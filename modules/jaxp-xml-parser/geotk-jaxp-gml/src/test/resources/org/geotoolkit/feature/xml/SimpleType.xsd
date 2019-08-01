@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema elementFormDefault="qualified"
-    targetNamespace="http://www.opengis.net/gml"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
-    <xs:element xmlns:gml="http://www.opengis.net/gml" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
-    <xs:complexType name="TestSimpleType">
-        <xs:complexContent>
-            <xs:extension xmlns:gml="http://www.opengis.net/gml" base="gml:AbstractFeatureType" >
-                <xs:sequence>
-                    <xs:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
-                    <xs:element name="attString"           maxOccurs="1" minOccurs="1" nillable="true" type="xs:string"/>
-                    <xs:element name="attShort"            maxOccurs="1" minOccurs="1" nillable="true" type="xs:short"/>
-                    <xs:element name="attInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
-                    <xs:element name="attLong"             maxOccurs="1" minOccurs="1" nillable="true" type="xs:long"/>
-                    <xs:element name="attDouble"           maxOccurs="1" minOccurs="1" nillable="true" type="xs:double"/>
-                    <xs:element name="attDecimal"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:decimal"/>
-                    <xs:element name="attDate"             maxOccurs="1" minOccurs="1" nillable="true" type="xs:date"/>
-                    <xs:element name="attDateTime"         maxOccurs="1" minOccurs="1" nillable="true" type="xs:dateTime"/>
-                    <xs:element name="attBoolean"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:boolean"/>
-                    <xs:element name="geomPoint"           maxOccurs="1" minOccurs="1" nillable="true" type="gml:Point"/>
-                    <xs:element name="geomMultiPoint"      maxOccurs="1" minOccurs="1" nillable="true" type="gml:MultiPoint"/>
-                    <xs:element name="geomLine"            maxOccurs="1" minOccurs="1" nillable="true" type="gml:Curve"/>
-                    <xs:element name="geomMultiLine"       maxOccurs="1" minOccurs="1" nillable="true" type="gml:CompositeCurve"/>
-                    <xs:element name="geomPolygon"         maxOccurs="1" minOccurs="1" nillable="true" type="gml:Polygon"/>
-                    <xs:element name="geomMultiPolygon"    maxOccurs="1" minOccurs="1" nillable="true" type="gml:MultiGeometry"/>
-                    <xs:element name="geomMultiGeometry"   maxOccurs="1" minOccurs="1" nillable="true" type="gml:MultiGeometry"/>
-                    <xs:element name="geomAnyGeometry"     maxOccurs="1" minOccurs="1" nillable="true" type="gml:GeometryPropertyType"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
+<xs:schema targetNamespace="http://www.geotoolkit.org/custom" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+  <xs:element type="TestSimpleType" substitutionGroup="gml:_Feature" name="TestSimple" xmlns="http://www.geotoolkit.org/custom" xmlns:gml="http://www.opengis.net/gml"/>
+  <xs:complexType name="TestSimpleType">
+    <xs:complexContent>
+      <xs:extension base="gml:AbstractFeatureType" xmlns:gml="http://www.opengis.net/gml">
+        <xs:sequence>
+          <xs:element type="xs:integer" nillable="true" minOccurs="1" maxOccurs="1" name="ID"/>
+          <xs:element type="xs:string" nillable="true" minOccurs="1" maxOccurs="1" name="attString"/>
+          <xs:element type="xs:short" nillable="true" minOccurs="1" maxOccurs="1" name="attShort"/>
+          <xs:element type="xs:integer" nillable="true" minOccurs="1" maxOccurs="1" name="attInteger"/>
+          <xs:element type="xs:long" nillable="true" minOccurs="1" maxOccurs="1" name="attLong"/>
+          <xs:element type="xs:double" nillable="true" minOccurs="1" maxOccurs="1" name="attDouble"/>
+          <xs:element type="xs:decimal" nillable="true" minOccurs="1" maxOccurs="1" name="attDecimal"/>
+          <xs:element type="xs:date" nillable="true" minOccurs="1" maxOccurs="1" name="attDate"/>
+          <xs:element type="xs:dateTime" nillable="true" minOccurs="1" maxOccurs="1" name="attDateTime"/>
+          <xs:element type="xs:boolean" nillable="true" minOccurs="1" maxOccurs="1" name="attBoolean"/>
+          <xs:element type="gml:Point" nillable="true" minOccurs="1" maxOccurs="1" name="geomPoint"/>
+          <xs:element type="gml:MultiPoint" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiPoint"/>
+          <xs:element type="gml:Curve" nillable="true" minOccurs="1" maxOccurs="1" name="geomLine"/>
+          <xs:element type="gml:CompositeCurve" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiLine"/>
+          <xs:element type="gml:Polygon" nillable="true" minOccurs="1" maxOccurs="1" name="geomPolygon"/>
+          <xs:element type="gml:MultiGeometry" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiPolygon"/>
+          <xs:element type="gml:MultiGeometry" nillable="true" minOccurs="1" maxOccurs="1" name="geomMultiGeometry"/>
+          <xs:element type="gml:GeometryPropertyType" nillable="true" minOccurs="1" maxOccurs="1" name="geomAnyGeometry"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 </xs:schema>

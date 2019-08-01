@@ -186,12 +186,13 @@ public class WMCUtilities {
             } else {
                 try {
                     for (Resource r : DataStores.flatten(server, true)) {
-                        GenericName n = r.getIdentifier();
-                        if (n != null && n.tip().toString().equalsIgnoreCase(layerName.tip().toString()) && r instanceof GridCoverageResource) {
-                            final MapLayer mapLayer = MapBuilder.createCoverageLayer(r,
-                                    GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
-                            context.layers().add(mapLayer);
-                        }
+                        r.getIdentifier().ifPresent((n) -> {
+                            if (n.tip().toString().equalsIgnoreCase(layerName.tip().toString()) && r instanceof GridCoverageResource) {
+                                final MapLayer mapLayer = MapBuilder.createCoverageLayer(r,
+                                        GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
+                                context.layers().add(mapLayer);
+                            }
+                        });
                     }
                 } catch (DataStoreException ex) {
                     Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);

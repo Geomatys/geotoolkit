@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.CurveInterpolation;
@@ -46,7 +47,7 @@ public class CurveSegmentAdapter extends XmlAdapter<CurveSegmentAdapter, CurveSe
     }
 
     public CurveSegmentAdapter(final CurveSegment lineString) {
-        this.positions = lineString.getSamplePoints().positions();
+        this.positions = GeometricUtilities.getSamplePoints(lineString);
     }
 
     @Override

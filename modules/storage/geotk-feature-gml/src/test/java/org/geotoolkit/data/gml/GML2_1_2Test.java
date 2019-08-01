@@ -16,17 +16,18 @@
  */
 package org.geotoolkit.data.gml;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.MultiLineString;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.data.FeatureSet;
+import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiLineString;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
@@ -44,11 +45,11 @@ public class GML2_1_2Test {
     public void testMultiLigne() throws Exception {
 
         final GMLFeatureStore store = new GMLFeatureStore(GML2_1_2Test.class.getResource("/org/geotoolkit/data/gml/2_1_2/MultiLigne.xml").toURI());
-        final Set<GenericName> names = store.getNames();
+        final Set<GenericName> names = DataStores.getNames(store, true, FeatureSet.class);
         assertEquals(1,names.size());
         final GenericName name = names.iterator().next();
         assertEquals("CoursEau", name.tip().toString());
-        final FeatureType type = store.getFeatureType(name.toString());
+        final FeatureType type = store.getType();
         assertEquals("CoursEau", type.getName().tip().toString());
         assertNotNull(type.getProperty("msGeometry"));
         assertNotNull(type.getProperty("CdEntiteHydrographique"));

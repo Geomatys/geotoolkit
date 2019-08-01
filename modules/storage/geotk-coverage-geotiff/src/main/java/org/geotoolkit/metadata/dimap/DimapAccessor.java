@@ -90,7 +90,6 @@ import static org.geotoolkit.util.DomUtilities.textValueSafe;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.Role;
@@ -468,7 +467,7 @@ public final class DimapAccessor extends Static {
         final List<Element> vertexs = getListElements(datasetFrame, TAG_VERTEX);
 
         final CoordinateReferenceSystem crs = readCRS(doc);
-        final GeometryFactory geometryFact = new JTSGeometryFactory(crs);
+        final JTSGeometryFactory geometryFact = new JTSGeometryFactory(crs);
 
         final int len = vertexs.size();
         final DirectPosition[] exteriorRing = new DirectPosition[len + 1];

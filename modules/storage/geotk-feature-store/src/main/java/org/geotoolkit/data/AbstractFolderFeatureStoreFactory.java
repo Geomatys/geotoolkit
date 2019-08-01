@@ -27,11 +27,13 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -81,7 +83,7 @@ public abstract class AbstractFolderFeatureStoreFactory extends DataStoreFactory
         paramDesc = desc;
     }
 
-    public abstract <T extends DataStoreFactory & FileFeatureStoreFactory> T getSingleFileFactory();
+    public abstract <T extends DataStoreProvider & ProviderOnFileSystem> T getSingleFileFactory();
 
     /**
      * {@inheritDoc}

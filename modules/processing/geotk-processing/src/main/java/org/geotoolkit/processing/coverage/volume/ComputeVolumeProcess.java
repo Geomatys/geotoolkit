@@ -424,8 +424,8 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
 
             // compute distance on grid x projected axis
-            geoCalc.setStartPoint(lowCRSPosition[1], lowCRSPosition[0]);
-            geoCalc.setEndPoint(upCRSPosition[1], upCRSPosition[0]);
+            geoCalc.setStartGeographicPoint(lowCRSPosition[1], lowCRSPosition[0]);
+            geoCalc.setEndGeographicPoint(upCRSPosition[1], upCRSPosition[0]);
             final double distX = ellConverter.convert(geoCalc.getGeodesicDistance());
 
             // compute on y grid axis
@@ -437,8 +437,8 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
 
             // compute distance on grid y projected axis
-            geoCalc.setStartPoint(lowCRSPosition[1], lowCRSPosition[0]);
-            geoCalc.setEndPoint(upCRSPosition[1], upCRSPosition[0]);
+            geoCalc.setStartGeographicPoint(lowCRSPosition[1], lowCRSPosition[0]);
+            geoCalc.setEndGeographicPoint(upCRSPosition[1], upCRSPosition[0]);
             final double distY = ellConverter.convert(geoCalc.getGeodesicDistance());
             return distX * distY;
         }

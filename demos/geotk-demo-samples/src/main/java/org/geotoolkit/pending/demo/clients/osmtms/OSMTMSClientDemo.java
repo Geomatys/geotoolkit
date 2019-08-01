@@ -47,7 +47,7 @@ public class OSMTMSClientDemo {
         for (Resource cr : DataStores.flatten(store, true, GridCoverageResource.class)) {
             final MapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(
-                    new SimpleInternationalString(cr.getIdentifier().tip().toString()),
+                    new SimpleInternationalString(cr.getIdentifier().get().tip().toString()),
                     new SimpleInternationalString("")));
             context.layers().add(cml);
         }

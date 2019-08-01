@@ -150,7 +150,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     final Parameters output = Parameters.castOrWrap(resampleProcess.call());
 
                     final GridCoverage resampledCoverage = (GridCoverage) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
-                    final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getIdentifier().tip().toString());
+                    final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getIdentifier().get().tip().toString());
                     final GridCoverageResource resampledCovRef = (GridCoverageResource) DataStores.flatten(memoryCoverageStore, true, GridCoverageResource.class).iterator().next();
 
                     /////////////////////

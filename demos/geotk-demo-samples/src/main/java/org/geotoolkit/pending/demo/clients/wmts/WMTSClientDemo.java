@@ -40,7 +40,7 @@ public class WMTSClientDemo {
                 WMTSVersion.v100);
 
         for(final Resource ref : DataStores.flatten(server, false)){
-            final GenericName n = ref.getIdentifier();
+            final GenericName n = ref.getIdentifier().get();
             System.out.println(n);
 
             final MapLayer layer = MapBuilder.createCoverageLayer(

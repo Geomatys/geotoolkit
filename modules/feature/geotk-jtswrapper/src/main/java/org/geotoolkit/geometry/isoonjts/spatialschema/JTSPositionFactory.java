@@ -24,7 +24,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.PositionFactory;
-import org.opengis.geometry.Precision;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -84,11 +83,6 @@ public class JTSPositionFactory implements PositionFactory {
 
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
-    }
-
-    public Precision getPrecision() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     public PointArray createPointArray(final float[] array, final int start, final int end) {

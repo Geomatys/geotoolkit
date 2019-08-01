@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.amended;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
@@ -221,10 +222,25 @@ public class AmendedCoverageReader extends AbstractGridCoverageReader {
 
         //override sample dimensions
         final List<SampleDimension> overrideDims = ref.getOverrideDims();
-        if(overrideDims!=null){
+        if (overrideDims != null) {
+            List<SampleDimension> sd = coverage.getSampleDimensions();
+
+            //check if size match
+            List<SampleDimension> overs = overrideDims;
+            int[] sourceBands = param.getSourceBands();
+            if (sourceBands != null) {
+                //we make an extra check not all readers honor the band selection parameters
+                if (sd == null || overrideDims.size() != sd.size()) {
+                    overs = new ArrayList<>();
+                    for (int i : sourceBands) {
+                        overs.add(overrideDims.get(i));
+                    }
+                }
+            }
+
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setGridCoverage(coverage);
-            gcb.setSampleDimensions(overrideDims.toArray(new SampleDimension[overrideDims.size()]));
+            gcb.setSampleDimensions(overs.toArray(new SampleDimension[overs.size()]));
             coverage = gcb.build();
         }
 

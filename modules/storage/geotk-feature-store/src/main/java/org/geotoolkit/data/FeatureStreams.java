@@ -30,6 +30,7 @@ import org.geotoolkit.internal.data.GenericEmptyFeatureIterator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -269,7 +270,6 @@ public final class FeatureStreams {
      * @param reader source reader
      * @param query query used to filter and transform the reader
      * @return feature reader subset
-     * @throws org.apache.sis.storage.DataStoreException
      */
     public static FeatureReader subset(FeatureReader reader, final Query query) throws DataStoreException{
         return GenericQueryFeatureIterator.wrap(reader, query);
@@ -588,16 +588,10 @@ public final class FeatureStreams {
         }
 
         @Override
-        public Envelope getEnvelope() throws DataStoreException {
-            CoordinateReferenceSystem crs = null;
-            if (wrapped.length > 0) {
-                crs = wrapped[0].getEnvelope().getCoordinateReferenceSystem();
-            }
+        public Optional<Envelope> getEnvelope() throws DataStoreException {
             GeneralEnvelope bbox = null;
-
             for (FeatureCollection c : wrapped) {
-                Envelope e = c.getEnvelope();
-
+                Envelope e = c.getEnvelope().orElse(null);
                 if (e != null) {
                     if (bbox != null) {
                         bbox.add(e);
@@ -606,7 +600,7 @@ public final class FeatureStreams {
                     }
                 }
             }
-            return bbox;
+            return Optional.ofNullable(bbox);
         }
 
         public static FeatureCollection sequence(final FeatureCollection... cols) {

@@ -23,24 +23,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.apache.sis.internal.raster.ColorModelFactory;
-
+import org.apache.sis.internal.coverage.ColorModelFactory;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.image.RecolorRenderedImage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Literal;
-
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
+import org.opengis.filter.capability.FunctionName;
+import org.opengis.filter.expression.Expression;
 import static org.opengis.filter.expression.Expression.*;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.expression.Literal;
 
 /**
  *
@@ -313,7 +309,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         final ColorModel model;
 
         // As index color model cannot manage negative values, we must use our own in this case.
-        if (points[0].getData().doubleValue() < 0 || candidate==null) {
+        if (points.length == 0 || (points[0].getData().doubleValue() < 0 || candidate==null)) {
             final int pixelSize;
             if(candidate!=null){
                 pixelSize = candidate.getPixelSize();

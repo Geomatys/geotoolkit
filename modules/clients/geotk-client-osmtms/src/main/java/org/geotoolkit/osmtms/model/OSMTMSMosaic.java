@@ -56,7 +56,7 @@ public class OSMTMSMosaic extends AbstractMosaic{
     }
 
     @Override
-    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
+    public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
         hints.put(Pyramids.HINT_FORMAT, "image/png");
         return set.getTile(getPyramid(), this, col, row, hints);
     }

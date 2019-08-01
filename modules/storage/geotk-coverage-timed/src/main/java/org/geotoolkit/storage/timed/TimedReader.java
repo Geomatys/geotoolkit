@@ -55,7 +55,7 @@ public class TimedReader extends AbstractGridCoverageReader {
 
     @Override
     public GenericName getCoverageName() throws DataStoreException, CancellationException {
-        return parent.getIdentifier();
+        return parent.getIdentifier().orElse(null);
     }
 
     @Override

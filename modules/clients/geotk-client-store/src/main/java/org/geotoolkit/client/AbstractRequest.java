@@ -118,7 +118,7 @@ public abstract class AbstractRequest implements Request {
             }
             this.timeout = timeout;
         } else {
-            this.timeout = AbstractClientFactory.TIMEOUT.getDefaultValue();
+            this.timeout = AbstractClientProvider.TIMEOUT.getDefaultValue();
         }
     }
 
@@ -379,7 +379,7 @@ public abstract class AbstractRequest implements Request {
     }
 
     public static InputStream openRichException(final URLConnection cnx, final ClientSecurity security) throws IOException {
-        return openRichException(cnx, security, AbstractClientFactory.TIMEOUT.getDefaultValue());
+        return openRichException(cnx, security, AbstractClientProvider.TIMEOUT.getDefaultValue());
     }
 
     public static InputStream openRichException(final URLConnection cnx, final ClientSecurity security, long timeout) throws IOException {

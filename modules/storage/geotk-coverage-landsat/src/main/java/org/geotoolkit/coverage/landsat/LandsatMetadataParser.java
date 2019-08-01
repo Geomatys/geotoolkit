@@ -38,7 +38,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -81,7 +80,6 @@ import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.util.TimeParser;
-import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.Band;
@@ -114,7 +112,7 @@ import org.opengis.util.InternationalString;
  *             Tests also need to be ported.
  */
 @Deprecated
-public class LandsatMetadataParser {
+final class LandsatMetadataParser {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage");
 
@@ -156,7 +154,6 @@ public class LandsatMetadataParser {
      * Read the metadata file with the {@link StandardCharsets#US_ASCII} default charset.
      *
      * @param metadataPath path where the metadata file is stored.
-     * @throws IOException
      */
     public LandsatMetadataParser(final Path metadataPath) throws IOException {
         this(metadataPath, StandardCharsets.US_ASCII);
@@ -166,8 +163,6 @@ public class LandsatMetadataParser {
      * Build a metadata parser for Landsat.
      *
      * @param metadataPath path where the metadata file is stored.
-     * @param charset
-     * @throws IOException
      */
     public LandsatMetadataParser(final Path metadataPath, final Charset charset) throws IOException {
         ArgumentChecks.ensureNonNull("metadata Path", metadataPath);
@@ -226,11 +221,6 @@ public class LandsatMetadataParser {
 
     /**
      * Returns Landsat ISO19115 metadatas.
-     *
-     * @param group
-     * @return
-     * @throws FactoryException
-     * @throws ParseException
      */
     public final DefaultMetadata getMetadata(final LandsatConstants.CoverageGroup group) throws FactoryException, ParseException {
         ArgumentChecks.ensureNonNull("Metadata group name", group);
@@ -410,7 +400,6 @@ public class LandsatMetadataParser {
                 baseMetadata.setAcquisitionInformation(Collections.singleton(dAI));
             }
 
-
             // build each specific metadata
             isoMetadata           = new DefaultMetadata(baseMetadata);
             panchromaticMetadatas = new DefaultMetadata(baseMetadata);
@@ -491,7 +480,6 @@ public class LandsatMetadataParser {
                 }
             }
         }
-
         switch (group) {
             case ALL :          return isoMetadata;
             case PANCHROMATIC : return panchromaticMetadatas;
@@ -499,14 +487,6 @@ public class LandsatMetadataParser {
             case THERMAL :      return thermalMetadatas;
             default: throw new IllegalArgumentException("Unknown coverage "+group);
         }
-    }
-
-    /**
-     * Return a map of the metadata fields.
-     * @return
-     */
-    public Map<String, String> getKeyValueMap(){
-        return Collections.unmodifiableMap(metaGroups);
     }
 
     //-------------------------------------------------------------------------//
@@ -527,11 +507,6 @@ public class LandsatMetadataParser {
 
     /**
      * Returns all bands informations from metadata text file.
-     *
-     * @param group
-     * @param reflectanceOrRadiance
-     * @param bandsIndex
-     * @return
      */
     private Set<DefaultBand> getBandsInfos(final CoverageGroup group, final String reflectanceOrRadiance, final int ...bandsIndex) {
         final HashSet<DefaultBand> bands = new HashSet<>();
@@ -593,10 +568,9 @@ public class LandsatMetadataParser {
      * @throws FactoryException if impossible to compute CRS.
      */
     private CoordinateReferenceSystem getCRS2D() throws FactoryException {
-
-        if (projectedCRS2D != null)
+        if (projectedCRS2D != null) {
             return projectedCRS2D;
-
+        }
         //-- Datum
         final String datum = getValue(true, "DATUM");
 
@@ -606,12 +580,10 @@ public class LandsatMetadataParser {
         if (!(("WGS84".equalsIgnoreCase(datum)) && ("WGS84".equalsIgnoreCase(ellips)))){
             throw new IllegalStateException("Comportement not supported : expected Datum and Ellipsoid value WGS84, found Datum = "+datum+", Ellipsoid : "+ellips);
         }
-
         final String projType = getValue(true, "MAP_PROJECTION");
-
         switch (projType) {
             case "UTM" : {
-                /**
+                /*
                  * From Landsat specification, normaly Datum and ellipsoid are always WGS84.
                  * UTM area is the only thing which change.
                  * Thereby we build a CRS from basic 32600 and we add read UTM area.
@@ -628,7 +600,6 @@ public class LandsatMetadataParser {
                 break;
             }
             case "PS" : {
-
                 final String originLongitude   = getValue(true, "VERTICAL_LON_FROM_POLE");
                 final String trueLatitudeScale = getValue(true, "TRUE_SCALE_LAT");
                 final String falseEasting      = getValue(true, "FALSE_EASTING");
@@ -654,7 +625,6 @@ public class LandsatMetadataParser {
             }
             default : throw new IllegalStateException("Comportement not supported : expected MAP_PROJECTION values are : PS or UTM, found : "+projType);
         }
-
         return projectedCRS2D;
     }
 
@@ -667,25 +637,23 @@ public class LandsatMetadataParser {
      * @throws ParseException if problem during Date parsing.
      */
     private Date getAcquisitionDate() throws ParseException {
-        if (date != null)
+        if (date != null) {
             return date;
-
-        /**
+        }
+        /*
          * Get temporales acquisition informations.
          */
         //-- year month day
         final String dateAcquired  = getValue(false, "DATE_ACQUIRED");
-
-        if (dateAcquired == null)
+        if (dateAcquired == null) {
             return null;
-
+        }
         //-- hh mm ss:ms
         final String sceneCenterTime = getValue(false, "SCENE_CENTER_TIME");
-
         String strDate = dateAcquired;
-        if (sceneCenterTime != null)
-            strDate = dateAcquired+"T"+sceneCenterTime;
-
+        if (sceneCenterTime != null) {
+            strDate = dateAcquired + 'T' + sceneCenterTime;
+        }
         date = TimeParser.toDate(strDate);
         return date;
     }
@@ -697,7 +665,6 @@ public class LandsatMetadataParser {
      * @return the internaly extent bounding box coordinates.
      */
     private double[] getProjectedBound2D() {
-
         //-- longitude
         final String lowWest = getValue(true, "CORNER_LL_LON_PRODUCT", "CORNER_UL_LON_PRODUCT");
         final String upWest  = getValue(true, "CORNER_UL_LON_PRODUCT", "CORNER_LL_LON_PRODUCT");
@@ -728,11 +695,9 @@ public class LandsatMetadataParser {
      * @throws FactoryException if impossible to compute CRS.
      */
     CoordinateReferenceSystem getCRS() throws FactoryException {
-
         if (projectedCRS != null) {
             return projectedCRS;
         }
-
         final CoordinateReferenceSystem crs2D = getCRS2D();
 
         //-- add temporal part if Date exist
@@ -779,9 +744,9 @@ public class LandsatMetadataParser {
     MathTransform getGridToCRS(final CoverageGroup group) throws ParseException, FactoryException {
         final Date acquisitionDate = getAcquisitionDate();
         final MathTransform gridToCRS2D = MathTransforms.linear(AffineTransforms2D.toMatrix(getGridToCRS2D(group)));
-        if (acquisitionDate == null)
+        if (acquisitionDate == null) {
             return gridToCRS2D;
-
+        }
         // we use a scale of 1, otherwise the transform can not be reversed.
         final LinearTransform linearTime = MathTransforms.linear(1.0, acquisitionDate.getTime());
         return MathTransforms.compound(gridToCRS2D, linearTime);
@@ -796,9 +761,7 @@ public class LandsatMetadataParser {
      * @throws FactoryException if impossible to compute CRS.
      */
     private AffineTransform getGridToCRS2D(final CoverageGroup group) throws FactoryException {
-
         final GridExtent gridExtent = getGridExtent(group);
-
         final String lowWest;
         final String upWest;
         final String lowEst;
@@ -832,40 +795,11 @@ public class LandsatMetadataParser {
             westNorth = getValue(true, "CORNER_UL_LAT_PRODUCT", "CORNER_UR_LAT_PRODUCT");
             estNorth  = getValue(true, "CORNER_UR_LAT_PRODUCT", "CORNER_UL_LAT_PRODUCT");
         }
-
         final double minLong  = Math.min(Double.valueOf(lowWest), Double.valueOf(upWest));
         final double spanLong = Math.max(Double.valueOf(lowEst), Double.valueOf(upEst)) - minLong;
-
         final double maxLat   = Math.max(Double.valueOf(westNorth), Double.valueOf(estNorth));
         final double spanLat  = maxLat - Math.min(Double.valueOf(westSouth), Double.valueOf(estSouth));
-
         return new AffineTransform2D(spanLong / gridExtent.getSize(0), 0, 0, - spanLat / gridExtent.getSize(1), minLong, maxLat);
-    }
-
-    /**
-     * Returns Landsat projected {@link Envelope} with the additionnal temporal
-     * axis related with the {@linkplain #getAcquisitionDate() date} image creation.
-     *
-     * @return projected {@link Envelope}.
-     * @throws FactoryException if problem during CRS decoding
-     * @throws ParseException if problem during date parsing
-     */
-    Envelope getProjectedEnvelope() throws FactoryException, ParseException {
-
-        final CoordinateReferenceSystem projCRS = getCRS();
-        assert projCRS != null;
-
-        //-- {west, est, south, north}
-        final double[] projectedBound2D = getProjectedBound2D();
-
-        final GeneralEnvelope projEnvelope = new GeneralEnvelope(projCRS);
-        projEnvelope.setRange(0, projectedBound2D[0], projectedBound2D[1]);
-        projEnvelope.setRange(1, projectedBound2D[2], projectedBound2D[3]);
-        final Date dat = getAcquisitionDate();
-        if (dat != null)
-            projEnvelope.setRange(2, dat.getTime(), dat.getTime());
-
-        return projEnvelope;
     }
 
     /**
@@ -915,10 +849,8 @@ public class LandsatMetadataParser {
      *
      * @param kVal 1 or 2 for K1 or K2.
      * @param bandIndex thermic band index. (10 or 11 for Landsat)
-     * @return
      */
     private ProcessStep getKConstant(final int kVal, final int bandIndex) {
-
         final String kLabel = "K"+kVal+"_CONSTANT_BAND_"+bandIndex;
         final String k = getValue(false, kLabel);
         if (k != null) {
@@ -946,14 +878,7 @@ public class LandsatMetadataParser {
         return getValue(isMandatory, label, null);
     }
 
-    /**
-     *
-     * @param isMandatory
-     * @param label
-     * @param labelRescue
-     * @return
-     */
-    String getValue(final boolean isMandatory, final String label, final String labelRescue) {
+    private String getValue(final boolean isMandatory, final String label, final String labelRescue) {
         ArgumentChecks.ensureNonNull("Label", label);
         String labelValue  = metaGroups.get(label);
         if (labelValue == null) {
@@ -974,15 +899,10 @@ public class LandsatMetadataParser {
 
     /**
      * Travel all metadata file and fill a {@link String} map to access more easily to metadatas values.
-     *
-     * @return
-     * @throws IOException if problem during file reading.
      */
     private Map<String, String> getMetadataGroups(final Charset charset) throws IOException {
-
         final Map<String, String> metaGroup = new HashMap<>();
         final Iterator<String> iterator = Files.readAllLines(metadataPath, charset).iterator();
-
         while (iterator.hasNext()) {
             final String currentValue = iterator.next();
             final int id     = currentValue.indexOf("=");

@@ -16,14 +16,23 @@
  */
 package org.geotoolkit.data;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.WritableFeatureSet;
@@ -47,7 +56,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultFeatureResource extends AbstractResource implements FeatureSet, WritableFeatureSet, ChangeListener<ChangeEvent> {
+public class DefaultFeatureResource extends AbstractResource implements WritableFeatureSet, ChangeListener<ChangeEvent>, StoreResource {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;
@@ -65,19 +74,48 @@ public class DefaultFeatureResource extends AbstractResource implements FeatureS
     }
 
     @Override
+    public DefaultMetadata createMetadata() throws DataStoreException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification identification = new DefaultDataIdentification();
+        final NamedIdentifier identifier = NamedIdentifier.castOrCopy(getIdentifier().get());
+        final DefaultCitation citation = new DefaultCitation(identifier.toString());
+        citation.setIdentifiers(Collections.singleton(identifier));
+        identification.setCitation(citation);
+        metadata.setIdentificationInfo(Collections.singleton(identification));
+
+        //NOTE : add count, may be expensive, remove it ?
+//        final DefaultFeatureCatalogueDescription fcd = new DefaultFeatureCatalogueDescription();
+//        final DefaultFeatureTypeInfo info = new DefaultFeatureTypeInfo();
+//        info.setFeatureInstanceCount((int)features(false).count());
+//        fcd.getFeatureTypeInfo().add(info);
+//        metadata.getContentInfo().add(fcd);
+
+        metadata.freeze();
+        return metadata;
+    }
+
+    @Override
     public FeatureType getType() throws DataStoreException {
         return store.getFeatureType(query.getTypeName());
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override
-    public FeatureSet subset(Query query) throws DataStoreException {
-        if (query==null) return this;
-        return new DefaultFeatureResource(store, QueryUtilities.subQuery(this.query, query));
+    public DataStore getOriginator() {
+        return (DataStore) store;
+    }
+
+    @Override
+    public FeatureSet subset(org.apache.sis.storage.Query query) throws DataStoreException {
+        if (query == null) return this;
+        if (query instanceof Query) {
+            return new DefaultFeatureResource(store, QueryUtilities.subQuery(this.query, (Query) query));
+        }
+        return WritableFeatureSet.super.subset(query);
     }
 
     @Override

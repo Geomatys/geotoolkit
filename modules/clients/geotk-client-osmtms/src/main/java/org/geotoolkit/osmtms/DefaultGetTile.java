@@ -17,8 +17,8 @@
 package org.geotoolkit.osmtms;
 
 import java.util.logging.Logger;
-import org.geotoolkit.client.AbstractRequest;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.client.AbstractRequest;
 
 /**
  *
@@ -36,8 +36,8 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
      * The version to use for this webservice request.
      */
     private int scale = 0;
-    private int row = 0;
-    private int col = 0;
+    private long row = 0;
+    private long col = 0;
     private String extension = ".png";
 
 
@@ -73,22 +73,22 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
     }
 
     @Override
-    public int getTileRow() {
+    public long getTileRow() {
         return row;
     }
 
     @Override
-    public void setTileRow(final int row) {
+    public void setTileRow(final long row) {
         this.row = row;
     }
 
     @Override
-    public int getTileCol() {
+    public long getTileCol() {
         return col;
     }
 
     @Override
-    public void setTileCol(final int col) {
+    public void setTileCol(final long col) {
         this.col = col;
     }
 

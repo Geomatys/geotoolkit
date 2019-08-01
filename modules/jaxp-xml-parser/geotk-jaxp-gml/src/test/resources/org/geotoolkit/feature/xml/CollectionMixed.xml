@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection xmlns:wfs="http://www.opengis.net/wfs"
+                       xmlns:gml="http://www.opengis.net/gml"
+                       xmlns:ns0="http://www.geotoolkit.org/custom"
+                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:schemaLocation="http://www.geotoolkit.org/custom SimpleTypeBasic.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
+                       gml:id="collection-1" timeStamp="2002-05-30T09:00:00" numberOfFeatures="6">
+    <gml:featureMember>
+        <wfs:FeatureCollection gml:id="one-of-a-kind-ID" timeStamp="2002-05-30T09:00:00" numberOfFeatures="3">
+            <gml:featureMember>
+                <ns0:TestSimpleBasic gml:id="id412">
+                    <ns0:attString>a text composed of words.</ns0:attString>
+                    <ns0:attDouble>12.31</ns0:attDouble>
+                </ns0:TestSimpleBasic>
+            </gml:featureMember>
+            <gml:featureMember>
+                <ns0:TestSimpleBasic gml:id="id36">
+                    <ns0:attString>some words assembled in a text.</ns0:attString>
+                    <ns0:attDouble>39.45</ns0:attDouble>
+                </ns0:TestSimpleBasic>
+            </gml:featureMember>
+            <gml:featureMember>
+                <ns0:TestSimpleBasic gml:id="id89">
+                    <ns0:attString>some text with words.</ns0:attString>
+                    <ns0:attDouble>56.14</ns0:attDouble>
+                </ns0:TestSimpleBasic>
+            </gml:featureMember>
+        </wfs:FeatureCollection>
+    </gml:featureMember>
+    <gml:featureMember>
+        <wfs:FeatureCollection gml:id="one-of-a-kind-ID-2" timeStamp="2002-05-30T09:00:00" numberOfFeatures="3">
+            <gml:featureMember>
+                <ns0:TestSimpleBasic2 gml:id="id413">
+                    <ns0:attString2>a text composed of words.</ns0:attString2>
+                    <ns0:attDouble2>12.31</ns0:attDouble2>
+                </ns0:TestSimpleBasic2>
+            </gml:featureMember>
+            <gml:featureMember>
+                <ns0:TestSimpleBasic2 gml:id="id37">
+                    <ns0:attString2>some words assembled in a text.</ns0:attString2>
+                    <ns0:attDouble2>39.45</ns0:attDouble2>
+                </ns0:TestSimpleBasic2>
+            </gml:featureMember>
+            <gml:featureMember>
+                <ns0:TestSimpleBasic2 gml:id="id90">
+                    <ns0:attString2>some text with words.</ns0:attString2>
+                    <ns0:attDouble2>56.14</ns0:attDouble2>
+                </ns0:TestSimpleBasic2>
+            </gml:featureMember>
+        </wfs:FeatureCollection>
+    </gml:featureMember>
+</wfs:FeatureCollection>

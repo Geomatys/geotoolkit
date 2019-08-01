@@ -20,14 +20,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import org.apache.sis.internal.storage.AbstractResource;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.geometry.Envelope;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -45,9 +46,9 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     }
 
     @Override
-    public NamedIdentifier getIdentifier() {
+    public Optional<GenericName> getIdentifier() {
         try {
-            return NamedIdentifier.castOrCopy(base.getIdentifier());
+            return base.getIdentifier();
         } catch (DataStoreException ex) {
             throw new BackingStoreException(ex.getMessage(), ex);
         }

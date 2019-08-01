@@ -20,44 +20,45 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.storage.DataStoreException;
-
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-
-import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.xml.Namespaces;
 import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.Namespaces;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
-
+import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -124,8 +125,64 @@ public class ElementFeatureWriter {
 
         if (candidate instanceof Feature) {
             return writeFeature((Feature) candidate, null, fragment);
-        } else if (candidate instanceof FeatureCollection) {
-            return writeFeatureCollection((FeatureCollection) candidate, fragment, true, nbMatched);
+        } else if (candidate instanceof FeatureSet) {
+            return writeFeatureCollection((FeatureSet) candidate, null, fragment, true, nbMatched, true);
+        } else if (candidate instanceof List) {
+            // see http://schemas.opengis.net/wfs/2.0/examples/GetFeature/GetFeature_08_Res.xml
+            List collections = (List) candidate;
+
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            // then we have to create document-loader:
+            factory.setNamespaceAware(false);
+            DocumentBuilder loader = factory.newDocumentBuilder();
+
+            // creating a new DOM-document...
+            Document document = loader.newDocument();
+            final Element rootElement = document.createElementNS("http://www.opengis.net/wfs", "FeatureCollection");
+            rootElement.setPrefix("wfs");
+
+            document.appendChild(rootElement);
+
+            String collectionID = "collection-1";
+            final Attr idAttribute = document.createAttributeNS(GML, "id");
+            idAttribute.setValue(collectionID);
+            idAttribute.setPrefix("gml");
+            rootElement.setAttributeNodeNS(idAttribute);
+
+            long count = 0;
+            List<FeatureType> types = new ArrayList<>();
+            for (Object c : collections) {
+                if (c instanceof FeatureSet) {
+                    count = count + FeatureStoreUtilities.getCount((FeatureSet)c);
+                    types.add(((FeatureSet)c).getType());
+                } else {
+                    throw new IllegalArgumentException("Only list of Feature set is allowed");
+                }
+            }
+
+            rootElement.setAttribute("numberOfFeatures", Long.toString(count));
+
+            if (nbMatched != null) {
+                rootElement.setAttribute("numberMatched", Integer.toString(nbMatched));
+            }
+
+            // timestamp
+            synchronized(FORMATTER) {
+                rootElement.setAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
+            }
+
+            if (schemaLocation != null && !schemaLocation.equals("")) {
+                rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
+            }
+
+            for (Object collection : collections) {
+                final Element memberElement = document.createElementNS(GML, "featureMember");
+                memberElement.setPrefix("gml");
+                memberElement.appendChild(writeFeatureCollection((FeatureSet) collection, document, fragment, true, null, false));
+                rootElement.appendChild(memberElement);
+            }
+            return rootElement;
+
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureCollection: "+ candidate);
@@ -340,20 +397,24 @@ public class ElementFeatureWriter {
      * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public Element writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment, final boolean wfs, final Integer nbMatched) throws DataStoreException, ParserConfigurationException {
+    public Element writeFeatureCollection(final FeatureSet featureCollection, final Document rootDocument, final boolean fragment, final boolean wfs, final Integer nbMatched, boolean root) throws DataStoreException, ParserConfigurationException {
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        // then we have to create document-loader:
-        factory.setNamespaceAware(false);
-        DocumentBuilder loader = factory.newDocumentBuilder();
+        final Document document;
+        if (rootDocument == null) {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            // then we have to create document-loader:
+            factory.setNamespaceAware(false);
+            DocumentBuilder loader = factory.newDocumentBuilder();
 
-        // creating a new DOM-document...
-        Document document = loader.newDocument();
+            // creating a new DOM-document...
+            document = loader.newDocument();
+        } else {
+            document = rootDocument;
+        }
 
         // the XML header
         if (!fragment) {
             document.setXmlVersion("1.0");
-            //writer.writeStartDocument("UTF-8", "1.0");
         }
 
         // the root Element
@@ -366,18 +427,17 @@ public class ElementFeatureWriter {
             rootElement.setPrefix("gml");
         }
 
-        document.appendChild(rootElement);
-
-        String collectionID = "";
-        if (featureCollection.getIdentifier()!= null) {
-            collectionID = featureCollection.getIdentifier().toString();
+        if (root) {
+            document.appendChild(rootElement);
         }
+
+        String collectionID = featureCollection.getIdentifier().map(GenericName::toString).orElse("");
         final Attr idAttribute = document.createAttributeNS(GML, "id");
         idAttribute.setValue(collectionID);
         idAttribute.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttribute);
 
-        rootElement.setAttribute("numberOfFeatures", Integer.toString(featureCollection.size()));
+        rootElement.setAttribute("numberOfFeatures", Long.toString(FeatureStoreUtilities.getCount(featureCollection)));
 
         if (nbMatched != null) {
             rootElement.setAttribute("numberMatched", Integer.toString(nbMatched));
@@ -388,7 +448,7 @@ public class ElementFeatureWriter {
             rootElement.setAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
         }
 
-        if (schemaLocation != null && !schemaLocation.equals("")) {
+        if (root && schemaLocation != null && !schemaLocation.equals("")) {
             rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }
 
@@ -403,14 +463,16 @@ public class ElementFeatureWriter {
         /*
          * The boundedby part
          */
-        final Element boundElement = writeBounds(featureCollection.getEnvelope(), document);
-        if (boundElement != null) {
-            rootElement.appendChild(boundElement);
-        }
+        featureCollection.getEnvelope().ifPresent((env) -> {
+            final Element boundElement = writeBounds(env, document);
+            if (boundElement != null) {
+                rootElement.appendChild(boundElement);
+            }
+        });
 
         // we write each feature member of the collection
-        FeatureIterator iterator = featureCollection.iterator();
-        try {
+        try (Stream<Feature> stream = featureCollection.features(false)) {
+            Iterator<Feature> iterator = stream.iterator();
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
                 final Element memberElement = document.createElementNS(GML, "featureMember");
@@ -419,10 +481,6 @@ public class ElementFeatureWriter {
                 rootElement.appendChild(memberElement);
 
             }
-
-        } finally {
-            // we close the stream
-            iterator.close();
         }
         return rootElement;
     }

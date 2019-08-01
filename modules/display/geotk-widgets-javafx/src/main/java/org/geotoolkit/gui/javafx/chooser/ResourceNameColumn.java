@@ -64,8 +64,7 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
                     final Resource r = param.getValue().getValue();
                     String id = MetadataUtilities.getIdentifier(r.getMetadata());
                     if (id == null || (id = id.trim()).isEmpty()) {
-                        final GenericName rId = r.getIdentifier();
-                        id = rId == null? "Unknown" : rId.toString();
+                        id = r.getIdentifier().map(GenericName::toString).orElse("Unknown");
                     }
                     return new SimpleObjectProperty<>(id);
                 } catch (DataStoreException ex) {

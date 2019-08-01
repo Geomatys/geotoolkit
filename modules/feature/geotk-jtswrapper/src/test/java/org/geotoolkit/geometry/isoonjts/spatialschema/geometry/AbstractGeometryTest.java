@@ -27,7 +27,6 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.PrimitiveFactory;
@@ -48,7 +47,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public abstract class AbstractGeometryTest {
 
-    protected static final GeometryFactory GEOMETRY_FACTORY;
+    protected static final JTSGeometryFactory GEOMETRY_FACTORY;
 
     protected static final PrimitiveFactory PRIMITIVE_FACTORY;
 

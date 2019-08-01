@@ -45,13 +45,13 @@ public class MPMosaic extends AbstractMosaic {
     }
 
     @Override
-    public boolean isMissing(int col, int row) {
-        return mpTileReference[col][row] == null;
+    public boolean isMissing(long col, long row) {
+        return mpTileReference[Math.toIntExact(col)][Math.toIntExact(row)] == null;
     }
 
     @Override
-    public MPImageTile getTile(int col, int row, Map hints) throws DataStoreException {
-        return mpTileReference[col][row];
+    public MPImageTile getTile(long col, long row, Map hints) throws DataStoreException {
+        return mpTileReference[Math.toIntExact(col)][Math.toIntExact(row)];
     }
 
     public void setTile(int col, int row, MPImageTile tile){

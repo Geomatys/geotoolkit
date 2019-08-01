@@ -18,9 +18,17 @@
 package org.geotoolkit.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
@@ -30,6 +38,8 @@ import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.metadata.Metadata;
+import org.opengis.util.GenericName;
 
 /**
  * A java collection that may hold only features.
@@ -44,10 +54,31 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FeatureCollection extends Collection<Feature>, FeatureSet, WritableFeatureSet {
+public interface FeatureCollection extends Collection<Feature>, WritableFeatureSet {
 
     @Override
-    NamedIdentifier getIdentifier();
+    default Metadata getMetadata() throws DataStoreException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification identification = new DefaultDataIdentification();
+        final NamedIdentifier identifier = NamedIdentifier.castOrCopy(getIdentifier().get());
+        final DefaultCitation citation = new DefaultCitation(identifier.toString());
+        citation.setIdentifiers(Collections.singleton(identifier));
+        identification.setCitation(citation);
+        metadata.setIdentificationInfo(Collections.singleton(identification));
+
+        //NOTE : add count, may be expensive, remove it ?
+//        final DefaultFeatureCatalogueDescription fcd = new DefaultFeatureCatalogueDescription();
+//        final DefaultFeatureTypeInfo info = new DefaultFeatureTypeInfo();
+//        info.setFeatureInstanceCount((int)features(false).count());
+//        fcd.getFeatureTypeInfo().add(info);
+//        metadata.getContentInfo().add(fcd);
+
+        metadata.freeze();
+        return metadata;
+    }
+
+    @Override
+    Optional<GenericName> getIdentifier();
 
     /**
      * A collection may be linked to a session, this implies that changes maid
@@ -114,7 +145,10 @@ public interface FeatureCollection extends Collection<Feature>, FeatureSet, Writ
 
     @Override
     default Stream<Feature> features(boolean parallal) throws DataStoreException {
-        return stream();
+        final FeatureIterator reader = iterator();
+        final Spliterator<Feature> spliterator = Spliterators.spliterator(reader, Long.MAX_VALUE, Spliterator.ORDERED);
+        final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
+        return stream.onClose(reader::close);
     }
 
     /**
@@ -144,5 +178,4 @@ public interface FeatureCollection extends Collection<Feature>, FeatureSet, Writ
     default boolean removeIf(Predicate<? super Feature> predicate) {
         return Collection.super.removeIf(predicate);
     }
-
 }

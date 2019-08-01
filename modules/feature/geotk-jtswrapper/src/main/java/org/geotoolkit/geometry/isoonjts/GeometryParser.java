@@ -22,7 +22,6 @@ import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.aggregate.AggregateFactory;
 import org.opengis.geometry.aggregate.MultiPrimitive;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
@@ -41,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.OrientableCurve;
 
@@ -98,7 +98,7 @@ public class GeometryParser {
     private static final String L_PAREN = "(";
     private static final String R_PAREN = ")";
 
-    private GeometryFactory geometryFactory;
+    private JTSGeometryFactory geometryFactory;
     private PrimitiveFactory primitiveFactory;
     private PositionFactory positionFactory;
     private AggregateFactory aggregateFactory;
@@ -114,7 +114,7 @@ public class GeometryParser {
      * @param positionFactory A <code>PositionFactory</code> created with the same crs and precision as above
      * @param aggregateFactory A <Code>AggregateFactory</code> created with the same crs and precision as above
      */
-    public GeometryParser(final GeometryFactory geometryFactory, final PrimitiveFactory primitiveFactory, final PositionFactory positionFactory, final AggregateFactory aggregateFactory) {
+    public GeometryParser(final JTSGeometryFactory geometryFactory, final PrimitiveFactory primitiveFactory, final PositionFactory positionFactory, final AggregateFactory aggregateFactory) {
         this.geometryFactory = geometryFactory;
         this.primitiveFactory = primitiveFactory;
         this.positionFactory = positionFactory;
@@ -122,28 +122,22 @@ public class GeometryParser {
     }
     /**
      * Provide a GeometryFactory for the parser.
-     * <p>
      * Should be called prior to use.
-     * @param factory
      */
-    public void setFactory(final GeometryFactory factory){
+    public void setFactory(final JTSGeometryFactory factory){
         this.geometryFactory = factory;
     }
 
     /**
      * Provide a PrimitiveFactory for the parser.
-     * <p>
      * Should be called prior to use.
-     * @param factory
      */
     public void setFactory(final PrimitiveFactory factory){
         this.primitiveFactory = factory;
     }
     /**
      * Provide a PositionFactory for the parser.
-     * <p>
      * Should be called prior to use.
-     * @param factory
      */
     public void setFactory(final PositionFactory factory){
         this.positionFactory = factory;
@@ -242,10 +236,7 @@ public class GeometryParser {
      * Returns a list of DirectPosition objects which it read from
      * the StreamTokenizer
      *
-     * @param tokenizer
      * @return a <code>List\<DirectPosition\></code>
-     * @throws IOException
-     * @throws ParseException
      */
     private List<Position> getCoordinates(final StreamTokenizer tokenizer)
             throws IOException, ParseException {
@@ -265,10 +256,7 @@ public class GeometryParser {
     /**
      * Parse a single coordinate from a <code>StreamTokenizer</code>
      *
-     * @param tokenizer
      * @return a single DirectPosition
-     * @throws IOException
-     * @throws ParseException
      */
     private DirectPosition getPreciseCoordinate(final StreamTokenizer tokenizer)
             throws IOException, ParseException {
@@ -411,7 +399,6 @@ public class GeometryParser {
      * Throws a formatted ParseException for the current token.
      *
      * @param expected a description of what was expected
-     * @throws ParseException
      */
     private void parseError(final String expected, final StreamTokenizer tokenizer)
             throws ParseException {
@@ -617,7 +604,6 @@ public class GeometryParser {
      *                  format.
      * @return a <code>MultiPrimitive</code> specified by the next tokens
      *         in the stream
-     * @throws ParseException
      * @throws IOException    if an I/O error occurs
      */
     private MultiPrimitive readGeometryCollectionText(final StreamTokenizer tokenizer) throws IOException, ParseException {
@@ -647,7 +633,6 @@ public class GeometryParser {
      *                  format.
      * @return a <code>MultiPrimitive</code> specified by the next tokens
      *         in the stream
-     * @throws ParseException
      * @throws IOException    if an I/O error occurs
      */
     private MultiPrimitive readMultiLineStringText(final StreamTokenizer tokenizer) throws IOException, ParseException {
@@ -669,5 +654,4 @@ public class GeometryParser {
         }
         return multi;
     }
-
 }

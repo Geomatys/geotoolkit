@@ -36,13 +36,15 @@ import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import javax.measure.Unit;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.Category;
-import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.WritableGridCoverageResource;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -59,7 +61,6 @@ import org.geotoolkit.storage.coverage.PyramidalModelWriter;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.version.Version;
-import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -71,7 +72,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-public class PGCoverageResource extends AbstractPyramidalCoverageResource {
+public class PGCoverageResource extends AbstractPyramidalCoverageResource implements WritableGridCoverageResource {
 
     private final PGCoverageStore pgstore;
     private boolean updated = false;
@@ -106,7 +107,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
         try{
             cnx = pgstore.getDataSource().getConnection();
             stmt = cnx.createStatement();
-            final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+            final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
 
             final StringBuilder query = new StringBuilder();
             query.append("SELECT p.id, p.epsg, pp.value FROM ");
@@ -325,7 +326,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
 
             stmt = cnx.createStatement();
 
-            final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+            final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
 
             StringBuilder query = new StringBuilder();
             query.append("INSERT INTO ");
@@ -391,7 +392,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
             cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
 
-            final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+            final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
             String versionStr;
             if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
                 versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
@@ -535,7 +536,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource {
                 cnx = pgstore.getDataSource().getConnection();
                 cnx.setReadOnly(false);
 
-                final int layerId = pgstore.getLayerId(cnx,getIdentifier().tip().toString());
+                final int layerId = pgstore.getLayerId(cnx,getIdentifier().get().tip().toString());
                 for (int i = 0; i < dimensions.size(); i++) {
 
                     final SampleDimension dim = dimensions.get(i);

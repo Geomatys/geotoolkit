@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +35,7 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.UnsupportedQueryException;
@@ -112,8 +114,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
-        return null;
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override
@@ -130,7 +132,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                 if (!(r instanceof FeatureSet)) continue;
                 final FeatureSet fs = (FeatureSet) r;
                 final FeatureType type = fs.getType();
-                builder.addFeatureType(type, null);
+                builder.addFeatureType(type, -1);
                 final CoordinateReferenceSystem crs = FeatureExt.getCRS(type);
                 if (crs!=null) builder.addReferenceSystem(crs);
             }
@@ -179,7 +181,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     private static void listNames(Resource resource, Set<GenericName> names) throws DataStoreException {
-        names.add(resource.getIdentifier());
+        resource.getIdentifier().ifPresent((n) -> names.add(n));
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
             for (Resource rs : ds.components()) {

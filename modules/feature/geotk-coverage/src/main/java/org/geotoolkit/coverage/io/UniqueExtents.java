@@ -33,13 +33,16 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 /**
  * An ISO 19115 (@code Extent} object where each elements is a singleton.
  *
+ * This class has been set public because otherwise it cause an exception during a copy of the metadata.
+ * The Metadata copier need to access the empty constructor via reflection.
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
  *
  * @since 3.18
  * @module
  */
-final class UniqueExtents extends DefaultExtent {
+public final class UniqueExtents extends DefaultExtent {
     /**
      * For cross-version compatibility.
      */
@@ -48,13 +51,13 @@ final class UniqueExtents extends DefaultExtent {
     /**
      * Creates a uninitialized instance.
      */
-    UniqueExtents() {
+    public UniqueExtents() {
     }
 
     /**
      * Creates an instance initialized to the values of the given existing object.
      */
-    UniqueExtents(final Extent copy) {
+    public UniqueExtents(final Extent copy) {
         super(copy);
     }
 

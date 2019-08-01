@@ -18,7 +18,7 @@ package org.geotoolkit.data.osm.client;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
@@ -30,7 +30,7 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.OTHER)
-public class OSMClientFactory extends AbstractClientFactory {
+public class OSMClientFactory extends AbstractClientProvider {
 
     /** factory identification **/
     public static final String NAME = "osm";

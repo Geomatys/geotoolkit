@@ -16,14 +16,11 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Image;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
 import org.opengis.util.GenericName;
@@ -56,12 +53,6 @@ public class DefaultCoverageResource extends AbstractCoverageResource {
         this.input = input;
     }
 
-
-    @Override
-    public boolean isWritable() throws DataStoreException {
-        return false;
-    }
-
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
         if (coverage == null) {
@@ -92,11 +83,6 @@ public class DefaultCoverageResource extends AbstractCoverageResource {
     }
 
     @Override
-    public GridCoverageWriter acquireWriter() throws DataStoreException {
-        throw new CoverageStoreException("Writing not supported.");
-    }
-
-    @Override
     public void recycle(GridCoverageReader reader) {
         if (input instanceof GridCoverageReader) {
             //do not dispose it, it will be reused
@@ -106,14 +92,9 @@ public class DefaultCoverageResource extends AbstractCoverageResource {
     }
 
     @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
-    }
-
-    @Override
     protected void finalize() throws Throwable {
         if (input instanceof GridCoverageReader) {
-            dispose((GridCoverageReader)input);
+            dispose((GridCoverageReader) input);
         }
         super.finalize();
     }

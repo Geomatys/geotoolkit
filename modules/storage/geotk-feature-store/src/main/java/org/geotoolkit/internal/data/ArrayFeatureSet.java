@@ -16,16 +16,25 @@
  */
 package org.geotoolkit.internal.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.query.QueryFeatureSet;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
@@ -44,28 +53,44 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ArrayFeatureSet implements FeatureSet {
+public class ArrayFeatureSet implements WritableFeatureSet {
 
     private final Metadata metadata;
     private final FeatureType type;
-    private final Collection<Feature> features;
+    private final List<Feature> features;
+    private GenericName id;
+
+    public ArrayFeatureSet(String id, FeatureType type) {
+        this(type, new ArrayList<>(), null);
+        this.id = (id != null) ? NamesExt.create(id) : null;
+    }
 
     /**
      *
      * @param type stored features type.
-     * @param features collection of stored features, this collection will not be copied.
+     * @param features collection of stored features, this collection will be copied.
      * @param metadata can be null
      */
     public ArrayFeatureSet(FeatureType type, Collection<Feature> features, Metadata metadata) {
+        this(type, new ArrayList<>(features), metadata);
+    }
+
+    /**
+     *
+     * @param type stored features type.
+     * @param features collection of stored features, this list will not be copied.
+     * @param metadata can be null
+     */
+    public ArrayFeatureSet(FeatureType type, List<Feature> features, Metadata metadata) {
         this.metadata = metadata;
         this.type = type;
         this.features = features;
-
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return type.getName();
+    public Optional<GenericName> getIdentifier() {
+        if (id != null) return Optional.of(id);
+        return Optional.of(type.getName());
     }
 
     @Override
@@ -85,18 +110,17 @@ public class ArrayFeatureSet implements FeatureSet {
         if (query instanceof org.geotoolkit.data.query.Query) {
             return QueryFeatureSet.apply(this, (org.geotoolkit.data.query.Query)query);
         }
-        return FeatureSet.super.subset(query);
+        return WritableFeatureSet.super.subset(query);
     }
 
     /**
      * Envelope is not stored or computed.
      *
-     * @return always null
-     * @throws DataStoreException
+     * @return always empty
      */
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override
@@ -110,6 +134,39 @@ public class ArrayFeatureSet implements FeatureSet {
 
     @Override
     public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    }
+
+    @Override
+    public void updateType(FeatureType newType) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public void add(Iterator<? extends Feature> features) {
+        while (features.hasNext()) {
+            this.features.add(features.next());
+        }
+    }
+
+    @Override
+    public boolean removeIf(Predicate<? super Feature> filter) {
+        return features.removeIf(filter);
+    }
+
+    @Override
+    public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) {
+        final ListIterator<Feature> iterator = features.listIterator();
+        while (iterator.hasNext()) {
+            Feature feature = iterator.next();
+            if (filter.test(feature)) {
+                Feature changed = updater.apply(feature);
+                if (changed == null) {
+                    iterator.remove();
+                } else {
+                    iterator.set(changed);
+                }
+            }
+        }
     }
 
 }

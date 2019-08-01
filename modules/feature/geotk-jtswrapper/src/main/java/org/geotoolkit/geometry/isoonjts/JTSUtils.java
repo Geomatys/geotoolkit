@@ -357,7 +357,7 @@ public final class JTSUtils {
         GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         LineString ls = gf.createLineString(new ArrayList());
-        List pointList = ls.getControlPoints().positions();
+        List pointList = ls.getControlPoints();
         for (int i = 0; i < numPoints; i++) {
             pointList.add(coordinateToDirectPosition(jtsLinearRing.getCoordinateN(i), crs));
         }

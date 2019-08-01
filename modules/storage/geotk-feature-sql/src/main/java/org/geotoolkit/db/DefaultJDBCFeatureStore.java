@@ -147,11 +147,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         return (DataStoreFactory) DataStores.getProviderById(factoryId);
     }
 
-    @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
     /**
      * {@inheritDoc }
      */

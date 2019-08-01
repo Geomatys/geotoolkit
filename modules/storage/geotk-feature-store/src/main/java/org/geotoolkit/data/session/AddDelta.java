@@ -59,9 +59,7 @@ public class AddDelta extends AbstractDelta{
 
     /**
      *
-     * @param session
-     * @param typeName
-     * @param features : can be empty, even so it would be useless,
+     * @param features  can be empty, even so it would be useless,
      * We do not check the size since this collection may be relying on
      * a feature store which may be slow or changing with time.
      * this features from the given collection will be copied.
@@ -154,7 +152,7 @@ public class AddDelta extends AbstractDelta{
     public Envelope modify(final Query query, final Envelope env) throws DataStoreException {
         if(!query.getTypeName().equals(type)) return env;
 
-        final Envelope affected = features.subset(query).getEnvelope();
+        final Envelope affected = features.subset(query).getEnvelope().get();
         final JTSEnvelope2D combine = new JTSEnvelope2D(env);
         combine.expandToInclude(new JTSEnvelope2D(affected));
 

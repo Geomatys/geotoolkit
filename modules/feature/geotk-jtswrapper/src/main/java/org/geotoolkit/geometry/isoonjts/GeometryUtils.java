@@ -72,7 +72,7 @@ public final class GeometryUtils {
 
     static{
         CoordinateReferenceSystem crs = CommonCRS.WGS84.geographic();
-        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
+        final JTSGeometryFactory geometryFactory = new JTSGeometryFactory(crs);
 
         final DirectPosition lowerCorner = geometryFactory.createDirectPosition(new double[] {-90,-180});
         final DirectPosition upperCorner = geometryFactory.createDirectPosition(new double[] {90,180});
@@ -138,7 +138,7 @@ public final class GeometryUtils {
             final double miny,
             final double maxx,
             final double maxy) {
-        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
+        final JTSGeometryFactory geometryFactory = new JTSGeometryFactory(crs);
 
         final DirectPosition lowerCorner = geometryFactory.createDirectPosition();
         lowerCorner.setOrdinate(0, minx);
@@ -168,7 +168,7 @@ public final class GeometryUtils {
             final double maxx,
             final double maxy,
             final Unit unit) {
-        final GeometryFactory geometryFactory = new JTSGeometryFactory(crs);
+        final JTSGeometryFactory geometryFactory = new JTSGeometryFactory(crs);
 
         final CoordinateSystem cs = crs.getCoordinateSystem();
 
@@ -533,7 +533,7 @@ public final class GeometryUtils {
      * @param dps The new array of points
      */
     public static void populatePointArray(final PointArray pointArray, final DirectPosition[] dps) {
-        List pts = pointArray.positions();
+        List pts = pointArray;
         pts.clear();
         int count = dps.length;
         for (int i = 0; i < count; i++) {
@@ -629,8 +629,8 @@ public final class GeometryUtils {
 
     public static DirectPosition[] getDirectPositions(final LineString lineString) {
         final PointArray controlPoints = lineString.getControlPoints();
-        final DirectPosition[] returnable = new DirectPosition[controlPoints.length()];
-        for (int i = 0; i < controlPoints.length(); i++) {
+        final DirectPosition[] returnable = new DirectPosition[controlPoints.size()];
+        for (int i = 0; i < controlPoints.size(); i++) {
             returnable[i] = controlPoints.getDirectPosition(i, null);
         }
         return returnable;

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -77,7 +78,7 @@ public class AmendedCoverageStore extends AbstractCoverageStore implements Aggre
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
         return store.getIdentifier();
     }
 

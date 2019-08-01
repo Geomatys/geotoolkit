@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
@@ -104,8 +105,8 @@ public class WMTSMosaic implements Mosaic{
         final DirectPosition ul = getUpperLeftCorner();
         final double minX = ul.getOrdinate(0);
         final double maxY = ul.getOrdinate(1);
-        final double spanX = getTileSize().width * getGridSize().width * getScale();
-        final double spanY = getTileSize().height* getGridSize().height* getScale();
+        final double spanX = getScale() * getTileSize().width * getGridSize().width;
+        final double spanY = getScale() * getTileSize().height * getGridSize().height;
 
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 pyramid.getCoordinateReferenceSystem());
@@ -116,7 +117,7 @@ public class WMTSMosaic implements Mosaic{
     }
 
     @Override
-    public boolean isMissing(int col, int row) throws PointOutsideCoverageException {
+    public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
         if (col < 0 || row < 0 || col > matrix.getMatrixWidth() || row > matrix.getMatrixHeight()) {
             throw new PointOutsideCoverageException("Queried tile position is outside matrix dimension.", new GeneralDirectPosition(col, row));
         }
@@ -130,7 +131,7 @@ public class WMTSMosaic implements Mosaic{
     }
 
     @Override
-    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
+    public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
         if(hints==null) hints = new HashMap();
         if(!hints.containsKey(Pyramids.HINT_FORMAT)) hints.put(Pyramids.HINT_FORMAT,"image/png");
 
@@ -158,9 +159,11 @@ public class WMTSMosaic implements Mosaic{
     }
 
     @Override
-    public Rectangle getDataExtent() {
+    public GridExtent getDataExtent() {
         Dimension tileSize = getTileSize();
-        return new Rectangle(0,0, getGridSize().width * tileSize.width, getGridSize().height * tileSize.height);
+        return new GridExtent(
+                ((long) getGridSize().width) * tileSize.width,
+                ((long) getGridSize().height) * tileSize.height);
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.geotoolkit.storage;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -66,8 +67,8 @@ public abstract class AbstractResource implements Resource {
     }
 
     @Override
-    public NamedIdentifier getIdentifier() {
-        return identifier;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.ofNullable(identifier);
     }
 
     @Override
@@ -144,5 +145,4 @@ public abstract class AbstractResource implements Resource {
             return name.toString();
         }
     }
-
 }

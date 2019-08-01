@@ -36,7 +36,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.apache.sis.metadata.iso.citation.Citations;
-import org.apache.sis.internal.metadata.VerticalDatumTypes;
+import org.apache.sis.internal.referencing.VerticalDatumTypes;
 import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.IdentifiedObjects;

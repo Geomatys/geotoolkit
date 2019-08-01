@@ -20,6 +20,7 @@ package org.geotoolkit.data.osm.client;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
@@ -91,8 +92,8 @@ public class OpenStreetMapClient extends AbstractClient {
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     public OSMVersion getVersion(){

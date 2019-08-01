@@ -81,9 +81,9 @@ public abstract class AbstractFileFeatureStoreFactory extends DataStoreFactory i
      * otherwise.
      */
     private boolean extensionMatch(final URI location) {
-        final String path = location.getPath();
+        final String path = location.getPath().toLowerCase();
         for (final String ext : getSuffix()) {
-            if (path.endsWith(ext) && !path.endsWith("*" + ext)) {
+            if (path.endsWith(ext.toLowerCase()) && !path.endsWith("*" + ext.toLowerCase())) {
                 return true;
             }
         }

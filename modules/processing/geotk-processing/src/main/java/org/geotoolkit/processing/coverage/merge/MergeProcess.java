@@ -19,6 +19,9 @@ package org.geotoolkit.processing.coverage.merge;
 import java.awt.image.DataBuffer;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -32,6 +35,7 @@ import org.geotoolkit.processing.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  *
@@ -92,9 +96,8 @@ public class MergeProcess extends AbstractProcess {
         }
 
         //calculate the output grid geometry and image size
-        final int sizeX = (int)(inputEnvelope.getSpan(0) / inputResolution);
-        final int sizeY = (int)(inputEnvelope.getSpan(1) / inputResolution);
-        final GridGeometry2D gridGeom = new GridGeometry2D(new GridExtent(sizeX, sizeY), inputEnvelope);
+        final AffineTransform2D g2c = new AffineTransform2D(inputResolution, 0, 0, -inputResolution, inputEnvelope.getMinimum(0), inputEnvelope.getMaximum(1));
+        final GridGeometry gridGeom = new GridGeometry(PixelInCell.CELL_CORNER, g2c, inputEnvelope, GridRoundingMode.ENCLOSING);
 
         //force sample type and area of each coverage
         final GridCoverage[] fittedCoverages = new GridCoverage[inputCoverage.length];

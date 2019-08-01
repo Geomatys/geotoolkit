@@ -63,7 +63,7 @@ final class AmendedResource extends AbstractResource implements Aggregate {
     };
 
     AmendedResource(Aggregate node, final AmendedCoverageStore store) throws DataStoreException {
-        super(node.getIdentifier());
+        super(node.getIdentifier().get());
         this.store = store;
         this.base = node;
         node.addListener(new StorageListener.Weak(store, subListener), ChangeEvent.class);

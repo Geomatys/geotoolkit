@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,21 +16,22 @@
  */
 package org.geotoolkit.data.geojson.binding;
 
-import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-
-import java.io.*;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
+import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
+import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class GeoJSONCRS implements Serializable {
 
@@ -67,7 +68,13 @@ public class GeoJSONCRS implements Serializable {
 
     public CoordinateReferenceSystem getCRS() throws FactoryException, MalformedURLException {
         if (type.equals(CRS_NAME)) {
-            return org.apache.sis.referencing.CRS.forCode(properties.get(NAME));
+            String name = properties.get(NAME);
+            CoordinateReferenceSystem crs = org.apache.sis.referencing.CRS.forCode(name);
+            if (!name.startsWith("urn")) {
+                //legacy names, we force longitude first for those
+                crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+            }
+            return crs;
         } else if (type.equals(CRS_LINK)) {
             final String href = properties.get(HREF);
             final String crsType = properties.get(TYPE);

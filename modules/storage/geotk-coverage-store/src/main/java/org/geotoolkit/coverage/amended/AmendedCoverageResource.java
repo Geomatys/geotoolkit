@@ -19,11 +19,11 @@ package org.geotoolkit.coverage.amended;
 import java.awt.Image;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
@@ -32,7 +32,6 @@ import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.coverage.GridCoverageResource;
@@ -42,6 +41,7 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.GenericName;
 
 /**
  * Decorates a coverage reference adding possibility to override properties.
@@ -84,13 +84,13 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
     }
 
     @Override
-    public NamedIdentifier getIdentifier() {
+    public Optional<GenericName> getIdentifier() {
         return ref.getIdentifier();
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return getGridGeometry().getEnvelope();
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.of(getGridGeometry().getEnvelope());
     }
 
     private void loadRefData() throws DataStoreException {
@@ -148,7 +148,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
     public void setOverrideCRS(CoordinateReferenceSystem overrideCRS) {
         if(this.overrideCRS==overrideCRS) return;
         this.overrideCRS = overrideCRS;
-        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier(), null, null));
+        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier().orElse(null), null, null));
     }
 
     /**
@@ -188,7 +188,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
     public void setOverrideGridToCrs(MathTransform overrideGridToCrs) {
         if(this.overrideGridToCrs==overrideGridToCrs) return;
         this.overrideGridToCrs = overrideGridToCrs;
-        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier(), null, null));
+        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, getIdentifier().orElse(null), null, null));
     }
 
     /**
@@ -266,40 +266,8 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource{
      * {@inheritDoc }
      */
     @Override
-    public boolean isWritable() throws DataStoreException {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public GridCoverageReader acquireReader() throws DataStoreException {
         return new AmendedCoverageReader(this);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-        throw new CoverageStoreException("Not supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void recycle(GridCoverageReader reader) {
-        ((AmendedCoverageReader)reader).dispose();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void recycle(GridCoverageWriter writer) {
-        throw new UnsupportedOperationException("Not supported.");
     }
 
     /**

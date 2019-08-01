@@ -22,7 +22,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.DefaultLiteral;
 
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.geometry.BoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 
 /**
  * Perform the same work as the LooseBBox expect it does not reproject the candidate geometry to the filter CRS.

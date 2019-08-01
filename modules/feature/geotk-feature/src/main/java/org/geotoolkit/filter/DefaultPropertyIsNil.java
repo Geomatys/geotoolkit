@@ -29,7 +29,7 @@ import org.opengis.filter.expression.Expression;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPropertyIsNil implements PropertyIsNil,Serializable {
+public class DefaultPropertyIsNil extends AbstractFilter implements PropertyIsNil,Serializable {
 
     private final Expression exp;
 

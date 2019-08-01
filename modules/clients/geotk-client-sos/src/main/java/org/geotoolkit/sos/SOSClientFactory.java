@@ -18,7 +18,7 @@ package org.geotoolkit.sos;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.sos.xml.SOSVersion;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -31,7 +31,7 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.SENSOR, canWrite = true)
-public class SOSClientFactory extends AbstractClientFactory{
+public class SOSClientFactory extends AbstractClientProvider{
 
     /** factory identification **/
     public static final String NAME = "sos";

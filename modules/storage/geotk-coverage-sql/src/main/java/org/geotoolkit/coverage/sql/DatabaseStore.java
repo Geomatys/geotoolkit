@@ -367,14 +367,14 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
     }
 
     /**
-     * Returns an identifier for the root resource of this data store, or {@code null} if none.
+     * Returns an identifier for the root resource of this data store, or empty if none.
      *
-     * @return {@code null} in current implementation.
+     * @return empty in current implementation.
      * @throws DataStoreException if an error occurred while reading data.
      */
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
-        return null;
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.empty();
     }
 
     /**

@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.coverage.statistics;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -265,19 +264,19 @@ public class Statistics extends AbstractProcess {
             final Mosaic gridMosaic = mosaicImage.getGridMosaic();
             final Dimension gridSize = gridMosaic.getGridSize();
 
-            int startX = 0;
-            int startY = 0;
-            int endX = gridSize.width;
-            int endY = gridSize.height;
-            int totalTiles = gridSize.width * gridSize.height;
+            long startX = 0;
+            long startY = 0;
+            long endX = gridSize.width;
+            long endY = gridSize.height;
+            long totalTiles = gridSize.width * gridSize.height;
             Dimension tileSize = gridMosaic.getTileSize();
 
-            final Rectangle dataArea = gridMosaic.getDataExtent();
+            final GridExtent dataArea = gridMosaic.getDataExtent();
             if (dataArea != null) {
-                startX = dataArea.x / tileSize.width;
-                startY = dataArea.y / tileSize.height;
-                endX = (int) Math.ceil((dataArea.x + dataArea.width) / tileSize.width);
-                endY = (int) Math.ceil((dataArea.y + dataArea.height) / tileSize.height);
+                startX = dataArea.getLow(0) / tileSize.width;
+                startY = dataArea.getLow(1) / tileSize.height;
+                endX = (long) Math.ceil((dataArea.getHigh(0)+1) / tileSize.width);
+                endY = (long) Math.ceil((dataArea.getHigh(1)+1) / tileSize.height);
                 totalTiles = (endX - startX) * (endY - startY);
             }
 
@@ -285,10 +284,10 @@ public class Statistics extends AbstractProcess {
             Raster tile;
             PixelIterator pix;
             int step = 1;
-            for (int y = startY; y < endY; y++) {
-                for (int x = startX; x < endX; x++) {
+            for (long y = startY; y < endY; y++) {
+                for (long x = startX; x < endX; x++) {
                     if (!gridMosaic.isMissing(x,y)) {
-                        tile = mosaicImage.getTile(x, y);
+                        tile = mosaicImage.getTile(Math.toIntExact(x), Math.toIntExact(y));
                         pix = new PixelIterator.Builder().create(tile);
 
                         analyseRange(pix, stats, bands, excludeNoData);

@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -121,8 +122,8 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     @Override
@@ -154,8 +155,8 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override

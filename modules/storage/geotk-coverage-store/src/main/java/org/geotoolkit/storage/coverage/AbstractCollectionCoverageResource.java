@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -52,7 +51,6 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -97,23 +95,8 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException {
-        return false;
-    }
-
-    @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         return new CollectionCoverageReader();
-    }
-
-    @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-        throw new CoverageStoreException("Not supported.");
-    }
-
-    @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
     }
 
     /**
@@ -303,7 +286,7 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
                 }
 
                 final GridCoverageBuilder builder = new GridCoverageBuilder();
-                builder.setName(ref.getIdentifier().tip().toString());
+                ref.getIdentifier().ifPresent((n) -> builder.setName(n.tip().toString()));
                 builder.setRenderedImage(targetImage);
                 builder.setGridGeometry(gridGeom);
                 builder.setSampleDimensions(coverages.get(0).getSampleDimensions());

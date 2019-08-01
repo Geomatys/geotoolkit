@@ -18,10 +18,9 @@ package org.geotoolkit.filter.visitor;
 
 import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.filter.expression.Literal;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.logging.Logging;
@@ -43,7 +42,7 @@ public class FillCrsVisitor extends DuplicatingFilterVisitor{
         if(obj instanceof BoundingBox){
             BoundingBox bbox = (BoundingBox) obj;
             if(bbox.getCoordinateReferenceSystem() == null){
-                obj = new DefaultBoundingBox(bbox,crs);
+                obj = new BoundingBox(bbox,crs);
             }
         }else if(obj instanceof Geometry){
             try {

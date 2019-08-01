@@ -1061,7 +1061,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                  * Resolution along the horizontal axes only, ignoring all other axes. For linear units (feet,
                  * kilometres, etc.), we convert the units to metres for compliance with a current limitation
                  * of Apache SIS, which can handle only metres. For angular resolution (typically in degrees),
-                 * we perform an APPROXIMATIVE conversion to metres using the nautical mile definition. This
+                 * we perform an APPROXIMATE conversion to metres using the nautical mile definition. This
                  * conversion is only valid along the latitudes axis (the number is wrong along the longitude
                  * axis), and more accurate for mid-latitude (the numbers are differents close to equator or
                  * to the poles).

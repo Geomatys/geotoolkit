@@ -18,7 +18,7 @@ package org.geotoolkit.ncwms;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wms.xml.WMSVersion;
@@ -31,7 +31,7 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.GRID)
-public class NcWMSClientFactory extends AbstractClientFactory {
+public class NcWMSClientFactory extends AbstractClientProvider {
 
     /** factory identification **/
     public static final String NAME = "ncWMS";

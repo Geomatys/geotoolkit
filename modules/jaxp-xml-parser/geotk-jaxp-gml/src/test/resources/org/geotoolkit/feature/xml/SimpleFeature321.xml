@@ -1,28 +1,29 @@
 <?xml version="1.0"?>
-<gml:TestSimple xmlns:gml="http://www.opengis.net/gml/3.2"
+<ns0:TestSimple xmlns:gml="http://www.opengis.net/gml/3.2"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:gmd="http://www.isotc211.org/2005/gmd"
                 xmlns:gmi="http://www.isotc211.org/2005/gmi"
                 xmlns:gmx="http://www.isotc211.org/2005/gmx"
                 xmlns:gco="http://www.isotc211.org/2005/gco"
                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                xmlns:ns0="http://www.geotoolkit.org/custom"
                 gml:id="id-156">
-    <gml:ID>36</gml:ID>
-    <gml:attString>stringValue</gml:attString>
-    <gml:attShort>12</gml:attShort>
-    <gml:attInteger>24</gml:attInteger>
-    <gml:attLong>48</gml:attLong>
-    <gml:attDouble>96.12</gml:attDouble>
-    <gml:attDecimal>456789</gml:attDecimal>
-    <gml:attDate>2005-08-21Z</gml:attDate>
-    <gml:attDateTime>2005-08-21T15:43:12.052Z</gml:attDateTime>
-    <gml:attBoolean>true</gml:attBoolean>
-    <gml:geomPoint>
+    <ns0:ID>36</ns0:ID>
+    <ns0:attString>stringValue</ns0:attString>
+    <ns0:attShort>12</ns0:attShort>
+    <ns0:attInteger>24</ns0:attInteger>
+    <ns0:attLong>48</ns0:attLong>
+    <ns0:attDouble>96.12</ns0:attDouble>
+    <ns0:attDecimal>456789</ns0:attDecimal>
+    <ns0:attDate>2005-08-21Z</ns0:attDate>
+    <ns0:attDateTime>2005-08-21T15:43:12.052Z</ns0:attDateTime>
+    <ns0:attBoolean>true</ns0:attBoolean>
+    <ns0:geomPoint>
         <gml:Point  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g0">
             <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml:pos>
         </gml:Point>
-    </gml:geomPoint>
-    <gml:geomMultiPoint>
+    </ns0:geomPoint>
+    <ns0:geomMultiPoint>
         <gml:MultiPoint  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g1">
             <gml:pointMember>
                 <gml:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g2">
@@ -35,15 +36,15 @@
                 </gml:Point>
             </gml:pointMember>
         </gml:MultiPoint>
-    </gml:geomMultiPoint>
-    <gml:geomLine>
+    </ns0:geomMultiPoint>
+    <ns0:geomLine>
         <gml:LineString  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g4">
             <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">10.0 10.0</gml:pos>
             <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">20.0 20.0</gml:pos>
             <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">30.0 30.0</gml:pos>
         </gml:LineString>
-    </gml:geomLine>
-    <gml:geomMultiLine>
+    </ns0:geomLine>
+    <ns0:geomMultiLine>
         <gml:MultiCurve  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g5">
             <gml:curveMember>
                 <gml:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g6">
@@ -60,8 +61,8 @@
                 </gml:LineString>
             </gml:curveMember>
         </gml:MultiCurve>
-    </gml:geomMultiLine>
-    <gml:geomPolygon>
+    </ns0:geomMultiLine>
+    <ns0:geomPolygon>
         <gml:Polygon  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g8">
             <gml:exterior>
                 <gml:LinearRing>
@@ -69,8 +70,8 @@
                 </gml:LinearRing>
             </gml:exterior>
         </gml:Polygon>
-    </gml:geomPolygon>
-    <gml:geomMultiPolygon>
+    </ns0:geomPolygon>
+    <ns0:geomMultiPolygon>
         <gml:MultiSurface  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g9">
             <gml:surfaceMember>
                 <gml:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g10">
@@ -91,8 +92,8 @@
                 </gml:Polygon>
             </gml:surfaceMember>
         </gml:MultiSurface>
-    </gml:geomMultiPolygon>
-    <gml:geomMultiGeometry>
+    </ns0:geomMultiPolygon>
+    <ns0:geomMultiGeometry>
         <gml:MultiPoint  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g12">
             <gml:pointMember>
                 <gml:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g13">
@@ -105,10 +106,10 @@
                 </gml:Point>
             </gml:pointMember>
         </gml:MultiPoint>
-    </gml:geomMultiGeometry>
-    <gml:geomAnyGeometry>
+    </ns0:geomMultiGeometry>
+    <ns0:geomAnyGeometry>
         <gml:Point  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g15">
             <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml:pos>
         </gml:Point>
-    </gml:geomAnyGeometry>
-</gml:TestSimple>
+    </ns0:geomAnyGeometry>
+</ns0:TestSimple>

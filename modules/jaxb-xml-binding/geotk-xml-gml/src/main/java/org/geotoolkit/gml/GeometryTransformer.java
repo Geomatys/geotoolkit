@@ -1,18 +1,9 @@
 package org.geotoolkit.gml;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Polygon;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +25,10 @@ import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.internal.jaxb.gml.Measure;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ArgumentChecks;
@@ -44,6 +36,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractCurveSegment;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -72,7 +65,16 @@ import org.geotoolkit.gml.xml.v321.MeasureType;
 import org.geotoolkit.gml.xml.v321.PointPropertyType;
 import org.geotoolkit.gml.xml.v321.PolygonPatchType;
 import org.geotoolkit.gml.xml.v321.SurfaceType;
-import org.apache.sis.referencing.GeodeticCalculator;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -193,53 +195,79 @@ public class GeometryTransformer implements Supplier<Geometry> {
      */
     @Override
     public Geometry get() throws UnconvertibleObjectException {
+
+        Geometry geometry;
         /*
          * SIMPLE CASES
          */
         if (source instanceof org.geotoolkit.gml.xml.Point) {
-            return accumulateAndBuild(coords -> (coords.length > 0 ? GF.createPoint(coords[0]) : GF.createPoint((Coordinate) null)));
+            geometry = accumulateAndBuild(coords -> (coords.length > 0 ? GF.createPoint(coords[0]) : GF.createPoint((Coordinate) null)));
         } else if (source instanceof org.geotoolkit.gml.xml.LineString) {
-            return accumulateAndBuild(GF::createLineString);
+            geometry = accumulateAndBuild(GF::createLineString);
         } else if (source instanceof org.geotoolkit.gml.xml.LinearRing) {
-            return accumulateAndBuild(GF::createLinearRing);
+            geometry = accumulateAndBuild(GF::createLinearRing);
         } else if (source instanceof Curve) {
-            return convertCurve((Curve) source);
+            geometry = convertCurve((Curve) source);
         } else if (source instanceof Envelope) {
-            return convertEnvelope((Envelope) source);
+            geometry = convertEnvelope((Envelope) source);
 
             /*
              * COMPOSED GEOMETRIES
              */
         } else if (source instanceof org.geotoolkit.gml.xml.Ring) {
-            return convertRing((Ring) source);
+            geometry = convertRing((Ring) source);
         } else if (source instanceof org.geotoolkit.gml.xml.Polygon) {
-            return convertPolygon((org.geotoolkit.gml.xml.Polygon) source);
+            geometry = convertPolygon((org.geotoolkit.gml.xml.Polygon) source);
         } else if (source instanceof AbstractSurface) {
             if (source instanceof SurfaceType) {
-                return convertSurface((SurfaceType)source);
+                geometry = convertSurface((SurfaceType)source);
             } else if (source instanceof org.geotoolkit.gml.xml.v311.SurfaceType) {
-                return convertSurface((org.geotoolkit.gml.xml.v311.SurfaceType)source);
+                geometry = convertSurface((org.geotoolkit.gml.xml.v311.SurfaceType)source);
             }
             // TODO : complex case
+            else {
+                throw new IllegalArgumentException("Unsupported geometry type : " + source.getClass());
+            }
 
             /*
              * GEOMETRY COLLECTIONS
              */
         } else if (source instanceof org.geotoolkit.gml.xml.MultiPoint) {
-            return convertMultiPoint((org.geotoolkit.gml.xml.MultiPoint) source);
+            geometry = convertMultiPoint((org.geotoolkit.gml.xml.MultiPoint) source);
         } else if (source instanceof org.geotoolkit.gml.xml.MultiLineString) {
-            return convertMultiLineString((org.geotoolkit.gml.xml.MultiLineString) source);
+            geometry = convertMultiLineString((org.geotoolkit.gml.xml.MultiLineString) source);
         } else if (source instanceof MultiCurve) {
-            return convertMultiCurve((MultiCurve) source);
+            geometry = convertMultiCurve((MultiCurve) source);
         } else if (source instanceof org.geotoolkit.gml.xml.MultiPolygon) {
-            return convertMultiPolygon((org.geotoolkit.gml.xml.MultiPolygon) source);
+            geometry = convertMultiPolygon((org.geotoolkit.gml.xml.MultiPolygon) source);
         } else if (source instanceof MultiSurface) {
-            return convertMultiSurface((MultiSurface) source);
+            geometry = convertMultiSurface((MultiSurface) source);
         } else if (source instanceof MultiGeometry) {
-            return convertMultiGeometry((MultiGeometry) source);
+            geometry = convertMultiGeometry((MultiGeometry) source);
+        } else {
+            throw new IllegalArgumentException("Unsupported geometry type : " + source.getClass());
         }
 
-        throw new IllegalArgumentException("Unsupported geometry type : " + source.getClass());
+        //store identifier in user map
+        final String id = source.getId();
+        if (id != null && !id.isEmpty()) {
+            Object userData = geometry.getUserData();
+            Map values;
+            if (userData instanceof Map) {
+                values = (Map) userData;
+            } else if (userData instanceof CoordinateReferenceSystem) {
+                values = new HashMap();
+                values.put(HintsPending.JTS_GEOMETRY_CRS, userData);
+            } else if (userData == null) {
+                values = new HashMap();
+            } else {
+                throw new IllegalArgumentException("Unexpected user data object : " + userData);
+            }
+            values.put("@id", id);
+            geometry.setUserData(values);
+        }
+
+        return geometry;
     }
 
     /**

@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.chooser;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -57,7 +59,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -77,8 +78,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStoreChooser extends BorderPane {
-
-    public static final Predicate CLIENTFACTORY_ONLY = (Object t) -> t instanceof ClientFactory;
 
     static final Comparator<Object> SORTER = new Comparator<Object>() {
         @Override
@@ -105,12 +104,6 @@ public class FXStoreChooser extends BorderPane {
         }
 
         private int getPriority(Object o){
-
-            if (o instanceof ClientFactory) {
-                return 4;
-            }else if(o instanceof AbstractJDBCFeatureStoreFactory){
-                return 3;
-            }
 
             ResourceType[] types = new ResourceType[0];
             if (o instanceof DataStoreProvider) {
@@ -230,6 +223,9 @@ public class FXStoreChooser extends BorderPane {
                     resourceChooser.setResource(store);
                     accordion.setExpandedPane(paneResource);
 
+                    Collection<DataSet> preselected = org.geotoolkit.storage.DataStores.flatten(store, true, DataSet.class);
+                    resourceChooser.setSelected(new ArrayList<>(preselected));
+
                 } catch (DataStoreException ex) {
                     infoLabel.setText("Error "+ex.getMessage());
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
@@ -270,7 +266,7 @@ public class FXStoreChooser extends BorderPane {
             if (selection instanceof GridCoverageResource) {
                 final GridCoverageResource ref = (GridCoverageResource) selection;
                 final MapLayer layer = MapBuilder.createCoverageLayer(ref);
-                layer.setName(ref.getIdentifier().tip().toString());
+                ref.getIdentifier().ifPresent((id) -> layer.setName(id.tip().toString()));
                 layers.add(layer);
             } else if (selection instanceof FeatureSet) {
                 final FeatureSet fs = (FeatureSet) selection;
@@ -376,10 +372,7 @@ public class FXStoreChooser extends BorderPane {
 
     private static Image findIcon(Object candidate){
 
-
-        if (candidate instanceof ClientFactory) {
-            return ICON_SERVER;
-        }else if(candidate instanceof AbstractJDBCFeatureStoreFactory){
+        if(candidate instanceof AbstractJDBCFeatureStoreFactory){
             return ICON_DATABASE;
         }
 

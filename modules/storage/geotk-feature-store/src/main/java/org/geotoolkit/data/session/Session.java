@@ -78,51 +78,34 @@ public interface Session {
     /**
      * Get a feature iterator that can be used only for reading.
      * Use add, update and remove methods for other purposes.
-     *
-     * @param query
-     * @return FeatureIterator
-     * @throws DataStoreException
      */
     FeatureIterator getFeatureIterator(Query query) throws DataStoreException;
 
     /**
      * Same behavior as @see FeatureStore#updateFeatures(org.opengis.feature.type.Name, java.util.Collection)
      * but makes modification in the session diff if this one is asynchrone.
-     * @param groupName
-     * @param newFeatures
-     * @throws org.apache.sis.storage.DataStoreException
      */
     void addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
     /**
      * Same behavior as @see FeatureStore#updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      * but makes modification in the session diff if this one is asynchrone.
-     * @param groupName
-     * @param filter
-     * @param values
-     * @throws org.apache.sis.storage.DataStoreException
      */
     void updateFeatures(String groupName, Filter filter, Map<String, ?> values) throws DataStoreException;
 
     /**
      * Same behavior as @see FeatureStore#removeFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter)
      * but makes modification in the session diff if this one is asynchrone.
-     * @param groupName
-     * @param filter
-     * @throws org.apache.sis.storage.DataStoreException
      */
     void removeFeatures(String groupName, Filter filter) throws DataStoreException;
 
     /**
      * Returns true if this session holds pending (that is, unsaved) changes; otherwise returns false.
-     * @return
      */
     boolean hasPendingChanges();
 
     /**
      * Apply all the changes made in this session on the featurestore.
-     *
-     * @throws DataStoreException
      */
     void commit() throws DataStoreException;
 
@@ -134,18 +117,12 @@ public interface Session {
     /**
      * Same behavior as @see FeatureStore#getCount(org.geotoolkit.data.query.Query)
      * but take in consideration the session modifications.
-     * @param query
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
      */
     long getCount(Query query) throws DataStoreException;
 
     /**
      * Same behavior as @see FeatureStore#getEnvelope(org.geotoolkit.data.query.Query)
      * but take in consideration the session modifications.
-     * @param query
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
      */
     Envelope getEnvelope(Query query) throws DataStoreException;
 

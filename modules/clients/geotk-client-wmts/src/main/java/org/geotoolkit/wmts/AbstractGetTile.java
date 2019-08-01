@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.wmts;
 
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Abstract implementation of {@link GetTileRequest}, which defines the parameters for
@@ -47,8 +45,8 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
     protected String format        = "image/png";
     protected String tileMatrixSet = null;
     protected String tileMatrix    = null;
-    protected Integer tileRow       = null;
-    protected Integer tileCol       = null;
+    protected Long tileRow       = null;
+    protected Long tileCol       = null;
     protected String resourceUrl    = null;
 
     protected final Map<String,String> dims = new HashMap<String, String>();
@@ -149,14 +147,14 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
      * {@inheritDoc }
      */
     @Override
-    public int getTileRow(){
+    public long getTileRow(){
         return tileRow;
     }
         /**
      * {@inheritDoc }
      */
     @Override
-    public void setTileRow(int tr){
+    public void setTileRow(long tr){
         this.tileRow = tr;
     }
 
@@ -164,7 +162,7 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
      * {@inheritDoc }
      */
     @Override
-    public int getTileCol(){
+    public long getTileCol(){
         return tileCol;
     }
 
@@ -172,7 +170,7 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
      * {@inheritDoc }
      */
     @Override
-    public void setTileCol(int tr){
+    public void setTileCol(long tr){
         this.tileCol = tr;
     }
 

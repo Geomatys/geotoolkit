@@ -18,12 +18,12 @@ package org.geotoolkit.data.multires;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.Monitor;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -91,7 +91,7 @@ public interface Mosaic {
      * @return true if tile is missing
      * @throws org.opengis.coverage.PointOutsideCoverageException if the queried coordinate is not an allowed tile indice.
      */
-    boolean isMissing(int col, int row) throws PointOutsideCoverageException;
+    boolean isMissing(long col, long row) throws PointOutsideCoverageException;
 
     /**
      * Get a tile.
@@ -100,7 +100,7 @@ public interface Mosaic {
      * @return Tile , may be null if tile is missing.
      * @throws DataStoreException
      */
-    public default Tile getTile(int col, int row) throws DataStoreException {
+    public default Tile getTile(long col, long row) throws DataStoreException {
         return getTile(col, row, null);
     }
 
@@ -112,7 +112,7 @@ public interface Mosaic {
      * @return TileReference , may be null if tile is missing.
      * @throws DataStoreException
      */
-    Tile getTile(int col, int row, Map hints) throws DataStoreException;
+    Tile getTile(long col, long row, Map hints) throws DataStoreException;
 
     /**
      * Retrieve a set of TileReferences.<p>
@@ -148,7 +148,7 @@ public interface Mosaic {
      * @return {@link java.awt.Rectangle} of data area or null if all
      * tiles of the mosaic are missing.
      */
-    Rectangle getDataExtent();
+    GridExtent getDataExtent();
 
     void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException;
 

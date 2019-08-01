@@ -27,6 +27,7 @@ import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.SearchArea;
@@ -103,7 +104,6 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
         final double opacity = item.getOpacity();
         if (opacity < 1e-6) return false;
 
-
         if (1-opacity < 1e-6) {
             //we are very close to opacity one, no need to create a intermediate image
             return paintLayer(context);
@@ -126,7 +126,6 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
 
             return dataRendered;
         }
-
     }
 
     /**

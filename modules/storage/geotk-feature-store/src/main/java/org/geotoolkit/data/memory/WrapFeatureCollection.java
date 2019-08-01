@@ -17,6 +17,7 @@
 package org.geotoolkit.data.memory;
 
 import java.util.Map;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -43,7 +44,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
      * @param originalFC FeatureCollection
      */
     public WrapFeatureCollection(final FeatureCollection originalFC) {
-        super(originalFC.getIdentifier(), originalFC.getSession());
+        super(NamedIdentifier.castOrCopy(originalFC.getIdentifier().get()), originalFC.getSession());
         this.originalFC = originalFC;
     }
 

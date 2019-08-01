@@ -24,11 +24,11 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.data.multires.DefaultPyramid;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.osmtms.GetTileRequest;
 import org.geotoolkit.osmtms.OSMTileMapClient;
-import org.geotoolkit.data.multires.DefaultPyramid;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -100,7 +100,7 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
         final GetTileRequest request = getServer().createGetTile();
         request.setScaleLevel( ((OSMTMSMosaic)mosaic).getScaleLevel() );
         request.setTileCol(col);

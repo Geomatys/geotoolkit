@@ -30,13 +30,13 @@ public interface GetTileRequest extends Request {
 
     void setScaleLevel(int level);
 
-    int getTileRow();
+    long getTileRow();
 
-    void setTileRow(int tr);
+    void setTileRow(long tr);
 
-    int getTileCol();
+    long getTileCol();
 
-    void setTileCol(int tr);
+    void setTileCol(long tr);
 
     String getExtension();
 

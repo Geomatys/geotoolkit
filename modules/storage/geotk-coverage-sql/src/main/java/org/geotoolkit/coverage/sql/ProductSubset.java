@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.List;
+import java.util.Optional;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.coverage.SampleDimension;
@@ -75,8 +76,8 @@ final class ProductSubset extends AbstractGridResource {
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return product.createIdentifier("subset");      // TODO: need a unique name.
+    public Optional<GenericName> getIdentifier() {
+        return Optional.of(product.createIdentifier("subset"));      // TODO: need a unique name.
     }
 
     /**

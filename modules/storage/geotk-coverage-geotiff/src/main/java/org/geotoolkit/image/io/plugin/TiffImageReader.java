@@ -63,12 +63,12 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.coverage.SampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.internal.ImageUtils;
@@ -1925,7 +1925,7 @@ public class TiffImageReader extends SpatialImageReader {
                     int outSize = 0;
                     for (int i : destinationBands) outSize = Math.max(outSize, destinationBands[i]);
 
-                    final int[] indexes = new int[outSize];
+                    final int[] indexes = new int[outSize+1];
                     Arrays.fill(indexes, -1);
                     for (int i=0;i<destinationBands.length;i++) {
                         indexes[destinationBands[i]] = sourceBands[i];

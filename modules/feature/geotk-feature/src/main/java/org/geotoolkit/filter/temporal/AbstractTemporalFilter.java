@@ -16,15 +16,16 @@
  */
 package org.geotoolkit.filter.temporal;
 
-import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.filter.AbstractFilter;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.expression.Expression;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AbstractTemporalFilter {
+public abstract class AbstractTemporalFilter extends AbstractFilter {
 
     protected final Expression left;
     protected final Expression right;

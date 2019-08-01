@@ -5,6 +5,7 @@ import javax.measure.UnitConverter;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.GeodeticCalculator;
+import org.apache.sis.referencing.operation.GeodesicException;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -51,6 +52,10 @@ class OrthodromicEngine implements ToDoubleBiFunction<Coordinate, Coordinate> {
         } catch (TransformException e) {
             throw new IllegalArgumentException(e);
         }
-        return toMeters.convert(engine.getGeodesicDistance());
+        try {
+            return toMeters.convert(engine.getGeodesicDistance());
+        } catch (GeodesicException e) {
+            throw new RuntimeException(e);      // TODO: we should define a more specific exception.
+        }
     }
 }

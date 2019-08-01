@@ -16,8 +16,15 @@
  */
 package org.geotoolkit.data;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Stream;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.query.Query;
@@ -46,15 +53,36 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureSet
     private FeatureType type;
 
     public SubsetFeatureResource(FeatureSet parent, Query query) throws DataStoreException {
-        super(parent.getIdentifier());
+        super(parent.getIdentifier().get());
         this.parent = parent;
         this.query = query;
         weakListener.registerSource(parent);
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    protected DefaultMetadata createMetadata() throws DataStoreException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification identification = new DefaultDataIdentification();
+        final NamedIdentifier identifier = NamedIdentifier.castOrCopy(getIdentifier().get());
+        final DefaultCitation citation = new DefaultCitation(identifier.toString());
+        citation.setIdentifiers(Collections.singleton(identifier));
+        identification.setCitation(citation);
+        metadata.setIdentificationInfo(Collections.singleton(identification));
+
+        //NOTE : add count, may be expensive, remove it ?
+//        final DefaultFeatureCatalogueDescription fcd = new DefaultFeatureCatalogueDescription();
+//        final DefaultFeatureTypeInfo info = new DefaultFeatureTypeInfo();
+//        info.setFeatureInstanceCount((int)features(false).count());
+//        fcd.getFeatureTypeInfo().add(info);
+//        metadata.getContentInfo().add(fcd);
+
+        metadata.freeze();
+        return metadata;
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override
@@ -73,9 +101,12 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureSet
     }
 
     @Override
-    public FeatureSet subset(Query query) throws DataStoreException {
-        final Query merge = QueryUtilities.subQuery(this.query, query);
-        return new SubsetFeatureResource(parent, merge);
+    public FeatureSet subset(org.apache.sis.storage.Query query) throws DataStoreException {
+        if (query instanceof Query) {
+            final Query merge = QueryUtilities.subQuery(this.query, (Query) query);
+            return new SubsetFeatureResource(parent, merge);
+        }
+        return FeatureSet.super.subset(query);
     }
 
     @Override

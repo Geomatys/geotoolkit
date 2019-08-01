@@ -19,12 +19,14 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import java.awt.Color;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -41,7 +43,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -52,6 +53,8 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.StorageListener;
+import org.opengis.style.Description;
+import org.opengis.style.Style;
 
 /**
  * Context tree column with name and type icon.
@@ -77,6 +80,19 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
                     final Object value = item.getValue();
                     if (value instanceof MapItem) {
                         return FXUtilities.beanProperty(value, "name", String.class);
+                    } else if (value instanceof Style) {
+                        final Style style = (Style) value;
+                        Description description = style.getDescription();
+                        String name = style.getName();
+
+                        String text = null;
+                        if (description != null && description.getTitle() != null) {
+                            text = description.getTitle().toString();
+                        }
+                        if (name != null && (text == null || text.isEmpty())) {
+                            text = name;
+                        }
+                        return new SimpleObjectProperty<>(text);
                     } else {
                         throw new IllegalArgumentException("Expected a Map item object, but got "+value == null? "null" : value.getClass().getCanonicalName());
                     }
@@ -89,6 +105,8 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         setEditable(true);
         setPrefWidth(200);
         setMinWidth(120);
+        setMaxWidth(800);
+        setSortable(false);
     }
 
     public static class Cell<T> extends TreeTableCell<T,String> implements ChangeListener<ChangeEvent>{
@@ -135,6 +153,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             super.updateItem(item, empty);
             setText(null);
             setGraphic(null);
+            setTooltip(null);
             setContentDisplay(ContentDisplay.LEFT);
             setAlignment(Pos.CENTER_LEFT);
             setTextAlignment(TextAlignment.LEFT);
@@ -167,6 +186,15 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
                         weakListener.registerSource(session);
                         if(session.hasPendingChanges()){
                             setText(getText()+" *");
+                        }
+                    }
+                }
+                if (object instanceof MapLayer) {
+                    Description description = ((MapLayer) object).getDescription();
+                    if (description != null && description.getAbstract() != null) {
+                        String abs = description.getAbstract().toString();
+                        if (abs != null && !abs.isEmpty()) {
+                            setTooltip(new Tooltip(abs));
                         }
                     }
                 }
@@ -216,11 +244,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         if (resource instanceof FeatureSet) {
             return ICON_VECTOR;
         } else if (resource instanceof GridCoverageResource) {
-            if (store instanceof ClientFactory) {
-                return ICON_SERVICE;
-            } else {
-                return ICON_RASTER;
-            }
+            return ICON_RASTER;
         }
         return ICON_FOLDER;
     }

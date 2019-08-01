@@ -59,12 +59,12 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
         assertFalse("deepEquals",                  Objects  .deepEquals(o1, o2));
         assertFalse("deepEquals(STRICT)",          Utilities.deepEquals(o1, o2, ComparisonMode.STRICT));
         assertFalse("deepEquals(IGNORE_METADATA)", Utilities.deepEquals(o1, o2, ComparisonMode.IGNORE_METADATA));
-        assertFalse("deepEquals(APPROXIMATIVE)",   Utilities.deepEquals(o1, o2, ComparisonMode.APPROXIMATIVE));
+        assertFalse("deepEquals(APPROXIMATE)",     Utilities.deepEquals(o1, o2, ComparisonMode.APPROXIMATE));
     }
 
     /**
-     * Asserts that the two given objects are approximatively equal.
-     * See {@link ComparisonMode#APPROXIMATIVE} for more information.
+     * Asserts that the two given objects are approximately equal.
+     * See {@link ComparisonMode#APPROXIMATE} for more information.
      *
      * @param expected  The expected object.
      * @param actual    The actual object.
@@ -73,11 +73,11 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
      * @since 3.20
      */
     public static void assertEqualsApproximatively(final Object expected, final Object actual, final boolean slightlyDifferent) {
-        assertTrue("Should be approximatively equals",      Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
-        assertTrue("DEBUG inconsistent with APPROXIMATIVE", Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATIVE));
+        assertTrue("Should be approximatively equals",    Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
+        assertTrue("DEBUG inconsistent with APPROXIMATE", Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATE));
         if (slightlyDifferent) {
-            assertFalse("Should be slightly different",     Utilities.deepEquals(expected, actual, ComparisonMode.IGNORE_METADATA));
-            assertFalse("Should not be strictly equals",    Utilities.deepEquals(expected, actual, ComparisonMode.STRICT));
+            assertFalse("Should be slightly different",   Utilities.deepEquals(expected, actual, ComparisonMode.IGNORE_METADATA));
+            assertFalse("Should not be strictly equals",  Utilities.deepEquals(expected, actual, ComparisonMode.STRICT));
         }
     }
 
@@ -92,11 +92,11 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
      * @since 3.20
      */
     public static void assertEqualsIgnoreMetadata(final Object expected, final Object actual, final boolean strictlyDifferent) {
-        assertTrue("Should be approximatively equals",      Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
-        assertTrue("DEBUG inconsistent with APPROXIMATIVE", Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATIVE));
-        assertTrue("Should be equals, ignoring metadata",   Utilities.deepEquals(expected, actual, ComparisonMode.IGNORE_METADATA));
+        assertTrue("Should be approximatively equals",    Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
+        assertTrue("DEBUG inconsistent with APPROXIMATE", Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATE));
+        assertTrue("Should be equals, ignoring metadata", Utilities.deepEquals(expected, actual, ComparisonMode.IGNORE_METADATA));
         if (strictlyDifferent) {
-            assertFalse("Should not be strictly equals",    Utilities.deepEquals(expected, actual, ComparisonMode.STRICT));
+            assertFalse("Should not be strictly equals",  Utilities.deepEquals(expected, actual, ComparisonMode.STRICT));
         }
     }
 

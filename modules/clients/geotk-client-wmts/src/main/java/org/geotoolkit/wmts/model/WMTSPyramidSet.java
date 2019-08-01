@@ -101,7 +101,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
         final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
 
         if(hints == null) hints = new HashMap();

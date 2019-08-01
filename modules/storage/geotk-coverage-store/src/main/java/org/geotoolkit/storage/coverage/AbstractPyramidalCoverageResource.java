@@ -17,13 +17,13 @@
 
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -67,11 +67,6 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
     }
 
     @Override
-    public boolean isWritable() throws CoverageStoreException {
-        return false;
-    }
-
-    @Override
     public DefaultMetadata createMetadata() throws DataStoreException {
         final DefaultMetadata meta = super.createMetadata();
 
@@ -107,8 +102,8 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return Pyramids.getEnvelope(this);
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.ofNullable(Pyramids.getEnvelope(this));
     }
 
     @Override
@@ -125,11 +120,6 @@ public abstract class AbstractPyramidalCoverageResource extends AbstractCoverage
         }else{
             throw new CoverageStoreException("Pyramid is not writable");
         }
-    }
-
-    @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
     }
 
     @Override

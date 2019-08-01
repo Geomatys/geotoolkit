@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.awt.Image;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
@@ -26,13 +25,12 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
@@ -44,7 +42,7 @@ import org.opengis.util.GenericName;
 /**
  * Interoperability with legacy API.
  */
-class ProductResource extends AbstractCoverageResource implements GridCoverageResource {
+class ProductResource extends AbstractCoverageResource implements WritableGridCoverageResource {
     final ProductEntry product;
 
     ProductResource(final DataStore store, final ProductEntry product)  {
@@ -65,16 +63,6 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
         return new Reader();
     }
 
-    @Override
-    public GridCoverageWriter acquireWriter() throws CatalogException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
-    }
-
     private final class Reader extends GeoReferencedGridCoverageReader {
         Reader() {
             super(ProductResource.this);
@@ -82,7 +70,7 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
 
         @Override
         public GenericName getCoverageName() throws CoverageStoreException {
-            return ProductResource.this.getIdentifier();
+            return ProductResource.this.getIdentifier().orElse(null);
         }
 
         @Override
@@ -114,7 +102,7 @@ class ProductResource extends AbstractCoverageResource implements GridCoverageRe
 
         @Override
         public GenericName getCoverageName() throws CoverageStoreException {
-            return ProductResource.this.getIdentifier();
+            return ProductResource.this.getIdentifier().orElse(null);
         }
 
         @Override

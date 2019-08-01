@@ -31,7 +31,6 @@ import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -53,7 +52,6 @@ public class LandsatProvider extends DataStoreProvider implements ProviderOnFile
     public static final ParameterDescriptor<URI> PATH;
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR;
-
 
     static {
         final ParameterBuilder builder = new ParameterBuilder();
@@ -89,14 +87,8 @@ public class LandsatProvider extends DataStoreProvider implements ProviderOnFile
     }
 
     @Override
-    public LandsatCoverageStore open(ParameterValueGroup params) throws DataStoreException {
-        return new LandsatCoverageStore(params);
-    }
-
-    @Override
     public LandsatCoverageStore open(StorageConnector sc) throws DataStoreException {
-        final URI uri = sc.getStorageAs(URI.class);
-        return new LandsatCoverageStore(uri);
+        return new LandsatCoverageStore(sc);
     }
 
     /**
@@ -114,5 +106,4 @@ public class LandsatProvider extends DataStoreProvider implements ProviderOnFile
     public Collection<byte[]> getSignature() {
         return Collections.singleton(new byte[]{'G','R','O','U','P'});
     }
-
 }

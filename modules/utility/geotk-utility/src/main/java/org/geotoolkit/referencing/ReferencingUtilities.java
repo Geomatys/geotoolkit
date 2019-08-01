@@ -26,7 +26,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CRS;
@@ -1010,7 +1010,7 @@ public final class ReferencingUtilities {
                  */
                 int tmpOffset = 0;
                 for (CoordinateReferenceSystem tmpSubCRS : toFind) {
-                    final int srcOffset = org.apache.sis.internal.metadata.AxisDirections.indexOfColinear(
+                    final int srcOffset = org.apache.sis.internal.referencing.AxisDirections.indexOfColinear(
                             inputCRS.getCoordinateSystem(), tmpSubCRS.getCoordinateSystem());
                     if(srcOffset>=0){
                         int tmpDimNumber = tmpSubCRS.getCoordinateSystem().getDimension();
@@ -1051,7 +1051,7 @@ public final class ReferencingUtilities {
     /**
      * Looks up an {@linkplain Identifier identifier}, such as {@code "EPSG:4326"},
      * of the specified object. This method searches in registered factories for an object
-     * {@linkplain ComparisonMode#APPROXIMATIVE approximatively equals} to the specified
+     * {@linkplain ComparisonMode#APPROXIMATE approximately equals} to the specified
      * object. If such an object is found, then its first identifier is returned. Otherwise
      * this method returns {@code null}.
      * <p>

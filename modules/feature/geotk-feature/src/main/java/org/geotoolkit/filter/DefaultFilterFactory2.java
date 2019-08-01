@@ -71,7 +71,7 @@ import org.geotoolkit.filter.temporal.DefaultOverlappedBy;
 import org.geotoolkit.filter.temporal.DefaultTContains;
 import org.geotoolkit.filter.temporal.DefaultTEquals;
 import org.geotoolkit.filter.temporal.DefaultTOverlaps;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.apache.sis.referencing.CRS;
 
 import org.opengis.filter.And;
@@ -144,7 +144,6 @@ import org.opengis.filter.temporal.OverlappedBy;
 import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.util.FactoryException;
@@ -183,10 +182,10 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     public BBOX bbox(final Expression e, final double minx, final double miny,
             final double maxx, final double maxy, final String srs) {
 
-        final DefaultBoundingBox env;
+        final BoundingBox env;
 
         if (srs == null || srs.trim().isEmpty()) {
-            env = new DefaultBoundingBox(new double[]{minx, miny}, new double[]{maxx, maxy});
+            env = new BoundingBox(new double[]{minx, miny}, new double[]{maxx, maxy});
             return bbox(e, env);
         }
 
@@ -235,7 +234,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
                     "\n primary exception : "+firstException.getMessage(), firstException);
         }
 
-        env = new DefaultBoundingBox(crs);
+        env = new BoundingBox(crs);
         env.setRange(0, minx, maxx);
         env.setRange(1, miny, maxy);
 
@@ -250,7 +249,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         if(e != null && !(e instanceof PropertyName)){
             throw new IllegalArgumentException("Expression expected to be a PropertyName, instead found a " + e.getClass());
         }
-        return new DefaultBBox((PropertyName)e, new DefaultLiteral<BoundingBox>(DefaultBoundingBox.castOrCopy(bounds)));
+        return new DefaultBBox((PropertyName)e, new DefaultLiteral<BoundingBox>(BoundingBox.castOrCopy(bounds)));
     }
 
     /**

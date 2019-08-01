@@ -134,11 +134,6 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
     public DataStoreFactory getProvider() {
         return (DataStoreFactory) DataStores.getProviderById(GeoJSONFeatureStoreFactory.NAME);
     }

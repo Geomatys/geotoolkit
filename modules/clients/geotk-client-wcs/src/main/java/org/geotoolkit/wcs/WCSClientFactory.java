@@ -18,7 +18,7 @@ package org.geotoolkit.wcs;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.wcs.xml.WCSVersion;
@@ -31,7 +31,7 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
-public class WCSClientFactory extends AbstractClientFactory{
+public class WCSClientFactory extends AbstractClientProvider{
 
     /** factory identification **/
     public static final String NAME = "wcs";

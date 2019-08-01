@@ -68,7 +68,7 @@ public abstract class AbstractClient extends DataStore implements Client {
 
     public AbstractClient(final ParameterValueGroup params) {
         this.parameters = Parameters.castOrWrap(params);
-        this.serverURL = parameters.getValue(AbstractClientFactory.URL);
+        this.serverURL = parameters.getValue(AbstractClientProvider.URL);
         ArgumentChecks.ensureNonNull("server url", serverURL);
     }
 
@@ -124,7 +124,7 @@ public abstract class AbstractClient extends DataStore implements Client {
     public ClientSecurity getClientSecurity() {
         ClientSecurity securityManager = null;
         try {
-            securityManager = parameters.getValue(AbstractClientFactory.SECURITY);
+            securityManager = parameters.getValue(AbstractClientProvider.SECURITY);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
@@ -135,11 +135,11 @@ public abstract class AbstractClient extends DataStore implements Client {
     public int getTimeOutValue() {
         Integer timeout = null;
         try {
-            timeout = parameters.getValue(AbstractClientFactory.TIMEOUT);
+            timeout = parameters.getValue(AbstractClientProvider.TIMEOUT);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
-        return (timeout == null) ?  AbstractClientFactory.TIMEOUT.getDefaultValue() : timeout;
+        return (timeout == null) ?  AbstractClientProvider.TIMEOUT.getDefaultValue() : timeout;
     }
 
     /**
@@ -196,12 +196,12 @@ public abstract class AbstractClient extends DataStore implements Client {
     protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
             final URL url, final ClientSecurity security, final Integer timeout){
         final Parameters param = Parameters.castOrWrap(desc.createValue());
-        param.getOrCreate(AbstractClientFactory.URL).setValue(url);
+        param.getOrCreate(AbstractClientProvider.URL).setValue(url);
         if (security != null) {
-            param.getOrCreate(AbstractClientFactory.SECURITY).setValue(security);
+            param.getOrCreate(AbstractClientProvider.SECURITY).setValue(security);
         }
         if (timeout != null) {
-            param.getOrCreate(AbstractClientFactory.TIMEOUT).setValue(timeout);
+            param.getOrCreate(AbstractClientProvider.TIMEOUT).setValue(timeout);
         }
         return param;
     }

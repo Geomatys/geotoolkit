@@ -32,7 +32,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.geometry.Precision;
 import org.opengis.geometry.TransfiniteSet;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.Ring;
@@ -67,10 +66,6 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * we can also invalidate that of our parent.
      */
     private JTSGeometry parent;
-    /**
-     * Precision model
-     */
-    private Precision precision;
 
     /**
      * Creates a new mutable {@code GeometryImpl} with a null CRS.
@@ -100,11 +95,6 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
 
     public void setParent(final JTSGeometry parent) {
         this.parent = parent;
-    }
-
-    @Override
-    public Precision getPrecision() {
-        return precision;
     }
 
     /**
@@ -689,8 +679,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         if (object instanceof AbstractJTSGeometry) {
             AbstractJTSGeometry that = (AbstractJTSGeometry) object;
             return Objects.equals(this.coordinateReferenceSystem, that.coordinateReferenceSystem) &&
-                   Objects.equals(this.parent,                    that.parent)                    &&
-                   Objects.equals(this.precision,                 that.precision);
+                   Objects.equals(this.parent,                    that.parent);
         }
         return false;
     }
@@ -700,7 +689,6 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         int hash = 7;
         hash = 41 * hash + (this.coordinateReferenceSystem != null ? this.coordinateReferenceSystem.hashCode() : 0);
         hash = 41 * hash + (this.parent != null ? this.parent.hashCode() : 0);
-        hash = 41 * hash + (this.precision != null ? this.precision.hashCode() : 0);
         return hash;
     }
 
@@ -715,8 +703,6 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         sb.append("mutable: ").append(mutable).append('\n');
         if (parent != null)
             sb.append("parent:").append(parent).append('\n');
-        if (precision != null)
-            sb.append("precision:").append(precision).append('\n');
         return sb.toString();
     }
 }

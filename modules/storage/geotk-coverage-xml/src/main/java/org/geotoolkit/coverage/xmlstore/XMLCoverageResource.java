@@ -30,6 +30,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,13 +42,15 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.image.PixelIterator;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -60,7 +63,6 @@ import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.util.GenericName;
 
 /**
@@ -71,7 +73,7 @@ import org.opengis.util.GenericName;
  * @module
  */
 @XmlRootElement(name="CoverageReference")
-public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
+public class XMLCoverageResource extends AbstractPyramidalCoverageResource implements WritableGridCoverageResource {
 
     /**
      * Changes :
@@ -269,8 +271,8 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
     }
 
     @Override
-    public NamedIdentifier getIdentifier() {
-        return id;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.of(id);
     }
 
     /**
@@ -720,7 +722,7 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource {
         if (template instanceof Pyramid) {
             final Pyramid base = (Pyramid) template;
             final XMLPyramidSet set = getPyramidSet();
-            final Pyramid pyramid = set.createPyramid(getIdentifier().tip().toString(), base.getCoordinateReferenceSystem());
+            final Pyramid pyramid = set.createPyramid(getIdentifier().get().tip().toString(), base.getCoordinateReferenceSystem());
             save();
             Pyramids.copyStructure(base, pyramid);
             return pyramid;

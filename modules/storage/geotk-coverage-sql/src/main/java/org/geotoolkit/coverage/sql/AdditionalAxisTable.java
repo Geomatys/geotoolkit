@@ -49,8 +49,8 @@ import org.opengis.referencing.operation.MathTransform1D;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.Types;
-import org.apache.sis.internal.metadata.VerticalDatumTypes;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.VerticalDatumTypes;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;

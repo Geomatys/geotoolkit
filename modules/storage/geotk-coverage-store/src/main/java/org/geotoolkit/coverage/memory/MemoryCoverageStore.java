@@ -27,7 +27,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
@@ -99,11 +98,6 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
     public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
         return Collections.unmodifiableList(resources);
     }
@@ -131,9 +125,6 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
         if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final GridCoverageResource cr = (GridCoverageResource) resource;
-        final NamedIdentifier name = cr.getIdentifier();
-
         //TODO
         throw new DataStoreException("Remove operation not supported.");
     }
@@ -196,7 +187,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore implements Writab
 
         @Override
         public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
-            return ref.getIdentifier();
+            return ref.getIdentifier().orElse(null);
         }
     }
 

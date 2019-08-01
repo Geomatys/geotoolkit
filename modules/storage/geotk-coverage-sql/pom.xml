@@ -85,8 +85,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.sis.storage</groupId>
-      <artifactId>sis-earth-observation</artifactId>
+      <groupId>org.apache.sis.profiles</groupId>
+      <artifactId>sis-japan-profile</artifactId>
       <version>${sis.version}</version>
       <scope>test</scope>
     </dependency>

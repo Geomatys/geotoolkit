@@ -37,7 +37,6 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.GenericName;
 
 /**
  * A coverage store based on a folder of timed images. See {@link TimedCoverageFactory}
@@ -81,11 +80,6 @@ public class TimedCoverageStore extends AbstractCoverageStore implements Aggrega
     @Override
     public DataStoreProvider getProvider() {
         return DataStores.getProviderById(TimedCoverageFactory.NAME);
-    }
-
-    @Override
-    public GenericName getIdentifier() {
-        return null;
     }
 
     @Override

@@ -33,6 +33,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.filter.AbstractFilter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Geometry;
@@ -58,7 +59,7 @@ import org.opengis.util.FactoryException;
  * @module
  */
 public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression>
-                                                implements BinarySpatialOperator,Serializable {
+                                                extends AbstractFilter implements BinarySpatialOperator,Serializable {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.binaryspatial");
     protected static final CoordinateReferenceSystem MERCATOR;

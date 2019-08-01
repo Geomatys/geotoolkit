@@ -208,11 +208,6 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         }
     }
 
-    @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
     /**
      * {@inheritDoc }
      */

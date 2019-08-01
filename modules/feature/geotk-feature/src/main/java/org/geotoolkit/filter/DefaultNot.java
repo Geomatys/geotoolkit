@@ -18,11 +18,10 @@
 package org.geotoolkit.filter;
 
 import java.io.Serializable;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Not;
-
-import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable "not" filter.
@@ -30,7 +29,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultNot implements Not,Serializable{
+public class DefaultNot extends AbstractFilter implements Not,Serializable{
 
     private final Filter filter;
 

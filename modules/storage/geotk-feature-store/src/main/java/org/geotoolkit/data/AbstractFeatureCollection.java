@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -99,8 +100,8 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     }
 
     @Override
-    public NamedIdentifier getIdentifier() {
-        return identifier;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.ofNullable(identifier);
     }
 
     @Override
@@ -120,10 +121,10 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope() throws DataStoreException{
-        try{
-            return FeatureStoreUtilities.calculateEnvelope(iterator());
-        }catch(FeatureStoreRuntimeException ex){
+    public Optional<Envelope> getEnvelope() throws DataStoreException{
+        try {
+            return Optional.ofNullable(FeatureStoreUtilities.calculateEnvelope(iterator()));
+        } catch (FeatureStoreRuntimeException ex) {
             throw new DataStoreException(ex);
         }
     }

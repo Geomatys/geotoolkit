@@ -46,6 +46,8 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.opengis.geometry.coordinate.PointArray;
+import org.opengis.geometry.primitive.CurveSegment;
 
 /**
  * A utility class containing methods to manipulate geometries.
@@ -330,8 +332,15 @@ public class GeometricUtilities {
             final Point2D bottomLeft  = new Point2D.Double(env.getMinimum(0), env.getMinimum(1));
             result.add(bottomLeft);
         }
-
         return result;
+    }
+
+    public static PointArray getSamplePoints(final CurveSegment lineString) {
+        if (lineString instanceof SampledByPoints) {
+            return ((SampledByPoints) lineString).getSamplePoints();
+        } else {
+            throw new IllegalArgumentException(lineString.getClass() + " is not an instance of SampledByPoints.");
+        }
     }
 
     /**

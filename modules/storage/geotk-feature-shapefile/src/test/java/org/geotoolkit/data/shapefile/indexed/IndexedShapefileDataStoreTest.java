@@ -55,7 +55,7 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.test.TestData;
 import static org.junit.Assert.*;
@@ -74,7 +74,6 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -223,7 +222,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         while (indexIter.hasNext()) {
             Feature newFeature = indexIter.next();
 
-            BoundingBox bounds = DefaultBoundingBox.castOrCopy(FeatureExt.getEnvelope(newFeature));
+            BoundingBox bounds = BoundingBox.castOrCopy(FeatureExt.getEnvelope(newFeature));
             Geometry geometry = factory.toGeometry(new JTSEnvelope2D(
                     bounds));
             double newArea = geometry.getArea();

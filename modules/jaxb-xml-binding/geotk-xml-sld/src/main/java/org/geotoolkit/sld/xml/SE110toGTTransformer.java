@@ -32,22 +32,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import javax.measure.quantity.Length;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.iharder.Base64;
 import org.apache.sis.measure.Units;
-
-import org.geotoolkit.util.NamesExt;
-
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
-
 import org.geotoolkit.se.xml.v110.AnchorPointType;
+import org.geotoolkit.se.xml.v110.CategorizeType;
+import org.geotoolkit.se.xml.v110.ChangeCaseType;
 import org.geotoolkit.se.xml.v110.ChannelSelectionType;
 import org.geotoolkit.se.xml.v110.ColorMapType;
+import org.geotoolkit.se.xml.v110.ColorReplacementType;
+import org.geotoolkit.se.xml.v110.ConcatenateType;
 import org.geotoolkit.se.xml.v110.ContrastEnhancementType;
 import org.geotoolkit.se.xml.v110.CoverageStyleType;
 import org.geotoolkit.se.xml.v110.DescriptionType;
@@ -56,16 +57,22 @@ import org.geotoolkit.se.xml.v110.ExternalGraphicType;
 import org.geotoolkit.se.xml.v110.FeatureTypeStyleType;
 import org.geotoolkit.se.xml.v110.FillType;
 import org.geotoolkit.se.xml.v110.FontType;
+import org.geotoolkit.se.xml.v110.FormatDateType;
+import org.geotoolkit.se.xml.v110.FormatNumberType;
 import org.geotoolkit.se.xml.v110.GeometryType;
 import org.geotoolkit.se.xml.v110.GraphicFillType;
 import org.geotoolkit.se.xml.v110.GraphicStrokeType;
 import org.geotoolkit.se.xml.v110.GraphicType;
 import org.geotoolkit.se.xml.v110.HaloType;
 import org.geotoolkit.se.xml.v110.ImageOutlineType;
+import org.geotoolkit.se.xml.v110.InlineContentType;
+import org.geotoolkit.se.xml.v110.InterpolateType;
+import org.geotoolkit.se.xml.v110.InterpolationPointType;
 import org.geotoolkit.se.xml.v110.LabelPlacementType;
 import org.geotoolkit.se.xml.v110.LegendGraphicType;
 import org.geotoolkit.se.xml.v110.LinePlacementType;
 import org.geotoolkit.se.xml.v110.LineSymbolizerType;
+import org.geotoolkit.se.xml.v110.MapItemType;
 import org.geotoolkit.se.xml.v110.MarkType;
 import org.geotoolkit.se.xml.v110.MethodType;
 import org.geotoolkit.se.xml.v110.ModeType;
@@ -75,28 +82,18 @@ import org.geotoolkit.se.xml.v110.PointPlacementType;
 import org.geotoolkit.se.xml.v110.PointSymbolizerType;
 import org.geotoolkit.se.xml.v110.PolygonSymbolizerType;
 import org.geotoolkit.se.xml.v110.RasterSymbolizerType;
+import org.geotoolkit.se.xml.v110.RecodeType;
 import org.geotoolkit.se.xml.v110.RuleType;
 import org.geotoolkit.se.xml.v110.ShadedReliefType;
+import org.geotoolkit.se.xml.v110.StringLengthType;
+import org.geotoolkit.se.xml.v110.StringPositionType;
 import org.geotoolkit.se.xml.v110.StrokeType;
+import org.geotoolkit.se.xml.v110.SubstringType;
 import org.geotoolkit.se.xml.v110.SvgParameterType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
-import org.geotoolkit.se.xml.v110.CategorizeType;
-import org.geotoolkit.se.xml.v110.ChangeCaseType;
-import org.geotoolkit.se.xml.v110.ColorReplacementType;
-import org.geotoolkit.se.xml.v110.ConcatenateType;
-import org.geotoolkit.se.xml.v110.FormatDateType;
-import org.geotoolkit.se.xml.v110.FormatNumberType;
-import org.geotoolkit.se.xml.v110.InterpolateType;
-import org.geotoolkit.se.xml.v110.InterpolationPointType;
-import org.geotoolkit.se.xml.v110.MapItemType;
-import org.geotoolkit.se.xml.v110.RecodeType;
-import org.geotoolkit.se.xml.v110.StringLengthType;
-import org.geotoolkit.se.xml.v110.StringPositionType;
-import org.geotoolkit.se.xml.v110.SubstringType;
 import org.geotoolkit.se.xml.v110.TrimType;
-
 import org.geotoolkit.se.xml.vext.ColorItemType;
 import org.geotoolkit.se.xml.vext.JenksType;
 import org.geotoolkit.se.xml.vext.RangeType;
@@ -105,8 +102,8 @@ import org.geotoolkit.style.DefaultColorReplacement;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
@@ -116,16 +113,13 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.se.xml.v110.InlineContentType;
-
+import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.util.FactoryException;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -159,6 +153,7 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  * Transform a SE v1.1.0 symbology in GT classes.
@@ -328,7 +323,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             if(obj instanceof MapItemType){
                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             }else if(obj instanceof InterpolateType){
-                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+                return visit((InterpolateType) obj);
             }else if(obj instanceof ConcatenateType){
                  throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             }else if(obj instanceof ChangeCaseType){
@@ -338,7 +333,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             }else if(obj instanceof FormatDateType){
                  throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             }else if(obj instanceof CategorizeType){
-                 throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
+                return visit((CategorizeType) obj);
             }else if(obj instanceof InterpolationPointType){
                  throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             }else if(obj instanceof StringLengthType){

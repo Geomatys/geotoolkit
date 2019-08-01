@@ -96,7 +96,6 @@ public class JTSGeometryFactory implements GeometryFactory {
     /**
      * {@inheritDoc }
      */
-    @Override
     public DirectPosition createDirectPosition() {
         return new GeneralDirectPosition(crs);
     }
@@ -104,7 +103,6 @@ public class JTSGeometryFactory implements GeometryFactory {
     /**
      * {@inheritDoc }
      */
-    @Override
     public DirectPosition createDirectPosition(final double[] coordinates) {
         GeneralDirectPosition pos = new GeneralDirectPosition(coordinates);
         pos.setCoordinateReferenceSystem(crs);
@@ -285,7 +283,6 @@ public class JTSGeometryFactory implements GeometryFactory {
     /**
      * {@inheritDoc }
      */
-    @Override
     public MultiPrimitive createMultiPrimitive() {
         return new JTSMultiPrimitive();
     }

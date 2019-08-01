@@ -51,7 +51,7 @@ public class JTSPointGrid implements PointGrid {
      */
     @Override
     public int width() {
-        return pointGrid[0].length();
+        return pointGrid[0].size();
     }
 
     /**
@@ -126,7 +126,7 @@ public class JTSPointGrid implements PointGrid {
      */
      DirectPosition getInternal( final int row, final int column ){
         PointArray pointArray = pointGrid[row];
-        return (DirectPosition) pointArray.positions().get( column );
+        return (DirectPosition) pointArray.get(column);
     }
 
     /**

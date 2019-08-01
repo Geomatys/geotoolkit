@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -126,9 +127,9 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope() throws FeatureStoreRuntimeException{
+    public Optional<Envelope> getEnvelope() throws FeatureStoreRuntimeException{
         try {
-            return getSession().getEnvelope(query);
+            return Optional.ofNullable(getSession().getEnvelope(query));
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }

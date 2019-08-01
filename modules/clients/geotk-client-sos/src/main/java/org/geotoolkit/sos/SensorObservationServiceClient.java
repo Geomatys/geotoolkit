@@ -17,6 +17,7 @@
 package org.geotoolkit.sos;
 
 import java.net.URL;
+import java.util.Optional;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sos.v100.*;
@@ -65,8 +66,8 @@ public class SensorObservationServiceClient extends AbstractClient {
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     /**

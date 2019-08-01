@@ -36,7 +36,6 @@ import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -132,11 +131,6 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
     @Override
     public DataStoreProvider getProvider() {
         return DataStores.getProviderById(FileCoverageProvider.NAME);
-    }
-
-    @Override
-    public GenericName getIdentifier() {
-        return null;
     }
 
     @Override
@@ -403,9 +397,6 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
         if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final GridCoverageResource cr = (GridCoverageResource) resource;
-        final NamedIdentifier name = cr.getIdentifier();
-
         //TODO
         throw new DataStoreException("Remove operation not supported.");
     }

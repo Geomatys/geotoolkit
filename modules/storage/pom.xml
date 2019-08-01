@@ -90,7 +90,6 @@
     <module>geotk-feature-store</module>
     <module>geotk-feature-dbf</module>
     <module>geotk-feature-csv</module>
-    <module>geotk-feature-gpx</module>
     <module>geotk-feature-gml</module>
     <module>geotk-feature-kml</module>
     <module>geotk-feature-shapefile</module>
@@ -113,6 +112,7 @@
     <module>geotk-coverage-sql</module>
     <module>geotk-coverage-wkb</module>
     <module>geotk-coverage-timed</module>
+    <module>geotk-coverage-hgt</module>
     <module>geotk-observation-store</module>
     <module>geotk-metadata-store</module>
   </modules>

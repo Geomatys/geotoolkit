@@ -52,6 +52,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.MultiResolutionModel;
@@ -112,8 +113,8 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
     }
 
     @Override
-    public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
-        return getInput().getIdentifier();
+    public GenericName getCoverageName() throws DataStoreException, CancellationException {
+        return getInput().getIdentifier().orElse(null);
     }
 
     @Override
@@ -186,15 +187,15 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
         }
 
         //-- size of internal pixel data recovered
-        final Rectangle dataSize = mosaic.getDataExtent();
+        final GridExtent dataSize = mosaic.getDataExtent();
 
         final long[] high  = new long[nbdim];
 
         for (int i = 0; i < cs.getDimension(); i++) {
             if (i == minordi) {
-                high[i] = dataSize.width; //-- X horizontal 2D part
+                high[i] = dataSize.getSize(0); //-- X horizontal 2D part
             } else if (i == minordi + 1) {
-                high[i] = dataSize.height; //-- Y horizontal 2D part
+                high[i] = dataSize.getSize(1); //-- Y horizontal 2D part
             } else if (i != minordi && i != minordi + 1) {
                 high[i] = multiAxisValues.get(i).length; //-- other dimension grid high value = discret axis values number.
             } else {
@@ -332,6 +333,8 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
                 //-- features a data cube of multiple slices
                 return readCube(mosaics, wantedEnv, deferred);
             }
+        } catch (CoverageStoreException ex) {
+            throw ex;
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex); //-- to be in accordance with reader method interface signature
         }
@@ -389,11 +392,10 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
 
             if (candidates.isEmpty()) {
                 //no tiles intersect
-                LOGGER.log(Level.FINE, "Following Requested envelope : "
+                throw new DisjointCoverageDomainException("Following Requested envelope : "
                         +wantedEnv
-                        + "\n do not intersect data define by following data Envelope."
+                        + "\n do not intersect any tiles data in mosaic Envelope : "
                         +mosaic.getEnvelope());
-                return null;
             }
 
             //--debug helper
@@ -492,11 +494,10 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
 
             if (image == null) {
                 //no tiles intersect
-                LOGGER.log(Level.FINE, "Following Requested envelope : "
+                throw new DisjointCoverageDomainException("Following Requested envelope : "
                         +wantedEnv
-                        + "\n do not intersect data define by following data Envelope."
+                        + "\n do not intersect any tiles data in mosaic Envelope : "
                         +mosaic.getEnvelope());
-                return null;
             }
         }
 ////
@@ -506,7 +507,7 @@ public class PyramidalModelReader extends AbstractGridCoverageReader {
 
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName(ref.getIdentifier().tip().toString());
+        ref.getIdentifier().ifPresent((n) -> gcb.setName(n.tip().toString()));
         final List<SampleDimension> dimensions = getSampleDimensions();
         if (dimensions != null) {
             gcb.setSampleDimensions(dimensions.toArray(new SampleDimension[dimensions.size()]));

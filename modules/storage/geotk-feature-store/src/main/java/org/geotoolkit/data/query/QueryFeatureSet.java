@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.query;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.DataStoreException;
@@ -52,7 +53,7 @@ public final class QueryFeatureSet implements FeatureSet {
     }
 
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
         return base.getIdentifier();
     }
 
@@ -70,12 +71,11 @@ public final class QueryFeatureSet implements FeatureSet {
      * and if the query permits it the envelope could be return without significant
      * cost.
      *
-     * @return always null
-     * @throws DataStoreException
+     * @return always empty
      */
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
-        return null;
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override

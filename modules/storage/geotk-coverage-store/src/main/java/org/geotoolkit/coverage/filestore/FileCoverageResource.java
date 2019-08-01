@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.coverage.filestore;
 
-import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,6 +26,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -42,7 +42,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FileCoverageResource extends AbstractCoverageResource {
+public class FileCoverageResource extends AbstractCoverageResource implements WritableGridCoverageResource {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
 
@@ -121,11 +121,6 @@ public class FileCoverageResource extends AbstractCoverageResource {
 
     public ImageReaderSpi getSpi() {
         return spi;
-    }
-
-    @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
     }
 
 }
