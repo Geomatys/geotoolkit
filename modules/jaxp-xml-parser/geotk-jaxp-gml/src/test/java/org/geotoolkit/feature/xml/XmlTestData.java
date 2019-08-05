@@ -36,10 +36,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
-import org.geotoolkit.feature.xml.jaxb.mapping.GeometryMapping;
-import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -196,6 +193,10 @@ public class XmlTestData {
         ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"country")      .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         final FeatureType adress = ftb.build();
 
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_311_NAMESPACE,"AddressPropertyType");
+        ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "address"))  .setMinimumOccurs(1).setMaximumOccurs(1);
+        final FeatureType adressProp = ftb.build();
 
         ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"Person");
@@ -208,7 +209,7 @@ public class XmlTestData {
         atb = ftb.addAttribute(Point .class)           .setName(GML_311_NAMESPACE,"position")         .setMinimumOccurs(0).setMaximumOccurs(1);
         atb.addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
-        ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress"))   .setMinimumOccurs(0).setMaximumOccurs(1).setDescription(GMLConvention.DECORATED_DESCRIPTION+" {http://www.opengis.net/gml}Address");
+        ftb.addAssociation(adressProp).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress"))   .setMinimumOccurs(1).setMaximumOccurs(1);
         ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress2"))  .setMinimumOccurs(0).setMaximumOccurs(1);
         ftb.addAttribute(String .class)          .setName(GML_311_NAMESPACE,"phone")            .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
         complexType = ftb.build();
@@ -417,6 +418,9 @@ public class XmlTestData {
         address.setPropertyValue("postalCode","M1R1K9");
         address.setPropertyValue("country","Canada");
 
+        final Feature adressP = adressProp.newInstance();
+        adressP.setPropertyValue("address", address);
+
         final Feature address2 = adress.newInstance();
         address2.setPropertyValue("streetName","Second");
         address2.setPropertyValue("streetNumber","7");
@@ -425,7 +429,7 @@ public class XmlTestData {
         address2.setPropertyValue("postalCode","14000");
         address2.setPropertyValue("country","France");
 
-        featureComplex.setPropertyValue("mailAddress", address);
+        featureComplex.setPropertyValue("mailAddress", adressP);
         featureComplex.setPropertyValue("mailAddress2", address2);
         featureComplex.setPropertyValue("phone", Arrays.asList("4161234567","4168901234"));
 

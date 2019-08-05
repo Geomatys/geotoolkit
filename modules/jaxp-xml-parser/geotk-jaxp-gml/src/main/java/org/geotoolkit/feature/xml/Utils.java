@@ -822,6 +822,8 @@ public final class Utils {
 
         if (name.endsWith("PropertyType")) {
             return name;
+        } else if (name.endsWith("Property")) {
+            return name += "Type";
         } else {
             return name += "PropertyType";
         }

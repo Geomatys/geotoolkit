@@ -11,14 +11,14 @@
         </gml:Point>
     </gml:position>
     <gml:mailAddress>
-        <gml:Address>
+        <gml:address>
             <gml:streetName>Main</gml:streetName>
             <gml:streetNumber>10</gml:streetNumber>
             <gml:city>SomeTown</gml:city>
             <gml:province>Ontario</gml:province>
             <gml:postalCode>M1R1K9</gml:postalCode>
             <gml:country>Canada</gml:country>
-        </gml:Address>
+        </gml:address>
     </gml:mailAddress>
     <gml:mailAddress2>
         <gml:streetName>Second</gml:streetName>

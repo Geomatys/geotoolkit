@@ -34,6 +34,7 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.IllegalNameException;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
+import org.geotoolkit.data.FeatureComparator;
 import static org.geotoolkit.feature.xml.GMLConvention.NILLABLE_CHARACTERISTIC;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
@@ -47,7 +48,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.xml.sax.SAXException;
 
@@ -77,14 +77,10 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
 
-        // GML defines a lot more properties than what we strictly need. Nonetheless,
-        // we must ensure that required prpoerties are read from xsd.
-        simpleTypeFull.equals(types.get(0));
-        Collection<? extends PropertyType> expProperties = simpleTypeFull.getProperties(false);
-        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
-        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
-
-        assertEquals(diffProperties(expProperties, resProperties), simpleTypeFull, types.get(0));
+        FeatureComparator comparator = new FeatureComparator(simpleTypeFull, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
     }
 
     @Test
@@ -96,14 +92,10 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
 
-        // GML defines a lot more properties than what we strictly need. Nonetheless,
-        // we must ensure that required prpoerties are read from xsd.
-        simpleTypeGeom.equals(types.get(0));
-        Collection<? extends PropertyType> expProperties = simpleTypeGeom.getProperties(false);
-        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
-        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
-
-        assertEquals(diffProperties(expProperties, resProperties), simpleTypeGeom, types.get(0));
+        FeatureComparator comparator = new FeatureComparator(simpleTypeGeom, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
     }
 
     @Test
@@ -153,7 +145,10 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
         assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
 
-        assertEquals(multiGeomType, types.get(0));
+        FeatureComparator comparator = new FeatureComparator(multiGeomType, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
     }
 
     @Test
@@ -175,11 +170,11 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(String.class).setName(ns, "L_SIEPT").setMinimumOccurs(1).setMaximumOccurs(1);
         final FeatureType wfsType = ftb.build();
 
-        Collection<? extends PropertyType> expProperties = wfsType.getProperties(false);
-        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
-        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
-
-        assertEquals(wfsType, types.get(0));
+        FeatureComparator comparator = new FeatureComparator(wfsType, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("http://www.w3.org/2001/XMLSchema-instance:@nil");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
     }
 
     @Test
@@ -194,7 +189,13 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         Collection<? extends PropertyType> expProperties = complexType.getProperties(false);
         Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
         assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
-        assertEquals(complexType, types.get(0));
+
+        FeatureComparator comparator = new FeatureComparator(complexType, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("http://www.w3.org/2001/XMLSchema-instance:@nil");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.ignoreDescription = true;
+        comparator.compare();
     }
 
     @Test
@@ -253,8 +254,11 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, types.size());
         final FeatureType readType = types.get(0);
 
-        assertEquals(typeEmpty.getName(), readType.getName());
-        checkProperties(typeEmpty.getProperties(true), readType);
+        FeatureComparator comparator = new FeatureComparator(typeEmpty, readType);
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.ignoreDescription = true;
+        comparator.compare();
     }
 
     @Test
@@ -286,8 +290,10 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, types.size());
         final FeatureType readType = types.get(0);
 
-        assertEquals(typeEmpty.getName(), readType.getName());
-        checkProperties(typeEmpty.getProperties(true), readType);
+        FeatureComparator comparator = new FeatureComparator(typeWithNil, readType);
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
     }
 
     @Test
@@ -340,8 +346,12 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         final FeatureType readType = types.get(0);
-        assertEquals(typeReference.getName(), readType.getName());
-        checkProperties(typeReference.getProperties(true), readType);
+
+        FeatureComparator comparator = new FeatureComparator(typeReference, readType);
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.ignoreDescription = true;
+        comparator.compare();
     }
 
     @Test
@@ -472,21 +482,21 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         Assert.assertTrue("Geometric attribute is not a JTS geometry", expectedValueClass.isAssignableFrom(attr.getValueClass()));
     }
 
-    /**
-     * Ensure that all given properties can be found in input feature type.
-     * @param wantedProperties The properties we need to find.
-     * @param toCheck The feature type to search into.
-     */
-    private static void checkProperties(Collection<? extends PropertyType> wantedProperties, final FeatureType toCheck) {
-        for (PropertyType searched : wantedProperties) {
-            try {
-                final PropertyType found = toCheck.getProperty(searched.getName().toString());
-                Assert.assertEquals(searched, found);
-            } catch (PropertyNotFoundException e) {
-                fail(e.getMessage());
-            }
-        }
-    }
+//    /**
+//     * Ensure that all given properties can be found in input feature type.
+//     * @param wantedProperties The properties we need to find.
+//     * @param toCheck The feature type to search into.
+//     */
+//    private static void checkProperties(Collection<? extends PropertyType> wantedProperties, final FeatureType toCheck) {
+//        for (PropertyType searched : wantedProperties) {
+//            try {
+//                final PropertyType found = toCheck.getProperty(searched.getName().toString());
+//                Assert.assertEquals(searched, found);
+//            } catch (PropertyNotFoundException e) {
+//                fail(e.getMessage());
+//            }
+//        }
+//    }
 
     private static String diffSizeProperties(Collection<? extends PropertyType> expProperties, Collection<? extends PropertyType> resProperties) {
         StringBuilder sb = new StringBuilder();

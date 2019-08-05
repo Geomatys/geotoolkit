@@ -14,7 +14,7 @@
                     <xs:element name="age"                 maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
                     <xs:element name="sex"                 maxOccurs="1" minOccurs="1" nillable="true" type="xs:string"/>
                     <xs:element name="position"            maxOccurs="1" minOccurs="0" nillable="true" type="gml:PointPropertyType"/>
-                    <xs:element name="mailAddress"         maxOccurs="1" minOccurs="0" nillable="true" type="gml:AddressPropertyType"/>
+                    <xs:element name="mailAddress"         maxOccurs="1" minOccurs="1" nillable="false" type="gml:AddressPropertyType"/>
                     <xs:element name="mailAddress2"        maxOccurs="1" minOccurs="0" nillable="false" type="gml:AddressType"/>
                     <xs:element name="phone"               maxOccurs="unbounded" minOccurs="0" nillable="true" type="xs:string"/>
                 </xs:sequence>
@@ -23,7 +23,7 @@
     </xs:complexType>
    <xs:complexType name="AddressPropertyType">
       <xs:sequence>
-         <xs:element name="Address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />
+         <xs:element name="address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />
       </xs:sequence>
    </xs:complexType>
    <xs:complexType name="AddressType">

@@ -169,7 +169,6 @@ public class GMLConvention {
             return !description.startsWith(UNDECORATED_DESCRIPTION);
         }
 
-
         return description.startsWith(DECORATED_DESCRIPTION);
     }
 
