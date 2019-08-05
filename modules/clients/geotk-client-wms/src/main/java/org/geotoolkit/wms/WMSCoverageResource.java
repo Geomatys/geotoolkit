@@ -27,10 +27,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelope2D;
@@ -417,6 +419,11 @@ public class WMSCoverageResource extends AbstractCoverageResource {
     public GridGeometry getGridGeometry() throws DataStoreException {
         //we only know the envelope,
         return new GridGeometry(PixelInCell.CELL_CENTER, null, getBounds(), GridRoundingMode.ENCLOSING);
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        return null; //unknown
     }
 
     @Override

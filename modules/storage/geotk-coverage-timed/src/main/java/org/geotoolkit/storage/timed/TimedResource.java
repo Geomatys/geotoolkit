@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -180,6 +182,16 @@ public class TimedResource extends AbstractCoverageResource implements Closeable
         grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, treeEnv.getCoordinateReferenceSystem());
 
         return grid;
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getSampleDimensions();
+        } finally {
+            recycle(reader);
+        }
     }
 
     private synchronized void invalidateGrid() {

@@ -17,7 +17,8 @@
 package org.geotoolkit.ncwms;
 
 import java.net.URL;
-
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.ncwms.v111.NcGetFeatureInfo111;
 import org.geotoolkit.ncwms.v111.NcGetLegend111;
 import org.geotoolkit.ncwms.v111.NcGetMap111;
@@ -27,13 +28,11 @@ import org.geotoolkit.ncwms.v130.NcGetLegend130;
 import org.geotoolkit.ncwms.v130.NcGetMap130;
 import org.geotoolkit.ncwms.v130.NcGetTimeseries130;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.wms.WebMapClient;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.util.GenericName;
 
 
 /**

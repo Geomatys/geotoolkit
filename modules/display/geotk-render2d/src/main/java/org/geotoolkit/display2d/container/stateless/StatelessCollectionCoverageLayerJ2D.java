@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.display.PortrayalException;
@@ -48,7 +49,6 @@ import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.storage.coverage.CollectionCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
@@ -140,7 +140,7 @@ public class StatelessCollectionCoverageLayerJ2D extends StatelessMapLayerJ2D<Ma
 
         boolean dataRendered = false;
         final CollectionCoverageResource ref = (CollectionCoverageResource) item.getResource();
-        final Collection<GridCoverageResource> references = ref.getCoverages(null);
+        final Collection<? extends GridCoverageResource> references = ref.getCoverages(null);
         final LoopLayer layer = new LoopLayer();
         for (GridCoverageResource cref : references) {
             layer.ref = cref;

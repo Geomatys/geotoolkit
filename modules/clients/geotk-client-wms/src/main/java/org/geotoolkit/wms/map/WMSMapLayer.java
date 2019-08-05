@@ -21,8 +21,8 @@ import java.awt.geom.Point2D;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -32,7 +32,6 @@ import org.geotoolkit.wms.WMSCoverageResource.EPSG4326Politic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 
 /**
@@ -54,7 +53,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
     }
 
     protected WMSMapLayer(final GridCoverageResource ref){
-        super(ref,new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
+        super(ref, new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
     }
 
     /**

@@ -17,12 +17,12 @@
 package org.geotoolkit.osmtms.map;
 
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.osmtms.OSMTileMapClient;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 

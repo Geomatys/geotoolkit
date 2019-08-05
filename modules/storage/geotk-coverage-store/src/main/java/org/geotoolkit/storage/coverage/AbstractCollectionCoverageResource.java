@@ -160,6 +160,16 @@ public abstract class AbstractCollectionCoverageResource extends AbstractCoverag
 
     }
 
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        final GridCoverageReader reader = acquireReader();
+        try {
+            return reader.getSampleDimensions();
+        } finally {
+            recycle(reader);
+        }
+    }
+
     /**
      * Cache and return the sample dimensions.<br>
      * All coverages are expected to have the same model.<br>

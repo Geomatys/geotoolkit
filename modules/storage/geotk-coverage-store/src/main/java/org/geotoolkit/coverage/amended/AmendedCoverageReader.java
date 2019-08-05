@@ -96,7 +96,7 @@ public class AmendedCoverageReader extends AbstractGridCoverageReader {
      */
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
-        return ref.getSampleDimensions(0);
+        return ref.getSampleDimensions();
     }
 
     /**

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
 import javax.imageio.ImageIO;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.Canvas;
@@ -32,7 +33,6 @@ import org.geotoolkit.display2d.container.stateless.StatelessPyramidalCoverageLa
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.WMSCoverageResource;
