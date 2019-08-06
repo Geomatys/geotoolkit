@@ -17,25 +17,23 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.factory.Hints;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -64,7 +62,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class ShapefileFeatureReader implements FeatureReader {
+public class ShapefileFeatureReader implements FeatureReader {
 
     /**
      * Stores the creation stack trace if assertion are enable.
@@ -157,7 +155,32 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
         }
     }
 
-    protected abstract Feature readFeature() throws DataStoreException;
+    protected Feature readFeature() throws DataStoreException {
+
+        final Feature feature = schema.newInstance();
+        final String fid = fidReader.next();
+        if(generateId){
+            feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), fid);
+        }
+        try {
+            attributeReader.read(buffer);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
+
+        //set crs on geometry
+        if (buffer[0] instanceof Geometry) {
+            JTS.setCRS((Geometry) buffer[0], geomCRS);
+        }
+
+        for (int i = 0; i < attributIndexes.length; i++) {
+            if (attributIndexes[i]!=null) {
+                feature.setPropertyValue(attributIndexes[i], buffer[i]);
+            }
+        }
+
+        return feature;
+    }
 
     /**
      * {@inheritDoc }
@@ -262,43 +285,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
 
     public static ShapefileFeatureReader create(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
             final FeatureType schema, final Hints hints) throws MismatchedFeatureException {
-        return new DefaultSeparateFeatureReader(attributeReader, fidReader, schema);
-    }
-
-    private static class DefaultSeparateFeatureReader extends ShapefileFeatureReader {
-
-        private DefaultSeparateFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-                final FeatureType schema) throws MismatchedFeatureException {
-            super(attributeReader, fidReader, schema);
-        }
-
-        @Override
-        protected Feature readFeature() throws DataStoreException {
-
-            final Feature feature = schema.newInstance();
-            final String fid = fidReader.next();
-            if(generateId){
-                feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), fid);
-            }
-            try {
-                attributeReader.read(buffer);
-            } catch (IOException ex) {
-                throw new DataStoreException(ex);
-            }
-
-            //set crs on geometry
-            if(buffer[0] instanceof Geometry){
-                JTS.setCRS((Geometry)buffer[0], geomCRS);
-            }
-
-            for (int i = 0; i < attributIndexes.length; i++) {
-                if (attributIndexes[i]!=null) {
-                    feature.setPropertyValue(attributIndexes[i], buffer[i]);
-                }
-            }
-
-            return feature;
-        }
+        return new ShapefileFeatureReader(attributeReader, fidReader, schema);
     }
 
     private static AttributeType[] getDescriptors(final ShapefileAttributeReader reader) {

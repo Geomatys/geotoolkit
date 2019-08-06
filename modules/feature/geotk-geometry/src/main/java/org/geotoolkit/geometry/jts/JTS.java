@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.geometry.jts;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.PathIterator;
@@ -25,50 +26,46 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import javax.vecmath.Vector3d;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.display.shape.ShapeUtilities;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.factory.HintsPending;
 import org.apache.sis.util.ArgumentChecks;
-
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.display.shape.ShapeUtilities;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.BoundingBox;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.resources.Errors;
+import org.locationtech.jts.algorithm.Orientation;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.algorithm.Orientation;
-import java.awt.Rectangle;
-import javax.vecmath.Vector3d;
-import org.apache.sis.util.Utilities;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
+import org.opengis.util.FactoryException;
 
 
 /**
