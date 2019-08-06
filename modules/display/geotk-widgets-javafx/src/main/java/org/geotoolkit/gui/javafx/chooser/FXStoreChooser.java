@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import javafx.beans.property.BooleanProperty;
@@ -34,7 +35,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
@@ -50,6 +50,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -59,6 +60,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -68,10 +70,14 @@ import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -212,27 +218,24 @@ public class FXStoreChooser extends BorderPane {
             }
         });
 
-        connectButton.setOnAction(new EventHandler<ActionEvent>() {
+        connectButton.setOnAction((ActionEvent event) -> { connect(); });
 
-            @Override
-            public void handle(ActionEvent event) {
+    }
 
-                try {
-                    resourceChooser.setResource(null);
-                    DataStore store = getStore();
-                    resourceChooser.setResource(store);
-                    accordion.setExpandedPane(paneResource);
+    private void connect() {
+        try {
+            resourceChooser.setResource(null);
+            DataStore store = getStore();
+            resourceChooser.setResource(store);
+            accordion.setExpandedPane(paneResource);
 
-                    Collection<DataSet> preselected = org.geotoolkit.storage.DataStores.flatten(store, true, DataSet.class);
-                    resourceChooser.setSelected(new ArrayList<>(preselected));
+            Collection<DataSet> preselected = org.geotoolkit.storage.DataStores.flatten(store, true, DataSet.class);
+            resourceChooser.setSelected(new ArrayList<>(preselected));
 
-                } catch (DataStoreException ex) {
-                    infoLabel.setText("Error "+ex.getMessage());
-                    Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
-                }
-            }
-        });
-
+        } catch (DataStoreException ex) {
+            infoLabel.setText("Error "+ex.getMessage());
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
+        }
     }
 
     public BooleanProperty decorateProperty(){
@@ -259,25 +262,67 @@ public class FXStoreChooser extends BorderPane {
         }
     }
 
-    private List<MapLayer> getSelectedLayers() throws DataStoreException {
+    private void setStore(DataStore store) {
+        factoryView.getSelectionModel().clearAndSelect(factoryView.getItems().indexOf(store.getProvider()));
+        paramEditor.setParameter(store.getOpenParameters());
+        connect();
+    }
+
+    private List<MapItem> getSelectedLayers() throws DataStoreException {
         final List<Resource> selected = resourceChooser.getSelected();
-        final List<MapLayer> layers = new ArrayList<>();
+        final List<MapItem> layers = new ArrayList<>();
         for (Resource selection : selected) {
-            if (selection instanceof GridCoverageResource) {
-                final GridCoverageResource ref = (GridCoverageResource) selection;
-                final MapLayer layer = MapBuilder.createCoverageLayer(ref);
-                ref.getIdentifier().ifPresent((id) -> layer.setName(id.tip().toString()));
-                layers.add(layer);
-            } else if (selection instanceof FeatureSet) {
-                final FeatureSet fs = (FeatureSet) selection;
-                final MapLayer layer = MapBuilder.createFeatureLayer(fs);
-                layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(fs.getType()));
-                layers.add(layer);
+            MapItem item = toMapItem(selection);
+            if (item != null) {
+                layers.add(item);
             }
         }
         return layers;
     }
 
+    private static MapItem toMapItem(Resource resource) throws DataStoreException {
+        if (resource instanceof GridCoverageResource) {
+            final GridCoverageResource ref = (GridCoverageResource) resource;
+            final MapLayer layer = MapBuilder.createCoverageLayer(ref);
+            ref.getIdentifier().ifPresent((id) -> layer.setName(id.tip().toString()));
+            return layer;
+        } else if (resource instanceof FeatureSet) {
+            final FeatureSet fs = (FeatureSet) resource;
+            final MapLayer layer = MapBuilder.createFeatureLayer(fs);
+            layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(fs.getType()));
+            return layer;
+        } else if (resource instanceof Aggregate) {
+            final Aggregate fs = (Aggregate) resource;
+            final MapItem item = MapBuilder.createItem();
+            fs.getIdentifier().ifPresent(new Consumer<GenericName>() {
+                @Override
+                public void accept(GenericName id) {
+                    final String name = id.tip().toString();
+                    item.setName(name);
+                    item.setDescription(new DefaultDescription(
+                            new SimpleInternationalString(name),
+                            new SimpleInternationalString(id.toString())));
+                }
+            });
+            if (item.getName() == null) {
+                String metaIdd = MetadataUtilities.getIdentifier(fs.getMetadata());
+                if (metaIdd != null) {
+                    item.setName(metaIdd);
+                    item.setDescription(new DefaultDescription(
+                            new SimpleInternationalString(metaIdd),
+                            new SimpleInternationalString(metaIdd)));
+                }
+            }
+
+
+            for (Resource r : fs.components()) {
+                MapItem i = toMapItem(r);
+                if (i != null) item.items().add(i);
+            }
+            return item;
+        }
+        return null;
+    }
 
     /**
      * Display a modal dialog.
@@ -299,7 +344,7 @@ public class FXStoreChooser extends BorderPane {
      * @throws DataStoreException if store creation failed
      */
     public static Object showDialog(Node parent, Predicate predicate) throws DataStoreException{
-        final List lst = showDialog(parent, predicate, false);
+        final List lst = showDialog(parent, null, predicate, false);
         if(lst.isEmpty()){
             return null;
         }else{
@@ -315,25 +360,34 @@ public class FXStoreChooser extends BorderPane {
      * @return created map layers.
      * @throws DataStoreException if store creation failed
      */
-    public static List<MapLayer> showLayerDialog(Node parent, Predicate predicate) throws DataStoreException{
-        return showDialog(parent, predicate, true);
+    public static List<MapItem> showLayerDialog(Node parent, Predicate predicate) throws DataStoreException{
+        return showDialog(parent, null, predicate, true);
     }
 
-    private static List showDialog(Node parent, Predicate predicate, boolean layerVisible) throws DataStoreException{
+    public static List<MapItem> showLayerDialog(Node parent, DataStore store, Predicate predicate) throws DataStoreException {
+        return showDialog(parent, store, predicate, true);
+    }
+
+    private static List showDialog(Node parent, DataStore store, Predicate predicate, boolean layerVisible) throws DataStoreException{
         final FXStoreChooser chooser = new FXStoreChooser(predicate);
         chooser.decorateProperty().set(true);
         chooser.setLayerSelectionVisible(layerVisible);
 
+        if (store != null) {
+            chooser.setStore(store);
+        }
+
+
         final boolean res = FXOptionDialog.showOkCancel(parent, chooser, "", true);
 
         if (res) {
-            if(layerVisible){
+            if (layerVisible) {
                 return chooser.getSelectedLayers();
-            }else{
-                final Object store = chooser.getStore();
+            } else {
+                store = chooser.getStore();
                 if(store == null){
                     return Collections.EMPTY_LIST;
-                }else{
+                } else {
                     return Collections.singletonList(store);
                 }
             }

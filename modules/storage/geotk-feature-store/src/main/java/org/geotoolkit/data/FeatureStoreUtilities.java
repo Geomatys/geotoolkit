@@ -401,7 +401,14 @@ public class FeatureStoreUtilities {
      * @throws org.apache.sis.storage.DataStoreException
      */
     public static Envelope getEnvelope(DataSet dataset, boolean forceCompute) throws DataStoreException {
-        Envelope envelope = forceCompute ? null : dataset.getEnvelope().orElse(null);
+        Envelope envelope = null;
+        if (!forceCompute) {
+            try {
+                envelope = dataset.getEnvelope().orElse(null);
+            } catch (DataStoreException ex) {
+                //do nothing, iterate on features to compute it
+            }
+        }
 
         if (envelope == null) {
             GeneralEnvelope env = null;

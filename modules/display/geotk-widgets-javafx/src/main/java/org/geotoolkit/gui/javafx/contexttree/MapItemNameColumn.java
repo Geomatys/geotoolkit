@@ -169,12 +169,12 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             if(ti==null) return;
 
             weakListener.unregisterAll();
-            if(ti instanceof StyleMapItem){
+            if (ti instanceof StyleMapItem) {
                 final BorderPane pane = new BorderPane(createIcon());
                 pane.setMaxSize(BorderPane.USE_COMPUTED_SIZE,Double.MAX_VALUE);
                 pane.setPrefSize(BorderPane.USE_COMPUTED_SIZE, BorderPane.USE_COMPUTED_SIZE);
                 setGraphic(pane);
-            }else if(ti instanceof TreeMapItem){
+            } else if (ti instanceof TreeMapItem) {
                 setGraphic(createIcon());
 
                 final Object object = ti.getValue();
@@ -201,17 +201,17 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             }
         }
 
-        private ImageView createIcon(){
+        private ImageView createIcon() {
             final TreeTableRow row = getTreeTableRow();
-            if(row==null) return null;
+            if (row == null) return null;
             final TreeItem ti = row.getTreeItem();
-            if(ti==null) return null;
+            if (ti == null) return null;
 
-            if(ti instanceof StyleMapItem){
+            if (ti instanceof StyleMapItem) {
                 final ImageView view = new ImageView();
                 view.imageProperty().bind(((StyleMapItem)ti).imageProperty());
                 return view;
-            }else if(ti instanceof TreeMapItem){
+            } else if (ti instanceof TreeMapItem) {
                 final MapItem mapItem = (MapItem) ((TreeMapItem)ti).getValue();
                 return new ImageView(getTypeIcon(mapItem));
             }
