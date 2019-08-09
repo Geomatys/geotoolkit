@@ -645,7 +645,7 @@ public final class Utils {
 
     public static URI resolveURI(URI base, String location) throws MalformedURLException, URISyntaxException{
         //try an url
-        if (location.startsWith("http://") || location.startsWith("https://") || location.startsWith("file:")) {
+        if (location.startsWith("http://") || location.startsWith("https://") || location.startsWith("file:") || location.startsWith("jar:")) {
             return new URI(location);
         }
 
@@ -785,6 +785,15 @@ public final class Utils {
             int idx = Integer.max(baseLocation.lastIndexOf('/'), baseLocation.lastIndexOf('\\'));
             baseLocation = baseLocation.substring(0, idx+1);
         }
+
+        while (schemaLocation.startsWith("../")) {
+            schemaLocation = schemaLocation.substring(3);
+            //move back in base location
+            baseLocation = baseLocation.substring(0, baseLocation.length()-1);
+            int idx = Integer.max(baseLocation.lastIndexOf('/'), baseLocation.lastIndexOf('\\'));
+            baseLocation = baseLocation.substring(0, idx+1);
+        }
+
         if (schemaLocation.startsWith("./")) {
             schemaLocation = schemaLocation.substring(2);
         }
