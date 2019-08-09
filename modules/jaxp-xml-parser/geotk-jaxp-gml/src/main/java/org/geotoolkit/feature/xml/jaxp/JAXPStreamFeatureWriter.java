@@ -633,6 +633,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 return;
             }
 
+            final String gmlid = getId(ca, null);
             /*
             Note : the GML 3.2 identifier element is this only one which does not
             follow the OGC 'PropertyType' pattern and is not encapsulated.
@@ -648,11 +649,19 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else {
                     writer.writeStartElement(encapName);
                 }
+                if (gmlid != null) {
+                    writer.writeAttribute("gml", gmlNamespace, "id", gmlid);
+                }
+                writeAttributeProperties(ca);
                 writeComplexProperties(ca, getId(ca, id));
 
                 //close encapsulation
                 writer.writeEndElement();
             } else {
+                if (gmlid != null) {
+                    writer.writeAttribute("gml", gmlNamespace, "id", gmlid);
+                }
+                writeAttributeProperties(ca);
                 writeComplexProperties(ca, getId(ca, id));
             }
             writer.writeEndElement();
