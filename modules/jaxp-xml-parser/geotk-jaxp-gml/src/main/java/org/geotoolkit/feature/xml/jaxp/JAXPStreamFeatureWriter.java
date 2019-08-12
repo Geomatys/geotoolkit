@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
@@ -121,6 +122,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private final Map<String, String> schemaLocations = new LinkedHashMap<>();
+    private final Map<String, String> commonPrefixes = new TreeMap<>();
 
     private final String gmlVersion;
     private final String wfsVersion;
@@ -135,6 +137,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     public JAXPStreamFeatureWriter() {
         this("3.1.1", "1.1.0", null);
+    }
+
+    public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
+         this("3.1.1", "1.1.0", schemaLocations);
     }
 
     public JAXPStreamFeatureWriter(final String gmlVersion, final String wfsVersion, final Map<String, String> schemaLocations)  {
@@ -162,10 +168,19 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             this.schemaLocations.put(wfsNamespace, wfsLocation);
             this.schemaLocations.put(gmlNamespace, gmlLocation);
         }
+
+        commonPrefixes.put("gml", gmlNamespace);
+        commonPrefixes.put("xsi", XSI_NAMESPACE);
+        commonPrefixes.put("xlink", GMLConvention.XLINK_NAMESPACE);
     }
 
-    public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
-         this("3.1.1", "1.1.0", schemaLocations);
+    /**
+     * Map of prefixes to namespace mapping which will always be written at the beginning.
+     * Must be modified before writing.
+     * @return
+     */
+    public Map<String, String> getCommonPrefixes() {
+        return commonPrefixes;
     }
 
     /**
@@ -204,10 +219,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             writer.writeAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
         }
 
-        writer.writeNamespace("gml", gmlNamespace);
+        writeCommonNamespaces();
         writer.writeNamespace("wfs", wfsNamespace);
-        writer.writeNamespace("xsi", XSI_NAMESPACE);
-        writer.writeNamespace("xlink", GMLConvention.XLINK_NAMESPACE);
 
         final String schemaLocation = buildSchemaLocationString(schemaLocations);
         if (!schemaLocation.isEmpty()) {
@@ -307,8 +320,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 writer.writeAttribute("gml", gmlNamespace, "id", gmlid);
             }
             if (root) {
-                writer.writeNamespace("gml", gmlNamespace);
-                writer.writeNamespace("xsi", XSI_NAMESPACE);
+                writeCommonNamespaces();
+                writeNamespaces(feature.getType());
                 if (!namespace.equals(gmlNamespace)) {
                     writer.writeNamespace(prefix.prefix, namespace);
                 }
@@ -882,6 +895,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     @Override
     public void dispose() throws IOException, XMLStreamException {
         super.dispose();
+    }
+
+    private void writeCommonNamespaces() throws XMLStreamException {
+        for (Entry<String,String> entry : commonPrefixes.entrySet()) {
+            writer.writeNamespace(entry.getKey(), entry.getValue());
+        }
     }
 
     private void writeNamespaces(FeatureType type) throws XMLStreamException {
