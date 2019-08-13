@@ -16,22 +16,19 @@
  */
 package org.geotoolkit.geometry.jts;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.sis.referencing.CommonCRS;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.geotoolkit.factory.HintsPending;
-import org.apache.sis.referencing.CommonCRS;
-import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.junit.Assert.*;
-import org.locationtech.jts.algorithm.Orientation;
 
 /**
  * Test JTS utility class
@@ -66,13 +63,13 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
         //user data contained a Map with another CRS
         final Point geom3 = GF.createPoint(new Coordinate(50, 27));
         Map<String,CoordinateReferenceSystem> dataMap = new HashMap<String,CoordinateReferenceSystem>();
-        dataMap.put(HintsPending.JTS_GEOMETRY_CRS, CommonCRS.SPHERE.normalizedGeographic());
+        dataMap.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, CommonCRS.SPHERE.normalizedGeographic());
         geom3.setUserData(dataMap);
 
         JTS.setCRS(geom3, crs);
         final Object userData3 = geom3.getUserData();
         Map values = (Map) userData3;
-        assertEquals(crs, values.get(HintsPending.JTS_GEOMETRY_CRS));
+        assertEquals(crs, values.get(org.apache.sis.internal.feature.jts.JTS.CRS_KEY));
 
     }
 

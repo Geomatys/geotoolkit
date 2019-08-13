@@ -38,7 +38,6 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.display.shape.ShapeUtilities;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -768,7 +767,7 @@ public final class JTS {
         } else {
             if (userData instanceof Map) {
                 Map values = (Map) userData;
-                values.put(HintsPending.JTS_GEOMETRY_CRS, crs);
+                values.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, crs);
                 userData = values;
             }
         }
@@ -801,7 +800,7 @@ public final class JTS {
             crs = (CoordinateReferenceSystem) userData;
         } else if (userData instanceof Map) {
             final Map values = (Map) userData;
-            final Object candidate = values.get(HintsPending.JTS_GEOMETRY_CRS);
+            final Object candidate = values.get(org.apache.sis.internal.feature.jts.JTS.CRS_KEY);
             if (candidate instanceof CoordinateReferenceSystem) {
                 crs = (CoordinateReferenceSystem) candidate;
             }

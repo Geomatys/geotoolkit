@@ -35,7 +35,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractCurveSegment;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -270,7 +269,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 values = (Map) userData;
             } else if (userData instanceof CoordinateReferenceSystem) {
                 values = new HashMap();
-                values.put(HintsPending.JTS_GEOMETRY_CRS, userData);
+                values.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, userData);
             } else if (userData == null) {
                 values = new HashMap();
             } else {

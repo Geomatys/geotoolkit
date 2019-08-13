@@ -17,22 +17,18 @@
 
 package org.geotoolkit.geometry.jts;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.geotoolkit.factory.HintsPending;
-import org.junit.Test;
-
-import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.CommonCRS;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -109,8 +105,8 @@ public class SRIDTest {
         CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(geom);
         assertNull(crs);
 
-        final Map<String,Object> map = new HashMap<String, Object>();
-        map.put(HintsPending.JTS_GEOMETRY_CRS, epsg4326);
+        final Map<String,Object> map = new HashMap<>();
+        map.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, epsg4326);
 
         geom.setUserData(map);
         crs = JTS.findCoordinateReferenceSystem(geom);
