@@ -43,16 +43,12 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.StorageListener;
 import org.opengis.style.Description;
 import org.opengis.style.Style;
 
@@ -112,7 +108,6 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
     public static class Cell<T> extends TreeTableCell<T,String> implements ChangeListener<ChangeEvent>{
 
         private final TextField textField = new TextField();
-        private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
 
         public Cell(){
             textField.setMaxWidth(Double.POSITIVE_INFINITY);
@@ -168,7 +163,6 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             final TreeItem ti = row.getTreeItem();
             if(ti==null) return;
 
-            weakListener.unregisterAll();
             if (ti instanceof StyleMapItem) {
                 final BorderPane pane = new BorderPane(createIcon());
                 pane.setMaxSize(BorderPane.USE_COMPUTED_SIZE,Double.MAX_VALUE);
@@ -178,17 +172,6 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
                 setGraphic(createIcon());
 
                 final Object object = ti.getValue();
-                if(object instanceof FeatureMapLayer){
-                    final FeatureMapLayer fml = (FeatureMapLayer) object;
-                    final FeatureSet resource = fml.getResource();
-                    if (resource instanceof FeatureCollection) {
-                        final Session session = ((FeatureCollection)resource).getSession();
-                        weakListener.registerSource(session);
-                        if(session.hasPendingChanges()){
-                            setText(getText()+" *");
-                        }
-                    }
-                }
                 if (object instanceof MapLayer) {
                     Description description = ((MapLayer) object).getDescription();
                     if (description != null && description.getAbstract() != null) {
