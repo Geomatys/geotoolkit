@@ -53,6 +53,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  * @module
+ * @deprecated replaced by Apache SIS FeatureSet
  */
 public interface FeatureCollection extends Collection<Feature>, WritableFeatureSet {
 

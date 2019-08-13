@@ -40,20 +40,6 @@ public final class HintsPending extends Hints {
      */
     public static String JTS_GEOMETRY_CRS = "JTSGeometryCRS";
 
-    /**
-     * The {@code org.locationtech.jts.geom.GeometryFactory} instance to use.
-     *
-     */
-    public static final ClassKey JTS_GEOMETRY_FACTORY = new ClassKey(
-            "org.locationtech.jts.geom.GeometryFactory");
-
-    /**
-     * The {@code org.locationtech.jts.geom.CoordinateSequenceFactory} instance to use.
-     *
-     */
-    public static final ClassKey JTS_COORDINATE_SEQUENCE_FACTORY = new ClassKey(
-            "org.locationtech.jts.geom.CoordinateSequenceFactory");
-
     ////////////////////////////////////////////////////////////////////////
     ////////                                                        ////////
     ////////                        Features                        ////////
@@ -72,23 +58,9 @@ public final class HintsPending extends Hints {
     public static final Key UPDATE_ID_ON_INSERT = new Key(Boolean.class);
 
     /**
-     * An implementation of featurestore might use some properties of the feature type
-     * to generate the feature id. To avoid some unexpected modification it
-     * might be usefull to hide thoses fields.
-     */
-    public static final Key FEATURE_HIDE_ID_PROPERTY = new Key(Boolean.class);
-
-    /**
      * Used to identify a PropertyDescriptor if he is part of the FeatureID.
      */
     public static final Key PROPERTY_IS_IDENTIFIER = new Key(Boolean.class);
-
-    /**
-     * Used to identify a PropertyDescriptor if the underlying property is
-     * dynamicly calculated. thoses properties can not be changed.
-     */
-    public static final Key PROPERTY_IS_CALCULATED = new Key(Boolean.class);
-
 
     /**
      * This flag indicates that the featurestore can ignore features which are smaller
