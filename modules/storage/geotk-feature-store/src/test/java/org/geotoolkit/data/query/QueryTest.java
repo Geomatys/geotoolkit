@@ -166,10 +166,10 @@ public class QueryTest {
         qb.setCRS(CommonCRS.WGS84.normalizedGeographic());
         qb.setResolution(new double[]{45,31});
         qb.setFilter(Filter.EXCLUDE);
-        qb.setMaxFeatures(10);
+        qb.setLimit(10);
         qb.setProperties(new String[]{"att1","att2"});
         qb.setSortBy(new SortBy[]{FF.sort("att1", SortOrder.DESCENDING)});
-        qb.setStartIndex(5);
+        qb.setOffset(5);
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name.toString());

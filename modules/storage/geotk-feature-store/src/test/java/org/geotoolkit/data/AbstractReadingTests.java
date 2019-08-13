@@ -452,7 +452,7 @@ public abstract class AbstractReadingTests {
             qb.reset();
             qb.setTypeName(candidate.name);
             //skip the first element
-            qb.setStartIndex(1);
+            qb.setOffset(1);
             query = qb.buildQuery();
 
             ite = store.getFeatureReader(query);
@@ -473,7 +473,7 @@ public abstract class AbstractReadingTests {
             qb.reset();
             qb.setTypeName(candidate.name);
             //skip the first element
-            qb.setMaxFeatures(1);
+            qb.setLimit(1);
             query = qb.buildQuery();
 
             int i = 0;

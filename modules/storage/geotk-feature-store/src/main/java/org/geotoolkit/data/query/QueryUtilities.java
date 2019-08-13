@@ -77,7 +77,7 @@ public class QueryUtilities {
                 max = Math.min(max, second.getLimit());
             }
         }
-        qb.setMaxFeatures(max);
+        qb.setLimit(max);
 
         //join attributes names-------------------------------------------------
         final String[] propNames = retainAttributes(
@@ -105,7 +105,7 @@ public class QueryUtilities {
 
         //group start index ----------------------------------------------------
         long start = original.getOffset() + second.getOffset();
-        qb.setStartIndex(start);
+        qb.setOffset(start);
 
         //ordering -------------------------------------------------------------
         final List<SortBy> sorts = new ArrayList<SortBy>();
@@ -235,9 +235,9 @@ public class QueryUtilities {
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(typeName);
         builder.setFilter(filter);
-        builder.setMaxFeatures(maxFeatures);
+        builder.setLimit(maxFeatures);
         builder.setProperties(propNames);
-        builder.setStartIndex(start);
+        builder.setOffset(start);
 
         //mix versions, second query version takes precedence.
         if(firstQuery.getVersionDate()!=null) builder.setVersionDate(firstQuery.getVersionDate());

@@ -63,7 +63,6 @@ public final class QueryBuilder {
     private long maxFeatures = -1;
     private Hints hints = null;
     private double[] resolution = null;
-    private String language = Query.GEOTK_QOM;
     private Object version = null;
 
     public QueryBuilder(){
@@ -140,19 +139,19 @@ public final class QueryBuilder {
         this.sortBy = sortBy;
     }
 
-    public long getStartIndex() {
+    public long getOffset() {
         return startIndex;
     }
 
-    public void setStartIndex(final long startIndex) {
+    public void setOffset(final long startIndex) {
         this.startIndex = startIndex;
     }
 
-    public long getMaxFeatures() {
+    public long getLimit() {
         return maxFeatures;
     }
 
-    public void setMaxFeatures(final long maxFeatures) {
+    public void setLimit(final long maxFeatures) {
         this.maxFeatures = maxFeatures;
     }
 

@@ -18,10 +18,6 @@
 
 package org.geotoolkit.data.memory;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,40 +27,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.filter.sort.DefaultSortBy;
-import org.apache.sis.referencing.CRS;
 import org.junit.AfterClass;
+import org.junit.Assert;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.DataStoreException;
-import org.junit.Assert;
-import static org.junit.Assert.*;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -215,7 +214,8 @@ public class MemoryDatastoreTest {
         }
 
         //check that we really have 10 features now
-        reader = store.getFeatureReader(QueryBuilder.sorted(name.toString(),new SortBy[]{new DefaultSortBy(FF.property("att1"), SortOrder.ASCENDING)}));
+        reader = store.getFeatureReader(
+                QueryBuilder.sorted(name.toString(),new SortBy[]{FF.sort("att1", SortOrder.ASCENDING)}));
         count = 0;
         try{
             while(reader.hasNext()){
@@ -523,7 +523,7 @@ public class MemoryDatastoreTest {
         //TEST start index -----------------------------------------------------
         qb.reset();
         qb.setTypeName(name);
-        qb.setStartIndex(1);
+        qb.setOffset(1);
         qb.setSortBy(new SortBy[]{FF.sort("date", SortOrder.DESCENDING)});
         query = qb.buildQuery();
 
@@ -549,7 +549,7 @@ public class MemoryDatastoreTest {
         //TEST max features ----------------------------------------------------
         qb.reset();
         qb.setTypeName(name);
-        qb.setMaxFeatures(1);
+        qb.setLimit(1);
         qb.setSortBy(new SortBy[]{FF.sort("date", SortOrder.DESCENDING)});
         query = qb.buildQuery();
 

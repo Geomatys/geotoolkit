@@ -19,7 +19,8 @@ package org.geotoolkit.filter;
 
 import java.util.List;
 import java.util.Set;
-
+import org.apache.sis.filter.DefaultFilterFactory;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsEqualTo;
 import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsGreaterThan;
 import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsGreaterThanOrEqualTo;
@@ -30,8 +31,6 @@ import org.geotoolkit.filter.binaryexpression.DefaultAdd;
 import org.geotoolkit.filter.binaryexpression.DefaultDivide;
 import org.geotoolkit.filter.binaryexpression.DefaultMultiply;
 import org.geotoolkit.filter.binaryexpression.DefaultSubtract;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.filter.identity.DefaultGmlObjectId;
 import org.geotoolkit.filter.binarylogic.DefaultAnd;
 import org.geotoolkit.filter.binarylogic.DefaultOr;
 import org.geotoolkit.filter.binaryspatial.DefaultBBox;
@@ -56,7 +55,8 @@ import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
-import org.geotoolkit.filter.sort.DefaultSortBy;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.filter.identity.DefaultGmlObjectId;
 import org.geotoolkit.filter.temporal.DefaultAfter;
 import org.geotoolkit.filter.temporal.DefaultAnyInteracts;
 import org.geotoolkit.filter.temporal.DefaultBefore;
@@ -72,11 +72,8 @@ import org.geotoolkit.filter.temporal.DefaultTContains;
 import org.geotoolkit.filter.temporal.DefaultTEquals;
 import org.geotoolkit.filter.temporal.DefaultTOverlaps;
 import org.geotoolkit.geometry.BoundingBox;
-import org.apache.sis.referencing.CRS;
-
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.MatchAction;
 import org.opengis.filter.Not;
@@ -109,7 +106,6 @@ import org.opengis.filter.capability.TemporalOperators;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
@@ -117,8 +113,6 @@ import org.opengis.filter.expression.Subtract;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.GmlObjectId;
 import org.opengis.filter.identity.Identifier;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
 import org.opengis.filter.spatial.Contains;
@@ -146,9 +140,9 @@ import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Default implementation of a Types filterFactory.
@@ -157,7 +151,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultFilterFactory2 implements FilterFactory2{
+public class DefaultFilterFactory2 extends DefaultFilterFactory {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -846,14 +840,6 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Function function(final String name, final Expression ... parameters) {
-        return org.geotoolkit.filter.function.Functions.function(name, null, parameters);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Literal literal(final Object obj) {
         if(obj instanceof Envelope && !(obj instanceof BoundingBox) ){
             //special case for envelopes to change them in JTS geometries
@@ -925,21 +911,6 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     @Override
     public Literal literal(final boolean b) {
         return new DefaultLiteral<Boolean>(b);
-    }
-
-////////////////////////////////////////////////////////////////////////////////
-//
-//  SORT BY
-//
-////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SortBy sort(final String propertyName, final SortOrder order) {
-        final PropertyName name = property(propertyName);
-        return new DefaultSortBy(name,order);
     }
 
 ////////////////////////////////////////////////////////////////////////////////
