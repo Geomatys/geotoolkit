@@ -28,15 +28,11 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.AbstractFeatureCollection;
+import org.apache.sis.storage.FeatureSet;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_32_NAMESPACE;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.query.QueryBuilder;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -54,7 +50,6 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -79,8 +74,8 @@ public class XmlTestData {
     public static final Feature simpleFeature1;
     public static final Feature simpleFeature2;
     public static final Feature simpleFeature3;
-    public static final FeatureCollection collectionSimple;
-    public static final FeatureCollection collectionSimple2;
+    public static final FeatureSet collectionSimple;
+    public static final FeatureSet collectionSimple2;
     public static final Feature featureComplex;
     public static final Feature featureWithAttributes;
     public static final Feature featureWithObject;
@@ -353,18 +348,9 @@ public class XmlTestData {
         simpleFeature3.setPropertyValue("attString","a text composed of words.");
         simpleFeature3.setPropertyValue("attDouble",12.31d);
 
-        FeatureCollection c = FeatureStoreUtilities.collection("one of a kind ID", simpleTypeBasic);
-        c.add(simpleFeature1);
-        c.add(simpleFeature2);
-        c.add(simpleFeature3);
-        try {
-            collectionSimple = c.subset(QueryBuilder.sorted(c.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
-        } catch (DataStoreException ex) {
-            throw new RuntimeException(ex.getMessage(),ex);
-        }
-
-        final NamedIdentifier ident = new NamedIdentifier(NamesExt.create("one-of-a-kind-ID"));
-        ((AbstractFeatureCollection)collectionSimple).setIdentifier(ident);
+        //sorted by attDouble ascending
+        collectionSimple = new ArrayFeatureSet(NamesExt.create("one-of-a-kind-ID"),
+                simpleTypeBasic, Arrays.asList(simpleFeature3, simpleFeature2, simpleFeature1), null);
 
         Feature s1 = simpleTypeBasic2.newInstance();
         s1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id90");
@@ -381,18 +367,8 @@ public class XmlTestData {
         s3.setPropertyValue("attString2","a text composed of words.");
         s3.setPropertyValue("attDouble2",12.31d);
 
-        FeatureCollection c2 = FeatureStoreUtilities.collection("one-of-a-kind-ID", simpleTypeBasic2);
-        c2.add(s1);
-        c2.add(s2);
-        c2.add(s3);
-        try {
-            collectionSimple2 = c2.subset(QueryBuilder.sorted(c.getType().getName().toString(), FF.sort("attDouble2", SortOrder.ASCENDING)));
-        } catch (DataStoreException ex) {
-            throw new RuntimeException(ex.getMessage(),ex);
-        }
-
-        final NamedIdentifier ident2 = new NamedIdentifier(NamesExt.create("one-of-a-kind-ID-2"));
-        ((AbstractFeatureCollection)collectionSimple2).setIdentifier(ident2);
+        collectionSimple2 = new ArrayFeatureSet(NamesExt.create("one-of-a-kind-ID-2"),
+                simpleTypeBasic2, Arrays.asList(s3, s2, s1), null);
 
         featureComplex = complexType.newInstance();
         featureComplex.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-0");

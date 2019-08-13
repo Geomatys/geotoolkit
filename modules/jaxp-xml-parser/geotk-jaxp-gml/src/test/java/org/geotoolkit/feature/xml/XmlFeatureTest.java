@@ -48,7 +48,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
@@ -351,7 +350,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
             Iterator<Feature> resultIte = resultS.iterator();
             Iterator<Feature> expectedIte = expectedS.iterator();
 
-            assertEquals(collectionSimple.size(), FeatureStoreUtilities.getCount(result).intValue());
+            assertEquals(FeatureStoreUtilities.getCount(collectionSimple), FeatureStoreUtilities.getCount(result));
             assertEquals(collectionSimple.getIdentifier().get().toString(), result.getIdentifier().get().toString());
             assertEquals(collectionSimple.getType(), result.getType());
 
@@ -381,7 +380,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof FeatureCollection);
+        assertTrue(obj instanceof FeatureSet);
 
         reader = new JAXPStreamFeatureReader();
         reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
@@ -390,13 +389,13 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT2.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof FeatureCollection);
+        assertTrue(obj instanceof FeatureSet);
 
         obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT3.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof FeatureCollection);
+        assertTrue(obj instanceof FeatureSet);
     }
 
     @Test
