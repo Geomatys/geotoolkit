@@ -27,14 +27,14 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -85,7 +85,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         sftb.addAttribute(Polygon.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         final FeatureType sft = sftb.build();
 
-        final FeatureCollection collection = FeatureStoreUtilities.collection("id", sft);
+        final WritableFeatureSet collection = new ArrayFeatureSet("id", sft);
         final Feature f = sft.newInstance();
 
         final GeometryFactory gf = new GeometryFactory();
@@ -99,9 +99,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         f.setPropertyValue("id", "id-0");
         f.setPropertyValue("geom", pol);
 
-        collection.add(f);
-
-        assertTrue(collection.size() == 1);
+        collection.add(Arrays.asList(f).iterator());
 
 
         MapLayer layer = MapBuilder.createFeatureLayer(collection, sf.style(sf.polygonSymbolizer()));

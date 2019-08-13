@@ -36,8 +36,6 @@ import java.util.Arrays;
 import javax.measure.Unit;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
@@ -47,7 +45,6 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -55,6 +52,9 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.Test;
 import org.opengis.style.Description;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.internal.data.ArrayFeatureSet;
+import org.geotoolkit.map.MapLayer;
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
@@ -85,7 +85,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         feature.setPropertyValue("geom",GF.createPoint(new Coordinate(0, 0)));
 
-        final FeatureCollection collection = FeatureStoreUtilities.collection(feature);
+        final FeatureSet collection = new ArrayFeatureSet(type, Arrays.asList(feature), null);
 
         //text symbolizer style
         final String name = "mySymbol";
@@ -104,7 +104,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final TextSymbolizer symbol = SF.textSymbolizer(name, geometry, desc, unit, label, font, placement, halo, fill);
         final MutableStyle style = SF.style(symbol);
-        final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
+        final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
 
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);

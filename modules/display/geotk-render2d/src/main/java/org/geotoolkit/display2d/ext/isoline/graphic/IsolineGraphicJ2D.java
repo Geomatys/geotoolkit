@@ -29,7 +29,6 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -223,7 +222,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 return false;
             }
             final GridCoverage coverage = output.getValue(KrigingDescriptor.OUT_COVERAGE);
-            final FeatureCollection isolines = output.getValue(KrigingDescriptor.OUT_LINES);
+            final FeatureSet isolines = output.getValue(KrigingDescriptor.OUT_LINES);
 
             if(coverage != null){
                 if(interpolateCoverageColor){

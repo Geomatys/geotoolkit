@@ -20,9 +20,7 @@ package org.geotoolkit.display2d.container.statefull;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.storage.StorageListener;
@@ -40,9 +38,8 @@ public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMap
         super(canvas, layer, false);
 
         final FeatureSet resource = layer.getResource();
-        if (resource instanceof FeatureCollection) {
-            final Session session = ((FeatureCollection)resource).getSession();
-            weakSessionListener.registerSource(session);
+        if (resource instanceof FeatureSet) {
+            weakSessionListener.registerSource(resource);
         }
     }
 

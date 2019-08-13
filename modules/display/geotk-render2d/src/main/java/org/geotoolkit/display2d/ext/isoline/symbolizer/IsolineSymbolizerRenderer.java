@@ -25,11 +25,11 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -156,7 +156,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     /////////////////////
                     // 2.2 - Compute isolines
                     ////////////////////
-                    FeatureCollection isolines = null;
+                    FeatureSet isolines = null;
                     ProcessDescriptor isolineDesc = symbol.getIsolineDesc();
                     if (isolineDesc != null) {
                         final Parameters inputs = Parameters.castOrWrap(isolineDesc.getInputDescriptor().createValue());
@@ -165,13 +165,13 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                         inputs.getOrCreate(IsolineDescriptor2.INTERVALS).setValue(intervales);
                         final org.geotoolkit.process.Process process = isolineDesc.createProcess(inputs);
                         final ParameterValueGroup result = process.call();
-                        isolines = (FeatureCollection) result.parameter(IsolineDescriptor2.FCOLL.getName().getCode()).getValue();
+                        isolines = (FeatureSet) result.parameter(IsolineDescriptor2.FCOLL.getName().getCode()).getValue();
                     }
 
                     /////////////////////
                     // 2.3 - Render isolines
                     ////////////////////
-                    if (isolines != null && !isolines.isEmpty()) {
+                    if (isolines != null) {
                         MutableStyle featureStyle = null;
                         if (textSymbolizer != null) {
                             featureStyle = GO2Utilities.STYLE_FACTORY.style(lineSymbolizer, textSymbolizer);
