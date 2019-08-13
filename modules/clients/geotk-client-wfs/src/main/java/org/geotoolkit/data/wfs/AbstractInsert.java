@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.wfs;
 
-import org.geotoolkit.data.FeatureCollection;
+import org.apache.sis.storage.FeatureSet;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class AbstractInsert implements Insert{
 
-    protected FeatureCollection features;
+    protected FeatureSet features;
     protected String handle = null;
     protected CoordinateReferenceSystem crs = null;
     protected String inputFormat = null;
@@ -73,12 +73,12 @@ public class AbstractInsert implements Insert{
     }
 
     @Override
-    public FeatureCollection getFeatures() {
+    public FeatureSet getFeatures() {
         return features;
     }
 
     @Override
-    public void setFeatures(final FeatureCollection fc) {
+    public void setFeatures(final FeatureSet fc) {
         this.features = fc;
     }
 

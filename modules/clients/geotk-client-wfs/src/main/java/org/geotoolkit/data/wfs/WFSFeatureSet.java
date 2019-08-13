@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,15 +57,14 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.ChangeEvent;
 import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureStreams;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -72,6 +72,7 @@ import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
+import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.storage.FeatureMapUpdate;
@@ -248,18 +249,23 @@ public class WFSFeatureSet implements WritableFeatureSet {
     @Override
     public void add(Iterator<? extends Feature> newFeatures) throws DataStoreException {
 
-        final FeatureType featureType = getType();
+        final List<Feature> features = new ArrayList<>();
+        newFeatures.forEachRemaining(features::add);
+
+        if (features.isEmpty()) {
+            //nothing to add
+            return;
+        }
 
         final TransactionRequest request = store.createTransaction();
         final Insert insert = store.createInsertElement();
         insert.setInputFormat("text/xml; subtype=\"gml/3.1.1\"");
 
-        final FeatureCollection col = FeatureStoreUtilities.collection("", null);
-        newFeatures.forEachRemaining(col::add);
+        final FeatureType featureType = getType();
+        final FeatureSet col = new ArrayFeatureSet(NamesExt.create("id"), featureType, features, null);
         insert.setFeatures(col);
 
         request.elements().add(insert);
-
 
         InputStream response = null;
 
