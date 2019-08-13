@@ -74,11 +74,11 @@ public class MeasureUtilities {
                 Coordinate coord1 = coords[i];
                 Coordinate coord2 = coords[i+1];
 
-                pos.ordinates[0] = coord1.x;
-                pos.ordinates[1] = coord1.y;
+                pos.coordinates[0] = coord1.x;
+                pos.coordinates[1] = coord1.y;
                 calculator.setStartPoint(pos);
-                pos.ordinates[0] = coord2.x;
-                pos.ordinates[1] = coord2.y;
+                pos.coordinates[0] = coord2.x;
+                pos.coordinates[1] = coord2.y;
                 calculator.setEndPoint(pos);
 
                 length += calculator.getGeodesicDistance();
@@ -92,8 +92,6 @@ public class MeasureUtilities {
             return length;
 
         } catch (MismatchedDimensionException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
 

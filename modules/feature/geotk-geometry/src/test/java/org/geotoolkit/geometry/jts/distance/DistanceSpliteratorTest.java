@@ -87,12 +87,12 @@ public class DistanceSpliteratorTest {
                 "Computed distance",
                 isOrthodromic? t.orthodromicDistance : t.loxodromicDistance,
                 totalDistance / 1000, // meter to kilometer
-                isOrthodromic ? EngineTest.SPHERICAL_ERROR : EngineTest.EPSI
+                isOrthodromic ? EngineTest.EPSI : EngineTest.LOXODROMIC_ERROR
         );
     }
 
     private static UnaryOperator<Coordinate> getTransformer(final CoordinateReferenceSystem target) throws FactoryException {
-        if (org.apache.sis.util.Utilities.equalsApproximatively(target, CommonCRS.defaultGeographic())) {
+        if (org.apache.sis.util.Utilities.equalsApproximately(target, CommonCRS.defaultGeographic())) {
             return UnaryOperator.identity();
         } else {
             final CoordinateOperation op = CRS.findOperation(CommonCRS.defaultGeographic(), target, null);
@@ -125,7 +125,7 @@ public class DistanceSpliteratorTest {
         final double orthodromicDistance;
         final double loxodromicDistance;
 
-        public Travel(CoordinateSequence polyline, double orthodromicDistance, double loxodromicDistance) {
+        Travel(CoordinateSequence polyline, double orthodromicDistance, double loxodromicDistance) {
             this.polyline = polyline;
             this.orthodromicDistance = orthodromicDistance;
             this.loxodromicDistance = loxodromicDistance;

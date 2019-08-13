@@ -123,8 +123,6 @@ public final class CanvasUtilities {
             try {
                 gc.setStartPoint(pos1);
                 gc.setEndPoint(pos2);
-            } catch (TransformException ex) {
-                throw new TransformException(ex.getLocalizedMessage(), ex);
             } catch (IllegalArgumentException ex) {
                 //might happen when changing projection and moving the area.
                 //the coordinate can be out of the crs area, which causes this exception

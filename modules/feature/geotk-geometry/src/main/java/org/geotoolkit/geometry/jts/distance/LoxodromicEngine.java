@@ -8,7 +8,6 @@ import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.util.ArgumentChecks;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -52,12 +51,8 @@ public class LoxodromicEngine implements ToDoubleBiFunction<Coordinate, Coordina
      */
     @Override
     public double applyAsDouble(Coordinate start, Coordinate end) {
-        try {
-            engine.setStartPoint(new DirectPosition2D(start.x, start.y));
-            engine.setEndPoint(new DirectPosition2D(end.x, end.y));
-        } catch (TransformException e) {
-            throw new IllegalArgumentException(e);
-        }
+        engine.setStartPoint(new DirectPosition2D(start.x, start.y));
+        engine.setEndPoint(new DirectPosition2D(end.x, end.y));
         return toMeters.convert(engine.getRhumblineLength());
     }
 }

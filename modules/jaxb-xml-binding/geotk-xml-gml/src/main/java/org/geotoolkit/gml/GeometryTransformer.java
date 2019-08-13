@@ -33,7 +33,6 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.HintsPending;
@@ -1037,12 +1036,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
             azimuth = ((azimuth + 180) % 360) - 180;
             gc.setStartingAzimuth(azimuth);
             gc.setGeodesicDistance(r);
-            final DirectPosition pt;
-            try {
-                pt = gc.getEndPoint();
-            } catch (TransformException ex) {
-                throw new BackingStoreException(ex);
-            }
+            final DirectPosition pt = gc.getEndPoint();
             return new Coordinate(
                 pt.getOrdinate(xAxis),
                 pt.getOrdinate(yAxis)
