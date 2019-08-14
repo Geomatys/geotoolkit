@@ -16,17 +16,21 @@
  */
 package org.geotoolkit.data.geojson.utils;
 
-import org.locationtech.jts.geom.*;
-import org.locationtech.jts.geom.impl.CoordinateArraySequence;
-import org.geotoolkit.data.geojson.binding.*;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.lang.Static;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
-
 import java.util.Arrays;
 import java.util.Collections;
+import org.geotoolkit.data.geojson.binding.*;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONLineString;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiLineString;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiPoint;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONMultiPolygon;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONPoint;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONPolygon;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.lang.Static;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -231,7 +235,8 @@ public final class GeometryUtils extends Static {
     private static double[] toArray(Coordinate coord) {
         double x = coord.getOrdinate(0);
         double y = coord.getOrdinate(1);
-        double z = coord.getOrdinate(2);
+        //do not use getOrdinate for Z, may raise an exception
+        double z = coord.getZ();
 
         if (Double.isNaN(z)) {
             return new double[] {x, y};
