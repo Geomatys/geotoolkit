@@ -356,7 +356,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         if (root) {
             writeNamespaces(featureSet.getType());
         }
-        writeBounds(featureSet.getEnvelope().orElse(null), writer);
+        //get or compute envelope
+        Envelope envelope = FeatureStoreUtilities.getEnvelope(featureSet);
+        writeBounds(envelope, writer);
 
         // we write each feature member of the collection
         try (Stream<Feature> stream = featureSet.features(false)) {
