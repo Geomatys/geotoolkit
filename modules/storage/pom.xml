@@ -113,6 +113,7 @@
     <module>geotk-coverage-wkb</module>
     <module>geotk-coverage-timed</module>
     <module>geotk-coverage-hgt</module>
+    <module>geotk-coverage-vi3g</module>
     <module>geotk-observation-store</module>
     <module>geotk-metadata-store</module>
   </modules>
