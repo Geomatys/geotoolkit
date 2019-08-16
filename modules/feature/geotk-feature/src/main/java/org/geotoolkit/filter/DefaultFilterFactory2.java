@@ -57,20 +57,6 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.filter.identity.DefaultGmlObjectId;
-import org.geotoolkit.filter.temporal.DefaultAfter;
-import org.geotoolkit.filter.temporal.DefaultAnyInteracts;
-import org.geotoolkit.filter.temporal.DefaultBefore;
-import org.geotoolkit.filter.temporal.DefaultBegins;
-import org.geotoolkit.filter.temporal.DefaultBegunBy;
-import org.geotoolkit.filter.temporal.DefaultDuring;
-import org.geotoolkit.filter.temporal.DefaultEndedBy;
-import org.geotoolkit.filter.temporal.DefaultEnds;
-import org.geotoolkit.filter.temporal.DefaultMeets;
-import org.geotoolkit.filter.temporal.DefaultMetBy;
-import org.geotoolkit.filter.temporal.DefaultOverlappedBy;
-import org.geotoolkit.filter.temporal.DefaultTContains;
-import org.geotoolkit.filter.temporal.DefaultTEquals;
-import org.geotoolkit.filter.temporal.DefaultTOverlaps;
 import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -124,20 +110,6 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.AnyInteracts;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.Meets;
-import org.opengis.filter.temporal.MetBy;
-import org.opengis.filter.temporal.OverlappedBy;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
-import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -678,125 +650,6 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
     public PropertyIsNil isNil(Expression expr) {
         return new DefaultPropertyIsNil(expr);
     }
-
-////////////////////////////////////////////////////////////////////////////////
-//
-//  TEMPORAL FILTER
-//
-////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public After after(Expression expr1, Expression expr2) {
-        return new DefaultAfter(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public AnyInteracts anyInteracts(Expression expr1, Expression expr2) {
-        return new DefaultAnyInteracts(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Before before(Expression expr1, Expression expr2) {
-        return new DefaultBefore(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Begins begins(Expression expr1, Expression expr2) {
-        return new DefaultBegins(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public BegunBy begunBy(Expression expr1, Expression expr2) {
-        return new DefaultBegunBy(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public During during(Expression expr1, Expression expr2) {
-        return new DefaultDuring(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Ends ends(Expression expr1, Expression expr2) {
-        return new DefaultEnds(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public EndedBy endedBy(Expression expr1, Expression expr2) {
-        return new DefaultEndedBy(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Meets meets(Expression expr1, Expression expr2) {
-        return new DefaultMeets(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public MetBy metBy(Expression expr1, Expression expr2) {
-        return new DefaultMetBy(expr1,expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public OverlappedBy overlappedBy(Expression expr1, Expression expr2) {
-        return new DefaultOverlappedBy(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public TContains tcontains(Expression expr1, Expression expr2) {
-        return new DefaultTContains(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public TEquals tequals(Expression expr1, Expression expr2) {
-        return new DefaultTEquals(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public TOverlaps toverlaps(Expression expr1, Expression expr2) {
-        return new DefaultTOverlaps(expr1, expr2);
-    }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
