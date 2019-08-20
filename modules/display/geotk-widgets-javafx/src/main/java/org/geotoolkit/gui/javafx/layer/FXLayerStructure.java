@@ -39,7 +39,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.amended.AmendedCoverageResource;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -280,14 +279,6 @@ public class FXLayerStructure extends FXPropertyPane {
                     }
                 }
             }
-
-            //override projection
-            if(ref instanceof AmendedCoverageResource){
-                final Tab taboverride = new Tab("Overrides");
-                taboverride.setContent(new FXCoverageDecoratorPane((AmendedCoverageResource) ref));
-                tabs.getTabs().add(taboverride);
-            }
-
 
         }
 

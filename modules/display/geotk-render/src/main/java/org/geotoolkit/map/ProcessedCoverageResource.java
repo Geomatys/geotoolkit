@@ -19,14 +19,13 @@ package org.geotoolkit.map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.storage.coverage.DefaultCoverageResource;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.memory.MemoryCoverageReader;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.Process;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.memory.MemoryCoverageResource;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -35,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ProcessedCoverageResource extends DefaultCoverageResource{
+public class ProcessedCoverageResource extends MemoryCoverageResource {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
 
@@ -48,7 +47,7 @@ public class ProcessedCoverageResource extends DefaultCoverageResource{
     private long lastCall = 0;
 
     public ProcessedCoverageResource(){
-        super(null, NamesExt.create("Processed"));
+        super(NamesExt.create("Processed"));
     }
 
     /**
@@ -170,12 +169,8 @@ public class ProcessedCoverageResource extends DefaultCoverageResource{
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
-        GridCoverage cov = getResult();
-        if (cov != null) {
-            return new MemoryCoverageReader(cov);
-        }
-        return null;
+    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        return getResult();
     }
 
 }

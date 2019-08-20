@@ -49,9 +49,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.memory.MemoryCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -60,13 +60,11 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -553,7 +551,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setGridGeometry(gg);
         final GridCoverage coverage = gcb.getGridCoverage2D();
 
-        final GridCoverageResource gcr = new DefaultCoverageResource(coverage, Names.createLocalName(null, null, CoverageUtilities.getName(coverage)));
+        final GridCoverageResource gcr = new MemoryCoverageResource(coverage);
         final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
         layer.setSelectable(true);
 
