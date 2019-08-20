@@ -18,6 +18,8 @@
 package org.geotoolkit.filter;
 
 
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.feature.FeatureExpression;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.binding.Binding;
@@ -126,8 +128,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
     }
 
     @Override
-    public PropertyType expectedType(FeatureType type) {
-        return (PropertyType) evaluate(type);
+    public PropertyTypeBuilder expectedType(FeatureType type, FeatureTypeBuilder addTo) {
+        return addTo.addProperty((PropertyType) evaluate(type));
     }
-
 }
