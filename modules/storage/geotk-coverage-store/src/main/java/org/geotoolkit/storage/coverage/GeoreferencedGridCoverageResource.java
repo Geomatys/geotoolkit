@@ -23,7 +23,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.storage.AbstractResource;
+import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
@@ -36,7 +36,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class GeoreferencedGridCoverageResource extends AbstractResource implements org.apache.sis.storage.GridCoverageResource {
+public abstract class GeoreferencedGridCoverageResource extends AbstractGridResource {
 
     protected GeoreferencedGridCoverageResource(Resource resource) {
         super(resource);
@@ -131,4 +131,21 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractResource
      */
     protected abstract GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling) throws DataStoreException;
 
+    /**
+     * Calculate the final size of each dimension.
+     *
+     * @param areaLower image features lower corner
+     * @param areaUpper image features upper corner
+     * @param subsampling image subsampling
+     */
+    public static long[] getResultExtent(int[] areaLower, int[] areaUpper, int[] subsampling) {
+
+        //calculate output size
+        final long[] outExtent = new long[areaLower.length];
+        for(int i=0;i<outExtent.length;i++){
+            outExtent[i] = (areaUpper[i]-areaLower[i]+subsampling[i]-1) / subsampling[i];
+        }
+
+        return outExtent;
+    }
 }
