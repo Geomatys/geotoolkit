@@ -507,14 +507,6 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsEqualTo equals(final Expression expr1, final Expression expr2) {
-        return equal(expr1,expr2,true, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public PropertyIsEqualTo equal(final Expression expr1,
             final Expression expr2, final boolean matchCase, MatchAction matchAction) {
         return new DefaultPropertyIsEqualTo(expr1, expr2, matchCase, matchAction);

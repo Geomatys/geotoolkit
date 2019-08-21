@@ -618,7 +618,7 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         filter = FF.lessOrEqual(aboveLiteral,property);
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));              // Needs to be assertTrue with JDK 10. TODO: investigate why!
         filter = FF.lessOrEqual(underLiteral,property);
         assertTrue(filter.evaluate(CANDIDATE_1));
 
