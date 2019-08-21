@@ -133,7 +133,7 @@ final class ProductEntry extends Entry {
         this.temporalResolution = temporalResolution;
         this.format             = format;
         this.metadata           = metadata;
-        this.namespace          = database.nameFactory.createNameSpace(database.nameFactory.createLocalName(null, name), null);
+        this.namespace          = database.nameFactory.createNameSpace(database.nameFactory.parseGenericName(null, name), null);
     }
 
     /**
