@@ -26,11 +26,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
@@ -44,6 +46,7 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.nio.IOUtilities;
@@ -83,19 +86,19 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
 
     private List<Resource> resources = null;
 
-    public FileCoverageStore(URL url, String format) throws URISyntaxException, IOException {
+    public FileCoverageStore(URL url, String format) throws URISyntaxException {
         this(toParameters(url.toURI(), format));
     }
 
-    public FileCoverageStore(Path path, String format) throws URISyntaxException, IOException {
+    public FileCoverageStore(Path path, String format) {
         this(toParameters(path.toUri(), format));
     }
 
-    public FileCoverageStore(URI uri, String format) throws URISyntaxException, IOException {
+    public FileCoverageStore(URI uri, String format) {
         this(toParameters(uri, format));
     }
 
-    public FileCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
+    public FileCoverageStore(ParameterValueGroup params) {
         super(params);
         Parameters p = Parameters.castOrWrap(params);
         rootPath = p.getValue(FileCoverageProvider.PATH);
@@ -103,15 +106,15 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
         format = p.getValue(FileCoverageProvider.TYPE);
         root = Paths.get(rootPath);
 
-        if("AUTO".equalsIgnoreCase(format)){
+        if ("AUTO".equalsIgnoreCase(format)) {
             spi = null;
-        }else{
+        } else {
             spi = XImageIO.getReaderSpiByFormatName(format);
         }
 
     }
 
-    private static ParameterValueGroup toParameters(URI uri, String format){
+    private static ParameterValueGroup toParameters(URI uri, String format) {
         final Parameters params = Parameters.castOrWrap(FileCoverageProvider.PARAMETERS_DESCRIPTOR.createValue());
         params.getOrCreate(FileCoverageProvider.PATH).setValue(uri);
         if (format!=null) {
@@ -250,7 +253,26 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
      */
     static ImageReader createReader(final Path candidate, ImageReaderSpi spi) throws IOException {
         final ImageReader reader;
+        search:
         if (spi == null) {
+            //we definitely can't trust ordering in image spi, this depends on so much initialization stuff
+            //sometimes properly called, sometimes not.
+            //Until total coverage api migration to SIS is finished NEVER EVER REMOVE THIS HACK
+            //I've spend so much time debugging spi order, fixing it and it comes back later because environment changed
+            //or whatever else. WorldFile must be first, ALWAYS tested before basic image readers.
+            final IIORegistry registry = IIORegistry.getDefaultInstance();
+            final Iterator<ImageReaderSpi> ite = registry.getServiceProviders(ImageReaderSpi.class, true);
+            while (ite.hasNext()) {
+                ImageReaderSpi sp = ite.next();
+                if (sp instanceof WorldFileImageReader.Spi) {
+                    if (sp.canDecodeInput(candidate)) {
+                        reader = sp.createReaderInstance();
+                        reader.setInput(candidate, false, false);
+                        break search;
+                    }
+                }
+            }
+
             reader = XImageIO.getReader(candidate, Boolean.FALSE, Boolean.FALSE);
         } else {
             Object in = XImageIO.toSupportedInput(spi, candidate);
@@ -282,7 +304,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements Resource
             }
 
             return XImageIO.getWriterByFormatName(readerSpi.getFormatNames()[0], candidate, null);
-        } else if (spi!=null) {
+        } else if (spi != null) {
             return XImageIO.getWriterByFormatName(spi.getFormatNames()[0], candidate, null);
         } else {
             final String extension = IOUtilities.extension(candidate);

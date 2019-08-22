@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.filestore;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -34,12 +33,12 @@ import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.image.io.SupportFiles;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.geotoolkit.storage.coverage.Bundle;
@@ -53,12 +52,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.GRID, canCreate = true, canWrite = true)
-public class FileCoverageProvider extends DataStoreFactory {
+public class FileCoverageProvider extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "coverage-file";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * Mandatory - the folder path
@@ -97,7 +94,7 @@ public class FileCoverageProvider extends DataStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName(NAME).addName("FileCoverageStoreParameters").createGroup(
-                IDENTIFIER, PATH, TYPE, PATH_SEPARATOR);
+                PATH, TYPE, PATH_SEPARATOR);
 
     static final Map<ImageReaderSpi,Boolean> SPIS = new HashMap<>();
     static {
@@ -155,14 +152,14 @@ public class FileCoverageProvider extends DataStoreFactory {
 
     @Override
     public DataStore open(ParameterValueGroup params) throws DataStoreException {
-        if(!canProcess(params)){
-            throw new DataStoreException("Can not process parameters.");
-        }
-        try {
-            return new FileCoverageStore(params);
-        } catch (IOException | URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
+        return new FileCoverageStore(params);
+    }
+
+    @Override
+    public DataStore open(StorageConnector connector) throws DataStoreException {
+        final URI path = connector.getStorageAs(URI.class);
+        if (path == null) throw new DataStoreException("Connector is not an URI");
+        return new FileCoverageStore(path, null);
     }
 
     @Override
@@ -240,11 +237,6 @@ public class FileCoverageProvider extends DataStoreFactory {
             }
         }
         return false;
-    }
-
-    @Override
-    public DataStore create(ParameterValueGroup params) throws DataStoreException {
-        return open(params);
     }
 
     /**
