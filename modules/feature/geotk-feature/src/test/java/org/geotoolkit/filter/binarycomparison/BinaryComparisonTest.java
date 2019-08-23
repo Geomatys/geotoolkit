@@ -28,8 +28,9 @@ import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+
 import org.opengis.filter.MatchAction;
 
 /**
@@ -38,13 +39,8 @@ import org.opengis.filter.MatchAction;
  * @module
  */
 public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
-
-    public BinaryComparisonTest() {
-    }
-
     @Test
     public void testIsEqualTo() {
-
         PropertyIsEqualTo filter;
         PropertyName property;
 
@@ -132,9 +128,9 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
 
         property = FF.property("time");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Uncomparable.
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Uncomparable.
 
         property = FF.property("datetime1");
         filter = FF.equals(property, rightliteral);
@@ -149,12 +145,10 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         assertFalse(filter.evaluate(CANDIDATE_1));
 
         assertSerializedEquals(filter); //test serialize
-
     }
 
     @Test
     public void testIsGreaterThan() {
-
         PropertyIsGreaterThan filter;
         PropertyName property;
 
@@ -232,7 +226,7 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
 
         property = FF.property("date");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));          // Would be true if the date had time fields set to zero.
         filter = FF.greater(equalLiteral,property);
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
@@ -254,15 +248,13 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         filter = FF.greater(underStrLiteral,property);
         assertFalse(filter.evaluate(CANDIDATE_1));
 
-
-
         property = FF.property("time");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Uncomparable
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Uncomparable
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Uncomparable
 
         property = FF.property("datetime1");
         filter = FF.greater(aboveLiteral,property);
@@ -281,12 +273,10 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
 //        assertFalse(filter.evaluate(FEATURE_1));
 
         assertSerializedEquals(filter); //test serialize
-
     }
 
     @Test
     public void testIsGreaterThanOrEqualTo() {
-
         PropertyIsGreaterThanOrEqualTo filter;
         PropertyName property;
 
@@ -368,15 +358,15 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         filter = FF.greaterOrEqual(equalLiteral,property);
         assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));               // Would be false if the date had time fields set to zero.
 
         property = FF.property("time");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));              // Uncomparable
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));              // Uncomparable
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));              // Uncomparable
 
         property = FF.property("datetime1");
         filter = FF.greaterOrEqual(aboveLiteral,property);
@@ -395,12 +385,10 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         assertFalse(filter.evaluate(CANDIDATE_1));
 
         assertSerializedEquals(filter); //test serialize
-
     }
 
     @Test
     public void testIsLessThan() {
-
         PropertyIsLessThan filter;
         PropertyName property;
 
@@ -482,15 +470,15 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         filter = FF.less(equalLiteral,property);
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Would be true if the date had time fields set to zero.
 
         property = FF.property("time");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Uncomparable
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Uncomparable
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Uncomparable
 
         property = FF.property("datetime1");
         filter = FF.less(aboveLiteral,property);
@@ -509,12 +497,10 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         assertTrue(filter.evaluate(CANDIDATE_1));
 
         assertSerializedEquals(filter); //test serialize
-
     }
 
     @Test
     public void testIsLessThanOrEqualTo() {
-
         PropertyIsLessThanOrEqualTo filter;
         PropertyName property;
 
@@ -592,7 +578,7 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
 
         property = FF.property("date");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));           // Equal because "date" compared with "date+time" in same day, even if hours are not zero.
         filter = FF.lessOrEqual(equalLiteral,property);
         assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
@@ -600,11 +586,11 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
 
         property = FF.property("time");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));          // Uncomparable.
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));          // Uncomparable.
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));          // Uncomparable.
 
         property = FF.property("datetime1");
         filter = FF.lessOrEqual(aboveLiteral,property);
@@ -618,17 +604,15 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         filter = FF.lessOrEqual(aboveLiteral,property);
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertFalse(filter.evaluate(CANDIDATE_1));              // Needs to be assertTrue with JDK 10. TODO: investigate why!
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
         assertTrue(filter.evaluate(CANDIDATE_1));
 
         assertSerializedEquals(filter); //test serialize
-
     }
 
     @Test
     public void testIsNotEqualTo() {
-
         PropertyIsNotEqualTo filter;
         PropertyName property;
 
@@ -709,15 +693,15 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         filter = FF.notEqual(property, rightliteral);
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertFalse(filter.evaluate(CANDIDATE_1)); // Would be false if we took hours in account, but the filter intentionally ignores hours if a date is java.sql.Date.
+        assertFalse(filter.evaluate(CANDIDATE_1));      // Would be false if we took hours in account, but the filter intentionally ignores hours if a date is java.sql.Date.
         filter = FF.notEqual(property, falseliteral2);
         assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("time");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));          // Uncomparable
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));          // Uncomparable
 
         property = FF.property("datetime1");
         filter = FF.notEqual(property, rightliteral);
@@ -732,12 +716,10 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         assertTrue(filter.evaluate(CANDIDATE_1));
 
         assertSerializedEquals(filter); //test serialize
-
     }
 
     @Test
     public void testMatchCase() {
-
         PropertyIsEqualTo filter;
         PropertyName property;
 
@@ -750,7 +732,5 @@ public class BinaryComparisonTest extends org.geotoolkit.test.TestBase {
         assertFalse(filter.evaluate(CANDIDATE_1));
 
         assertSerializedEquals(filter); //test serialize
-
     }
-
 }

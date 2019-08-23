@@ -98,7 +98,7 @@ public class FilterTestConstants {
         candidate.put("testString", "test string data");
         candidate.put("testString2", "cow $10");
         candidate.put("date", new java.sql.Date(DATE.getTime()));
-        candidate.put("time", new java.sql.Time(DATE.getTime()));
+        candidate.put("time", new java.sql.Time(DATE.getTime()));       // TODO: illegal java.sql.Time!
         candidate.put("datetime1", DATE);
         candidate.put("datetime2", new java.sql.Timestamp(DATE.getTime()));
         candidate.put("testNull", null);

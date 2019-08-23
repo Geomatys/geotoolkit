@@ -21,12 +21,6 @@ import java.util.List;
 import java.util.Set;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsEqualTo;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsGreaterThan;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsGreaterThanOrEqualTo;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsLessThan;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsLessThanOrEqualTo;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsNotEqualTo;
 import org.geotoolkit.filter.binaryexpression.DefaultAdd;
 import org.geotoolkit.filter.binaryexpression.DefaultDivide;
 import org.geotoolkit.filter.binaryexpression.DefaultMultiply;
@@ -61,18 +55,11 @@ import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
-import org.opengis.filter.MatchAction;
 import org.opengis.filter.Not;
 import org.opengis.filter.Or;
 import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNil;
-import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.capability.ArithmeticOperators;
 import org.opengis.filter.capability.ComparisonOperators;
@@ -215,7 +202,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
         if(e != null && !(e instanceof PropertyName)){
             throw new IllegalArgumentException("Expression expected to be a PropertyName, instead found a " + e.getClass());
         }
-        return new DefaultBBox((PropertyName)e, new DefaultLiteral<BoundingBox>(BoundingBox.castOrCopy(bounds)));
+        return new DefaultBBox((PropertyName)e, new DefaultLiteral<>(BoundingBox.castOrCopy(bounds)));
     }
 
     /**
@@ -507,103 +494,6 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsEqualTo equal(final Expression expr1,
-            final Expression expr2, final boolean matchCase, MatchAction matchAction) {
-        return new DefaultPropertyIsEqualTo(expr1, expr2, matchCase, matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2) {
-        return notEqual(expr1, expr2,false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsNotEqualTo notEqual(final Expression expr1,
-            final Expression expr2, final boolean matchCase, final MatchAction matchAction) {
-        return new DefaultPropertyIsNotEqualTo(expr1, expr2, matchCase, matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsGreaterThan greater(final Expression expr1,
-            final Expression expr2) {
-        return greater(expr1,expr2,false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsGreaterThan greater(final Expression expr1,
-            final Expression expr2, final boolean matchCase, final MatchAction matchAction) {
-        return new DefaultPropertyIsGreaterThan(expr1, expr2, matchCase,matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(
-            final Expression expr1, final Expression expr2) {
-        return greaterOrEqual(expr1, expr2,false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(
-            final Expression expr1, final Expression expr2, final boolean matchCase, final MatchAction matchAction) {
-        return new DefaultPropertyIsGreaterThanOrEqualTo(expr1, expr2, matchCase,matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLessThan less(final Expression expr1, final Expression expr2) {
-        return less(expr1, expr2, false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLessThan less(final Expression expr1,
-            final Expression expr2, final boolean matchCase, MatchAction matchAction) {
-        return new DefaultPropertyIsLessThan(expr1, expr2, matchCase,matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLessThanOrEqualTo lessOrEqual(
-            final Expression expr1, final Expression expr2) {
-        return lessOrEqual(expr1, expr2, false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1,
-            final Expression expr2, final boolean matchCase, final MatchAction matchAction) {
-        return new DefaultPropertyIsLessThanOrEqualTo(expr1, expr2, matchCase,matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public PropertyIsLike like(final Expression expr, final String pattern) {
         return like(expr,pattern,"*","?","\\");
     }
@@ -690,7 +580,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
             //special case for envelopes to change them in JTS geometries
             return new DefaultEnvelopeLiteral((Envelope) obj);
         }else{
-            return new DefaultLiteral<Object>(obj);
+            return new DefaultLiteral<>(obj);
         }
     }
 
@@ -699,7 +589,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      */
     @Override
     public Literal literal(final byte b) {
-        return new DefaultLiteral<Byte>(b);
+        return new DefaultLiteral<>(b);
     }
 
     /**
@@ -707,7 +597,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      */
     @Override
     public Literal literal(final short s) {
-        return new DefaultLiteral<Short>(s);
+        return new DefaultLiteral<>(s);
     }
 
     /**
@@ -715,7 +605,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      */
     @Override
     public Literal literal(final int i) {
-        return new DefaultLiteral<Integer>(i);
+        return new DefaultLiteral<>(i);
     }
 
     /**
@@ -723,7 +613,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      */
     @Override
     public Literal literal(final long l) {
-        return new DefaultLiteral<Long>(l);
+        return new DefaultLiteral<>(l);
     }
 
     /**
@@ -731,7 +621,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      */
     @Override
     public Literal literal(final float f) {
-        return new DefaultLiteral<Float>(f);
+        return new DefaultLiteral<>(f);
     }
 
     /**
@@ -739,7 +629,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      */
     @Override
     public Literal literal(final double d) {
-        return new DefaultLiteral<Double>(d);
+        return new DefaultLiteral<>(d);
     }
 
     /**
@@ -747,7 +637,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      */
     @Override
     public Literal literal(final char c) {
-        return new DefaultLiteral<Character>(c);
+        return new DefaultLiteral<>(c);
     }
 
     /**
@@ -755,7 +645,7 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      */
     @Override
     public Literal literal(final boolean b) {
-        return new DefaultLiteral<Boolean>(b);
+        return new DefaultLiteral<>(b);
     }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -25,10 +25,10 @@ import java.util.Arrays;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.junit.AfterClass;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -43,17 +43,6 @@ public class CalculatedLineStringOperationTest {
 
     private static final double DELTA = 0.00000001d;
     private final GeometryFactory GF = new GeometryFactory();
-
-    public CalculatedLineStringOperationTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
 
     @Test
     public void testDepthZeroFeature() {
@@ -119,5 +108,4 @@ public class CalculatedLineStringOperationTest {
         assertEquals(56, line.getCoordinateN(2).y, DELTA);
         assertEquals(3, line.getNumPoints());
     }
-
 }

@@ -17,8 +17,9 @@ import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.test.Assert;
+
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -170,8 +171,8 @@ public class FeatureExtTest {
         final FeatureType baseType = builder.build();
         // There's only one geometry here, no confusion possible.
         PropertyType defaultGeom = FeatureExt.getDefaultGeometry(baseType);
-        Assert.assertNotNull("We should find the only geometry defined in the feature type.", defaultGeom);
-        Assert.assertEquals("We should have found the attribute attached to SIS convention.", "secondary_geometry", defaultGeom.getName().tip().toString());
+        assertNotNull("We should find the only geometry defined in the feature type.", defaultGeom);
+        assertEquals("We should have found the attribute attached to SIS convention.", "secondary_geometry", defaultGeom.getName().tip().toString());
 
         builder = new FeatureTypeBuilder(baseType);
         builder.setName("with sis convention");
@@ -179,8 +180,8 @@ public class FeatureExtTest {
         final FeatureType conventionedType = builder.build();
         // We should find main geometry as we defined a convention for it.
         defaultGeom = FeatureExt.getDefaultGeometry(conventionedType);
-        Assert.assertNotNull("We should find one geometry attribute", defaultGeom);
-        Assert.assertEquals("We should have found the attribute attached to SIS convention.", AttributeConvention.GEOMETRY_PROPERTY, defaultGeom.getName());
+        assertNotNull("We should find one geometry attribute", defaultGeom);
+        assertEquals("We should have found the attribute attached to SIS convention.", AttributeConvention.GEOMETRY_PROPERTY, defaultGeom.getName());
 
         builder = new FeatureTypeBuilder(baseType);
         builder.setName("without sis convention");
@@ -195,15 +196,15 @@ public class FeatureExtTest {
         // We also test we find the geometry after reprojection, and it's the good one, the reprojected.
         final ReprojectMapper reprojected = new ReprojectMapper(conventionedType, CommonCRS.WGS84.geographic());
         defaultGeom = FeatureExt.getDefaultGeometry(reprojected.getMappedType());
-        Assert.assertNotNull("We should find one geometry attribute", defaultGeom);
-        Assert.assertEquals("We should have found the attribute attached to SIS convention.", AttributeConvention.GEOMETRY_PROPERTY, defaultGeom.getName());
+        assertNotNull("We should find one geometry attribute", defaultGeom);
+        assertEquals("We should have found the attribute attached to SIS convention.", AttributeConvention.GEOMETRY_PROPERTY, defaultGeom.getName());
         // Check we've got a definition matching reprojection
         final Optional<AttributeType<?>> geomAttr = FeatureExt.castOrUnwrap(defaultGeom);
-        Assert.assertTrue(geomAttr.isPresent());
+        assertTrue(geomAttr.isPresent());
 
         AttributeType<?> crsCharacteristic = geomAttr.get().characteristics().get(AttributeConvention.CRS_CHARACTERISTIC.toString());
-        Assert.assertNotNull("No CRS characteristic found in returned geometry", crsCharacteristic);
-        Assert.assertEquals("CRS defined in returned geometry is not correct !", CommonCRS.WGS84.geographic(), crsCharacteristic.getDefaultValue());
+        assertNotNull("No CRS characteristic found in returned geometry", crsCharacteristic);
+        assertEquals("CRS defined in returned geometry is not correct !", CommonCRS.WGS84.geographic(), crsCharacteristic.getDefaultValue());
     }
 
     @Test
@@ -237,8 +238,8 @@ public class FeatureExtTest {
         builder.addAttribute(String.class).setName(stringName);
         final FeatureType withoutConvention = builder.build();
 
-        Assert.assertFalse("Tested types should not be equal as conventions are checked.", FeatureExt.sameProperties(withConvention, withoutConvention, true));
-        Assert.assertTrue("Tested types should not be equal as conventions are checked.", FeatureExt.sameProperties(withConvention, withoutConvention, true, true));
-        Assert.assertFalse("Tested types should not be equal as super-types are ignored.", FeatureExt.sameProperties(withConvention, withoutConvention, false, true));
+        assertFalse("Tested types should not be equal as conventions are checked.", FeatureExt.sameProperties(withConvention, withoutConvention, true));
+        assertTrue("Tested types should not be equal as conventions are checked.", FeatureExt.sameProperties(withConvention, withoutConvention, true, true));
+        assertFalse("Tested types should not be equal as super-types are ignored.", FeatureExt.sameProperties(withConvention, withoutConvention, false, true));
     }
 }

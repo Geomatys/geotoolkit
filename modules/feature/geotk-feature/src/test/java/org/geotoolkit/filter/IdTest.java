@@ -29,11 +29,6 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @module
  */
 public class IdTest extends org.geotoolkit.test.TestBase {
-
-
-    public IdTest() {
-    }
-
     @Test
     public void testFeatureId() {
         String strid = "testFeatureType.1";
@@ -48,8 +43,7 @@ public class IdTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testGmlFeatureId(){
+    public void testGmlFeatureId() {
         //geotoolkit doesnt handle GML objects
     }
-
 }
