@@ -475,35 +475,34 @@ public final class Utils {
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_311 = new HashMap<Class, QName>();
     static {
 
-        GEOMETRY_NAME_BINDING_311.put(MultiPoint.class,         new QName(GML_311_NAMESPACE, "MultiPointPropertyType"));
-        GEOMETRY_NAME_BINDING_311.put(Point.class,              new QName(GML_311_NAMESPACE, "PointPropertyType"));
-        GEOMETRY_NAME_BINDING_311.put(LineString.class,         new QName(GML_311_NAMESPACE, "CurvePropertyType"));
-        GEOMETRY_NAME_BINDING_311.put(GeometryCollection.class, new QName(GML_311_NAMESPACE, "MultiGeometryPropertyType"));
-        GEOMETRY_NAME_BINDING_311.put(MultiLineString.class,    new QName(GML_311_NAMESPACE, "CompositeCurvePropertyType"));
-        GEOMETRY_NAME_BINDING_311.put(Envelope.class,           new QName(GML_311_NAMESPACE, "EnvelopePropertyType"));
-        GEOMETRY_NAME_BINDING_311.put(MultiPolygon.class,       new QName(GML_311_NAMESPACE, "MultiPolygonPropertyType"));
-        GEOMETRY_NAME_BINDING_311.put(Polygon.class,            new QName(GML_311_NAMESPACE, "PolygonPropertyType"));
-        GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "RingPropertyType"));
+        GEOMETRY_NAME_BINDING_311.put(MultiPoint.class,         new QName(GML_311_NAMESPACE, "MultiPointPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(Point.class,              new QName(GML_311_NAMESPACE, "PointPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(LineString.class,         new QName(GML_311_NAMESPACE, "CurvePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(GeometryCollection.class, new QName(GML_311_NAMESPACE, "MultiGeometryPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(MultiLineString.class,    new QName(GML_311_NAMESPACE, "CompositeCurvePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(Envelope.class,           new QName(GML_311_NAMESPACE, "EnvelopePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(MultiPolygon.class,       new QName(GML_311_NAMESPACE, "MultiPolygonPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(Polygon.class,            new QName(GML_311_NAMESPACE, "PolygonPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "RingPropertyType", "gml"));
     }
 
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<Class, QName>();
     static {
 
-        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPointPropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "PointPropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "CurvePropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometryPropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "MultiCurvePropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "EnvelopeType"));
-        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiSurfacePropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "SurfacePropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingPropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPointPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "PointPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "CurvePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometryPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "MultiCurvePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "EnvelopeType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiSurfacePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "SurfacePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingPropertyType", "gml"));
     }
     /**
-     * Return a QName intended to be used in a xsd XML file fro mthe specified class.
+     * Return a QName intended to be used in a xsd XML file from the specified class.
      *
-     * @param type A prmitive type Class.
-     * @param gmlVersion
+     * @param type  a primitive type Class.
      * @return A QName describing the class.
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
@@ -518,9 +517,9 @@ public final class Utils {
                 }
                 if (result == null) {
                     if ("3.2.1".equals(gmlVersion)) {
-                        return new QName(GML_321_NAMESPACE, "GeometryPropertyType");
+                        return new QName(GML_321_NAMESPACE, "GeometryPropertyType", "gml");
                     } else {
-                        return new QName(GML_311_NAMESPACE, "GeometryPropertyType");
+                        return new QName(GML_311_NAMESPACE, "GeometryPropertyType", "gml");
                     }
                 }
             // maybe we can find a better way to handle Enum. for now we set a String value
@@ -529,9 +528,9 @@ public final class Utils {
 
             } else if (binding.equals(Object.class)) {
               if ("3.2.1".equals(gmlVersion)) {
-                    result = new QName(GML_321_NAMESPACE, "AbstractObject");
+                    result = new QName(GML_321_NAMESPACE, "AbstractObject", "gml");
                 } else {
-                    result = new QName(GML_311_NAMESPACE, "_Object");
+                    result = new QName(GML_311_NAMESPACE, "_Object", "gml");
                 }
             } else {
                 result = NAME_BINDING.get(binding);

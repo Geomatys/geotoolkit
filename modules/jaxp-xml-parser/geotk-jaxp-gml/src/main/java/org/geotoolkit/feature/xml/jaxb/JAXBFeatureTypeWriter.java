@@ -69,10 +69,10 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
     private static final Import GML_IMPORT_311 = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
     private static final Import GML_IMPORT_321 = new Import("http://www.opengis.net/gml/3.2", "http://schemas.opengis.net/gml/3.2.1/gml.xsd");
 
-    private static final QName ABSTRACT_FEATURE_NAME_311 = new QName("http://www.opengis.net/gml", "_Feature");
-    private static final QName ABSTRACT_FEATURE_TYPE_311 = new QName("http://www.opengis.net/gml", "AbstractFeatureType");
-    private static final QName ABSTRACT_FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeature");
-    private static final QName ABSTRACT_FEATURE_TYPE_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeatureType");
+    private static final QName ABSTRACT_FEATURE_NAME_311 = new QName("http://www.opengis.net/gml", "_Feature", "gml");
+    private static final QName ABSTRACT_FEATURE_TYPE_311 = new QName("http://www.opengis.net/gml", "AbstractFeatureType", "gml");
+    private static final QName ABSTRACT_FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeature", "gml");
+    private static final QName ABSTRACT_FEATURE_TYPE_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeatureType", "gml");
 
     private final String gmlVersion;
 
@@ -122,10 +122,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
 
     /**
      * Write an XML representation of the specified featureType into an Element.
-     * @param feature
      * @return the xml element.
-     * @throws JAXBException
-     * @throws ParserConfigurationException
      */
     public Node writeToElement(FeatureType feature) throws JAXBException, ParserConfigurationException {
 
@@ -148,9 +145,6 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
 
     /**
      * Create an xsd schema from a list of feature type.
-     *
-     * @param featureTypes
-     * @return
      */
     public Schema getSchemaFromFeatureType(List<FeatureType> featureTypes) {
         final Schema schema = new Schema(FormChoice.QUALIFIED, null);
@@ -178,9 +172,6 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
 
     /**
      * Create a xsd schema from a feature type.
-     *
-     * @param featureType
-     * @return
      */
     public Schema getSchemaFromFeatureType(FeatureType featureType) {
         if (featureType != null) {

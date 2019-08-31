@@ -70,7 +70,7 @@ import org.opengis.util.GenericName;
  */
 public class GeometryMapping implements XSDMapping {
 
-    private static Map<String,Class> CLASS_BINDING = new HashMap<>();
+    private static final Map<String,Class> CLASS_BINDING = new HashMap<>();
     static {
 
         CLASS_BINDING.put("_Geometry",                     Geometry.class);

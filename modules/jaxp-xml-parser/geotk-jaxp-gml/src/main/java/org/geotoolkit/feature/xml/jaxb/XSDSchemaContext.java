@@ -215,21 +215,11 @@ public class XSDSchemaContext {
 
     /**
      * TODO : redefine : given name is not used.
-     * @param candidate
-     * @param name
-     * @return
-     * @throws JAXBException
      */
     public Schema read(final Object candidate, final String name) throws JAXBException {
         return readSchema(candidate).getKey();
     }
 
-    /**
-     *
-     * @param candidate
-     * @return Map<Schema,Location>
-     * @throws JAXBException
-     */
     public Map.Entry<Schema,String> read(final Object candidate) throws JAXBException {
         Entry<Schema, String> schemaEntry = readSchema(candidate);
         listAllSchemas(schemaEntry.getKey(), schemaEntry.getValue(), new ArrayList<>());
@@ -320,10 +310,6 @@ public class XSDSchemaContext {
      * TODO : Mechanism of schema discovery is messy. The interdependance with
      * its current state is far too strong, and its use is also strongly
      * dependant with {@link JAXBFeatureTypeReader}.
-     * @param schema
-     * @param baseLocation
-     * @param refs
-     * @throws MismatchedFeatureException
      */
     public void listAllSchemas(final Schema schema, final String baseLocation, List<Map.Entry<Schema,String>> refs) throws MismatchedFeatureException{
         fillAllSubstitution(schema);
@@ -372,8 +358,6 @@ public class XSDSchemaContext {
     /**
      * list all elements and complexe types and put them in the allCache map.
      * Do not parse them yet.
-     *
-     * @param schema
      */
     private void fillAllSubstitution(Schema schema){
         for (OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()) {

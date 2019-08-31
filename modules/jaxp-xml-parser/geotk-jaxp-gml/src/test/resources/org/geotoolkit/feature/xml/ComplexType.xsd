@@ -3,7 +3,7 @@
     targetNamespace="http://www.opengis.net/gml"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
-    <xs:element xmlns:gml="http://www.opengis.net/gml" name="Person" type="gml:PersonType" substitutionGroup="gml:_Feature"/>
+    <xs:element xmlns:gml="http://www.opengis.net/gml" xmlns="http://www.opengis.net/gml" name="Person" type="PersonType" substitutionGroup="_Feature"/>
     <xs:complexType name="PersonType">
         <xs:complexContent>
             <xs:extension xmlns:gml="http://www.opengis.net/gml" base="gml:AbstractFeatureType" >
@@ -23,7 +23,7 @@
     </xs:complexType>
    <xs:complexType name="AddressPropertyType">
       <xs:sequence>
-         <xs:element name="address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />
+         <xs:element name="address" type="AddressType" xmlns="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />
       </xs:sequence>
    </xs:complexType>
    <xs:complexType name="AddressType">

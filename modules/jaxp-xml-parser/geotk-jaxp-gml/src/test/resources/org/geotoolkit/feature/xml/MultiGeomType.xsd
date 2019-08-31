@@ -3,7 +3,7 @@
     targetNamespace="http://www.opengis.net/gml"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
-    <xs:element xmlns:gml="http://www.opengis.net/gml" name="TestMultiGeom" type="gml:TestMultiGeomType" substitutionGroup="gml:_Feature"/>
+    <xs:element xmlns:gml="http://www.opengis.net/gml" xmlns="http://www.opengis.net/gml" name="TestMultiGeom" type="TestMultiGeomType" substitutionGroup="_Feature"/>
     <xs:complexType name="TestMultiGeomType">
         <xs:complexContent>
             <xs:extension xmlns:gml="http://www.opengis.net/gml" base="gml:AbstractFeatureType" >
