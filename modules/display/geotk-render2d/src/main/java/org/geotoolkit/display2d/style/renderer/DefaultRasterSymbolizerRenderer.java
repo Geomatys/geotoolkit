@@ -43,9 +43,10 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.DataStoreException;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -73,6 +74,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.reformat.ReformatProcess;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
@@ -80,8 +82,6 @@ import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-
-import static org.apache.sis.util.ArgumentChecks.*;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.CompatibleColorModel;
@@ -269,6 +269,44 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     @Override
     protected final GridCoverage prepareCoverageToResampling(final GridCoverage source, final CachedRasterSymbolizer symbolizer) {
+
+        //always resample in geophysic
+        GridCoverage geosource = source.forConvertedValues(true);
+        //check if we need to change to float or double type
+        boolean needDataTypeTransform = true;
+        for (SampleDimension sd : geosource.getSampleDimensions()) {
+            Number background = sd.getBackground().orElse(null);
+            if (background != null) {
+                needDataTypeTransform = false;
+                break;
+            }
+            if (!sd.getNoDataValues().isEmpty()) {
+                needDataTypeTransform = false;
+                break;
+            }
+        }
+        if (needDataTypeTransform) {
+            //check if the image is already in float or double type
+            //coverage does no not provide this information
+            RenderedImage image = geosource.render(null);
+
+            final int dataType = image.getSampleModel().getDataType();
+            if (dataType == DataBuffer.TYPE_FLOAT || dataType == DataBuffer.TYPE_DOUBLE) {
+                needDataTypeTransform = false;
+            }
+            if (image.getColorModel().hasAlpha()) {
+                needDataTypeTransform = false;
+            }
+        }
+
+        if (needDataTypeTransform) {
+            try {
+                return new ReformatProcess(source, DataBuffer.TYPE_DOUBLE).executeNow();
+            } catch (ProcessException ex) {
+                //we have try
+            }
+        }
+
         final ColorMap cMap = symbolizer.getSource().getColorMap();
         if (cMap != null && cMap.getFunction() != null) {
             return source; // Coloration is handled externally
