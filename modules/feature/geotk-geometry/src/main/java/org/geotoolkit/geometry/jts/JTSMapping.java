@@ -305,7 +305,14 @@ public final class JTSMapping {
     }
 
     private static Polygon convertToPolygon(final MultiPolygon pt) {
-        return convertToPolygon(pt.convexHull());
+        final int nbGeom = pt.getNumGeometries();
+        if (nbGeom == 0) {
+            return GF.createPolygon();
+        } else if (nbGeom == 1) {
+            return (Polygon) pt.getGeometryN(0);
+        } else {
+            return convertToPolygon(pt.convexHull());
+        }
     }
 
     // Convert to MultiPolygon -------------------------------------------------
