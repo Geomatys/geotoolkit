@@ -29,7 +29,9 @@ import javax.sql.DataSource;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
+import org.geotoolkit.index.tree.manager.postgres.LuceneHSQLTreeEltMapper;
 import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
+import org.geotoolkit.index.tree.manager.postgres.LuceneSGBDTreeEltMapper;
 import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 import org.geotoolkit.index.tree.manager.postgres.PGTreeWrapper;
 import org.geotoolkit.index.tree.star.FileStarRTree;
@@ -48,16 +50,28 @@ public class SQLRtreeManager extends AbstractRtreeManager {
             if (existTree(directory)) {
 
                 if (PGDataSource.isSetPGDataSource()) {
+                    if (PGDataSource.isPostgres) {
+                        try {
+                            DataSource ds = PGDataSource.getDataSource();
+                            TreeElementMapper treeMapper = new LucenePostgresSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
+                            byte[] data = TreeAccessSQLByteArray.getData(directory, ds);
+                            tree = new PGTreeWrapper(data, directory, ds, treeMapper);
 
-                    try {
-                        DataSource ds = PGDataSource.getDataSource();
-                        TreeElementMapper treeMapper = new LucenePostgresSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
-                        byte[] data = TreeAccessSQLByteArray.getData(directory, ds);
-                        tree = new PGTreeWrapper(data, directory, ds, treeMapper);
+                        } catch (SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
+                            LOGGER.log(Level.SEVERE, null, e);
+                            return null;
+                        }
+                    } else {
+                        try {
+                            DataSource ds = PGDataSource.getDataSource();
+                            TreeElementMapper treeMapper = new LuceneHSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
+                            byte[] data = TreeAccessSQLByteArray.getData(directory, ds);
+                            tree = new PGTreeWrapper(data, directory, ds, treeMapper);
 
-                    } catch (SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
-                        LOGGER.log(Level.SEVERE, null, e);
-                        return null;
+                        } catch (SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
+                            LOGGER.log(Level.SEVERE, null, e);
+                            return null;
+                        }
                     }
 
                 } else {
@@ -99,8 +113,13 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                 Files.createFile(treeFile);
                 // postgres
                 if (PGDataSource.isSetPGDataSource()) {
-                    TreeElementMapper treeMapper = LucenePostgresSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
-                    return new PGTreeWrapper(directory, PGDataSource.getDataSource(), treeMapper, DEFAULT_CRS);
+                     if (PGDataSource.isPostgres) {
+                        TreeElementMapper treeMapper = LucenePostgresSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
+                        return new PGTreeWrapper(directory, PGDataSource.getDataSource(), treeMapper, DEFAULT_CRS);
+                     } else {
+                         TreeElementMapper treeMapper = LuceneHSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
+                        return new PGTreeWrapper(directory, PGDataSource.getDataSource(), treeMapper, DEFAULT_CRS);
+                     }
 
                 } else {
                     TreeElementMapper treeMapper = LuceneDerbySQLTreeEltMapper.createTreeEltMapperWithDB(directory);
@@ -124,7 +143,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
             tree.clear();
         }
         if (PGDataSource.isSetPGDataSource()) {
-            if (LucenePostgresSQLTreeEltMapper.treeExist(PGDataSource.getDataSource(), directory)) {
+            if (LuceneSGBDTreeEltMapper.treeExist(PGDataSource.getDataSource(), directory)) {
                 tree.getTreeElementMapper().clear();
             }
         } else {
@@ -139,7 +158,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
     private static boolean existTree(final Path directory) {
         if (PGDataSource.isSetPGDataSource()) {
             DataSource ds = PGDataSource.getDataSource();
-            return LucenePostgresSQLTreeEltMapper.treeExist(ds, directory);
+            return LuceneSGBDTreeEltMapper.treeExist(ds, directory);
         } else {
             // derby DB as default
             final Path treeFile = directory.resolve("tree.bin");
@@ -149,7 +168,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
 
     public static void removeTree(final Path directory) throws SQLException, IOException {
         if (PGDataSource.isSetPGDataSource()) {
-            LucenePostgresSQLTreeEltMapper.resetDB(directory);
+            LuceneSGBDTreeEltMapper.resetDB(directory);
         }
         IOUtilities.deleteRecursively(directory);
     }

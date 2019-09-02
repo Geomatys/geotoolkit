@@ -40,11 +40,11 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class LucenePostgresSQLTreeEltMapper extends LuceneSGBDTreeEltMapper implements TreeElementMapper<NamedEnvelope> {
+public class LuceneHSQLTreeEltMapper extends LuceneSGBDTreeEltMapper implements TreeElementMapper<NamedEnvelope> {
 
-
-    public LucenePostgresSQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source, Path directory) throws SQLException {
+    public LuceneHSQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source, Path directory) throws SQLException {
         super(crs, source, directory);
+
     }
 
     public static TreeElementMapper createTreeEltMapperWithDB(Path directory) throws SQLException, IOException {
@@ -54,14 +54,14 @@ public class LucenePostgresSQLTreeEltMapper extends LuceneSGBDTreeEltMapper impl
                 createSchema(connection, directory.getFileName().toString());
             }
         }
-        return new LucenePostgresSQLTreeEltMapper(SQLRtreeManager.DEFAULT_CRS, dataSource, directory);
+        return new LuceneHSQLTreeEltMapper(SQLRtreeManager.DEFAULT_CRS, dataSource, directory);
     }
 
     private static void createSchema(Connection connection, String absolutePath) throws SQLException, IOException {
         try {
             ensureNonNull("absolutePath", absolutePath);
             final String schemaName = getSchemaName(absolutePath);
-            final InputStream stream = getResourceAsStream("org/geotoolkit/index/tree/create-postgres-treemap-db.sql");
+            final InputStream stream = getResourceAsStream("org/geotoolkit/index/tree/create-hsql-treemap-db.sql");
             final ScriptRunner scriptRunner = new ScriptRunner(connection);
             StringWriter writer = new StringWriter();
             IOUtils.copy(stream, writer, "UTF-8");
