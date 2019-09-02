@@ -85,16 +85,6 @@
             </exclusion>
         </exclusions>
       </dependency>
-
-
-<!--
-      <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-core</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-
--->
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-store</artifactId>
@@ -108,11 +98,6 @@
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
         </dependency>
 
     </dependencies>

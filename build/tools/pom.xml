@@ -48,21 +48,9 @@
 
   <!-- ===========================================================
            Modules included in the build
-
-       We don't include "geotk-provided" in the list because we
-       don't want it to be processed in the aggregated javadoc.
-       We can't use the javadoc "exclude package" option since
-       we don't want to exclude the real classes defined in an
-       other module. Consequently "geotk-provided" needs to be
-       deployed manually. Hopefully the changes in that module
-       are exceptional enough.
-
-       See: http://jira.codehaus.org/browse/MJAVADOC-134
-            http://jira.codehaus.org/browse/MJAVADOC-227
        =========================================================== -->
   <modules>
     <module>geotk-stressor</module>
-    <module>geotk-provided</module>
   </modules>
 
 </project>
