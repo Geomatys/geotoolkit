@@ -37,6 +37,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -99,7 +100,7 @@ public class GeometryMapping implements XSDMapping {
         CLASS_BINDING.put("PolyHedralSurfaceType",         MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygon",                  MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygonType",              MultiPolygon.class);
-        CLASS_BINDING.put("SurfaceType",                   MultiPolygon.class);
+        CLASS_BINDING.put("SurfaceType",                   Polygon.class);
         CLASS_BINDING.put("Polygon",                       Polygon.class);
         CLASS_BINDING.put("PolygonType",                   Polygon.class);
         CLASS_BINDING.put("Ring",                          LinearRing.class);
@@ -123,7 +124,7 @@ public class GeometryMapping implements XSDMapping {
         CLASS_BINDING.put("PolyHedralSurfacePropertyType", MultiPolygon.class);
         CLASS_BINDING.put("MultiSurfacePropertyType",      MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
-        CLASS_BINDING.put("SurfacePropertyType",           MultiPolygon.class);
+        CLASS_BINDING.put("SurfacePropertyType",           Polygon.class);
         CLASS_BINDING.put("PolygonPropertyType",           Polygon.class);
         CLASS_BINDING.put("RingPropertyType",              LinearRing.class);
         CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
@@ -228,6 +229,7 @@ public class GeometryMapping implements XSDMapping {
                 throw new IllegalArgumentException("unexpected geometry type:" + geometry);
             }
             value = jtsGeom;
+            value = JTSMapping.convertType(jtsGeom, ((AttributeType) propertyType).getValueClass());
 
             pool.recycle(unmarshaller);
         } catch (JAXBException ex) {
