@@ -81,7 +81,6 @@ public final class DomUtilities extends Static {
      *
      * @param doc : DOM document to write
      * @param output : output file, url, uri, outputstream
-     * @throws TransformerException
      */
     public static void write(final Document doc, final Object output) throws TransformerException, FileNotFoundException, IOException{
         final Source source = new DOMSource(doc);
@@ -363,14 +362,6 @@ public final class DomUtilities extends Static {
 
     /**
      * Reformat and indent an xml file.
-     *
-     * @param input
-     * @param output
-     * @throws TransformerConfigurationException
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
-     * @throws TransformerException
      */
     public static void prettyPrint(Path input, Path output) throws TransformerConfigurationException, ParserConfigurationException, SAXException, IOException, TransformerException {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
