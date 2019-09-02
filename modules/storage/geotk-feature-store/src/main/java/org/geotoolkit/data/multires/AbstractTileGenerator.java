@@ -127,7 +127,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                         } finally {
                             long v = al.incrementAndGet();
                             if (listener != null) {
-                                listener.progressing(new ProcessEvent(DUMMY, v+"/"+total, (float) (( ((double)v)/((double)total) )*100.0)  ));
+                                listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
                             }
                         }
                     }
