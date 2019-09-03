@@ -119,9 +119,6 @@ public final class WMSUtilities {
      *
      * @param server web map server
      * @param layername wms layer name
-     * @return
-     * @throws FactoryException
-     * @throws CapabilitiesException
      */
     public static CoordinateReferenceSystem findOriginalCRS(final WebMapClient server,
             final String layername) throws CapabilitiesException {
@@ -160,7 +157,6 @@ public final class WMSUtilities {
      *
      * @param server web map server
      * @param layername wms layer name
-     * @return
      */
     public static Long findClosestDate(final WebMapClient server, final String layername,
             final long date) throws CapabilitiesException {
@@ -207,8 +203,6 @@ public final class WMSUtilities {
      *
      * @param server web map server
      * @param layername wms layer name
-     * @return
-     * @throws CapabilitiesException
      */
     public static Envelope findEnvelope(final WebMapClient server,
             final String layername) throws CapabilitiesException {
@@ -356,8 +350,6 @@ public final class WMSUtilities {
      *
      * @param server web map server
      * @param layername wms layer name
-     * @return
-     * @throws CapabilitiesException
      */
     public static List<? extends Style> findStyleCandidates(final WebMapClient server,
             final String layername) throws CapabilitiesException{

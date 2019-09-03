@@ -203,8 +203,6 @@ public class GridCoverage2D extends GridCoverage {
      * default will be inferred from image type (integers, floats...) and range of values. If
      * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
      * is thrown.
-     *
-     * @return
      */
     private static Collection<SampleDimension> fillSampleDimensions(final CharSequence name, final RenderedImage image, final SampleDimension[] bands) {
         RenderedSampleDimension[] sampleDimensions = new RenderedSampleDimension[image.getSampleModel().getNumBands()];

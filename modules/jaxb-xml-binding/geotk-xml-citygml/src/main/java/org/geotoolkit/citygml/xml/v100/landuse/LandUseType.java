@@ -86,11 +86,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the clazz property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getClazz() {
         return clazz;
@@ -98,11 +93,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the clazz property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setClazz(String value) {
         this.clazz = value;
@@ -110,7 +100,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the function property.
-     *
     */
     public List<String> getFunction() {
         if (function == null) {
@@ -121,7 +110,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the usage property.
-     *
      */
     public List<String> getUsage() {
         if (usage == null) {
@@ -132,11 +120,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod0MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod0MultiSurface() {
         return lod0MultiSurface;
@@ -144,11 +127,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod0MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod0MultiSurface(MultiSurfacePropertyType value) {
         this.lod0MultiSurface = value;
@@ -156,11 +134,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod1MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod1MultiSurface() {
         return lod1MultiSurface;
@@ -168,11 +141,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod1MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod1MultiSurface(MultiSurfacePropertyType value) {
         this.lod1MultiSurface = value;
@@ -180,11 +148,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod2MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod2MultiSurface() {
         return lod2MultiSurface;
@@ -192,11 +155,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod2MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod2MultiSurface(MultiSurfacePropertyType value) {
         this.lod2MultiSurface = value;
@@ -204,11 +162,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod3MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod3MultiSurface() {
         return lod3MultiSurface;
@@ -216,11 +169,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod3MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod3MultiSurface(MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
@@ -228,11 +176,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod4MultiSurface() {
         return lod4MultiSurface;
@@ -240,11 +183,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod4MultiSurface(MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
@@ -252,7 +190,6 @@ public class LandUseType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfLandUse property.
-     *
      */
     public List<Object> getGenericApplicationPropertyOfLandUse() {
         if (genericApplicationPropertyOfLandUse == null) {

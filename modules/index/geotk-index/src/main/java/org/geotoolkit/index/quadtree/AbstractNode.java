@@ -166,8 +166,6 @@ public abstract class AbstractNode {
     /**
      * Special toString, that will add "<>" before each node that intersect the
      * given envelope.
-     * @param env
-     * @return
      */
     public String toString(final Envelope env) {
         final StringBuilder sb = new StringBuilder();

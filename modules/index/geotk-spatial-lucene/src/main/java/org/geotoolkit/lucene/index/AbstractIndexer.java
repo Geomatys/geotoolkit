@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import org.locationtech.jts.geom.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Logger;
 
 // Apache Lucene dependencies
 import org.apache.lucene.analysis.Analyzer;
@@ -351,9 +350,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
     /**
      * Return the identifier of the metadata
-     *
-     * @param metadata
-     * @return
      */
     protected abstract String getIdentifier(E metadata);
 
@@ -394,9 +390,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
     /**
      * Add a numeric fields to the current list.
-     *
-     * @param fieldName
-     * @param numberType
      */
     protected void addNumericField(final String fieldName, final Character numberType) {
         if (numericFields.get(fieldName) == null) {
@@ -406,8 +399,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
     /**
      * This method remove index of lucene a document identified by identifier.
-     *
-     * @param identifier
      */
     public void removeDocument(final String identifier) {
         try {

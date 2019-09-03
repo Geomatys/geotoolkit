@@ -113,13 +113,6 @@ public class DistributedSearchType implements DistributedSearch {
      * <pre>
      *    getFederatedCatalogues().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FederatedCatalogueType }
-     *
-     *
      */
     public List<FederatedCatalogueType> getFederatedCatalogues() {
         if (federatedCatalogues == null) {
@@ -130,11 +123,6 @@ public class DistributedSearchType implements DistributedSearch {
 
     /**
      * Obtient la valeur de la propriété hopCount.
-     *
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *
      */
     @Override
     public Integer getHopCount() {
@@ -147,11 +135,6 @@ public class DistributedSearchType implements DistributedSearch {
 
     /**
      * Définit la valeur de la propriété hopCount.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *
      */
     @Override
     public void setHopCount(Integer value) {
@@ -160,11 +143,6 @@ public class DistributedSearchType implements DistributedSearch {
 
     /**
      * Obtient la valeur de la propriété clientId.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getClientId() {
         return clientId;
@@ -172,11 +150,6 @@ public class DistributedSearchType implements DistributedSearch {
 
     /**
      * Définit la valeur de la propriété clientId.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setClientId(String value) {
         this.clientId = value;
@@ -184,11 +157,6 @@ public class DistributedSearchType implements DistributedSearch {
 
     /**
      * Obtient la valeur de la propriété distributedSearchId.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getDistributedSearchId() {
         return distributedSearchId;
@@ -196,11 +164,6 @@ public class DistributedSearchType implements DistributedSearch {
 
     /**
      * Définit la valeur de la propriété distributedSearchId.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setDistributedSearchId(String value) {
         this.distributedSearchId = value;
@@ -208,11 +171,6 @@ public class DistributedSearchType implements DistributedSearch {
 
     /**
      * Obtient la valeur de la propriété distributedSearchIdTimout.
-     *
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *
      */
     public Integer getDistributedSearchIdTimout() {
         if (distributedSearchIdTimout == null) {
@@ -224,14 +182,8 @@ public class DistributedSearchType implements DistributedSearch {
 
     /**
      * Définit la valeur de la propriété distributedSearchIdTimout.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *
      */
     public void setDistributedSearchIdTimout(Integer value) {
         this.distributedSearchIdTimout = value;
     }
-
 }

@@ -82,17 +82,10 @@ public final class Bindings {
 
     /**
      * Shortcut to get binding and resolve it againts candidate.
-     *
-     * @param <T>
-     * @param candidate
-     * @param xpath
-     * @param type
-     * @return
      */
     public static <T> T resolve(Object candidate, final String xpath, final Class<T> type){
         final Binding binding = getBinding(candidate.getClass(), xpath);
         if(binding==null) return null;
         return (T) binding.get(candidate, xpath, type);
     }
-
 }

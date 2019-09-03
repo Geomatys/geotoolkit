@@ -333,8 +333,6 @@ public class QuadTreeNode extends SceneNode3D {
     /**
      * Return first parent with data != null
      * return null else or if this node is the root node
-     *
-     * @return
      */
     private QuadTreeNode getFirstParentWithDataImage() {
         if (this.getTreeDepth() == 0) return null;
@@ -352,8 +350,6 @@ public class QuadTreeNode extends SceneNode3D {
     /**
      * Return first parent with data != null
      * return null else or if this node is the root node
-     *
-     * @return
      */
     private QuadTreeNode getFirstParentWithDataMNT() {
         if (this.getTreeDepth() == 0) return null;
@@ -370,7 +366,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Shortcut to id.length
-     * @return
      */
     public int getTreeDepth() {
         return this.pyramidPosition.z;
@@ -378,7 +373,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Return the QuadTreeNode position relative to his parent
-     * @return
      */
     public Point getNodePosition() {
         return this.parentPosition;
@@ -386,7 +380,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Return the QuadTreeNode position relative to mosaic
-     * @return
      */
     public Point3i getPosition() {
         return this.pyramidPosition;

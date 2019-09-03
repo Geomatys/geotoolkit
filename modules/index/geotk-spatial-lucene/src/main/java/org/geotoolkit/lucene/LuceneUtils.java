@@ -130,12 +130,9 @@ public class LuceneUtils {
         LOGGER.log(Level.WARNING, "Not a geometry for literal:{0} (class: {1})", new Object[]{geom, geom.getClass().getName()});
         return null;
     }
+
     /**
      * Extract the internal envelope from the geometry and reprojected it to the treeCRS.
-     *
-     * @param geom
-     * @param treeCrs
-     * @return
      */
     private static GeneralEnvelope getReprojectedEnvelope(final Geometry geom, final CoordinateReferenceSystem treeCrs) {
         final Envelope jtsBound = geom.getEnvelopeInternal();
@@ -158,9 +155,6 @@ public class LuceneUtils {
 
     /**
      * Reproject the envelope in the tree CRS.
-     * @param env
-     * @param treeCrs
-     * @return
      */
     private static GeneralEnvelope getReprojectedEnvelope(final org.opengis.geometry.Envelope env, final CoordinateReferenceSystem treeCrs) {
         try {

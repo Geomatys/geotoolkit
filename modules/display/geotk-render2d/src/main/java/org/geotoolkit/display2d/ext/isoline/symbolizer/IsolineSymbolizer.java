@@ -253,8 +253,6 @@ public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbol
 
     /**
      * Get Isoline FeatureType
-     * @return
-     * @throws DataStoreException
      */
     public static FeatureType buildIsolineType() throws DataStoreException {
         return Isoline2.buildIsolineFeatureType(null,null);

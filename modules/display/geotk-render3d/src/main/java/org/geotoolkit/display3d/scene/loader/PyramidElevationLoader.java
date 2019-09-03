@@ -97,7 +97,6 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
 
     /**
      * Return the current outputCRS if set, else null
-     * @return
      */
     public CoordinateReferenceSystem getOutputCRS() {
         return outputCrs;

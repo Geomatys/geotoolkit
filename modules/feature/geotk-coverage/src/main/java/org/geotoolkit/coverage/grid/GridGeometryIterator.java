@@ -169,9 +169,6 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
 
     /**
      * Note : logic copied from Rectangle class, long primitive type variant
-     * @param parent
-     * @param child
-     * @return
      */
     public static boolean isContained2D(GridExtent parent, GridExtent child) {
 

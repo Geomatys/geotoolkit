@@ -96,7 +96,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
      * An empty constructor used by JAXB
      */
     HarvestType() {
-
     }
 
     /**
@@ -106,8 +105,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
      * @param version The service version fixed at 3.0.0.
      * @param source  The distant resource URL.
      * @param resourceType The type of the resource to harvest.
-     * @param handler
-     * @param harvestInterval
      */
     public HarvestType(final String service, final String version, final String source, final String resourceType,
             final String resourceFormat, final String handler, final Duration harvestInterval) {
@@ -123,11 +120,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Obtient la valeur de la propriété source.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getSource() {
@@ -136,11 +128,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Définit la valeur de la propriété source.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setSource(String value) {
         this.source = value;
@@ -148,11 +135,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Obtient la valeur de la propriété resourceType.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getResourceType() {
@@ -161,11 +143,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Définit la valeur de la propriété resourceType.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setResourceType(String value) {
         this.resourceType = value;
@@ -173,11 +150,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Obtient la valeur de la propriété resourceFormat.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getResourceFormat() {
@@ -186,11 +158,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Définit la valeur de la propriété resourceFormat.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setResourceFormat(String value) {
         this.resourceFormat = value;
@@ -198,11 +165,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Obtient la valeur de la propriété harvestInterval.
-     *
-     * @return
-     *     possible object is
-     *     {@link Duration }
-     *
      */
     @Override
     public Duration getHarvestInterval() {
@@ -211,11 +173,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Définit la valeur de la propriété harvestInterval.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Duration }
-     *
      */
     public void setHarvestInterval(Duration value) {
         this.harvestInterval = value;
@@ -235,13 +192,6 @@ public class HarvestType extends RequestBaseType implements Harvest {
      * <pre>
      *    getResponseHandler().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     @Override
     public List<String> getResponseHandler() {

@@ -1345,7 +1345,6 @@ public final class GO2Utilities {
      * This is used by PointSymbolizer and TextSymbiolizer.
      *
      * @param geom, not null
-     * @return
      */
     public static Point getBestPoint(Geometry geom){
         Point pt = null;

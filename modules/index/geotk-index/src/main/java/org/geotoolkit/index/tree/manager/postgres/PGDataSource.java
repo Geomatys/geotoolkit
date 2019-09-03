@@ -60,9 +60,6 @@ public class PGDataSource {
 
     /**
      * postgres://cstl:admin@localhost:5432/cstl-test
-     *
-     * @param databaseURL
-     * @return
      */
     public static Map<String, String> extractDbInfo(String databaseURL) {
         Map<String, String> results = new HashMap<>();
@@ -87,5 +84,4 @@ public class PGDataSource {
         }
         return results;
     }
-
 }

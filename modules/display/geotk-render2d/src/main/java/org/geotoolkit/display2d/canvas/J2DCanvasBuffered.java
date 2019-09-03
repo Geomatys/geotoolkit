@@ -162,7 +162,6 @@ public class J2DCanvasBuffered extends J2DCanvas{
     /**
      * This will try to create the most efficient bufferedImage knowing
      * the different rendering parameters and hints.
-     * @return
      */
     private BufferedImage createBufferedImage(final Dimension dim){
 

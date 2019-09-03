@@ -87,7 +87,6 @@ public class GeometryTestOperation {
      * Performs the contained operation
      * @param a argument object a
      * @param b argument object b
-     * @return
      */
     public boolean run(final Geometry a, final Geometry b) {
         boolean result = false;

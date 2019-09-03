@@ -266,7 +266,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     /**
      * Returns the request version.
-     * @return
      */
     public WMSVersion getVersion() {
             return WMSVersion.getVersion(parameters.getValue(WMSClientFactory.VERSION));
@@ -275,7 +274,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetMapRequest createGetMap() {
@@ -296,7 +294,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
@@ -320,7 +317,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetLegendRequest createGetLegend(){
@@ -339,7 +335,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetFeatureInfoRequest createGetFeatureInfo() {
@@ -359,7 +354,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     /**
      * Returns the request header map for this server.
-     * @return
      */
     public Map<String,String> getRequestHeaderMap() {
         return requestHeaderMap;

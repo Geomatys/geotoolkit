@@ -1055,7 +1055,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Returns the geographic scale, in a ground unit manner, relation between map display size
      * and real ground unit meters.
      *
-     * @return
      * @throws org.opengis.referencing.operation.TransformException
      * @throws IllegalStateException If the affine transform used for conversion is in
      *                               illegal state.

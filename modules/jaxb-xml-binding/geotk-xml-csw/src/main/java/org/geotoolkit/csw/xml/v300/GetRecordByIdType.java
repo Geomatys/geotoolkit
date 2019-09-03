@@ -99,11 +99,6 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Obtient la valeur de la propriété id.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public List<String> getId() {
@@ -115,11 +110,6 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Définit la valeur de la propriété id.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setId(String value) {
         this.id = value;
@@ -127,11 +117,6 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Obtient la valeur de la propriété elementSetName.
-     *
-     * @return
-     *     possible object is
-     *     {@link ElementSetNameType }
-     *
      */
     @Override
     public ElementSetNameType getElementSetName() {
@@ -140,11 +125,6 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Définit la valeur de la propriété elementSetName.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ElementSetNameType }
-     *
      */
     public void setElementSetName(ElementSetNameType value) {
         this.elementSetName = value;
@@ -152,11 +132,6 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Obtient la valeur de la propriété outputFormat.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getOutputFormat() {
@@ -169,11 +144,6 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Définit la valeur de la propriété outputFormat.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     @Override
     public void setOutputFormat(String value) {
@@ -182,11 +152,6 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Obtient la valeur de la propriété outputSchema.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getOutputSchema() {
@@ -195,14 +160,8 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
 
     /**
      * Définit la valeur de la propriété outputSchema.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setOutputSchema(String value) {
         this.outputSchema = value;
     }
-
 }

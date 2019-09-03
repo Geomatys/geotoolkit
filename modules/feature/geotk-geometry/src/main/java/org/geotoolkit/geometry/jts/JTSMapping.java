@@ -44,11 +44,6 @@ public final class JTSMapping {
     /**
      * Force geometry type. If the given geometry is not of given class it will
      * be adapted.
-     *
-     * @param <T>
-     * @param geom
-     * @param targetClass
-     * @return
      */
     public static <T extends Geometry> T convertType(final Geometry geom, final Class<T> targetClass) {
         if (geom == null) {

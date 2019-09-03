@@ -49,9 +49,6 @@ public class OSMTMSCoverageResource extends AbstractPyramidalCoverageResource {
     /**
      * Returns adapted {@link ViewType} for OSM TMS reference.
      * The default associated view is {@link ViewType#PHOTOGRAPHIC}.
-     *
-     * @return
-     * @throws DataStoreException
      */
     @Override
     public ViewType getPackMode() throws DataStoreException {

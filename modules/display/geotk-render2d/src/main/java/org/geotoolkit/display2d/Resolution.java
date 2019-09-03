@@ -307,7 +307,6 @@ public class Resolution {
      * Generate all sequences possibilities from dimension.
      *
      * @param dimension space dimension.
-     * @return
      */
     private int[] generate(final int dimension) {
         final int[] ordinates = new int[dimension];

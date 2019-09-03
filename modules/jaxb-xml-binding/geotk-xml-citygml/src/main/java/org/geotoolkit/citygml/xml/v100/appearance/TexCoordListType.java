@@ -157,11 +157,6 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the ring property.
-         *
-         * @return
-         *     possible object is
-         *     {@link String }
-         *
          */
         public String getRing() {
             return ring;
@@ -169,11 +164,6 @@ public class TexCoordListType extends AbstractTextureParameterizationType {
 
         /**
          * Sets the value of the ring property.
-         *
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *
          */
         public void setRing(String value) {
             this.ring = value;

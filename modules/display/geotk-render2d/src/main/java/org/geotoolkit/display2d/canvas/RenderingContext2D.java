@@ -817,7 +817,6 @@ public class RenderingContext2D implements RenderingContext{
     /**
      * Returns the geographic scale, like we can see in scalebar legends '1 : 200 000'
      * This is mainly used in style rules to check the minimum and maximum scales.
-     * @return
      */
     public double getGeographicScale() {
         return geoScale;
@@ -829,7 +828,6 @@ public class RenderingContext2D implements RenderingContext{
      * This is not an accurate geographic scale.
      * This is a fake average scale unproper for correct rendering.
      * It is used only to filter SE rules.
-     * @return
      */
     public double getSEScale() {
         return seScale;

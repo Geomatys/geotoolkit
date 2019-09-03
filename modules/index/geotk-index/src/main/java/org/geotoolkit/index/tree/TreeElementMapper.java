@@ -30,7 +30,6 @@ public interface TreeElementMapper<E> {
     /**
      * Return an appropriate tree identifier from object define by user.
      *
-     * @param object
      * @return an appropriate tree identifier from object define by user.
      */
     public int getTreeIdentifier(E object) throws IOException;
@@ -38,16 +37,12 @@ public interface TreeElementMapper<E> {
     /**
      * Return {@link Envelope} boundary from object.
      *
-     * @param object
      * @return {@link Envelope} boundary from object.
      */
     public Envelope getEnvelope(E object) throws IOException;
 
     /**
      * Affect a tree identifier define by user.
-     *
-     * @param object
-     * @param treeIdentifier
      */
     public void setTreeIdentifier(E object, int treeIdentifier) throws IOException;
 
@@ -65,8 +60,6 @@ public interface TreeElementMapper<E> {
      * Return the full map of object.
      * This method should be used carrefully with a large number of object.
      * Mostly used for debugging purpose.
-     *
-     * @return
      */
     public Map<Integer, E> getFullMap() throws IOException;
 

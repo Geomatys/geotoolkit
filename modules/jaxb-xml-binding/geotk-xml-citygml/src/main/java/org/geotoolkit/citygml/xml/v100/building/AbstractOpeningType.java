@@ -72,11 +72,6 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod3MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod3MultiSurface() {
         return lod3MultiSurface;
@@ -84,11 +79,6 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod3MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
@@ -96,11 +86,6 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod4MultiSurface() {
         return lod4MultiSurface;
@@ -108,11 +93,6 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
@@ -146,5 +126,4 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
         }
         return this.genericApplicationPropertyOfOpening;
     }
-
 }

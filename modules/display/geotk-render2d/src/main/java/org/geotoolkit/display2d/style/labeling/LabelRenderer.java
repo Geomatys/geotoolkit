@@ -35,7 +35,6 @@ public interface LabelRenderer {
 
     /**
      * Create a label layer, that can remove labels "on the fly" if needed.
-     * @return
      */
     LabelLayer createLabelLayer();
 

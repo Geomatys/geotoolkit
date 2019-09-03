@@ -77,7 +77,6 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Gets the extension for the output response. By default {@code image/png}.
-     * @return
      */
     public String getFormat() {
         Object val = getUserProperty(Pyramids.HINT_FORMAT);

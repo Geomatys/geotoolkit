@@ -401,8 +401,6 @@ nextPixel:          do {
 
     /**
      * Temporary Method in attempt to generalize comportment with reflexivity.
-     * @param i
-     * @return
      */
     public SampleDimension getSampleDimension(int i) {
         selectParent();

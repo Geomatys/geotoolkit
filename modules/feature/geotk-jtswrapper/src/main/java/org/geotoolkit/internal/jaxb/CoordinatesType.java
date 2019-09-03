@@ -78,11 +78,6 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the value property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getValue() {
         return value;
@@ -90,11 +85,6 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the value property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -138,11 +128,6 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the decimal property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getDecimal() {
         /*if (decimal == null) {
@@ -153,11 +138,6 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the decimal property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setDecimal(final String value) {
         this.decimal = value;
@@ -165,11 +145,6 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the cs property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getCs() {
         /*if (cs == null) {
@@ -180,11 +155,6 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the cs property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setCs(final String value) {
         this.cs = value;
@@ -192,11 +162,6 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the ts property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getTs() {
         /*if (ts == null) {
@@ -207,11 +172,6 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the ts property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setTs(final String value) {
         this.ts = value;

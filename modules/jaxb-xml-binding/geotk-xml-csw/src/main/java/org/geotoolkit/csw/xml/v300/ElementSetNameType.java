@@ -60,7 +60,6 @@ public class ElementSetNameType implements ElementSetName {
      * An empty constructor used by JAXB
      */
     ElementSetNameType(){
-
     }
 
     /**
@@ -83,11 +82,6 @@ public class ElementSetNameType implements ElementSetName {
 
     /**
      * Obtient la valeur de la propriété value.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public ElementSetType getValue() {
@@ -99,11 +93,6 @@ public class ElementSetNameType implements ElementSetName {
 
     /**
      * Définit la valeur de la propriété value.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -123,13 +112,6 @@ public class ElementSetNameType implements ElementSetName {
      * <pre>
      *    getTypeNames().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link QName }
-     *
-     *
      */
     public List<QName> getTypeNames() {
         if (typeNames == null) {
@@ -137,5 +119,4 @@ public class ElementSetNameType implements ElementSetName {
         }
         return this.typeNames;
     }
-
 }

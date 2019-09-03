@@ -67,11 +67,6 @@ public class AbstractSurfaceDataType extends AbstractFeatureType {
 
     /**
      * Gets the value of the isFront property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *
      */
     public Boolean isIsFront() {
         return isFront;
@@ -79,11 +74,6 @@ public class AbstractSurfaceDataType extends AbstractFeatureType {
 
     /**
      * Sets the value of the isFront property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *
      */
     public void setIsFront(Boolean value) {
         this.isFront = value;
@@ -113,5 +103,4 @@ public class AbstractSurfaceDataType extends AbstractFeatureType {
         }
         return s.toString();
     }
-
 }

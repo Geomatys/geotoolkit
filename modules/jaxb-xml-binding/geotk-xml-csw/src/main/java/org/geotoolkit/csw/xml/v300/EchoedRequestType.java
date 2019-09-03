@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
-import org.w3c.dom.Element;
 
 
 /**
@@ -59,7 +58,6 @@ public class EchoedRequestType {
      * An empty constructor used by JAXB
      */
     public EchoedRequestType() {
-
     }
 
     /**
@@ -71,12 +69,6 @@ public class EchoedRequestType {
 
     /**
      * Obtient la valeur de la propriété any.
-     *
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     {@link Element }
-     *
      */
     public Object getAny() {
         return any;
@@ -84,15 +76,8 @@ public class EchoedRequestType {
 
     /**
      * Définit la valeur de la propriété any.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     {@link Element }
-     *
      */
     public void setAny(Object value) {
         this.any = value;
     }
-
 }
