@@ -501,9 +501,6 @@ class WPS2Process extends AbstractProcess {
      * Fill {@link ParameterValueGroup parameters} of the process using the WPS
      * {@link ExecuteResponse response}.
      *
-     * @param outputs
-     * @param descriptor
-     * @param response
      * @throws ProcessException if data conversion fails.
      */
     private void fillOutputs(Object response) throws ProcessException {
@@ -560,12 +557,6 @@ class WPS2Process extends AbstractProcess {
 
     /**
      * Make a WPS Execute request from {@link ParameterValueGroup values}.
-     *
-     * @param inputs
-     * @param descriptor
-     * @param inputTypes
-     * @return
-     * @throws ProcessException
      */
     private ExecuteRequest createRequest() throws ProcessException {
 

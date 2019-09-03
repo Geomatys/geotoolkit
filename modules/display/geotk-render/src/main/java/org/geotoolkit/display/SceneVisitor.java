@@ -24,12 +24,6 @@ import org.geotoolkit.display.primitive.SceneNode;
  */
 public interface SceneVisitor {
 
-    /**
-     *
-     * @param node
-     * @param extraData
-     * @return visit result
-     */
     Object visit(SceneNode node, Object extraData);
 
 }

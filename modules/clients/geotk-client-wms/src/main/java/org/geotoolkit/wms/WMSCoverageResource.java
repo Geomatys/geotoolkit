@@ -299,8 +299,6 @@ public class WMSCoverageResource extends AbstractCoverageResource {
 
     /**
      * Set the SLD specification version for SLD defines with SLD or SLD_BODY parameter
-     *
-     * @param sldVersion
      */
     public void setSldVersion(final String sldVersion) {
         this.sldVersion = sldVersion;
@@ -378,7 +376,6 @@ public class WMSCoverageResource extends AbstractCoverageResource {
      * Define if the map layer must rely on the geotoolkit reprojection capabilities
      * if the distant server can not handle the canvas crs.
      * The result image might not be pretty, but still better than no image.
-     * @param useLocalReprojection
      */
     public void setUseLocalReprojection(final boolean useLocalReprojection) {
         this.useLocalReprojection = useLocalReprojection;
@@ -391,7 +388,6 @@ public class WMSCoverageResource extends AbstractCoverageResource {
     /**
      * Set to true if the time parameter must be adjusted to match the closest
      * date provided in the layer getCapabilities.
-     * @param matchCapabilitiesDates
      */
     public void setMatchCapabilitiesDates(final boolean matchCapabilitiesDates) {
         this.matchCapabilitiesDates = matchCapabilitiesDates;
@@ -473,10 +469,6 @@ public class WMSCoverageResource extends AbstractCoverageResource {
     /**
      * Prepare parameters for a getMap query.
      * The given parameters will be modified !
-     *
-     * @param request
-     * @param env
-     * @param dim
      */
     public void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
             final Dimension dim, final Point2D pickCoord) throws TransformException,

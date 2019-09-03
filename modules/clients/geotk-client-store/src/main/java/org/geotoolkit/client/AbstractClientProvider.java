@@ -81,8 +81,6 @@ public abstract class AbstractClientProvider extends DataStoreFactory {
     /**
      * Create the version descriptor.
      *
-     * @param values
-     * @param defaultValue
      * @return a version descriptor.
      */
     public static ParameterDescriptor<String> createVersionDescriptor(String[] values, String defaultValue) {

@@ -109,10 +109,6 @@ public class PortrayalRenderedImage implements RenderedImage{
     /**
      *
      * @param canvasDef : canvas size will be ignored.
-     * @param sceneDef
-     * @param viewDef
-     * @param gridSize
-     * @param tileSize
      */
     public PortrayalRenderedImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
             final Dimension gridSize, final Dimension tileSize, final double scale) throws PortrayalException{
@@ -153,7 +149,6 @@ public class PortrayalRenderedImage implements RenderedImage{
     /**
      * A PortrayalRenderedImage does not have any properties
      *
-     * @param name
      * @return always Image.UndefinedProperty
      */
     @Override

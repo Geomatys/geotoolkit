@@ -85,9 +85,7 @@ public final class JasperReportService extends Static {
      * This feature type must be used to generate the featureCollection that will be used
      * by the generateReport method.
      *
-     * @param jrxml
      * @return Entry<JasperReport,FeatureType>
-     * @throws JRException
      */
     public static Entry<JasperReport,FeatureType> prepareTemplate(final Object jrxml) throws JRException{
 
@@ -157,9 +155,7 @@ public final class JasperReportService extends Static {
 
     /**
      * Write the jasper print in the defined output.
-     * @param print
      * @param output : output definition
-     * @throws net.sf.jasperreports.engine.JRException
      */
     public static void generate(final JasperPrint print, final OutputDef output) throws JRException{
         final String mime = output.getMime();
@@ -206,9 +202,6 @@ public final class JasperReportService extends Static {
 
     /**
      * Explore the report design and generate a FeatureType that match the records definition.
-     *
-     * @param design
-     * @return FeatureType
      */
     private static FeatureType extractType(final JasperDesign design){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

@@ -369,9 +369,6 @@ public class TerrainUpdater implements PropertyChangeListener, Updater {
 //    /**
 //     * Not working right yet.
 //     * Waiting for sgothel answer.
-//     *
-//     * @param gl
-//     * @return
 //     */
 //    private GL createLoaderGL(GL gl) {
 //        final GLContext baseContext = gl.getContext();

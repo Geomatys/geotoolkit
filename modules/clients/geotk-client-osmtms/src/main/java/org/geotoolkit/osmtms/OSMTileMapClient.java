@@ -71,7 +71,6 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
      * @param serverURL The server base url. must not be null.
      * @param security ClientSecurity.
      * @param maxZoomLevel maximum zoom level supported on server.
-     * @param cacheImage
      */
     public OSMTileMapClient(final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel, boolean cacheImage) {

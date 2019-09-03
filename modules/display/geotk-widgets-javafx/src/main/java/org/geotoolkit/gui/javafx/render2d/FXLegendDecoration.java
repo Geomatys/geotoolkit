@@ -158,7 +158,6 @@ public class FXLegendDecoration extends StackPane implements FXMapDecoration {
 
     /**
      * When watched {@link MapContext} changes, we update current decoration listener.
-     * @param obs
      * @param oldContext If not null, we unregister our listener from it.
      * @param newContext If not null, we listen to it.
      */
@@ -175,7 +174,6 @@ public class FXLegendDecoration extends StackPane implements FXMapDecoration {
 
     /**
      * Update decoration registration when target {@link FXMap} changes.
-     * @param obs
      * @param oldMap The previous bound map. Unregister if different from null.
      * @param newMap The new Map to target. Register on it if it's not null.
      */
@@ -199,9 +197,6 @@ public class FXLegendDecoration extends StackPane implements FXMapDecoration {
 
     /**
      * Called when popup mode is (de)activated, to update display.
-     * @param obs
-     * @param oldValue
-     * @param newValue
      */
     private void updatePopupMode(final ObservableValue<? extends Boolean> obs, final Boolean oldValue, final Boolean newValue) {
         if (map2D.get() != null) {

@@ -69,7 +69,6 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Sets the format for the output response. By default sets to {@code image/png}.
-     * @param format
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
@@ -99,9 +98,6 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
         return null;
     }
 
-    /**
-     * @param tileSetStyle
-     */
     public void setTileSetStyle(String tileSetStyle) {
         ArgumentChecks.ensureNonNull("tileSetStyle", tileSetStyle);
         setUserProperty(WMTSPyramidSet.HINT_STYLE, tileSetStyle);
@@ -109,7 +105,6 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Returns the {@link WebMapTileClient} to request. Can't be {@code null}.
-     * @return
      */
     public WebMapTileClient getServer() {
         return server;

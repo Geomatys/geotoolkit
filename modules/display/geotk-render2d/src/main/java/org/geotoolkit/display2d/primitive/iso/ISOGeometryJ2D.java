@@ -69,8 +69,6 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
     /**
      * Sets the geometry contained in this lite shape. Convenient to reuse this
      * object instead of creating it again and again during rendering
-     *
-     * @param g
      */
     public void setGeometry(final Geometry g) {
         this.geometry = g;

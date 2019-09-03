@@ -131,8 +131,6 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
 
     /**
      * Extract isolines steps from RasterSymbolizer ColorMap.
-     * @param rasterSymbolizer
-     * @return
      */
     private double[] extractSteps(RasterSymbolizer rasterSymbolizer) {
 

@@ -52,18 +52,12 @@ public interface ClientSecurity {
     /**
      * If the securisation imply some encryption. The manager
      * should encapsulate the given stream.
-     *
-     * @param stream
-     * @return OutputStream
      */
     OutputStream encrypt(OutputStream stream);
 
     /**
      * If the securisation imply some encryption. The manager
      * should encapsulate the given stream.
-     *
-     * @param stream
-     * @return
      */
     InputStream decrypt(InputStream stream);
 

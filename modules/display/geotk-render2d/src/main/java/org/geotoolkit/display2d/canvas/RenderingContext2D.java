@@ -735,8 +735,6 @@ public class RenderingContext2D implements RenderingContext{
 
     /**
      * Find the coefficient between the given Unit and the Objective CRS.
-     * @param unit
-     * @return float
      */
     public float getUnitCoefficient(final Unit<Length> uom){
         Float f = coeffs.get(uom);
@@ -768,7 +766,6 @@ public class RenderingContext2D implements RenderingContext{
      * given to gridCoverageReaders to extract the best resolution grid coverage.
      * This resolution is between the given CRS and Display CRS.
      *
-     * @param crs
      * @return double[] of 2 dimensions
      */
     public double[] getResolution(final CoordinateReferenceSystem crs) {

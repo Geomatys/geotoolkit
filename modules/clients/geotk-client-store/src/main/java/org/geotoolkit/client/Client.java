@@ -73,14 +73,11 @@ public interface Client extends AutoCloseable {
 
     /**
      * Store a value for this server in a hashmap using the given key.
-     * @param key
-     * @param value
      */
     void setUserProperty(String key,Object value);
 
     /**
      * Get a stored value knowing the key.
-     * @param key
      * @return user property object , can be null
      */
     Object getUserProperty(String key);

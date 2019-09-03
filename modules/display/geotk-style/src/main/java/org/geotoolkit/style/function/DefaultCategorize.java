@@ -174,10 +174,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
     /**
      *
-     * @param LookUpValue
      * @param values map with threadholds keys.
-     * @param belongs
-     * @param fallback
      */
     public DefaultCategorize(final Expression LookUpValue, final Map<Expression,Expression> values,
             final ThreshholdsBelongTo belongs, final Literal fallback){
@@ -303,7 +300,6 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
     /**
      * Recolor image
-     * @param image
      * @return recolored image
      */
     private RenderedImage evaluateImage(final RenderedImage image) {

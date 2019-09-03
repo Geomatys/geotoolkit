@@ -115,7 +115,6 @@ public class ProcessedCoverageResource extends MemoryCoverageResource {
 
     /**
      * {@see ProcessedCollection.getLifespan}
-     * @param lifespan
      */
     public void setLifespan(long lifespan) {
         this.lifespan = lifespan;

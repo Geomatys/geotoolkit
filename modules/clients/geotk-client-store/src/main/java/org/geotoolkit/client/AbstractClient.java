@@ -242,7 +242,6 @@ public abstract class AbstractClient extends DataStore implements Client {
     /**
      * Forward given event, changing the source by this object.
      * For implementation use only.
-     * @param event
      */
     public void forwardEvent(StorageEvent event){
         sendEvent(event.copy(this));

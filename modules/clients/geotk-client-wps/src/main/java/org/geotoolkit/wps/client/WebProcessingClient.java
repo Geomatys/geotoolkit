@@ -61,9 +61,6 @@ public class WebProcessingClient extends AbstractClient {
 
     /**
      * Constructor
-     *
-     * @param serverURL
-     * @param version
      */
     public WebProcessingClient(final URL serverURL, final String version) {
         this(serverURL, null, version, true, null, false);
@@ -72,8 +69,6 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Costructor with forceGET tunning.
      *
-     * @param serverURL
-     * @param version
      * @param forceGET if true, GetCapabilities and DescribeProcess will be request in GET, otherwise POST is used.
      */
     public WebProcessingClient(final URL serverURL, final String version, final boolean forceGET) {
@@ -83,8 +78,6 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Constructor
      * Auto detect version.
-     *
-     * @param serverURL
      */
     public WebProcessingClient(final URL serverURL) {
         this(serverURL,null,null,true, null, false);
@@ -93,9 +86,6 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Constructor
      * Auto detect version.
-     *
-     * @param serverURL
-     * @param security
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security) {
         this(serverURL,security,null,true, null, false);
@@ -103,10 +93,6 @@ public class WebProcessingClient extends AbstractClient {
 
     /**
      * Constructor
-     *
-     * @param serverURL
-     * @param security
-     * @param version
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, final String version) {
         this(serverURL,security,version,true, null, false);
@@ -114,10 +100,6 @@ public class WebProcessingClient extends AbstractClient {
 
     /**
      * Constructor
-     *
-     * @param serverURL
-     * @param security
-     * @param version
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, final WPSVersion version) {
         this(serverURL, security, version==null?null:version.getCode(), true, null, false);
@@ -125,11 +107,6 @@ public class WebProcessingClient extends AbstractClient {
 
     /**
      * Constructor
-     *
-     * @param serverURL
-     * @param security
-     * @param version
-     * @param timeout
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, final WPSVersion version, final Integer timeout) {
         this(serverURL, security, version==null?null:version.getCode(), true, timeout, false);
@@ -137,11 +114,6 @@ public class WebProcessingClient extends AbstractClient {
 
     /**
      * Constructor
-     *
-     * @param serverURL
-     * @param security
-     * @param version
-     * @param timeout
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, final WPSVersion version, final Integer timeout, final Boolean dynamicLoading) {
         this(serverURL, security, version==null?null:version.getCode(), true, timeout, dynamicLoading);
@@ -150,12 +122,7 @@ public class WebProcessingClient extends AbstractClient {
     /**
      * Constructor
      *
-     * @param serverURL
-     * @param security
-     * @param version
      * @param forceGET if true, GetCapabilities and DescribeProcess will be request in GET, otherwise POST is used.
-     * @param timeout
-     * @param dynamicLoading
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, String version, final boolean forceGET, final Integer timeout, final Boolean dynamicLoading) {
         super(create(WPSClientFactory.PARAMETERS, serverURL, security, timeout));
@@ -219,7 +186,6 @@ public class WebProcessingClient extends AbstractClient {
 
     /**
      * @return WPSCapabilitiesType : WPS server capabilities
-     * @throws org.geotoolkit.client.CapabilitiesException
      */
     public Capabilities getServiceCapabilities() throws CapabilitiesException {
         return getServiceCapabilities(false);
@@ -229,7 +195,6 @@ public class WebProcessingClient extends AbstractClient {
      * @param refresh if set to true, the cached capabilities document will be renewed.
      *
      * @return WPSCapabilitiesType : WPS server capabilities
-     * @throws org.geotoolkit.client.CapabilitiesException
      */
     public Capabilities getServiceCapabilities(boolean refresh) throws CapabilitiesException {
         if (capabilities != null && !refresh) {
@@ -311,8 +276,6 @@ public class WebProcessingClient extends AbstractClient {
      *
      * @param processIDs List of process Identifiers
      * @return ProcessDescriptions : WPS process description
-     *
-     * @throws java.io.IOException
      */
     public ProcessOfferings getDescribeProcess(final List<String> processIDs) throws Exception {
 
@@ -356,7 +319,6 @@ public class WebProcessingClient extends AbstractClient {
      * Create a GetStatus request
      *
      * @param jobId The job identifier.
-     * @return GetStatusRequest
      */
     public GetStatusRequest createGetStatus(final String jobId) {
         final WPSVersion version = ensureVersionSet();
@@ -377,7 +339,6 @@ public class WebProcessingClient extends AbstractClient {
      * Create a GetResult request
      *
      * @param jobId The job identifier.
-     * @return GetResultRequest.
      */
     public GetResultRequest createGetResult(final String jobId) {
 
@@ -403,7 +364,6 @@ public class WebProcessingClient extends AbstractClient {
      * Create a Dismiss request
      *
      * @param jobId The job identifier.
-     * @return GetResultRequest.
      */
     public DismissRequest createDismiss(final String jobId) {
 

@@ -231,8 +231,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * Render styled features.
-     *
-     * @param context
      */
     private boolean renderStyledFeature(final RenderingContext2D context){
 
@@ -1054,11 +1052,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * Render by object order.
-     * @param candidates
-     * @param renderers
-     * @param context
-     * @param params
-     * @throws PortrayalException
      */
     protected final boolean renderByObjectOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules,
@@ -1132,11 +1125,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * render by symbol order.
-     * @param candidates
-     * @param context
-     * @param rules
-     * @param params
-     * @throws org.geotoolkit.display.PortrayalException
      */
     protected final boolean renderBySymbolOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)

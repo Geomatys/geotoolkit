@@ -654,8 +654,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * Returns {@code true} if a default style is needed to interpret current data
      * else {@code false} if java 2d will be able to interprete data.
      *
-     * @param sampleModel
-     * @param colorModel
      * @return {@code true} if a style creation is needed to show image datas else {@code false}.
      */
     private static boolean defaultStyleIsNeeded(final SampleModel sampleModel, final ColorModel colorModel) {
@@ -876,11 +874,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     /**
      * Create a geoide coverage to mimic an elevation model.
-     * @param coverage
-     * @return
-     * @throws IllegalArgumentException
-     * @throws FactoryException
-     * @throws TransformException
      */
     public static GridCoverage2D getGeoideCoverage(final GridCoverage2D coverage) throws IllegalArgumentException, FactoryException, TransformException{
 

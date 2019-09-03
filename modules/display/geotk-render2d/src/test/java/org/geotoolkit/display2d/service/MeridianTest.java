@@ -531,8 +531,6 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
     /**
      * Test the image content.
      * The image must be completely white and pixels inside the fille areas must be black.
-     * @param image
-     * @param fillAreas
      */
     private void checkImage(BufferedImage image, Rectangle ... fillAreas){
 

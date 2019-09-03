@@ -313,7 +313,6 @@ public class ConvertedGridCoverage extends org.apache.sis.coverage.grid.GridCove
         private final float offset;
 
         /**
-         * @param nbbits
          * @param fct : Interpolate or Categorize function
          */
         public ConvertedColorModel(final int nbbits, final NumberRange range){

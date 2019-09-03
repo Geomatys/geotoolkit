@@ -37,10 +37,7 @@ public final class TextureUtils {
     private TextureUtils(){}
 
     /**
-     * @param imgSrc
-     * @param transform
      * @param sampleValue the value to set on non-existing pixel after resampling
-     * @return
      */
     public static RenderedImage sampleImage(RenderedImage imgSrc, MathTransform transform, double[] sampleValue) throws TransformException {
 

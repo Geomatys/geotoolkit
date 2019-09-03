@@ -328,10 +328,6 @@ public final class DefaultPortrayalService implements PortrayalService{
      * Unlike a call to a portray method, the returned rendered image will be calculated
      * progressively.
      *
-     * @param mosaic
-     * @param def
-     * @param sceneDef
-     * @param viewDef
      * @return RenderedImage , never null
      */
     public static RenderedImage prepareImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
@@ -342,7 +338,6 @@ public final class DefaultPortrayalService implements PortrayalService{
     /**
      * Manipulate a MapContext as if it was an ARGB coverage of infinite resolution.
      *
-     * @param sceneDef
      * @return GridCoverageReader, never null
      */
     public static GridCoverageReader asCoverageReader(final SceneDef sceneDef){
@@ -420,9 +415,6 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     /**
      *
-     * @param canvasDef
-     * @param sceneDef
-     * @param viewDef
      * @param outputDef : The compression parameter will not necesarly be used
      *              if the mime type write can not support it.
      * @throws PortrayalException
@@ -740,12 +732,6 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     /**
      * Generate presentation objects for a scene.
-     *
-     * @param canvasDef
-     * @param sceneDef
-     * @param viewDef
-     * @return
-     * @throws PortrayalException
      */
     public static Spliterator<Presentation> present(final CanvasDef canvasDef,
             final SceneDef sceneDef, final ViewDef viewDef) throws PortrayalException, DataStoreException{
@@ -1050,7 +1036,6 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     /**
      *
-     * @param image
      * @return String containing a technical description of the image.
      */
     private static String toImageInformation(final RenderedImage image){

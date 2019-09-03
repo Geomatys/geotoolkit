@@ -115,7 +115,6 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Map
 
     /**
      * {@inheritDoc }
-     * @param context2D
      */
     @Override
     public boolean paint(RenderingContext2D context2D) {

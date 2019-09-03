@@ -86,14 +86,11 @@ public interface MapItem {
 
     /**
      * Store a value for this maplayer in a hashmap using the given key.
-     * @param key
-     * @param value
      */
     void setUserProperty(String key,Object value);
 
     /**
      * Get a stored value knowing the key.
-     * @param key
      * @return user property object , can be null
      */
     Object getUserProperty(String key);

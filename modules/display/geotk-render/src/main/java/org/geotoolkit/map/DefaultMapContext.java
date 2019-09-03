@@ -117,10 +117,6 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
     /**
      * {@inheritDoc }
-     *
-     * @param onlyVisible
-     * @return
-     * @throws IOException
      */
     @Override
     public Envelope getBounds(boolean onlyVisible) throws IOException {

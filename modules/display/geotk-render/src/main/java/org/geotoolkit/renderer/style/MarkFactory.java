@@ -43,9 +43,6 @@ public abstract class MarkFactory {
      * 0 : protocol
      * 1 : main path
      * 2+ : arguments as entries
-     *
-     * @param path
-     * @return
      */
     protected static List<Object> splitPath(String path){
         final List<Object> splits = new ArrayList<>();

@@ -56,9 +56,6 @@ public abstract class PositionedGraphic2D extends GraphicJ2D{
     /**
      * Move the graphic inside the canvas, this makes
      * the graphic go away from the image borders.
-     *
-     * @param offsetX
-     * @param offsetY
      */
     public void setOffset(final int offsetX, final int offsetY) {
         this.offset[0] = offsetX;

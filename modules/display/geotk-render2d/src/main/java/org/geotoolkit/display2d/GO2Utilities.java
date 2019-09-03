@@ -413,7 +413,6 @@ public final class GO2Utilities {
      *
      * @param shape : java2d shape
      * @param stroke : sld stroke
-     * @param uom
      * @param target : Graphics2D
      */
     public static void renderStroke(final Shape shape, final Stroke stroke, final Unit uom, final Graphics2D target){
@@ -609,10 +608,7 @@ public final class GO2Utilities {
     /**
      * Calculate the most accurate pixel resolution for the given envelope.
      *
-     * @param context2D
-     * @param wanted
      * @return double, in envelope crs unit by pixel
-     * @throws TransformException
      */
     public static double pixelResolution(final RenderingContext2D context2D, final Envelope wanted) throws TransformException{
         final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
@@ -894,10 +890,6 @@ public final class GO2Utilities {
 
     /**
      * Compute Euclidean distance between a point and a line define by 2 points (ptA, ptB).
-     *
-     * @param point
-     * @param ptA
-     * @param ptB
      */
     public static double euclidianDistance(final double[] point, final double[] ptA, final double[] ptB) {
         ArgumentChecks.ensureNonNull("point", point);
@@ -1021,7 +1013,6 @@ public final class GO2Utilities {
      * - Expression.NIL
      * - PropertyName with null or empty name
      *
-     * @param exp
      * @return true if empty
      */
     public static boolean isNullorEmpty(Expression exp){

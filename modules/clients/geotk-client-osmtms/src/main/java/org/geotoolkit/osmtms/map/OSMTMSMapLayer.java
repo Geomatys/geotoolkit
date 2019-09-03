@@ -56,7 +56,6 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Sets the extension for the output response. By default sets to {@code .png}.
-     * @param format
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);

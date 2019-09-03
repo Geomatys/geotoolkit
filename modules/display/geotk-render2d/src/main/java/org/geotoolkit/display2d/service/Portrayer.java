@@ -142,12 +142,8 @@ public final class Portrayer {
 
     /**
      *
-     * @param canvasDef
-     * @param sceneDef
-     * @param viewDef
      * @param outputDef : The compression parameter will not necesarly be used
      *              if the mime type write can not support it.
-     * @throws PortrayalException
      */
     public void portray(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
             final OutputDef outputDef) throws PortrayalException{

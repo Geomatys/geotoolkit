@@ -233,9 +233,6 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
 
     /**
      * Generate mimetype file extension
-     *
-     * @param mimeType
-     * @return
      */
     private static String findExtension(String mimeType) {
         if (mimeType==null) return null;

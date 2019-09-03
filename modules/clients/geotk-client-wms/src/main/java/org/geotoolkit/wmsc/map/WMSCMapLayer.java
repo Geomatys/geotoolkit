@@ -35,7 +35,6 @@ public class WMSCMapLayer extends WMSMapLayer{
     }
 
     /**
-     * @param server
      * @param layer : only one layer possible in wms-c
      */
     public WMSCMapLayer(final WebMapClientCached server, final GenericName name) throws CapabilitiesException {

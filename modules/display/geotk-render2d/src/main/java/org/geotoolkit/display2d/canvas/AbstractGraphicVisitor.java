@@ -17,25 +17,10 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.geom.Rectangle2D;
-import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import javax.measure.IncommensurableException;
-import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.apache.sis.measure.Units;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -46,13 +31,8 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
 import org.apache.sis.storage.GridCoverageResource;
-import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.display.primitive.Graphic;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * A visitor which can be applied to the
@@ -107,15 +87,6 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         return false;
     }
 
-    /**
-     *
-     * @param projectedCoverage
-     * @param context
-     * @param area
-     * @return
-     * @throws CoverageStoreException
-     * @throws TransformException
-     */
     protected static CoverageExtractor.Ray rayExtraction(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D area)
             throws DataStoreException, TransformException {
 

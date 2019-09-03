@@ -55,11 +55,6 @@ public final class CanvasUtilities {
      * Returns the geographic scale, in a ground unit manner, relation between map display size
      * and real ground unit meters.
      *
-     * @param center
-     * @param objToDisp
-     * @param crs
-     * @return
-     * @throws org.opengis.referencing.operation.TransformException
      * @throws IllegalStateException If the affine transform used for conversion is in illegal state.
      */
     public static double getGeographicScale(Point2D center, AffineTransform2D objToDisp, CoordinateReferenceSystem crs) throws TransformException {
@@ -137,9 +132,6 @@ public final class CanvasUtilities {
 
     /**
      * @param envelope : canvas objective bounds 2D
-     * @param objToDisp
-     * @param dispBounds
-     * @return
      */
     public static double computeSEScale(final Envelope envelope, AffineTransform objToDisp, Rectangle dispBounds) {
         final CoordinateReferenceSystem objCRS = envelope.getCoordinateReferenceSystem();

@@ -1274,7 +1274,6 @@ public class EditionHelper {
 
     /**
      *
-     * @param fml
      * @return true if layer resource is a FeatureCollection and is Writable.
      */
     public static boolean isWritable(FeatureMapLayer fml) {

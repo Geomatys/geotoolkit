@@ -160,8 +160,6 @@ class WPS2ProcessDescriptor extends AbstractProcessDescriptor {
     /**
      * Convert Description to GeneralParameterDescriptor.
      *
-     * @param input
-     * @return
      * @throws UnsupportedOperationException if data type could not be mapped
      */
     private static GeneralParameterDescriptor toDescriptor(String processId, Description input) throws UnsupportedParameterException {

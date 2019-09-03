@@ -69,7 +69,6 @@ public class OpacityItem extends TreeMenuItem {
 
     /**
      * Update opacity of currently selected layers using {@link #slider}.
-     * @param sliderProperty
      * @param oldOpacity The previous slider opacity.
      * @param newOpacity The new opacity value
      */

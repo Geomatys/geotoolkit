@@ -61,9 +61,6 @@ public class SceneNode3D extends SceneNode{
 
     /**
      * Check that the node has been initialized properly before drawing.
-     *
-     * @param glDrawable
-     * @throws GLException
      */
     public final void draw(GLAutoDrawable glDrawable) throws GLException{
         //ensure object has been initialized

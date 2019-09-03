@@ -110,7 +110,6 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Map
 
     /**
      * {@inheritDoc }
-     * @param context2D
      */
     @Override
     public boolean paintLayer(final RenderingContext2D context2D) {
@@ -196,10 +195,6 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Map
 
     /**
      * {@inheritDoc }
-     * @param context
-     * @param mask
-     * @param filter
-     * @param graphics
      */
     @Override
     public List<Graphic> getGraphicAt(final RenderingContext context,
@@ -277,9 +272,6 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Map
 
     /**
      * File the tiles to features for rendering.
-     *
-     * @param context2D
-     * @return
      */
     private TileSetResult listTiles(RenderingContext2D context2D){
         final TileSetResult result = new TileSetResult();

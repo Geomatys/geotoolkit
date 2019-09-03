@@ -506,7 +506,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * Pragmatic approach trying to solve intersection of areas with
      * different meridian origin such as -180/+180 to +0/+360.
      *
-     * @param areaOfInterest
      * @param resolution, may be changed by this method.
      * @return update area of interest envelope, CRS may have changed and new resolution
      *         or null if unchanged.

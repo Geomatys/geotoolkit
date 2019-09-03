@@ -35,8 +35,6 @@ public interface JRFieldRenderer {
 
     /**
      *
-     * @param field
-     * @return
      * @throws IllegalArgumentException
      *     if the field type match this renderer but some additional
      *     field parameters are missing

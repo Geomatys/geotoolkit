@@ -186,8 +186,6 @@ public abstract class AbstractRequest implements Request {
 
     /**
      * Active the printing of all the sent/received request.
-     *
-     * @param debug
      */
     public void setDebug(boolean debug) {
         this.debug = debug;
@@ -333,9 +331,6 @@ public abstract class AbstractRequest implements Request {
     /**
      * Java do not follow urls if there is a change in protocol.
      * See : http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4620571
-     *
-     * @param cnx
-     * @return
      */
     protected InputStream followLink(URLConnection cnx) throws IOException {
 

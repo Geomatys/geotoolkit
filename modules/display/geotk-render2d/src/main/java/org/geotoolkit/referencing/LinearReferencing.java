@@ -151,7 +151,6 @@ public class LinearReferencing extends Static{
      *
      * @param geom linear geometry
      * @param references positions
-     * @param position
      * @return Entry : Key = index of the closest reference point
      *                 Value = distance along the linear
      */
@@ -167,7 +166,6 @@ public class LinearReferencing extends Static{
      * @param segments The list of segments which compose source linear.
      *
      * @param references positions
-     * @param position
      * @return Entry : Key = index of the closest reference point
      *                 Value = distance along the linear
      */
@@ -232,10 +230,6 @@ public class LinearReferencing extends Static{
     /**
      * Project the geometry on the segments.
      * The result can be a Point/MultiPoint/LineString/MultiLinestring over the segments.
-     *
-     * @param segments
-     * @param geometry
-     * @return LineString
      */
     public static Geometry project(SegmentInfo[] segments, Geometry geometry){
         ArgumentChecks.ensureNonNull("geometry", geometry);
@@ -318,10 +312,6 @@ public class LinearReferencing extends Static{
 
     /**
      * Find nearest segment to given distance.
-     *
-     * @param segments
-     * @param distance
-     * @return SegmentInfo
      */
     public static SegmentInfo getSegment(SegmentInfo[] segments, double distance){
         SegmentInfo segment = segments[0];

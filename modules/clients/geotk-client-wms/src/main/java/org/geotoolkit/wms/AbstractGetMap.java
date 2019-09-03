@@ -370,7 +370,6 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     /**
      * Return a map containing BBOX, SRS (or CRS), TIME and ELEVATION parameters.
      *
-     * @param env
      * @return
      */    /**
      * {@inheritDoc }

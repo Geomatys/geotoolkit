@@ -581,8 +581,6 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         /**
          * Message completed, all chunk are aggregated into buffer attribute.
          * Create an InputStream from that buffer and update PackImage and add it tho queue.
-         *
-         * @param e
          */
         private void messageCompleted(final MessageEvent e) {
             final Integer channelID = e.getChannel().getId();

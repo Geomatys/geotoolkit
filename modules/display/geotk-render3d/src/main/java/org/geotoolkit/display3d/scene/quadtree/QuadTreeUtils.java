@@ -31,9 +31,6 @@ public final class QuadTreeUtils {
 
     /**
      * Get the QuadTree Grid Size for a specific tree depth
-     *
-     * @param treeDepth
-     * @return
      */
     public static Dimension getGridSize(int treeDepth) {
         final int numTile = (int)Math.pow(2, treeDepth);
@@ -42,10 +39,6 @@ public final class QuadTreeUtils {
 
     /**
      * Get the number of pixel for the grid at a specific tree depth
-     *
-     * @param treeDepth
-     * @param pixelPerTile
-     * @return
      */
     public static long getNumPixel(int treeDepth, long pixelPerTile) {
         final int gridSize = (int)Math.pow(2, treeDepth);
@@ -54,11 +47,6 @@ public final class QuadTreeUtils {
 
     /**
      * Get the scale (crs / pixels) for the grid at a specific tree depth
-     *
-     * @param treeDepth
-     * @param pixelPerTile
-     * @param crsSpan
-     * @return
      */
     public static double getScale(int treeDepth, long pixelPerTile, double crsSpan) {
         final long numPixel = getNumPixel(treeDepth, pixelPerTile);
@@ -67,11 +55,6 @@ public final class QuadTreeUtils {
 
     /**
      * Search the nearest tree depth for a specific scale
-     *
-     * @param scale
-     * @param pixelPerTile
-     * @param crsSpan
-     * @return
      */
     public static int getTreeDepth(double scale, long pixelPerTile, double crsSpan){
         int treeDepth = -1;
@@ -84,9 +67,6 @@ public final class QuadTreeUtils {
 
     /**
      * Search the top QuadTree node of the QuadTree
-     *
-     * @param node
-     * @return
      */
     public static QuadTreeNode findRootNode(QuadTreeNode node) {
         QuadTreeNode searchNode = node;
@@ -160,12 +140,6 @@ public final class QuadTreeUtils {
 
     /**
      * Search the id of the quad tree node
-     *
-     * @param treeDepth
-     * @param envelope
-     * @param lon
-     * @param lat
-     * @return
      */
     public static Point[] findId(int treeDepth, Envelope envelope, double lon, double lat) {
 

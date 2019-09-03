@@ -47,8 +47,6 @@ public class DefaultOnlineResource implements OnlineResource{
 
     /**
      * Create a default immutable OnlineResource.
-     *
-     * @param uri
      */
     public DefaultOnlineResource(final URI uri, final String protocol, final String profil, final String name,
                             final InternationalString desc, final OnLineFunction function){

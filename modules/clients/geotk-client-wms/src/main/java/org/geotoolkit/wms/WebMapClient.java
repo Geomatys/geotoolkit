@@ -89,7 +89,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     /**
      * Constructor with only URL
-     * @param serverURL
      */
     public WebMapClient(final URL serverURL){
         this(serverURL, null, null, null);
@@ -409,9 +408,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     /**
      * Override by WMS-c and NCWMS.
-     *
-     * @param name
-     * @return
      */
     protected GridCoverageResource createReference(GenericName name) throws DataStoreException{
         return new WMSCoverageResource(this,name);
