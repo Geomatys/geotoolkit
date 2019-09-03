@@ -118,7 +118,7 @@ public class FishStore extends DataStore implements FeatureSet {
             throw new DataStoreException(ex);
         }
 
-        final Spliterator<Feature> spliterator = Spliterators.spliterator(reader, Long.MAX_VALUE, Spliterator.ORDERED);
+        final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
         final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
         return stream.onClose(reader::close);
     }

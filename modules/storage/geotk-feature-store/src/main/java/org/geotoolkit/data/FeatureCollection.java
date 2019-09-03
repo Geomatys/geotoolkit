@@ -147,7 +147,7 @@ public interface FeatureCollection extends Collection<Feature>, WritableFeatureS
     @Override
     default Stream<Feature> features(boolean parallal) throws DataStoreException {
         final FeatureIterator reader = iterator();
-        final Spliterator<Feature> spliterator = Spliterators.spliterator(reader, Long.MAX_VALUE, Spliterator.ORDERED);
+        final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
         final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
         return stream.onClose(reader::close);
     }
