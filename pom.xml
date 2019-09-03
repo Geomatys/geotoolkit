@@ -244,31 +244,6 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- Apache SIS -->
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-utility</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.opengis</groupId>
-          <artifactId>geoapi-pending</artifactId>
-          <version>${geoapi.version}</version>
-      </dependency>
-        <dependency>
-          <groupId>org.opengis</groupId>
-          <artifactId>geoapi-conformance</artifactId>
-          <version>${geoapi.version}</version>
-        </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-utility</artifactId>
-          <version>${sis.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-      </dependency>
-
       <dependency>
           <groupId>org.apache.sis.core</groupId>
           <artifactId>sis-referencing</artifactId>
@@ -295,58 +270,6 @@
                   <artifactId>sis-referencing</artifactId>
               </exclusion>
           </exclusions>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-referencing</artifactId>
-          <version>${sis.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-metadata</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-metadata</artifactId>
-          <version>${sis.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-feature</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.storage</groupId>
-          <artifactId>sis-storage</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.storage</groupId>
-          <artifactId>sis-netcdf</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.storage</groupId>
-          <artifactId>sis-geotiff</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.profiles</groupId>
-          <artifactId>sis-french-profile</artifactId>
-          <version>${sis.version}</version>
       </dependency>
 
       <dependency>
