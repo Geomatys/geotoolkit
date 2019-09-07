@@ -27,8 +27,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.storage.*;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
@@ -659,15 +657,6 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         } catch (Exception exception) {
             throw new CatalogException(exception);
         }
-    }
-
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     /**

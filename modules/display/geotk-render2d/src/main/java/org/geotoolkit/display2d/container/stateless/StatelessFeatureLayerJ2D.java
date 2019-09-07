@@ -44,8 +44,8 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -114,7 +114,7 @@ import org.opengis.util.GenericName;
  * @author johann sorel (Geomatys)
  * @module
  */
-public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements ChangeListener<ChangeEvent> {
+public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements StoreListener<StoreEvent> {
 
     protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
@@ -136,7 +136,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     }
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             getCanvas().repaint();

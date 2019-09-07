@@ -40,8 +40,8 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -80,7 +80,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage");
 
-    protected final Set<ChangeListener> listeners = new HashSet<>();
+    protected final Set<StoreListener> listeners = new HashSet<>();
     protected final GridCoverageResource ref;
     protected final DataStore store;
 
@@ -290,14 +290,14 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
     }
 
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -308,12 +308,12 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
      * @param event , event to send to listeners.
      */
     private void sendStructureEvent(final StorageEvent event){
-        final ChangeListener[] lst;
+        final StoreListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new ChangeListener[listeners.size()]);
+            lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
-        for (final ChangeListener listener : lst) {
-            listener.changeOccured(event);
+        for (final StoreListener listener : lst) {
+            listener.eventOccured(event);
         }
     }
 

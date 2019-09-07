@@ -27,8 +27,8 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.metadata.Identifier;
@@ -41,7 +41,7 @@ import org.opengis.util.GenericName;
  */
 public abstract class AbstractResource implements Resource {
 
-    protected final Set<ChangeListener> listeners = new HashSet<>();
+    protected final Set<StoreListener> listeners = new HashSet<>();
 
     protected NamedIdentifier identifier;
     private DefaultMetadata metadata;
@@ -91,14 +91,14 @@ public abstract class AbstractResource implements Resource {
     }
 
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -108,13 +108,13 @@ public abstract class AbstractResource implements Resource {
      * Forward a structure event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(final ChangeEvent event){
-        final ChangeListener[] lst;
+    protected void sendEvent(final StoreEvent event){
+        final StoreListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new ChangeListener[listeners.size()]);
+            lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
-        for(final ChangeListener listener : lst){
-            listener.changeOccured(event);
+        for(final StoreListener listener : lst){
+            listener.eventOccured(event);
         }
     }
 

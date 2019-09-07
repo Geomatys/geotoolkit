@@ -31,9 +31,9 @@ import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
+
 import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.storage.Resource;
@@ -163,14 +163,5 @@ public class LandsatCoverageStore extends org.apache.sis.storage.earthobservatio
     @Override
     public DataStoreProvider getProvider() {
         return DataStores.getProviderById(LandsatProvider.NAME);
-    }
-
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 }

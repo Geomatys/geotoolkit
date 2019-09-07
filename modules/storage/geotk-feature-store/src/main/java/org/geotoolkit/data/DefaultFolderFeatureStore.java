@@ -29,8 +29,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.*;
 import static org.geotoolkit.data.AbstractFolderFeatureStoreFactory.*;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -63,10 +63,10 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
     /**
      * Listen to changes in sub stores and propagate them.
      */
-    private final ChangeListener subListener = new ChangeListener() {
+    private final StoreListener subListener = new StoreListener() {
 
         @Override
-        public void changeOccured(ChangeEvent event) {
+        public void eventOccured(StoreEvent event) {
             if (event instanceof StorageEvent) {
                 event = ((StorageEvent)event).copy(DefaultFolderFeatureStore.this);
             }
@@ -191,7 +191,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         if (singleFileFactory.canProcess(params)) {
             try {
                 final FeatureStore fileDS = (FeatureStore) singleFileFactory.open(params);
-                fileDS.addListener(subListener, ChangeEvent.class);
+                fileDS.addListener(subListener, StoreEvent.class);
                 stores.add(this, fileDS.getNames().iterator().next(), fileDS);
             } catch (DataStoreException ex) {
                 getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
@@ -221,7 +221,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         }
 
         final FeatureStore store = (FeatureStore) singleFileFactory.create(params);
-        store.addListener(subListener, ChangeEvent.class);
+        store.addListener(subListener, StoreEvent.class);
         store.createFeatureType(featureType);
         stores.add(this, typeName, store);
     }
@@ -377,5 +377,4 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
     public void refreshMetaModel() {
         stores=null;
     }
-
 }

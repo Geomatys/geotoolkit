@@ -26,6 +26,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -39,7 +40,7 @@ import org.opengis.util.FactoryException;
 public abstract class GeoreferencedGridCoverageResource extends AbstractGridResource {
 
     protected GeoreferencedGridCoverageResource(Resource resource) {
-        super(resource);
+        super(resource instanceof StoreListeners ? (StoreListeners) resource : null);
     }
 
     @Override

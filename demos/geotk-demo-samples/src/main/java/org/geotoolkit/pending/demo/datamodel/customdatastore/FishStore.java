@@ -23,8 +23,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.storage.DataStores;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
@@ -121,14 +119,6 @@ public class FishStore extends DataStore implements FeatureSet {
         final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
         final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
         return stream.onClose(reader::close);
-    }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override

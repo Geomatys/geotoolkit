@@ -15,8 +15,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.*;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -251,12 +251,12 @@ public class PredictorTest {
         }
 
         @Override
-        public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+        public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }

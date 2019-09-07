@@ -32,8 +32,8 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
@@ -67,7 +67,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<MapLayer> implements ChangeListener<ChangeEvent> {
+public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<MapLayer> implements StoreListener<StoreEvent> {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
     protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
@@ -311,7 +311,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Map
     }
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         if (event instanceof CoverageStoreContentEvent) {
             //TODO should call a repaint only on this graphic
             gtiles.clear();

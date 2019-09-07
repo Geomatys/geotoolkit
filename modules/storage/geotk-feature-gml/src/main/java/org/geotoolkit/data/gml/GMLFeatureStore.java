@@ -55,8 +55,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -259,14 +257,6 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
 
     @Override
     public void close() throws DataStoreException {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override

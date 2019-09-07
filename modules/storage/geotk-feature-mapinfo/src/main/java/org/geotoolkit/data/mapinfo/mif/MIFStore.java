@@ -34,8 +34,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableAggregate;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.DefiningFeatureSet;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.storage.DataStores;
@@ -184,13 +182,4 @@ public class MIFStore extends DataStore implements WritableAggregate, ResourceOn
     @Override
     public void close() throws DataStoreException {
     }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
 }

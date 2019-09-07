@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.apache.sis.util.Disposable;
 import org.apache.sis.util.logging.Logging;
@@ -49,15 +49,15 @@ public final class StorageListener {
      * Weak style listener. Use it when you are not
      * sure that the listener will be correctly removed by your class.
      */
-    public static final class Weak extends WeakReference<ChangeListener> implements ChangeListener, Disposable {
+    public static final class Weak extends WeakReference<StoreListener> implements StoreListener, Disposable {
 
         private final Collection<Object> sources = new ArrayList<>(1);
 
-        public Weak(final ChangeListener ref) {
+        public Weak(final StoreListener ref) {
             this(null,ref);
         }
 
-        public Weak(final Object source, final ChangeListener ref) {
+        public Weak(final Object source, final StoreListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -71,7 +71,7 @@ public final class StorageListener {
                 this.sources.add(source);
                 if (source instanceof Resource) {
                     Resource res = (Resource) source;
-                    res.addListener(this, ChangeEvent.class);
+                    res.addListener(this, StoreEvent.class);
                 }
             }
         }
@@ -96,7 +96,7 @@ public final class StorageListener {
         private synchronized void remove(final Object source) {
             if (source instanceof Resource) {
                 Resource res = (Resource) source;
-                res.removeListener(this, ChangeEvent.class);
+                res.removeListener(this, StoreEvent.class);
             }
         }
 
@@ -109,10 +109,10 @@ public final class StorageListener {
         }
 
         @Override
-        public void changeOccured(final ChangeEvent event) {
-            final ChangeListener listener = get();
+        public void eventOccured(final StoreEvent event) {
+            final StoreListener listener = get();
             if (listener != null) {
-                listener.changeOccured(event);
+                listener.eventOccured(event);
             }
         }
     }

@@ -17,7 +17,7 @@
 
 package org.geotoolkit.storage;
 
-import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.Resource;
 
 /**
@@ -25,7 +25,7 @@ import org.apache.sis.storage.Resource;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class StorageEvent extends ChangeEvent {
+public abstract class StorageEvent extends StoreEvent {
 
     public StorageEvent(final Resource source){
         super(source);

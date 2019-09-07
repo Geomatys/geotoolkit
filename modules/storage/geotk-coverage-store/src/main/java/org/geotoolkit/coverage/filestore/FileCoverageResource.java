@@ -79,7 +79,7 @@ public final class FileCoverageResource extends AbstractGridResource implements 
     private GridGeometry cachedGridGeometry;
 
     FileCoverageResource(FileCoverageStore store, GenericName name, Path file) {
-        super(store);
+        super(null);
         this.store = store;
         this.name = name;
         this.file = file;

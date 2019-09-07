@@ -18,8 +18,8 @@ package org.geotoolkit.pending.demo.datamodel.nmea;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -57,17 +57,17 @@ public class NMEASerialPortReaderDemo {
         LOGGER.log(Level.INFO, "Port reading ended.");
     }
 
-    private static class TestListener implements ChangeListener<ChangeEvent> {
+    private static class TestListener implements StoreListener<StoreEvent> {
 
         public final Session session;
 
         public TestListener(final MemoryFeatureStore store) {
-            store.addListener(this, ChangeEvent.class);
+            store.addListener(this, StoreEvent.class);
             session = store.createSession(false);
         }
 
         @Override
-        public void changeOccured(ChangeEvent event) {
+        public void eventOccured(StoreEvent event) {
             if (event instanceof FeatureStoreContentEvent) {
                 final FeatureStoreContentEvent tmp = (FeatureStoreContentEvent) event;
                 if (tmp.getType().equals(FeatureStoreContentEvent.Type.ADD)) {

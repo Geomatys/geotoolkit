@@ -45,8 +45,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.BufferedImages;
@@ -184,14 +182,6 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
     @Override
     public Metadata getMetadata() throws DataStoreException {
         return new DefaultMetadata();
-    }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override

@@ -18,8 +18,8 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -30,7 +30,7 @@ import org.geotoolkit.storage.StorageListener;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMapLayer> implements ChangeListener<ChangeEvent> {
+public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMapLayer> implements StoreListener<StoreEvent> {
 
     protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
@@ -44,10 +44,9 @@ public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMap
     }
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         if (event instanceof FeatureStoreContentEvent && item.isVisible() && getCanvas().isAutoRepaint()) {
             update();
         }
     }
-
 }

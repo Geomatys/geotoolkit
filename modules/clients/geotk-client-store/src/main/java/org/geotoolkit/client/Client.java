@@ -21,8 +21,8 @@ import java.net.URL;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -93,14 +93,13 @@ public interface Client extends AutoCloseable {
      * when data changes.
      * @param listener to add
      */
-    <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType);
+    <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType);
 
     /**
      * Remove a storage listener
      * @param listener to remove
      */
-    <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType);
+    <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType);
 
     void close() throws DataStoreException;
-
 }

@@ -39,8 +39,7 @@ import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStores;
@@ -63,7 +62,6 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
     protected final Parameters parameters;
-    protected final Set<ChangeListener> storeListeners = new HashSet<>();
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = Parameters.castOrWrap(params);
@@ -329,32 +327,14 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
         }
     }
 
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        synchronized (storeListeners) {
-            storeListeners.add(listener);
-        }
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        synchronized (storeListeners) {
-            storeListeners.remove(listener);
-        }
-    }
-
     /**
      * Forward event to all listeners.
      * @param event , event to send to listeners.
+     *
+     * @todo should specify the event type.
      */
-    protected synchronized void sendEvent(final ChangeEvent event){
-        final ChangeListener[] lst;
-        synchronized (storeListeners) {
-            lst = storeListeners.toArray(new ChangeListener[storeListeners.size()]);
-        }
-        for (final ChangeListener listener : lst){
-            listener.changeOccured(event);
-        }
+    protected void sendEvent(final StoreEvent event) {
+        listeners.fire(event, StoreEvent.class);
     }
 
     /**
@@ -365,5 +345,4 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
     public void forwardEvent(StorageEvent event){
         sendEvent(event.copy(this));
     }
-
 }

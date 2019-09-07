@@ -24,12 +24,12 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import static java.nio.file.StandardOpenOption.*;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
@@ -61,8 +61,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
@@ -106,7 +105,6 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
 
     private static final Pattern ESCAPE_PATTERN = Pattern.compile("\"");
 
-    private final List<ChangeListener> storeListeners = new ArrayList<>();
     private final ReadWriteLock fileLock = new ReentrantReadWriteLock();
 
     private final Parameters parameters;
@@ -320,32 +318,14 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
         return stream;
     }
 
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        synchronized (storeListeners) {
-            storeListeners.add(listener);
-        }
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        synchronized (storeListeners) {
-            storeListeners.remove(listener);
-        }
-    }
-
     /**
      * Forward event to all listeners.
      * @param event , event to send to listeners.
+     *
+     * @todo should specify the event type.
      */
-    protected synchronized void sendEvent(final ChangeEvent event){
-        final ChangeListener[] lst;
-        synchronized (storeListeners) {
-            lst = storeListeners.toArray(new ChangeListener[storeListeners.size()]);
-        }
-        for (final ChangeListener listener : lst){
-            listener.changeOccured(event);
-        }
+    protected void sendEvent(final StoreEvent event) {
+        listeners.fire(event, StoreEvent.class);
     }
 
     @Override

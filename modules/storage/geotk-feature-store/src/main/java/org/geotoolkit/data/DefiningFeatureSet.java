@@ -25,8 +25,8 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.FeatureType;
@@ -113,11 +113,10 @@ public class DefiningFeatureSet implements Resource {
     }
 
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
     }
-
 }

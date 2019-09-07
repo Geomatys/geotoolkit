@@ -20,8 +20,8 @@ package org.geotoolkit.data.session;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
@@ -134,12 +134,11 @@ public interface Session {
      *
      * @param listener to add
      */
-    <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType);
+    <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType);
 
     /**
      * Remove a storage listener
      * @param listener to remove
      */
-    <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType);
-
+    <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType);
 }

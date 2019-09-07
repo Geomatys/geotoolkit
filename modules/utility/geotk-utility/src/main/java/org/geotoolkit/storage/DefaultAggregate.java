@@ -25,8 +25,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.opengis.metadata.Identifier;
 import org.opengis.util.GenericName;
 
@@ -58,13 +56,5 @@ public class DefaultAggregate extends AbstractResource implements Aggregate {
     @Override
     public Collection<Resource> components() {
         return Collections.unmodifiableList(resources);
-    }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 }

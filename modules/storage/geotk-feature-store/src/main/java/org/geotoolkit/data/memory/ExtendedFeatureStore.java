@@ -31,8 +31,8 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
@@ -267,12 +267,12 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
         wrapped.addListener(listener, eventType);
     }
 
     @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
         wrapped.removeListener(listener, eventType);
     }
 
@@ -280,5 +280,4 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore {
     public void refreshMetaModel() throws DataStoreException {
         wrapped.refreshMetaModel();
     }
-
 }

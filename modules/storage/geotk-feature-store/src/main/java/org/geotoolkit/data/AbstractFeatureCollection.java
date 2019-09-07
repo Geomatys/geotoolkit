@@ -35,8 +35,8 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
@@ -71,9 +71,9 @@ import org.opengis.util.GenericName;
  * @module
  */
 public abstract class AbstractFeatureCollection extends AbstractCollection<Feature>
-        implements FeatureCollection, ChangeListener<ChangeEvent> {
+        implements FeatureCollection, StoreListener<StoreEvent> {
 
-    private final Set<ChangeListener> listeners = new HashSet<>();
+    private final Set<StoreListener> listeners = new HashSet<>();
     private final StorageListener.Weak weakListener = new Weak(this);
 
     protected NamedIdentifier identifier;
@@ -357,7 +357,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         if (event instanceof FeatureStoreManagementEvent) {
             FeatureStoreManagementEvent fevent = (FeatureStoreManagementEvent) event;
             final FeatureType currentType = getType();
@@ -365,12 +365,12 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
             //forward events only if the collection is typed and match the type name
             if (currentType != null && currentType.getName().equals(fevent.getFeatureTypeName())) {
                 fevent = fevent.copy(this);
-                final ChangeListener[] lst;
+                final StoreListener[] lst;
                 synchronized (listeners) {
-                    lst = listeners.toArray(new ChangeListener[listeners.size()]);
+                    lst = listeners.toArray(new StoreListener[listeners.size()]);
                 }
-                for (final ChangeListener listener : lst) {
-                    listener.changeOccured(fevent);
+                for (final StoreListener listener : lst) {
+                    listener.eventOccured(fevent);
                 }
             }
         } else if(event instanceof FeatureStoreContentEvent) {
@@ -388,7 +388,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * {@inheritDoc }
      */
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.add(listener);
         }
@@ -398,7 +398,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * {@inheritDoc }
      */
     @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -438,14 +438,13 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * Forward a features event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(final ChangeEvent event) {
-        final ChangeListener[] lst;
+    protected void sendEvent(final StoreEvent event) {
+        final StoreListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new ChangeListener[listeners.size()]);
+            lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
-        for (final ChangeListener listener : lst) {
-            listener.changeOccured(event);
+        for (final StoreListener listener : lst) {
+            listener.eventOccured(event);
         }
     }
-
 }

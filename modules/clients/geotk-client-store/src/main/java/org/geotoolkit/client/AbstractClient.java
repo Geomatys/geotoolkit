@@ -22,10 +22,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -36,8 +34,7 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.security.ClientSecurity;
@@ -63,7 +60,6 @@ public abstract class AbstractClient extends DataStore implements Client {
 
     private final Map<String,Object> userProperties = new HashMap<>();
     private String sessionId = null;
-    protected final Set<ChangeListener> listeners = new HashSet<>();
 
 
     public AbstractClient(final ParameterValueGroup params) {
@@ -211,32 +207,14 @@ public abstract class AbstractClient extends DataStore implements Client {
         //do nothing
     }
 
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
     /**
      * Forward a structure event to all listeners.
      * @param event , event to send to listeners.
+     *
+     * @todo should specify event type.
      */
-    protected void sendEvent(final StorageEvent event){
-        final ChangeListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new ChangeListener[listeners.size()]);
-        }
-        for(final ChangeListener listener : lst){
-            listener.changeOccured(event);
-        }
+    protected void sendEvent(final StorageEvent event) {
+        listeners.fire(event, StoreEvent.class);
     }
 
     /**

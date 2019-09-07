@@ -41,8 +41,8 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
@@ -105,7 +105,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         setSortable(false);
     }
 
-    public static class Cell<T> extends TreeTableCell<T,String> implements ChangeListener<ChangeEvent>{
+    public static class Cell<T> extends TreeTableCell<T,String> implements StoreListener<StoreEvent>{
 
         private final TextField textField = new TextField();
 
@@ -202,7 +202,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         }
 
         @Override
-        public void changeOccured(ChangeEvent event) {
+        public void eventOccured(StoreEvent event) {
             //change the edition asteriks
             if(!isEditing()){
                 Platform.runLater(()-> updateItem(getItem(), false));

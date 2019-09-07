@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.StoreEvent;
 import org.opengis.filter.Filter;
 
 /**
@@ -48,7 +48,7 @@ public class MemoryWritingTest extends org.geotoolkit.test.TestBase {
 
 
         //test on the featurestore with feature writer ////////////////////////////
-        store.addListener(listener, ChangeEvent.class);
+        store.addListener(listener, StoreEvent.class);
 
         final FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(type.getName().toString(),Filter.EXCLUDE));
         final Feature feature = writer.next();
@@ -66,13 +66,13 @@ public class MemoryWritingTest extends org.geotoolkit.test.TestBase {
         Object obj = objects.iterator().next();
         assertNotNull(obj);
         assertEquals("test.0", obj);
-        store.removeListener(listener, ChangeEvent.class);
+        store.removeListener(listener, StoreEvent.class);
 
         //test on a feature collection /////////////////////////////////////////
         listener = new StorageCountListener();
         Session session = store.createSession(false);
         FeatureCollection fc = session.getFeatureCollection(QueryBuilder.all(type.getName()));
-        fc.addListener(listener, ChangeEvent.class);
+        fc.addListener(listener, StoreEvent.class);
 
         Feature newFeature = type.newInstance();
         newFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "myID");
@@ -89,7 +89,6 @@ public class MemoryWritingTest extends org.geotoolkit.test.TestBase {
         obj = objects.iterator().next();
         assertNotNull(obj);
         assertEquals("myID", obj);
-        store.removeListener(listener, ChangeEvent.class);
-
+        store.removeListener(listener, StoreEvent.class);
     }
 }

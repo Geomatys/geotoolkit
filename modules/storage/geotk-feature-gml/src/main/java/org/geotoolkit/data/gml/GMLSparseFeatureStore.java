@@ -48,8 +48,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureExt;
@@ -289,14 +287,6 @@ public class GMLSparseFeatureStore extends DataStore implements WritableFeatureS
     @Override
     public void updateType(FeatureType newType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
-    }
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     @Override

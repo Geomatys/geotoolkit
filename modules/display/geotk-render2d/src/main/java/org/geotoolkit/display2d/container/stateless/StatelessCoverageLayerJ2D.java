@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
@@ -50,7 +50,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> implements ChangeListener<ChangeEvent> {
+public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> implements StoreListener<StoreEvent> {
 
     protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
 
@@ -233,7 +233,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     }
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             projectedCoverage.clearObjectiveCache();

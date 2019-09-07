@@ -22,8 +22,8 @@ import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreContentEvent;
@@ -39,11 +39,11 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractSession implements Resource, Session, ChangeListener<ChangeEvent> {
+public abstract class AbstractSession implements Resource, Session, StoreListener<StoreEvent> {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     protected final FeatureStore store;
-    protected final Set<ChangeListener> listeners = new HashSet<>();
+    protected final Set<StoreListener> listeners = new HashSet<>();
 
     public AbstractSession(final FeatureStore store){
         ensureNonNull("feature store", store);
@@ -73,13 +73,13 @@ public abstract class AbstractSession implements Resource, Session, ChangeListen
     // listeners methods ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType){
+    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType){
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -89,13 +89,13 @@ public abstract class AbstractSession implements Resource, Session, ChangeListen
      * Forward an event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(final ChangeEvent event){
-        final ChangeListener[] lst;
+    protected void sendEvent(final StoreEvent event){
+        final StoreListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new ChangeListener[listeners.size()]);
+            lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
-        for (final ChangeListener listener : lst) {
-            listener.changeOccured(event);
+        for (final StoreListener listener : lst) {
+            listener.eventOccured(event);
         }
     }
 
@@ -112,7 +112,7 @@ public abstract class AbstractSession implements Resource, Session, ChangeListen
      * Forward event to listeners by changing source.
      */
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         if (event instanceof StorageEvent) event = ((StorageEvent)event).copy(this);
         sendEvent(event);
     }
@@ -152,5 +152,4 @@ public abstract class AbstractSession implements Resource, Session, ChangeListen
     protected void fireSessionChanged(){
         sendEvent(FeatureStoreContentEvent.createSessionEvent(this));
     }
-
 }

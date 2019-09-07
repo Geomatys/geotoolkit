@@ -26,7 +26,6 @@ import java.util.stream.StreamSupport;
 import org.apache.sis.internal.storage.AbstractFeatureSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.util.logging.WarningListeners;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.opengis.feature.Feature;
@@ -44,7 +43,7 @@ final class MIFFeatureSet extends AbstractFeatureSet implements WritableFeatureS
     private final GenericName name;
 
     public MIFFeatureSet(MIFStore store, GenericName name) {
-        super((WarningListeners) null);
+        super(null);
         this.store = store;
         this.name = name;
     }
@@ -116,5 +115,4 @@ final class MIFFeatureSet extends AbstractFeatureSet implements WritableFeatureS
     public void replaceIf(Predicate<? super Feature> filter, UnaryOperator<Feature> updater) throws DataStoreException {
         throw new DataStoreException("Update operation is not supported yet.");
     }
-
 }

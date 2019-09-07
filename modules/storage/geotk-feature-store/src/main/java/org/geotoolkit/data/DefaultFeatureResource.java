@@ -36,8 +36,8 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalFeatureTypeException;
 import org.apache.sis.storage.ReadOnlyStorageException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -56,7 +56,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultFeatureResource extends AbstractResource implements WritableFeatureSet, ChangeListener<ChangeEvent>, StoreResource {
+public class DefaultFeatureResource extends AbstractResource implements WritableFeatureSet, StoreListener<StoreEvent>, StoreResource {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
     private final FeatureStore store;
@@ -181,7 +181,7 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
      * Forward event to listeners by changing source.
      */
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
 
         if (event instanceof FeatureStoreManagementEvent) {
             final FeatureStoreManagementEvent fevent = (FeatureStoreManagementEvent) event;
@@ -202,5 +202,4 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
     public void updateType(FeatureType newType) throws IllegalFeatureTypeException, DataStoreException {
         throw new DataStoreException("Feature type update not supported.");
     }
-
 }

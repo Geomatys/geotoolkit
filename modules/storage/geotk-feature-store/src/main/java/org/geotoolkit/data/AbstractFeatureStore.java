@@ -40,8 +40,8 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableAggregate;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -98,7 +98,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     private static final Logger logger = Logging.getLogger("org.geotoolkit.data");
 
     protected final Parameters parameters;
-    protected final Set<ChangeListener> listeners = new HashSet<>();
+    protected final Set<StoreListener> listeners = new HashSet<>();
 
     protected AbstractFeatureStore(final ParameterValueGroup params) {
         this.parameters = Parameters.castOrWrap(params);
@@ -593,14 +593,14 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -610,13 +610,13 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * Forward a structure event to all listeners.
      * @param event event to send to listeners.
      */
-    protected void sendEvent(final ChangeEvent event){
-        final ChangeListener[] lst;
+    protected void sendEvent(final StoreEvent event){
+        final StoreListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new ChangeListener[listeners.size()]);
+            lst = listeners.toArray(new StoreListener[listeners.size()]);
         }
-        for(final ChangeListener listener : lst){
-            listener.changeOccured(event);
+        for(final StoreListener listener : lst){
+            listener.eventOccured(event);
         }
     }
 
@@ -627,5 +627,4 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     public void forwardEvent(StorageEvent event){
         sendEvent(event.copy(this));
     }
-
 }

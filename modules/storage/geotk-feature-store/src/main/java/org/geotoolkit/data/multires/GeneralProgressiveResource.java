@@ -24,7 +24,6 @@ import java.util.Optional;
 import org.apache.sis.internal.storage.AbstractResource;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.geometry.Envelope;
@@ -40,7 +39,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     protected TileGenerator generator;
 
     public GeneralProgressiveResource(MultiResolutionResource base, TileGenerator generator) throws DataStoreException {
-        super((Resource) null);
+        super(null);
         this.base = base;
         this.generator = generator;
     }

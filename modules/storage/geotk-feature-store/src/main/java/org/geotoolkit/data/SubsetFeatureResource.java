@@ -25,8 +25,8 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -44,7 +44,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class SubsetFeatureResource extends AbstractResource implements FeatureSet, ChangeListener<ChangeEvent> {
+final class SubsetFeatureResource extends AbstractResource implements FeatureSet, StoreListener<StoreEvent> {
 
     private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
 
@@ -115,12 +115,11 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureSet
     }
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         //forward events
         if (event instanceof StorageEvent) {
             event = ((StorageEvent)event).copy(this);
         }
         sendEvent(event);
     }
-
 }

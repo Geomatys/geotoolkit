@@ -24,7 +24,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
-import org.apache.sis.util.logging.WarningListeners;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
@@ -40,12 +39,12 @@ public class MemoryCoverageResource extends AbstractGridResource implements Writ
     GridCoverage coverage;
 
     public MemoryCoverageResource() {
-        super((WarningListeners) null);
+        super(null);
         this.name = null;
     }
 
     public MemoryCoverageResource(GenericName name) {
-        super((WarningListeners) null);
+        super(null);
         this.name = name;
     }
 
@@ -54,7 +53,7 @@ public class MemoryCoverageResource extends AbstractGridResource implements Writ
     }
 
     public MemoryCoverageResource(GenericName name, GridCoverage coverage) {
-        super((WarningListeners) null);
+        super(null);
         if (name == null) {
             InternationalString in = CoverageUtilities.getName(coverage);
             this.name = (in == null) ? null : NamesExt.create(in.toString());
