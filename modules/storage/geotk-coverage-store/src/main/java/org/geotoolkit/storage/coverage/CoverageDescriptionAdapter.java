@@ -1,6 +1,6 @@
 package org.geotoolkit.storage.coverage;
 
-import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.util.iso.Names;

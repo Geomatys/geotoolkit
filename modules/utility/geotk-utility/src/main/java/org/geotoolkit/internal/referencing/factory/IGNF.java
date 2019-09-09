@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultContact;

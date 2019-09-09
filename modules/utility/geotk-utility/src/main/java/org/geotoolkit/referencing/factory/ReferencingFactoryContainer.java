@@ -40,7 +40,7 @@ import org.apache.sis.internal.referencing.VerticalDatumTypes;
 import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.referencing.ImmutableIdentifier;
 import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
