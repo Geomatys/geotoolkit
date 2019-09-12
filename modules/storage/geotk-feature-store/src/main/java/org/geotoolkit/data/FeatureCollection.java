@@ -74,7 +74,7 @@ public interface FeatureCollection extends Collection<Feature>, WritableFeatureS
 //        fcd.getFeatureTypeInfo().add(info);
 //        metadata.getContentInfo().add(fcd);
 
-        metadata.freeze();
+        metadata.transition(DefaultMetadata.State.FINAL);
         return metadata;
     }
 

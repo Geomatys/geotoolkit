@@ -90,7 +90,7 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
 //        fcd.getFeatureTypeInfo().add(info);
 //        metadata.getContentInfo().add(fcd);
 
-        metadata.freeze();
+        metadata.transition(DefaultMetadata.State.FINAL);
         return metadata;
     }
 

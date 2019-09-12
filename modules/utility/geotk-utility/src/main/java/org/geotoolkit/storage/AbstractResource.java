@@ -75,7 +75,7 @@ public abstract class AbstractResource implements Resource {
     public final synchronized Metadata getMetadata() throws DataStoreException {
         if (metadata == null) {
             metadata = createMetadata();
-            metadata.freeze();
+            metadata.transition(DefaultMetadata.State.FINAL);
         }
         return metadata;
     }

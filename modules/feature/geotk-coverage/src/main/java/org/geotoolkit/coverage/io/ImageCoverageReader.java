@@ -1022,7 +1022,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                                 .filter(CoverageDescription.class::isInstance)
                                 .map(CoverageDescription.class::cast)
                                 .findFirst().orElse(null);
-                        if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).isModifiable()) {
+                        if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).state() != ModifiableMetadata.State.FINAL) {
                             ci = cd;
                         }
                     } else {

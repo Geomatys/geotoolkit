@@ -32,6 +32,7 @@ import java.util.Arrays;
 import javax.measure.IncommensurableException;
 import javax.measure.UnitConverter;
 import javax.measure.Unit;
+import org.apache.sis.internal.referencing.Formulas;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
@@ -39,7 +40,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -178,12 +178,13 @@ public class J2DScaleBarUtilities {
         final Ellipsoid ellipsoid = ReferencingUtilities.getEllipsoidOfGeographicCRS(mapCRS);
         try {
 
-            if (ellipsoid != null && ellipsoid instanceof DefaultEllipsoid) {
+            if (ellipsoid != null) {
                 final UnitConverter xConverter = mapUnitX.getConverterToAny(Units.DEGREE);
                 final UnitConverter yConverter = mapUnitY.getConverterToAny(Units.DEGREE);
                 P1.setLocation(xConverter.convert(P1.getX()), yConverter.convert(P1.getY()));
                 P2.setLocation(xConverter.convert(P2.getX()), yConverter.convert(P2.getY()));
-                logicalLength = ((DefaultEllipsoid)ellipsoid).orthodromicDistance(P1.getX(), P1.getY(), P2.getX(), P2.getY());
+                logicalLength = org.geotoolkit.referencing.ReferencingUtilities.orthodromicDistance(
+                        Formulas.getAuthalicRadius(ellipsoid), P1.getX(), P1.getY(), P2.getX(), P2.getY());
                 logicalLength = ellipsoid.getAxisUnit().getConverterToAny(scaleUnit).convert(logicalLength);
             } else {
                 final UnitConverter xConverter = mapUnitX.getConverterToAny(scaleUnit);

@@ -332,7 +332,6 @@ public abstract class AbstractGridCoverageReader implements GridCoverageReader {
                         }
                     }
                 }
-
                 /*
                  * Get or create the content info to store sample dimensions
                  */
@@ -343,7 +342,7 @@ public abstract class AbstractGridCoverageReader implements GridCoverageReader {
                                 .filter(CoverageDescription.class::isInstance)
                                 .map(CoverageDescription.class::cast)
                                 .findFirst().orElse(null);
-                        if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).isModifiable()) {
+                        if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).state() != ModifiableMetadata.State.FINAL) {
                             ci = cd;
                         }
                     } else {

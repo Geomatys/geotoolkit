@@ -79,7 +79,7 @@ public abstract class AbstractClient extends DataStore implements Client {
         citation.setIdentifiers(Collections.singleton(identifier));
         identification.setCitation(citation);
         metadata.setIdentificationInfo(Collections.singleton(identification));
-        metadata.freeze();
+        metadata.transition(DefaultMetadata.State.FINAL);
         return metadata;
     }
 

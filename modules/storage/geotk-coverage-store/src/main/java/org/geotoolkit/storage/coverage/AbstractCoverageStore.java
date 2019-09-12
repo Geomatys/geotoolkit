@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
@@ -40,6 +38,8 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.event.WarningEvent;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStores;
@@ -67,17 +67,11 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
         this.parameters = Parameters.castOrWrap(params);
 
         //redirect warning listener events to default logger
-        listeners.getLogger().setUseParentHandlers(false);
-        listeners.getLogger().addHandler(new Handler() {
-            @Override
-            public void publish(LogRecord record) {
-                getLogger().log(record);
+        listeners.addListener(new StoreListener<WarningEvent>() {
+            @Override public void eventOccured(WarningEvent t) {
+                t.getDescription().setLoggerName("org.geotoolkit.storage.coverage");
             }
-            @Override
-            public void flush() {}
-            @Override
-            public void close() throws SecurityException {}
-        });
+        }, WarningEvent.class);
     }
 
     @Override
