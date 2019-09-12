@@ -33,6 +33,8 @@ public class PGDataSource {
 
     private static DataSource ds = null;
 
+    public static boolean isPostgres = true;
+
     private final static String POSTGRES_DATABASE_KEY = "org.geotoolkit.index.tree.manager.SQLRtreeManager.database";
 
     public static boolean isSetPGDataSource() {
@@ -56,6 +58,11 @@ public class PGDataSource {
 
     public static void setDataSource(DataSource datasource) {
         ds = datasource;
+    }
+
+    public static void setDataSource(DataSource datasource, boolean isPg) {
+        ds = datasource;
+        isPostgres = isPg;
     }
 
     /**

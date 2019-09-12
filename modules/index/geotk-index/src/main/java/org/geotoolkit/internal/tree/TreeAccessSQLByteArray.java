@@ -13,8 +13,8 @@ import java.sql.Statement;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
-import static org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper.SCHEMA;
+import org.geotoolkit.index.tree.manager.postgres.LuceneSGBDTreeEltMapper;
+import static org.geotoolkit.index.tree.manager.postgres.LuceneSGBDTreeEltMapper.SCHEMA;
 import org.geotoolkit.index.tree.manager.util.AeSimpleSHA1;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -41,7 +41,7 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
     }
 
     private void printTree() throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
-        if (LucenePostgresSQLTreeEltMapper.treeExist(source, directory)) {
+        if (LuceneSGBDTreeEltMapper.treeExist(source, directory)) {
             final byte[] array = getData();
             try (final Connection c = source.getConnection();
                  final Statement dstmt  = c.createStatement()) {

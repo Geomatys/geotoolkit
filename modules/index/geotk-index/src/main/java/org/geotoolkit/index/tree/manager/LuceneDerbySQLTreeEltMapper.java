@@ -20,8 +20,6 @@ package org.geotoolkit.index.tree.manager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,10 +27,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sql.DataSource;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.DerbySqlScriptRunner;
@@ -45,19 +41,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvelope>{
-
-     /**
-     * Mutual Coordinate Reference System from all stored NamedEnvelopes.
-     */
-    private final CoordinateReferenceSystem crs;
-
-    private final DataSource source;
+public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope>{
 
     private Connection conRO;
     private Connection conT;
-
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager");
 
     static {
         try {
@@ -68,8 +55,7 @@ public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvel
     }
 
     public LuceneDerbySQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source) throws IOException {
-        this.crs    = crs;
-        this.source = source;
+        super(crs, source);
         try {
             this.conRO = source.getConnection();
             this.conRO.setReadOnly(true);
@@ -127,28 +113,6 @@ public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvel
         }
         return false;
     }
-
-    /**
-     * Return an input stream of the specified resource.
-     */
-    private static InputStream getResourceAsStream(final String url) {
-        final ClassLoader cl = getContextClassLoader();
-        return cl.getResourceAsStream(url);
-    }
-
-    /**
-     * Obtain the Thread Context ClassLoader.
-     */
-    private static ClassLoader getContextClassLoader() {
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }
-
-
 
     @Override
     public int getTreeIdentifier(final NamedEnvelope env) throws IOException {
