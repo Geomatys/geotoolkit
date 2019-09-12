@@ -200,7 +200,7 @@ public abstract class CoverageFinder {
             final CoordinateReferenceSystem pyCrs = CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem());
             if (CRS.findOperation(pyCrs, crs2D, null).getMathTransform().isIdentity()
                     || Utilities.equalsIgnoreMetadata(crs2D, pyCrs)
-                    || Utilities.equalsApproximatively(crs2D, pyCrs)) {
+                    || Utilities.equalsApproximately(crs2D, pyCrs)) {
                 return pyramid;
             }
         }

@@ -406,7 +406,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             try {
                 srsName = IdentifiedObjects.lookupURN(boxCrs, null);
             } catch (FactoryException ex) {
-                srsName = IdentifiedObjects.getUnicodeIdentifier(boxCrs);
+                srsName = IdentifiedObjects.getSimpleNameOrIdentifier(boxCrs);
             }
             if (srsName != null) {
                 bType.setSrsName(srsName);

@@ -273,7 +273,7 @@ public final class CoverageUtilities {
         Pyramid pyramid = null;
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         for (Pyramid candidate : Pyramids.getPyramids(container)) {
-            if (Utilities.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
+            if (Utilities.equalsApproximately(crs, candidate.getCoordinateReferenceSystem())) {
                 pyramid = candidate;
                 break;
             }

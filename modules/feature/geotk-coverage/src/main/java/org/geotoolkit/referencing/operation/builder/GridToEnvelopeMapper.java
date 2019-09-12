@@ -301,8 +301,8 @@ public class GridToEnvelopeMapper {
      *
      * @param x The minimal <var>x</var> ordinate.
      * @param y The minimal <var>y</var> ordinate.
-     * @param width  The number of valid ordinates along the <var>x</var> axis.
-     * @param height The number of valid ordinates along the <var>y</var> axis.
+     * @param width  The number of valid coordinates along the <var>x</var> axis.
+     * @param height The number of valid coordinates along the <var>y</var> axis.
      *
      * @since 3.20 (derived from 3.15)
      */

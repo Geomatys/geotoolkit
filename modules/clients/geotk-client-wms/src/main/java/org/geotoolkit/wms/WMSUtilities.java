@@ -318,7 +318,7 @@ public final class WMSUtilities {
                 }
             }
 
-            // build new envelope with all dimension CRSs and lower/upper ordinates.
+            // build new envelope with all dimension CRSs and lower/upper coordinates.
             if (!dimensionsCRS.isEmpty()) {
 
                 final CoordinateReferenceSystem outCRS;
@@ -334,11 +334,11 @@ public final class WMSUtilities {
                 final List<Double> ordinateList = new ArrayList<Double>(lower);
                 ordinateList.addAll(upper);
 
-                final double[] ordinates = new double[ordinateList.size()];
+                final double[] coordinates = new double[ordinateList.size()];
                 for (int i = 0; i < ordinateList.size(); i++) {
-                    ordinates[i] = ordinateList.get(i);
+                    coordinates[i] = ordinateList.get(i);
                 }
-                layerEnvelope.setEnvelope(ordinates);
+                layerEnvelope.setEnvelope(coordinates);
             }
         }
 

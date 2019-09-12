@@ -54,11 +54,11 @@ final class Polyline implements CoordinateSequence {
      * is a <var>x</var> ordinate if the corresponding {@link #gridLines} is negative, or
      * a <var>y</var> ordinate otherwise.
      */
-    private double[] ordinates;
+    private double[] coordinates;
 
     /**
      * The number of points in this object. This determines the length of the valid part
-     * in the {@link #gridLines} and {@link #ordinates} arrays.
+     * in the {@link #gridLines} and {@link #coordinates} arrays.
      */
     private int size;
 
@@ -67,7 +67,7 @@ final class Polyline implements CoordinateSequence {
      */
     Polyline() {
         gridLines = new int   [8];
-        ordinates = new double[8];
+        coordinates = new double[8];
     }
 
     /**
@@ -83,7 +83,7 @@ final class Polyline implements CoordinateSequence {
      * <var>y</var> ordinate value, depending on the {@linkplain #gridLine(int)} sign.
      */
     final double ordinate(final int i) {
-        return ordinates[i];
+        return coordinates[i];
     }
 
     /**
@@ -104,7 +104,7 @@ final class Polyline implements CoordinateSequence {
      */
     final Long key(final boolean start) {
         final int index = start ? 0 : size-1;
-        final long key = key(gridLines[index], ordinates[index]);
+        final long key = key(gridLines[index], coordinates[index]);
         assert startsWith(key) == start || isClosed();
         return key;
     }
@@ -128,8 +128,8 @@ final class Polyline implements CoordinateSequence {
          */
         if (gridLine == gridLines[size-1]) {
             final int ordinate = (int) (key & 0xFFFFFFFFL);
-            if (ordinate != (int) ordinates[0]) {
-                assert ordinate == (int) ordinates[size-1] : ordinate;
+            if (ordinate != (int) coordinates[0]) {
+                assert ordinate == (int) coordinates[size-1] : ordinate;
                 return false;
             }
         }
@@ -142,7 +142,7 @@ final class Polyline implements CoordinateSequence {
     final boolean isClosed() {
         return (size >= 2)
                 && gridLines[0] == gridLines[size-1]
-                && ordinates[0] == ordinates[size-1];
+                && coordinates[0] == coordinates[size-1];
     }
 
     /**
@@ -157,10 +157,10 @@ final class Polyline implements CoordinateSequence {
         assert !isClosed();
         final int     size = this.size;
         int[]    gridLines = this.gridLines;
-        double[] ordinates = this.ordinates;
+        double[] coordinates = this.coordinates;
         if (size == gridLines.length) {
             this.gridLines = gridLines = Arrays.copyOf(gridLines, size*2);
-            this.ordinates = ordinates = Arrays.copyOf(ordinates, size*2);
+            this.coordinates = coordinates = Arrays.copyOf(coordinates, size*2);
         }
         /*
          * The given coordinate can be either at the begining or end of this polyline.
@@ -172,12 +172,12 @@ final class Polyline implements CoordinateSequence {
             int j = i + (size & 1);
             while (--i >= 0) {
                 final int    ti = gridLines[i]; gridLines[i] = gridLines[j]; gridLines[j] = ti;
-                final double td = ordinates[i]; ordinates[i] = ordinates[j]; ordinates[j] = td;
+                final double td = coordinates[i]; coordinates[i] = coordinates[j]; coordinates[j] = td;
                 j++;
             }
         }
         gridLines[size] = gridLine;
-        ordinates[size] = ordinate;
+        coordinates[size] = ordinate;
         this.size++;
         assert checkSegmentLengths(size-1) : this;
         assert isClosed() || !contains(gridLine, ordinate, size) : this;
@@ -197,13 +197,13 @@ final class Polyline implements CoordinateSequence {
         if (toMerge == this) {
             final int     size = this.size;
             int[]    gridLines = this.gridLines;
-            double[] ordinates = this.ordinates;
+            double[] coordinates = this.coordinates;
             if (size == gridLines.length) {
                 this.gridLines = gridLines = Arrays.copyOf(gridLines, size+1);
-                this.ordinates = ordinates = Arrays.copyOf(ordinates, size+1);
+                this.coordinates = coordinates = Arrays.copyOf(coordinates, size+1);
             }
             gridLines[size] = gridLines[0];
-            ordinates[size] = ordinates[0];
+            coordinates[size] = coordinates[0];
             this.size++;
             assert checkSegmentLengths(0);
         } else {
@@ -216,7 +216,7 @@ final class Polyline implements CoordinateSequence {
              * this instance does not.
              */
             final int newLength = size + toMerge.size;
-            if (newLength > ordinates.length && newLength <= toMerge.ordinates.length) {
+            if (newLength > coordinates.length && newLength <= toMerge.coordinates.length) {
                 toMerge.merge(this, mgStart, reverse, skip);
                 return toMerge;
             }
@@ -233,26 +233,26 @@ final class Polyline implements CoordinateSequence {
      */
     private void merge(final Polyline toMerge, final boolean prepend, final boolean reverse, int skip) {
         int[]     gridLines = this.gridLines;
-        double[]  ordinates = this.ordinates;
+        double[]  coordinates = this.coordinates;
         int       addLength = toMerge.size - skip;
         final int newLength = addLength + size;
         int copyAt;
         if (!prepend) { // Append case
-            if (newLength > ordinates.length) {
+            if (newLength > coordinates.length) {
                 this.gridLines = gridLines = Arrays.copyOf(gridLines, newLength * 2);
-                this.ordinates = ordinates = Arrays.copyOf(ordinates, newLength * 2);
+                this.coordinates = coordinates = Arrays.copyOf(coordinates, newLength * 2);
             }
             copyAt = size;
         } else {
-            if (newLength > ordinates.length) {
+            if (newLength > coordinates.length) {
                 gridLines = new int   [newLength * 2];
-                ordinates = new double[newLength * 2];
+                coordinates = new double[newLength * 2];
                 // Variables and fields will be different for a short time.
             }
             System.arraycopy(this.gridLines, 0, gridLines, addLength, size);
-            System.arraycopy(this.ordinates, 0, ordinates, addLength, size);
+            System.arraycopy(this.coordinates, 0, coordinates, addLength, size);
             this.gridLines = gridLines;
-            this.ordinates = ordinates;
+            this.coordinates = coordinates;
             if (reverse) addLength += skip;
             copyAt = 0;
             skip   = 0;
@@ -260,12 +260,12 @@ final class Polyline implements CoordinateSequence {
         if (reverse) {
             while (--addLength >= 0) {
                 gridLines[copyAt] = toMerge.gridLines[addLength];
-                ordinates[copyAt] = toMerge.ordinates[addLength];
+                coordinates[copyAt] = toMerge.coordinates[addLength];
                 copyAt++;
             }
         } else {
             System.arraycopy(toMerge.gridLines, skip, gridLines, copyAt, addLength);
-            System.arraycopy(toMerge.ordinates, skip, ordinates, copyAt, addLength);
+            System.arraycopy(toMerge.coordinates, skip, coordinates, copyAt, addLength);
         }
         size = newLength;
         assert checkSegmentLengths(0);
@@ -617,7 +617,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
     @Override
     public void getCoordinate(final int i, final Coordinate target) {
         final int    x = gridLines[i];
-        final double y = ordinates[i];
+        final double y = coordinates[i];
         if (x >= 0) {
             target.x =  x;
             target.y =  y;
@@ -634,7 +634,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
     @Override
     public double getX(final int i) {
         final int x = gridLines[i];
-        return (x >= 0) ? x : ordinates[i];
+        return (x >= 0) ? x : coordinates[i];
     }
 
     /**
@@ -643,7 +643,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
     @Override
     public double getY(final int i) {
         final int x = gridLines[i];
-        return (x >= 0) ? ordinates[i] : ~x;
+        return (x >= 0) ? coordinates[i] : ~x;
     }
 
     /**
@@ -742,7 +742,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
      */
     private boolean contains(final int gridLine, final double ordinate, final int n) {
         for (int i=0; i<n; i++) {
-            if (gridLines[i] == gridLine && ordinates[i] == ordinate) {
+            if (gridLines[i] == gridLine && coordinates[i] == ordinate) {
                 return true;
             }
         }

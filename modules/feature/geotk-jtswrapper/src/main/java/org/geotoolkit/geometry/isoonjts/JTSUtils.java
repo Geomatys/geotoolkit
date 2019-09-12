@@ -233,7 +233,7 @@ public final class JTSUtils {
     /**
      * Sets the coordinate values of an existing JTS Coordinate by extracting
      * values from a DirectPosition.  If the dimension of the DirectPosition is
-     * less than three, then the unused ordinates of the Coordinate are set to
+     * less than three, then the unused coordinates of the Coordinate are set to
      * Double.NaN.
      */
     public static void directPositionToCoordinate(final DirectPosition dp, final org.locationtech.jts.geom.Coordinate result) {
@@ -325,7 +325,7 @@ public final class JTSUtils {
                 if (d >= 3) {
                     int zIndex = GeometryUtils.getDirectedAxisIndex(cs, AxisDirection.UP);
                     result.setOrdinate(zIndex, c.z);//2
-                    // If d > 3, then the remaining ordinates of the DP are
+                    // If d > 3, then the remaining coordinates of the DP are
                     // (so far) left with their original values.  So we init
                     // them to zero here.
                     if (d > 3) {

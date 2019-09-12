@@ -864,19 +864,19 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * See {@link #setEnvelope(Envelope)} for information about recommended practices and
      * precedence.
      *
-     * @param  ordinates The ordinates of the new envelope to use, or {@code null}.
+     * @param  coordinates The coordinates of the new envelope to use, or {@code null}.
      * @throws IllegalArgumentException if the envelope is illegal.
      */
-    public void setEnvelope(final double... ordinates) throws IllegalArgumentException {
+    public void setEnvelope(final double... coordinates) throws IllegalArgumentException {
         GeneralEnvelope env = null;
-        if (ordinates != null) {
+        if (coordinates != null) {
             final CoordinateReferenceSystem crs = this.crs;
             if (crs != null) {
                 env = new GeneralEnvelope(crs);
             } else {
-                env = new GeneralEnvelope(ordinates.length / 2);
+                env = new GeneralEnvelope(coordinates.length / 2);
             }
-            env.setEnvelope(ordinates);
+            env.setEnvelope(coordinates);
         }
         setEnvelope(env);
     }

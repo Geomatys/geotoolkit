@@ -50,7 +50,7 @@ public class ObjectiveAnalysisPending extends org.geotoolkit.math.ObjectiveAnaly
     /**
      * Creates a new instance for interpolating values in the given region.
      *
-     * @param gridRegion The grid bounding box. The maximal ordinates are inclusive.
+     * @param gridRegion The grid bounding box. The maximal coordinates are inclusive.
      * @param size The number of grid cells along the <var>x</var> and <var>y</var> axes.
      */
     public ObjectiveAnalysisPending(final Rectangle2D gridRegion, final Dimension size) {

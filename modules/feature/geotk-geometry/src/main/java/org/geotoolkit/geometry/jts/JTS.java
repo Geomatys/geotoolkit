@@ -420,39 +420,39 @@ public final class JTS {
         final GeneralDirectPosition pos = POSITIONS[Math.min(POSITIONS.length - 1,
                 crs.getCoordinateSystem().getDimension())];
         pos.setCoordinateReferenceSystem(crs);
-        copy(p1, pos.ordinates);
+        copy(p1, pos.coordinates);
         gc.setStartPoint(pos);
-        copy(p2, pos.ordinates);
+        copy(p2, pos.coordinates);
         gc.setEndPoint(pos);
         return gc.getGeodesicDistance();
     }
 
     /**
-     * Copies the ordinates values from the specified JTS coordinates to the
+     * Copies the coordinates values from the specified JTS coordinates to the
      * specified array. The destination array can have any length. Only the
      * relevant field of the source coordinate will be copied. If the array
      * length is greater than 3, then all extra dimensions will be set to
      * {@link Double#NaN NaN}.
      *
      * @param point The source coordinate.
-     * @param ordinates The destination array.
+     * @param coordinates The destination array.
      */
-    public static void copy(final Coordinate point, final double[] ordinates) {
+    public static void copy(final Coordinate point, final double[] coordinates) {
         ensureNonNull("point", point);
-        ensureNonNull("ordinates", ordinates);
+        ensureNonNull("coordinates", coordinates);
 
-        switch (ordinates.length) {
+        switch (coordinates.length) {
             default:
-                Arrays.fill(ordinates, 3, ordinates.length, Double.NaN); // Fall through
+                Arrays.fill(coordinates, 3, coordinates.length, Double.NaN); // Fall through
 
             case 3:
-                ordinates[2] = point.z; // Fall through
+                coordinates[2] = point.z; // Fall through
 
             case 2:
-                ordinates[1] = point.y; // Fall through
+                coordinates[1] = point.y; // Fall through
 
             case 1:
-                ordinates[0] = point.x; // Fall through
+                coordinates[0] = point.x; // Fall through
 
             case 0:
                 break;

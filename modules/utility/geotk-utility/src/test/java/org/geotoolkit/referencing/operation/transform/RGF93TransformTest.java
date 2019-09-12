@@ -41,7 +41,7 @@ import static java.lang.StrictMath.*;
  */
 public final strictfp class RGF93TransformTest extends TransformTestCase {
     /**
-     * The test points, as (Easting, Northing) ordinates.
+     * The test points, as (Easting, Northing) coordinates.
      * <ol>
      *   <li>The two first columns are the source points expressed in the EPSG:27572 projected CRS.</li>
      *   <li>The two next columns are the expected points expressed in the EPSG:2154 projected CRS,
@@ -181,7 +181,7 @@ public final strictfp class RGF93TransformTest extends TransformTestCase {
             }
             System.out.println("Mean error (Geotk): " + s1 / circePts.length);
             System.out.println("Mean error (IGN):   " + s2 / circePts.length);
-            System.out.println("No regression for " + round(pass*100f / circePts.length) + "% of ordinates.");
+            System.out.println("No regression for " + round(pass*100f / circePts.length) + "% of coordinates.");
         }
     }
 }

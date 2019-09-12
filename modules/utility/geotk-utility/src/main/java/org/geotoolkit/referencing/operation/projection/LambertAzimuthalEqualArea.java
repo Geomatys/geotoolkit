@@ -467,7 +467,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                  * leads naturally to NaN in Java because division by 0 produces infinity,
                  * and the following multiplication by zero (x == 0 implies sinφ == 0 at
                  * least in the equatorial case) would produce NaN. But the explicit check
-                 * makes sure that we set both ordinates to NaN.
+                 * makes sure that we set both coordinates to NaN.
                  */
                 if (!oblique) {
                     x = 1.0 + cosφ * cosλ;

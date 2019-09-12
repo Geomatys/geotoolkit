@@ -37,7 +37,7 @@ public class CoordinateConversion {
      * This demo uses predefined CRS constants for simplicity. The
      * coordinate is Everest Mount (27°59'17"N 86°55'31"E﻿).
      * <p>
-     * Note that the geographic ordinates for this demo are in
+     * Note that the geographic coordinates for this demo are in
      * (<var>longitude</var>, <var>latitude</var>, <var>altitude</var>) order.
      *
      * @throws FactoryException If an error occurred while searching for a conversion.

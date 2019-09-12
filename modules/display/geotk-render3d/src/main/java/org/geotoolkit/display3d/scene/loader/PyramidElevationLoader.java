@@ -34,6 +34,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
@@ -132,7 +133,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
+        if (!Utilities.equalsApproximately(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 

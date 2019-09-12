@@ -303,13 +303,13 @@ public abstract class AbstractPyramidalModelStoreTest extends org.geotoolkit.tes
         final GridCoverage coverage = rgbaCoverageRef.read(rgbaCoverageRef.getGridGeometry().derive().subgrid(paramEnv, 1.2, 1.2).build());
 
         //check coverage informations
-        assertTrue(Utilities.equalsApproximatively(crs,  coverage.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsApproximately(crs,  coverage.getCoordinateReferenceSystem()));
         final Envelope env = coverage.getGridGeometry().getEnvelope();
         assertEquals(corner.getOrdinate(0) +(1*10)*1, env.getMinimum(0), DELTA);
         assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
         assertEquals(corner.getOrdinate(0) +(1*10)*1+(1*10)*1, env.getMaximum(0), DELTA);
         assertEquals(corner.getOrdinate(1) -(2*10)*1, env.getMinimum(1), DELTA);
-        assertTrue(Utilities.equalsApproximatively(crs,  env.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsApproximately(crs,  env.getCoordinateReferenceSystem()));
 
 
         //check tile aggregation

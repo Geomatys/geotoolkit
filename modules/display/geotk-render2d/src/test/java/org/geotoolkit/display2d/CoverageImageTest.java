@@ -95,15 +95,15 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      *
      * @param image coverage image.
      * @param crs coverage {@link CoordinateReferenceSystem}
-     * @param ordinates coverage envelope ordinate values.(xmin, ymin, ... xmax, ymax ...)
+     * @param coordinates coverage envelope ordinate values.(xmin, ymin, ... xmax, ymax ...)
      * @return {@link GridCoverage2D} from image, {@link CoordinateReferenceSystem}
      * and double table values which represent geographic envelope in {@link CoordinateReferenceSystem} units.
      */
-    private GridCoverage createCoverage(RenderedImage image, CoordinateReferenceSystem crs, double...ordinates) {
+    private GridCoverage createCoverage(RenderedImage image, CoordinateReferenceSystem crs, double...coordinates) {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setRenderedImage(image);
-        gcb.setEnvelope(ordinates);
+        gcb.setEnvelope(coordinates);
         return gcb.getGridCoverage2D();
     }
 

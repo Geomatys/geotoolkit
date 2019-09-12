@@ -466,7 +466,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
      * {@link #setRectifiedGridDomain setRectifiedGridDomain} for a two-dimensional bounding box.
      * <p>
      * Note that the value of the {@code yBound} parameter can be lower than the value of the
-     * {@code yOrigin} parameter, in which case the scale factor for the <var>y</var> ordinates
+     * {@code yOrigin} parameter, in which case the scale factor for the <var>y</var> coordinates
      * will be negative.
      *
      * @param xOrigin The first  ordinate of the {@code origin} parameter.

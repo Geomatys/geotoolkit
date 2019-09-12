@@ -56,7 +56,7 @@ final class Utilities {
      * @param base The coordinate to reproject.
      * @param tr The transform to apply (should be projected -> geographic).
      * @param flipAxes A flag indicating if the given transform produces
-     * latitude first coordinates. If true, we'll inverse ordinates obtained
+     * latitude first coordinates. If true, we'll inverse coordinates obtained
      * from the input transform.
      *
      * @return A longitude/latitude coordinate, never null.

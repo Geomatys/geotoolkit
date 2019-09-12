@@ -31,6 +31,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
@@ -104,7 +105,7 @@ public class PyramidImageLoader implements ImageLoader{
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
+        if (!Utilities.equalsApproximately(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 

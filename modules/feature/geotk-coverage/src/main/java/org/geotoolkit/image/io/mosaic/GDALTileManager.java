@@ -175,7 +175,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
             region.add(tileRegion);
         }
         /*
-         * Computes whatever sorting by x or by y ordinates is better, then sort the regions.
+         * Computes whatever sorting by x or by y coordinates is better, then sort the regions.
          */
         sortedByY = (tiles.length * (long)region.height / sumHeight >=
                      tiles.length * (long)region.width  / sumWidth);
@@ -206,7 +206,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
 
     /**
      * Compares two rectangle for order. The rectangles are ordered by either their <var>x</var>
-     * or <var>y</var> ordinates. The ordinate used is determined by the constructor.
+     * or <var>y</var> coordinates. The ordinate used is determined by the constructor.
      */
     @Override
     public int compare(final Rectangle r1, final Rectangle r2) {

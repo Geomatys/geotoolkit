@@ -194,7 +194,6 @@ public class TreeUtilities {
      * Table result length is 2*envelope dimension.
      * First table part contain envelope lower corner coordinates and second part, upper corner coordinates.
      *
-     * @param envelope
      * @param coords table where is store coordinate. if null a new table is create.
      * @return double coordinate table which contain Envelope coordinate.
      */
@@ -302,7 +301,6 @@ public class TreeUtilities {
      *
      * @param envelopeA first envelope coordinates.
      * @param envelopeB second envelope coordinates.
-     * @param edgeInclusive
      * @return true if envelopeA contain envelopeB or envelope is within envelopeA.
      */
     public static boolean contains(final double[] envelopeA, final double[] envelopeB, final boolean edgeInclusive) {
@@ -322,7 +320,6 @@ public class TreeUtilities {
      *
      * @param envelopeA first envelope coordinates.
      * @param envelopeB second envelope coordinates.
-     * @param edgeInclusive
      * @return true if envelopeA contain envelopeB or envelope is within envelopeA.
      */
     public static boolean contains(final double[] envelope, final double[] point) {
@@ -337,9 +334,6 @@ public class TreeUtilities {
     }
 
     /**Compute {@code Envelope} area in euclidean cartesian space.
-     *
-     * @param envelope
-     * @return candidate area.
      */
     public static double getArea(final double[] envelope){
         ArgumentChecks.ensureNonNull("getArea : envelop", envelope);
@@ -356,7 +350,6 @@ public class TreeUtilities {
     /**
      * Return span value at index i from envelope table coordinates.
      *
-     * @param envelope
      * @return span value at index i from envelope table coordinates.
      */
     public static double getSpan(final double[] envelope, final int i){
@@ -371,7 +364,6 @@ public class TreeUtilities {
     /**
      * Return minimum value at index i from envelope table coordinates.
      *
-     * @param envelope
      * @return minimum value at index i from envelope table coordinates.
      */
     public static double getMinimum(final double[] envelope, int i){
@@ -386,7 +378,6 @@ public class TreeUtilities {
     /**
      * Return maximum value at index i from envelope table coordinates.
      *
-     * @param envelope
      * @return maximum value at index i from envelope table coordinates.
      */
     public static double getMaximum(final double[] envelope, int i){
@@ -399,12 +390,10 @@ public class TreeUtilities {
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getMedian(int) middle ordinates}
+     * A coordinate position consisting of all the {@linkplain #getMedian(int) middle coordinates}
      * for each dimension for all points within the {@code Envelope}.
      *
      * @return The median coordinates.
-     *
-     * @param env
      */
     public static double[] getMedian(final double[] envelope) {
         ArgumentChecks.ensureNonNull("getMedian : envelop", envelope);
@@ -417,12 +406,10 @@ public class TreeUtilities {
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getMinimum(double[], int) minimum ordinates}
+     * A coordinate position consisting of all the {@linkplain #getMinimum(double[], int) minimum coordinates}
      * for each dimension from the {@code Envelope}.
      *
      * @return The lower corner coordinates.
-     *
-     * @param env
      */
     public static double[] getLowerCorner(final double[] envelope) {
         ArgumentChecks.ensureNonNull("getLowerCorner : envelop", envelope);
@@ -435,12 +422,10 @@ public class TreeUtilities {
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getMaximum(double[],int) maximum ordinates}
+     * A coordinate position consisting of all the {@linkplain #getMaximum(double[],int) maximum coordinates}
      * for each dimension from the {@code Envelope}.
      *
      * @return The upper coordinates.
-     *
-     * @param env
      */
     public static double[] getUpperCorner(final double[] envelope) {
         ArgumentChecks.ensureNonNull("getLowerCorner : envelop", envelope);

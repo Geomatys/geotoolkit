@@ -623,7 +623,7 @@ public final class GO2Utilities {
         final MathTransform objToDisp = context2D.getObjectiveToDisplay();
 
         Envelope cropped = wanted;
-        if(!Utilities.equalsApproximatively(context2D.getObjectiveCRS2D(), wanted.getCoordinateReferenceSystem())){
+        if(!Utilities.equalsApproximately(context2D.getObjectiveCRS2D(), wanted.getCoordinateReferenceSystem())){
             cropped = Envelopes.transform(wanted, context2D.getObjectiveCRS2D());
         }
 

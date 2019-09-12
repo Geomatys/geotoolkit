@@ -80,7 +80,7 @@ public final class CanvasUtilities {
             distance = conv.convert(p1.distance(p2));
         } else {
             /*
-             * If the latitude ordinates (for example) are outside the +/-90°
+             * If the latitude coordinates (for example) are outside the +/-90°
              * range, translate the points in order to bring them back in the
              * domain of validity.
              */

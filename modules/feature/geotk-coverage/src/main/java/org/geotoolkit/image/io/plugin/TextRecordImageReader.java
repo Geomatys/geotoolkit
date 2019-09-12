@@ -711,7 +711,7 @@ public class TextRecordImageReader extends TextImageReader {
 
         /**
          * A tolerance factor during decoding, between 0 and 1. During decoding, the image reader
-         * computes cell's width and height (i.e. the smallest non-null difference between ordinates
+         * computes cell's width and height (i.e. the smallest non-null difference between coordinates
          * in a given column: <var>x</var> for cell's width and <var>y</var> for cell's height).
          * Then, it checks if every coordinate points fall on a grid having this cell's size. If
          * a point depart from more than {@code gridTolerance} percent of cell's width or height,

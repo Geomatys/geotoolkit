@@ -558,11 +558,11 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         /**
          * A coordinate point where to evaluate the function. The point dimension is equals to the
          * {@linkplain AbstractCoverage#getDimension coverage's dimension}. The {@linkplain #xAxis
-         * x} and {@link #yAxis y} ordinates will be ignored, since they will vary for each pixel
-         * to be evaluated. Other ordinates, if any, should be set to a fixed value. For example a
+         * x} and {@link #yAxis y} coordinates will be ignored, since they will vary for each pixel
+         * to be evaluated. Other coordinates, if any, should be set to a fixed value. For example a
          * coverage may be three-dimensional, where the third dimension is the time axis. In such
          * case, {@code coordinate.ord[2]} should be set to the point in time where to evaluate the
-         * coverage. By default, all ordinates are initialized to 0. Subclasses should set the
+         * coverage. By default, all coordinates are initialized to 0. Subclasses should set the
          * desired values in their constructor if needed.
          */
         protected final GeneralDirectPosition coordinate = new GeneralDirectPosition(getCoordinateReferenceSystem().getCoordinateSystem().getDimension());
@@ -796,8 +796,8 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                                 point2D.y = y;
                                 crsToGrid.inverseTransform(point2D, point2D);
                                 if (area == null || area.contains(point2D)) {
-                                    coordinate.ordinates[xAxis] = point2D.x;
-                                    coordinate.ordinates[yAxis] = point2D.y;
+                                    coordinate.coordinates[xAxis] = point2D.x;
+                                    coordinate.coordinates[yAxis] = point2D.y;
                                     iterator.setPixel(evaluate(coordinate, samples));
                                 } else {
                                     iterator.setPixel(padNaNs);
@@ -918,15 +918,15 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
             float[] buffer = null;
             // Clones the coordinate point in order to allow multi-thread invocation.
             final GeneralDirectPosition coordinate = new GeneralDirectPosition(this.coordinate);
-            coordinate.ordinates[1] = startY;
+            coordinate.coordinates[1] = startY;
             for (int j=0; j<countY; j++) {
-                coordinate.ordinates[0] = startX;
+                coordinate.coordinates[0] = startX;
                 for (int i=0; i<countX; i++) {
                     buffer = evaluate(coordinate, buffer);
                     real[index++] = buffer[dim];
-                    coordinate.ordinates[0] += deltaX;
+                    coordinate.coordinates[0] += deltaX;
                 }
-                coordinate.ordinates[1] += deltaY;
+                coordinate.coordinates[1] += deltaY;
             }
         }
 
@@ -958,15 +958,15 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
             double[] buffer = null;
             // Clones the coordinate point in order to allow multi-thread invocation.
             final GeneralDirectPosition coordinate = new GeneralDirectPosition(this.coordinate);
-            coordinate.ordinates[1] = startY;
+            coordinate.coordinates[1] = startY;
             for (int j=0; j<countY; j++) {
-                coordinate.ordinates[0] = startX;
+                coordinate.coordinates[0] = startX;
                 for (int i=0; i<countX; i++) {
                     buffer = evaluate(coordinate, buffer);
                     real[index++] = buffer[dim];
-                    coordinate.ordinates[0] += deltaX;
+                    coordinate.coordinates[0] += deltaX;
                 }
-                coordinate.ordinates[1] += deltaY;
+                coordinate.coordinates[1] += deltaY;
             }
         }
     }

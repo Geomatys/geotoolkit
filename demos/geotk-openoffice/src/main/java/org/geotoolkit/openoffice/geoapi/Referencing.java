@@ -528,8 +528,8 @@ public final class Referencing extends Formulas implements XReferencing {
             if (coords == null) {
                 continue;
             }
-            for (int i=sourcePt.ordinates.length; --i>=0;) {
-                sourcePt.ordinates[i] = (i < coords.length) ? coords[i] : 0;
+            for (int i=sourcePt.coordinates.length; --i>=0;) {
+                sourcePt.coordinates[i] = (i < coords.length) ? coords[i] : 0;
             }
             final DirectPosition pt;
             try {

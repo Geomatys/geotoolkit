@@ -158,7 +158,7 @@ public class DriftPredictor extends AbstractProcess {
     private float[] positions;
 
     /**
-     * Number of valid ordinates in the {@link #positions} array.
+     * Number of valid coordinates in the {@link #positions} array.
      * This is {@value #TUPLE_LENGTH} time the number of valid tuples.
      */
     private int numOrdinates;

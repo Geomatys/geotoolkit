@@ -684,7 +684,7 @@ public final class ReferencingUtilities {
     @Deprecated
     public static MathTransform toTransform(final MathTransform base, double[] ... values){
 
-        MathTransform result = PassThroughTransform.create(0, base, values.length);
+        MathTransform result = MathTransforms.passThrough(0, base, values.length);
         final int baseDim = base.getSourceDimensions();
         for(int i=0; i<values.length; i++){
             final double[] array = values[i];
@@ -696,7 +696,7 @@ public final class ReferencingUtilities {
             }else{
                 axistrs = LinearInterpolator1D.create(array);
             }
-            final MathTransform mask = PassThroughTransform.create(baseDim+i, axistrs, values.length-i-1);
+            final MathTransform mask = MathTransforms.passThrough(baseDim+i, axistrs, values.length-i-1);
             result = MathTransforms.concatenate(result, mask);
         }
 
@@ -719,7 +719,7 @@ public final class ReferencingUtilities {
                                             final Map<Integer, double[]> axisValues, final int expectedTargetDimension) {
         checkMTToTransform(firstBaseOrdinate, subTransform, axisValues, expectedTargetDimension);
 
-        MathTransform result = PassThroughTransform.create(firstBaseOrdinate, subTransform, expectedTargetDimension - subTransform.getTargetDimensions() - firstBaseOrdinate);
+        MathTransform result = MathTransforms.passThrough(firstBaseOrdinate, subTransform, expectedTargetDimension - subTransform.getTargetDimensions() - firstBaseOrdinate);
         for (Integer dim : axisValues.keySet()) {
             final double[] currentAxisValues = axisValues.get(dim);
             final MathTransform1D axistrs;
@@ -729,7 +729,7 @@ public final class ReferencingUtilities {
             } else {
                 axistrs = LinearInterpolator1D.create(currentAxisValues);
             }
-            final MathTransform mask = PassThroughTransform.create(dim, axistrs, expectedTargetDimension - dim - 1);
+            final MathTransform mask = MathTransforms.passThrough(dim, axistrs, expectedTargetDimension - dim - 1);
             result                   = MathTransforms.concatenate(result, mask);
         }
         return result;
@@ -814,7 +814,7 @@ public final class ReferencingUtilities {
         final CoordinateReferenceSystem destCRS = destination.getCoordinateReferenceSystem();
 
         // If they're the same, we can return the source envelope.
-        if (org.geotoolkit.referencing.CRS.equalsApproximatively(sourceCRS, destCRS)) {
+        if (Utilities.equalsApproximately(sourceCRS, destCRS)) {
             destination = new GeneralEnvelope(source);
         }
 
@@ -856,7 +856,7 @@ public final class ReferencingUtilities {
                     continue;
                 }
 
-                if (org.geotoolkit.referencing.CRS.equalsApproximatively(srcCurrent, destCurrent)) {
+                if (Utilities.equalsApproximately(srcCurrent, destCurrent)) {
                     final GeneralEnvelope srcSubEnvelope = source.subEnvelope(srcLowerAxis, srcLowerAxis + srcAxisCount);
                     destination.subEnvelope(destLowerAxis, destLowerAxis+ srcSubEnvelope.getDimension()).setEnvelope(srcSubEnvelope);
                     usedCRS.add(destCurrent);
@@ -921,7 +921,7 @@ public final class ReferencingUtilities {
                     }
                 }
 
-                // We found matching CRS, Now we can transfer ordinates.
+                // We found matching CRS, Now we can transfer coordinates.
                 if (compatible) {
                     final GeneralEnvelope srcSubEnvelope = source.subEnvelope(srcLowerAxis, srcLowerAxis + srcAxisCount);
                     srcSubEnvelope.setCoordinateReferenceSystem(srcCurrent);

@@ -296,7 +296,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
      * @param envelope expented envelope
      */
     private void checkCoverage(GridCoverage coverage, int width, int height, int[][] colors, double... envelope){
-        assertTrue(Utilities.equalsApproximatively(crs, coverage.getCoordinateReferenceSystem()));
+        assertTrue(Utilities.equalsApproximately(crs, coverage.getCoordinateReferenceSystem()));
         Envelope env = coverage.getGridGeometry().getEnvelope();
         assertEquals(envelope[0], env.getMinimum(0), DELTA);
         assertEquals(envelope[1], env.getMaximum(0), DELTA);

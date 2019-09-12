@@ -36,6 +36,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
@@ -133,7 +134,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)) {
+        if (!Utilities.equalsApproximately(outputEnv.getCoordinateReferenceSystem(), outputCrs)) {
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 

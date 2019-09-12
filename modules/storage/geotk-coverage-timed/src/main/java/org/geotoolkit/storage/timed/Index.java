@@ -326,7 +326,7 @@ public class Index implements Closeable {
         }
 
         final CoordinateReferenceSystem envCRS = e.getCoordinateReferenceSystem();
-        if (envCRS == null || !Utilities.equalsApproximatively(treeCRS, envCRS)) {
+        if (envCRS == null || !Utilities.equalsApproximately(treeCRS, envCRS)) {
             e = toTreeCRS(e);
         }
 

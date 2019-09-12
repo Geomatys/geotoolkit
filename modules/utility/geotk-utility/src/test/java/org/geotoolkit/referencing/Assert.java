@@ -63,25 +63,6 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
     }
 
     /**
-     * Asserts that the two given objects are approximately equal.
-     * See {@link ComparisonMode#APPROXIMATE} for more information.
-     *
-     * @param expected  The expected object.
-     * @param actual    The actual object.
-     * @param slightlyDifferent {@code true} if the objects should also be slightly different.
-     *
-     * @since 3.20
-     */
-    public static void assertEqualsApproximatively(final Object expected, final Object actual, final boolean slightlyDifferent) {
-        assertTrue("Should be approximatively equals",    Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
-        assertTrue("DEBUG inconsistent with APPROXIMATE", Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATE));
-        if (slightlyDifferent) {
-            assertFalse("Should be slightly different",   Utilities.deepEquals(expected, actual, ComparisonMode.IGNORE_METADATA));
-            assertFalse("Should not be strictly equals",  Utilities.deepEquals(expected, actual, ComparisonMode.STRICT));
-        }
-    }
-
-    /**
      * Asserts that the two given objects are equal ignoring metadata.
      * See {@link ComparisonMode#IGNORE_METADATA} for more information.
      *

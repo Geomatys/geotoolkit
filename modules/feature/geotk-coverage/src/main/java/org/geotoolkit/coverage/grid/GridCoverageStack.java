@@ -47,7 +47,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
@@ -822,7 +821,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         TransformSeparator df = new TransformSeparator(baseGridToCRS);
         df.addSourceDimensionRange(0, zDimension);
         MathTransform firstMT = df.separate();
-        firstMT = PassThroughTransform.create(0, firstMT, nbDim - zDimension);
+        firstMT = MathTransforms.passThrough(0, firstMT, nbDim - zDimension);
 
         //create dimension pass through transform with linear
         final MathTransform lastAxisTrs;
@@ -831,7 +830,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         } else {
             lastAxisTrs = LinearInterpolator1D.create(zAxisSteps);
         }
-        final MathTransform dimLinear = PassThroughTransform.create(zDimension, lastAxisTrs, remainingDimensions);
+        final MathTransform dimLinear = MathTransforms.passThrough(zDimension, lastAxisTrs, remainingDimensions);
 
         //extract MT [zDim+1, nbDim[
         MathTransform lastPart = null;
@@ -839,7 +838,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
             df = new TransformSeparator(baseGridToCRS);
             df.addSourceDimensionRange(zDimension+1, nbDim);
             lastPart = df.separate();
-            lastPart = PassThroughTransform.create(zDimension+1, lastPart, 0);
+            lastPart = MathTransforms.passThrough(zDimension+1, lastPart, 0);
         }
 
         //build final gridToCRS
@@ -1174,7 +1173,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                 }
                 position = transform.transform(position, position);
                 for (int i=Math.min(dimension, zDimension); --i>=0;) {
-                    // Do not touch the z-value, copy the other ordinates.
+                    // Do not touch the z-value, copy the other coordinates.
                     point.setOrdinate(i, position.getOrdinate(i));
                 }
             } catch (TransformException exception) {
@@ -1386,7 +1385,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                 reducedPosition = new GeneralDirectPosition(zDimension);
             }
             for (int i=0; i<dimension; i++) {
-                reducedPosition.ordinates[i] = coord.getOrdinate(i);
+                reducedPosition.coordinates[i] = coord.getOrdinate(i);
             }
             coord = reducedPosition;
         } else {

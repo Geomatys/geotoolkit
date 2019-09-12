@@ -341,7 +341,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     }
 
     /**
-     * A coordinate position consisting of all the minimal ordinates for each
+     * A coordinate position consisting of all the minimal coordinates for each
      * dimension for all points within the {@code Envelope}.
      */
     @Override
@@ -350,7 +350,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     }
 
     /**
-     * A coordinate position consisting of all the maximal ordinates for each
+     * A coordinate position consisting of all the maximal coordinates for each
      * dimension for all points within the {@code Envelope}.
      */
     @Override

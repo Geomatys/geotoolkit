@@ -368,25 +368,25 @@ final class IntersectionGrid {
         do { // Executed exactly twice.
             final String section;
             final char gridLines;
-            final char ordinates;
+            final char coordinates;
             final Intersections[] intersections;
             if (isVertical) {
                 intersections = vertical;
                 section       = "Vertical";
                 gridLines     = 'x';
-                ordinates     = 'y';
+                coordinates   = 'y';
             } else {
                 intersections = horizontal;
                 section       = "Horizontal";
                 gridLines     = 'y';
-                ordinates     = 'x';
+                coordinates   = 'x';
             }
             buffer.append(section).append(lineSeparator);
             for (int n=0,i=0; i<intersections.length; i++) {
                 final Intersections inter = intersections[i];
                 if (inter != null) {
                     inter.toString(buffer.append("  ").append(gridLines).append('=').append(i),
-                            "; " + ordinates + '=');
+                            "; " + coordinates + '=');
                     buffer.append(lineSeparator);
                     if (++n == MAX_LINE_COUNT/2) {
                         for (int j=intersections.length; --j>i;) {

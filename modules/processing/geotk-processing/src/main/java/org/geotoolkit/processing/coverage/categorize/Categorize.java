@@ -130,7 +130,7 @@ public class Categorize extends AbstractProcess {
                 // geometry, we have to resample input ourselves.
                 GridCoverage source2D = sourceCvg;
                 source2D = source2D.forConvertedValues(true);
-                final boolean compliantCrs = Utilities.equalsApproximatively(expectedSliceEnvelope.getCoordinateReferenceSystem(), source2D.getCoordinateReferenceSystem());
+                final boolean compliantCrs = Utilities.equalsApproximately(expectedSliceEnvelope.getCoordinateReferenceSystem(), source2D.getCoordinateReferenceSystem());
                 final boolean compliantEnvelope = expectedSliceEnvelope.contains(source2D.getGridGeometry().getEnvelope(), true);
                 if (!(compliantCrs && compliantEnvelope)) {
                     source2D = resample(source2D, sliceGeom);
