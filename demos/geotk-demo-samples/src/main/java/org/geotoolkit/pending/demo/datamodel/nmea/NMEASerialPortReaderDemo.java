@@ -62,7 +62,7 @@ public class NMEASerialPortReaderDemo {
         public final Session session;
 
         public TestListener(final MemoryFeatureStore store) {
-            store.addListener(this, StoreEvent.class);
+            store.addListener(StoreEvent.class, this);
             session = store.createSession(false);
         }
 

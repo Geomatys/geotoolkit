@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -108,8 +109,8 @@ public class WFSStore extends DataStore implements Aggregate, Client {
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override

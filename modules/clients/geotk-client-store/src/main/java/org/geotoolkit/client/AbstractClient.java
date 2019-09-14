@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -79,17 +80,17 @@ public abstract class AbstractClient extends DataStore implements Client {
         citation.setIdentifiers(Collections.singleton(identifier));
         identification.setCitation(citation);
         metadata.setIdentificationInfo(Collections.singleton(identification));
-        metadata.transition(DefaultMetadata.State.FINAL);
+        metadata.transitionTo(DefaultMetadata.State.FINAL);
         return metadata;
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        if(parameters != null){
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        if (parameters != null) {
             //defensive copy
-            return parameters.clone();
+            return Optional.of(parameters.clone());
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

@@ -76,7 +76,7 @@ final class SubsetFeatureResource extends AbstractResource implements FeatureSet
 //        fcd.getFeatureTypeInfo().add(info);
 //        metadata.getContentInfo().add(fcd);
 
-        metadata.transition(DefaultMetadata.State.FINAL);
+        metadata.transitionTo(DefaultMetadata.State.FINAL);
         return metadata;
     }
 

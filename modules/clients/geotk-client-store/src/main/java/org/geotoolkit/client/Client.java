@@ -19,6 +19,7 @@ package org.geotoolkit.client;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.event.StoreEvent;
@@ -41,7 +42,7 @@ public interface Client extends AutoCloseable {
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getOpenParameters();
+    Optional<ParameterValueGroup> getOpenParameters();
 
     /**
      * Get the factory which created this source.
@@ -93,13 +94,14 @@ public interface Client extends AutoCloseable {
      * when data changes.
      * @param listener to add
      */
-    <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType);
+    <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener);
 
     /**
      * Remove a storage listener
      * @param listener to remove
      */
-    <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType);
+    <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener);
 
+    @Override
     void close() throws DataStoreException;
 }

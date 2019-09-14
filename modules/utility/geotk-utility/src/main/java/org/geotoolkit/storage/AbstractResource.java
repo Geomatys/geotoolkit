@@ -75,7 +75,7 @@ public abstract class AbstractResource implements Resource {
     public final synchronized Metadata getMetadata() throws DataStoreException {
         if (metadata == null) {
             metadata = createMetadata();
-            metadata.transition(DefaultMetadata.State.FINAL);
+            metadata.transitionTo(DefaultMetadata.State.FINAL);
         }
         return metadata;
     }
@@ -91,14 +91,14 @@ public abstract class AbstractResource implements Resource {
     }
 
     @Override
-    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     @Override
-    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }

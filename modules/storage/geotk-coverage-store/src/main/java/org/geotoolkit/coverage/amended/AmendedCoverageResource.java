@@ -290,14 +290,14 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
     }
 
     @Override
-    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     @Override
-    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }

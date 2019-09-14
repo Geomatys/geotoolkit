@@ -67,11 +67,11 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
         this.parameters = Parameters.castOrWrap(params);
 
         //redirect warning listener events to default logger
-        listeners.addListener(new StoreListener<WarningEvent>() {
+        listeners.addListener(WarningEvent.class, new StoreListener<WarningEvent>() {
             @Override public void eventOccured(WarningEvent t) {
                 t.getDescription().setLoggerName("org.geotoolkit.storage.coverage");
             }
-        }, WarningEvent.class);
+        });
     }
 
     @Override
@@ -202,8 +202,8 @@ public abstract class AbstractCoverageStore extends DataStore implements AutoClo
      * @return source configuration parameters
      */
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.ofNullable(parameters);
     }
 
     protected Logger getLogger(){

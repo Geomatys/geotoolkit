@@ -124,8 +124,8 @@ public class GMLSparseFeatureStore extends DataStore implements WritableFeatureS
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override

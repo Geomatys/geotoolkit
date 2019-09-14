@@ -124,13 +124,13 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
     }
 
     @Override
-    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
-        featureSet.addListener(listener, eventType);
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+        featureSet.addListener(eventType, listener);
     }
 
     @Override
-    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
-        featureSet.removeListener(listener, eventType);
+    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+        featureSet.removeListener(eventType, listener);
     }
 
     @Override
@@ -254,7 +254,7 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
 
     @Override
     public Session getSession() {
-        return new DefaultSession(new FeatureStoreWrapper(store.getOpenParameters(), featureSet), false);
+        return new DefaultSession(new FeatureStoreWrapper(store.getOpenParameters().orElse(null), featureSet), false);
     }
 
     @Override

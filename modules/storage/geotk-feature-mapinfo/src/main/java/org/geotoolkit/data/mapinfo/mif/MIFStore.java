@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
@@ -81,8 +82,8 @@ public class MIFStore extends DataStore implements WritableAggregate, ResourceOn
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override

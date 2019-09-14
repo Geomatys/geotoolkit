@@ -18,6 +18,7 @@
 package org.geotoolkit.observation;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -41,7 +42,7 @@ public interface ObservationStore {
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getOpenParameters();
+    Optional<ParameterValueGroup> getOpenParameters();
 
     /**
      * Get the factory which created this source.

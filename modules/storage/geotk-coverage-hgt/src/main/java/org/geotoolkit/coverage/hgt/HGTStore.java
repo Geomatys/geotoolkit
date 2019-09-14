@@ -96,8 +96,8 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override

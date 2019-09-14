@@ -360,8 +360,8 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @return parameters used for opening this {@code DataStore}.
      */
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return Provider.parameters(database.source, database.root);
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(Provider.parameters(database.source, database.root));
     }
 
     /**

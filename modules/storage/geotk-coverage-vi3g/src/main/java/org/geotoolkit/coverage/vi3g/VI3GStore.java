@@ -165,8 +165,8 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override

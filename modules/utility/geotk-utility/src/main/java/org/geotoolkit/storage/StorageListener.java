@@ -71,7 +71,7 @@ public final class StorageListener {
                 this.sources.add(source);
                 if (source instanceof Resource) {
                     Resource res = (Resource) source;
-                    res.addListener(this, StoreEvent.class);
+                    res.addListener(StoreEvent.class, this);
                 }
             }
         }
@@ -96,7 +96,7 @@ public final class StorageListener {
         private synchronized void remove(final Object source) {
             if (source instanceof Resource) {
                 Resource res = (Resource) source;
-                res.removeListener(this, StoreEvent.class);
+                res.removeListener(StoreEvent.class, this);
             }
         }
 

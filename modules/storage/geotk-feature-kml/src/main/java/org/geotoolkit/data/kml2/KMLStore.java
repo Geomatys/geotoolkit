@@ -130,8 +130,8 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return params;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(params);
     }
 
     @Override

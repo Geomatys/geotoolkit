@@ -148,8 +148,8 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override

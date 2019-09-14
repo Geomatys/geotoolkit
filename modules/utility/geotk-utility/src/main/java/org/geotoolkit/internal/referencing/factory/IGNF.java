@@ -70,7 +70,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         final DefaultCitation c = new DefaultCitation();
         c.setCitedResponsibleParties(Collections.singleton(r));
         c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);
-        c.transition(DefaultCitation.State.FINAL);
+        c.transitionTo(DefaultCitation.State.FINAL);
         AUTHORITY = c;
     }
 

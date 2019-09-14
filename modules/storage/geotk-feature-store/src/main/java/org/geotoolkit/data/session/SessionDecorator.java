@@ -117,12 +117,12 @@ public class SessionDecorator implements Session{
     }
 
     @Override
-    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
-        wrapped.addListener(listener, eventType);
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+        wrapped.addListener(eventType, listener);
     }
 
     @Override
-    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
-        wrapped.removeListener(listener, eventType);
+    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+        wrapped.removeListener(eventType, listener);
     }
 }

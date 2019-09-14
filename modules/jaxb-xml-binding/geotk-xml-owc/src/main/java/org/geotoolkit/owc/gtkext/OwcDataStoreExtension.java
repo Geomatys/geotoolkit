@@ -156,7 +156,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         final Resource resource = layer.getResource();
         if (resource instanceof StoreResource) {
             final DataStore store = ((StoreResource) resource).getOriginator();
-            return store.getOpenParameters();
+            return store.getOpenParameters().orElse(null);
         }
         return null;
     }

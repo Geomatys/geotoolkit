@@ -91,7 +91,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
     @Override
     public Identification getIdentification() {
-        final Identifier name = client.getOpenParameters().getDescriptor().getName();
+        final Identifier name = client.getProvider().getOpenParameters().getName();
         final DefaultServiceIdentification identification = new DefaultServiceIdentification();
         final Identifier id = new DefaultIdentifier(name);
         final DefaultCitation citation = new DefaultCitation(name.getCode());
@@ -257,7 +257,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
     }
 
     private static boolean isDynamicLoading(final WebProcessingClient client) {
-        final Parameters p = Parameters.castOrWrap(client.getOpenParameters());
+        final Parameters p = Parameters.castOrWrap(client.getOpenParameters().get());
         final Boolean isDynamic = p.getValue(WPSClientFactory.DYNAMIC_LOADING);
         return isDynamic == null? false : isDynamic;
     }

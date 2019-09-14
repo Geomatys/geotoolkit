@@ -86,8 +86,8 @@ public class FishStore extends DataStore implements FeatureSet {
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return params;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.ofNullable(params);
     }
 
     @Override

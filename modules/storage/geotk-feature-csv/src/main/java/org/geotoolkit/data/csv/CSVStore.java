@@ -279,8 +279,8 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override

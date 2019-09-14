@@ -244,7 +244,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
                     for (int i=1; i<authorities.length; i++) {
                         identifiers.addAll(authorities[i].getIdentifiers());
                     }
-                    c.transition(DefaultCitation.State.FINAL);
+                    c.transitionTo(DefaultCitation.State.FINAL);
                     authority = c;
                     break;
                 }

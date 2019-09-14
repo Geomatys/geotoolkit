@@ -99,8 +99,8 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override

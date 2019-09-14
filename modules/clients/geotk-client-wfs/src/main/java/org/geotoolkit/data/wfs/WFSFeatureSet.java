@@ -367,11 +367,11 @@ public class WFSFeatureSet implements WritableFeatureSet {
     }
 
     @Override
-    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
     }
 
     @Override
-    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
+    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
     }
 
     private FeatureType requestType(final QName typeName) throws IOException{

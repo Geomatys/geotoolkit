@@ -264,7 +264,7 @@ public class FXStoreChooser extends BorderPane {
 
     private void setStore(DataStore store) {
         factoryView.getSelectionModel().clearAndSelect(factoryView.getItems().indexOf(store.getProvider()));
-        paramEditor.setParameter(store.getOpenParameters());
+        paramEditor.setParameter(store.getOpenParameters().get());
         connect();
     }
 

@@ -50,6 +50,7 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
 /**
@@ -74,8 +75,8 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public Parameters getOpenParameters() {
-        return Parameters.castOrWrap(wrapped.getOpenParameters());
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return wrapped.getOpenParameters().map(Parameters::castOrWrap);
     }
 
     @Override
@@ -267,13 +268,13 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
-        wrapped.addListener(listener, eventType);
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+        wrapped.addListener(eventType, listener);
     }
 
     @Override
-    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
-        wrapped.removeListener(listener, eventType);
+    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+        wrapped.removeListener(eventType, listener);
     }
 
     @Override

@@ -88,13 +88,13 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public <T extends StoreEvent> void addListener(StoreListener<? super T> listener, Class<T> eventType) {
-        queryableResource.addListener(listener, eventType);
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+        queryableResource.addListener(eventType, listener);
     }
 
     @Override
-    public <T extends StoreEvent> void removeListener(StoreListener<? super T> listener, Class<T> eventType) {
-        queryableResource.removeListener(listener, eventType);
+    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+        queryableResource.removeListener(eventType, listener);
     }
 
     @Override

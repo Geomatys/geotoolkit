@@ -76,8 +76,8 @@ public abstract class AbstractModelTests {
             //add listeners
             StorageCountListener storeListen = new StorageCountListener();
             StorageCountListener sessionListen = new StorageCountListener();
-            store.addListener(storeListen, StoreEvent.class);
-            session.addListener(sessionListen, StoreEvent.class);
+            store.addListener(StoreEvent.class, storeListen);
+            session.addListener(StoreEvent.class, sessionListen);
 
             store.createFeatureType(sft);
 
@@ -103,8 +103,8 @@ public abstract class AbstractModelTests {
 //            assertEquals(null, storeListen.lastManagementEvent.getOldFeatureType());
 //            assertEquals(null, sessionListen.lastManagementEvent.getOldFeatureType());
 
-            store.removeListener(storeListen, StoreEvent.class);
-            session.removeListener(sessionListen, StoreEvent.class);
+            store.removeListener(StoreEvent.class, storeListen);
+            session.removeListener(StoreEvent.class, sessionListen);
 
 
             //delete the created schema ----------------------------------------
@@ -122,8 +122,8 @@ public abstract class AbstractModelTests {
             //add listeners
             storeListen = new StorageCountListener();
             sessionListen = new StorageCountListener();
-            store.addListener(storeListen, StoreEvent.class);
-            session.addListener(sessionListen, StoreEvent.class);
+            store.addListener(StoreEvent.class, storeListen);
+            session.addListener(StoreEvent.class, sessionListen);
 
             store.deleteFeatureType(nsname.toString());
 
@@ -145,8 +145,8 @@ public abstract class AbstractModelTests {
 //            assertEquals(sft, storeListen.lastManagementEvent.getOldFeatureType());
 //            assertEquals(sft, sessionListen.lastManagementEvent.getOldFeatureType());
 
-            store.removeListener(storeListen, StoreEvent.class);
-            session.removeListener(sessionListen, StoreEvent.class);
+            store.removeListener(StoreEvent.class, storeListen);
+            session.removeListener(StoreEvent.class, sessionListen);
 
             try{
                 store.getFeatureType(nsname.toString());

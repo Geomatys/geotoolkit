@@ -191,7 +191,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         if (singleFileFactory.canProcess(params)) {
             try {
                 final FeatureStore fileDS = (FeatureStore) singleFileFactory.open(params);
-                fileDS.addListener(subListener, StoreEvent.class);
+                fileDS.addListener(StoreEvent.class, subListener);
                 stores.add(this, fileDS.getNames().iterator().next(), fileDS);
             } catch (DataStoreException ex) {
                 getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
@@ -221,7 +221,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         }
 
         final FeatureStore store = (FeatureStore) singleFileFactory.create(params);
-        store.addListener(subListener, StoreEvent.class);
+        store.addListener(StoreEvent.class, subListener);
         store.createFeatureType(featureType);
         stores.add(this, typeName, store);
     }
@@ -250,7 +250,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
                 sourceFiles = ((ResourceOnFileSystem) store).getComponentFiles();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
-                final URI fileURI = Parameters.castOrWrap(store.getOpenParameters()).getValue(PATH);
+                final URI fileURI = Parameters.castOrWrap(store.getOpenParameters().get()).getValue(PATH);
                 if (fileURI == null) {
                     throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
                 }
