@@ -336,6 +336,14 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 writer.writeAttribute("gml", gmlNamespace, "id", gmlid);
             }
         }
+
+        if (root) {
+            final String schemaLocation = buildSchemaLocationString(schemaLocations);
+            if (!schemaLocation.isEmpty()) {
+                writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
+            }
+        }
+
         writeComplexProperties(feature, gmlid);
         writer.writeEndElement();
         writer.flush();
