@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
-import org.apache.sis.util.ComparisonMode;
 import org.opengis.geometry.DirectPosition;
 
 
@@ -226,9 +226,26 @@ public class LineStringType extends AbstractCurveType implements LineString {
             final DirectPositionType upperCorner = new DirectPositionType(maxx, maxy);
             return new EnvelopeType(lowerCorner, upperCorner, getSrsName());
         }
+        if (posList != null) {
+            List<Double> values = posList.getValue();
+            if (!values.isEmpty()) {
+                int dim = getSrsDimension() == null ? 2 : getSrsDimension().intValue();
+                for (int i=0, n=values.size(); i<n; i+=dim) {
+                    final double x = values.get(i);
+                    final double y = values.get(i+1);
+                    if (x < minx) { minx = x; }
+                    if (x > maxx) { maxx = x; }
+                    if (y < miny) { miny = y; }
+                    if (y > maxy) { maxy = y; }
+                }
+            }
+            final DirectPositionType lowerCorner = new DirectPositionType(minx, miny);
+            final DirectPositionType upperCorner = new DirectPositionType(maxx, maxy);
+            return new EnvelopeType(lowerCorner, upperCorner, getSrsName());
+        }
         return null;
 
-        // TODO try with posList and coordinates if pos is null or empty
+        // TODO try with coordinates if pos is null or empty
     }
 
     @Override

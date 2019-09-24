@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gml;
+package org.geotoolkit.gml.xml;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v321.AngleType;
 import org.geotoolkit.gml.xml.v321.ArcByCenterPointType;
 import org.geotoolkit.gml.xml.v321.CurveSegmentArrayPropertyType;
