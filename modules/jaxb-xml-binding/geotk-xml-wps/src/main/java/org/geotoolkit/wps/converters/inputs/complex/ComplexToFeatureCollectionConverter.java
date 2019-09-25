@@ -18,9 +18,13 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
-import org.geotoolkit.data.FeatureCollection;
+import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureSetWrapper;
 import org.geotoolkit.wps.xml.v200.Data;
 
 /**
@@ -61,8 +65,17 @@ public final class ComplexToFeatureCollectionConverter extends AbstractComplexIn
             throw new UnconvertibleObjectException("Invalid data input : Only one FeatureCollection expected.");
         }
 
-        try (final Stream<FeatureCollection> stream = readFeatureArrays(source)) {
-                return stream.findAny().orElse(null);
+        try (final Stream<FeatureSet> stream = readFeatureArrays(source)) {
+                return stream.findAny().map(new Function<FeatureSet, FeatureCollection>() {
+                    @Override
+                    public FeatureCollection apply(FeatureSet t) {
+                        if (t instanceof FeatureCollection) {
+                            return (FeatureCollection) t;
+                        } else {
+                            return new FeatureSetWrapper(t, ((StoreResource)t).getOriginator());
+                        }
+                    }
+                }).orElse(null);
         }
     }
 }

@@ -24,11 +24,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.xml.XmlFeatureReader;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureSetWrapper;
 import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -99,7 +102,12 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
             }
         } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
             try {
-                return WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(source.getHref()));
+                FeatureSet fs = WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(source.getHref()));
+                if (fs instanceof FeatureCollection) {
+                    return (FeatureCollection) fs;
+                } else {
+                    return new FeatureSetWrapper(fs, ((StoreResource) fs).getOriginator());
+                }
             } catch (DataStoreException | URISyntaxException | IOException ex) {
                 throw new UnconvertibleObjectException(ex);
             }

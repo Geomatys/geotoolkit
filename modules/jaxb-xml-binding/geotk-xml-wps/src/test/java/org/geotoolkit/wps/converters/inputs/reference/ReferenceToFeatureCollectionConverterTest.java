@@ -17,6 +17,7 @@
 package org.geotoolkit.wps.converters.inputs.reference;
 
 import java.io.IOException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
@@ -31,7 +32,7 @@ import org.junit.Test;
 public class ReferenceToFeatureCollectionConverterTest extends org.geotoolkit.test.TestBase {
 
     @Test
-    public void testJSONConversion() throws IOException {
+    public void testJSONConversion() throws IOException, DataStoreException {
 
         final FeatureCollection featureCollection = ConvertersTestUtils.initAndRunInputConversion(Reference.class,
                                                       FeatureCollection.class,

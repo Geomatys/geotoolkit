@@ -34,6 +34,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.sf.json.JSONObject;
@@ -46,23 +47,21 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeometryUtils;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.mathml.xml.*;
@@ -99,7 +98,6 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.opengis.util.GenericName;
 import org.w3c.dom.Node;
 
 /**
@@ -802,25 +800,24 @@ public class WPSConvertersUtils {
     public static final Feature readFeatureFromJson(final URI uri) throws DataStoreException, URISyntaxException, IOException {
         ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(uri));
-        FeatureStore store = (FeatureStore) DataStores.open(param);
+        DataStore store = DataStores.open(param);
 
         if (store == null)
             throw new DataStoreException("No available factory found");
 
-        Iterator<GenericName> iterator = store.getNames().iterator();
-        Session session = store.createSession(false);
+        final List<FeatureSet> featureSets = new ArrayList<>(DataStores.flatten(store, true, FeatureSet.class));
 
-        int typesNumber = store.getNames().size();
-        if (typesNumber != 1)
-            throw new UnconvertibleObjectException("Expected one feature. Found " + typesNumber);
+        if (featureSets.size() != 1)
+            throw new UnconvertibleObjectException("Expected one Geometry. Found " + featureSets.size());
 
-        GenericName name = iterator.next();
-        FeatureCollection featureCollection = session.getFeatureCollection(QueryBuilder.all(name));
-        if (featureCollection.size() != 1)
-            throw new DataStoreException("One feature expected. Found " + featureCollection.size());
+        final FeatureSet featureSet = featureSets.get(0);
 
-        try (FeatureIterator featureIterator = featureCollection.iterator()) {
-            return featureIterator.next();
+        long collectionSize = FeatureStoreUtilities.getCount(featureSet);
+        if (collectionSize != 1)
+            throw new UnconvertibleObjectException("Expected one geometry. Found " + collectionSize);
+
+        try (Stream<Feature> st = featureSet.features(false)) {
+            return st.findFirst().get();
         }
     }
 
@@ -835,25 +832,23 @@ public class WPSConvertersUtils {
      * when more than one feature collection has been found or when an error
      * occurs while reading the json file
      */
-    public static final FeatureCollection readFeatureCollectionFromJson(final URI url) throws DataStoreException, URISyntaxException, IOException {
+    public static final FeatureSet readFeatureCollectionFromJson(final URI url) throws DataStoreException, URISyntaxException, IOException {
         final ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(url));
-        final FeatureStore store = (FeatureStore) DataStores.open(param);
+        final DataStore store = DataStores.open(param);
 
         if (store == null)
             throw new DataStoreException("No available factory found");
-        final Set<GenericName> names = store.getNames();
-        final Iterator<GenericName> iterator;
-        if (names == null || !(iterator = names.iterator()).hasNext()) {
-            throw new DataStoreException("No GeoJSON content available at "+url);
-        }
 
-        final GenericName name = iterator.next();
-        if (iterator.hasNext()) {
-            throw new DataStoreException("Multiple feature types found from datasource " + url);
-        }
 
-        return store.createSession(false).getFeatureCollection(QueryBuilder.all(name));
+        List<FeatureSet> featureSets = new ArrayList<>(DataStores.flatten(store, true, FeatureSet.class));
+
+        if (featureSets.size() != 1)
+            throw new UnconvertibleObjectException("Expected one Geometry. Found " + featureSets.size());
+
+        final FeatureSet featureSet = featureSets.get(0);
+
+        return featureSet;
     }
 
     /**

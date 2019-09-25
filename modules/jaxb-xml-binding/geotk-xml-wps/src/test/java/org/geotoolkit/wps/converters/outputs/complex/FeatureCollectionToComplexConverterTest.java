@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
@@ -51,7 +52,7 @@ public class FeatureCollectionToComplexConverterTest extends org.geotoolkit.test
             // The main part of the test consist in retrieving the same feature collection
             // that we gave as input to the converter
             try {
-                FeatureCollection readFeatureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(file.toUri());
+                FeatureSet readFeatureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(file.toUri());
                 ConvertersTestUtils.assertFeatureCollectionIsValid(readFeatureCollection);
             } catch (DataStoreException | URISyntaxException e) {
                 throw new RuntimeException(e);

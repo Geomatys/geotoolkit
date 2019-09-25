@@ -21,14 +21,15 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 import org.opengis.util.FactoryException;
 
 /**
@@ -55,8 +56,8 @@ public class FeatureCollectionToReferenceConverterTest extends org.geotoolkit.te
         assertNull(reference.getSchema());
         assertNotNull(reference.getHref());
 
-        final FeatureCollection featureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(reference.getHref()));
-        ConvertersTestUtils.assertFeatureCollectionIsValid((FeatureCollection) testResource);
+        final FeatureSet featureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(reference.getHref()));
+        ConvertersTestUtils.assertFeatureCollectionIsValid((FeatureSet) testResource);
         ConvertersTestUtils.assertFeatureCollectionIsValid(featureCollection);
     }
 }

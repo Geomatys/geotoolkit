@@ -16,20 +16,22 @@
  */
 package org.geotoolkit.pending.demo.datamodel.nmea;
 
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.nmea.NMEAStore;
 import org.geotoolkit.data.nmea.NMEASerialPortReader;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.lang.Setup;
+import org.opengis.feature.Feature;
 
 /**
  * Connect and activate a GPS on COM/USB port first.
@@ -59,11 +61,11 @@ public class NMEASerialPortReaderDemo {
 
     private static class TestListener implements StoreListener<StoreEvent> {
 
-        public final Session session;
+        public final MemoryFeatureStore store;
 
         public TestListener(final MemoryFeatureStore store) {
             store.addListener(StoreEvent.class, this);
-            session = store.createSession(false);
+            this.store = store;
         }
 
         @Override
@@ -71,10 +73,22 @@ public class NMEASerialPortReaderDemo {
             if (event instanceof FeatureStoreContentEvent) {
                 final FeatureStoreContentEvent tmp = (FeatureStoreContentEvent) event;
                 if (tmp.getType().equals(FeatureStoreContentEvent.Type.ADD)) {
-                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.filtered(NMEAStore.TYPE_NAME.toString(), tmp.getIds()));
-                    final FeatureIterator it = col.iterator();
-                    while (it.hasNext()) {
-                        LOGGER.log(Level.INFO, it.next().toString());
+                    try {
+                        FeatureSet resource = (FeatureSet) store.findResource(NMEAStore.TYPE_NAME.toString());
+                        SimpleQuery query = new SimpleQuery();
+                        query.setFilter(tmp.getIds());
+                        resource = resource.subset(query);
+
+                        try (Stream<Feature> stream = resource.features(false)){
+                            stream.forEach(new Consumer<Feature>() {
+                                @Override
+                                public void accept(Feature t) {
+                                    LOGGER.log(Level.INFO, t.toString());
+                                }
+                            });
+                        }
+                    } catch (DataStoreException ex) {
+                        ex.printStackTrace();
                     }
                 }
             } else {

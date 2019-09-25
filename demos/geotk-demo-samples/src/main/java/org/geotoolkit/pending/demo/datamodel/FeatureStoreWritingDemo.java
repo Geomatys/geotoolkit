@@ -2,25 +2,23 @@
 
 package org.geotoolkit.pending.demo.datamodel;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableFeatureSet;
+import org.geotoolkit.data.DefiningFeatureSet;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -47,39 +45,19 @@ public class FeatureStoreWritingDemo {
 
 
         //create the featurestore ---------------------------------------------------------
-        final FeatureStore store = new MemoryFeatureStore();
-        store.createFeatureType(type);
+        final MemoryFeatureStore store = new MemoryFeatureStore();
+        final WritableFeatureSet resource = (WritableFeatureSet) store.add(new DefiningFeatureSet(type, null));
 
 
         ////////////////////////////////////////////////////////////////////////////////
         // ADDING RECORDS //////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
 
-        //working directly on the featurestore --------------------------------------------
-        //best performance
-        final FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(type.getName().toString(),Filter.EXCLUDE));
-        Feature feature = writer.next();
-        feature.setPropertyValue("name","sam");
-        feature.setPropertyValue("length",30);
-        feature.setPropertyValue("position",gf.createPoint(new Coordinate(20, 30)));
-        writer.write();
-
-        feature = writer.next();
-        feature.setPropertyValue("name","tomy");
-        feature.setPropertyValue("length",5);
-        feature.setPropertyValue("position",gf.createPoint(new Coordinate(41, 56)));
-        writer.write();
-
-        //and so on write features ...
-
-        writer.close();
-
-
         //passing a collection -----------------------------------------------------------
         //used to copy values from one featurestore to another
-        FeatureCollection toAdd = FeatureStoreUtilities.collection("collectionID", type);
+        List<Feature> toAdd = new ArrayList<>();
 
-        feature = type.newInstance();
+        Feature feature = type.newInstance();
         feature.setPropertyValue("name","speedy");
         feature.setPropertyValue("length",78);
         feature.setPropertyValue("position",gf.createPoint(new Coordinate(-12, -31)));
@@ -87,38 +65,7 @@ public class FeatureStoreWritingDemo {
         //and so on add features in the collection ...
 
         //and finally store them
-        store.addFeatures(type.getName().toString(), toAdd);
-
-
-        //From a the session -----------------------------------------------------------
-        final Session session = store.createSession(true);
-        toAdd = FeatureStoreUtilities.collection("collectionID", type);
-
-        feature = type.newInstance();
-        feature.setPropertyValue("name","ginette");
-        feature.setPropertyValue("length",74);
-        feature.setPropertyValue("position",gf.createPoint(new Coordinate(56, 101)));
-        toAdd.add(feature);
-        //and so on add features in the collection ...
-
-        session.addFeatures(type.getName().toString(), toAdd);
-        //so far thoses features are only visible in the session, don't forget to commit
-        session.commit();
-
-
-        //On a FeatureCollection like normal java ----------------------------------------
-        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName()));
-
-        feature = type.newInstance();
-        feature.setPropertyValue("name","marcel");
-        feature.setPropertyValue("length",125);
-        feature.setPropertyValue("position",gf.createPoint(new Coordinate(-79, 2)));
-
-        col.add(feature);
-
-        session.commit();
-
-        System.out.println(col);
+        resource.add(toAdd.iterator());
 
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -133,8 +80,6 @@ public class FeatureStoreWritingDemo {
         //same thing on the session and normal java way on the collection.
         //to remove everything use
         store.removeFeatures(type.getName().toString(), Filter.INCLUDE);
-
-        System.out.println("Number of features = " + col.size());
 
     }
 

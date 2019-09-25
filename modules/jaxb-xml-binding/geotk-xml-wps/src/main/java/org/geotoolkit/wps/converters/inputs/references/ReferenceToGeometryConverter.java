@@ -16,38 +16,34 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.UnconvertibleObjectException;
+import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.v200.Reference;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.Feature;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PATH;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.wps.xml.v200.Reference;
-;
-import org.opengis.feature.Feature;
-import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;import org.opengis.feature.Feature;
-import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a Geometry.
@@ -109,24 +105,21 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
             ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
             try {
                 param.parameter(PATH.getName().getCode()).setValue(URI.create(source.getHref()));
-                FeatureStore store = (FeatureStore) DataStores.open(param);
-                Iterator<GenericName> iterator = store.getNames().iterator();
+                DataStore store = DataStores.open(param);
 
-                int typesSize = store.getNames().size();
-                if (typesSize != 1)
-                    throw new UnconvertibleObjectException("Expected one Geometry. Found " + typesSize);
+                List<FeatureSet> featureSets = new ArrayList<>(DataStores.flatten(store, true, FeatureSet.class));
 
-                GenericName name = iterator.next();
+                if (featureSets.size() != 1)
+                    throw new UnconvertibleObjectException("Expected one Geometry. Found " + featureSets.size());
 
-                Session session = store.createSession(false);
-                FeatureCollection featureCollection = session.getFeatureCollection(QueryBuilder.all(name));
+                final FeatureSet featureSet = featureSets.get(0);
 
-                int collectionSize = featureCollection.size();
+                long collectionSize = FeatureStoreUtilities.getCount(featureSet);
                 if (collectionSize != 1)
                     throw new UnconvertibleObjectException("Expected one geometry. Found " + collectionSize);
 
-                try (FeatureIterator featureCollectionIterator = featureCollection.iterator()) {
-                    Feature feature = featureCollectionIterator.next();
+                try (Stream<Feature> st = featureSet.features(false)) {
+                    Feature feature = st.findFirst().get();
                     return FeatureExt.getDefaultGeometryValue(feature)
                             .filter(Geometry.class::isInstance)
                             .map(Geometry.class::cast)

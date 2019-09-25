@@ -1,15 +1,13 @@
 package org.geotoolkit.pending.demo.datamodel;
 
-import org.locationtech.jts.geom.Point;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.DataStores;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.FeatureType;
 
 public class MemoryFeatureStoreDemo {
@@ -31,9 +29,9 @@ public class MemoryFeatureStoreDemo {
 
 
         //query the featurestore like any other
-        final Session session = store.createSession(true);
-        final Query query = QueryBuilder.all(type.getName());
-        final FeatureCollection collection = session.getFeatureCollection(query);
+        for (FeatureSet fs : DataStores.flatten(store, true, FeatureSet.class)) {
+            System.out.println(fs.getType());
+        }
 
     }
 }

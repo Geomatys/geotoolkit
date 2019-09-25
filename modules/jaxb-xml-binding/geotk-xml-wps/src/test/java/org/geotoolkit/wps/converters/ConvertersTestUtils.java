@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.wps.converters;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
@@ -32,24 +29,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.data.FeatureSetWrapper;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
@@ -60,10 +61,13 @@ import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Format;
 import org.geotoolkit.wps.xml.v200.Reference;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.util.FactoryException;
 
@@ -210,9 +214,10 @@ public final class ConvertersTestUtils {
             testResource = ConvertersTestUtils.getGeometryArrayFromTestFolder(resourcePath);
         else if ("/inputs/feature.json".equals(resourcePath))
             testResource = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
-        else if ("/inputs/featurecollection.json".equals(resourcePath))
-            testResource = WPSConvertersUtils.readFeatureCollectionFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
-        else
+        else if ("/inputs/featurecollection.json".equals(resourcePath)) {
+            FeatureSet fs = WPSConvertersUtils.readFeatureCollectionFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
+            testResource = new FeatureSetWrapper(fs, ((StoreResource)fs).getOriginator());
+        } else
             fail("Unknown test resource : " + resourcePath);
 
         return testResource;
@@ -417,12 +422,14 @@ public final class ConvertersTestUtils {
      *
      * @param featureCollection the FeatureCollection to test
      */
-    public static void assertFeatureCollectionIsValid(final FeatureCollection featureCollection) {
+    public static void assertFeatureCollectionIsValid(final FeatureSet featureCollection) throws DataStoreException {
         assertNotNull(featureCollection);
 
         // Ensure the feature collection contains 7 features
-        assertEquals(featureCollection.size(), 7);
-        try (FeatureIterator iterator = featureCollection.iterator()) {
+        assertEquals(FeatureStoreUtilities.getCount(featureCollection).longValue(), 7l);
+
+        try (Stream<Feature> stream = featureCollection.features(false)) {
+            Iterator<Feature> iterator = stream.iterator();
 
             boolean[] isDefinedProperties = new boolean[7];
             for (int i = 0; i < isDefinedProperties.length; i++)
