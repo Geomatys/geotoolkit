@@ -50,7 +50,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
@@ -454,7 +453,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
      * Test the CoverageReader view of a scene.
      */
     @Test
-    public void testPortrayalCoverageReader() throws DataStoreException {
+    public void testPortrayalCoverageResource() throws DataStoreException {
 
         //create a test coverage
         final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
@@ -476,12 +475,12 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         context.layers().add(cl);
 
         final SceneDef sceneDef = new SceneDef(context);
-        final GridCoverageReader reader = DefaultPortrayalService.asCoverageReader(sceneDef);
+        final GridCoverageResource resource = DefaultPortrayalService.asResource(sceneDef);
 
-        final GridGeometry gridGeom = reader.getGridGeometry();
+        final GridGeometry gridGeom = resource.getGridGeometry();
         assertNotNull(gridGeom);
 
-        final GridCoverage result = reader.read(null);
+        final GridCoverage result = resource.read(null);
         final RenderedImage image = result.render(null);
         assertEquals(1000, image.getWidth());
     }
