@@ -137,9 +137,9 @@ public class GMLProvider extends DataStoreProvider implements ProviderOnFileSyst
     public DataStore open(final ParameterValueGroup params) throws DataStoreException {
         final Boolean sparse = Parameters.castOrWrap(params).getValue(SPARSE);
         if (sparse) {
-            return new GMLSparseFeatureStore(params);
+            return new GMLSparseStore(params);
         }else{
-            return new GMLFeatureStore(params);
+            return new GMLStore(params);
         }
     }
 
@@ -147,7 +147,7 @@ public class GMLProvider extends DataStoreProvider implements ProviderOnFileSyst
     public DataStore open(StorageConnector connector) throws DataStoreException {
         final URI path = connector.getStorageAs(URI.class);
         try {
-            return new GMLFeatureStore(path);
+            return new GMLStore(path);
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }

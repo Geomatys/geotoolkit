@@ -45,7 +45,7 @@ public class GML3CollectionTest {
     public void collectionTest() throws URISyntaxException, MalformedURLException, DataStoreException, IOException {
 
         Path file = Files.createTempFile("gml3", "gml");
-        final GMLFeatureStore store = new GMLFeatureStore(file, GML2_1_2Test.class.getResource("/org/geotoolkit/data/gml/2_1_2/Road.xsd").toURI().toString(), "Road", null);
+        final GMLStore store = new GMLStore(file, GML2_1_2Test.class.getResource("/org/geotoolkit/data/gml/2_1_2/Road.xsd").toURI().toString(), "Road", null);
 
         FeatureType type = store.getType();
 

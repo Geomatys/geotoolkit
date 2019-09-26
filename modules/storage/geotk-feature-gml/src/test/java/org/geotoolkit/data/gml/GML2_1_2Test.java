@@ -44,7 +44,7 @@ public class GML2_1_2Test {
     @Test
     public void testMultiLigne() throws Exception {
 
-        final GMLFeatureStore store = new GMLFeatureStore(GML2_1_2Test.class.getResource("/org/geotoolkit/data/gml/2_1_2/MultiLigne.xml").toURI());
+        final GMLStore store = new GMLStore(GML2_1_2Test.class.getResource("/org/geotoolkit/data/gml/2_1_2/MultiLigne.xml").toURI());
         final Set<GenericName> names = DataStores.getNames(store, true, FeatureSet.class);
         assertEquals(1,names.size());
         final GenericName name = names.iterator().next();

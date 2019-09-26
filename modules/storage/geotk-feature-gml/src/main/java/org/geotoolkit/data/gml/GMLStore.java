@@ -78,7 +78,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLFeatureStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
+public class GMLStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
 
     private final ReadWriteLock MAINLOCK = new ReentrantReadWriteLock();
     private final ReadWriteLock UPDATELOCK = new ReentrantReadWriteLock();
@@ -104,23 +104,23 @@ public class GMLFeatureStore extends DataStore implements WritableFeatureSet, Re
      * @deprecated use {@link #GMLFeatureStore(Path)} or {@link #GMLFeatureStore(ParameterValueGroup)} instead
      */
     @Deprecated
-    public GMLFeatureStore(final File f) throws MalformedURLException, DataStoreException{
+    public GMLStore(final File f) throws MalformedURLException, DataStoreException{
         this(f.toURI());
     }
 
-    public GMLFeatureStore(final Path f) throws MalformedURLException, DataStoreException{
+    public GMLStore(final Path f) throws MalformedURLException, DataStoreException{
         this(f.toUri());
     }
 
-    public GMLFeatureStore(final Path f, String xsd, String typeName, Boolean longitudeFirst) throws MalformedURLException, DataStoreException{
+    public GMLStore(final Path f, String xsd, String typeName, Boolean longitudeFirst) throws MalformedURLException, DataStoreException{
         this(toParameters(f.toUri(), xsd, typeName, longitudeFirst));
     }
 
-    public GMLFeatureStore(final URI uri) throws MalformedURLException, DataStoreException{
+    public GMLStore(final URI uri) throws MalformedURLException, DataStoreException{
         this(toParameters(uri, null, null, null));
     }
 
-    public GMLFeatureStore(final ParameterValueGroup params) throws DataStoreException {
+    public GMLStore(final ParameterValueGroup params) throws DataStoreException {
         parameters = Parameters.unmodifiable(params);
 
         final URI uri = parameters.getMandatoryValue(GMLProvider.PATH);

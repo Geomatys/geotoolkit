@@ -71,7 +71,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLSparseFeatureStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
+public class GMLSparseStore extends DataStore implements WritableFeatureSet, ResourceOnFileSystem, FeatureCatalogue {
 
     private final Parameters parameters;
     private final Path file;
@@ -83,20 +83,20 @@ public class GMLSparseFeatureStore extends DataStore implements WritableFeatureS
 
     private Boolean longitudeFirst;
 
-    public GMLSparseFeatureStore(final File f) throws MalformedURLException, DataStoreException{
+    public GMLSparseStore(final File f) throws MalformedURLException, DataStoreException{
         this(f.toPath(),null,null);
     }
 
     @Deprecated
-    public GMLSparseFeatureStore(final File f,String xsd, String typeName) throws MalformedURLException, DataStoreException{
+    public GMLSparseStore(final File f,String xsd, String typeName) throws MalformedURLException, DataStoreException{
         this(toParameters(f.toPath(),xsd,typeName));
     }
 
-    public GMLSparseFeatureStore(final Path f,String xsd, String typeName) throws MalformedURLException, DataStoreException{
+    public GMLSparseStore(final Path f,String xsd, String typeName) throws MalformedURLException, DataStoreException{
         this(toParameters(f,xsd,typeName));
     }
 
-    public GMLSparseFeatureStore(final ParameterValueGroup params) throws DataStoreException {
+    public GMLSparseStore(final ParameterValueGroup params) throws DataStoreException {
         parameters = Parameters.unmodifiable(params);
 
         final URI uri = (URI) params.parameter(GMLProvider.PATH.getName().toString()).getValue();
