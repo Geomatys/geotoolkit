@@ -12,7 +12,7 @@ import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.osmtms.OSMTMSClientFactory;
+import org.geotoolkit.osmtms.OSMTMSProvider;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultDescription;
@@ -36,11 +36,11 @@ public class OSMTMSClientDemo {
     public static MapContext createOSMTMSContext() throws Exception{
         final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
-        final Parameters params = Parameters.castOrWrap(OSMTMSClientFactory.PARAMETERS.createValue());
-        params.getOrCreate(OSMTMSClientFactory.URL).setValue(new URL("http://tile.openstreetmap.org"));
-        params.getOrCreate(OSMTMSClientFactory.IMAGE_CACHE).setValue(true);
-        params.getOrCreate(OSMTMSClientFactory.NIO_QUERIES).setValue(true);
-        params.getOrCreate(OSMTMSClientFactory.MAX_ZOOM_LEVEL).setValue(18);
+        final Parameters params = Parameters.castOrWrap(OSMTMSProvider.PARAMETERS.createValue());
+        params.getOrCreate(OSMTMSProvider.URL).setValue(new URL("http://tile.openstreetmap.org"));
+        params.getOrCreate(OSMTMSProvider.IMAGE_CACHE).setValue(true);
+        params.getOrCreate(OSMTMSProvider.NIO_QUERIES).setValue(true);
+        params.getOrCreate(OSMTMSProvider.MAX_ZOOM_LEVEL).setValue(18);
 
         final DataStore store = DataStores.open(params);
 

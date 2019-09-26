@@ -30,11 +30,11 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSCoverageResource extends AbstractPyramidalCoverageResource {
+public class WMTSResource extends AbstractPyramidalCoverageResource {
 
     private final WMTSPyramidSet set;
 
-    WMTSCoverageResource(WebMapTileClient server, GenericName name, boolean cacheImage){
+    WMTSResource(WebMapTileClient server, GenericName name, boolean cacheImage){
         super(server,name);
         set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
     }

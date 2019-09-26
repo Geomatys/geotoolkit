@@ -39,12 +39,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.METADATA)
-public class CSWClientFactory extends AbstractClientProvider {
+public class CSWProvider extends AbstractClientProvider {
 
     /** factory identification **/
     public static final String NAME = "csw";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * Version, Mandatory.
@@ -60,7 +58,7 @@ public class CSWClientFactory extends AbstractClientProvider {
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName(NAME).addName("CSWParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
+            new ParameterBuilder().addName(NAME).addName("CSWParameters").createGroup(URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public String getShortName() {

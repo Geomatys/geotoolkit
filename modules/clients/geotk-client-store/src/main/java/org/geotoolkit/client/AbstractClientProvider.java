@@ -19,12 +19,16 @@ package org.geotoolkit.client;
 
 import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
@@ -34,23 +38,12 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel
  * @module
  */
-public abstract class AbstractClientProvider extends DataStoreFactory {
+public abstract class AbstractClientProvider extends DataStoreProvider {
 
     /**
      * commonly used translation for version parameters.
      */
     public static final InternationalString I18N_VERSION = Bundle.formatInternational(Bundle.Keys.version);
-
-    /**
-     * Identifier, Mandatory.
-     * Subclasses should redeclared this parameter with a different default value.
-     */
-    public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
-            .addName("identifier")
-            .addName(Bundle.formatInternational(Bundle.Keys.identifier))
-            .setRemarks(Bundle.formatInternational(Bundle.Keys.identifierRemarks))
-            .setRequired(true)
-            .create(String.class, null);
 
     /**
      * Version, Mandatory.
@@ -62,21 +55,6 @@ public abstract class AbstractClientProvider extends DataStoreFactory {
             .setRemarks(Bundle.formatInternational(Bundle.Keys.versionRemarks))
             .setRequired(true)
             .create(String.class, null);
-
-    /**
-     * Create the identifier descriptor, and set only one valid value, the one in parameter.
-     *
-     * @param idValue the value to use for identifier.
-     * @return an identifier descriptor.
-     */
-    public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
-            return new ParameterBuilder()
-                    .addName(IDENTIFIER.getName().getCode())
-                    .addName(IDENTIFIER.getAlias().iterator().next())
-                    .setRemarks(IDENTIFIER.getRemarks())
-                    .setRequired(true)
-                    .createEnumerated(String.class, new String[]{idValue},idValue);
-    }
 
     /**
      * Create the version descriptor.
@@ -153,9 +131,47 @@ public abstract class AbstractClientProvider extends DataStoreFactory {
         }
     }
 
+    /**
+     * @param params
+     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup)
+     * @throws DataStoreException if identifier is not valid
+     */
+    protected void ensureCanProcess(final ParameterValueGroup params) throws DataStoreException{
+        final boolean valid = canProcess(params);
+        if(!valid){
+            throw new DataStoreException("Parameter values not supported by this factory.");
+        }
+    }
+
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         // TODO : properly implement in each sub-type
         return new ProbeResult(false, null, null);
+    }
+
+    @Override
+    public DataStore open(StorageConnector connector) throws DataStoreException {
+        try {
+            final URL url = connector.getStorageAs(URL.class);
+            Parameters parameters = Parameters.castOrWrap(getOpenParameters().createValue());
+            parameters.getOrCreate(URL).setValue(url);
+            return open(parameters);
+        } catch (IllegalArgumentException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+    }
+
+    private boolean canProcess(final ParameterValueGroup params) {
+        if (params == null) {
+            return false;
+        }
+
+        final ParameterDescriptorGroup desc = getOpenParameters();
+        if (!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())) {
+            return false;
+        }
+
+        final ConformanceResult result = org.geotoolkit.parameter.Parameters.isValid(params, desc);
+        return (result != null) && Boolean.TRUE.equals(result.pass());
     }
 }

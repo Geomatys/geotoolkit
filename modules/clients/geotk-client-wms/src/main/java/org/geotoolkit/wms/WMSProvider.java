@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2012, Johann Sorel
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,44 +15,45 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.osm.client;
+package org.geotoolkit.wms;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.opengis.parameter.*;
+import org.geotoolkit.wms.xml.WMSVersion;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Open Street Map Server factory.
+ * WMS Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
-@StoreMetadataExt(resourceTypes = ResourceType.OTHER)
-public class OSMClientFactory extends AbstractClientProvider {
+@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
+public class WMSProvider extends AbstractClientProvider {
 
-    /** factory identification **/
-    public static final String NAME = "osm";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final String NAME = "wms";
 
     /**
      * Version, Mandatory.
      */
     public static final ParameterDescriptor<String> VERSION;
+
     static{
-        final OSMVersion[] values = OSMVersion.values();
+        final WMSVersion[] values = WMSVersion.values();
         final String[] validValues =  new String[values.length];
         for(int i=0;i<values.length;i++){
             validValues[i] = values[i].getCode();
         }
-        VERSION = createVersionDescriptor(validValues, OSMVersion.v060.getCode());
+        VERSION = createVersionDescriptor(validValues, WMSVersion.auto.getCode());
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName(NAME).addName("OSMParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
+            new ParameterBuilder().addName(NAME).addName("WMSParameters").createGroup(URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public String getShortName() {
@@ -64,17 +66,17 @@ public class OSMClientFactory extends AbstractClientProvider {
     }
 
     public CharSequence getDescription() {
-        return Bundle.formatInternational(Bundle.Keys.serverDescription);
+        return Bundle.formatInternational(Bundle.Keys.coverageDescription);
     }
 
     public CharSequence getDisplayName() {
-        return Bundle.formatInternational(Bundle.Keys.serverTitle);
+        return Bundle.formatInternational(Bundle.Keys.coverageTitle);
     }
 
     @Override
-    public OpenStreetMapClient open(ParameterValueGroup params) throws DataStoreException {
+    public WebMapClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        return new OpenStreetMapClient(params);
+        return new WebMapClient(params);
     }
 
 }

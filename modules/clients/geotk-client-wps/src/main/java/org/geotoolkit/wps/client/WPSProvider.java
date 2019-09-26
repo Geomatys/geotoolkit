@@ -14,45 +14,50 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wcs;
+package org.geotoolkit.wps.client;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.wcs.xml.WCSVersion;
 import org.opengis.parameter.*;
 
 /**
- * Web Coverage Service Server factory.
+ * WPS Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
-@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
-public class WCSClientFactory extends AbstractClientProvider{
+@StoreMetadataExt(resourceTypes = ResourceType.OTHER)
+public class WPSProvider extends AbstractClientProvider{
 
     /** factory identification **/
-    public static final String NAME = "wcs";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final String NAME = "wps";
 
     /**
      * Version, Mandatory.
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final WCSVersion[] values = WCSVersion.values();
+        final WPSVersion[] values = WPSVersion.values();
         final String[] validValues =  new String[values.length];
         for(int i=0;i<values.length;i++){
             validValues[i] = values[i].getCode();
         }
-        VERSION = createVersionDescriptor(validValues, WCSVersion.v111.getCode());
+        VERSION = createVersionDescriptor(validValues, WPSVersion.auto.getCode());
     }
 
+     /**
+     * Dynamic loading, Optional.
+     */
+    public static final ParameterDescriptor<Boolean> DYNAMIC_LOADING = new ParameterBuilder()
+            .addName("dynamic_loading")
+            .setRequired(false)
+            .create(Boolean.class, false);
+
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName(NAME).addName("WCSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
+            new ParameterBuilder().addName(NAME).addName("WPSParameters").createGroup(URL,VERSION,SECURITY,TIMEOUT, DYNAMIC_LOADING);
 
     @Override
     public String getShortName() {
@@ -73,9 +78,9 @@ public class WCSClientFactory extends AbstractClientProvider{
     }
 
     @Override
-    public WebCoverageClient open(ParameterValueGroup params) throws DataStoreException {
+    public WebProcessingClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        return new WebCoverageClient(params);
+        return new WebProcessingClient(params);
     }
 
 }

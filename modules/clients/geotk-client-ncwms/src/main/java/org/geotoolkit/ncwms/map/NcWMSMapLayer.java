@@ -23,7 +23,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.ncwms.NcWMSCoverageResource;
+import org.geotoolkit.ncwms.NcWMSResource;
 import org.geotoolkit.ncwms.NcWebMapClient;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.map.WMSMapLayer;
@@ -41,8 +41,8 @@ import org.opengis.util.FactoryException;
  */
 public class NcWMSMapLayer extends WMSMapLayer {
 
-    private static NcWMSCoverageResource toReference(final NcWebMapClient server, final String... layers) {
-        return new NcWMSCoverageResource(server, layers);
+    private static NcWMSResource toReference(final NcWebMapClient server, final String... layers) {
+        return new NcWMSResource(server, layers);
     }
 
     public NcWMSMapLayer(final NcWebMapClient server, final String... layers) {
@@ -50,8 +50,8 @@ public class NcWMSMapLayer extends WMSMapLayer {
     }
 
     @Override
-    public NcWMSCoverageResource getResource(){
-        return (NcWMSCoverageResource) super.getResource();
+    public NcWMSResource getResource(){
+        return (NcWMSResource) super.getResource();
     }
 
     /**

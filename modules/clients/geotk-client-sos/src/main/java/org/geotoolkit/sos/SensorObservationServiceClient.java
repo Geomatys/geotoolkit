@@ -41,16 +41,16 @@ public class SensorObservationServiceClient extends AbstractClient {
     }
 
     public SensorObservationServiceClient(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(SOSClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(SOSProvider.PARAMETERS, serverURL, security, null));
         if (version.equals("1.0.0")){
-            parameters.getOrCreate(SOSClientFactory.VERSION).setValue(version);
+            parameters.getOrCreate(SOSProvider.VERSION).setValue(version);
         } else {
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
     }
 
     public SensorObservationServiceClient(final URL serverURL, final ClientSecurity security, final SOSVersion version) {
-        super(create(SOSClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(SOSProvider.PARAMETERS, serverURL, security, null));
         if(version == null){
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
@@ -62,7 +62,7 @@ public class SensorObservationServiceClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(SOSClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(SOSProvider.NAME);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SensorObservationServiceClient extends AbstractClient {
      * Returns the currently used version for this server
      */
     public SOSVersion getVersion() {
-        return SOSVersion.fromCode(parameters.getValue(SOSClientFactory.VERSION));
+        return SOSVersion.fromCode(parameters.getValue(SOSProvider.VERSION));
     }
 
     /**

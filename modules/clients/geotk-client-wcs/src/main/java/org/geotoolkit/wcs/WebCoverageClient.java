@@ -54,20 +54,20 @@ public class WebCoverageClient extends AbstractClient {
     }
 
     public WebCoverageClient(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(WCSClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(WCSProvider.PARAMETERS, serverURL, security, null));
         if (version.equals("1.0.0")) {
-            parameters.getOrCreate(WCSClientFactory.VERSION).setValue(version);
+            parameters.getOrCreate(WCSProvider.VERSION).setValue(version);
         } else {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
     }
 
     public WebCoverageClient(final URL serverURL, final ClientSecurity security, final WCSVersion version) {
-        super(create(WCSClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(WCSProvider.PARAMETERS, serverURL, security, null));
         if(version == null){
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
-        parameters.getOrCreate(WCSClientFactory.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(WCSProvider.VERSION).setValue(version.getCode());
     }
 
     public WebCoverageClient(final ParameterValueGroup params) {
@@ -76,7 +76,7 @@ public class WebCoverageClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(WCSClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(WCSProvider.NAME);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class WebCoverageClient extends AbstractClient {
      * Returns the currently used version for this server
      */
     public WCSVersion getVersion() {
-        return WCSVersion.fromCode(parameters.getValue(WCSClientFactory.VERSION));
+        return WCSVersion.fromCode(parameters.getValue(WCSProvider.VERSION));
     }
 
     /**

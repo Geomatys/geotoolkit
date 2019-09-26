@@ -77,9 +77,9 @@ public class OpenStreetMapClient extends AbstractClient {
     }
 
     public OpenStreetMapClient(final URL url, final ClientSecurity security, final OSMVersion version){
-        super(create(OSMClientFactory.PARAMETERS, url, security, null));
+        super(create(OSMProvider.PARAMETERS, url, security, null));
         ArgumentChecks.ensureNonNull("version", version);
-        parameters.getOrCreate(OSMClientFactory.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(OSMProvider.VERSION).setValue(version.getCode());
     }
 
     public OpenStreetMapClient(final ParameterValueGroup params){
@@ -88,7 +88,7 @@ public class OpenStreetMapClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(OSMClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(OSMProvider.NAME);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class OpenStreetMapClient extends AbstractClient {
     }
 
     public OSMVersion getVersion(){
-        return OSMVersion.getVersion(parameters.getValue(OSMClientFactory.VERSION));
+        return OSMVersion.getVersion(parameters.getValue(OSMProvider.VERSION));
     }
 
     public Api getServiceCapabilities(){

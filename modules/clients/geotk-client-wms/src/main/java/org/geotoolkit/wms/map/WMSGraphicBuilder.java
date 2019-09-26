@@ -35,7 +35,7 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.wms.GetLegendRequest;
-import org.geotoolkit.wms.WMSCoverageResource;
+import org.geotoolkit.wms.WMSResource;
 import org.geotoolkit.wms.WebMapClient;
 
 /**
@@ -81,11 +81,11 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     public Image getLegend(final MapLayer layer) throws PortrayalException {
         Resource resource = layer.getResource();
 
-        if(!(resource instanceof WMSCoverageResource)){
+        if(!(resource instanceof WMSResource)){
             return null;
         }
 
-        final WMSCoverageResource reference = (WMSCoverageResource) resource;
+        final WMSResource reference = (WMSResource) resource;
         final WebMapClient server = (WebMapClient)reference.getOriginator();
 
         final GetLegendRequest request = server.createGetLegend();

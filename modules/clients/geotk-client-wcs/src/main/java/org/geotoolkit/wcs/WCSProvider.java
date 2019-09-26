@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012-2014, Geomatys
+ *    (C) 2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,46 +14,43 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wmts;
+package org.geotoolkit.wcs;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.wmts.xml.WMTSVersion;
+import org.geotoolkit.wcs.xml.WCSVersion;
 import org.opengis.parameter.*;
 
 /**
- * WMTS Server factory.
+ * Web Coverage Service Server factory.
  *
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
-@StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
-public class WMTSClientFactory extends AbstractClientProvider {
+@StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
+public class WCSProvider extends AbstractClientProvider{
 
-    public static final String NAME = "wmts";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    /** factory identification **/
+    public static final String NAME = "wcs";
 
     /**
-     * Mandatory - the serveur verion
+     * Version, Mandatory.
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final WMTSVersion[] values = WMTSVersion.values();
+        final WCSVersion[] values = WCSVersion.values();
         final String[] validValues =  new String[values.length];
         for(int i=0;i<values.length;i++){
             validValues[i] = values[i].getCode();
         }
-        VERSION = createVersionDescriptor(validValues, WMTSVersion.v100.getCode());
+        VERSION = createVersionDescriptor(validValues, WCSVersion.v111.getCode());
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName(NAME).addName("WMTSParameters").createGroup(
-                IDENTIFIER,URL,VERSION, SECURITY, IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
+            new ParameterBuilder().addName(NAME).addName("WCSParameters").createGroup(URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public String getShortName() {
@@ -66,24 +63,17 @@ public class WMTSClientFactory extends AbstractClientProvider {
     }
 
     public CharSequence getDescription() {
-        return Bundle.formatInternational(Bundle.Keys.coverageDescription);
+        return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
     public CharSequence getDisplayName() {
-        return Bundle.formatInternational(Bundle.Keys.coverageTitle);
+        return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }
 
     @Override
-    public WebMapTileClient open(ParameterValueGroup params) throws DataStoreException {
+    public WebCoverageClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        final WebMapTileClient server = new WebMapTileClient(params);
-
-        try{
-            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
-            boolean useNIO = Boolean.TRUE.equals(val.getValue());
-            server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
-        }catch(ParameterNotFoundException ex){}
-
-        return server;
+        return new WebCoverageClient(params);
     }
+
 }

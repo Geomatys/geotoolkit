@@ -39,7 +39,7 @@ public class OSMTMSCoverageStoreFactoryTest extends org.geotoolkit.test.TestBase
         final Iterator<DataStoreProvider> ite = DataStores.getProviders(DataStoreProvider.class).iterator();
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof OSMTMSClientFactory){
+            if(ite.next() instanceof OSMTMSProvider){
                 found = true;
             }
         }

@@ -31,12 +31,10 @@ import org.opengis.parameter.*;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
-public class OSMTMSClientFactory extends AbstractClientProvider {
+public class OSMTMSProvider extends AbstractClientProvider {
 
     /** factory identification **/
     public static final String NAME = "osm-tms";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * Mandatory - the serveur max zoom level
@@ -50,7 +48,7 @@ public class OSMTMSClientFactory extends AbstractClientProvider {
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new ParameterBuilder().addName(NAME).addName("OSMTMSParameters").createGroup(
-                IDENTIFIER,URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
+                URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
     public String getShortName() {

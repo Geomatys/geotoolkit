@@ -40,7 +40,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
-import org.geotoolkit.wps.client.WPSClientFactory;
+import org.geotoolkit.wps.client.WPSProvider;
 import org.geotoolkit.wps.xml.v200.Capabilities;
 import org.geotoolkit.wps.xml.v200.Contents;
 import org.geotoolkit.wps.xml.v200.ProcessOffering;
@@ -258,7 +258,7 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
 
     private static boolean isDynamicLoading(final WebProcessingClient client) {
         final Parameters p = Parameters.castOrWrap(client.getOpenParameters().get());
-        final Boolean isDynamic = p.getValue(WPSClientFactory.DYNAMIC_LOADING);
+        final Boolean isDynamic = p.getValue(WPSProvider.DYNAMIC_LOADING);
         return isDynamic == null? false : isDynamic;
     }
 }

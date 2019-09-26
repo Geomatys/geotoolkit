@@ -26,7 +26,6 @@ import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
@@ -39,15 +38,13 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
-public class WMSCClientFactory extends AbstractClientProvider {
+public class WMSCProvider extends AbstractClientProvider {
 
     /** factory identification **/
     public static final String NAME = "wmsc";
 
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName(NAME).addName("WMSCParameters").createGroup(IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
+            new ParameterBuilder().addName(NAME).addName("WMSCParameters").createGroup(URL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
     public String getShortName() {
@@ -60,11 +57,11 @@ public class WMSCClientFactory extends AbstractClientProvider {
     }
 
     public CharSequence getDescription() {
-        return new ClassLoaderInternationalString(WMSCClientFactory.class,"org/geotoolkit/wmsc/bundle", "serverDescription");
+        return new ClassLoaderInternationalString(WMSCProvider.class,"org/geotoolkit/wmsc/bundle", "serverDescription");
     }
 
     public CharSequence getDisplayName() {
-        return new ClassLoaderInternationalString(WMSCClientFactory.class,"org/geotoolkit/wmsc/bundle", "serverTitle");
+        return new ClassLoaderInternationalString(WMSCProvider.class,"org/geotoolkit/wmsc/bundle", "serverTitle");
     }
 
     @Override

@@ -1,2 +1,2 @@
-org.geotoolkit.wms.WMSClientFactory
-org.geotoolkit.wmsc.WMSCClientFactory
+org.geotoolkit.wms.WMSProvider
+org.geotoolkit.wmsc.WMSCProvider

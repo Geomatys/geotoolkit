@@ -23,7 +23,7 @@ import java.net.URL;
 import org.geotoolkit.client.Request;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.wms.GetMapRequest;
-import org.geotoolkit.wms.WMSCoverageResource;
+import org.geotoolkit.wms.WMSResource;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -35,7 +35,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class NcWMSCoverageResource extends WMSCoverageResource{
+public class NcWMSResource extends WMSResource{
 
 
     /**
@@ -103,11 +103,11 @@ public class NcWMSCoverageResource extends WMSCoverageResource{
      */
     private Boolean logScale = null;
 
-    public NcWMSCoverageResource(NcWebMapClient server, GenericName name) {
+    public NcWMSResource(NcWebMapClient server, GenericName name) {
         super(server, name);
     }
 
-    public NcWMSCoverageResource(NcWebMapClient server, String... layers) {
+    public NcWMSResource(NcWebMapClient server, String... layers) {
         super(server, layers);
     }
 

@@ -103,7 +103,7 @@ public class NcWebMapClient extends WebMapClient{
 
     @Override
     protected GridCoverageResource createReference(GenericName name) throws DataStoreException{
-        return new NcWMSCoverageResource(this,name);
+        return new NcWMSResource(this,name);
     }
 
     /**

@@ -23,16 +23,21 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelope2D;
@@ -40,19 +45,21 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.DirectPosition;
@@ -74,8 +81,9 @@ import org.opengis.util.GenericName;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class WMSCoverageResource extends AbstractCoverageResource {
+public class WMSResource extends AbstractGridResource implements StoreResource {
 
+    static final Dimension DEFAULT_SIZE = new Dimension(256, 256);
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
     /**
@@ -168,20 +176,18 @@ public class WMSCoverageResource extends AbstractCoverageResource {
     private CRS84Politic    crs84Politic = CRS84Politic.STRICT;
     private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
 
-    /**
-     * Expose a WMS as a normal coverage
-     */
-    private WMSCoverageReader reader;
+    private final GenericName identifier;
     private Envelope env;
 
 
-    public WMSCoverageResource(final WebMapClient server, String ... layers) {
+    public WMSResource(final WebMapClient server, String ... layers) {
         this(server,toNames(layers));
     }
 
-    public WMSCoverageResource(final WebMapClient server, final GenericName ... names) {
-        super(server,names[0]);
+    public WMSResource(final WebMapClient server, final GenericName ... names) {
+        super(null);
         this.server = server;
+        this.identifier = names[0];
 
         if(names == null || names.length == 0){
             throw new IllegalArgumentException("No layer name defined");
@@ -204,6 +210,16 @@ public class WMSCoverageResource extends AbstractCoverageResource {
             ns[i] = NamesExt.valueOf(str);
         }
         return ns;
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(identifier);
+    }
+
+    @Override
+    public DataStore getOriginator() {
+        return server;
     }
 
     /**
@@ -419,17 +435,110 @@ public class WMSCoverageResource extends AbstractCoverageResource {
 
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        return null; //unknown
+        final List<SampleDimension> sd = new ArrayList<>();
+        switch (format) {
+            case "image/png" :
+                //4 bands
+                sd.add(new SampleDimension.Builder().setName("1").build());
+                sd.add(new SampleDimension.Builder().setName("2").build());
+                sd.add(new SampleDimension.Builder().setName("3").build());
+                sd.add(new SampleDimension.Builder().setName("4").build());
+                break;
+            default :
+                //3 bands
+                sd.add(new SampleDimension.Builder().setName("1").build());
+                sd.add(new SampleDimension.Builder().setName("2").build());
+                sd.add(new SampleDimension.Builder().setName("3").build());
+
+        }
+        return sd;
     }
 
     @Override
-    public synchronized GridCoverageReader acquireReader() throws CoverageStoreException {
-        if (reader == null) {
-            reader = new WMSCoverageReader(this);
-        }
-        return reader;
-    }
+    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
 
+        if (domain == null) {
+            domain = getGridGeometry();
+        }
+
+        if (range != null && range.length != 0) {
+            throw new CoverageStoreException("Source or destination bands can not be used on WMS coverages.");
+        }
+
+        GeneralEnvelope env;
+        if (domain.isDefined(GridGeometry.ENVELOPE)) {
+            env = new GeneralEnvelope(domain.getEnvelope());
+        } else {
+            env = new GeneralEnvelope(getGridGeometry().getEnvelope());
+        }
+
+        CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
+
+        final CoordinateReferenceSystem crs2d;
+        try {
+            crs2d = CRSUtilities.getCRS2D(crs);
+        } catch (TransformException ex) {
+            throw new CoverageStoreException("WMS reading expect a CRS whose first component is 2D.", ex);
+        }
+
+        final CoordinateReferenceSystem candidateCRS = env.getDimension() > 2? crs : crs2d;
+        if (env.getCoordinateReferenceSystem() == null) {
+            env.setCoordinateReferenceSystem(candidateCRS);
+        } else if (!Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), candidateCRS)) {
+            try {
+                env = GeneralEnvelope.castOrCopy(Envelopes.transform(env, candidateCRS));
+            } catch (TransformException ex) {
+                throw new CoverageStoreException("Could not transform coverage envelope to given crs.", ex);
+            }
+        }
+
+        final Dimension dim;
+        if (domain.isDefined(GridGeometry.EXTENT)) {
+            GridExtent extent = domain.getExtent();
+            dim = new Dimension(
+                    (int) extent.getSize(0),
+                    (int) extent.getSize(1));
+        } else {
+            dim = DEFAULT_SIZE;
+        }
+
+        final GetMapRequest request = server.createGetMap();
+
+        //Filling the request header map from the map of the layer's server
+        final Map<String, String> headerMap = server.getRequestHeaderMap();
+        if (headerMap != null) {
+            request.getHeaderMap().putAll(headerMap);
+        }
+
+        try {
+            prepareQuery(request, env, dim, null);
+            LOGGER.fine(request.getURL().toExternalForm());
+        } catch (Exception ex) {
+            throw new CoverageStoreException(ex.getMessage(), ex);
+        }
+
+        //read image
+        try (final InputStream stream = request.getResponseStream()) {
+            final BufferedImage image = ImageIO.read(stream);
+
+            //the envelope CRS may have been changed by prepareQuery method
+            final CoordinateReferenceSystem resultCrs = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
+            final Envelope env2D = Envelopes.transform(env, resultCrs);
+            final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
+
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setName(getCombinedLayerNames());
+            gcb.setRenderedImage(image);
+            gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
+            gcb.setGridToCRS(gridToCRS);
+            gcb.setCoordinateReferenceSystem(resultCrs);
+            return gcb.build();
+
+        } catch (IOException|TransformException ex) {
+            throw new CoverageStoreException(ex.getMessage(), ex);
+        }
+
+    }
 
     /*************************  Queries functions *****************************/
     protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException,CapabilitiesException {
@@ -658,8 +767,6 @@ public class WMSCoverageResource extends AbstractCoverageResource {
         request.dimensions().putAll(dimensions());
     }
 
-
-    @Override
     public Image getLegend() throws DataStoreException {
         final BufferedImage image;
         try {

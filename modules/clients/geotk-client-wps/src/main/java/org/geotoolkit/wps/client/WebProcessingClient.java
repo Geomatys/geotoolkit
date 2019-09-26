@@ -125,7 +125,7 @@ public class WebProcessingClient extends AbstractClient {
      * @param forceGET if true, GetCapabilities and DescribeProcess will be request in GET, otherwise POST is used.
      */
     public WebProcessingClient(final URL serverURL, final ClientSecurity security, String version, final boolean forceGET, final Integer timeout, final Boolean dynamicLoading) {
-        super(create(WPSClientFactory.PARAMETERS, serverURL, security, timeout));
+        super(create(WPSProvider.PARAMETERS, serverURL, security, timeout));
 
         if(version==null || "auto".equalsIgnoreCase(version)){
             //if version is null, call getCapabilities to found service version
@@ -142,12 +142,12 @@ public class WebProcessingClient extends AbstractClient {
             }
         }
         if (dynamicLoading != null) {
-            Parameters.castOrWrap(parameters).getOrCreate(WPSClientFactory.DYNAMIC_LOADING).setValue(dynamicLoading);
+            Parameters.castOrWrap(parameters).getOrCreate(WPSProvider.DYNAMIC_LOADING).setValue(dynamicLoading);
         }
         if (version.equals("1.0.0")) {
-            Parameters.castOrWrap(parameters).getOrCreate(WPSClientFactory.VERSION).setValue(WPSVersion.v100.getCode());
+            Parameters.castOrWrap(parameters).getOrCreate(WPSProvider.VERSION).setValue(WPSVersion.v100.getCode());
         } else if (version.equals("2.0.0")) {
-            Parameters.castOrWrap(parameters).getOrCreate(WPSClientFactory.VERSION).setValue(WPSVersion.v200.getCode());
+            Parameters.castOrWrap(parameters).getOrCreate(WPSProvider.VERSION).setValue(WPSVersion.v200.getCode());
         } else {
             throw new IllegalArgumentException("Unknown version : " + version);
         }
@@ -164,7 +164,7 @@ public class WebProcessingClient extends AbstractClient {
 
     @Override
     public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(WPSClientFactory.NAME);
+        return (DataStoreFactory) DataStores.getProviderById(WPSProvider.NAME);
     }
 
     @Override
@@ -176,7 +176,7 @@ public class WebProcessingClient extends AbstractClient {
      * @return WPSVersion : currently used version for this server
      */
     public WPSVersion getVersion() {
-        return WPSVersion.getVersion(Parameters.castOrWrap(parameters).getValue(WPSClientFactory.VERSION));
+        return WPSVersion.getVersion(Parameters.castOrWrap(parameters).getValue(WPSProvider.VERSION));
     }
 
     @Override

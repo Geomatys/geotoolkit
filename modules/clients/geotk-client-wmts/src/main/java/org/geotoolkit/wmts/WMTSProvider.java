@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Johann Sorel
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,52 +14,44 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps.client;
+package org.geotoolkit.wmts;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
+import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.opengis.parameter.*;
 
 /**
- * WPS Server factory.
+ * WMTS Server factory.
  *
- * @author Johann Sorel (Puzzle-GIS)
+ * @author Johann Sorel (Geomatys)
  * @module
  */
-@StoreMetadataExt(resourceTypes = ResourceType.OTHER)
-public class WPSClientFactory extends AbstractClientProvider{
+@StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
+public class WMTSProvider extends AbstractClientProvider {
 
-    /** factory identification **/
-    public static final String NAME = "wps";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final String NAME = "wmts";
 
     /**
-     * Version, Mandatory.
+     * Mandatory - the serveur verion
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final WPSVersion[] values = WPSVersion.values();
+        final WMTSVersion[] values = WMTSVersion.values();
         final String[] validValues =  new String[values.length];
         for(int i=0;i<values.length;i++){
             validValues[i] = values[i].getCode();
         }
-        VERSION = createVersionDescriptor(validValues, WPSVersion.auto.getCode());
+        VERSION = createVersionDescriptor(validValues, WMTSVersion.v100.getCode());
     }
 
-     /**
-     * Dynamic loading, Optional.
-     */
-    public static final ParameterDescriptor<Boolean> DYNAMIC_LOADING = new ParameterBuilder()
-            .addName("dynamic_loading")
-            .setRequired(false)
-            .create(Boolean.class, false);
-
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName(NAME).addName("WPSParameters").createGroup(IDENTIFIER, URL,VERSION,SECURITY,TIMEOUT, DYNAMIC_LOADING);
+            new ParameterBuilder().addName(NAME).addName("WMTSParameters").createGroup(
+                URL,VERSION, SECURITY, IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
     public String getShortName() {
@@ -72,17 +64,24 @@ public class WPSClientFactory extends AbstractClientProvider{
     }
 
     public CharSequence getDescription() {
-        return Bundle.formatInternational(Bundle.Keys.serverDescription);
+        return Bundle.formatInternational(Bundle.Keys.coverageDescription);
     }
 
     public CharSequence getDisplayName() {
-        return Bundle.formatInternational(Bundle.Keys.serverTitle);
+        return Bundle.formatInternational(Bundle.Keys.coverageTitle);
     }
 
     @Override
-    public WebProcessingClient open(ParameterValueGroup params) throws DataStoreException {
+    public WebMapTileClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        return new WebProcessingClient(params);
-    }
+        final WebMapTileClient server = new WebMapTileClient(params);
 
+        try{
+            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
+            boolean useNIO = Boolean.TRUE.equals(val.getValue());
+            server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
+        }catch(ParameterNotFoundException ex){}
+
+        return server;
+    }
 }

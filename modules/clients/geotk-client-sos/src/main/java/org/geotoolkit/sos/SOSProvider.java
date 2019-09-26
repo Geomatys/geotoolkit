@@ -14,45 +14,43 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ncwms;
+package org.geotoolkit.sos;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
+import org.geotoolkit.sos.xml.SOSVersion;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.parameter.*;
 
 /**
- * NcWMS Server factory.
+ * Sensor Observation Service Server factory.
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
-@StoreMetadataExt(resourceTypes = ResourceType.GRID)
-public class NcWMSClientFactory extends AbstractClientProvider {
+@StoreMetadataExt(resourceTypes = ResourceType.SENSOR, canWrite = true)
+public class SOSProvider extends AbstractClientProvider{
 
     /** factory identification **/
-    public static final String NAME = "ncWMS";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    public static final String NAME = "sos";
 
     /**
      * Version, Mandatory.
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final WMSVersion[] values = WMSVersion.values();
+        final SOSVersion[] values = SOSVersion.values();
         final String[] validValues =  new String[values.length];
         for(int i=0;i<values.length;i++){
             validValues[i] = values[i].getCode();
         }
-        VERSION = createVersionDescriptor(validValues, WMSVersion.v130.getCode());
+        VERSION = createVersionDescriptor(validValues, SOSVersion.v100.getCode());
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName(NAME).addName("NcWMSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
+            new ParameterBuilder().addName(NAME).addName("SOSParameters").createGroup(URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public String getShortName() {
@@ -73,9 +71,9 @@ public class NcWMSClientFactory extends AbstractClientProvider {
     }
 
     @Override
-    public NcWebMapClient open(ParameterValueGroup params) throws DataStoreException {
+    public SensorObservationServiceClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
-        return new NcWebMapClient(params);
+        return new SensorObservationServiceClient(params);
     }
 
 }

@@ -87,15 +87,15 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
     private static ParameterValueGroup toParameters(
             final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel, boolean cacheImage){
-        final Parameters params = create(OSMTMSClientFactory.PARAMETERS, serverURL, security);
-        params.getOrCreate(OSMTMSClientFactory.MAX_ZOOM_LEVEL).setValue(maxZoomLevel);
-        params.getOrCreate(OSMTMSClientFactory.IMAGE_CACHE).setValue(cacheImage);
+        final Parameters params = create(OSMTMSProvider.PARAMETERS, serverURL, security);
+        params.getOrCreate(OSMTMSProvider.MAX_ZOOM_LEVEL).setValue(maxZoomLevel);
+        params.getOrCreate(OSMTMSProvider.IMAGE_CACHE).setValue(cacheImage);
         return params;
     }
 
     @Override
-    public OSMTMSClientFactory getProvider() {
-        return (OSMTMSClientFactory) DataStores.getProviderById(OSMTMSClientFactory.NAME);
+    public OSMTMSProvider getProvider() {
+        return (OSMTMSProvider) DataStores.getProviderById(OSMTMSProvider.NAME);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
     }
 
     public boolean getCacheImage(){
-        return parameters.getValue(OSMTMSClientFactory.IMAGE_CACHE);
+        return parameters.getValue(OSMTMSProvider.IMAGE_CACHE);
     }
 
     public OSMTMSPyramidSet getPyramidSet(){
@@ -115,7 +115,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
      * @return maximum scale level available on this server.
      */
     public int getMaxZoomLevel() {
-        return parameters.getValue(OSMTMSClientFactory.MAX_ZOOM_LEVEL);
+        return parameters.getValue(OSMTMSProvider.MAX_ZOOM_LEVEL);
     }
 
     /**
