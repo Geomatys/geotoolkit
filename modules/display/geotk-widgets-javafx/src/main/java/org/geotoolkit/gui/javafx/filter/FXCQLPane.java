@@ -23,7 +23,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
-import org.geotoolkit.cql.CQLException;
+import org.apache.sis.cql.CQLException;
 import org.geotoolkit.map.MapItem;
 import org.opengis.filter.Filter;
 

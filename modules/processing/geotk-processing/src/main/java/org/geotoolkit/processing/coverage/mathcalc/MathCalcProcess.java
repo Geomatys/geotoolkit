@@ -19,13 +19,13 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.filter.WrapFilterFactory2;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;

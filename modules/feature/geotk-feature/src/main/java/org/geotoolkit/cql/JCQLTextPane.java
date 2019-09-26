@@ -33,6 +33,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.sis.cql.CQLException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 

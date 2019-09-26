@@ -16,13 +16,6 @@
  */
 package org.geotoolkit.cql;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -32,17 +25,38 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.internal.system.DefaultFactories;
+import static org.geotoolkit.cql.CQLParser.*;
+import org.geotoolkit.cql.CQLParser.CoordinateContext;
+import org.geotoolkit.cql.CQLParser.CoordinateSerieContext;
+import org.geotoolkit.cql.CQLParser.CoordinateSeriesContext;
+import org.geotoolkit.cql.CQLParser.ExpressionContext;
+import org.geotoolkit.cql.CQLParser.ExpressionFctParamContext;
+import org.geotoolkit.cql.CQLParser.ExpressionGeometryContext;
+import org.geotoolkit.cql.CQLParser.ExpressionNumContext;
+import org.geotoolkit.cql.CQLParser.ExpressionTermContext;
+import org.geotoolkit.cql.CQLParser.ExpressionUnaryContext;
+import org.geotoolkit.cql.CQLParser.FilterContext;
+import org.geotoolkit.cql.CQLParser.FilterGeometryContext;
+import org.geotoolkit.cql.CQLParser.FilterOrExpressionContext;
+import org.geotoolkit.cql.CQLParser.FilterTermContext;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Or;
 import org.opengis.filter.expression.Expression;
-import static org.geotoolkit.cql.CQLParser.*;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
 
 /**
