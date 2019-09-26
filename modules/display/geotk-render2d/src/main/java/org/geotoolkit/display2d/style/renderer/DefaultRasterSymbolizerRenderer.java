@@ -1210,9 +1210,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     private boolean isInView(final ProjectedCoverage candidate) {
         try {
-            final GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
-                    Envelopes.transform(candidate.getLayer().getBounds(), renderingContext.getObjectiveCRS2D())
-            );
+            Envelope bounds = candidate.getLayer().getBounds();
+            GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
+                    Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
+            if (boundary.isEmpty()) {
+                //we may have NaN values with envelopes which cross poles
+                //normalizing envelope before transform often solve this issue
+                bounds = new GeneralEnvelope(bounds);
+                ((GeneralEnvelope) bounds).normalize();
+                boundary = GeneralEnvelope.castOrCopy(
+                    Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
+            }
+
             return boundary.intersects(renderingContext.getCanvasObjectiveBounds2D());
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Cannot compare layer bbox with rendering context", e);
