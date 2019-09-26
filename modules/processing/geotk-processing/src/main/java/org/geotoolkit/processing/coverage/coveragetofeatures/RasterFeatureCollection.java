@@ -18,7 +18,7 @@ package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import java.util.AbstractCollection;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
@@ -30,7 +30,7 @@ import org.opengis.feature.Feature;
  */
 public abstract class RasterFeatureCollection extends AbstractCollection<Feature> {
 
-    private final GridCoverageReader reader;
+    private final GridCoverageResource reader;
     private final long minX;
     private final long minY;
     private final long maxX;
@@ -41,7 +41,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
      * @param reader GridCoverageReader
      * @param range GridExtent
      */
-    public RasterFeatureCollection(final GridCoverageReader reader, final GridExtent range) {
+    public RasterFeatureCollection(final GridCoverageResource reader, final GridExtent range) {
         this.reader = reader;
 
         this.minX = range.getLow(0);
@@ -65,7 +65,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
      * Return the reader
      * @return GridCoverageReader
      */
-    protected GridCoverageReader getReader() {
+    protected GridCoverageResource getReader() {
         return reader;
     }
 

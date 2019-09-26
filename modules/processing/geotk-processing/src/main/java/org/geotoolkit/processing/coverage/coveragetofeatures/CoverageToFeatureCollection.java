@@ -20,7 +20,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
@@ -36,14 +36,14 @@ import org.opengis.referencing.operation.TransformException;
 public class CoverageToFeatureCollection extends RasterFeatureCollection {
 
     private final FeatureType newFeatureType;
-    private final GridCoverageReader reader;
+    private final GridCoverageResource reader;
     private final GridCoverage coverage;
     private final GridGeometry gridGeom;
 
     /**
      * CoverageToFeatureCollection constructor connect the collection to the coverage.
      */
-    public CoverageToFeatureCollection(final GridCoverageReader reader, GridExtent range,
+    public CoverageToFeatureCollection(final GridCoverageResource reader, GridExtent range,
             GridCoverage coverage, GridGeometry gridGeom) throws DataStoreException {
         super(reader, range);
         this.reader = reader;
