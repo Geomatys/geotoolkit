@@ -17,41 +17,38 @@
 
 package org.geotoolkit.data;
 
-import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
-import org.apache.sis.referencing.CRS;
+import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.util.GenericName;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
-import static org.junit.Assert.*;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.Utilities;
-import org.opengis.metadata.Identifier;
 import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.sort.SortOrder;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Identifier;
+import org.opengis.util.GenericName;
 
 /**
  * Generic reading tests for datastore.
@@ -79,7 +76,7 @@ public abstract class AbstractReadingTests {
         public Envelope env;
     }
 
-    protected abstract FeatureStore getDataStore();
+    protected abstract DataStore getDataStore();
 
     protected abstract Set<GenericName> getExpectedNames();
 
@@ -87,24 +84,8 @@ public abstract class AbstractReadingTests {
 
     @Test
     public void testDataStore(){
-        final FeatureStore store = getDataStore();
+        final DataStore store = getDataStore();
         assertNotNull(store);
-    }
-
-    /**
-     * test session creation.
-     */
-    @Test
-    public void testSession(){
-        final FeatureStore store = getDataStore();
-
-        Session async_session = store.createSession(true);
-        Session sync_session = store.createSession(false);
-
-        assertNotNull(async_session);
-        assertTrue(async_session.isAsynchrone());
-        assertNotNull(sync_session);
-        assertFalse(sync_session.isAsynchrone());
     }
 
     /**
@@ -112,58 +93,31 @@ public abstract class AbstractReadingTests {
      */
     @Test
     public void testSchemas() throws Exception{
-        final FeatureStore store = getDataStore();
+        final DataStore store = getDataStore();
         final Set<GenericName> expectedTypes = getExpectedNames();
 
         //need at least one type to test
         assertTrue(expectedTypes.size() > 0);
 
         //check names-----------------------------------------------------------
-        final Set<GenericName> founds = store.getNames();
-        assertNotNull(founds);
-        assertTrue(expectedTypes.size() == founds.size());
-        assertTrue(expectedTypes.containsAll(founds));
-        assertTrue(founds.containsAll(expectedTypes));
+        final Collection<FeatureSet> featureSets = DataStores.flatten(store, true, FeatureSet.class);
+        assertTrue(expectedTypes.size() == featureSets.size());
 
-        for(GenericName name : founds){
-            assertNotNull(name);
-            assertNotNull(store.getFeatureType(name.toString()));
-        }
+        for (FeatureSet fs : featureSets) {
+            assertTrue(fs.getIdentifier().isPresent());
+            assertNotNull(fs.getType());
+            assertTrue(expectedTypes.contains(fs.getType().getName()));
+            assertTrue(fs.getIdentifier().get().toString().equals(fs.getType().getName().toString()));
 
-        //check type names------------------------------------------------------
-        final Set<GenericName> typeNames = store.getNames();
-
-        assertNotNull(typeNames);
-        assertTrue(typeNames.size() == founds.size());
-
-        check:
-        for (GenericName typeName : typeNames) {
-            for(GenericName n : founds){
-                if(n.tip().toString().equals(typeName.tip().toString())){
-                    assertNotNull(typeName);
-                    FeatureType type1 = store.getFeatureType(typeName.toString());
-                    FeatureType type2 = store.getFeatureType(n.toString());
-                    assertNotNull(type1);
-                    assertNotNull(type2);
-                    assertTrue(type1.equals(type2));
-                    continue check;
-                }
-            }
-            throw new Exception("A typename has no matching Name, featurestore is not consistent.");
+            //will cause an error if not found
+            store.findResource(fs.getType().getName().toString());
         }
 
         //check error on wrong type names---------------------------------------
-        try{
-            store.getFeatureType(NamesExt.create("http://not", "exist").toString());
-            throw new Exception("Asking for a schema that doesnt exist should have raised a featurestore exception.");
-        }catch(DataStoreException ex){
-            //ok
-        }
-
-        try{
-            store.getFeatureType("not-exist_stuff");
-            throw new Exception("Asking for a schema that doesnt exist should have raised a featurestore exception.");
-        }catch(DataStoreException ex){
+        try {
+            store.findResource(NamesExt.create("http://not", "exist").toString());
+            fail("Asking for a schema that doesnt exist should have raised an exception.");
+        } catch(IllegalNameException ex) {
             //ok
         }
 
@@ -173,32 +127,34 @@ public abstract class AbstractReadingTests {
      * test feature reader.
      */
     @Test
-    public void testReader() throws Exception{
-        final FeatureStore store = getDataStore();
+    public void testReader() throws Exception {
+        final DataStore store = getDataStore();
         final List<ExpectedResult> candidates = getReaderTests();
 
         //need at least one type to test
         assertTrue(candidates.size() > 0);
 
-        for(final ExpectedResult candidate : candidates){
+        for (final ExpectedResult candidate : candidates) {
             final GenericName name = candidate.name;
-            final FeatureType type = store.getFeatureType(name.toString());
+            final Resource resource = store.findResource(name.toString());
+            assertTrue(resource instanceof FeatureSet);
+            final FeatureSet featureSet = (FeatureSet) resource;
+            final FeatureType type = featureSet.getType();
             assertNotNull(type);
             assertTrue(FeatureTypeExt.equalsIgnoreConvention(candidate.type, type));
 
-            testCounts(store, candidate);
-            testReaders(store, candidate);
-            testBounds(store, candidate);
+            testCounts(featureSet, candidate);
+            testReaders(featureSet, candidate);
+            testBounds(featureSet, candidate);
         }
-
     }
 
     /**
      * test different count with filters.
      */
-    private void testCounts(final FeatureStore store, final ExpectedResult candidate) throws Exception{
+    private void testCounts(final FeatureSet featureSet, final ExpectedResult candidate) throws Exception {
 
-        assertEquals(candidate.size, store.getCount(QueryBuilder.all(candidate.name)));
+        assertEquals(candidate.size, FeatureStoreUtilities.getCount(featureSet, true).intValue());
 
         //todo make more generic count tests
     }
@@ -206,15 +162,14 @@ public abstract class AbstractReadingTests {
     /**
      * test different bounds with filters.
      */
-    private void testBounds(final FeatureStore store, final ExpectedResult candidate) throws Exception{
-        Envelope res = store.getEnvelope(QueryBuilder.all(candidate.name));
+    private void testBounds(final FeatureSet featureSet, final ExpectedResult candidate) throws Exception {
+        Envelope res = FeatureStoreUtilities.getEnvelope(featureSet, true);
 
-        if(candidate.env == null){
+        if (candidate.env == null) {
             //looks like we are testing a geometryless feature
             assertNull(res);
             return;
         }
-
 
         assertNotNull(res);
 
@@ -229,262 +184,173 @@ public abstract class AbstractReadingTests {
     /**
      * test different readers.
      */
-    private void testReaders(final FeatureStore store, final ExpectedResult candidate) throws Exception{
-        final FeatureType type = store.getFeatureType(candidate.name.toString());
+    private void testReaders(final FeatureSet featureSet, final ExpectedResult candidate) throws Exception{
+        final FeatureType type = featureSet.getType();
         final Collection<? extends PropertyType> properties = type.getProperties(true);
-        final QueryBuilder qb = new QueryBuilder();
-        Query query = null;
 
-        try{
-            store.getFeatureReader(query);
+
+        try (Stream<Feature> stream = featureSet.features(true)) {
+            stream.forEach((Feature t) -> {
+                //do nothing
+            });
             throw new Exception("Asking for a reader without any query whould raise an error.");
-        }catch(Exception ex){
+        } catch (Exception ex) {
             //ok
-        }
-
-        query = QueryBuilder.all(NamesExt.create(NamesExt.getNamespace(candidate.name), candidate.name.tip().toString()+"fgresfds_not_exist"));
-        try{
-            store.getFeatureReader(query);
-            throw new Exception("Asking for a reader with a wrong name should raise a featurestore exception.");
-        }catch(DataStoreException ex){
-            //ok
-        }
-
-        query = QueryBuilder.all(NamesExt.create(NamesExt.getNamespace(candidate.name)+"resfsdfsdf_not_exist", candidate.name.tip().toString()));
-        try{
-            store.getFeatureReader(query);
-            throw new Exception("Asking for a reader with a wrong namespace should raise a featurestore exception.");
-        }catch(DataStoreException ex){
-            //ok
-        }
-
-
-        //crs ------------------------------------------------------------------
-        final CoordinateReferenceSystem originalCRS = FeatureExt.getCRS(type);
-        if(originalCRS!= null){
-            CoordinateReferenceSystem testCRS = CRS.forCode("EPSG:3395");
-            if(Utilities.equalsIgnoreMetadata(originalCRS, testCRS)){
-                //change the test crs
-                testCRS = CommonCRS.WGS84.geographic();
-            }
-
-            //handle geometry as object since they can be ISO or JTS
-            final Map<FeatureId,Object> inOriginal = new HashMap<>();
-            FeatureReader ite = store.getFeatureReader(QueryBuilder.all(candidate.name));
-            try{
-                while(ite.hasNext()){
-                    final Feature f = ite.next();
-                    final FeatureId id = FeatureExt.getId(f);
-                    assertNotNull(id);
-                    final Optional<Object> geom = FeatureExt.getDefaultGeometryValue(f);
-                    assertTrue(String.format("No geometry found in feature%n%s", f), geom.isPresent());
-                    inOriginal.put(id,geom.get());
-                }
-            }finally{
-                ite.close();
-            }
-
-            //check that geometries are different in another projection
-            //it's not a exact check but it's better than nothing
-            qb.reset();
-            qb.setTypeName(candidate.name);
-            qb.setCRS(testCRS);
-            ite = store.getFeatureReader(qb.buildQuery());
-            try{
-                while(ite.hasNext()){
-                    final Feature f = ite.next();
-                    final FeatureId id = FeatureExt.getId(f);
-                    assertNotNull(id);
-                    final Object original = inOriginal.get(id);
-                    assertNotNull(original);
-                    final Optional<Object> reprojected = FeatureExt.getDefaultGeometryValue(f);
-                    assertTrue(String.format("No geometry found in feature%n%s", reprojected), reprojected.isPresent());
-                    assertNotSame(original, reprojected.get());
-                }
-            }finally{
-                ite.close();
-            }
-
         }
 
         //property -------------------------------------------------------------
 
-        //check only id query
-        query = QueryBuilder.fids(candidate.name.toString());
-        FeatureReader ite = store.getFeatureReader(query);
-        FeatureType limited = ite.getFeatureType();
-        assertNotNull(limited);
-        assertTrue(limited.getProperties(true).size() == 1);
-        try{
-            while(ite.hasNext()){
-                final Feature f = ite.next();
-                assertNotNull(FeatureExt.getId(f));
-            }
-        }finally{
-            ite.close();
-        }
-
-        for(final PropertyType desc : properties){
-            if(desc instanceof Operation) continue;
-            qb.reset();
-            qb.setTypeName(candidate.name);
-            qb.setProperties(new String[]{desc.getName().tip().toString()});
-            query = qb.buildQuery();
-
-            ite = store.getFeatureReader(query);
-            limited = ite.getFeatureType();
+        {
+            //check only id query
+            final SimpleQuery query = new SimpleQuery();
+            query.setColumns(new SimpleQuery.Column(FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString())));
+            FeatureSet subset = featureSet.subset(query);
+            FeatureType limited = subset.getType();
             assertNotNull(limited);
             assertTrue(limited.getProperties(true).size() == 1);
-            assertNotNull(limited.getProperty(desc.getName().toString()));
-            try{
-                while(ite.hasNext()){
+
+            try (Stream<Feature> stream = subset.features(false)) {
+                final Iterator<Feature> ite = stream.iterator();
+                while (ite.hasNext()){
                     final Feature f = ite.next();
-                    assertNotNull(f.getProperty(desc.getName().toString()));
+                    assertNotNull(FeatureExt.getId(f));
                 }
-            }finally{
-                ite.close();
             }
 
+            for (final PropertyType desc : properties) {
+                if (desc instanceof Operation) continue;
+
+                final SimpleQuery sq = new SimpleQuery();
+                sq.setColumns(new SimpleQuery.Column(FF.property(desc.getName().tip().toString())));
+
+                subset = featureSet.subset(sq);
+                limited = subset.getType();
+                assertNotNull(limited);
+                assertTrue(limited.getProperties(true).size() == 1);
+                assertNotNull(limited.getProperty(desc.getName().toString()));
+
+                try (Stream<Feature> stream = subset.features(false)) {
+                    final Iterator<Feature> ite = stream.iterator();
+                    while (ite.hasNext()) {
+                        final Feature f = ite.next();
+                        assertNotNull(f.getProperty(desc.getName().toString()));
+                    }
+                }
+            }
         }
 
-
         //sort by --------------------------------------------------------------
-        for(final PropertyType desc : properties){
-            if(!(desc instanceof AttributeType)){
+        for (final PropertyType desc : properties) {
+            if (!(desc instanceof AttributeType)) {
                 continue;
             }
 
             final AttributeType att = (AttributeType) desc;
-            if(att.getMaximumOccurs()>1){
+            if (att.getMaximumOccurs()>1) {
                 //do not test sort by on multi occurence properties
                 continue;
             }
 
             final Class clazz = att.getValueClass();
 
-            if(!Comparable.class.isAssignableFrom(clazz) || Geometry.class.isAssignableFrom(clazz)){
+            if (!Comparable.class.isAssignableFrom(clazz) || Geometry.class.isAssignableFrom(clazz)) {
                 //can not make a sort by on this attribut.
                 continue;
             }
 
-            qb.reset();
-            qb.setTypeName(candidate.name);
-            qb.setSortBy(new SortBy[]{FF.sort(desc.getName().tip().toString(), SortOrder.ASCENDING)});
-            query = qb.buildQuery();
+            final SimpleQuery query = new SimpleQuery();
+            query.setSortBy(FF.sort(desc.getName().tip().toString(), SortOrder.ASCENDING));
+            FeatureSet subset = featureSet.subset(query);
 
             //count should not change with a sort by
-            assertEquals(candidate.size, store.getCount(query));
+            assertEquals(candidate.size, FeatureStoreUtilities.getCount(subset, true).intValue());
 
-            FeatureReader reader = store.getFeatureReader(query);
-            try{
+            try (Stream<Feature> stream = subset.features(false)) {
+                final Iterator<Feature> reader = stream.iterator();
                 Comparable last = null;
-                while(reader.hasNext()){
+                while (reader.hasNext()) {
                     final Feature f = reader.next();
                     Object obj = f.getProperty(desc.getName().toString()).getValue();
                     if (obj instanceof Identifier) obj = ((Identifier) obj).getCode();
                     final Comparable current = (Comparable) obj;
 
-                    if(current != null){
-                        if(last != null){
+                    if (current != null) {
+                        if (last != null) {
                             //check we have the correct order.
                             assertTrue( current.compareTo(last) >= 0 );
                         }
                         last = current;
-                    }else{
+                    } else {
                         //any restriction about where should be placed the feature with null values ? before ? after ?
                     }
-
                 }
-            }finally{
-                reader.close();
             }
 
-            qb.reset();
-            qb.setTypeName(candidate.name);
-            qb.setSortBy(new SortBy[]{FF.sort(desc.getName().tip().toString(), SortOrder.DESCENDING)});
-            query = qb.buildQuery();
+            query.setSortBy(FF.sort(desc.getName().tip().toString(), SortOrder.DESCENDING));
+            subset = featureSet.subset(query);
 
             //count should not change with a sort by
-            assertEquals(candidate.size, store.getCount(query));
+            assertEquals(candidate.size, FeatureStoreUtilities.getCount(subset, true).intValue());
 
-            reader = store.getFeatureReader(query);
-            try{
+            try (Stream<Feature> stream = subset.features(false)) {
+                final Iterator<Feature> reader = stream.iterator();
                 Comparable last = null;
-                while(reader.hasNext()){
+                while (reader.hasNext()) {
                     final Feature f = reader.next();
                     Object obj = f.getProperty(desc.getName().toString()).getValue();
                     if (obj instanceof Identifier) obj = ((Identifier) obj).getCode();
                     final Comparable current = (Comparable) obj;
 
-                    if(current != null){
-                        if(last != null){
+                    if (current != null) {
+                        if (last != null) {
                             //check we have the correct order.
                             assertTrue( current.compareTo(last) <= 0 );
                         }
                         last = current;
-                    }else{
+                    } else {
                         //any restriction about where should be placed the feature with null values ? before ? after ?
                     }
-
                 }
-            }finally{
-                reader.close();
             }
-
         }
 
         //start ----------------------------------------------------------------
-        if(candidate.size > 1){
-            qb.reset();
-            qb.setTypeName(candidate.name);
-            query = qb.buildQuery();
+        if (candidate.size > 1) {
 
-            List<FeatureId> ids = new ArrayList<FeatureId>();
-            ite = store.getFeatureReader(query);
-            try{
-                while(ite.hasNext()){
+            List<FeatureId> ids = new ArrayList<>();
+            try (Stream<Feature> stream = featureSet.features(false)) {
+                final Iterator<Feature> ite = stream.iterator();
+                while (ite.hasNext()) {
                     ids.add(FeatureExt.getId(ite.next()));
                 }
-            }finally{
-                ite.close();
             }
-
-            qb.reset();
-            qb.setTypeName(candidate.name);
             //skip the first element
-            qb.setOffset(1);
-            query = qb.buildQuery();
+            final SimpleQuery query = new SimpleQuery();
+            query.setOffset(1);
 
-            ite = store.getFeatureReader(query);
-            try{
+            try (Stream<Feature> stream = featureSet.subset(query).features(false)) {
+                final Iterator<Feature> ite = stream.iterator();
                 int i = 1;
-                while(ite.hasNext()){
+                while (ite.hasNext()) {
                     assertEquals(FeatureExt.getId(ite.next()), ids.get(i));
                     i++;
                 }
-            }finally{
-                ite.close();
             }
         }
 
 
         //max ------------------------------------------------------------------
         if(candidate.size > 1){
-            qb.reset();
-            qb.setTypeName(candidate.name);
-            //skip the first element
-            qb.setLimit(1);
-            query = qb.buildQuery();
+            final SimpleQuery query = new SimpleQuery();
+            query.setLimit(1);
 
             int i = 0;
-            ite = store.getFeatureReader(query);
-            try{
-                while(ite.hasNext()){
+            try (Stream<Feature> stream = featureSet.subset(query).features(false)) {
+                final Iterator<Feature> ite = stream.iterator();
+                while (ite.hasNext()) {
                     ite.next();
                     i++;
                 }
-            }finally{
-                ite.close();
             }
 
             assertEquals(1, i);
@@ -495,33 +361,28 @@ public abstract class AbstractReadingTests {
         //we just make a few tests here for sanity check
         //todo should we make more deep tests ?
 
-
         Set<FeatureId> ids = new HashSet<>();
-        ite = store.getFeatureReader(QueryBuilder.fids(candidate.name.toString()));
-        try{
+        try (Stream<Feature> stream = featureSet.features(false)) {
+            final Iterator<Feature> ite = stream.iterator();
             //peek only one on two ids
             boolean oneOnTwo = true;
-            while(ite.hasNext()){
+            while (ite.hasNext()) {
                 final Feature feature = ite.next();
-                if(oneOnTwo){
+                if (oneOnTwo) {
                     ids.add(FeatureExt.getId(feature));
                 }
                 oneOnTwo = !oneOnTwo;
             }
-        }finally{
-            ite.close();
         }
 
-
         Set<FeatureId> remaining = new HashSet<>(ids);
-        ite = store.getFeatureReader(QueryBuilder.filtered(candidate.name.toString(),FF.id(ids)));
-
-        try{
-            while(ite.hasNext()){
+        final SimpleQuery query = new SimpleQuery();
+        query.setFilter(FF.id(ids));
+        try (Stream<Feature> stream = featureSet.subset(query).features(false)) {
+            final Iterator<Feature> ite = stream.iterator();
+            while (ite.hasNext()) {
                 remaining.remove(FeatureExt.getId(ite.next()));
             }
-        }finally{
-            ite.close();
         }
 
          assertTrue(remaining.isEmpty() );

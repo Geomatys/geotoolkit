@@ -25,15 +25,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.data.AbstractReadingTests;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.AbstractReadingTests;
+import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.assertNotNull;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -70,7 +70,7 @@ public class DBFReadingTest extends AbstractReadingTests{
     }
 
     @Override
-    protected synchronized FeatureStore getDataStore() {
+    protected synchronized DataStore getDataStore() {
         return store;
     }
 

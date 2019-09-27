@@ -18,7 +18,6 @@
 
 package org.geotoolkit.data.om;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.AccessController;
@@ -32,23 +31,24 @@ import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.data.AbstractReadingTests;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory;
-import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStore;
+import org.geotoolkit.data.AbstractReadingTests;
+import org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory;
 import org.geotoolkit.feature.xml.GMLConvention;
-import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.util.GenericName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetCDFFeatureStoreTest extends AbstractReadingTests{
+public class NetCDFFeatureStoreTest extends AbstractReadingTests {
 
-    private static FeatureStore store;
+    private static DataStore store;
     private static final Set<GenericName> names = new HashSet<>();
     private static final List<AbstractReadingTests.ExpectedResult> expecteds = new ArrayList<>();
     static{
@@ -58,7 +58,7 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
             params.put(NetcdfObservationStoreFactory.IDENTIFIER.getName().toString(), "observationFile");
             params.put(NetcdfObservationStoreFactory.FILE_PATH.getName().toString(), f.toUri().toURL());
 
-            store = (FeatureStore) DataStores.open(params);
+            store = DataStores.open(params);
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";
@@ -110,7 +110,7 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
 //    }
 
     @Override
-    protected FeatureStore getDataStore() {
+    protected DataStore getDataStore() {
         return store;
     }
 

@@ -1,19 +1,17 @@
 
 package org.geotoolkit.data.om.netcdf;
 
-import org.geotoolkit.data.om.OMFeatureTypes;
-import org.locationtech.jts.geom.Geometry;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.feature.FeatureTypeExt;
-import org.geotoolkit.feature.ReprojectMapper;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.om.OMFeatureTypes;
+import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
@@ -21,6 +19,7 @@ import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.observation.AnyFeature;

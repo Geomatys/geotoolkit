@@ -17,9 +17,6 @@
 
 package org.geotoolkit.data.memory;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,21 +24,24 @@ import java.util.List;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractReadingTests;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CRS;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.opengis.filter.Filter;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -146,7 +146,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
     }
 
     @Override
-    protected synchronized FeatureStore getDataStore() {
+    protected synchronized DataStore getDataStore() {
         return store;
     }
 
