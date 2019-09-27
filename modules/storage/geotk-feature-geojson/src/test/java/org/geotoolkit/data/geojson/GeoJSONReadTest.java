@@ -13,7 +13,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.data.FeatureStore;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
+import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeatureCollection;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;

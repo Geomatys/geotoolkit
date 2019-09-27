@@ -31,7 +31,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
 import org.geotoolkit.data.FeatureStoreUtilities;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
+import static org.geotoolkit.data.geojson.GeoJSONProvider.PARAMETERS_DESCRIPTOR;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;

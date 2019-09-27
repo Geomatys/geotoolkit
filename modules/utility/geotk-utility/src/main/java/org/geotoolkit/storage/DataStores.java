@@ -243,20 +243,34 @@ public final class DataStores extends Static {
     {
         CharSequence unavailable = null;
         Exception error = null;
-        for (final DataStoreFactory factory : getProviders(DataStoreFactory.class)) {
-            try {
-                if ((parameters != null) ? factory.canProcess(parameters) : canProcess(factory,asMap)) {
-                    return ((parameters != null) ? factory.open(parameters) : open(factory,asMap));
+        final List<DataStoreProvider> newProviders = new ArrayList();
+        for (DataStoreProvider provider : org.apache.sis.storage.DataStores.providers()) {
+
+            if (provider instanceof DataStoreFactory) {
+                final DataStoreFactory factory = (DataStoreFactory) provider;
+                try {
+                    if ((parameters != null) ? factory.canProcess(parameters) : canProcess(factory,asMap)) {
+                        return ((parameters != null) ? factory.open(parameters) : open(factory,asMap));
+                    }
+                } catch (Exception e) {
+                    // If an error occurs with a factory, we skip it and try another factory.
+                    if (error != null) {
+                        error.addSuppressed(e);
+                    } else {
+                        error = e;
+                    }
                 }
-            } catch (Exception e) {
-                // If an error occurs with a factory, we skip it and try another factory.
-                if (error != null) {
-                    error.addSuppressed(e);
-                } else {
-                    error = e;
-                }
+            } else {
+                newProviders.add(provider);
             }
         }
+
+        for (DataStoreProvider provider : newProviders) {
+            if (parameters != null && provider.getOpenParameters().getName().equals(parameters.getDescriptor().getName())) {
+                return provider.open(parameters);
+            }
+        }
+
         if (unavailable != null) {
             throw new DataStoreException("The " + unavailable + " data store is not available. "
                     + "Are every required JAR files accessible on the classpath?");

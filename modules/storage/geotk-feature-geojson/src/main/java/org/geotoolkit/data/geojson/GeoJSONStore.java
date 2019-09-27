@@ -34,12 +34,13 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.*;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
+import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
 import org.geotoolkit.data.geojson.binding.*;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONLineString;
@@ -56,7 +57,6 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.*;
@@ -73,7 +73,7 @@ import org.opengis.util.GenericName;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class GeoJSONFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
+public class GeoJSONStore extends AbstractFeatureStore implements ResourceOnFileSystem {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson");
     private static final String DESC_FILE_SUFFIX = "_Type.json";
@@ -88,17 +88,17 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
     private Integer coordAccuracy;
     private boolean isLocal = true;
 
-    public GeoJSONFeatureStore(final Path path, Integer coordAccuracy)
+    public GeoJSONStore(final Path path, Integer coordAccuracy)
             throws DataStoreException {
         this(toParameter(path.toUri(), coordAccuracy));
     }
 
-    public GeoJSONFeatureStore(final URI uri, Integer coordAccuracy)
+    public GeoJSONStore(final URI uri, Integer coordAccuracy)
             throws DataStoreException {
         this(toParameter(uri, coordAccuracy));
     }
 
-    public GeoJSONFeatureStore (final ParameterValueGroup params) throws DataStoreException {
+    public GeoJSONStore (final ParameterValueGroup params) throws DataStoreException {
         super(params);
         this.coordAccuracy = (Integer) params.parameter(COORDINATE_ACCURACY.getName().toString()).getValue();
 
@@ -127,15 +127,15 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
     }
 
     private static ParameterValueGroup toParameter(final URI uri, Integer coordAccuracy){
-        final Parameters params = Parameters.castOrWrap(GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(GeoJSONFeatureStoreFactory.PATH).setValue(uri);
-        params.getOrCreate(GeoJSONFeatureStoreFactory.COORDINATE_ACCURACY).setValue(coordAccuracy);
+        final Parameters params = Parameters.castOrWrap(GeoJSONProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(GeoJSONProvider.PATH).setValue(uri);
+        params.getOrCreate(GeoJSONProvider.COORDINATE_ACCURACY).setValue(coordAccuracy);
         return params;
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(GeoJSONFeatureStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(GeoJSONProvider.NAME);
     }
 
     @Override
@@ -371,7 +371,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore implements Resourc
         final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
         typeCheck(gquery.getTypeName());
         final FeatureWriter fw = new GeoJSONFileWriter(jsonFile, featureType, rwLock,
-                GeoJSONFeatureStoreFactory.ENCODING, coordAccuracy);
+                GeoJSONProvider.ENCODING, coordAccuracy);
         return FeatureStreams.filter(fw, gquery.getFilter());
     }
 

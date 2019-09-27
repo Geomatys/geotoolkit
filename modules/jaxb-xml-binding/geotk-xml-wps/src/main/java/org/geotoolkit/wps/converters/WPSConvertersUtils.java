@@ -57,7 +57,7 @@ import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
 import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory;
+import org.geotoolkit.data.geojson.GeoJSONProvider;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
@@ -798,7 +798,7 @@ public class WPSConvertersUtils {
      * or when errors occurs while reading
      */
     public static final Feature readFeatureFromJson(final URI uri) throws DataStoreException, URISyntaxException, IOException {
-        ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        ParameterValueGroup param = GeoJSONProvider.PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(uri));
         DataStore store = DataStores.open(param);
 
@@ -833,7 +833,7 @@ public class WPSConvertersUtils {
      * occurs while reading the json file
      */
     public static final FeatureSet readFeatureCollectionFromJson(final URI url) throws DataStoreException, URISyntaxException, IOException {
-        final ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        final ParameterValueGroup param = GeoJSONProvider.PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(url));
         final DataStore store = DataStores.open(param);
 

@@ -18,17 +18,20 @@ package org.geotoolkit.data.geojson;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.locationtech.jts.geom.Geometry;
@@ -44,6 +47,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
@@ -56,10 +60,9 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
+public class GeoJSONProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
     public static final String NAME = "geojson";
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final String ENCODING = "UTF-8";
 
@@ -69,6 +72,12 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
     public static final String MIME_TYPE = "application/json";
 
     public static final String EXT = "json";
+
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
+            .addName(LOCATION)
+            .addName("path")
+            .setRequired(true)
+            .create(URI.class, null);
 
     /**
      * Optional
@@ -83,7 +92,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName(NAME).addName("GeoJSONParameters").createGroup(
-                IDENTIFIER, PATH, COORDINATE_ACCURACY);
+                PATH, COORDINATE_ACCURACY);
 
     @Override
     public String getShortName() {
@@ -118,17 +127,8 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      * {@inheritDoc }
      */
     @Override
-    public GeoJSONFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        ensureCanProcess(params);
-        return new GeoJSONFeatureStore(params);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public GeoJSONFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
-        return open(params);
+    public GeoJSONStore open(final ParameterValueGroup params) throws DataStoreException {
+        return new GeoJSONStore(params);
     }
 
     @Override
@@ -188,6 +188,16 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
             if (!Character.isWhitespace(c)) break;
         }
         return c;
+    }
+
+    @Override
+    public DataStore open(StorageConnector connector) throws DataStoreException {
+        try {
+            final Path path = connector.getStorageAs(Path.class);
+            return new GeoJSONStore(path, null);
+        } catch (IllegalArgumentException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
     }
 
 }
