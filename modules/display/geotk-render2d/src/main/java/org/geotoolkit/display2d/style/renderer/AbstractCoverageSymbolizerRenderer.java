@@ -46,6 +46,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.ReducedGridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
@@ -473,9 +474,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     .sliceByRatio(1, 0, 1)
                     .build();
         } catch (DisjointExtentException ex) {
-            //don't log, still continue
+            throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         } catch (IllegalGridGeometryException ex) {
-            LOGGER.log(Level.INFO, ex.getMessage(), ex);
+            throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         }
 
 //        // latest data slice
