@@ -470,10 +470,10 @@ public class ResampleProcess extends AbstractProcess {
             if (!sd.getNoDataValues().isEmpty())
                 return true;
 
-            final boolean isNotLinear = sd.getTransferFunction()
-                    .map(tr -> !(tr instanceof LinearTransform))
-                    .isPresent();
-            if (isNotLinear)
+            final boolean isLinear = sd.getTransferFunction()
+                    .map(tr -> (tr instanceof LinearTransform))
+                    .orElse(Boolean.TRUE);
+            if (!isLinear)
                 return true;
         }
 

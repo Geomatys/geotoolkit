@@ -82,6 +82,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.processing.coverage.reformat.ReformatProcess;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.CompatibleColorModel;
@@ -269,6 +270,55 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     @Override
     protected final GridCoverage prepareCoverageToResampling(final GridCoverage source, final CachedRasterSymbolizer symbolizer) {
+
+        //always resample in geophysic
+        GridCoverage geosource = source.forConvertedValues(true);
+        //check if we need to change to float or double type
+        boolean needDataTypeTransform = true;
+        for (SampleDimension sd : geosource.getSampleDimensions()) {
+            Number background = sd.getBackground().orElse(null);
+            if (background != null) {
+                needDataTypeTransform = false;
+                break;
+            }
+            if (!sd.getNoDataValues().isEmpty()) {
+                needDataTypeTransform = false;
+                break;
+            }
+        }
+        if (needDataTypeTransform) {
+            //check if the image is already in float or double type
+            //coverage does no not provide this information
+            RenderedImage image = geosource.render(null);
+
+            SampleModel sm = image.getSampleModel();
+            final int dataType = sm.getDataType();
+            if (dataType == DataBuffer.TYPE_BYTE && (sm.getNumBands() == 3 || sm.getNumBands() == 4)) {
+                //we are still in byte type in geophysic, this is very likely just a colored image
+                if (sm.getNumBands() == 3) {
+                    //we need to an alpha band
+                    return new ForcedAlpha(source);
+                } else if (sm.getNumBands() == 4) {
+                    //already has an alpha
+                    needDataTypeTransform = false;
+                }
+            }
+            if (dataType == DataBuffer.TYPE_FLOAT || dataType == DataBuffer.TYPE_DOUBLE) {
+                needDataTypeTransform = false;
+            }
+            if (image.getColorModel().hasAlpha()) {
+                needDataTypeTransform = false;
+            }
+        }
+
+        if (needDataTypeTransform) {
+            try {
+                return new ReformatProcess(source, DataBuffer.TYPE_DOUBLE).executeNow();
+            } catch (ProcessException ex) {
+                //we have try
+            }
+        }
+
         final ColorMap cMap = symbolizer.getSource().getColorMap();
         if (cMap != null && cMap.getFunction() != null) {
             return source; // Coloration is handled externally
