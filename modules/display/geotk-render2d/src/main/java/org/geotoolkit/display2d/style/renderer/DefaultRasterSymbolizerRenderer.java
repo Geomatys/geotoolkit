@@ -290,7 +290,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //coverage does no not provide this information
             RenderedImage image = geosource.render(null);
 
-            final int dataType = image.getSampleModel().getDataType();
+            SampleModel sm = image.getSampleModel();
+            final int dataType = sm.getDataType();
+            if (dataType == DataBuffer.TYPE_BYTE && (sm.getNumBands() == 3 || sm.getNumBands() == 4)) {
+                //we are still in byte type in geophysic, this is very likely just a colored image
+                if (sm.getNumBands() == 3) {
+                    //we need to an alpha band
+                    return new ForcedAlpha(source);
+                } else if (sm.getNumBands() == 4) {
+                    //already has an alpha
+                    needDataTypeTransform = false;
+                }
+            }
             if (dataType == DataBuffer.TYPE_FLOAT || dataType == DataBuffer.TYPE_DOUBLE) {
                 needDataTypeTransform = false;
             }
