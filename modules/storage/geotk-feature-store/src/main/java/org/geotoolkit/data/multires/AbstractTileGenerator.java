@@ -18,6 +18,8 @@ package org.geotoolkit.data.multires;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongConsumer;
 import java.util.stream.LongStream;
@@ -100,11 +102,17 @@ public abstract class AbstractTileGenerator implements TileGenerator {
 
         final long total = countTiles(pyramid, env, resolutions);
         final AtomicLong al = new AtomicLong();
-        for (final Mosaic mosaic : pyramid.getMosaics()) {
+
+        //generate mosaic in resolution order
+        //this order allows the pyramid to be used at high scales until she is not completed.
+        final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
+        mosaics.sort((Mosaic o1, Mosaic o2) -> Double.compare(o1.getScale(), o2.getScale()));
+        for (final Mosaic mosaic : mosaics) {
             if (resolutions == null || resolutions.contains(mosaic.getScale())) {
                 final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
+                final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
                 LongStream.range(0, nbTile).parallel().forEach(new LongConsumer() {
                     @Override
                     public void accept(long value) {
@@ -126,12 +134,17 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                             }
                         } finally {
                             long v = al.incrementAndGet();
-                            if (listener != null) {
+                            if (listener != null & (v % eventstep == 0))  {
                                 listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
                             }
                         }
                     }
                 });
+
+                long v = al.get();
+                if (listener != null) {
+                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                }
             }
         }
 
