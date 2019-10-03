@@ -106,7 +106,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         //generate mosaic in resolution order
         //this order allows the pyramid to be used at high scales until she is not completed.
         final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
-        mosaics.sort((Mosaic o1, Mosaic o2) -> Double.compare(o1.getScale(), o2.getScale()));
+        mosaics.sort((Mosaic o1, Mosaic o2) -> Double.compare(o2.getScale(), o1.getScale()));
         for (final Mosaic mosaic : mosaics) {
             if (resolutions == null || resolutions.contains(mosaic.getScale())) {
                 final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
