@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -103,11 +104,15 @@ public class MosaicedCoverageResource implements GridCoverageResource {
 
         GridGeometry canvas = gridGeometry;
         if (domain != null) {
+            try {
             canvas = canvas.derive()
                     .margin(3)
                     .rounding(GridRoundingMode.ENCLOSING)
                     .subgrid(domain)
                     .build();
+            } catch (DisjointExtentException ex) {
+                throw new DisjointCoverageDomainException(ex.getMessage(), ex);
+            }
         } else {
             domain = canvas;
         }
