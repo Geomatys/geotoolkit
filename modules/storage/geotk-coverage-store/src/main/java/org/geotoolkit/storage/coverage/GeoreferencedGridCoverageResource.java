@@ -23,11 +23,13 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -48,14 +50,18 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
         final GridGeometry gg = getGridGeometry();
         final GridExtent extent;
         final int[] subsampling;
-        if (domain != null) {
-            GridDerivation derived = gg.derive().subgrid(domain);
-            extent = derived.getIntersection();
-            subsampling = derived.getSubsamplings();
-        } else {
-            GridDerivation derived = gg.derive();
-            extent = derived.getIntersection();
-            subsampling = derived.getSubsamplings();
+        try {
+            if (domain != null) {
+                GridDerivation derived = gg.derive().subgrid(domain);
+                extent = derived.getIntersection();
+                subsampling = derived.getSubsamplings();
+            } else {
+                GridDerivation derived = gg.derive();
+                extent = derived.getIntersection();
+                subsampling = derived.getSubsamplings();
+            }
+        } catch (IllegalGridGeometryException ex) {
+            throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         }
 
         final int[] areaLower = new int[extent.getDimension()];
