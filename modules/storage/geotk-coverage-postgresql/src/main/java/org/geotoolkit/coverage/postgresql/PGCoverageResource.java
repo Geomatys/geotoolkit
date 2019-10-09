@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.postgresql;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.image.DataBuffer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,7 +45,6 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
-import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -423,7 +423,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                 final int sid = rs.getInt("id");
                 final int indice = rs.getInt("indice");
                 final String description = rs.getString("description");
-                final SampleDimensionType type = WKBRasterConstants.getDimensionType(rs.getInt("dataType"));
+                final int dataType = rs.getInt("dataType");
                 final String unitStr = rs.getString("unit");
                 Unit unit = null;
                 if(unitStr != null && !unitStr.isEmpty()) {
@@ -563,7 +563,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                         pstmt.setString(2, versionStr);
                         pstmt.setInt(3, i);
                         pstmt.setString(4, description);
-                        pstmt.setInt(5, (WKBRasterConstants.getPixelType(SampleDimensionType.REAL_32BITS /* dim.getSampleDimensionType() */)));
+                        pstmt.setInt(5, (WKBRasterConstants.getPixelType(DataBuffer.TYPE_DOUBLE /* dim.getSampleDimensionType() */)));
                         pstmt.setString(6, unit);
 
                     } else {
@@ -577,7 +577,7 @@ public class PGCoverageResource extends AbstractPyramidalCoverageResource implem
                         pstmt.setInt(1, layerId);
                         pstmt.setInt(2, i);
                         pstmt.setString(3, description);
-                        pstmt.setInt(4, (WKBRasterConstants.getPixelType(SampleDimensionType.REAL_32BITS /* dim.getSampleDimensionType() */)));
+                        pstmt.setInt(4, (WKBRasterConstants.getPixelType(DataBuffer.TYPE_DOUBLE /* dim.getSampleDimensionType() */)));
                         pstmt.setString(5, unit);
                     }
                     pstmt.executeUpdate();

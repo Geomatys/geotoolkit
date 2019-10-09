@@ -37,8 +37,6 @@ import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.SampleDimensionType;
-import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -195,7 +193,6 @@ public class FXLayerStructure extends FXPropertyPane {
 
                 if (dimensions!=null) {
                     for (SampleDimension dim : dimensions) {
-                        final SampleDimensionType st = SampleDimensionUtils.getSampleDimensionType(dim);
                         final MathTransform1D sampletoGeo = dim.getTransferFunction().orElse(null);
                         final Unit unit = dim.getUnits().orElse(null);
                         final InternationalString desc = dim.getName().toInternationalString();

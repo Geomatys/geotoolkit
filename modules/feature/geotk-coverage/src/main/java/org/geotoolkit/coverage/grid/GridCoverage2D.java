@@ -26,7 +26,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -38,6 +37,7 @@ import javax.media.jai.remote.SerializableRenderedImage;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.referencing.PositionTransformer;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
@@ -51,7 +51,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.internal.referencing.PositionTransformer;
 
 
 /**
@@ -205,13 +204,9 @@ public class GridCoverage2D extends GridCoverage {
      * is thrown.
      */
     private static Collection<SampleDimension> fillSampleDimensions(final CharSequence name, final RenderedImage image, final SampleDimension[] bands) {
-        RenderedSampleDimension[] sampleDimensions = new RenderedSampleDimension[image.getSampleModel().getNumBands()];
-        RenderedSampleDimension.create(name, image, bands, sampleDimensions);
-        final List<SampleDimension> dims = new ArrayList<>(sampleDimensions.length);
-        for (RenderedSampleDimension rsd : sampleDimensions) {
-            dims.add(rsd.dimension);
-        }
-        return dims;
+        final SampleDimension[] sampleDimensions = new SampleDimension[image.getSampleModel().getNumBands()];
+        GridCoverageBuilder.create(name, image, bands, sampleDimensions);
+        return new ArrayList<>(Arrays.asList(sampleDimensions));
     }
 
     /**
