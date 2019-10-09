@@ -221,13 +221,24 @@ public class LEDataInputStream extends InputStream implements DataInput {
     @Override
     public final int skipBytes(int n) throws IOException {
         int nb = ds.skipBytes(n);
+        if (nb <= 0) return nb;
         position+=nb;
         return nb;
     }
 
     public final void skipFully(int n) throws IOException {
         while (n > 0) {
-            n -= skipBytes(n);
+            int nb = skipBytes(n);
+            if (nb == -1) {
+                throw new EOFException();
+            } else if (nb == 0) {
+                nb = read();
+                if (nb == -1) {
+                    throw new EOFException();
+                }
+                nb = 1;
+            }
+            n -= nb;
         }
     }
 
