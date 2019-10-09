@@ -38,7 +38,6 @@ import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.apache.sis.internal.storage.io.HyperRectangleReader;
 import org.apache.sis.internal.storage.io.Region;
 import org.apache.sis.measure.Units;
-import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
@@ -50,6 +49,7 @@ import org.apache.sis.util.Numbers;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
 import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
@@ -96,6 +96,11 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
     }
 
     @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return resource.getIdentifier();
+    }
+
+    @Override
     public Optional<ParameterValueGroup> getOpenParameters() {
         return Optional.of(parameters);
     }
@@ -112,7 +117,7 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
 
     @Override
     public Metadata getMetadata() throws DataStoreException {
-        return new DefaultMetadata();
+        return resource.getMetadata();
     }
 
     @Override
@@ -147,7 +152,7 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
 
         private Res() {
             super(HGTStore.this);
-            name = NamesExt.create(fileInput.getFileName().toString());
+            name = NamesExt.create(IOUtilities.filenameWithoutExtension(fileInput));
         }
 
         @Override
