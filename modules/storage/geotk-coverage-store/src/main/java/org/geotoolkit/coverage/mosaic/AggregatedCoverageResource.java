@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.measure.Unit;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -89,6 +90,7 @@ public final class AggregatedCoverageResource implements GridCoverageResource {
     private final GridGeometry gridGeometry;
     private final Mode mode;
     private InterpolationCase interpolation = InterpolationCase.BILINEAR;
+    private List<SampleDimension> sampleDimensions;
 
     public static GridCoverageResource create(CoordinateReferenceSystem resultCrs, GridCoverageResource ... resources) throws DataStoreException, TransformException {
         return create(resultCrs, Mode.ORDER, resources);
@@ -118,6 +120,7 @@ public final class AggregatedCoverageResource implements GridCoverageResource {
             resultCrs = map.last();
         }
 
+        //compute envelope and check sample dimensions
         GeneralEnvelope env = new GeneralEnvelope(resultCrs);
         env.setToNaN();
         int index = 0;
@@ -131,11 +134,45 @@ public final class AggregatedCoverageResource implements GridCoverageResource {
             } else {
                 env.add(envelope);
             }
+
+            boolean hasUndefinedUnits = false;
+            List<SampleDimension> sampleDimensions = resource.getSampleDimensions();
+            if (this.sampleDimensions == null) {
+                this.sampleDimensions = new ArrayList<>(sampleDimensions);
+            } else {
+                //check dimensions count
+                if (sampleDimensions.size() != this.sampleDimensions.size()) {
+                    throw new DataStoreException("Uncompatible sample dimensions, size differ.");
+                }
+                //check dimensions units
+                for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
+                    SampleDimension baseDim = this.sampleDimensions.get(i);
+                    SampleDimension dim = sampleDimensions.get(i);
+                    Unit<?> baseUnit = baseDim.getUnits().orElse(null);
+                    Unit<?> unit = baseDim.getUnits().orElse(null);
+
+                    if (baseUnit == null) {
+                        hasUndefinedUnits = true;
+                        if (unit != null) {
+                            //replace the declared unit, more accurate
+                            this.sampleDimensions.set(i, dim);
+                        }
+                    } else if (unit == null) {
+                        //we assume all datas have the implicite same unit
+                        //if there is no conflict
+                        hasUndefinedUnits = true;
+
+                    } else {
+                        if (!baseUnit.equals(unit)) {
+                            throw new DataStoreException("Uncompatible sample dimensions, different units found : "+baseUnit +", "+unit);
+                        }
+                    }
+                }
+            }
         }
 
         gridGeometry = new GridGeometry(null, env);
 
-        //TODO need to check SampleDimension match and convert compatible units when needed
     }
 
     @Override
@@ -155,7 +192,7 @@ public final class AggregatedCoverageResource implements GridCoverageResource {
 
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        return resources.get(0).getSampleDimensions();
+        return sampleDimensions;
     }
 
     @Override
@@ -286,23 +323,44 @@ public final class AggregatedCoverageResource implements GridCoverageResource {
                     //we need to merge image, replacing only not-NaN values
                     PixelIterator read = PixelIterator.create(workImage);
                     WritablePixelIterator write = WritablePixelIterator.create(result);
+                    final double[] pixelr = new double[read.getNumBands()];
+                    final double[] pixelw = new double[read.getNumBands()];
+                    final boolean monoBand = pixelr.length == 1;
                     while (read.next() & write.next()) {
-                        double r = read.getSampleDouble(0);
-                        if (Double.isNaN(r)) continue;
-                        double w = write.getSampleDouble(0);
-                        if (Double.isNaN(w)) {
-                            write.setSample(0, r);
-                            //fill the mask
-                            Point pt = read.getPosition();
-                            mask.set2D(pt.x, pt.y);
+                        if (monoBand) {
+                            read.getPixel(pixelr);
+                            if (Double.isNaN(pixelr[0])) continue;
+                            write.getPixel(pixelw);
+                            if (Double.isNaN(pixelw[0])) {
+                                write.setPixel(pixelr);
+                                //fill the mask
+                                Point pt = read.getPosition();
+                                mask.set2D(pt.x, pt.y);
+                            }
+                        } else {
+                            //TODO what approach when a NaN is defined on one band and not another ?
+                            //should we have one mask per band ?
+                            read.getPixel(pixelr);
+                            write.getPixel(pixelw);
+                            for (int i=0;i<pixelr.length;i++) {
+                                if (Double.isNaN(pixelr[i])) {
+                                    //do nothing
+                                } else if (Double.isNaN(pixelw[i])) {
+                                    write.setPixel(pixelr);
+                                    //fill the mask
+                                    Point pt = read.getPosition();
+                                    mask.set2D(pt.x, pt.y);
+                                }
+                            }
                         }
                     }
                 } else {
                     //first resampled Image, fill the mask
                     PixelIterator read = PixelIterator.create(workImage);
+                    final double[] pixelr = new double[read.getNumBands()];
                     while (read.next()) {
-                        double r = read.getSampleDouble(0);
-                        if (!Double.isNaN(r)) {
+                        read.getPixel(pixelr);
+                        if (!Double.isNaN(pixelr[0])) {
                             Point pt = read.getPosition();
                             mask.set2D(pt.x, pt.y);
                         }

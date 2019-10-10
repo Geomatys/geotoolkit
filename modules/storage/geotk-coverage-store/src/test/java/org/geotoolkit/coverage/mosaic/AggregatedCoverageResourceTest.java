@@ -237,5 +237,75 @@ public class AggregatedCoverageResourceTest {
 
     }
 
+    /**
+     * Test aggregating coverages with multiple sample dimensions.
+     */
+    @Test
+    public void testMultiBandAggregation() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands = Arrays.asList(sd,sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        |1:2|NaN|NaN|
+        +---+---+---+
+
+        Coverage 2
+        +---+---+---+
+        |3:4|3:4|NaN|
+        +---+---+---+
+
+        Coverage 3
+        +---+---+---+
+        |5:6|5:6|5:6|
+        +---+---+---+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new MemoryCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new MemoryCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new MemoryCoverageResource(coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setPixel(new double[]{1,2});
+        write1.moveTo(1, 0); write1.setPixel(new double[]{Double.NaN, Double.NaN});
+        write1.moveTo(2, 0); write1.setPixel(new double[]{Double.NaN, Double.NaN});
+        write2.moveTo(0, 0); write2.setPixel(new double[]{3,4});
+        write2.moveTo(1, 0); write2.setPixel(new double[]{3,4});
+        write2.moveTo(2, 0); write2.setPixel(new double[]{Double.NaN, Double.NaN});
+        write3.moveTo(0, 0); write3.setPixel(new double[]{5,6});
+        write3.moveTo(1, 0); write3.setPixel(new double[]{5,6});
+        write3.moveTo(2, 0); write3.setPixel(new double[]{5,6});
+
+
+        /*
+        We expect a final coverage with values [1:2,3:4,5:6] on a single row
+        +---+---+---+
+        |1:2|3:4|5:6|
+        +---+---+---+
+        */
+        final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
+                null, AggregatedCoverageResource.Mode.ORDER,
+                resource1, resource2, resource3);
+        ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0)); Assert.assertEquals(2, reader.getSample(1));
+        reader.moveTo(1, 0); Assert.assertEquals(3, reader.getSample(0)); Assert.assertEquals(4, reader.getSample(1));
+        reader.moveTo(2, 0); Assert.assertEquals(5, reader.getSample(0)); Assert.assertEquals(6, reader.getSample(1));
+    }
 
 }
