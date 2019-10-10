@@ -81,11 +81,23 @@ public final class DataStores extends Static {
      * @return Collection of all resources
      */
     public static <T extends Resource> Collection<T> flatten(Resource root, boolean includeRoot, Class<T> resourceClass) throws DataStoreException {
+        return flatten(root, includeRoot, resourceClass, false);
+    }
+
+    /**
+     * List all resources in given resource.
+     *
+     * @param root Root resource to explore
+     * @param includeRoot include the root in the stream
+     * @param resourceClass class of searched resources
+     * @return Collection of all resources
+     */
+    public static <T extends Resource> Collection<T> flatten(Resource root, boolean includeRoot, Class<T> resourceClass, boolean ignoreErrors) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resourceClass", resourceClass);   // null not allowed because unsafe.
         if (root instanceof Aggregate) {
             final List<T> list = new ArrayList<>();
             if (includeRoot && resourceClass.isInstance(root)) list.add((T) root);
-            list(root, list, resourceClass);
+            list(root, list, resourceClass, ignoreErrors);
             return list;
         } else if (includeRoot && resourceClass.isInstance(root)) {
             return Collections.singleton((T) root);
@@ -94,12 +106,18 @@ public final class DataStores extends Static {
         }
     }
 
-    private static <T extends Resource> void list(Resource resource, Collection<T> list, Class<T> resourceClass) throws DataStoreException {
+    private static <T extends Resource> void list(Resource resource, Collection<T> list, Class<T> resourceClass, boolean ignoreErrors) throws DataStoreException {
         if (resource instanceof Aggregate) {
             final Aggregate ds = (Aggregate) resource;
-            for (Resource rs : ds.components()) {
-                if (resourceClass.isInstance(rs)) list.add((T) rs);
-                list(rs, list, resourceClass);
+            try {
+                for (Resource rs : ds.components()) {
+                    if (resourceClass.isInstance(rs)) list.add((T) rs);
+                    list(rs, list, resourceClass, ignoreErrors);
+                }
+            } catch (DataStoreException ex) {
+                if (!ignoreErrors) {
+                    throw ex;
+                }
             }
         }
     }

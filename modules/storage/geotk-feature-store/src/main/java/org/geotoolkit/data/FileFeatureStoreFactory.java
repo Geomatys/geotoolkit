@@ -57,20 +57,34 @@ public interface FileFeatureStoreFactory extends ProviderOnFileSystem {
     FeatureStore createDataStore(URI uri) throws DataStoreException;
 
     public static <T extends DataStoreProvider & ProviderOnFileSystem> ProbeResult probe(T provider, StorageConnector connector, String mimeType) throws DataStoreException {
+        return probe(provider, connector, mimeType, false);
+    }
+
+    public static <T extends DataStoreProvider & ProviderOnFileSystem> ProbeResult probe(T provider, StorageConnector connector, String mimeType, boolean alwaysCheckExtension) throws DataStoreException {
 
         final Collection<byte[]> signatures = provider.getSignature();
-        if (signatures.isEmpty()) {
+        if (signatures.isEmpty()) alwaysCheckExtension = true;
+
+        boolean extValid = false;
+        if (alwaysCheckExtension) {
             //we don't have any signature, check file extensions
             final Collection<String> suffix = provider.getSuffix();
-            if (suffix.isEmpty()) return ProbeResult.UNSUPPORTED_STORAGE;
-
-            final Path path = connector.getStorageAs(Path.class);
-            if (path == null) return ProbeResult.UNSUPPORTED_STORAGE;
-            final String extension = IOUtilities.extension(path).toLowerCase();
-            if (suffix.contains(extension)) {
-                return new ProbeResult(true, mimeType, null);
+            if (!suffix.isEmpty()) {
+                final Path path = connector.getStorageAs(Path.class);
+                if (path != null) {
+                    final String extension = IOUtilities.extension(path).toLowerCase();
+                    extValid = suffix.contains(extension);
+                }
             }
-            return ProbeResult.UNSUPPORTED_STORAGE;
+        }
+
+        if (alwaysCheckExtension) {
+            if (!extValid) {
+                return ProbeResult.UNSUPPORTED_STORAGE;
+            }
+        }
+        if (signatures.isEmpty()) {
+            return extValid ? new ProbeResult(true, mimeType, null) : ProbeResult.UNSUPPORTED_STORAGE;
         }
 
         final ByteBuffer buffer = connector.getStorageAs(ByteBuffer.class);
