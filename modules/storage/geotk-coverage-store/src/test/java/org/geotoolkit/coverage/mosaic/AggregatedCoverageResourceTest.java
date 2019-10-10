@@ -25,6 +25,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.coverage.BufferedGridCoverage;
@@ -37,6 +38,7 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
@@ -306,6 +308,58 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0)); Assert.assertEquals(2, reader.getSample(1));
         reader.moveTo(1, 0); Assert.assertEquals(3, reader.getSample(0)); Assert.assertEquals(4, reader.getSample(1));
         reader.moveTo(2, 0); Assert.assertEquals(5, reader.getSample(0)); Assert.assertEquals(6, reader.getSample(1));
+    }
+
+    /**
+     * Test aggregating coverages one at the time.
+     */
+    @Test
+    public void testModifyAggregation() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        final GeneralEnvelope expected = new GeneralEnvelope(crs);
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands = Arrays.asList(sd);
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0.5, 0.5), crs);
+        final GridGeometry grid2 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 1.5, 0.5), crs);
+        final GridGeometry grid3 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2.5, 0.5), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid3, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new MemoryCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new MemoryCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new MemoryCoverageResource(coverage3);
+
+        final AggregatedCoverageResource agg = new AggregatedCoverageResource();
+        Assert.assertNull(agg.getEnvelope().orElse(null));
+
+        agg.add(resource1);
+        Envelope envelope = agg.getEnvelope().orElse(null);
+        expected.setRange(0, 0, 3);
+        expected.setRange(1, 0, 1);
+        Assert.assertEquals(expected, new GeneralEnvelope(envelope));
+
+        agg.add(resource2);
+        envelope = agg.getEnvelope().orElse(null);
+        expected.setRange(0, 0, 4);
+        expected.setRange(1, 0, 1);
+        Assert.assertEquals(expected, new GeneralEnvelope(envelope));
+
+        agg.add(resource3);
+        envelope = agg.getEnvelope().orElse(null);
+        expected.setRange(0, 0, 5);
+        expected.setRange(1, 0, 1);
+        Assert.assertEquals(expected, new GeneralEnvelope(envelope));
+
+        agg.remove(resource1);
+        agg.remove(resource2);
+        envelope = agg.getEnvelope().orElse(null);
+        expected.setRange(0, 2, 5);
+        expected.setRange(1, 0, 1);
+        Assert.assertEquals(expected, new GeneralEnvelope(envelope));
     }
 
 }

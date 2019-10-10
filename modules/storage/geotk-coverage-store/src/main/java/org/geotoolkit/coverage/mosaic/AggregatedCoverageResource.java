@@ -22,6 +22,7 @@ import java.awt.image.RenderedImage;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,8 +44,11 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -69,7 +73,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class AggregatedCoverageResource implements GridCoverageResource {
+public final class AggregatedCoverageResource implements WritableAggregate, GridCoverageResource {
 
     public static enum Mode {
         /**
@@ -85,12 +89,18 @@ public final class AggregatedCoverageResource implements GridCoverageResource {
         SCALE
     }
 
-    private final List<GridCoverageResource> resources;
-    private final Quadtree tree = new Quadtree();
-    private final GridGeometry gridGeometry;
-    private final Mode mode;
+    private final List<GridCoverageResource> components = new ArrayList<>();
+
+    //user defined parameters
+    private Mode mode = Mode.SCALE;
     private InterpolationCase interpolation = InterpolationCase.BILINEAR;
+    private CoordinateReferenceSystem outputCrs = null;
+
+    //computed informations
+    private Quadtree tree;
+    private GridGeometry gridGeometry;
     private List<SampleDimension> sampleDimensions;
+
 
     public static GridCoverageResource create(CoordinateReferenceSystem resultCrs, GridCoverageResource ... resources) throws DataStoreException, TransformException {
         return create(resultCrs, Mode.ORDER, resources);
@@ -107,26 +117,192 @@ public final class AggregatedCoverageResource implements GridCoverageResource {
     }
 
     private AggregatedCoverageResource(List<GridCoverageResource> resources, Mode mode, CoordinateReferenceSystem resultCrs) throws DataStoreException, TransformException {
-        this.resources = resources;
+        this.components.addAll(resources);
         this.mode = mode;
+        this.outputCrs = resultCrs;
+        initModel();
+    }
 
-        if (resultCrs == null) {
+    public AggregatedCoverageResource() throws DataStoreException, TransformException {
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.empty();
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        return new DefaultMetadata();
+    }
+
+    @Override
+    public synchronized GridGeometry getGridGeometry() throws DataStoreException {
+        initModel();
+        return gridGeometry;
+    }
+
+    @Override
+    public synchronized List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        initModel();
+        return sampleDimensions;
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        final GridGeometry grid = getGridGeometry();
+        if (grid.isDefined(GridGeometry.ENVELOPE)) {
+            return Optional.of(grid.getEnvelope());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Collection<? extends Resource> components() throws DataStoreException {
+        return Collections.unmodifiableList(components);
+    }
+
+    /**
+     * Remove resource from aggregation.
+     * This method does not delete any data.
+     *
+     * @param resource resource to remove
+     * @throws DataStoreException
+     */
+    @Override
+    public synchronized void remove(Resource resource) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("resource", resource);
+        if (!components.remove(resource)) {
+            throw new DataStoreException("Resource not found");
+        }
+        eraseCaches();
+    }
+
+    /**
+     * Add a new resource in the aggregation.
+     * The resource is not copied.
+     *
+     * @param resource
+     * @return the same resource
+     * @throws DataStoreException if new resource is incompatible with other resources.
+     */
+    @Override
+    public synchronized Resource add(Resource resource) throws DataStoreException {
+        if (resource instanceof GridCoverageResource) {
+            components.add((GridCoverageResource) resource);
+            eraseCaches();
+            try {
+                initModel();
+            } catch (DataStoreException ex) {
+                //restore to an usable state
+                components.remove(resource);
+                throw ex;
+            }
+            return resource;
+        } else {
+            throw new DataStoreException("Resource must be an instance of GridCoverageResource");
+        }
+    }
+
+    /**
+     * Returns preferred interpolation method when aggregating data.
+     * @return interpolation, not null
+     */
+    public InterpolationCase getInterpolation() {
+        return interpolation;
+    }
+
+    /**
+     * Set preferred interpolation method when aggregating data.
+     * @param interpolation not null
+     * @return
+     */
+    public void setInterpolation(InterpolationCase interpolation) {
+        ArgumentChecks.ensureNonNull("interpolation", interpolation);
+        this.interpolation = interpolation;
+    }
+
+    /**
+     * Returns aggregation ordering.
+     *
+     * @return order mode, not null
+     */
+    public Mode getMode() {
+        return mode;
+    }
+
+    /**
+     * Set aggregation ordering mode.
+     *
+     * @param mode , not null
+     */
+    public void setMode(Mode mode) {
+        ArgumentChecks.ensureNonNull("mode", mode);
+        this.mode = mode;
+    }
+
+    /**
+     * Returns preferred crs when aggregating data.
+     *
+     * @return may be null
+     */
+    public CoordinateReferenceSystem getOutputCrs() {
+        return outputCrs;
+    }
+
+    /**
+     * Set preferred crs when aggregating data.
+     *
+     * @param outputCrs, may be null
+     */
+    public synchronized void setOutputCrs(CoordinateReferenceSystem outputCrs) {
+        if (this.outputCrs == outputCrs) return;
+        this.outputCrs = outputCrs;
+        eraseCaches();
+    }
+
+    /**
+     * Compute grid geometry and sample dimensions.
+     */
+    private synchronized void initModel() throws DataStoreException {
+        if (gridGeometry != null) return;
+
+        if (components.isEmpty()) {
+            //no data yet
+            this.sampleDimensions = new ArrayList<>();
+            this.gridGeometry = new GridGeometry(new GridExtent(1, 1), null);
+            return;
+        } else if (components.size() == 1) {
+            //copy exact definition
+            GridCoverageResource resource = components.get(0);
+            this.gridGeometry = resource.getGridGeometry();
+            this.sampleDimensions = resource.getSampleDimensions();
+            return;
+        }
+
+        if (outputCrs == null) {
             //use most common crs
             //TODO find a better approach to determinate a common crs
             final FrequencySortedSet<CoordinateReferenceSystem> map = new FrequencySortedSet<>();
-            for (GridCoverageResource resource : resources) {
+            for (GridCoverageResource resource : components) {
                 map.add(resource.getGridGeometry().getCoordinateReferenceSystem());
             }
-            resultCrs = map.last();
+            outputCrs = map.last();
         }
 
         //compute envelope and check sample dimensions
-        GeneralEnvelope env = new GeneralEnvelope(resultCrs);
+        tree = new Quadtree();
+        GeneralEnvelope env = new GeneralEnvelope(outputCrs);
         env.setToNaN();
         int index = 0;
-        for (GridCoverageResource resource : resources) {
+        for (GridCoverageResource resource : components) {
             Envelope envelope = resource.getGridGeometry().getEnvelope();
-            envelope = Envelopes.transform(envelope, resultCrs);
+            try {
+                envelope = Envelopes.transform(envelope, outputCrs);
+            } catch (TransformException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
             tree.insert(new JTSEnvelope2D(envelope), new AbstractMap.SimpleImmutableEntry<>(index++,resource));
 
             if (env.isAllNaN()) {
@@ -172,46 +348,25 @@ public final class AggregatedCoverageResource implements GridCoverageResource {
         }
 
         gridGeometry = new GridGeometry(null, env);
-
     }
 
-    @Override
-    public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return Optional.empty();
-    }
-
-    @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return new DefaultMetadata();
-    }
-
-    @Override
-    public GridGeometry getGridGeometry() throws DataStoreException {
-        return gridGeometry;
-    }
-
-    @Override
-    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        return sampleDimensions;
-    }
-
-    @Override
-    public Optional<Envelope> getEnvelope() throws DataStoreException {
-        return Optional.of(getGridGeometry().getEnvelope());
-    }
-
-    public InterpolationCase getInterpolation() {
-        return interpolation;
-    }
-
-    public void setInterpolation(InterpolationCase interpolation) {
-        this.interpolation = interpolation;
+    private void eraseCaches() {
+        gridGeometry = null;
+        sampleDimensions = null;
+        tree = null;
     }
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        initModel();
 
-        if (domain == null) domain = gridGeometry;
+        if (components.size() == 1) {
+            //bypass aggregation
+            GridCoverageResource resource = components.get(0);
+            return resource.read(domain, range);
+        }
+
+        if (domain == null) domain = getGridGeometry();
 
         GridGeometry canvas = domain;
         canvas = CoverageUtilities.forceLowerToZero(canvas);
