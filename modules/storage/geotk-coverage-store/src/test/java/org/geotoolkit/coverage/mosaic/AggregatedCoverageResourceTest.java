@@ -362,4 +362,67 @@ public class AggregatedCoverageResourceTest {
         Assert.assertEquals(expected, new GeneralEnvelope(envelope));
     }
 
+    /**
+     * Test aggregation add a NaN value to fill spaces.
+     *
+     * @throws DataStoreException
+     * @throws TransformException
+     */
+    @Test
+    public void testNoDataAdded() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+
+        | 1 |
+        +---+
+
+        Coverage 2
+                +---+
+                | 2 |
+                +---+
+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid2 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2, 0), crs);
+        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_SHORT);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_SHORT);
+        final GridCoverageResource resource1 = new MemoryCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new MemoryCoverageResource(coverage2);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+
+        write1.moveTo(0, 0); write1.setSample(0, 1);
+        write2.moveTo(0, 0); write2.setSample(0, 2);
+
+
+        /*
+        We expect a final coverage with values :
+        +---+---+---+
+        | 1 |NaN| 2 |
+        +---+---+---+
+        */
+        final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
+                null, AggregatedCoverageResource.Mode.ORDER,
+                resource1, resource2);
+        ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+
+        final GridCoverage coverage = aggregate.read(grid).forConvertedValues(true);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(1, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(2, 0); Assert.assertEquals(2, reader.getSampleDouble(0), 0.0);
+
+    }
+
 }

@@ -18,6 +18,7 @@ package org.geotoolkit.coverage.mosaic;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -28,8 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.measure.Unit;
+import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -100,6 +103,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private Quadtree tree;
     private GridGeometry gridGeometry;
     private List<SampleDimension> sampleDimensions;
+    private boolean forceTransformedValues;
+    private double[] noData;
 
 
     public static GridCoverageResource create(CoordinateReferenceSystem resultCrs, GridCoverageResource ... resources) throws DataStoreException, TransformException {
@@ -348,6 +353,42 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
 
         gridGeometry = new GridGeometry(null, env);
+
+
+        //add a no-data category
+        //the no-data is needed to fill possible gaps between coverages
+        //TODO need to improve detection cases to avoid switching to transformed values all the time
+        forceTransformedValues = false;
+        noData = new double[sampleDimensions.size()];
+        for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
+            SampleDimension baseDim = sampleDimensions.get(i).forConvertedValues(true);
+            Set<Number> noData = baseDim.getNoDataValues();
+            Optional<Number> background = baseDim.getBackground();
+            if (noData.isEmpty() && !background.isPresent()) {
+                final SampleDimension.Builder builder = new SampleDimension.Builder();
+                final Unit<?> unit = baseDim.getUnits().orElse(null);
+
+                for (Category c : baseDim.getCategories()) {
+                    if (c.isQuantitative()) {
+                        builder.addQuantitative(c.getName(), c.getSampleRange(), c.getTransferFunction().orElse(null), unit);
+                    } else {
+                        builder.addQualitative(c.getName(), c.getSampleRange());
+                    }
+                }
+                builder.setBackground(null, Double.NaN);
+                baseDim = builder.build();
+                noData = baseDim.getNoDataValues();
+                background = baseDim.getBackground();
+                sampleDimensions.set(i, baseDim);
+                forceTransformedValues = true;
+            }
+
+            if (background.isPresent()) {
+                this.noData[i] = background.get().doubleValue();
+            } else {
+                this.noData[i] = noData.iterator().next().doubleValue();
+            }
+        }
     }
 
     private void eraseCaches() {
@@ -412,8 +453,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         //aggregate tiles
         BufferedImage result = null;
         BufferedImage intermediate = null;
-        double[] fillValue = null;
-        List<SampleDimension> sampleDimensions = null;
+        List<SampleDimension> sampleDimensions = getSampleDimensions();
 
         //start by creating a mask of filled datas
         final BitSet2D mask = new BitSet2D((int) canvas.getExtent().getSize(0), (int) canvas.getExtent().getSize(1));
@@ -438,7 +478,6 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 }
 
                 final GridCoverage coverage = resource.read(readGridGeom, range).forConvertedValues(true);
-                sampleDimensions = coverage.getSampleDimensions();
                 final RenderedImage tileImage = coverage.render(null);
 
                 final BufferedImage workImage;
@@ -447,17 +486,19 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     GridExtent extent = canvas.getExtent();
                     int sizeX = Math.toIntExact(extent.getSize(0));
                     int sizeY = Math.toIntExact(extent.getSize(1));
-                    result = BufferedImages.createImage(sizeX, sizeY, tileImage);
+                    if (forceTransformedValues) {
+                        result = BufferedImages.createImage(sizeX, sizeY, noData.length, DataBuffer.TYPE_DOUBLE);
+                    } else {
+                        result = BufferedImages.createImage(sizeX, sizeY, tileImage);
+                    }
                     workImage = result;
-                    fillValue = new double[result.getSampleModel().getNumBands()];
-                    Arrays.fill(fillValue, Double.NaN);
-                    BufferedImages.setAll(result, fillValue);
+                    BufferedImages.setAll(result, noData);
                 } else {
                     if (intermediate == null) {
                         intermediate = BufferedImages.createImage(result.getWidth(), result.getHeight(), result);
                     }
                     workImage = intermediate;
-                    BufferedImages.setAll(intermediate, fillValue);
+                    BufferedImages.setAll(intermediate, noData);
                 }
 
                 //resample coverage
@@ -471,7 +512,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 final MathTransform targetToSource = MathTransforms.concatenate(canvasToCrs, crsToCrs, tileToTileCrs);
 
                 final Resample resample = new Resample(targetToSource, workImage, tileImage,
-                        interpolation, ResampleBorderComportement.FILL_VALUE, null);
+                        interpolation, ResampleBorderComportement.FILL_VALUE, noData);
                 resample.fillImage(true);
 
                 if (workImage != result) {
