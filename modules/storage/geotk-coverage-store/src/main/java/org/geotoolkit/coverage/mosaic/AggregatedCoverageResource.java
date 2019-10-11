@@ -361,10 +361,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         forceTransformedValues = false;
         noData = new double[sampleDimensions.size()];
         for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
-            SampleDimension baseDim = sampleDimensions.get(i).forConvertedValues(true);
+            SampleDimension baseDim = sampleDimensions.get(i);
             Set<Number> noData = baseDim.getNoDataValues();
             Optional<Number> background = baseDim.getBackground();
             if (noData.isEmpty() && !background.isPresent()) {
+                baseDim = sampleDimensions.get(i).forConvertedValues(true);
                 final SampleDimension.Builder builder = new SampleDimension.Builder();
                 final Unit<?> unit = baseDim.getUnits().orElse(null);
 
@@ -512,10 +513,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 final MathTransform targetToSource = MathTransforms.concatenate(canvasToCrs, crsToCrs, tileToTileCrs);
 
                 final Resample resample = new Resample(targetToSource, workImage, tileImage,
-                        interpolation, ResampleBorderComportement.FILL_VALUE, noData);
+                        interpolation, ResampleBorderComportement.FILL_VALUE, null);
                 resample.fillImage(true);
 
-                if (workImage != result) {
+               if (workImage != result) {
                     //we need to merge image, replacing only not-NaN values
                     PixelIterator read = PixelIterator.create(workImage);
                     WritablePixelIterator write = WritablePixelIterator.create(result);
@@ -525,9 +526,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     while (read.next() & write.next()) {
                         if (monoBand) {
                             read.getPixel(pixelr);
-                            if (Double.isNaN(pixelr[0])) continue;
+                            if (noData[0] == pixelr[0] || Double.isNaN(pixelr[0])) continue;
                             write.getPixel(pixelw);
-                            if (Double.isNaN(pixelw[0])) {
+                            if (noData[0] == pixelw[0] || Double.isNaN(pixelw[0])) {
                                 write.setPixel(pixelr);
                                 //fill the mask
                                 Point pt = read.getPosition();
@@ -539,9 +540,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                             read.getPixel(pixelr);
                             write.getPixel(pixelw);
                             for (int i=0;i<pixelr.length;i++) {
-                                if (Double.isNaN(pixelr[i])) {
+                                if (noData[i] == pixelr[i] || Double.isNaN(pixelr[i])) {
                                     //do nothing
-                                } else if (Double.isNaN(pixelw[i])) {
+                                } else if (noData[i] == pixelw[i] || Double.isNaN(pixelw[i])) {
                                     write.setPixel(pixelr);
                                     //fill the mask
                                     Point pt = read.getPosition();
@@ -609,7 +610,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         //compute transform
         final MathTransform gridToCRS = result.getGridToCRS(PixelInCell.CELL_CENTER);
         final CoordinateOperation crsToCrs = CRS.findOperation(result.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null);
-        final MathTransform trs = MathTransforms.concatenate(gridToCRS, crsToCrs.getMathTransform());
+        final MathTransform trs = MathTransforms.concatenate(gridToCRS, crsToCrs.getMathTransform(), target.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
         //transform a unitary vector at most representative point
         double[] point = result.getExtent().getPointOfInterest();
         double[] vector = Arrays.copyOf(point, 4);

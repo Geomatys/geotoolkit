@@ -17,18 +17,23 @@
 package org.geotoolkit.coverage.mosaic;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
+import javax.measure.Unit;
+import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
@@ -45,7 +50,6 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -57,13 +61,18 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MosaicedCoverageResource implements GridCoverageResource {
+public class MosaicedCoverageResource extends AbstractGridResource {
 
     private final GridGeometry gridGeometry;
     private final Tile[] tiles;
     private final Quadtree tree = new Quadtree();
 
+    private List<SampleDimension> sampleDimensions;
+    private boolean forceTransformedValues;
+    private double[] noData;
+
     private MosaicedCoverageResource(GridGeometry gridGeometry, Tile[] tiles) throws DataStoreException {
+        super(null);
         this.gridGeometry = gridGeometry;
         this.tiles = tiles;
 
@@ -71,6 +80,49 @@ public class MosaicedCoverageResource implements GridCoverageResource {
             GridCoverageResource resource = tile.getResource();
             Envelope envelope = resource.getGridGeometry().getEnvelope();
             tree.insert(new JTSEnvelope2D(envelope), tile);
+        }
+
+        //add a no-data category
+        //the no-data is needed to fill possible gaps between coverages
+        //TODO need to improve detection cases to avoid switching to transformed values all the time
+        sampleDimensions = new ArrayList<>(tiles[0].getResource().getSampleDimensions());
+        forceTransformedValues = false;
+        noData = new double[sampleDimensions.size()];
+        for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
+            SampleDimension baseDim = sampleDimensions.get(i);
+            Set<Number> noData = baseDim.getNoDataValues();
+            Optional<Number> background = baseDim.getBackground();
+            if (noData.isEmpty() && !background.isPresent()) {
+                baseDim = sampleDimensions.get(i).forConvertedValues(true);
+                final SampleDimension.Builder builder = new SampleDimension.Builder();
+                final Unit<?> unit = baseDim.getUnits().orElse(null);
+
+                for (Category c : baseDim.getCategories()) {
+                    if (c.isQuantitative()) {
+                        builder.addQuantitative(c.getName(), c.getSampleRange(), c.getTransferFunction().orElse(null), unit);
+                    } else {
+                        builder.addQualitative(c.getName(), c.getSampleRange());
+                    }
+                }
+                builder.setBackground(null, Double.NaN);
+                baseDim = builder.build();
+                noData = baseDim.getNoDataValues();
+                background = baseDim.getBackground();
+                sampleDimensions.set(i, baseDim);
+                forceTransformedValues = true;
+            }
+
+            if (background.isPresent()) {
+                this.noData[i] = background.get().doubleValue();
+            } else {
+                this.noData[i] = noData.iterator().next().doubleValue();
+            }
+        }
+
+        if (forceTransformedValues) {
+            for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
+                sampleDimensions.set(i, sampleDimensions.get(i).forConvertedValues(true));
+            }
         }
     }
 
@@ -80,23 +132,13 @@ public class MosaicedCoverageResource implements GridCoverageResource {
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return new DefaultMetadata();
-    }
-
-    @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
         return gridGeometry;
     }
 
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        return tiles[0].getResource().getSampleDimensions();
-    }
-
-    @Override
-    public Optional<Envelope> getEnvelope() throws DataStoreException {
-        return Optional.of(getGridGeometry().getEnvelope());
+        return Collections.unmodifiableList(sampleDimensions);
     }
 
     @Override
@@ -129,21 +171,30 @@ public class MosaicedCoverageResource implements GridCoverageResource {
 
         //aggregate tiles
         BufferedImage buffer = null;
-        List<SampleDimension> sampleDimensions = null;
         for (Tile tile : results) {
             final GridCoverageResource resource = tile.getResource();
             try {
-                final GridCoverage coverage = resource.read(domain, range);
-                sampleDimensions = coverage.getSampleDimensions();
-                final RenderedImage tileImage = coverage.render(null);
+                GridCoverage coverage = resource.read(domain, range);
+                RenderedImage tileImage = coverage.render(null);
 
                 if (buffer == null) {
                     //create result image
                     GridExtent extent = canvas.getExtent();
-                    buffer = BufferedImages.createImage(
+                    if (forceTransformedValues) {
+                        coverage = coverage.forConvertedValues(true);
+                        tileImage = coverage.render(null);
+                        buffer = BufferedImages.createImage(
+                            Math.toIntExact(extent.getSize(0)),
+                            Math.toIntExact(extent.getSize(1)),
+                            noData.length, DataBuffer.TYPE_DOUBLE);
+                        BufferedImages.setAll(buffer, noData);
+                    } else {
+                        buffer = BufferedImages.createImage(
                             Math.toIntExact(extent.getSize(0)),
                             Math.toIntExact(extent.getSize(1)),
                             tileImage);
+                        BufferedImages.setAll(buffer, noData);
+                    }
                 }
 
                 MathTransform tileToTileCrs = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
@@ -176,7 +227,7 @@ public class MosaicedCoverageResource implements GridCoverageResource {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("Mosaic");
         gcb.setGridGeometry(canvas);
-        gcb.setSampleDimensions(sampleDimensions);
+        gcb.setSampleDimensions(getSampleDimensions());
         gcb.setRenderedImage(buffer);
         return gcb.build();
     }
