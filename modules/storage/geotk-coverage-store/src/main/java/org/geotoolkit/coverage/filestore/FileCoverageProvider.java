@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -203,6 +204,8 @@ public class FileCoverageProvider extends DataStoreProvider {
                         return new ProbeResult(true, "image", null);
                     }
                 }
+            } catch (EOFException ex) {
+                //reached an EOF while testing file, test next spi
             } catch (IOException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
