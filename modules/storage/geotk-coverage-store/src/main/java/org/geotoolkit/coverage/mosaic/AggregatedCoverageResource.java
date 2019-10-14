@@ -128,7 +128,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         initModel();
     }
 
-    public AggregatedCoverageResource() throws DataStoreException, TransformException {
+    public AggregatedCoverageResource() {
     }
 
     @Override
