@@ -100,6 +100,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private CoordinateReferenceSystem outputCrs = null;
 
     //computed informations
+    private GenericName identifier;
     private Quadtree tree;
     private GridGeometry gridGeometry;
     private List<SampleDimension> sampleDimensions;
@@ -133,7 +134,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
-        return Optional.empty();
+        return Optional.ofNullable(identifier);
+    }
+
+    public void setIdentifier(GenericName identifier) {
+        this.identifier = identifier;
     }
 
     @Override
