@@ -108,7 +108,8 @@
     <module>geotk-coverage-geotiff</module>
     <module>geotk-coverage-imagery</module>
     <module>geotk-coverage-landsat</module>
-    <module>geotk-coverage-postgresql</module>
+    <!-- Obsolete module, still contains interesting things, salvage what we can before removing it -->
+    <!--module>geotk-coverage-postgresql</module-->
     <module>geotk-coverage-xml</module>
     <module>geotk-coverage-store</module>
     <module>geotk-coverage-sql</module>
