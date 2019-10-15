@@ -26,10 +26,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.cql.CQL;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.filter.WrapFilterFactory2;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -95,8 +95,8 @@ public class MathCalcProcess extends AbstractProcess {
 
         final FillCoverage filler = new FillCoverage();
         try {
-            if(outRef instanceof PyramidalCoverageResource){
-                filler.fill((PyramidalCoverageResource)outRef, evaluator);
+            if(outRef instanceof MultiResolutionResource){
+                filler.fill((MultiResolutionResource)outRef, evaluator);
             }else{
                 filler.fill((org.geotoolkit.storage.coverage.GridCoverageResource) outRef, evaluator, null);
             }

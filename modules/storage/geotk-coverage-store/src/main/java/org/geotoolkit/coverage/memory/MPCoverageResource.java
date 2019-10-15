@@ -173,12 +173,12 @@ public class MPCoverageResource extends AbstractGridResource implements MultiRes
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidalModelReader2<>(this).getGridGeometry();
+        return new PyramidReader<>(this).getGridGeometry();
     }
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidalModelReader2<>(this).read(domain, range);
+        return new PyramidReader<>(this).read(domain, range);
     }
 
     @Override

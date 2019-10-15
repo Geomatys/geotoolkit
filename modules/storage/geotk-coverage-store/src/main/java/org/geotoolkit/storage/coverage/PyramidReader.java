@@ -75,14 +75,14 @@ import org.opengis.util.FactoryException;
  * @param <GridCoverageResource>
  * @module
  */
-public class PyramidalModelReader2 <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
+public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
 
     private final T ref;
     private final CoverageFinder coverageFinder = new DefaultCoverageFinder();
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
-    public PyramidalModelReader2(T ref) {
+    public PyramidReader(T ref) {
         this.ref = ref;
     }
 
@@ -391,11 +391,6 @@ public class PyramidalModelReader2 <T extends MultiResolutionResource & org.apac
                     if (image == null) {
                         ColorModel cm = null;
                         SampleModel sm = null;
-                        if (ref instanceof PyramidalCoverageResource) {
-                            final PyramidalCoverageResource pyramRef = (PyramidalCoverageResource) ref;
-                            cm = pyramRef.getColorModel();
-                            sm = pyramRef.getSampleModel();
-                        }
                         if (cm == null) {
                             cm = tileImage.getColorModel();
                         }

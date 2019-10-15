@@ -41,6 +41,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.geometry.HyperCubeIterator;
@@ -189,13 +190,15 @@ public class FillCoverage {
      * @param evaluator
      * @param outRef
      */
-    public static void fill(PyramidalCoverageResource outRef, SampleEvaluator evaluator)
+    public static void fill(MultiResolutionResource outRef, SampleEvaluator evaluator)
             throws DataStoreException, TransformException, FactoryException {
 
-        final ColorModel cm = outRef.getColorModel();
-        final SampleModel sm = outRef.getSampleModel();
+//        final ColorModel cm = outRef.getColorModel();
+//        final SampleModel sm = outRef.getSampleModel();
+        final ColorModel cm = null;
+        final SampleModel sm = null;
 
-        for(Pyramid pyramid : outRef.getModels()){
+        for(Pyramid pyramid : Pyramids.getPyramids(outRef)){
             for(Mosaic mosaic : pyramid.getMosaics()){
                 final Dimension tileSize = mosaic.getTileSize();
                 final double[] upperLeftGeo = mosaic.getUpperLeftCorner().getCoordinate();

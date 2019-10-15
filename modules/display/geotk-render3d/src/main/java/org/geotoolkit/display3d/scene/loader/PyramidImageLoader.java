@@ -33,6 +33,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.display.PortrayalException;
@@ -41,7 +42,6 @@ import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -58,20 +58,20 @@ import org.opengis.util.FactoryException;
  */
 public class PyramidImageLoader implements ImageLoader{
 
-    private final PyramidalCoverageResource ref;
+    private final MultiResolutionResource ref;
     private final Pyramid dataSource;
     private GridMosaicRenderedImage dataRenderedImage = null;
 
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
 
-    public PyramidImageLoader(final PyramidalCoverageResource ref, final Pyramid dataSource) throws FactoryException, IncommensurableException {
+    public PyramidImageLoader(final MultiResolutionResource ref, final Pyramid dataSource) throws FactoryException, IncommensurableException {
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
         this.ref = ref;
         this.dataSource = dataSource;
     }
 
-    public PyramidalCoverageResource getCoverageReference() {
+    public MultiResolutionResource getCoverageReference() {
         return ref;
     }
 

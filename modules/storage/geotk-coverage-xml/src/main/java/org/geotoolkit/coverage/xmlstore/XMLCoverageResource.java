@@ -67,7 +67,7 @@ import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.PyramidalModelReader2;
+import org.geotoolkit.storage.coverage.PyramidReader;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 
@@ -747,12 +747,12 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidalModelReader2<>(this).getGridGeometry();
+        return new PyramidReader<>(this).getGridGeometry();
     }
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidalModelReader2<>(this).read(domain, range);
+        return new PyramidReader<>(this).read(domain, range);
     }
 
     @Override

@@ -29,7 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.multires.MultiResolutionModel;
 import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidalModelReader2;
+import org.geotoolkit.storage.coverage.PyramidReader;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.util.GenericName;
 
@@ -83,7 +83,7 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidalModelReader2<>(this).getGridGeometry();
+        return new PyramidReader<>(this).getGridGeometry();
     }
 
     @Override
@@ -93,7 +93,7 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidalModelReader2<>(this).read(domain, range);
+        return new PyramidReader<>(this).read(domain, range);
     }
 
 }

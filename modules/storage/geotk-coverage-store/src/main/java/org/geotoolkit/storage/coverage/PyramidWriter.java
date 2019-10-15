@@ -75,7 +75,7 @@ import org.opengis.util.FactoryException;
  * @author Cédric Briançon (Geomatys)
  * @author Rémi Maréchal (Geomatys)
  */
-public class PyramidalModelWriter <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridCoverageWriter {
+public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridCoverageWriter {
 
     private final T reference;
 
@@ -87,7 +87,7 @@ public class PyramidalModelWriter <T extends MultiResolutionResource & org.apach
      * @throws IllegalArgumentException if the given {@link GridCoverageResource coverage reference}
      *                                  is not an instance of {@link PyramidalModel}.
      */
-    public PyramidalModelWriter(final T reference) {
+    public PyramidWriter(final T reference) {
         this.reference = reference;
     }
 

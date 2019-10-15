@@ -42,6 +42,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -52,7 +53,6 @@ import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -106,8 +106,8 @@ public class Isoline2 extends AbstractProcess {
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));
 
-            if (coverageRef instanceof PyramidalCoverageResource) {
-                final PyramidalCoverageResource pm = (PyramidalCoverageResource) coverageRef;
+            if (coverageRef instanceof MultiResolutionResource) {
+                final MultiResolutionResource pm = (MultiResolutionResource) coverageRef;
                 computeIsolineFromPM(pm);
 
             } else {
@@ -137,9 +137,9 @@ public class Isoline2 extends AbstractProcess {
         outputParameters.parameter("outFeatureCollection").setValue(col);
     }
 
-    private void computeIsolineFromPM(PyramidalCoverageResource pm) throws DataStoreException, ProcessException, InterruptedException{
+    private void computeIsolineFromPM(MultiResolutionResource pm) throws DataStoreException, ProcessException, InterruptedException{
 
-        final Collection<Pyramid> pyramids = pm.getModels();
+        final Collection<Pyramid> pyramids = Pyramids.getPyramids(pm);
 
         final ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (Pyramid pyramid : pyramids) {

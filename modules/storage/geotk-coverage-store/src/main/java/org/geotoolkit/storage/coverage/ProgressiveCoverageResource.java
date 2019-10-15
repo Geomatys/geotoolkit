@@ -59,7 +59,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        PyramidalModelReader2 reader = new PyramidalModelReader2(this);
+        PyramidReader reader = new PyramidReader(this);
         return reader.read(domain, range);
     }
 

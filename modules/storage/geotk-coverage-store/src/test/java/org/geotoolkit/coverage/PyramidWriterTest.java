@@ -40,7 +40,7 @@ import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.PyramidalModelWriter;
+import org.geotoolkit.storage.coverage.PyramidWriter;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -88,7 +88,7 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
         testImage(candidate, 360, 180, Color.BLACK);
 
         //write over the tile
-        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
+        final PyramidWriter writer = new PyramidWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
@@ -128,7 +128,7 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
+        final PyramidWriter writer = new PyramidWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
@@ -168,7 +168,7 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
+        final PyramidWriter writer = new PyramidWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -230,7 +230,7 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
+        final PyramidWriter writer = new PyramidWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -322,7 +322,7 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
         testImage(candidate, 18, 36, Color.BLACK);
 
         //write over the tile
-        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
+        final PyramidWriter writer = new PyramidWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -414,7 +414,7 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
+        final PyramidWriter writer = new PyramidWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(EPSG4326);
         env.setRange(0, -30, +60);

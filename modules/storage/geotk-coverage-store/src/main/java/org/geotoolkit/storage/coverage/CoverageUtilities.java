@@ -32,10 +32,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
+import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
@@ -45,7 +46,6 @@ import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -199,7 +199,7 @@ public final class CoverageUtilities {
      * @throws DataStoreException If a problem occurs at pyramid access.
      * @throws IOException If a problem occurs at image reading/writing.
      */
-    public static void copyPyramidReference(PyramidalCoverageResource sourceRef, PyramidalCoverageResource targetRef) throws DataStoreException, IOException {
+    public static void copyPyramidReference(MultiResolutionResource sourceRef, MultiResolutionResource targetRef) throws DataStoreException, IOException {
         final Collection<? extends Pyramid> pyramids = Pyramids.getPyramids(sourceRef);
 
         // Create pyramids
@@ -266,7 +266,7 @@ public final class CoverageUtilities {
     /**
      * Get or create a pyramid and it's mosaic for the given envelope and scales.
      */
-    public static Pyramid getOrCreatePyramid(PyramidalCoverageResource container,
+    public static Pyramid getOrCreatePyramid(MultiResolutionResource container,
             Envelope envelope, Dimension tileSize, double[] scales) throws DataStoreException
     {
         // Find if we already have a pyramid in the given CRS

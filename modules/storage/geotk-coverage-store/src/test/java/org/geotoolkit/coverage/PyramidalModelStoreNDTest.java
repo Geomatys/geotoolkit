@@ -38,11 +38,11 @@ import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -56,7 +56,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.TestBase {
+public abstract class PyramidalModelStoreNDTest <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.00000001;
 
@@ -69,7 +69,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
 
     private DataStore store;
     private CoordinateReferenceSystem crs;
-    private PyramidalCoverageResource ref;
+    private T ref;
 
     protected abstract DataStore createStore() throws Exception ;
 
@@ -87,7 +87,7 @@ public abstract class PyramidalModelStoreNDTest extends org.geotoolkit.test.Test
         crs = new GeodeticObjectBuilder().addName("3dcrs").createCompoundCRS(horizontal,vertical);
 
         final GenericName name = NamesExt.create("test");
-        ref = (PyramidalCoverageResource) agg.add(new DefiningCoverageResource(name));
+        ref = (T) agg.add(new DefiningCoverageResource(name));
 
         //prepare expected colors
         int color = 0;
