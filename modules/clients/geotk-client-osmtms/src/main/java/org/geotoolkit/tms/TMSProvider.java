@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.tms;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
@@ -25,16 +25,16 @@ import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
 
 /**
- * OSM TMS Server factory.
+ * TMS client provider.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
-public class OSMTMSProvider extends AbstractClientProvider {
+public class TMSProvider extends AbstractClientProvider {
 
-    /** factory identification **/
-    public static final String NAME = "osm-tms";
+    /** provider identification **/
+    public static final String NAME = "tms";
 
     /**
      * Mandatory - the serveur max zoom level
@@ -45,10 +45,17 @@ public class OSMTMSProvider extends AbstractClientProvider {
             .setRemarks(Bundle.formatInternational(Bundle.Keys.maxZoomLevelRemarks))
             .setRequired(true)
             .create(Integer.class, 18);
+    /**
+     * file pattern.
+     */
+    public static final ParameterDescriptor<String> PATTERN = new ParameterBuilder()
+            .addName("pattern")
+            .setRequired(true)
+            .create(String.class, "{z}/{x}/{y}.png");
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new ParameterBuilder().addName(NAME).addName("OSMTMSParameters").createGroup(
-                URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
+            new ParameterBuilder().addName(NAME).addName("TMSParameters").createGroup(
+                URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT,PATTERN);
 
     @Override
     public String getShortName() {
@@ -69,10 +76,10 @@ public class OSMTMSProvider extends AbstractClientProvider {
     }
 
     @Override
-    public OSMTileMapClient open(ParameterValueGroup params) throws DataStoreException {
+    public TileMapClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
 
-        final OSMTileMapClient server = new OSMTileMapClient(params);
+        final TileMapClient server = new TileMapClient(params);
 
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());

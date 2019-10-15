@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.tms;
 
 import java.net.URL;
 import java.util.Collection;
@@ -24,9 +24,9 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
-import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.tms.model.TMSPyramidSet;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -37,10 +37,10 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OSMTileMapClient extends AbstractCoverageClient implements Client, Aggregate {
+public class TileMapClient extends AbstractCoverageClient implements Client, Aggregate {
 
-    private final OSMTMSPyramidSet pyramidSet;
-    private final OSMTMSCoverageResource resource;
+    private final TMSPyramidSet pyramidSet;
+    private final TMSResource resource;
 
     /**
      * Builds a tile map server with the given server url and version.
@@ -48,7 +48,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
      * @param serverURL The server base url. must not be null.
      * @param maxZoomLevel maximum zoom level supported on server.
      */
-    public OSMTileMapClient(final URL serverURL, final int maxZoomLevel) {
+    public TileMapClient(final URL serverURL, final int maxZoomLevel) {
         this(serverURL,null,maxZoomLevel, false);
     }
 
@@ -59,7 +59,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
      * @param security ClientSecurity.
      * @param maxZoomLevel maximum zoom level supported on server.
      */
-    public OSMTileMapClient(final URL serverURL, final ClientSecurity security,
+    public TileMapClient(final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel) {
         this(serverURL,security,maxZoomLevel, false);
     }
@@ -72,30 +72,30 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
      * @param security ClientSecurity.
      * @param maxZoomLevel maximum zoom level supported on server.
      */
-    public OSMTileMapClient(final URL serverURL, final ClientSecurity security,
+    public TileMapClient(final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel, boolean cacheImage) {
         this(toParameters(serverURL, security, maxZoomLevel, cacheImage));
     }
 
-    public OSMTileMapClient(ParameterValueGroup params){
+    public TileMapClient(ParameterValueGroup params){
         super(params);
         final GenericName name = NamesExt.create(serverURL.toString(), "main");
-        pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
-        resource = new OSMTMSCoverageResource(this,name);
+        pyramidSet = new TMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
+        resource = new TMSResource(this,name);
     }
 
     private static ParameterValueGroup toParameters(
             final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel, boolean cacheImage){
-        final Parameters params = create(OSMTMSProvider.PARAMETERS, serverURL, security);
-        params.getOrCreate(OSMTMSProvider.MAX_ZOOM_LEVEL).setValue(maxZoomLevel);
-        params.getOrCreate(OSMTMSProvider.IMAGE_CACHE).setValue(cacheImage);
+        final Parameters params = create(TMSProvider.PARAMETERS, serverURL, security);
+        params.getOrCreate(TMSProvider.MAX_ZOOM_LEVEL).setValue(maxZoomLevel);
+        params.getOrCreate(TMSProvider.IMAGE_CACHE).setValue(cacheImage);
         return params;
     }
 
     @Override
-    public OSMTMSProvider getProvider() {
-        return (OSMTMSProvider) DataStores.getProviderById(OSMTMSProvider.NAME);
+    public TMSProvider getProvider() {
+        return (TMSProvider) DataStores.getProviderById(TMSProvider.NAME);
     }
 
     @Override
@@ -104,10 +104,10 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
     }
 
     public boolean getCacheImage(){
-        return parameters.getValue(OSMTMSProvider.IMAGE_CACHE);
+        return parameters.getValue(TMSProvider.IMAGE_CACHE);
     }
 
-    public OSMTMSPyramidSet getPyramidSet(){
+    public TMSPyramidSet getPyramidSet(){
         return pyramidSet;
     }
 
@@ -115,14 +115,16 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Client, 
      * @return maximum scale level available on this server.
      */
     public int getMaxZoomLevel() {
-        return parameters.getValue(OSMTMSProvider.MAX_ZOOM_LEVEL);
+        return parameters.getValue(TMSProvider.MAX_ZOOM_LEVEL);
     }
 
     /**
      * Returns the request object.
      */
     public GetTileRequest createGetTile() {
-        return new DefaultGetTile(this);
+        final DefaultGetTile getTile = new DefaultGetTile(this);
+        getTile.setPattern(parameters.getValue(TMSProvider.PATTERN));
+        return getTile;
     }
 
     @Override

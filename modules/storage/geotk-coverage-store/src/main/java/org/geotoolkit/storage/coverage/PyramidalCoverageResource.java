@@ -20,8 +20,8 @@ import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
 import java.util.Collection;
 import java.util.List;
-import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
@@ -56,16 +56,6 @@ public interface PyramidalCoverageResource extends GridCoverageResource, MultiRe
      * @throws org.apache.sis.storage.DataStoreException
      */
     void setPackMode(ViewType packMode) throws DataStoreException;
-
-    /**
-     * List sample dimensions.
-     *
-     * This method should be called before adding any data.
-     *
-     * @return can be null
-     * @throws DataStoreException
-     */
-    List<SampleDimension> getSampleDimensions() throws DataStoreException;
 
     /**
      * Set sample dimensions.

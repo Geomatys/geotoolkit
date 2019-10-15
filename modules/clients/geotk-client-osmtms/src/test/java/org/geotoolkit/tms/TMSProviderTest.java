@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.tms;
 
 import java.util.Iterator;
 import org.apache.sis.storage.DataStoreProvider;
@@ -28,9 +28,9 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OSMTMSClientFactoryTest extends org.geotoolkit.test.TestBase {
+public class TMSProviderTest extends org.geotoolkit.test.TestBase {
 
-    public OSMTMSClientFactoryTest() {
+    public TMSProviderTest() {
     }
 
     @Test
@@ -38,13 +38,13 @@ public class OSMTMSClientFactoryTest extends org.geotoolkit.test.TestBase {
 
         final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;
-        while (ite.hasNext()){
-            if(ite.next() instanceof OSMTMSProvider){
+        while (ite.hasNext()) {
+            if (ite.next() instanceof TMSProvider) {
                 found = true;
             }
         }
 
-        if(!found){
+        if (!found) {
             fail("Factory not found");
         }
     }

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.tms;
 
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
@@ -28,17 +28,14 @@ import org.geotoolkit.client.AbstractRequest;
 public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
 
     /**
-     * Default logger for all GetMap requests.
+     * Default logger for all GetTile requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.osmtms");
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.tms");
 
-    /**
-     * The version to use for this webservice request.
-     */
+    private String pattern = "{z}/{x}/{y}.png";
     private int scale = 0;
     private long row = 0;
     private long col = 0;
-    private String extension = ".png";
 
 
     /**
@@ -46,7 +43,7 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
      *
      * @param serverURL The server url.
      */
-    protected DefaultGetTile(final OSMTileMapClient server){
+    protected DefaultGetTile(final TileMapClient server){
         super(server);
     }
 
@@ -54,10 +51,13 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
     protected String getSubPath() {
         final StringBuilder sb = new StringBuilder();
         final String baseSub = super.getSubPath();
-        if(baseSub != null){
+        if (baseSub != null) {
             sb.append(baseSub);
         }
-        sb.append('/').append(scale).append('/').append(col).append('/').append(row).append(extension);
+
+        String part = pattern.replace("{z}", ""+scale).replace("{x}", ""+col).replace("{y}", ""+row);
+
+        sb.append('/').append(part);
         return sb.toString();
     }
 
@@ -93,13 +93,13 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
     }
 
     @Override
-    public String getExtension() {
-        return extension;
+    public String getPattern() {
+        return pattern;
     }
 
     @Override
-    public void setExtension(final String ext) {
-        this.extension = ext;
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
     }
 
 }

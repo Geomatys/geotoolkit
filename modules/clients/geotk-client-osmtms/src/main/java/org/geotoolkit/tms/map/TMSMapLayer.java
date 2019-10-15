@@ -14,14 +14,14 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms.map;
+package org.geotoolkit.tms.map;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
-import org.geotoolkit.osmtms.OSMTileMapClient;
+import org.geotoolkit.tms.TileMapClient;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -33,9 +33,9 @@ import org.geotoolkit.style.StyleConstants;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
+public class TMSMapLayer extends DefaultCoverageMapLayer {
 
-    private static GridCoverageResource getReference(OSMTileMapClient server){
+    private static GridCoverageResource getReference(TileMapClient server){
         try {
             return (GridCoverageResource) DataStores.flatten(server, true, GridCoverageResource.class).iterator().next();
         } catch (DataStoreException ex) {
@@ -48,7 +48,7 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
     private static final String DEFAULT_FORMAT = ".png";
 
 
-    public OSMTMSMapLayer(final OSMTileMapClient server) {
+    public TMSMapLayer(final TileMapClient server) {
         super(getReference(server),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         setUserProperty(Pyramids.HINT_FORMAT, DEFAULT_FORMAT);

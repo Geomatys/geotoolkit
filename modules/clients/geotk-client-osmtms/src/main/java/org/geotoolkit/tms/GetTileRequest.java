@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.tms;
 
 import org.geotoolkit.client.Request;
 
@@ -38,8 +38,8 @@ public interface GetTileRequest extends Request {
 
     void setTileCol(long tr);
 
-    String getExtension();
+    String getPattern();
 
-    void setExtension(String ext);
+    void setPattern(String pattern);
 
 }

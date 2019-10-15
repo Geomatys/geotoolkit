@@ -1,5 +1,5 @@
 
-package org.geotoolkit.pending.demo.clients.osmtms;
+package org.geotoolkit.pending.demo.clients.tms;
 
 import java.net.URL;
 import org.apache.sis.parameter.Parameters;
@@ -12,15 +12,15 @@ import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.osmtms.OSMTMSProvider;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.tms.TMSProvider;
 
 
-public class OSMTMSClientDemo {
+public class TMSClientDemo {
 
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
 
@@ -36,11 +36,11 @@ public class OSMTMSClientDemo {
     public static MapContext createOSMTMSContext() throws Exception{
         final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
-        final Parameters params = Parameters.castOrWrap(OSMTMSProvider.PARAMETERS.createValue());
-        params.getOrCreate(OSMTMSProvider.URL).setValue(new URL("http://tile.openstreetmap.org"));
-        params.getOrCreate(OSMTMSProvider.IMAGE_CACHE).setValue(true);
-        params.getOrCreate(OSMTMSProvider.NIO_QUERIES).setValue(true);
-        params.getOrCreate(OSMTMSProvider.MAX_ZOOM_LEVEL).setValue(18);
+        final Parameters params = Parameters.castOrWrap(TMSProvider.PARAMETERS.createValue());
+        params.getOrCreate(TMSProvider.URL).setValue(new URL("http://tile.openstreetmap.org"));
+        params.getOrCreate(TMSProvider.IMAGE_CACHE).setValue(true);
+        params.getOrCreate(TMSProvider.NIO_QUERIES).setValue(true);
+        params.getOrCreate(TMSProvider.MAX_ZOOM_LEVEL).setValue(18);
 
         final DataStore store = DataStores.open(params);
 
@@ -53,6 +53,9 @@ public class OSMTMSClientDemo {
         }
 
         //Other available OSM TMS
+        // https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/4/4/9
+
+        //not available anymore
         // http://a.tah.openstreetmap.org/Tiles/tile/   17
         // http://tile.opencyclemap.org/cycle/ 18
         // http://tile.cloudmade.com/fd093e52f0965d46bb1c6c6281022199/3/256/ 18
