@@ -31,16 +31,16 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalModelWriter;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -55,7 +55,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
+public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends org.geotoolkit.test.TestBase {
 
     private static final GenericName NAME = NamesExt.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
@@ -78,7 +78,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testSingleGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
+        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic = pyramid.createMosaic(new DefiningMosaic(null, UL84, 1, new Dimension(360, 180), new Dimension(1, 1)));
         mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(360, 180, Color.BLACK), 0, 0)), null);
@@ -88,7 +88,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         testImage(candidate, 360, 180, Color.BLACK);
 
         //write over the tile
-        final GridCoverageWriter writer = ref.acquireWriter();
+        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
@@ -100,7 +100,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(360, 180, Color.RED));
         writer.write(gcb.build(), param);
-        ref.recycle(writer);
+        writer.dispose();
 
         //image should be red
         candidate = ref.read(null).render(null);
@@ -113,7 +113,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testQuadGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
+        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic = pyramid.createMosaic(
                 new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
@@ -128,7 +128,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final GridCoverageWriter writer = ref.acquireWriter();
+        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
@@ -140,7 +140,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(36, 18, Color.RED));
         writer.write(gcb.build(), param);
-        ref.recycle(writer);
+        writer.dispose();
 
         //image should be red
         candidate = ref.read(null).render(null);
@@ -153,7 +153,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testPartialQuadGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
+        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic = pyramid.createMosaic(
                 new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
@@ -168,7 +168,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final GridCoverageWriter writer = ref.acquireWriter();
+        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -180,7 +180,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), param);
-        ref.recycle(writer);
+        writer.dispose();
 
         //image should be black/red
         candidate = ref.read(null).render(null);
@@ -208,7 +208,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testPartialQuadGridOverride2() throws DataStoreException, IOException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
+        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic1 = pyramid.createMosaic(
                 new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
@@ -230,7 +230,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final GridCoverageWriter writer = ref.acquireWriter();
+        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -242,7 +242,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), param);
-        ref.recycle(writer);
+        writer.dispose();
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);
@@ -300,7 +300,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testPartialQuadGridOverrideFlip() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
+        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(EPSG4326));
         final Mosaic mosaic1 = pyramid.createMosaic(
                 new DefiningMosaic(null, UL4326, 10, new Dimension(9, 9), new Dimension(2, 4)));
@@ -321,8 +321,8 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         RenderedImage candidate = ref.read(null).render(null);
         testImage(candidate, 18, 36, Color.BLACK);
 
-       //write over the tile
-        final GridCoverageWriter writer = ref.acquireWriter();
+        //write over the tile
+        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -334,7 +334,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), param);
-        ref.recycle(writer);
+        writer.dispose();
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);
@@ -392,7 +392,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testPartialQuadGridOverrideFlip2() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalCoverageResource ref = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NAME));
+        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic1 = pyramid.createMosaic(
                 new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
@@ -414,7 +414,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final GridCoverageWriter writer = ref.acquireWriter();
+        final PyramidalModelWriter writer = new PyramidalModelWriter(ref);
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(EPSG4326);
         env.setRange(0, -30, +60);
@@ -426,7 +426,7 @@ public class PyramidWriterTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(9, 19, Color.RED));
         writer.write(gcb.build(), param);
-        ref.recycle(writer);
+        writer.dispose();
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);

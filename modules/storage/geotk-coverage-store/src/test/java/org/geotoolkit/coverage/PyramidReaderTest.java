@@ -16,17 +16,18 @@ import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,7 +63,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final int width = 28;
         final int height = 13;
 
-        final PyramidalCoverageResource ref1 = (PyramidalCoverageResource) store.add(new DefiningCoverageResource(NamesExt.create("test1")));
+        final GridCoverageResource ref1 = store.add(new DefiningCoverageResource(NamesExt.create("test1")));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
             {-5, 0,  -7},
@@ -169,10 +170,10 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
      * @param crs
      * @param geovalues [0...n slices][Z coord, T coord, sample value]
      */
-    private static void create4DPyramid(PyramidalCoverageResource ref, CoordinateReferenceSystem crs,
+    private static void create4DPyramid(GridCoverageResource ref, CoordinateReferenceSystem crs,
             int width, int height, double[][] geovalues) throws DataStoreException{
 
-        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(crs));
+        final Pyramid pyramid = (Pyramid) ((MultiResolutionResource) ref).createModel(new DefiningPyramid(crs));
 
         final Dimension gridSize = new Dimension(4, 3);
         final Dimension tilePixelSize = new Dimension(width, height);

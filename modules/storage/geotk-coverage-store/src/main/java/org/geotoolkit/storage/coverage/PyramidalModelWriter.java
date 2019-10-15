@@ -21,19 +21,15 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.stream.Stream;
-import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -53,6 +49,7 @@ import org.geotoolkit.coverage.io.AbstractGridCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.image.BufferedImages;
@@ -78,9 +75,9 @@ import org.opengis.util.FactoryException;
  * @author Cédric Briançon (Geomatys)
  * @author Rémi Maréchal (Geomatys)
  */
-public class PyramidalModelWriter extends AbstractGridCoverageWriter {
+public class PyramidalModelWriter <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridCoverageWriter {
 
-    private final GridCoverageResource reference;
+    private final T reference;
 
     /**
      * Build a writer on an existing {@link GridCoverageResource coverage reference}.
@@ -90,10 +87,7 @@ public class PyramidalModelWriter extends AbstractGridCoverageWriter {
      * @throws IllegalArgumentException if the given {@link GridCoverageResource coverage reference}
      *                                  is not an instance of {@link PyramidalModel}.
      */
-    public PyramidalModelWriter(final GridCoverageResource reference) {
-        if (!(reference instanceof PyramidalCoverageResource)) {
-            throw new IllegalArgumentException("Given coverage reference should be an instance of PyramidalModel!");
-        }
+    public PyramidalModelWriter(final T reference) {
         this.reference = reference;
     }
 
@@ -162,15 +156,14 @@ public class PyramidalModelWriter extends AbstractGridCoverageWriter {
         }
 
         //to fill value table : see resample.
-        final int nbBand        = image.getSampleModel().getNumBands();
-        final PyramidalCoverageResource pm = (PyramidalCoverageResource)reference;
+        final int nbBand = image.getSampleModel().getNumBands();
 
         final BlockingQueue<Runnable> tileQueue;
         try {
             //extract the 2D part of the gridtocrs transform
             final TransformSeparator filter = new TransformSeparator(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
-            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
+            tileQueue = new ByTileQueue(reference, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex);
         } catch (FactoryException ex) {
@@ -193,9 +186,9 @@ public class PyramidalModelWriter extends AbstractGridCoverageWriter {
         }
     }
 
-    private static class ByTileQueue extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {
+    private static class ByTileQueue <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {
 
-        private final PyramidalCoverageResource model;
+        private final T model;
         private final Envelope requestedEnvelope;
         private final CoordinateReferenceSystem crsCoverage2D;
         private final RenderedImage sourceImage;
@@ -229,7 +222,7 @@ public class PyramidalModelWriter extends AbstractGridCoverageWriter {
         private int idx = -1;
         private int idy = -1;
 
-        private ByTileQueue(PyramidalCoverageResource model, Envelope requestedEnvelope,
+        private ByTileQueue(T model, Envelope requestedEnvelope,
                 CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand,
                 MathTransform srcCRSToGrid, InterpolationCase interpolation) throws DataStoreException{
             this.model = model;
@@ -429,9 +422,9 @@ public class PyramidalModelWriter extends AbstractGridCoverageWriter {
 
     }
 
-    private static class TileUpdater implements Runnable{
+    private static class TileUpdater <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> implements Runnable{
 
-        private final PyramidalCoverageResource pm;
+        private final T pm;
         private final Pyramid pyramid;
         private final Mosaic mosaic;
         private final int idx;
@@ -451,7 +444,7 @@ public class PyramidalModelWriter extends AbstractGridCoverageWriter {
         private final int tileWidth;
         private final int tileHeight;
 
-        public TileUpdater(PyramidalCoverageResource pm, Pyramid pyramid, Mosaic mosaic, int idx, int idy,
+        public TileUpdater(T pm, Pyramid pyramid, Mosaic mosaic, int idx, int idy,
                 int mosAreaX, int mosAreaY, int mosAreaMaxX, int mosAreaMaxY,
                 double mosULX, double mosULY, MathTransform crsDestToSrcGrid,
                 RenderedImage image, int nbBand, double res, InterpolationCase interpolation) {
@@ -481,37 +474,15 @@ public class PyramidalModelWriter extends AbstractGridCoverageWriter {
         public void run() {
             final BufferedImage currentlyTile;
 
-            if(!mosaic.isMissing(idx, idy)){
+            if (!mosaic.isMissing(idx, idy)) {
                 try {
                     ImageTile tile = (ImageTile) mosaic.getTile(idx, idy);
                     currentlyTile = (BufferedImage) tile.getImage();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-            }else{
-                try {
-                    SampleModel sm = pm.getSampleModel();
-                    if(sm!=null){
-                        final WritableRaster raster = WritableRaster.createWritableRaster(
-                                sm.createCompatibleSampleModel(tileWidth, tileHeight), new Point(0, 0));
-                        currentlyTile = new BufferedImage(pm.getColorModel(), raster, pm.getColorModel().isAlphaPremultiplied(), null);
-                        //currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, sm.getNumBands(), sm.getDataType());
-
-                    }else{
-                        //todo not exact
-                        final List<SampleDimension> dims = pm.getSampleDimensions();
-                        if(nbBand==3){
-                            currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
-                        }else if(nbBand==4){
-                            currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
-                        }else{
-                            currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, dims.size(),
-                                    pm.getSampleModel().getDataType());
-                        }
-                    }
-                } catch (DataStoreException ex) {
-                    throw new RuntimeException(ex);
-                }
+            } else {
+                currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, baseImage);
             }
 
             // define tile translation from bufferedImage min pixel position to mosaic pixel position.

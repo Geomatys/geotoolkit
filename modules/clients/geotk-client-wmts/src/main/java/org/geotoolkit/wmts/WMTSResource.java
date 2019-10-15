@@ -17,10 +17,19 @@
 package org.geotoolkit.wmts;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.multires.MultiResolutionModel;
+import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidalModelReader2;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.util.GenericName;
 
@@ -30,13 +39,27 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSResource extends AbstractPyramidalCoverageResource {
+public class WMTSResource extends AbstractGridResource implements MultiResolutionResource, StoreResource {
 
+    private final WebMapTileClient server;
+    private final GenericName name;
     private final WMTSPyramidSet set;
 
     WMTSResource(WebMapTileClient server, GenericName name, boolean cacheImage){
-        super(server,name);
+        super(null);
+        this.server = server;
+        this.name = name;
         set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
+    }
+
+    @Override
+    public DataStore getOriginator() {
+        return server;
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(name);
     }
 
     public WMTSPyramidSet getPyramidSet() {
@@ -56,6 +79,21 @@ public class WMTSResource extends AbstractPyramidalCoverageResource {
     @Override
     public void removeModel(String identifier) throws DataStoreException {
         throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        return new PyramidalModelReader2<>(this).getGridGeometry();
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        return new PyramidalModelReader2<>(this).read(domain, range);
     }
 
 }

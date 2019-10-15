@@ -33,6 +33,7 @@ import org.geotoolkit.data.multires.Pyramid;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@Deprecated
 public interface PyramidalCoverageResource extends GridCoverageResource, MultiResolutionResource {
 
     @Override

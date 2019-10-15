@@ -17,23 +17,18 @@
 
 package org.geotoolkit.ncwms;
 
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.Dimension;
+import java.awt.geom.NoninvertibleTransformException;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
-
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.ncwms.map.NcWMSMapLayer;
 import org.geotoolkit.wms.xml.WMSVersion;
-
+import static org.junit.Assert.*;
 import org.junit.Test;
-
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -62,9 +57,9 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
 
-        final String query = layer.getResource().query(env, new Dimension(800, 600)).toString();
+        final String query = layer.query(env, new Dimension(800, 600)).toString();
         assertFalse(query.contains("OPACITY="));
         assertFalse(query.contains("COLORSCALERANGE="));
         assertFalse(query.contains("NUMCOLORBANDS="));
@@ -82,13 +77,13 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
-        layer.getResource().setOpacity(new Integer(60));
-        layer.getResource().dimensions().put("COLORSCALERANGE","auto");
-        layer.getResource().setNumColorBands(125);
-        layer.getResource().setLogScale(true);
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
+        layer.setOpacity(new Integer(60));
+        layer.dimensions().put("COLORSCALERANGE","auto");
+        layer.setNumColorBands(125);
+        layer.setLogScale(true);
 
-        final String query = layer.getResource().query(env, new Dimension(800, 600)).toString();
+        final String query = layer.query(env, new Dimension(800, 600)).toString();
         assertTrue("was:" + query, query.contains("OPACITY=60"));
         assertTrue("was:" + query, query.contains("COLORSCALERANGE=auto"));
         assertTrue("was:" + query, query.contains("NUMCOLORBANDS=125"));
@@ -107,9 +102,9 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
 
-        final String query = layer.getResource().queryFeatureInfo(env, new Dimension(360, 180),
+        final String query = layer.queryFeatureInfo(env, new Dimension(360, 180),
                 140, 250, new String[]{"BlueMarble"}, "gml", 1).getURL().toString();
         assertTrue("was:" + query, query.contains("INFO_FORMAT=gml"));
         assertTrue("was:" + query, query.contains("QUERY_LAYERS=BlueMarble"));
@@ -134,13 +129,13 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
-        layer.getResource().setOpacity(new Integer(60));
-        layer.getResource().dimensions().put("COLORSCALERANGE","auto");
-        layer.getResource().setNumColorBands(125);
-        layer.getResource().setLogScale(true);
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
+        layer.setOpacity(new Integer(60));
+        layer.dimensions().put("COLORSCALERANGE","auto");
+        layer.setNumColorBands(125);
+        layer.setLogScale(true);
 
-        final String query = layer.getResource().queryFeatureInfo(env, new Dimension(360, 180),
+        final String query = layer.queryFeatureInfo(env, new Dimension(360, 180),
                 140, 250, new String[]{"BlueMarble"}, "gml", 1).getURL().toString();
         assertTrue("was:" + query, query.contains("INFO_FORMAT=gml"));
         assertTrue("was:" + query, query.contains("QUERY_LAYERS=BlueMarble"));
@@ -159,13 +154,13 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_GetLegend() throws MalformedURLException {
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
-        layer.getResource().dimensions().put("COLORSCALERANGE","auto");
-        layer.getResource().setNumColorBands(125);
-        layer.getResource().setLogScale(true);
-        layer.getResource().setStyles("style_name/palette_name");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
+        layer.dimensions().put("COLORSCALERANGE","auto");
+        layer.setNumColorBands(125);
+        layer.setLogScale(true);
+        layer.setStyles("style_name/palette_name");
 
-        final String query = layer.getResource().queryLegend(new Dimension(360, 180),
+        final String query = layer.queryLegend(new Dimension(360, 180),
                 "image/png", "test", 100.0).getURL().toString();
         assertTrue("was:" + query, query.contains("FORMAT=image%2Fpng"));
         assertTrue("was:" + query, query.contains("WIDTH=360"));
@@ -185,18 +180,18 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_GetMetadataLayerDetails() throws MalformedURLException {
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
 
         // Test mandatory values
-        String query = layer.getResource().queryMetadataLayerDetails().toString();
+        String query = layer.queryMetadataLayerDetails().toString();
         assertTrue("was:" + query, query.contains("request=GetMetadata"));
         assertTrue("was:" + query, query.contains("item=layerDetails"));
         assertTrue("was:" + query, query.contains("layerName=BlueMarble"));
 
 
         // Test all values
-        layer.getResource().dimensions().put("TIME", "10-10-10T01:00:00Z");
-        query = layer.getResource().queryMetadataLayerDetails().toString();
+        layer.dimensions().put("TIME", "10-10-10T01:00:00Z");
+        query = layer.queryMetadataLayerDetails().toString();
         assertTrue("was:" + query, query.contains("item=layerDetails"));
         assertTrue("was:" + query, query.contains("layerName=BlueMarble"));
         assertTrue("was:" + query, query.contains("time=10-10-10T01%3A00%3A00Z"));
@@ -209,10 +204,10 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_GetMetadataAnimationTimesteps() throws MalformedURLException {
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
 
         // Test mandatory values
-        String query = layer.getResource().queryMetadataAnimationTimesteps("10-10-10T01:00:00Z",
+        String query = layer.queryMetadataAnimationTimesteps("10-10-10T01:00:00Z",
                 "11-10-10T01:00:00Z").toString();
         assertTrue("was:" + query, query.contains("request=GetMetadata"));
         assertTrue("was:" + query, query.contains("item=animationTimesteps"));
@@ -229,11 +224,11 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_GetMetadataTimesteps() throws MalformedURLException {
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
-        layer.getResource().dimensions().put("TIME", "10-10-10T01:00:00Z");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
+        layer.dimensions().put("TIME", "10-10-10T01:00:00Z");
 
         // Test mandatory values
-        String query = layer.getResource().queryMetadataTimesteps().toString();
+        String query = layer.queryMetadataTimesteps().toString();
         assertTrue("was:" + query, query.contains("request=GetMetadata"));
         assertTrue("was:" + query, query.contains("item=timesteps"));
         assertTrue("was:" + query, query.contains("layerName=BlueMarble"));
@@ -247,10 +242,10 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_GetMetadataMinmax() throws MalformedURLException {
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
 
         // Test mandatory values
-        String query = layer.getResource().queryMetadataMinmax("epsg:4326","-2,-1,1,2","300","400").toString();
+        String query = layer.queryMetadataMinmax("epsg:4326","-2,-1,1,2","300","400").toString();
         assertTrue("was:" + query, query.contains("request=GetMetadata"));
         assertTrue("was:" + query, query.contains("item=minmax"));
         assertTrue("was:" + query, query.contains("layers=BlueMarble"));
@@ -268,10 +263,10 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_GetTransect() throws MalformedURLException {
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
 
         // Test mandatory values
-        String query = layer.getResource().queryTransect("CRS:84", "1 2,3 4", "image/png")
+        String query = layer.queryTransect("CRS:84", "1 2,3 4", "image/png")
                 .toString();
         assertTrue("was:" + query, query.contains("REQUEST=GetTransect"));
         assertTrue("was:" + query, query.contains("LAYER=BlueMarble"));
@@ -280,9 +275,9 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
         assertTrue("was:" + query, query.contains("LINESTRING=1+2%2C3+4"));
 
         // Test optional values
-        layer.getResource().dimensions().put("TIME", "10-10-10T10:00:00Z");
-        layer.getResource().dimensions().put("ELEVATION", "550");
-        query = layer.getResource().queryTransect("CRS:84", "1 2,3 4", "image/png").toString();
+        layer.dimensions().put("TIME", "10-10-10T10:00:00Z");
+        layer.dimensions().put("ELEVATION", "550");
+        query = layer.queryTransect("CRS:84", "1 2,3 4", "image/png").toString();
         assertTrue("was:" + query, query.contains("TIME=10-10-10T10%3A00%3A00Z"));
         assertTrue("was:" + query, query.contains("ELEVATION=550"));
     }
@@ -294,10 +289,10 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
     @Test
     public void test_GetVerticalProfile() throws MalformedURLException {
 
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
+        final NcWMSResource layer = new NcWMSResource(SERVER_111, "BlueMarble");
 
         // Test mandatory values
-        String query = layer.getResource().queryVerticalProfile("CRS:84", 1, 2,  "image/png")
+        String query = layer.queryVerticalProfile("CRS:84", 1, 2,  "image/png")
                 .toString();
         System.out.println("query = " + query);
         assertTrue("was:" + query, query.contains("REQUEST=GetVerticalProfile"));
@@ -307,8 +302,8 @@ public class NcWMSMapLayerTest extends org.geotoolkit.test.TestBase {
         assertTrue("was:" + query, query.contains("POINT=1.0+2.0"));
 
         // Test optional values
-        layer.getResource().dimensions().put("TIME", "10-10-10T10:00:00Z");
-        query = layer.getResource().queryVerticalProfile("CRS:84", 1, 2,  "image/png").toString();
+        layer.dimensions().put("TIME", "10-10-10T10:00:00Z");
+        query = layer.queryVerticalProfile("CRS:84", 1, 2,  "image/png").toString();
         assertTrue("was:" + query, query.contains("TIME=10-10-10T10%3A00%3A00Z"));
 
     }

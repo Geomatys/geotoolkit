@@ -22,12 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
 
@@ -54,7 +53,7 @@ public class MPCoverageStore extends AbstractCoverageStore implements WritableAg
     }
 
     @Override
-    public GridCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
+    public MPCoverageResource add(org.apache.sis.storage.Resource resource) throws DataStoreException {
         if (!(resource instanceof DefiningCoverageResource)) {
             throw new DataStoreException("Unsupported resource "+resource);
         }
@@ -69,7 +68,7 @@ public class MPCoverageStore extends AbstractCoverageStore implements WritableAg
 
     @Override
     public void remove(org.apache.sis.storage.Resource resource) throws DataStoreException {
-        if (!(resource instanceof GridCoverageResource)) {
+        if (!(resource instanceof MPCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
         //TODO
@@ -77,7 +76,7 @@ public class MPCoverageStore extends AbstractCoverageStore implements WritableAg
     }
 
     @Override
-    public DataStoreFactory getProvider() {
+    public DataStoreProvider getProvider() {
         return null;
     }
 
