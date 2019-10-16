@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.feature;
+package org.geotoolkit.coverage;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -39,6 +39,8 @@ import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.internal.feature.TypeConventions;
+import org.geotoolkit.storage.coverage.GridCoverageFeatureSet;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -56,7 +58,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CoverageFeatureTest {
+public class GridCoverageFeatureSetTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -94,7 +96,7 @@ public class CoverageFeatureTest {
         final GridCoverage coverage = gcb.build();
 
         //test mapped feature type
-        final FeatureType coverageType = CoverageFeature.createCoverageType(coverage);
+        final FeatureType coverageType = GridCoverageFeatureSet.createCoverageType(coverage);
         final FeatureAssociationRole role = (FeatureAssociationRole) coverageType.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final FeatureType recordType = role.getValueType();
 
@@ -106,7 +108,7 @@ public class CoverageFeatureTest {
 
         //convert coverage to feature
         final Feature feature = coverageType.newInstance();
-        feature.setProperty(CoverageFeature.coverageRecords(coverage,role));
+        feature.setProperty(GridCoverageFeatureSet.coverageRecords(coverage,role));
 
         //check records
         final Collection col = (Collection) feature.getPropertyValue(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
@@ -212,7 +214,7 @@ public class CoverageFeatureTest {
         }
 
         //test mapped feature type
-        final FeatureType coverageType = CoverageFeature.createCoverageType(coverage3D);
+        final FeatureType coverageType = GridCoverageFeatureSet.createCoverageType(coverage3D);
         final FeatureAssociationRole role = (FeatureAssociationRole) coverageType.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final FeatureType recordType = role.getValueType();
 
@@ -224,7 +226,7 @@ public class CoverageFeatureTest {
 
         //convert coverage to feature
         final Feature feature = coverageType.newInstance();
-        feature.setProperty(CoverageFeature.coverageRecords(coverage3D,role));
+        feature.setProperty(GridCoverageFeatureSet.coverageRecords(coverage3D,role));
 
         //check records
         final Collection col = (Collection) feature.getPropertyValue(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
