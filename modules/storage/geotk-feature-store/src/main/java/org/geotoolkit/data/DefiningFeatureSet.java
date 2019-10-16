@@ -18,18 +18,21 @@ package org.geotoolkit.data;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
@@ -59,7 +62,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefiningFeatureSet implements Resource {
+public class DefiningFeatureSet implements FeatureSet {
 
     private final FeatureType type;
     private final Metadata metadata;
@@ -96,6 +99,7 @@ public class DefiningFeatureSet implements Resource {
      * @return defined type
      * @throws DataStoreException
      */
+    @Override
     public FeatureType getType() throws DataStoreException {
         return type;
     }
@@ -110,6 +114,16 @@ public class DefiningFeatureSet implements Resource {
     @Override
     public Metadata getMetadata() throws DataStoreException {
         return metadata;
+    }
+
+    @Override
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
+        return Stream.of();
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     @Override
