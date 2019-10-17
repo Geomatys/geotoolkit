@@ -104,6 +104,7 @@
     <module>geotk-feature-mapinfo</module>
     <module>geotk-feature-nmea</module>
     <module>geotk-feature-oracle</module>
+    <module>geotk-coverage-worldfile</module>
     <module>geotk-coverage-bil</module>
     <module>geotk-coverage-geotiff</module>
     <module>geotk-coverage-imagery</module>

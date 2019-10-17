@@ -17,7 +17,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.filestore.FileCoverageStore;
+import org.geotoolkit.coverage.worldfile.FileCoverageStore;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;

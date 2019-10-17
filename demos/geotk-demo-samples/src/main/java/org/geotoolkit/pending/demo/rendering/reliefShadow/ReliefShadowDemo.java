@@ -9,7 +9,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.filestore.FileCoverageStore;
+import org.geotoolkit.coverage.worldfile.FileCoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.XImageIO;
