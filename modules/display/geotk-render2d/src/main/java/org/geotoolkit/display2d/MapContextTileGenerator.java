@@ -42,7 +42,7 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.coverage.memory.MPCoverageResource;
+import org.geotoolkit.data.memory.InMemoryPyramidResource;
 import org.geotoolkit.data.multires.AbstractTileGenerator;
 import org.geotoolkit.data.multires.DefaultPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -318,7 +318,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     //modify context
                     final DefaultPyramid pm = new DefaultPyramid(pyramid.getCoordinateReferenceSystem());
                     pm.getMosaicsInternal().add(mosaic);
-                    final MPCoverageResource r = new MPCoverageResource(NamesExt.create("test"));
+                    final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
                     r.getModels().add(pm);
 
                     final MapContext mc = MapBuilder.createContext();

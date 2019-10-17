@@ -18,16 +18,25 @@ package org.geotoolkit.data.memory;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -245,7 +254,7 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
     private final class InMemoryTile extends DefaultImageTile {
 
         public InMemoryTile(RenderedImage input, int imageIndex, Point position) {
-            super(IImageReader.IISpi.INSTANCE, input, imageIndex, position);
+            super(IISpi.INSTANCE, input, imageIndex, position);
         }
 
         @Override
@@ -253,4 +262,89 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
             return (RenderedImage) super.getInput();
         }
     }
+
+    /**
+    * Image reader for BufferedImage.
+    * Just a wrapper class.
+    */
+   private static final class IImageReader extends ImageReader{
+
+       public IImageReader(ImageReaderSpi spi){
+           super(spi);
+       }
+
+       private BufferedImage getImage() throws IOException{
+           if(input instanceof BufferedImage){
+               return (BufferedImage)input;
+           }else{
+               throw new IOException("Input is not a BufferedImage : " + input);
+           }
+       }
+
+       @Override
+       public int getNumImages(boolean allowSearch) throws IOException {
+           return 1;
+       }
+
+       @Override
+       public int getWidth(int imageIndex) throws IOException {
+           return getImage().getWidth();
+       }
+
+       @Override
+       public int getHeight(int imageIndex) throws IOException {
+           return getImage().getHeight();
+       }
+
+       @Override
+       public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
+           ImageTypeSpecifier spec = new ImageTypeSpecifier(getImage());
+           return Collections.singleton(spec).iterator();
+       }
+
+       @Override
+       public IIOMetadata getStreamMetadata() throws IOException {
+           throw new UnsupportedOperationException("Not supported.");
+       }
+
+       @Override
+       public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
+           throw new UnsupportedOperationException("Not supported.");
+       }
+
+       @Override
+       public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
+           //defensive copy
+           final BufferedImage image =  getImage();
+           final WritableRaster rastercp = image.copyData(null);
+           final BufferedImage copy = new BufferedImage(image.getColorModel(), rastercp, image.isAlphaPremultiplied(),new Hashtable<Object, Object>());
+           return copy;
+       }
+
+   }
+
+    private static final class IISpi extends ImageReaderSpi{
+        public static final IISpi INSTANCE = new IISpi();
+
+        public IISpi() {
+            inputTypes = new Class[]{BufferedImage.class};
+        }
+
+        @Override
+        public boolean canDecodeInput(Object source) throws IOException {
+            return source instanceof BufferedImage;
+        }
+
+        @Override
+        public ImageReader createReaderInstance(Object extension) throws IOException {
+            return new IImageReader(this);
+        }
+
+        @Override
+        public String getDescription(Locale locale) {
+            return "Java Image Reader";
+        }
+
+    }
+
 }

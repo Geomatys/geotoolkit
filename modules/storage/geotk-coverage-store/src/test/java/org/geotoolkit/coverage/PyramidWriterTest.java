@@ -31,14 +31,14 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.memory.MPCoverageStore;
+import org.geotoolkit.data.memory.InMemoryStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.DefiningPyramidResource;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.PyramidWriter;
 import org.geotoolkit.util.NamesExt;
@@ -77,8 +77,8 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
      */
     @Test
     public void testSingleGridOverride() throws DataStoreException{
-        final MPCoverageStore store = new MPCoverageStore();
-        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
+        final InMemoryStore store = new InMemoryStore();
+        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic = pyramid.createMosaic(new DefiningMosaic(null, UL84, 1, new Dimension(360, 180), new Dimension(1, 1)));
         mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(360, 180, Color.BLACK), 0, 0)), null);
@@ -112,8 +112,8 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
      */
     @Test
     public void testQuadGridOverride() throws DataStoreException{
-        final MPCoverageStore store = new MPCoverageStore();
-        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
+        final InMemoryStore store = new InMemoryStore();
+        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic = pyramid.createMosaic(
                 new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
@@ -152,8 +152,8 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
      */
     @Test
     public void testPartialQuadGridOverride() throws DataStoreException{
-        final MPCoverageStore store = new MPCoverageStore();
-        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
+        final InMemoryStore store = new InMemoryStore();
+        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic = pyramid.createMosaic(
                 new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
@@ -207,8 +207,8 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
      */
     @Test
     public void testPartialQuadGridOverride2() throws DataStoreException, IOException{
-        final MPCoverageStore store = new MPCoverageStore();
-        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
+        final InMemoryStore store = new InMemoryStore();
+        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic1 = pyramid.createMosaic(
                 new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
@@ -299,8 +299,8 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
      */
     @Test
     public void testPartialQuadGridOverrideFlip() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
-        final MPCoverageStore store = new MPCoverageStore();
-        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
+        final InMemoryStore store = new InMemoryStore();
+        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(EPSG4326));
         final Mosaic mosaic1 = pyramid.createMosaic(
                 new DefiningMosaic(null, UL4326, 10, new Dimension(9, 9), new Dimension(2, 4)));
@@ -391,8 +391,8 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
      */
     @Test
     public void testPartialQuadGridOverrideFlip2() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
-        final MPCoverageStore store = new MPCoverageStore();
-        final T ref = (T) store.add(new DefiningCoverageResource(NAME));
+        final InMemoryStore store = new InMemoryStore();
+        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
         final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
         final Mosaic mosaic1 = pyramid.createMosaic(
                 new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));

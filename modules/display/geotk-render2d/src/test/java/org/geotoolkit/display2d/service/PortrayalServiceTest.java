@@ -50,7 +50,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.memory.MemoryCoverageResource;
+import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -550,7 +550,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setGridGeometry(gg);
         final GridCoverage coverage = gcb.getGridCoverage2D();
 
-        final GridCoverageResource gcr = new MemoryCoverageResource(coverage);
+        final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
         final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
         layer.setSelectable(true);
 

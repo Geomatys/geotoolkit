@@ -11,7 +11,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.memory.MemoryCoverageResource;
+import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierTest;
 import org.geotoolkit.test.Assert;
@@ -60,8 +60,8 @@ public class CategorizeTest {
         builder.setEnvelope(-20, -20, 10, 10);
         final GridCoverage sourceCvg = builder.build();
 
-        WritableGridCoverageResource input = new MemoryCoverageResource(sourceCvg);
-        WritableGridCoverageResource output = new MemoryCoverageResource(null, null);
+        WritableGridCoverageResource input = new InMemoryGridCoverageResource(sourceCvg);
+        WritableGridCoverageResource output = new InMemoryGridCoverageResource(null, null);
 
         final Envelope roi;
         final Categorize process;
@@ -135,8 +135,8 @@ public class CategorizeTest {
             }
         };
 
-        WritableGridCoverageResource input = new MemoryCoverageResource();
-        WritableGridCoverageResource output = new MemoryCoverageResource();
+        WritableGridCoverageResource input = new InMemoryGridCoverageResource();
+        WritableGridCoverageResource output = new InMemoryGridCoverageResource();
 
         for (int i = 0; i < inputs.length; i++) {
             final GridCoverageBuilder builder = new GridCoverageBuilder();

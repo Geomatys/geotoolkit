@@ -26,7 +26,7 @@ import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.memory.MemoryCoverageResource;
+import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -128,7 +128,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage grid, final MutableStyle style, final String name) {
-        final GridCoverageResource ref = new MemoryCoverageResource(NamesExt.create(name), grid);
+        final GridCoverageResource ref = new InMemoryGridCoverageResource(NamesExt.create(name), grid);
         return createCoverageLayer(ref, style);
     }
 
@@ -144,7 +144,7 @@ public final class MapBuilder {
         if (input instanceof GridCoverageResource) {
             resource = (GridCoverageResource) input;
         } else if (input instanceof GridCoverage) {
-            resource = new MemoryCoverageResource((GridCoverage) input);
+            resource = new InMemoryGridCoverageResource((GridCoverage) input);
         } else {
             try {
                 DataStore store = DataStores.open(input);

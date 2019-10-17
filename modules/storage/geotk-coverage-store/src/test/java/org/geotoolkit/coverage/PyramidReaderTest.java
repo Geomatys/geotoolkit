@@ -19,7 +19,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.memory.MPCoverageStore;
+import org.geotoolkit.data.memory.InMemoryStore;
 import org.geotoolkit.data.multires.DefiningMosaic;
 import org.geotoolkit.data.multires.DefiningPyramid;
 import org.geotoolkit.data.multires.Mosaic;
@@ -27,7 +27,7 @@ import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.coverage.DefiningPyramidResource;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
     public void coverage4DTest() throws Exception{
 
         //create a small pyramid
-        final MPCoverageStore store = new MPCoverageStore();
+        final InMemoryStore store = new InMemoryStore();
         final CoordinateReferenceSystem horizontal = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
@@ -63,7 +63,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final int width = 28;
         final int height = 13;
 
-        final GridCoverageResource ref1 = store.add(new DefiningCoverageResource(NamesExt.create("test1")));
+        final GridCoverageResource ref1 = (GridCoverageResource) store.add(new DefiningPyramidResource(NamesExt.create("test1")));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
             {-5, 0,  -7},

@@ -33,7 +33,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.memory.MemoryCoverageResource;
+import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.junit.Assert;
@@ -87,9 +87,9 @@ public class AggregatedCoverageResourceTest {
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
-        final GridCoverageResource resource1 = new MemoryCoverageResource(coverage1);
-        final GridCoverageResource resource2 = new MemoryCoverageResource(coverage2);
-        final GridCoverageResource resource3 = new MemoryCoverageResource(coverage3);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
 
         final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
         final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
@@ -174,9 +174,9 @@ public class AggregatedCoverageResourceTest {
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage3 = new BufferedGridCoverage(grid3, bands, DataBuffer.TYPE_DOUBLE);
-        final GridCoverageResource resource1 = new MemoryCoverageResource(coverage1);
-        final GridCoverageResource resource2 = new MemoryCoverageResource(coverage2);
-        final GridCoverageResource resource3 = new MemoryCoverageResource(coverage3);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
         final WritableRenderedImage img1 = (WritableRenderedImage) coverage1.render(null);
         final WritableRenderedImage img2 = (WritableRenderedImage) coverage2.render(null);
         final WritableRenderedImage img3 = (WritableRenderedImage) coverage3.render(null);
@@ -272,9 +272,9 @@ public class AggregatedCoverageResourceTest {
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
-        final GridCoverageResource resource1 = new MemoryCoverageResource(coverage1);
-        final GridCoverageResource resource2 = new MemoryCoverageResource(coverage2);
-        final GridCoverageResource resource3 = new MemoryCoverageResource(coverage3);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
 
         final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
         final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
@@ -329,9 +329,9 @@ public class AggregatedCoverageResourceTest {
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage3 = new BufferedGridCoverage(grid3, bands, DataBuffer.TYPE_DOUBLE);
-        final GridCoverageResource resource1 = new MemoryCoverageResource(coverage1);
-        final GridCoverageResource resource2 = new MemoryCoverageResource(coverage2);
-        final GridCoverageResource resource3 = new MemoryCoverageResource(coverage3);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
 
         final AggregatedCoverageResource agg = new AggregatedCoverageResource();
         Assert.assertNull(agg.getEnvelope().orElse(null));
@@ -395,8 +395,8 @@ public class AggregatedCoverageResourceTest {
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_SHORT);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_SHORT);
-        final GridCoverageResource resource1 = new MemoryCoverageResource(coverage1);
-        final GridCoverageResource resource2 = new MemoryCoverageResource(coverage2);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
 
         final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
         final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));

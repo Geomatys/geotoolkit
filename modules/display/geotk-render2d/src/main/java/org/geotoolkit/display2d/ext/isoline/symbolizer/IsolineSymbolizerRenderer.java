@@ -29,7 +29,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.memory.MemoryCoverageResource;
+import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -149,7 +149,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     final Parameters output = Parameters.castOrWrap(resampleProcess.call());
 
                     final GridCoverage resampledCoverage = (GridCoverage) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
-                    final GridCoverageResource resampledCovRef = new MemoryCoverageResource(coverageReference.getIdentifier().orElse(null), resampledCoverage);
+                    final GridCoverageResource resampledCovRef = new InMemoryGridCoverageResource(coverageReference.getIdentifier().orElse(null), resampledCoverage);
 
                     /////////////////////
                     // 2.2 - Compute isolines

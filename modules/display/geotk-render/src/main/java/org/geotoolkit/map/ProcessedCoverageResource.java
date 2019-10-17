@@ -22,7 +22,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.memory.MemoryCoverageResource;
+import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.util.NamesExt;
@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ProcessedCoverageResource extends MemoryCoverageResource {
+public class ProcessedCoverageResource extends InMemoryGridCoverageResource {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
 
