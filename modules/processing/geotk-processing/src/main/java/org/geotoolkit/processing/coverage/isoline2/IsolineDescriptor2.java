@@ -17,13 +17,13 @@
 package org.geotoolkit.processing.coverage.isoline2;
 
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.parameter.ParameterDescriptor;
@@ -56,11 +56,11 @@ public class IsolineDescriptor2 extends AbstractProcessDescriptor {
      * Output FeatureStore
      */
     public static final InternationalString IN_FEATURE_STORE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inFeatureStore);
-    public static final ParameterDescriptor<FeatureStore> FEATURE_STORE = new ParameterBuilder()
+    public static final ParameterDescriptor<DataStore> FEATURE_STORE = new ParameterBuilder()
             .addName("inFeatureStore")
             .setRemarks(IN_FEATURE_STORE_PARAM_REMARKS)
             .setRequired(false)
-            .create(FeatureStore.class, null);
+            .create(DataStore.class, null);
 
     /*
      * Output FeatureType name
@@ -99,11 +99,11 @@ public class IsolineDescriptor2 extends AbstractProcessDescriptor {
      * FeatureCollection of isoline
      */
     public static final InternationalString OUT_FCOLL_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_outFeatureCollection);
-    public static final ParameterDescriptor<FeatureCollection> FCOLL = new ParameterBuilder()
+    public static final ParameterDescriptor<FeatureSet> FCOLL = new ParameterBuilder()
             .addName("outFeatureCollection")
             .setRemarks(OUT_FCOLL_PARAM_REMARKS)
             .setRequired(true)
-            .create(FeatureCollection.class, null);
+            .create(FeatureSet.class, null);
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters").createGroup(FCOLL);

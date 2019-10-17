@@ -1,20 +1,21 @@
 
 package org.geotoolkit.pending.demo.filter;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.referencing.CommonCRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -28,10 +29,10 @@ public class FilterDemo {
 
     private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DataStoreException {
         Demos.init();
 
-        final FeatureCollection collection = createSampleCollection();
+        final FeatureSet collection = createSampleCollection();
         System.out.println(collection);
 
         testFilter(collection, attributeFilter());
@@ -41,21 +42,17 @@ public class FilterDemo {
 
     }
 
-    private static void testFilter(FeatureCollection collection, Filter filter){
+    private static void testFilter(FeatureSet collection, Filter filter) throws DataStoreException{
         System.out.println("\n==============================================================\n");
         System.out.println(filter);
         System.out.println('\n');
 
-        final FeatureIterator ite = collection.iterator();
-        try{
-            while(ite.hasNext()){
-                final Feature candidate = ite.next();
-                if(filter.evaluate(candidate)){
-                    System.out.println(candidate);
-                }
+        final Iterator<Feature> ite = collection.features(false).iterator();
+        while(ite.hasNext()){
+            final Feature candidate = ite.next();
+            if(filter.evaluate(candidate)){
+                System.out.println(candidate);
             }
-        }finally{
-            ite.close();
         }
     }
 
@@ -86,7 +83,7 @@ public class FilterDemo {
         return bbox;
     }
 
-    public static FeatureCollection createSampleCollection(){
+    public static FeatureSet createSampleCollection(){
 
         final GeometryFactory gf = new GeometryFactory();
 
@@ -127,8 +124,7 @@ public class FilterDemo {
         feature4.setPropertyValue("job","manager");
         feature4.setPropertyValue("localisation",gf.createPoint(new Coordinate(22, 7)));
 
-        final FeatureCollection collection = FeatureStoreUtilities.collection(feature1,feature2,feature3,feature4);
-        return collection;
+        return FeatureStoreUtilities.collection(feature1,feature2,feature3,feature4);
     }
 
 }

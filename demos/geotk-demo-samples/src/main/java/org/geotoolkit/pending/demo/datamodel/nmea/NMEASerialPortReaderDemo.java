@@ -23,12 +23,11 @@ import java.util.stream.Stream;
 import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.nmea.NMEAStore;
 import org.geotoolkit.data.nmea.NMEASerialPortReader;
 import org.geotoolkit.lang.Setup;
 import org.opengis.feature.Feature;
@@ -48,7 +47,7 @@ public class NMEASerialPortReaderDemo {
         Setup.initialize(null);
 
         final NMEASerialPortReader reader = new NMEASerialPortReader();
-        final MemoryFeatureStore store = reader.read();
+        final WritableFeatureSet store = reader.read();
 
         final TestListener listener = new TestListener(store);
 
@@ -61,11 +60,11 @@ public class NMEASerialPortReaderDemo {
 
     private static class TestListener implements StoreListener<StoreEvent> {
 
-        public final MemoryFeatureStore store;
+        public final WritableFeatureSet resource;
 
-        public TestListener(final MemoryFeatureStore store) {
-            store.addListener(StoreEvent.class, this);
-            this.store = store;
+        public TestListener(final WritableFeatureSet resource) {
+            resource.addListener(StoreEvent.class, this);
+            this.resource = resource;
         }
 
         @Override
@@ -74,12 +73,11 @@ public class NMEASerialPortReaderDemo {
                 final FeatureStoreContentEvent tmp = (FeatureStoreContentEvent) event;
                 if (tmp.getType().equals(FeatureStoreContentEvent.Type.ADD)) {
                     try {
-                        FeatureSet resource = (FeatureSet) store.findResource(NMEAStore.TYPE_NAME.toString());
                         SimpleQuery query = new SimpleQuery();
                         query.setFilter(tmp.getIds());
-                        resource = resource.subset(query);
+                        FeatureSet subres = resource.subset(query);
 
-                        try (Stream<Feature> stream = resource.features(false)){
+                        try (Stream<Feature> stream = subres.features(false)){
                             stream.forEach(new Consumer<Feature>() {
                                 @Override
                                 public void accept(Feature t) {

@@ -19,6 +19,7 @@ package org.geotoolkit.processing.coverage.isoline2;
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,18 +35,20 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableAggregate;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.data.DefiningFeatureSet;
+import org.geotoolkit.data.memory.InMemoryStore;
 import org.geotoolkit.data.multires.Mosaic;
 import org.geotoolkit.data.multires.MultiResolutionResource;
 import org.geotoolkit.data.multires.Pyramid;
 import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -81,7 +84,7 @@ public class Isoline2 extends AbstractProcess {
     //iteration informations
     private CoordinateReferenceSystem crs;
     private FeatureType type;
-    private FeatureCollection col;
+    private WritableFeatureSet col;
     private double[] intervals;
 
     public Isoline2(ProcessDescriptor desc, ParameterValueGroup input) {
@@ -92,19 +95,19 @@ public class Isoline2 extends AbstractProcess {
     protected void execute() throws ProcessException {
         final GridCoverageResource coverageRef = inputParameters.getValue(COVERAGE_REF);
         final GridCoverageReadParam readParam = inputParameters.getValue(READ_PARAM);
-        FeatureStore featureStore = inputParameters.getValue(FEATURE_STORE);
+        DataStore featureStore = inputParameters.getValue(FEATURE_STORE);
         final String featureTypeName = inputParameters.getValue(FEATURE_NAME);
         intervals = inputParameters.getValue(INTERVALS);
 
         if (featureStore == null) {
-            featureStore = new MemoryFeatureStore();
+            featureStore = new InMemoryStore();
         }
 
         try {
             final GridGeometry gridgeom = coverageRef.getGridGeometry();
             crs = gridgeom.getCoordinateReferenceSystem();
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
-            col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));
+            col = (WritableFeatureSet) featureStore.findResource(type.getName().toString());
 
             if (coverageRef instanceof MultiResolutionResource) {
                 final MultiResolutionResource pm = (MultiResolutionResource) coverageRef;
@@ -201,22 +204,18 @@ public class Isoline2 extends AbstractProcess {
         return null;
     }
 
-    private static FeatureType getOrCreateIsoType(FeatureStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
+    private static FeatureType getOrCreateIsoType(DataStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
         FeatureType type = buildIsolineFeatureType(featureTypeName,crs);
 
         //create FeatureType in FeatureStore if not exist
-        boolean createSchema = false;
+        FeatureSet resource;
         try {
-            if (featureStore.getFeatureType(type.getName().toString()) == null) {
-                createSchema = true;
-            }
+            resource = (FeatureSet) featureStore.findResource(type.getName().toString());
+            //will cause an IllegalNameException if not exist
         } catch (DataStoreException ex) {
-            createSchema = true;
+            resource = (FeatureSet) ((WritableAggregate) featureStore).add(new DefiningFeatureSet(type, null));
         }
-        if (createSchema) {
-            featureStore.createFeatureType(type);
-        }
-        return featureStore.getFeatureType(type.getName().toString());
+        return resource.getType();
     }
 
     /**
@@ -359,7 +358,7 @@ public class Isoline2 extends AbstractProcess {
         }
 
         private Boundary buildTriangles(final int k, final double level, final Boundary top, final Boundary left)
-                throws MismatchedDimensionException, TransformException, ProcessException{
+                throws MismatchedDimensionException, TransformException, ProcessException, DataStoreException{
 
             final boolean ulCorner = (UL.z == level);
             final boolean urCorner = (UR.z == level);
@@ -948,7 +947,7 @@ public class Isoline2 extends AbstractProcess {
             return newBoundary;
         }
 
-        private void pushGeometry(Geometry geom, double level) throws MismatchedDimensionException, TransformException{
+        private void pushGeometry(Geometry geom, double level) throws MismatchedDimensionException, TransformException, DataStoreException{
             if (geom == null) return;
             final Feature f = type.newInstance();
             f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "0");
@@ -957,7 +956,7 @@ public class Isoline2 extends AbstractProcess {
             f.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
             f.setPropertyValue("scale", scale);
             f.setPropertyValue("value", level);
-            col.add(f);
+            col.add(Arrays.asList(f).iterator());
         }
     }
 }

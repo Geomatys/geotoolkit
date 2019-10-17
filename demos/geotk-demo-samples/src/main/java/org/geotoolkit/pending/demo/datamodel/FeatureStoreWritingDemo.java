@@ -13,7 +13,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.data.DefiningFeatureSet;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.data.memory.InMemoryStore;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;
@@ -45,7 +45,7 @@ public class FeatureStoreWritingDemo {
 
 
         //create the featurestore ---------------------------------------------------------
-        final MemoryFeatureStore store = new MemoryFeatureStore();
+        final InMemoryStore store = new InMemoryStore();
         final WritableFeatureSet resource = (WritableFeatureSet) store.add(new DefiningFeatureSet(type, null));
 
 
@@ -75,11 +75,11 @@ public class FeatureStoreWritingDemo {
         //on the featurestore ------------------------------------------------------------
         Set<Identifier> ids = new HashSet<Identifier>();
         ids.add(new DefaultFeatureId("Fish.1"));
-        store.removeFeatures(type.getName().toString(), FF.id(ids));
+        resource.removeIf(FF.id(ids)::evaluate);
 
         //same thing on the session and normal java way on the collection.
         //to remove everything use
-        store.removeFeatures(type.getName().toString(), Filter.INCLUDE);
+        resource.removeIf(Filter.INCLUDE::evaluate);
 
     }
 

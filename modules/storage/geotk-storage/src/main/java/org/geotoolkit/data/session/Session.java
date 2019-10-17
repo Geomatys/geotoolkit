@@ -41,6 +41,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@Deprecated
 public interface Session {
 
     /**

@@ -90,18 +90,6 @@ public class FeatureStoreUtilities {
         return col;
     }
 
-    /**
-     * Convinient method to create a featurecollection from a collection of features.
-     * @param type
-     * @param features
-     * @return FeatureCollection
-     */
-    public static FeatureCollection collection(final FeatureType type, final Collection<? extends Feature> features){
-        final FeatureCollection col = collection(new NamedIdentifier(type.getName()), type);
-        col.addAll(features);
-        return col;
-    }
-
     public static FeatureCollection collection(final String id, final FeatureType type) {
         ArgumentChecks.ensureNonNull("Collection id", id);
         ArgumentChecks.ensureNonEmpty("Collection id", id);

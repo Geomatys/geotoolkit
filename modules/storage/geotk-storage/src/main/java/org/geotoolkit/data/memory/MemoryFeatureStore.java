@@ -71,6 +71,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@Deprecated
 public class MemoryFeatureStore extends AbstractFeatureStore{
 
     private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,13 +21,10 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-
-import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.data.memory.InMemoryAggregate;
 import org.geotoolkit.storage.StorageListener;
-
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+import org.junit.Test;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -58,7 +55,7 @@ public class WeakListenerTest extends org.geotoolkit.test.TestBase {
 
         final AtomicInteger count = new AtomicInteger(0);
 
-        final FeatureStore store = new MemoryFeatureStore();
+        final InMemoryAggregate store = new InMemoryAggregate();
 
         StoreListener listener = new StoreListener() {
             @Override
@@ -70,12 +67,12 @@ public class WeakListenerTest extends org.geotoolkit.test.TestBase {
         final StorageListener.Weak ref = new StorageListener.Weak(listener);
         ref.registerSource(store);
 
-        store.createFeatureType(type1);
+        store.add(new DefiningFeatureSet(type1, null));
         assertEquals(1, count.get());
         listener = null;
         System.gc();
 
-        store.createFeatureType(type2);
+        store.add(new DefiningFeatureSet(type2, null));
         //listener should have desapear now, so the event should not have been send
         assertEquals(1, count.get());
     }

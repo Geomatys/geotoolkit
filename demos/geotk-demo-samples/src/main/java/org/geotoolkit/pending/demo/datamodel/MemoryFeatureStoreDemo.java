@@ -4,7 +4,8 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.data.DefiningFeatureSet;
+import org.geotoolkit.data.memory.InMemoryStore;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.locationtech.jts.geom.Point;
@@ -16,7 +17,7 @@ public class MemoryFeatureStoreDemo {
         Demos.init();
 
         //create the datastore
-        final MemoryFeatureStore store = new MemoryFeatureStore();
+        final InMemoryStore store = new InMemoryStore();
 
 
         //add a schema in the datastore
@@ -25,7 +26,7 @@ public class MemoryFeatureStoreDemo {
         ftb.addAttribute(String.class).setName("type");
         ftb.addAttribute(Point.class).setName("the_geom").setCRS(CommonCRS.WGS84.normalizedGeographic());
         final FeatureType type = ftb.build();
-        store.createFeatureType(type);
+        store.add(new DefiningFeatureSet(type, null));
 
 
         //query the featurestore like any other

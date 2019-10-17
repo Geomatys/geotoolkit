@@ -23,7 +23,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.geotoolkit.data.DefiningFeatureSet;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.data.memory.InMemoryStore;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
@@ -57,7 +57,7 @@ public class MapLayerTest {
         builder.setName(name);
         FeatureType type = builder.build();
 
-        MemoryFeatureStore ds = new MemoryFeatureStore();
+        InMemoryStore ds = new InMemoryStore();
         FeatureSet fs = (FeatureSet) ds.add(new DefiningFeatureSet(type, null));
 
         FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs, new DefaultStyleFactory().style());

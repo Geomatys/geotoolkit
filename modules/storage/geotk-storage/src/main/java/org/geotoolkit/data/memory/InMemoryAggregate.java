@@ -29,7 +29,11 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.data.multires.MultiResolutionResource;
+import org.geotoolkit.storage.ManagementEvent;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.DefiningPyramidResource;
 import org.opengis.feature.Feature;
@@ -41,6 +45,7 @@ import org.opengis.util.GenericName;
  */
 public class InMemoryAggregate extends AbstractResource implements WritableAggregate {
 
+    private final StoreListeners listeners = new StoreListeners(null, this);
     private final List<Resource> resources = new ArrayList<>();
     private GenericName identifier;
 
@@ -65,43 +70,37 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
 
     @Override
     public synchronized Resource add(Resource resource) throws DataStoreException {
+
+        Resource newr;
         if (resource instanceof FeatureSet) {
             final FeatureSet fs = (FeatureSet) resource;
             final InMemoryFeatureSet newres = new InMemoryFeatureSet(fs.getType());
             try (Stream<Feature> stream = fs.features(false)) {
                 newres.add(stream.iterator());
             }
-            resources.add(newres);
-            return newres;
+            newr = newres;
 
         } else if (resource instanceof DefiningPyramidResource) {
             final DefiningPyramidResource cr = (DefiningPyramidResource) resource;
             final GenericName name = cr.getIdentifier().orElse(null);
-            final InMemoryPyramidResource newres = new InMemoryPyramidResource(name);
-            resources.add(newres);
-            return newres;
+            newr = new InMemoryPyramidResource(name);
 
         } else if (resource instanceof GridCoverageResource && resource instanceof MultiResolutionResource) {
             final GridCoverageResource cr = (GridCoverageResource) resource;
             final GenericName name = cr.getIdentifier().orElse(null);
-            final InMemoryPyramidResource newres = new InMemoryPyramidResource(name);
-            resources.add(newres);
-            return newres;
+            newr = new InMemoryPyramidResource(name);
 
         } else if (resource instanceof GridCoverageResource) {
             final GridCoverageResource cr = (GridCoverageResource) resource;
             final GenericName name = cr.getIdentifier().orElse(null);
             final InMemoryGridCoverageResource newres = new InMemoryGridCoverageResource(name);
             newres.write(cr.read(null));
-            resources.add(newres);
-            return newres;
+            newr = newres;
 
         } else if (resource instanceof DefiningCoverageResource) {
             final DefiningCoverageResource cr = (DefiningCoverageResource) resource;
             final GenericName name = cr.getIdentifier().orElse(null);
-            final InMemoryGridCoverageResource newres = new InMemoryGridCoverageResource(name);
-            resources.add(newres);
-            return newres;
+            newr = new InMemoryGridCoverageResource(name);
 
         } else if (resource instanceof Aggregate) {
             final Aggregate agg = (Aggregate) resource;
@@ -109,12 +108,15 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
             for (Resource r : agg.components()) {
                 newres.add(r);
             }
-            resources.add(newres);
-            return newres;
+            newr = newres;
 
         } else {
             throw new DataStoreException("Unsupported resource type "+ resource);
         }
+
+        resources.add(newr);
+        listeners.fire(new ManagementEvent(this, ManagementEvent.TYPE_ADD, newr), ManagementEvent.class);
+        return newr;
     }
 
     @Override
@@ -122,6 +124,17 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
         if (!resources.remove(resource)) {
             throw new DataStoreException("Resource not found");
         }
+        listeners.fire(new ManagementEvent(this, ManagementEvent.TYPE_REMOVE, resource), ManagementEvent.class);
+    }
+
+    @Override
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+        listeners.addListener(eventType, listener);
+    }
+
+    @Override
+    public synchronized <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+        listeners.removeListener(eventType, listener);
     }
 
 }
