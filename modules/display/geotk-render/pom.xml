@@ -86,17 +86,12 @@
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverage-store</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-style</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-feature-store</artifactId>
+      <artifactId>geotk-storage</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

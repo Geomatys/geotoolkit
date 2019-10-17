@@ -36,7 +36,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-store</artifactId>
+            <artifactId>geotk-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

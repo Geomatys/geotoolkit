@@ -18,9 +18,9 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-feature-store</artifactId>
+  <artifactId>geotk-storage</artifactId>
   <packaging>jar</packaging>
-  <name>FeatureStore Core</name>
+  <name>Resources Core</name>
 
 
   <!-- =========================================================== -->

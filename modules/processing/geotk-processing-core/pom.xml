@@ -61,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature-store</artifactId>
+            <artifactId>geotk-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

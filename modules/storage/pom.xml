@@ -89,7 +89,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-feature-store</module>
+    <module>geotk-storage</module>
     <module>geotk-feature-dbf</module>
     <module>geotk-feature-csv</module>
     <module>geotk-feature-gml</module>
@@ -112,7 +112,6 @@
     <!-- Obsolete module, still contains interesting things, salvage what we can before removing it -->
     <!--module>geotk-coverage-postgresql</module-->
     <module>geotk-coverage-xml</module>
-    <module>geotk-coverage-store</module>
     <module>geotk-coverage-sql</module>
     <module>geotk-coverage-wkb</module>
     <module>geotk-coverage-hgt</module>
