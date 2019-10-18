@@ -92,9 +92,17 @@ final class ProgressiveMosaic implements Mosaic {
         return tile;
     }
 
+    /**
+     * Return the full extent, tiles will be generated.
+     * @return
+     */
     @Override
     public GridExtent getDataExtent() {
-        return base.getDataExtent();
+        final Dimension tileSize = getTileSize();
+        final Dimension gridSize = getGridSize();
+        return new GridExtent(
+                ((long) gridSize.width) * tileSize.width,
+                ((long) gridSize.height) * tileSize.height);
     }
 
     @Override

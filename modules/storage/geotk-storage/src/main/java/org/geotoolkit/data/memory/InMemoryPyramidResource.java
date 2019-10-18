@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -197,25 +198,24 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
     private final class InMemoryMosaic extends AbstractMosaic {
 
-        private final InMemoryTile[][] mpTileReference;
+        private final Map<Point,InMemoryTile> mpTileReference = new HashMap<>();
 
         public InMemoryMosaic(final String id, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
             super(id, pyramid, upperLeft, gridSize, tileSize, scale);
-            mpTileReference = new InMemoryTile[gridSize.width][gridSize.height];
         }
 
         @Override
         public boolean isMissing(long col, long row) {
-            return mpTileReference[Math.toIntExact(col)][Math.toIntExact(row)] == null;
+            return mpTileReference.get(new Point(Math.toIntExact(col), Math.toIntExact(row))) == null;
         }
 
         @Override
         public InMemoryTile getTile(long col, long row, Map hints) throws DataStoreException {
-            return mpTileReference[Math.toIntExact(col)][Math.toIntExact(row)];
+            return mpTileReference.get(new Point(Math.toIntExact(col), Math.toIntExact(row)));
         }
 
-        public void setTile(int col, int row, InMemoryTile tile){
-            mpTileReference[col][row] = tile;
+        public synchronized void setTile(int col, int row, InMemoryTile tile) {
+            mpTileReference.put(new Point(Math.toIntExact(col), Math.toIntExact(row)), tile);
         }
 
         @Override

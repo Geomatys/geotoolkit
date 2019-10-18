@@ -419,13 +419,17 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         canvas = CoverageUtilities.forceLowerToZero(canvas);
 
         final Envelope envelope = domain.getEnvelope();
-        final List<Map.Entry<Integer,GridCoverageResource>> results = new ArrayList(tree.query(new JTSEnvelope2D(envelope)));
+        List<Map.Entry<Integer,GridCoverageResource>> results = tree.query(new JTSEnvelope2D(envelope));
 
         //single result
-        if (results.size() == 1) {
+        if (results == null || results.isEmpty()) {
+            throw new DisjointCoverageDomainException();
+        } else if (results.size() == 1) {
             GridCoverageResource resource = results.get(0).getValue();
             return resource.read(canvas, range);
         }
+
+        results = new ArrayList(results);
 
         final List<GridCoverageResource> ordered;
         if (mode == Mode.ORDER) {

@@ -49,7 +49,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return base.getGridGeometry();
+        return new PyramidReader(this).getGridGeometry();
     }
 
     @Override
