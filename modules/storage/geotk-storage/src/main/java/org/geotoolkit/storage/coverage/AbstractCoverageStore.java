@@ -17,6 +17,8 @@
 
 package org.geotoolkit.storage.coverage;
 
+import org.geotoolkit.storage.event.CoverageStoreManagementEvent;
+import org.geotoolkit.storage.event.CoverageStoreContentEvent;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,7 +45,7 @@ import org.apache.sis.storage.event.WarningEvent;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;

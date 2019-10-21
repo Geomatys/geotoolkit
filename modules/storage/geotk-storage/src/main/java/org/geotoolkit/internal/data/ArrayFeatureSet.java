@@ -53,6 +53,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
+@Deprecated
 public class ArrayFeatureSet implements WritableFeatureSet {
 
     private final Metadata metadata;

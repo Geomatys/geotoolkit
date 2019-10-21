@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data;
 
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,8 +49,8 @@ import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
-import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.storage.StorageListener.Weak;
+import org.geotoolkit.storage.event.StorageListener;
+import org.geotoolkit.storage.event.StorageListener.Weak;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.AttributeType;

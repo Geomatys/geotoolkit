@@ -15,10 +15,10 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data;
+package org.geotoolkit.storage.event;
 
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Id;
 

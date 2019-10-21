@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import org.geotoolkit.storage.event.CoverageStoreManagementEvent;
+import org.geotoolkit.storage.event.CoverageStoreContentEvent;
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +40,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;

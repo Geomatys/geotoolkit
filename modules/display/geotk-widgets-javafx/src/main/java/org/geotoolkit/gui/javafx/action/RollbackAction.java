@@ -32,7 +32,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.event.StorageListener;
 
 /**
  * Action to rollback a feature maplayer session.

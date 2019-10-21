@@ -40,7 +40,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;

@@ -45,7 +45,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;

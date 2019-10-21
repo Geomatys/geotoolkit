@@ -38,7 +38,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.data.GenericNameIndex;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;

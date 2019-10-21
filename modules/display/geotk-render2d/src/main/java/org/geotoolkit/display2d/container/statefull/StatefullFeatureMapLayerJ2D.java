@@ -20,10 +20,10 @@ package org.geotoolkit.display2d.container.statefull;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.event.StorageListener;
 
 /**
  *

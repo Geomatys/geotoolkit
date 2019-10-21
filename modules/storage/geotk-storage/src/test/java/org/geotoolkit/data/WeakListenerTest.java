@@ -22,7 +22,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.data.memory.InMemoryAggregate;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.event.StorageListener;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.FeatureType;

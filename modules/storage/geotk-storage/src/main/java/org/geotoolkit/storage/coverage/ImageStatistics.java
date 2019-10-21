@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.metadata;
+package org.geotoolkit.storage.coverage;
 
 import java.io.Serializable;
 import java.util.*;

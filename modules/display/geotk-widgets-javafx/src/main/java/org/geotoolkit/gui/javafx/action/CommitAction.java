@@ -36,7 +36,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.event.StorageListener;
 
 /**
  * Action to commit a feature maplayer session.

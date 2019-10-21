@@ -4,8 +4,6 @@ import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.metadata.DefaultSampleDimensionExt;
-import org.geotoolkit.metadata.ImageStatistics;
 
 /**
  * Simple Adapter that fill a {@link DefaultCoverageDescription} with information form

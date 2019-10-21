@@ -42,7 +42,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.math.Histogram;
-import org.geotoolkit.metadata.DefaultSampleDimensionExt;
+import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;

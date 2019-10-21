@@ -27,7 +27,7 @@ import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.data.nmea.NMEASerialPortReader;
 import org.geotoolkit.lang.Setup;
 import org.opengis.feature.Feature;

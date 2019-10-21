@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.storage;
+package org.geotoolkit.storage.event;
 
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.Resource;

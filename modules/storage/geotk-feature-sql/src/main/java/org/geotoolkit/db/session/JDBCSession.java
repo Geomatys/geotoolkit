@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import org.geotoolkit.feature.FeatureExt;
 
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.AddDelta;
 import org.geotoolkit.data.session.DefaultSession;

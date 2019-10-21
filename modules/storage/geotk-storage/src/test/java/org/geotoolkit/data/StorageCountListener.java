@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 

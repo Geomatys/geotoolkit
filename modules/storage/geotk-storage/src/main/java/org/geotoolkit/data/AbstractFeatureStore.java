@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data;
 
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
+import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,7 +56,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;

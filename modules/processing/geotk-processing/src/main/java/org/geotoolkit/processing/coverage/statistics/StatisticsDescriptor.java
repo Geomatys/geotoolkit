@@ -21,7 +21,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.metadata.ImageStatistics;
+import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;

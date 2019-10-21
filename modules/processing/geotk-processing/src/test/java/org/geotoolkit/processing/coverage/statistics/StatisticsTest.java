@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.coverage.statistics;
 
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.metadata.ImageStatistics;
+import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
