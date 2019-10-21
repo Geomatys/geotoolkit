@@ -35,6 +35,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.DataStores.ResourceWalker.VisitOption;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -59,6 +60,41 @@ public final class DataStores extends Static {
      * Do not allow instantiation of this class.
      */
     private DataStores() {
+    }
+
+    public static void walk(Resource root, ResourceWalker walker) throws DataStoreException {
+        walkInternal(root, walker);
+    }
+
+    private static ResourceWalker.VisitOption walkInternal(Resource root, ResourceWalker walker) throws DataStoreException {
+        final VisitOption opt = walker.visit(root);
+        switch (opt) {
+            case FINISH:
+                return VisitOption.FINISH;
+            case SKIP:
+                return VisitOption.CONTINUE;
+            case CONTINUE:
+                if (root instanceof Aggregate) {
+                    Aggregate agg = (Aggregate) root;
+                    try {
+                        for (Resource r : agg.components()) {
+                            final VisitOption copt = walkInternal(r, walker);
+                            if (copt == VisitOption.FINISH) return VisitOption.FINISH;
+                        }
+                    } catch (DataStoreException ex) {
+                        ResourceWalker.ErrorOption erropt = walker.errorOccured(agg, ex);
+                        if (null != erropt) switch (erropt) {
+                            case SKIP:   return VisitOption.CONTINUE;
+                            case FINISH: return VisitOption.FINISH;
+                            case ERROR:  throw ex;
+                            default: throw new IllegalArgumentException("Unexpected option "+ erropt);
+                        }
+                    }
+                }
+                return VisitOption.CONTINUE;
+            default:
+                throw new IllegalArgumentException("Unexpected option "+ opt);
+        }
     }
 
     /**
@@ -388,5 +424,26 @@ public final class DataStores extends Static {
             params.put(DataStoreFactory.IDENTIFIER.getName().getCode(), (Serializable)value);
         }
         return params;
+    }
+
+    public static interface ResourceWalker {
+
+        public static enum VisitOption {
+            CONTINUE,
+            SKIP,
+            FINISH;
+        }
+
+        public static enum ErrorOption {
+            SKIP,
+            FINISH,
+            ERROR;
+        }
+
+        VisitOption visit(Resource resource);
+
+        default ErrorOption errorOccured(Aggregate aggregate, Exception ex) {
+            return ErrorOption.ERROR;
+        }
     }
 }
