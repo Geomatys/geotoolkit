@@ -26,13 +26,13 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.ows.xml.v200.AcceptVersionsType;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v200.Capabilities;
@@ -163,8 +163,8 @@ public class WebProcessingClient extends AbstractClient {
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(WPSProvider.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(WPSProvider.NAME);
     }
 
     @Override

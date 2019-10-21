@@ -35,11 +35,11 @@ import javax.xml.bind.JAXBException;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
@@ -103,8 +103,8 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(XMLCoverageStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(XMLCoverageStoreFactory.NAME);
     }
 
     @Override

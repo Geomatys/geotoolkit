@@ -18,11 +18,11 @@ package org.geotoolkit.sos;
 
 import java.net.URL;
 import java.util.Optional;
+import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sos.v100.*;
 import org.geotoolkit.sos.xml.SOSVersion;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -61,8 +61,8 @@ public class SensorObservationServiceClient extends AbstractClient {
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(SOSProvider.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(SOSProvider.NAME);
     }
 
     @Override

@@ -25,7 +25,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -44,8 +43,6 @@ public class LandsatProvider extends DataStoreProvider implements ProviderOnFile
     public static final String NAME = "Landsat";
     public static final String MIME_TYPE = "application/x-landsat";
 
-    public static final ParameterDescriptor<String> IDENTIFIER = DataStoreFactory.createFixedIdentifier(NAME);
-
     /**
      * Mandatory - the folder uri
      */
@@ -60,7 +57,7 @@ public class LandsatProvider extends DataStoreProvider implements ProviderOnFile
                       .create(URI.class, null);
 
         PARAMETERS_DESCRIPTOR = builder.addName(NAME).addName("LandSatParameters")
-                      .createGroup(IDENTIFIER, PATH);
+                      .createGroup(PATH);
     }
 
     @Override

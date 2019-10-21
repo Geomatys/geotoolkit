@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
@@ -50,7 +51,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.data.GenericNameIndex;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -186,7 +186,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * @return null
      */
     @Override
-    public DataStoreFactory getProvider() {
+    public DataStoreProvider getProvider() {
         return null;
     }
 

@@ -35,6 +35,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -46,7 +47,6 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -109,8 +109,8 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
      * {@inheritDoc}
      */
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(DbaseFeatureStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(DbaseFeatureStoreFactory.NAME);
     }
 
     private synchronized void checkExist() throws DataStoreException{

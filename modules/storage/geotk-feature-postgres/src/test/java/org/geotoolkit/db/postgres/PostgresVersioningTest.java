@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.db.postgres;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,32 +27,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.apache.sis.storage.DataStoreException;
-import org.junit.Test;
-import org.opengis.util.GenericName;
-import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.geotoolkit.storage.DataStores;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
-import org.apache.sis.referencing.CommonCRS;
+import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -1056,8 +1057,8 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         store2 = (PostgresFeatureStore) DataStores.open(params2);
 
         //-------------- create schema in public2 schema --------------------
-        try{
-            store2.getProvider().create(params2);
+        try {
+            ((DataStoreFactory)store2.getProvider()).create(params2);
         } catch (Exception ex) {
             //schema public2 already exist
         }

@@ -49,6 +49,7 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
@@ -79,7 +80,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
@@ -187,8 +187,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
     }
 
     @Override

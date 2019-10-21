@@ -21,11 +21,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.Version;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
@@ -39,12 +40,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID, canCreate = true, canWrite = true)
-public class XMLCoverageStoreFactory extends DataStoreFactory {
+public class XMLCoverageStoreFactory extends DataStoreProvider {
 
     /** factory identification **/
     public static final String NAME = "coverage-xml-pyramid";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * Mandatory - the folder path
@@ -67,7 +66,7 @@ public class XMLCoverageStoreFactory extends DataStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName(NAME).addName("XMLCoverageStoreParameters").createGroup(
-                IDENTIFIER, PATH, CACHE_TILE_STATE);
+                PATH, CACHE_TILE_STATE);
 
     @Override
     public String getShortName() {
@@ -87,22 +86,6 @@ public class XMLCoverageStoreFactory extends DataStoreFactory {
         return PARAMETERS_DESCRIPTOR;
     }
 
-    @Override
-    public XMLCoverageStore open(ParameterValueGroup params) throws DataStoreException {
-        if(!canProcess(params)){
-            throw new DataStoreException("Can not process parameters.");
-        }
-        try {
-            return new XMLCoverageStore(params);
-        } catch (IOException | URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
-    }
-
-    @Override
-    public XMLCoverageStore create(ParameterValueGroup params) throws DataStoreException {
-        return open(params);
-    }
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
@@ -115,5 +98,23 @@ public class XMLCoverageStoreFactory extends DataStoreFactory {
         }
 
         return new ProbeResult(false, mime, version);
+    }
+
+    @Override
+    public DataStore open(StorageConnector connector) throws DataStoreException {
+        try {
+            return new XMLCoverageStore(connector.getStorageAs(Path.class));
+        } catch (IOException | URISyntaxException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public XMLCoverageStore open(ParameterValueGroup params) throws DataStoreException {
+        try {
+            return new XMLCoverageStore(params);
+        } catch (IOException | URISyntaxException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 }

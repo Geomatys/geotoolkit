@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
@@ -35,7 +36,6 @@ import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.csw.xml.CSWBindingUtilities;
 import org.geotoolkit.csw.xml.CSWVersion;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 
@@ -102,8 +102,8 @@ public class CatalogServicesClient extends AbstractClient {
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(CSWProvider.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(CSWProvider.NAME);
     }
 
     @Override
