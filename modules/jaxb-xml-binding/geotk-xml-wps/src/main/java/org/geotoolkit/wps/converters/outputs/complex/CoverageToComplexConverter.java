@@ -18,8 +18,8 @@ package org.geotoolkit.wps.converters.outputs.complex;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
-import net.iharder.Base64;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -80,7 +80,7 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
             CoverageIO.write(source, "GEOTIFF", baos);
             baos.flush();
             byte[] bytesOut = baos.toByteArray();
-            return new Data(new Format((String)((tmpEncoding instanceof String)? tmpEncoding : null), mime, null, null), Base64.encodeBytes(bytesOut));
+            return new Data(new Format((String)((tmpEncoding instanceof String)? tmpEncoding : null), mime, null, null), Base64.getEncoder().encodeToString(bytesOut));
 
         } catch (DataStoreException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);

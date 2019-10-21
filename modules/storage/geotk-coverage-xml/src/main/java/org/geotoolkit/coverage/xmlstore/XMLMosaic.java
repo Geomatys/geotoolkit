@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Locale;
@@ -55,7 +56,6 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import net.iharder.Base64;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -186,13 +186,13 @@ public class XMLMosaic implements Mosaic {
         try {
             if (existMask != null && !existMask.isEmpty()) {
                 try {
-                    tileExist = BitSet.valueOf(Base64.decode(existMask));
+                    tileExist = BitSet.valueOf(Base64.getDecoder().decode(existMask));
                     /*
                      * Caching tile state can only be determined at pyramid creation, because a switch of behavior after
                      * that seems a little bit tricky.
                      */
                     cacheTileState = false;
-                } catch (IOException ex) {
+                } catch (IllegalArgumentException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     tileExist = new BitSet(gridWidth * gridHeight);
                 }
@@ -202,8 +202,8 @@ public class XMLMosaic implements Mosaic {
 
             if (emptyMask != null && !emptyMask.isEmpty()) {
                 try {
-                    tileEmpty = BitSet.valueOf(Base64.decode(emptyMask));
-                } catch (IOException ex) {
+                    tileEmpty = BitSet.valueOf(Base64.getDecoder().decode(emptyMask));
+                } catch (IllegalArgumentException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     tileEmpty = new BitSet(gridWidth * gridHeight);
                 }
@@ -312,7 +312,7 @@ public class XMLMosaic implements Mosaic {
     }
 
     private static String updateCompletionString(BitSet input) throws IOException {
-        return Base64.encodeBytes(input.toByteArray(), Base64.GZIP);
+        return Base64.getEncoder().encodeToString(input.toByteArray());
     }
 
     /**
@@ -762,8 +762,8 @@ public class XMLMosaic implements Mosaic {
         existMask = newValue;
         if (existMask != null && !existMask.isEmpty()) {
             try {
-                tileExist = BitSet.valueOf(Base64.decode(existMask));
-            } catch (IOException ex) {
+                tileExist = BitSet.valueOf(Base64.getDecoder().decode(existMask));
+            } catch (IllegalArgumentException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -790,8 +790,8 @@ public class XMLMosaic implements Mosaic {
         emptyMask = newValue;
         if (emptyMask != null && !emptyMask.isEmpty()) {
             try {
-                tileEmpty = BitSet.valueOf(Base64.decode(emptyMask,Base64.GZIP));
-            } catch (IOException ex) {
+                tileEmpty = BitSet.valueOf(Base64.getDecoder().decode(emptyMask));
+            } catch (IllegalArgumentException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }

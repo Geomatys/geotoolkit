@@ -19,9 +19,9 @@ package org.geotoolkit.wps.converters.outputs.complex;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import net.iharder.Base64;
 import org.apache.sis.util.UnconvertibleObjectException;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
@@ -81,7 +81,7 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
             ImageIO.write(source, formatName, baos);
             baos.flush();
             byte[] bytesOut = baos.toByteArray();
-            complex.getContent().add(Base64.encodeBytes(bytesOut));
+            complex.getContent().add(Base64.getEncoder().encodeToString(bytesOut));
             baos.close();
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);

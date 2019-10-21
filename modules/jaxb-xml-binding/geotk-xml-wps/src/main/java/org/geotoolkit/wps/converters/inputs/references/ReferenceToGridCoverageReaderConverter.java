@@ -20,12 +20,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import net.iharder.Base64;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -80,7 +80,7 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
              //decode form base64 stream
             if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
                 final String encodedImage = IOUtilities.toString(stream);
-                final byte[] byteData = Base64.decode(encodedImage.trim());
+                final byte[] byteData = Base64.getDecoder().decode(encodedImage.trim());
                 if (byteData != null && byteData.length > 0) {
                     try (InputStream is = new ByteArrayInputStream(byteData)) {
                         imageStream = ImageIO.createImageInputStream(is);

@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.*;
@@ -27,7 +31,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import net.iharder.Base64;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.io.wkt.*;
 import org.apache.sis.referencing.CRS;
@@ -132,7 +135,8 @@ public class XMLPyramid implements Pyramid {
 
         if (serializedCrs != null) {
             try {
-                crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
+                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(serializedCrs)));
+                crsobj = (CoordinateReferenceSystem) in.readObject();
             } catch (Exception ex) {
                 final String msg = "Unable to read base64 serialized CRS, fallback to WKT : "+ex.getMessage();
                 Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, msg);
@@ -168,7 +172,11 @@ public class XMLPyramid implements Pyramid {
 
         if (crs instanceof Serializable) {
             try {
-                this.serializedCrs = Base64.encodeObject((Serializable)crs);
+                ByteArrayOutputStream bo = new ByteArrayOutputStream();
+                ObjectOutputStream out = new ObjectOutputStream(bo);
+                out.writeObject(crs);
+                out.close();
+                this.serializedCrs = Base64.getEncoder().encodeToString(bo.toByteArray());
             } catch (IOException serializedEx) {
                 Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, serializedEx.getMessage(), serializedEx);
             }

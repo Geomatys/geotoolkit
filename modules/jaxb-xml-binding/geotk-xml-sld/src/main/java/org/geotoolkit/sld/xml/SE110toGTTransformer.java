@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,7 +39,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import net.iharder.Base64;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
@@ -1071,7 +1071,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             for(Object obj : contents){
                 if(obj instanceof String){
                     try{
-                        final byte[] b64 = Base64.decode((String)obj);
+                        final byte[] b64 = Base64.getDecoder().decode((String) obj);
                         final ByteArrayInputStream is = new ByteArrayInputStream(b64);
                         final BufferedImage image = ImageIO.read(is);
                         icon = new ImageIcon(image);

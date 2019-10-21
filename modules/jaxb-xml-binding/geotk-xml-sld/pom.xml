@@ -71,9 +71,5 @@
             <artifactId>geotk-feature</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>net.iharder</groupId>
-            <artifactId>base64</artifactId>
-        </dependency>
     </dependencies>
 </project>

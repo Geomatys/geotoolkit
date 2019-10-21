@@ -39,7 +39,6 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import net.iharder.Base64;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -1096,11 +1095,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     public static Object readValue(final String content, final AttributeType type) {
         Object value = content;
         if (type.getValueClass() == byte[].class && content != null) {
-            try {
-                value = Base64.decode(content);
-            } catch (IOException ex) {
-                LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
-            }
+            value = Base64.getDecoder().decode(content);
         } else {
             value = ObjectConverters.convert(value, Numbers.primitiveToWrapper(type.getValueClass()));
         }

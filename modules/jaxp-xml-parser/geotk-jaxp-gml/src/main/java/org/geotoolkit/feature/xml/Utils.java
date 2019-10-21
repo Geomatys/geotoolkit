@@ -31,6 +31,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -50,7 +51,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
-import net.iharder.Base64;
 import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
@@ -609,7 +609,7 @@ public final class Utils {
         } else if (obj instanceof Number || obj instanceof Boolean || obj instanceof URI) {
             return obj.toString();
         } else if (obj instanceof byte[]) {
-            return Base64.encodeBytes((byte[])obj);
+            return Base64.getEncoder().encodeToString((byte[])obj);
         } else if (obj != null) {
             LOGGER.log(Level.WARNING, "Unhandled type :" + obj.getClass(),new IllegalArgumentException());
         }

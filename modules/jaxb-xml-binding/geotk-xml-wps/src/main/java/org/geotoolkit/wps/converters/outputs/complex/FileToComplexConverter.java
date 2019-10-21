@@ -1,21 +1,20 @@
 package org.geotoolkit.wps.converters.outputs.complex;
 
-import net.iharder.Base64;
-import org.geotoolkit.nio.IOUtilities;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v200.Data;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Map;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.nio.IOUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
+import org.geotoolkit.wps.io.WPSEncoding;
+import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.v200.Data;
 
 /**
  * A converter to transform a File into ComplexOutput data for wps ExecuteResponse query.
@@ -125,7 +124,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
             try (FileInputStream stream =new FileInputStream(source)) {
                 byte[] barray = new byte[(int) source.length()];
                 stream.read(barray);
-                complex.getContent().add(Base64.encodeBytes(barray));
+                complex.getContent().add(Base64.getEncoder().encodeToString(barray));
             } catch (Exception ex) {
                 throw new UnconvertibleObjectException(ex.getMessage(), ex);
             }
