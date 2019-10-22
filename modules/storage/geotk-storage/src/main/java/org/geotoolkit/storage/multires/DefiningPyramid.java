@@ -19,8 +19,6 @@ package org.geotoolkit.storage.multires;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.UUID;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
@@ -57,34 +55,6 @@ public class DefiningPyramid implements Pyramid {
     @Override
     public Collection<Mosaic> getMosaics() {
         return mosaics;
-    }
-
-    @Override
-    public double[] getScales() {
-        final SortedSet<Double> scaleSet = new TreeSet<>();
-        for(Mosaic m : mosaics){
-            scaleSet.add(m.getScale());
-        }
-
-        final double[] scales = new double[scaleSet.size()];
-        int i=0;
-        for(Double d : scaleSet){
-            scales[i] = d;
-            i++;
-        }
-        return scales;
-    }
-
-    @Override
-    public Collection<? extends Mosaic> getMosaics(int index) {
-        final List<Mosaic> candidates = new ArrayList<>();
-        final double[] scales = getScales();
-        for(Mosaic m : mosaics){
-            if(m.getScale() == scales[index]){
-                candidates.add(m);
-            }
-        }
-        return candidates;
     }
 
     @Override

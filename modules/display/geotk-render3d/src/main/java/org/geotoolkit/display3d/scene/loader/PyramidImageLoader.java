@@ -32,16 +32,16 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.utils.TextureUtils;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -117,14 +117,15 @@ public class PyramidImageLoader implements ImageLoader{
         }
 
         final double scale = env.getSpan(0)/outputDimension.width;
-        final int indexImg = TextureUtils.getNearestScaleIndex(dataSource.getScales(), scale);
+        final double[] scales = dataSource.getScales();
+        final int indexImg = TextureUtils.getNearestScaleIndex(scales, scale);
 
         if (dataRenderedImage != null) {
             final Mosaic gridMosaic = dataRenderedImage.getGridMosaic();
             final double mosaicScale = gridMosaic.getScale();
             final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
             if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
-                final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(indexImg);
+                final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
                     dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
                 } else {
@@ -133,7 +134,7 @@ public class PyramidImageLoader implements ImageLoader{
                 }
             }
         } else {
-            final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(indexImg);
+            final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
             if (!mosaics.isEmpty()) {
                 dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
             } else {

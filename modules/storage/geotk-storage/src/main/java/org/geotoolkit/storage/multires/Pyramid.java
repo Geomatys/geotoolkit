@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.storage.multires;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -50,16 +54,41 @@ public interface Pyramid extends MultiResolutionModel {
     /**
      * @return the different scales available in the pyramid.
      * The scale value is expressed in CRS unit by image cell (pixel usually)
+     * Scales are sorted in natural order, from smallest to highest.
      */
-    double[] getScales();
+    default double[] getScales() {
+        final SortedSet<Double> scaleSet = new TreeSet<Double>();
+
+        for(Mosaic m : getMosaics()){
+            scaleSet.add(m.getScale());
+        }
+
+        final double[] scales = new double[scaleSet.size()];
+
+        int i=0;
+        for(Double d : scaleSet){
+            scales[i] = d;
+            i++;
+        }
+
+        return scales;
+    }
 
     /**
-     * @param index of the wanted scale, must match an available index of the scales table.
+     * @param scale the wanted scale, must match an available scale of the scales table.
      * @return Collection<GridMosaic> available mosaics at this scale.
      * Waring : in multidimensional pyramids, multiple mosaic at the same scale
      * may exist.
      */
-    Collection<? extends Mosaic> getMosaics(int index);
+    default Collection<Mosaic> getMosaics(double scale) {
+        final List<Mosaic> candidates = new ArrayList<>();
+        for (Mosaic m : getMosaics()) {
+            if (m.getScale() == scale) {
+                candidates.add(m);
+            }
+        }
+        return candidates;
+    }
 
     /**
      * Get pyramid envelope.

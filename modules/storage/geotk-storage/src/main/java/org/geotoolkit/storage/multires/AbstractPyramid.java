@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.storage.multires;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.UUID;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -67,37 +62,6 @@ public abstract class AbstractPyramid implements Pyramid {
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
-    }
-
-    @Override
-    public double[] getScales() {
-        final SortedSet<Double> scaleSet = new TreeSet<Double>();
-
-        for(Mosaic m : getMosaics()){
-            scaleSet.add(m.getScale());
-        }
-
-        final double[] scales = new double[scaleSet.size()];
-
-        int i=0;
-        for(Double d : scaleSet){
-            scales[i] = d;
-            i++;
-        }
-
-        return scales;
-    }
-
-    @Override
-    public Collection<Mosaic> getMosaics(int index) {
-        final List<Mosaic> candidates = new ArrayList<>();
-        final double[] scales = getScales();
-        for(Mosaic m : getMosaics()){
-            if(m.getScale() == scales[index]){
-                candidates.add(m);
-            }
-        }
-        return candidates;
     }
 
     @Override

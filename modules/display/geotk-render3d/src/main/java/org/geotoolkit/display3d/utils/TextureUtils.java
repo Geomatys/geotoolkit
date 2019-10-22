@@ -68,4 +68,18 @@ public final class TextureUtils {
 
         return nearIndex;
     }
+
+    public static double getNearestScale(double[] scales, double scale) {
+        double dist = -1;
+        int nearIndex = -1;
+        for (int i = 0; i < scales.length; i++) {
+            double tmpDist = Math.abs(scales[i]-scale);
+            if ((tmpDist <= dist && scale >= scales[i]) || dist < 0 || nearIndex < 0) {
+                dist=tmpDist;
+                nearIndex=i;
+            }
+        }
+
+        return scales[nearIndex];
+    }
 }

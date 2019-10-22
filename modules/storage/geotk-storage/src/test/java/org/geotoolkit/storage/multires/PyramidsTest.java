@@ -16,16 +16,13 @@
  */
 package org.geotoolkit.storage.multires;
 
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.DefiningPyramid;
-import org.geotoolkit.storage.multires.Pyramids;
 import java.awt.Dimension;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,9 +54,9 @@ public class PyramidsTest {
         Assert.assertEquals(2, scales[1], DELTA);
         Assert.assertEquals(4, scales[2], DELTA);
 
-        final Mosaic m1 = pyramid.getMosaics(0).iterator().next();
-        final Mosaic m2 = pyramid.getMosaics(1).iterator().next();
-        final Mosaic m3 = pyramid.getMosaics(2).iterator().next();
+        final Mosaic m1 = pyramid.getMosaics(scales[0]).iterator().next();
+        final Mosaic m2 = pyramid.getMosaics(scales[1]).iterator().next();
+        final Mosaic m3 = pyramid.getMosaics(scales[2]).iterator().next();
 
         //upperleft corner is in PixelInCell.CELL_CORNER, causing the 0.5 offset.
         final DirectPosition2D upperleft = new DirectPosition2D(crs, -50.5, 40.5);

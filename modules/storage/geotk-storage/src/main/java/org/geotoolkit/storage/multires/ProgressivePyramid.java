@@ -58,16 +58,6 @@ final class ProgressivePyramid implements Pyramid {
     }
 
     @Override
-    public Collection<? extends Mosaic> getMosaics(int index) {
-        final Collection<? extends Mosaic> mosaics = parent.getMosaics(index);
-        final List<Mosaic> pmosaics = new ArrayList<>(mosaics.size());
-        for (Mosaic m : mosaics) {
-            pmosaics.add(new ProgressiveMosaic(this, m));
-        }
-        return pmosaics;
-    }
-
-    @Override
     public Envelope getEnvelope() {
         return parent.getEnvelope();
     }

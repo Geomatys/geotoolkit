@@ -197,35 +197,6 @@ public class XMLPyramid implements Pyramid {
     }
 
     @Override
-    public double[] getScales() {
-        final SortedSet<Double> scaleSet = new TreeSet<Double>();
-
-        for(Mosaic m : mosaics()){
-            scaleSet.add(m.getScale());
-        }
-
-        final double[] scales = new double[scaleSet.size()];
-        int i=0;
-        for(Double d : scaleSet){
-            scales[i] = d;
-            i++;
-        }
-        return scales;
-    }
-
-    @Override
-    public Collection<Mosaic> getMosaics(int index) {
-        final List<Mosaic> candidates = new ArrayList<>();
-        final double[] scales = getScales();
-        for(Mosaic m : mosaics()){
-            if(m.getScale() == scales[index]){
-                candidates.add(m);
-            }
-        }
-        return candidates;
-    }
-
-    @Override
     public List<Mosaic> getMosaics() {
         return new ArrayList<Mosaic>(mosaics());
     }
