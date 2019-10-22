@@ -16,31 +16,29 @@
  */
 package org.geotoolkit.processing.vector.spatialjoin;
 
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.opengis.util.NoSuchIdentifierException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.vector.AbstractProcessTest;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
-import org.junit.Test;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of SpatialJoin process
@@ -64,8 +62,8 @@ public class SpatialJoinTest extends AbstractProcessTest {
     public void testSpacialJoin() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection targetFeatures = buildFeatureList1();
-        final FeatureCollection sourceFeatures = buildFeatureList2();
+        final FeatureSet targetFeatures = buildFeatureList1();
+        final FeatureSet sourceFeatures = buildFeatureList2();
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:spatialjoin");
@@ -77,10 +75,10 @@ public class SpatialJoinTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultNear();
+        final FeatureSet featureListResult = buildResultNear();
         compare(featureListResult,featureListOut);
     }
 
@@ -91,8 +89,8 @@ public class SpatialJoinTest extends AbstractProcessTest {
     public void testSpacialJoinIntersection() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection targetFeatures = buildFeatureListInter1();
-        final FeatureCollection sourceFeatures = buildFeatureListInter2();
+        final FeatureSet targetFeatures = buildFeatureListInter1();
+        final FeatureSet sourceFeatures = buildFeatureListInter2();
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:spatialjoin");
@@ -104,11 +102,11 @@ public class SpatialJoinTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultInter();
-        compare(featureListOut, featureListResult);
+        final FeatureSet expectedList = buildResultInter();
+        compare(expectedList, featureListOut);
     }
 
     /**
@@ -118,8 +116,8 @@ public class SpatialJoinTest extends AbstractProcessTest {
     public void testSpacialJoinIntersection2() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection targetFeatures = buildFeatureListInter1_2();
-        final FeatureCollection sourceFeatures = buildFeatureListInter2();
+        final FeatureSet targetFeatures = buildFeatureListInter1_2();
+        final FeatureSet sourceFeatures = buildFeatureListInter2();
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:spatialjoin");
@@ -131,11 +129,11 @@ public class SpatialJoinTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultInter2();
-        compare(featureListResult,featureListOut);
+        final FeatureSet expectedList = buildResultInter2();
+        compare(expectedList, featureListOut);
     }
 
     private static FeatureType createSimpleType1() throws NoSuchAuthorityCodeException, FactoryException {
@@ -165,12 +163,12 @@ public class SpatialJoinTest extends AbstractProcessTest {
         ftb.addAttribute(String.class).setName("name");
         ftb.addAttribute(Integer.class).setName("age");
         ftb.addAttribute(Geometry.class).setName("geom1").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
-        ftb.addAttribute(String.class).setName("type_SJ_Type2").setMinimumOccurs(0).setMaximumOccurs(1);
+        ftb.addAttribute(String.class).setName("type").setMinimumOccurs(0).setMaximumOccurs(1);
         ftb.addAttribute(Integer.class).setName("age_SJ_Type2").setMinimumOccurs(0).setMaximumOccurs(1);
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList1() throws FactoryException {
+    private static FeatureSet buildFeatureList1() throws FactoryException {
 
         type = createSimpleType1();
 
@@ -228,7 +226,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureList2() throws FactoryException {
+    private static FeatureSet buildFeatureList2() throws FactoryException {
 
         type = createSimpleType2();
 
@@ -286,7 +284,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureListInter1() throws FactoryException {
+    private static FeatureSet buildFeatureListInter1() throws FactoryException {
 
         type = createSimpleType1();
 
@@ -311,7 +309,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureListInter1_2() throws FactoryException {
+    private static FeatureSet buildFeatureListInter1_2() throws FactoryException {
 
         type = createSimpleType1();
 
@@ -336,7 +334,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureListInter2() throws FactoryException {
+    private static FeatureSet buildFeatureListInter2() throws FactoryException {
 
         type = createSimpleType2();
         final FeatureCollection featureList = FeatureStoreUtilities.collection("source", type);
@@ -400,17 +398,17 @@ public class SpatialJoinTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection buildResultNear() throws FactoryException {
+    private static FeatureSet buildResultNear() throws FactoryException {
         type = createSimpleTypeResult();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("Target", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-1_id-11");
         feature1.setPropertyValue("name","Human1");
         feature1.setPropertyValue("age",20);
         feature1.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 2)));
-        feature1.setPropertyValue("type_SJ_Type2","Tree1");
+        feature1.setPropertyValue("type","Tree1");
         feature1.setPropertyValue("age_SJ_Type2",220);
         featureList.add(feature1);
 
@@ -419,7 +417,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature2.setPropertyValue("name","Human2");
         feature2.setPropertyValue("age",10);
         feature2.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(3, 5)));
-        feature2.setPropertyValue("type_SJ_Type2","Tree2");
+        feature2.setPropertyValue("type","Tree2");
         feature2.setPropertyValue("age_SJ_Type2",100);
         featureList.add(feature2);
 
@@ -428,7 +426,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature3.setPropertyValue("name","Human3");
         feature3.setPropertyValue("age",35);
         feature3.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 6)));
-        feature3.setPropertyValue("type_SJ_Type2","Tree3");
+        feature3.setPropertyValue("type","Tree3");
         feature3.setPropertyValue("age_SJ_Type2",5);
         featureList.add(feature3);
 
@@ -437,7 +435,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature4.setPropertyValue("name","Human4");
         feature4.setPropertyValue("age",40);
         feature4.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(6, 2)));
-        feature4.setPropertyValue("type_SJ_Type2","Tree4");
+        feature4.setPropertyValue("type","Tree4");
         feature4.setPropertyValue("age_SJ_Type2",40);
         featureList.add(feature4);
 
@@ -446,7 +444,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature5.setPropertyValue("name","Human5");
         feature5.setPropertyValue("age",23);
         feature5.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(7, 4)));
-        feature5.setPropertyValue("type_SJ_Type2","Tree3");
+        feature5.setPropertyValue("type","Tree3");
         feature5.setPropertyValue("age_SJ_Type2",5);
         featureList.add(feature5);
 
@@ -455,7 +453,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature6.setPropertyValue("name","Human6");
         feature6.setPropertyValue("age",32);
         feature6.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 4)));
-        feature6.setPropertyValue("type_SJ_Type2","Tree6");
+        feature6.setPropertyValue("type","Tree6");
         feature6.setPropertyValue("age_SJ_Type2",68);
         featureList.add(feature6);
 
@@ -464,18 +462,18 @@ public class SpatialJoinTest extends AbstractProcessTest {
         feature7.setPropertyValue("name","Human7");
         feature7.setPropertyValue("age",28);
         feature7.setPropertyValue("geom1",geometryFactory.createPoint(new Coordinate(9, 1)));
-        feature7.setPropertyValue("type_SJ_Type2","Tree6");
+        feature7.setPropertyValue("type","Tree6");
         feature7.setPropertyValue("age_SJ_Type2",68);
         featureList.add(feature7);
 
         return featureList;
     }
 
-    private static FeatureCollection buildResultInter() throws FactoryException {
+    private static FeatureSet buildResultInter() throws FactoryException {
 
         type = createSimpleTypeResult();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("target", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01_id-12");
@@ -491,18 +489,18 @@ public class SpatialJoinTest extends AbstractProcessTest {
                 });
 
         feature1.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
-        feature1.setPropertyValue("type_SJ_Type2","something2");
+        feature1.setPropertyValue("type","something2");
         feature1.setPropertyValue("age_SJ_Type2",2);
         featureList.add(feature1);
 
         return featureList;
     }
 
-    private static FeatureCollection buildResultInter2() throws FactoryException {
+    private static FeatureSet buildResultInter2() throws FactoryException {
 
         type = createSimpleTypeResult();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("target", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("SJ_Type1_SJ_Type2", type);
 
         final Feature feature1 = type.newInstance();
         feature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
@@ -518,7 +516,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
                 });
 
         feature1.setPropertyValue("geom1",geometryFactory.createPolygon(ring, null));
-        feature1.setPropertyValue("type_SJ_Type2",null);
+        feature1.setPropertyValue("type",null);
         feature1.setPropertyValue("age_SJ_Type2",null);
         featureList.add(feature1);
 

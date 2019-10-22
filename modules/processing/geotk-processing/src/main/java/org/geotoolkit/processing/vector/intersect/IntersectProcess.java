@@ -16,11 +16,22 @@
  */
 package org.geotoolkit.processing.vector.intersect;
 
-import org.locationtech.jts.geom.Geometry;
-
-import org.geotoolkit.storage.feature.FeatureCollection;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -29,6 +40,8 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 public class IntersectProcess extends AbstractProcess {
+
+    private static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
 
     /**
      * Default constructor
@@ -41,12 +54,36 @@ public class IntersectProcess extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureCollection inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
-        final Geometry interGeom                 = inputParameters.getValue(IntersectDescriptor.GEOMETRY_IN);
+    protected void execute() throws ProcessException {
+        try {
+            final FeatureSet inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURESET_IN);
+            final Geometry interGeom          = inputParameters.getValue(IntersectDescriptor.GEOMETRY_IN);
 
-        final FeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);
+            Filter filter = createFilter(inputFeatureList.getType(), interGeom);
+            final SimpleQuery query = new SimpleQuery();
+            query.setFilter(filter);
+            final FeatureSet resultFeatureList = inputFeatureList.subset(query);
 
-        outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
+            outputParameters.getOrCreate(VectorDescriptor.FEATURESET_OUT).setValue(resultFeatureList);
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
+    }
+
+
+    /**
+     * Create an intersect filter between the intersection Geometry
+     * and feature geometries
+     * @return the intersect filter
+     */
+    private Filter createFilter(FeatureType ft, final Geometry interGeom) {
+        final List<Filter> filterList = new ArrayList<Filter>();
+        for (final PropertyType property : ft.getProperties(true)) {
+            if (AttributeConvention.isGeometryAttribute(property)) {
+                final Filter filter = FF.intersects(FF.property(property.getName()), FF.literal(interGeom));
+                filterList.add(filter);
+            }
+        }
+        return FF.or(filterList);
     }
 }

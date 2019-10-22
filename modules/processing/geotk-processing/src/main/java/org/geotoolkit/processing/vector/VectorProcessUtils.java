@@ -16,6 +16,39 @@
  */
 package org.geotoolkit.processing.vector;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.quantity.Length;
+import org.apache.sis.feature.AbstractOperation;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.vector.intersect.IntersectDescriptor;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -27,31 +60,7 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.measure.UnitConverter;
-import javax.measure.quantity.Length;
-import javax.measure.Unit;
-import org.apache.sis.feature.AbstractOperation;
-
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.lang.Static;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.vector.intersect.IntersectDescriptor;
-import org.apache.sis.referencing.CRS;
-
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -63,16 +72,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.feature.FeatureExt;
-import org.apache.sis.feature.builder.AttributeTypeBuilder;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.parameter.Parameters;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.opengis.feature.AttributeType;
 
 
 /**
@@ -352,7 +351,7 @@ public final class VectorProcessUtils extends Static {
      */
     public static FeatureCollection intersectionFeatureToColl(final Feature inputFeature,
             final FeatureCollection featureList, String geometryName)
-            throws FactoryException, TransformException, ProcessException {
+            throws FactoryException, TransformException, ProcessException, DataStoreException {
 
         //if the wanted feature geometry is null, we use the default geometry
         if (geometryName == null) {
@@ -383,21 +382,22 @@ public final class VectorProcessUtils extends Static {
         //lauch Intersect process to get all features which intersect the inputFeature geometry
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IntersectDescriptor.NAME);
         final Parameters in = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
-        in.getOrCreate(IntersectDescriptor.FEATURE_IN).setValue(featureList);
+        in.getOrCreate(IntersectDescriptor.FEATURESET_IN).setValue(featureList);
         in.getOrCreate(IntersectDescriptor.GEOMETRY_IN).setValue(inputGeometry);
         final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //get all Features which intersects the intput Feature geometry
-        final FeatureCollection featuresOut = (FeatureCollection) proc.call().parameter(
-                IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
+        final FeatureSet featuresOut = (FeatureSet) proc.call().parameter(
+                IntersectDescriptor.FEATURESET_OUT.getName().getCode()).getValue();
 
-        if (featuresOut.isEmpty()) {
+        if (FeatureStoreUtilities.getCount(featuresOut).longValue() == 0) {
             //return an empty FeatureCollection
             return resultFeatureList;
         } else {
 
             //loop in resulting FeatureCollection
-            try (final FeatureIterator ite = featuresOut.iterator()) {
+            try (Stream<Feature> stream = featuresOut.features(false)) {
+                final Iterator<Feature> ite = stream.iterator();
                 while (ite.hasNext()) {
 
                     //get the next Feature which intersect the inputFeature

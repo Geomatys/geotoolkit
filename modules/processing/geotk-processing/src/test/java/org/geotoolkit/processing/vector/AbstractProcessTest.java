@@ -17,19 +17,21 @@
 
 package org.geotoolkit.processing.vector;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
+import java.util.List;
 import java.util.Objects;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.opengis.util.NoSuchIdentifierException;
+import java.util.stream.Collectors;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
+import org.opengis.util.NoSuchIdentifierException;
 /**
  * Abstract JUnit test for vector process
  * @author Quentin Boileau
@@ -59,19 +61,28 @@ public abstract class AbstractProcessTest extends org.geotoolkit.test.TestBase {
      * @param expected
      * @param result
      */
-    public static void compare(FeatureCollection expected, FeatureCollection result){
-        assertEquals(expected.getType(), result.getType());
-        assertEquals(expected.getIdentifier(), result.getIdentifier());
-        assertEquals(expected.size(), result.size());
-        loop:
-        for(Feature f : expected){
-            if(result.contains(f)){
-                continue;
+    public static void compare(FeatureSet expected, FeatureSet result){
+        try {
+            assertEquals(expected.getType(), result.getType());
+            assertEquals(String.valueOf(expected.getIdentifier().orElse(null)), String.valueOf(result.getIdentifier().orElse(null)));
+
+            List<Feature> expectedList = expected.features(false).collect(Collectors.toList());
+            List<Feature> resultList = result.features(false).collect(Collectors.toList());
+
+
+            assertEquals(expectedList.size(), resultList.size());
+            loop:
+            for(Feature f : expectedList){
+                if(resultList.contains(f)){
+                    continue;
+                }
+                for(Feature r : resultList){
+                    if(equalsGeometryTopo(f, r)) continue loop;
+                }
+                fail("feature not found :\n"+f);
             }
-            for(Feature r : result){
-                if(equalsGeometryTopo(f, r)) continue loop;
-            }
-            fail("feature not found :\n"+f);
+        } catch (DataStoreException ex) {
+            fail(ex.getMessage());
         }
     }
 

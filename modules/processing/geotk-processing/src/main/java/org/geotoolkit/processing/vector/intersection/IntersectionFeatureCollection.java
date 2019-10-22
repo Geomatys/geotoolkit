@@ -17,15 +17,14 @@
 package org.geotoolkit.processing.vector.intersection;
 
 import java.util.NoSuchElementException;
-
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
-
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -85,6 +84,8 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
         } catch (TransformException ex) {
             throw new FeatureStoreRuntimeException(ex);
         } catch (ProcessException ex) {
+            throw new FeatureStoreRuntimeException(ex);
+        } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
     }

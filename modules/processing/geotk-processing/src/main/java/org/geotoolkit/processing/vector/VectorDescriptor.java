@@ -17,11 +17,11 @@
 package org.geotoolkit.processing.vector;
 
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -56,6 +56,23 @@ public abstract class VectorDescriptor extends AbstractProcessDescriptor {
             .setRemarks("Output FeatureFeatureCollection")
             .setRequired(true)
             .create(FeatureCollection.class, null);
+
+    /**
+     * Mandatory - Feature Collection
+     */
+    public static final ParameterDescriptor<FeatureSet> FEATURESET_IN = new ParameterBuilder()
+            .addName("feature_in")
+            .setRemarks("Input FeatureCollection")
+            .setRequired(true)
+            .create(FeatureSet.class, null);
+    /**
+     * Mandatory - Resulting Feature Collection
+     */
+    public static final ParameterDescriptor<FeatureSet> FEATURESET_OUT = new ParameterBuilder()
+            .addName("feature_out")
+            .setRemarks("Output FeatureFeatureCollection")
+            .setRequired(true)
+            .create(FeatureSet.class, null);
 
     /**
      * Default constructor
