@@ -29,7 +29,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

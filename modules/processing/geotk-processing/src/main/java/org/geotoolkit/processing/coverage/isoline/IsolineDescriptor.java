@@ -18,7 +18,7 @@ package org.geotoolkit.processing.coverage.isoline;
 
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;

@@ -18,7 +18,7 @@ package org.geotoolkit.data.shapefile.indexed;
 
 import org.junit.Test;
 
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;

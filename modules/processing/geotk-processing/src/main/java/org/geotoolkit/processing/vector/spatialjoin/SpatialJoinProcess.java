@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 import org.opengis.feature.AttributeType;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;

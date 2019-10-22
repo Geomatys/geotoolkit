@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
 import org.opengis.feature.FeatureType;

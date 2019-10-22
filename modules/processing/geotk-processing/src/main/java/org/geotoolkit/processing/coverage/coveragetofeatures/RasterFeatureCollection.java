@@ -19,8 +19,8 @@ package org.geotoolkit.processing.coverage.coveragetofeatures;
 import java.util.AbstractCollection;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 
 /**

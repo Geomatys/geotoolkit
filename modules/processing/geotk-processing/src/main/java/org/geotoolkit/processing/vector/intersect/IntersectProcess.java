@@ -18,7 +18,7 @@ package org.geotoolkit.processing.vector.intersect;
 
 import org.locationtech.jts.geom.Geometry;
 
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;

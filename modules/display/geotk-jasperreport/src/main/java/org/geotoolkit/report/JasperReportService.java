@@ -49,7 +49,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.lang.Static;
 import org.opengis.feature.AttributeType;

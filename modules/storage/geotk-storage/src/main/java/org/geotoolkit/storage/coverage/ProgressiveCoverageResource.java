@@ -23,10 +23,10 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.data.multires.GeneralProgressiveResource;
-import org.geotoolkit.data.multires.MultiResolutionResource;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.TileGenerator;
+import org.geotoolkit.storage.multires.GeneralProgressiveResource;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.TileGenerator;
 
 /**
  *

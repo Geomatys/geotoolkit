@@ -17,7 +17,7 @@
 package org.geotoolkit.processing.vector.clip;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;

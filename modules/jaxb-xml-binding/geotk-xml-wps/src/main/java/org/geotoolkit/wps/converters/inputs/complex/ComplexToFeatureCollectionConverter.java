@@ -23,8 +23,8 @@ import java.util.stream.Stream;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureSetWrapper;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureSetWrapper;
 import org.geotoolkit.wps.xml.v200.Data;
 
 /**

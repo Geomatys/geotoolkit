@@ -29,10 +29,10 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
-import static org.geotoolkit.data.AbstractFeatureStore.GML_32_NAMESPACE;
+import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_32_NAMESPACE;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -349,8 +349,8 @@ public class XmlTestData {
         simpleFeature3.setPropertyValue("attDouble",12.31d);
 
         //sorted by attDouble ascending
-        collectionSimple = new ArrayFeatureSet(NamesExt.create("one-of-a-kind-ID"),
-                simpleTypeBasic, Arrays.asList(simpleFeature3, simpleFeature2, simpleFeature1), null);
+        collectionSimple = new InMemoryFeatureSet(NamesExt.create("one-of-a-kind-ID"),
+                simpleTypeBasic, Arrays.asList(simpleFeature3, simpleFeature2, simpleFeature1));
 
         Feature s1 = simpleTypeBasic2.newInstance();
         s1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id90");
@@ -367,8 +367,8 @@ public class XmlTestData {
         s3.setPropertyValue("attString2","a text composed of words.");
         s3.setPropertyValue("attDouble2",12.31d);
 
-        collectionSimple2 = new ArrayFeatureSet(NamesExt.create("one-of-a-kind-ID-2"),
-                simpleTypeBasic2, Arrays.asList(s3, s2, s1), null);
+        collectionSimple2 = new InMemoryFeatureSet(NamesExt.create("one-of-a-kind-ID-2"),
+                simpleTypeBasic2, Arrays.asList(s3, s2, s1));
 
         featureComplex = complexType.newInstance();
         featureComplex.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-0");

@@ -35,10 +35,10 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -569,7 +569,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
         feature.setPropertyValue("geom",geometry);
-        final FeatureSet col = new ArrayFeatureSet(type, Arrays.asList(feature), null);
+        final FeatureSet col = new InMemoryFeatureSet(type, Arrays.asList(feature));
 
         final PolygonSymbolizer symbol = SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0), SF.fill(Color.RED), null);
         final MutableStyle style = SF.style(symbol);
@@ -590,7 +590,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
         feature.setPropertyValue("geom",geometry);
-        final FeatureSet col = new ArrayFeatureSet(type, Arrays.asList(feature), null);
+        final FeatureSet col = new InMemoryFeatureSet(type, Arrays.asList(feature));
 
         final List<GraphicalSymbol> symbols = new ArrayList<>();
         symbols.add(SF.mark(StyleConstants.MARK_SQUARE, SF.fill(Color.RED), SF.stroke(Color.BLACK, 0)));

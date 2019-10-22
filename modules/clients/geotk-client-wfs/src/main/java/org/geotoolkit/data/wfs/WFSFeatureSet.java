@@ -64,16 +64,16 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.storage.FeatureMapUpdate;
 import org.geotoolkit.util.NamesExt;
@@ -262,7 +262,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
         insert.setInputFormat("text/xml; subtype=\"gml/3.1.1\"");
 
         final FeatureType featureType = getType();
-        final FeatureSet col = new ArrayFeatureSet(NamesExt.create("id"), featureType, features, null);
+        final FeatureSet col = new InMemoryFeatureSet(NamesExt.create("id"), featureType, features);
         insert.setFeatures(col);
 
         request.elements().add(insert);
@@ -399,9 +399,9 @@ public class WFSFeatureSet implements WritableFeatureSet {
     }
 
     private FeatureReader requestFeature(final QName typeName, final Query query) throws XMLStreamException, DataStoreException, IOException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         FeatureType type = getType();
         // TODO : remove SIS conventions
         final GetFeatureRequest request = store.createGetFeature();

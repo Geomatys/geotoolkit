@@ -27,7 +27,7 @@ import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceValidator;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 

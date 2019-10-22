@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.DefaultGlyphService;

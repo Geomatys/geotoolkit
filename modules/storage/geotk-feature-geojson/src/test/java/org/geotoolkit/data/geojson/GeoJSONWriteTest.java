@@ -1,5 +1,8 @@
 package org.geotoolkit.data.geojson;
 
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureWriter;
+import org.geotoolkit.storage.feature.FeatureReader;
 import com.fasterxml.jackson.core.JsonEncoding;
 import java.io.*;
 import java.nio.file.Files;
@@ -16,8 +19,8 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.*;
 import static org.geotoolkit.data.geojson.GeoJSONProvider.PARAMETERS_DESCRIPTOR;
 import static org.geotoolkit.data.geojson.GeoJSONProvider.PATH;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;

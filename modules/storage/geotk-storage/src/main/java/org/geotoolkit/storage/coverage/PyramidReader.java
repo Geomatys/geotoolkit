@@ -43,17 +43,17 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.finder.CoverageFinder;
-import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
+import org.geotoolkit.storage.coverage.finder.CoverageFinder;
+import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.MultiResolutionModel;
-import org.geotoolkit.data.multires.MultiResolutionResource;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.MultiResolutionModel;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
@@ -97,10 +97,10 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
 
         //search for a pyramid
         //-- we use the first pyramid as default
-        org.geotoolkit.data.multires.Pyramid pyramid = null;
+        org.geotoolkit.storage.multires.Pyramid pyramid = null;
         for (MultiResolutionModel model : models) {
-            if (model instanceof org.geotoolkit.data.multires.Pyramid) {
-                pyramid = (org.geotoolkit.data.multires.Pyramid) model;
+            if (model instanceof org.geotoolkit.storage.multires.Pyramid) {
+                pyramid = (org.geotoolkit.storage.multires.Pyramid) model;
                 break;
             }
         }
@@ -215,7 +215,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
 
 
-        org.geotoolkit.data.multires.Pyramid pyramid;
+        org.geotoolkit.storage.multires.Pyramid pyramid;
         try {
              pyramid = coverageFinder.findPyramid(ref, crs);
         } catch (FactoryException | DataStoreException ex) {

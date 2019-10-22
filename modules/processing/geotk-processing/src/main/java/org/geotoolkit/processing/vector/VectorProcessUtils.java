@@ -41,9 +41,9 @@ import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import org.apache.sis.feature.AbstractOperation;
 
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.process.ProcessDescriptor;

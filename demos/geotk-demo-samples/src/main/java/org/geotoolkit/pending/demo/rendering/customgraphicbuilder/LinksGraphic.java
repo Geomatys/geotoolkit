@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.logging.Level;
 import org.geotoolkit.feature.FeatureExt;
 
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;

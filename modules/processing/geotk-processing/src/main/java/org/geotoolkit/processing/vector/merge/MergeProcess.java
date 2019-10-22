@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opengis.feature.AttributeType;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.processing.AbstractProcess;
 import org.apache.sis.util.ObjectConverters;

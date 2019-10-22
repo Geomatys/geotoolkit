@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.wps.xml.v200.Data;
 
 /**

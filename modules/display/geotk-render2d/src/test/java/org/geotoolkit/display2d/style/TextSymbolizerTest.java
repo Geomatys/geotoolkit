@@ -16,49 +16,49 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.locationtech.jts.geom.Coordinate;
-import java.awt.image.Raster;
-import org.geotoolkit.style.MutableStyle;
-import org.opengis.style.TextSymbolizer;
-import org.opengis.style.Fill;
-import org.opengis.style.Halo;
 import java.awt.Color;
-import org.opengis.style.LabelPlacement;
-import org.opengis.style.Font;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.Raster;
 import java.util.Arrays;
 import javax.measure.Unit;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.measure.Units;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.junit.Test;
-import org.opengis.style.Description;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.map.MapLayer;
-import static org.junit.Assert.*;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.Description;
+import org.opengis.style.Fill;
+import org.opengis.style.Font;
+import org.opengis.style.Halo;
+import org.opengis.style.LabelPlacement;
+import org.opengis.style.TextSymbolizer;
 
 /**
  * Test that text symbolizer are properly rendered.
@@ -85,7 +85,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         feature.setPropertyValue("geom",GF.createPoint(new Coordinate(0, 0)));
 
-        final FeatureSet collection = new ArrayFeatureSet(type, Arrays.asList(feature), null);
+        final FeatureSet collection = new InMemoryFeatureSet(type, Arrays.asList(feature));
 
         //text symbolizer style
         final String name = "mySymbol";

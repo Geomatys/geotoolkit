@@ -22,7 +22,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.util.NamesExt;

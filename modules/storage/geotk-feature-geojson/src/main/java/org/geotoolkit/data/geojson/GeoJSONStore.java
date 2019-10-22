@@ -17,6 +17,11 @@
 
 package org.geotoolkit.data.geojson;
 
+import org.geotoolkit.storage.feature.FeatureWriter;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.AbstractFeatureStore;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystemNotFoundException;
@@ -39,7 +44,7 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.*;
-import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
+import static org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory.PATH;
 import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
 import org.geotoolkit.data.geojson.binding.*;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
@@ -52,9 +57,9 @@ import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONPolygon;
 import org.geotoolkit.data.geojson.utils.FeatureTypeUtils;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.storage.DataStores;
@@ -321,9 +326,9 @@ public class GeoJSONStore extends AbstractFeatureStore implements ResourceOnFile
 
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException, FeatureStoreRuntimeException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         typeCheck(gquery.getTypeName());
 
         if (QueryUtilities.queryAll(gquery)) {
@@ -352,9 +357,9 @@ public class GeoJSONStore extends AbstractFeatureStore implements ResourceOnFile
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         typeCheck(gquery.getTypeName());
 
         final FeatureReader fr = new GeoJSONReader(jsonFile, featureType, rwLock);
@@ -366,9 +371,9 @@ public class GeoJSONStore extends AbstractFeatureStore implements ResourceOnFile
      */
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         typeCheck(gquery.getTypeName());
         final FeatureWriter fw = new GeoJSONFileWriter(jsonFile, featureType, rwLock,
                 GeoJSONProvider.ENCODING, coordAccuracy);

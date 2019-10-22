@@ -20,7 +20,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-import org.geotoolkit.data.multires.Tile;
+import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.image.io.XImageIO;
 
 /**

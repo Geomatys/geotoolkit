@@ -27,7 +27,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;

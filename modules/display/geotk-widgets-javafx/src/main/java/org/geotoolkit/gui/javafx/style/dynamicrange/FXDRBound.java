@@ -21,7 +21,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.gui.javafx.style.FXTextExpression;

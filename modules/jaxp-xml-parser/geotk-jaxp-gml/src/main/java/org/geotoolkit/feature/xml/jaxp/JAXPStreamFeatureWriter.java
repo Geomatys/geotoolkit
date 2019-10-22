@@ -49,7 +49,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;

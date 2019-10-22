@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.util.StringUtilities;
 
 /**

@@ -22,8 +22,8 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 

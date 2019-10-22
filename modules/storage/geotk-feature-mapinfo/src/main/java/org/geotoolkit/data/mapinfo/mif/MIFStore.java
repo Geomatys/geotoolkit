@@ -35,7 +35,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.data.DefiningFeatureSet;
+import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.FeatureType;

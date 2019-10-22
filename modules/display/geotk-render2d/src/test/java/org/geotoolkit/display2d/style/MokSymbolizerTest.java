@@ -24,6 +24,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.WritableFeatureSet;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -31,7 +32,6 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -78,7 +78,7 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
         sftb.addAttribute(String.class).setName("att1");
         sftb.addAttribute(Double.class).setName("att2");
         final FeatureType sft = sftb.build();
-        WritableFeatureSet col = new ArrayFeatureSet("id", sft);
+        WritableFeatureSet col = new InMemoryFeatureSet("id", sft);
 
         Feature sf1 = sft.newInstance();
         sf1.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));

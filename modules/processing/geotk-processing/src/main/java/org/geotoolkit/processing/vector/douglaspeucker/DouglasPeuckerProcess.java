@@ -21,7 +21,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;

@@ -17,8 +17,8 @@
 package org.geotoolkit.processing.vector.retype;
 
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.feature.FeatureType;
 import org.geotoolkit.processing.vector.VectorDescriptor;

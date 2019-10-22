@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.multires.MultiResolutionModel;
-import org.geotoolkit.data.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.MultiResolutionModel;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.opengis.util.GenericName;
 
 /**

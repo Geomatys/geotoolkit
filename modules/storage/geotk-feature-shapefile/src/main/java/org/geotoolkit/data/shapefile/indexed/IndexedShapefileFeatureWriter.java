@@ -27,8 +27,8 @@ import java.util.logging.Level;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureWriter;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;

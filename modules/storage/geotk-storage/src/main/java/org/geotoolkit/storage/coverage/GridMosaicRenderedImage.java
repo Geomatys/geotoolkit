@@ -27,8 +27,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Tile;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.math.XMath;
 
 /**

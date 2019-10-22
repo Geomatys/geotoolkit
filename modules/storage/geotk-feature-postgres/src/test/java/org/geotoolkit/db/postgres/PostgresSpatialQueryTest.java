@@ -26,7 +26,7 @@ import java.util.Properties;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.assertTrue;

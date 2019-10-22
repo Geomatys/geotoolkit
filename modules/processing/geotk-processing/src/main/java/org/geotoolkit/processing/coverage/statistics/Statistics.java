@@ -34,7 +34,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.process.ProcessException;

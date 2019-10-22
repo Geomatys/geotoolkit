@@ -47,7 +47,7 @@ import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.jaxb.mapping.GeometryMapping;
 import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xsd.xml.v2001.Annotated;

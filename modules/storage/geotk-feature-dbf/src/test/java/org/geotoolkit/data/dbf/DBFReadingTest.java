@@ -27,7 +27,7 @@ import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.AbstractReadingTests;
+import org.geotoolkit.storage.AbstractReadingTests;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.assertNotNull;
 import org.opengis.feature.FeatureType;

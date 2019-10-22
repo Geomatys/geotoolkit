@@ -3,8 +3,8 @@ package org.geotoolkit.data.geojson;
 import com.fasterxml.jackson.core.JsonEncoding;
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;

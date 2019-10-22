@@ -18,8 +18,8 @@ package org.geotoolkit.data.geojson;
 
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeatureCollection;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;

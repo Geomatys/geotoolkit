@@ -21,7 +21,7 @@ import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSEncoding;

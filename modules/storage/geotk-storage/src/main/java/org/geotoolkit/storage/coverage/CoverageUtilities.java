@@ -33,17 +33,17 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.SampleDimensionType;
-import org.geotoolkit.coverage.finder.CoverageFinder;
-import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
+import org.geotoolkit.storage.coverage.finder.CoverageFinder;
+import org.geotoolkit.storage.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.data.multires.DefiningMosaic;
-import org.geotoolkit.data.multires.DefiningPyramid;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.MultiResolutionResource;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.DefiningMosaic;
+import org.geotoolkit.storage.multires.DefiningPyramid;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
@@ -354,7 +354,7 @@ public final class CoverageUtilities {
      * @param pyramid shouldn't be null
      * @return pyramid Envelope or null if no mosaic found.
      */
-    public static GeneralEnvelope getPyramidEnvelope(org.geotoolkit.data.multires.Pyramid pyramid) {
+    public static GeneralEnvelope getPyramidEnvelope(org.geotoolkit.storage.multires.Pyramid pyramid) {
         ArgumentChecks.ensureNonNull("pyramid", pyramid);
         GeneralEnvelope pyramidEnv = null;
         for (Mosaic mosaic : pyramid.getMosaics()) {

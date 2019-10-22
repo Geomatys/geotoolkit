@@ -41,12 +41,6 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.Version;
-import org.geotoolkit.data.*;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.query.SQLQuery;
-import org.geotoolkit.data.session.Session;
 import static org.geotoolkit.db.JDBCFeatureStore.JDBC_PROPERTY_RELATION;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
@@ -62,6 +56,16 @@ import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.FeatureWriter;
+import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryCapabilities;
+import org.geotoolkit.storage.feature.query.SQLQuery;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.AttributeType;
@@ -94,7 +98,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     protected static final QueryCapabilities DEFAULT_CAPABILITIES = new DefaultQueryCapabilities(false, false,
-            new String[]{org.geotoolkit.data.query.Query.GEOTK_QOM, CUSTOM_SQL});
+            new String[]{org.geotoolkit.storage.feature.query.Query.GEOTK_QOM, CUSTOM_SQL});
 
     protected final GeometryFactory geometryFactory = new GeometryFactory();
     protected final FilterFactory filterFactory = DefaultFactories.forBuildin(FilterFactory.class);
@@ -274,8 +278,8 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         if (query instanceof SQLQuery) {
             return getSQLFeatureReader((SQLQuery)query,cnx);
 
-        } else if (query instanceof org.geotoolkit.data.query.Query) {
-            final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query)query;
+        } else if (query instanceof org.geotoolkit.storage.feature.query.Query) {
+            final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query)query;
             final FeatureReader reader = getQOMFeatureReader(gquery,cnx);
 
             //take care of potential hints, like removing primary keys
@@ -295,7 +299,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @return FeatureReader
      * @throws DataStoreException
      */
-    private FeatureReader getQOMFeatureReader(final org.geotoolkit.data.query.Query query, Connection cnx) throws DataStoreException {
+    private FeatureReader getQOMFeatureReader(final org.geotoolkit.storage.feature.query.Query query, Connection cnx) throws DataStoreException {
 
         final String dbSchemaName = getDatabaseSchema();
         final FeatureType type = dbmodel.getFeatureType(query.getTypeName());
@@ -340,7 +344,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         if(query.getResolution() != null){ //attach resampling in hints; used later by postgis dialect
             builder.getHints().add(new Hints(RESAMPLING, query.getResolution()));
         }
-        final org.geotoolkit.data.query.Query preQuery = builder.buildQuery();
+        final org.geotoolkit.storage.feature.query.Query preQuery = builder.buildQuery();
 
         final FeatureType baseType = getFeatureType(query.getTypeName());
 
@@ -448,7 +452,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @param type
      * @return
      */
-    private boolean containsOperation(org.geotoolkit.data.query.Query query, FeatureType type) {
+    private boolean containsOperation(org.geotoolkit.storage.feature.query.Query query, FeatureType type) {
         if (query.retrieveAllProperties()) {
             for (PropertyType prop : type.getProperties(true)) {
                 if (prop instanceof Operation) {
@@ -517,9 +521,9 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         typeCheck(gquery.getTypeName());
         final Filter filter = gquery.getFilter();
         final Hints hints = gquery.getHints();
@@ -574,7 +578,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             if ( EditMode.INSERT == mode ) {
                 //build up a statement for the content, inserting only so we dont want
                 //the query to return any data ==> Filter.EXCLUDE
-                final org.geotoolkit.data.query.Query queryNone = QueryBuilder.filtered(typeName, Filter.EXCLUDE);
+                final org.geotoolkit.storage.feature.query.Query queryNone = QueryBuilder.filtered(typeName, Filter.EXCLUDE);
                 final String sql = getQueryBuilder().selectSQL(baseType, queryNone);
                 getLogger().fine(sql);
                 return new JDBCFeatureWriterInsert(this,sql,baseType,cnx,release,hints);
@@ -582,7 +586,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
 
             // build up a statement for the content
-            final org.geotoolkit.data.query.Query preQuery = QueryBuilder.filtered(typeName, preFilter);
+            final org.geotoolkit.storage.feature.query.Query preQuery = QueryBuilder.filtered(typeName, preFilter);
             final String sql = getQueryBuilder().selectSQL(baseType, preQuery);
             getLogger().fine(sql);
 

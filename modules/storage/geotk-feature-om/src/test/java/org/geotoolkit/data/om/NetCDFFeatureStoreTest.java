@@ -33,7 +33,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStore;
-import org.geotoolkit.data.AbstractReadingTests;
+import org.geotoolkit.storage.AbstractReadingTests;
 import org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.nio.IOUtilities;

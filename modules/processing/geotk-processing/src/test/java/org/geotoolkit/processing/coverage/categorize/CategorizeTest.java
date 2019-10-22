@@ -11,7 +11,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierTest;
 import org.geotoolkit.test.Assert;

@@ -44,7 +44,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.memory.InMemoryFeatureSet;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import static org.geotoolkit.data.nmea.NMEAStore.NMEA_TYPE;
 
 /**

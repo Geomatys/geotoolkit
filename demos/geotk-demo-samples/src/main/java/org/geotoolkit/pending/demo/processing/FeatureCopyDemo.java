@@ -2,7 +2,7 @@
 package org.geotoolkit.pending.demo.processing;
 
 import java.net.URI;
-import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.process.Process;

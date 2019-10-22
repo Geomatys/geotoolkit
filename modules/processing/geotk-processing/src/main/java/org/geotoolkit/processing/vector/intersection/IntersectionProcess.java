@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.vector.intersection;
 
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.vector.VectorProcessUtils;

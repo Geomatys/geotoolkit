@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.data.multires.AbstractMosaic;
-import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.storage.multires.AbstractMosaic;
+import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.opengis.geometry.DirectPosition;
 

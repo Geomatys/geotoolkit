@@ -19,7 +19,7 @@ package org.geotoolkit.db.postgres;
 import java.sql.SQLException;
 import java.util.Date;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.query.Query;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.db.reverse.PrimaryKey;

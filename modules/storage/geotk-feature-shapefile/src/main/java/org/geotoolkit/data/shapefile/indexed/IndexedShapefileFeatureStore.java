@@ -34,11 +34,11 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.FeatureWriter;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
@@ -182,9 +182,9 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
 
         final FeatureType   baseType = getFeatureType();
         final String        queryTypeName = gquery.getTypeName();
@@ -554,9 +554,9 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
 
         //will raise an error if it does not exist
         final FeatureType schema = getFeatureType(gquery.getTypeName());
@@ -578,9 +578,9 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     @Override
     public org.opengis.geometry.Envelope getEnvelope(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
 
         final Filter filter = gquery.getFilter();
         if (filter == Filter.INCLUDE || QueryUtilities.queryAll(gquery) ) {

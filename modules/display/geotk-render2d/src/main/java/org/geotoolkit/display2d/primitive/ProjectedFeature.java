@@ -22,7 +22,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

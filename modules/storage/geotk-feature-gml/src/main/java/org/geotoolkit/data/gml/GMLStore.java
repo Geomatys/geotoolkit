@@ -55,13 +55,13 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
-import org.geotoolkit.internal.data.FeatureCatalogue;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.FeatureCatalogue;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
@@ -283,7 +283,7 @@ public class GMLStore extends DataStore implements WritableFeatureSet, ResourceO
                 }
                 lst.add(feature);
             }
-            final FeatureSet newfs = new ArrayFeatureSet(type, lst, null);
+            final FeatureSet newfs = new InMemoryFeatureSet(type, lst);
             final FeatureSet all = ConcatenatedFeatureSet.create(this, newfs);
 
             try {

@@ -37,7 +37,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.data.DefiningFeatureSet;
+import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.data.mapinfo.mif.MIFProvider;
 import org.geotoolkit.data.mapinfo.mif.MIFStore;
 import org.geotoolkit.storage.DataStores;

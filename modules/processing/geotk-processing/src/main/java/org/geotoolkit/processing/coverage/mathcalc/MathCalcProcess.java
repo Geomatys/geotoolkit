@@ -26,7 +26,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.data.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.filter.WrapFilterFactory2;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;

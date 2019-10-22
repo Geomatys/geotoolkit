@@ -45,6 +45,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.painter.GradiantColorPainter;
@@ -55,7 +56,6 @@ import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -109,7 +109,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         sftb.addAttribute(String.class).setName("att1");
         sftb.addAttribute(Double.class).setName("att2");
         final FeatureType sft = sftb.build();
-        WritableFeatureSet col = new ArrayFeatureSet("id", sft);
+        WritableFeatureSet col = new InMemoryFeatureSet("id", sft);
 
         Feature sf1 = sft.newInstance();
         sf1.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));

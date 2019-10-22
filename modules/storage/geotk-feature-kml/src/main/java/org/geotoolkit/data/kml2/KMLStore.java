@@ -49,7 +49,7 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.data.query.QueryFeatureSet;
+import org.geotoolkit.storage.feature.query.QueryFeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.kml.xml.KMLMarshallerPool;
@@ -174,8 +174,8 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
 
     @Override
     public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof org.geotoolkit.data.query.Query) {
-            return QueryFeatureSet.apply(this, (org.geotoolkit.data.query.Query)query);
+        if (query instanceof org.geotoolkit.storage.feature.query.Query) {
+            return QueryFeatureSet.apply(this, (org.geotoolkit.storage.feature.query.Query)query);
         }
         return FeatureSet.super.subset(query);
     }

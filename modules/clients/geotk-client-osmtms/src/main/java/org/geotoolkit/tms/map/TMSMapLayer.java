@@ -19,7 +19,7 @@ package org.geotoolkit.tms.map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.tms.TileMapClient;
 import org.geotoolkit.storage.DataStores;

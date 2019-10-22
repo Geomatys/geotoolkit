@@ -40,7 +40,7 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationFilter;
 import org.geotoolkit.observation.ObservationReader;

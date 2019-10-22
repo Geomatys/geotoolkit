@@ -17,10 +17,6 @@
 
 package org.geotoolkit.display2d.primitive;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -35,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
@@ -42,14 +41,15 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
@@ -247,7 +247,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
         feature.setPropertyValue("geom",geometry);
-        final FeatureSet col = new ArrayFeatureSet(type, Arrays.asList(feature), null);
+        final FeatureSet col = new InMemoryFeatureSet(type, Arrays.asList(feature));
 
         final List<GraphicalSymbol> symbols = new ArrayList<>();
         symbols.add(SF.mark(StyleConstants.MARK_SQUARE, SF.fill(Color.BLACK), SF.stroke(Color.BLACK, 0)));

@@ -25,8 +25,8 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;

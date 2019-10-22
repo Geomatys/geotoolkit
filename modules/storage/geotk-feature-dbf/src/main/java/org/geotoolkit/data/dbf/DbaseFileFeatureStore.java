@@ -38,13 +38,13 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.storage.feature.AbstractFeatureStore;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.data.dbf.DbaseFileReader.Row;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
@@ -175,9 +175,9 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         typeCheck(gquery.getTypeName()); //raise error is type doesnt exist
         final FeatureReader fr = new DBFFeatureReader();
         return FeatureStreams.subset(fr, gquery);

@@ -53,7 +53,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.query.Query;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

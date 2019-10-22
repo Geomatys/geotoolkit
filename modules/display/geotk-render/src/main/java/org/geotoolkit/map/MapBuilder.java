@@ -26,7 +26,7 @@ import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;

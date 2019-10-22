@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import org.opengis.feature.AttributeType;

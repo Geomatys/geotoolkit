@@ -21,7 +21,7 @@ import java.net.URI;
 import java.nio.file.*;
 import java.util.EnumSet;
 import java.util.logging.Level;
-import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
+import org.geotoolkit.storage.feature.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.nio.PosixPathMatcher;

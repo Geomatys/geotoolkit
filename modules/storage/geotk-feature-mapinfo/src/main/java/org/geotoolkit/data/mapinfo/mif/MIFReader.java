@@ -43,7 +43,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.feature.AttributeType;

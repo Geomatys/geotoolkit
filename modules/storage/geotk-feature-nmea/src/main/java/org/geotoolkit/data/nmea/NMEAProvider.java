@@ -28,7 +28,7 @@ import org.apache.sis.storage.DataStoreProvider;
 import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;

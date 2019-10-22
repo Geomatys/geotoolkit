@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 

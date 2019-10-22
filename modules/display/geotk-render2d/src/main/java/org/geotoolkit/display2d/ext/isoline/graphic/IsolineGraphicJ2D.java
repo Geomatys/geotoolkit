@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;

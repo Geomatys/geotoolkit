@@ -18,8 +18,8 @@ package org.geotoolkit.processing.vector.difference;
 
 import org.locationtech.jts.geom.Geometry;
 
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 import org.opengis.feature.Feature;

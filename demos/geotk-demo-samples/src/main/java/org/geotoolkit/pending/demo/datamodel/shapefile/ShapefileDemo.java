@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;

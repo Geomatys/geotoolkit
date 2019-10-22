@@ -24,7 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.data.query.Query;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
 

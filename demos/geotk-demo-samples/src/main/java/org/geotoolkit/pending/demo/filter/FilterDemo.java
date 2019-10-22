@@ -10,7 +10,7 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;

@@ -38,16 +38,54 @@ public final class Bundle extends IndexedResourceBundle {
         private Keys() {
         }
 
+        /**
+         * A coverage built from a file
+         */
+        public static final short coverageFileDescription = 15;
+
+        /**
+         * File coverage
+         */
+        public static final short coverageFileTitle = 16;
+
+        /**
+         * Structured Query Language database
+         */
+        public static final short coverageSQLDescription = 17;
+
+        /**
+         * Coverage SQL
+         */
+        public static final short coverageSQLTitle = 18;
+
+        /**
+         * Empty directory
+         */
         public static final short emptyDirectory = 1;
 
+        /**
+         * Allowed to open an empty directory
+         */
         public static final short emptyDirectory_remarks = 2;
 
+        /**
+         * Folder URI
+         */
         public static final short folderLocationAlias = 13;
 
+        /**
+         * Root folder
+         */
         public static final short folderLocationRemarks = 14;
 
+        /**
+         * Versatile store capable of aggregating multiple file stores.
+         */
         public static final short folderStoreDescription = 11;
 
+        /**
+         * Folder store
+         */
         public static final short folderStoreName = 12;
 
         /**
@@ -60,17 +98,66 @@ public final class Bundle extends IndexedResourceBundle {
          */
         public static final short paramIdentifierRemarks = 4;
 
+        /**
+         * Namespace
+         */
         public static final short paramNamespaceAlias = 5;
 
+        /**
+         * Namespace used for all data names (use "no namespace" for none)
+         */
         public static final short paramNamespaceRemarks = 6;
 
+        /**
+         * URI path
+         */
         public static final short paramPathAlias = 7;
 
+        /**
+         * URI path toward data
+         */
         public static final short paramPathRemarks = 8;
 
+        /**
+         * URL
+         */
+        public static final short path = 19;
+
+        /**
+         * Full path as name
+         */
+        public static final short pathSeparator = 20;
+
+        /**
+         * If specified, layer names will be built by concatenating image file name with its parent
+         * folder until the store root. Given separator will be used as separator in path
+         */
+        public static final short pathSeparator_remarks = 21;
+
+        /**
+         * Path to the file or parent directory of image(s) to read
+         */
+        public static final short path_remarks = 22;
+
+        /**
+         * Recursive
+         */
         public static final short recursive = 9;
 
+        /**
+         * Explore sub folders recursively.
+         */
         public static final short recursive_remarks = 10;
+
+        /**
+         * Image format
+         */
+        public static final short type = 23;
+
+        /**
+         * Name of the image format to use for reading
+         */
+        public static final short type_remarks = 24;
     }
 
     /**

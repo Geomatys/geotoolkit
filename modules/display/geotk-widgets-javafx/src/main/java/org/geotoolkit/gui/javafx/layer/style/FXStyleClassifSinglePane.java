@@ -62,7 +62,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.feature.FeatureExt;

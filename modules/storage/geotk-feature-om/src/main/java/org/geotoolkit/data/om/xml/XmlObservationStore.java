@@ -57,7 +57,7 @@ import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationFilter;
 import org.geotoolkit.observation.ObservationReader;

@@ -50,7 +50,8 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.data.memory.InMemoryGridCoverageResource;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -59,7 +60,6 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -125,7 +125,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         sftb.addAttribute(Double.class).setName("att2");
         final FeatureType sft = sftb.build();
 
-        WritableFeatureSet col = new ArrayFeatureSet("id", sft);
+        WritableFeatureSet col = new InMemoryFeatureSet("id", sft);
 
         Feature sf1 = sft.newInstance();
         sf1.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));
@@ -271,7 +271,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         final Feature f = ft.newInstance();
         f.setPropertyValue("coverage",gcb.getGridCoverage2D());
-        final FeatureSet collection = new ArrayFeatureSet(ft, Arrays.asList(f), null);
+        final FeatureSet collection = new InMemoryFeatureSet(ft, Arrays.asList(f));
 
 
         final String name = "mySymbol";
@@ -510,7 +510,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(pt, crs);
         feature.setPropertyValue("geom", pt);
 
-        final FeatureSet col = new ArrayFeatureSet(ft, Arrays.asList(feature), null);
+        final FeatureSet col = new InMemoryFeatureSet(ft, Arrays.asList(feature));
         final MapLayer layer = MapBuilder.createFeatureLayer(col,SF.style(symbolizer));
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);

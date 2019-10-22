@@ -45,18 +45,18 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.query.QueryBuilder;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.filter.DefaultPropertyName;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.*;
@@ -335,11 +335,15 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         assertTrue(obj instanceof FeatureSet);
 
         FeatureSet result = (FeatureSet) obj;
+
+        assertEquals(FeatureStoreUtilities.getCount(collectionSimple), FeatureStoreUtilities.getCount(result));
+        assertEquals(collectionSimple.getIdentifier().get().toString(), result.getIdentifier().get().toString());
+        assertEquals(collectionSimple.getType(), result.getType());
+
         try {
-           // NamedIdentifier id = NamedIdentifier.castOrCopy(result.getIdentifier().get());
-            result = result.subset(QueryBuilder.sorted(
-                    result.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
-            //((AbstractFeatureCollection) result).setIdentifier(id);
+            SimpleQuery query = new SimpleQuery();
+            query.setSortBy(FF.sort("attDouble", SortOrder.ASCENDING));
+            result = result.subset(query);
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
         }
@@ -350,9 +354,6 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
             Iterator<Feature> resultIte = resultS.iterator();
             Iterator<Feature> expectedIte = expectedS.iterator();
 
-            assertEquals(FeatureStoreUtilities.getCount(collectionSimple), FeatureStoreUtilities.getCount(result));
-            assertEquals(collectionSimple.getIdentifier().get().toString(), result.getIdentifier().get().toString());
-            assertEquals(collectionSimple.getType(), result.getType());
 
             assertEquals(resultIte.next(), expectedIte.next());
             assertEquals(resultIte.next(), expectedIte.next());
@@ -547,7 +548,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         f4.setPropertyValue("link", f1);
         f4.setPropertyValue("linkedTo", Arrays.asList(f2,f3));
 
-        final ArrayFeatureSet fs = new ArrayFeatureSet(NamesExt.create("one-of-a-kind-ID"), typeReference, Arrays.asList(f1, f2, f3, f4), null);
+        final InMemoryFeatureSet fs = new InMemoryFeatureSet(NamesExt.create("one-of-a-kind-ID"), typeReference, Arrays.asList(f1, f2, f3, f4));
 
         writer.write(fs, temp);
 

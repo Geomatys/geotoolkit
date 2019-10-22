@@ -49,9 +49,10 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.feature.xml.ExceptionReport;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
@@ -62,8 +63,7 @@ import org.geotoolkit.feature.xml.jaxb.mapping.GeometryMapping;
 import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
-import org.geotoolkit.internal.data.ArrayFeatureSet;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.xml.StaxStreamReader;
 import org.locationtech.jts.geom.Geometry;
@@ -474,7 +474,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     private WritableFeatureSet readFeatureCollection(final String id) throws XMLStreamException {
-        ArrayFeatureSet collection = null;
+        InMemoryFeatureSet collection = null;
         while (reader.hasNext()) {
             int event = reader.next();
 
@@ -522,7 +522,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     try {
                         FeatureType ft = featureTypes.get(name.toString());
                         if (collection == null) {
-                            collection = new ArrayFeatureSet(id, ft);
+                            collection = new InMemoryFeatureSet(id, ft);
                         }
                         collection.add( Collections.singleton( (Feature) readFeature(ft)).iterator() );
                         find = true;
