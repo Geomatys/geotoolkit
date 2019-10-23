@@ -33,6 +33,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -188,28 +189,17 @@ public class MosaicedCoverageResource extends AbstractGridResource {
                             Math.toIntExact(extent.getSize(0)),
                             Math.toIntExact(extent.getSize(1)),
                             noData.length, DataBuffer.TYPE_DOUBLE);
-                        BufferedImages.setAll(buffer, noData);
+                        if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(buffer, noData);
                     } else {
                         buffer = BufferedImages.createImage(
                             Math.toIntExact(extent.getSize(0)),
                             Math.toIntExact(extent.getSize(1)),
                             tileImage);
-                        BufferedImages.setAll(buffer, noData);
+                        if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(buffer, noData);
                     }
                 }
 
-                MathTransform tileToTileCrs = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
-                MathTransform crsToCrs = CRS.findOperation(
-                        canvas.getCoordinateReferenceSystem(),
-                        coverage.getGridGeometry().getCoordinateReferenceSystem(),
-                        null).getMathTransform();
-                MathTransform canvasToCrs = canvas.getGridToCRS(PixelInCell.CELL_CENTER);
-
-                final MathTransform targetToSource = MathTransforms.concatenate(canvasToCrs, crsToCrs, tileToTileCrs);
-
-                final Resample resample = new Resample(targetToSource, buffer, tileImage,
-                        InterpolationCase.NEIGHBOR, ResampleBorderComportement.FILL_VALUE, null);
-                resample.fillImage(true);
+                resample(coverage, tileImage, canvas, buffer);
 
             } catch (NoSuchDataException | DisjointExtentException ex) {
                 //may happen, envelepe is larger then data
@@ -231,6 +221,41 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         gcb.setSampleDimensions(getSampleDimensions());
         gcb.setRenderedImage(buffer);
         return gcb.build();
+    }
+
+    static void resample(GridCoverage coverage, RenderedImage coverageImage, GridGeometry canvasGridGeometry, BufferedImage canvasImage) throws TransformException, FactoryException {
+
+        final GridGeometry coverageGridGeometry = coverage.getGridGeometry();
+        GridExtent sourceRendering = coverageGridGeometry.getExtent();
+
+        final AffineTransform2D source = new AffineTransform2D(
+                1, 0, 0, 1,
+                sourceRendering.getLow(0),
+                sourceRendering.getLow(1)
+        );
+
+
+        //MathTransform tileToTileCrs = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
+        MathTransform tileToTileCrs = MathTransforms.concatenate(source, coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER)).inverse();
+
+        MathTransform crsToCrs = CRS.findOperation(
+                canvasGridGeometry.getCoordinateReferenceSystem(),
+                coverage.getGridGeometry().getCoordinateReferenceSystem(),
+                null).getMathTransform();
+        MathTransform canvasToCrs = canvasGridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
+
+        final MathTransform targetToSource = MathTransforms.concatenate(canvasToCrs, crsToCrs, tileToTileCrs);
+
+        final Resample resample = new Resample(targetToSource, canvasImage, coverageImage,
+                InterpolationCase.NEIGHBOR, ResampleBorderComportement.FILL_VALUE, null);
+        resample.fillImage(true);
+    }
+
+    static boolean isAllZero(double[] array) {
+        for (double d : array) {
+            if (d != 0) return false;
+        }
+        return true;
     }
 
     @Override

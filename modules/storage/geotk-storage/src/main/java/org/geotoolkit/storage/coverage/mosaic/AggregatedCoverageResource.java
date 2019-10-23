@@ -59,8 +59,6 @@ import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.geometry.Envelope;
@@ -472,6 +470,13 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             ordered.sort((GridCoverageResource o1, GridCoverageResource o2) -> ratios.get(o1).compareTo(ratios.get(o2)));
         }
 
+        if (ordered.isEmpty()) {
+            throw new DisjointCoverageDomainException();
+        } else if (ordered.size() == 1) {
+            return ordered.get(0).read(domain, range);
+        }
+
+
         //aggregate tiles
         BufferedImage result = null;
         BufferedImage intermediate = null;
@@ -514,28 +519,16 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                         result = BufferedImages.createImage(sizeX, sizeY, tileImage);
                     }
                     workImage = result;
-                    BufferedImages.setAll(result, noData);
+                    if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(result, noData);
                 } else {
                     if (intermediate == null) {
                         intermediate = BufferedImages.createImage(result.getWidth(), result.getHeight(), result);
                     }
                     workImage = intermediate;
-                    BufferedImages.setAll(intermediate, noData);
+                    if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(intermediate, noData);
                 }
 
-                //resample coverage
-                MathTransform tileToTileCrs = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
-                MathTransform crsToCrs = CRS.findOperation(
-                        canvas.getCoordinateReferenceSystem(),
-                        coverage.getGridGeometry().getCoordinateReferenceSystem(),
-                        null).getMathTransform();
-                MathTransform canvasToCrs = canvas.getGridToCRS(PixelInCell.CELL_CENTER);
-
-                final MathTransform targetToSource = MathTransforms.concatenate(canvasToCrs, crsToCrs, tileToTileCrs);
-
-                final Resample resample = new Resample(targetToSource, workImage, tileImage,
-                        interpolation, ResampleBorderComportement.FILL_VALUE, null);
-                resample.fillImage(true);
+                MosaicedCoverageResource.resample(coverage, tileImage, canvas, workImage);
 
                if (workImage != result) {
                     //we need to merge image, replacing only not-NaN values
@@ -578,7 +571,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     final double[] pixelr = new double[read.getNumBands()];
                     while (read.next()) {
                         read.getPixel(pixelr);
-                        if (!Double.isNaN(pixelr[0])) {
+                        if (!(noData[0] == pixelr[0] || Double.isNaN(pixelr[0]))) {
                             Point pt = read.getPosition();
                             mask.set2D(pt.x, pt.y);
                         }
