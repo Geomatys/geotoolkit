@@ -91,21 +91,21 @@ public class DefiningMosaic implements Mosaic {
 
     @Override
     public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
-        throw new UnsupportedOperationException("Not supported.");
+        return true;
     }
 
     @Override
     public Tile getTile(long col, long row, Map hints) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+        return null;
     }
 
     @Override
     public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported.");
+        throw new DataStoreException("Not supported.");
     }
 
     @Override
     public void deleteTile(int tileX, int tileY) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported.");
+        //has no effect
     }
 }

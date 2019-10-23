@@ -151,6 +151,14 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         return new PyramidReader<>(this).read(domain, range);
     }
 
+    /**
+     * Erase tiles in cache.
+     */
+    @Override
+    public void clearCache() {
+        tiles.clear();
+    }
+
     private class CachePyramid implements Pyramid {
 
         private final Pyramid parent;

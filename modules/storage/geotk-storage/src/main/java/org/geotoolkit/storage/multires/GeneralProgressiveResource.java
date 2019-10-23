@@ -16,20 +16,30 @@
  */
 package org.geotoolkit.storage.multires;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.storage.AbstractResource;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessListener;
+import org.opengis.coverage.PointOutsideCoverageException;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 /**
+ *
+ * Note : if base resource contains DefiningMosaic instances, the tile will be generated but not written.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -45,12 +55,8 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     }
 
     @Override
-    public Optional<GenericName> getIdentifier() {
-        try {
-            return base.getIdentifier();
-        } catch (DataStoreException ex) {
-            throw new BackingStoreException(ex.getMessage(), ex);
-        }
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return base.getIdentifier();
     }
 
     public TileGenerator getGenerator() {
@@ -66,7 +72,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     public MultiResolutionModel createModel(MultiResolutionModel model) throws DataStoreException {
         MultiResolutionModel rm = base.createModel(model);
         if (rm instanceof Pyramid) {
-            rm = new ProgressivePyramid(this, (Pyramid) rm);
+            rm = new ProgressivePyramid((Pyramid) rm);
         }
         return rm;
     }
@@ -102,10 +108,155 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         while (ite.hasNext()) {
             MultiResolutionModel mr = ite.next();
             if (mr instanceof Pyramid) {
-                mr = new ProgressivePyramid(this, (Pyramid) mr);
+                mr = new ProgressivePyramid((Pyramid) mr);
             }
             mapped.add(mr);
         }
         return mapped;
     }
+
+    private final class ProgressivePyramid implements Pyramid {
+
+        final Pyramid parent;
+
+        ProgressivePyramid(Pyramid pyramid) {
+            this.parent = pyramid;
+        }
+
+        @Override
+        public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+            return parent.getCoordinateReferenceSystem();
+        }
+
+        @Override
+        public Collection<? extends Mosaic> getMosaics() {
+            final Collection<? extends Mosaic> mosaics = parent.getMosaics();
+            final List<Mosaic> pmosaics = new ArrayList<>(mosaics.size());
+            for (Mosaic m : mosaics) {
+                pmosaics.add(new ProgressiveMosaic(ProgressivePyramid.this, m));
+            }
+            return pmosaics;
+        }
+
+        @Override
+        public double[] getScales() {
+            return parent.getScales();
+        }
+
+        @Override
+        public Envelope getEnvelope() {
+            return parent.getEnvelope();
+        }
+
+        @Override
+        public String getIdentifier() {
+            return parent.getIdentifier();
+        }
+
+        @Override
+        public String getFormat() {
+            return parent.getFormat();
+        }
+
+        @Override
+        public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+            return new ProgressiveMosaic(ProgressivePyramid.this,  parent.createMosaic(template));
+        }
+
+        @Override
+        public void deleteMosaic(String mosaicId) throws DataStoreException {
+            parent.deleteMosaic(mosaicId);
+        }
+
+    }
+
+    final class ProgressiveMosaic implements Mosaic {
+
+        private final ProgressivePyramid pyramid;
+        private final Mosaic base;
+
+        ProgressiveMosaic(ProgressivePyramid pyramid, Mosaic base) {
+            this.pyramid = pyramid;
+            this.base = base;
+        }
+
+        @Override
+        public String getIdentifier() {
+            return base.getIdentifier();
+        }
+
+        @Override
+        public DirectPosition getUpperLeftCorner() {
+            return base.getUpperLeftCorner();
+        }
+
+        @Override
+        public Dimension getGridSize() {
+            return base.getGridSize();
+        }
+
+        @Override
+        public double getScale() {
+            return base.getScale();
+        }
+
+        @Override
+        public Dimension getTileSize() {
+            return base.getTileSize();
+        }
+
+        @Override
+        public Envelope getEnvelope() {
+            return base.getEnvelope();
+        }
+
+        @Override
+        public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
+            if (generator == null) {
+                return base.isMissing(col, row);
+            }
+            //tile will be generated
+            return false;
+        }
+
+        @Override
+        public Tile getTile(long col, long row, Map hints) throws DataStoreException {
+            Tile tile = base.getTile(col, row);
+            if (tile == null && generator != null) {
+                //generate tile
+                tile = generator.generateTile(pyramid, base, new Point(Math.toIntExact(col), Math.toIntExact(row)));
+                if (!(base instanceof DefiningMosaic)) {
+                    base.writeTiles(Stream.of(tile), null);
+                    tile = base.getTile(col, row);
+                }
+            }
+            return tile;
+        }
+
+        /**
+         * Return the full extent, tiles will be generated.
+         * @return
+         */
+        @Override
+        public GridExtent getDataExtent() {
+            final Dimension tileSize = getTileSize();
+            final Dimension gridSize = getGridSize();
+            return new GridExtent(
+                    ((long) gridSize.width) * tileSize.width,
+                    ((long) gridSize.height) * tileSize.height);
+        }
+
+        @Override
+        public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {
+            base.writeTiles(tiles, monitor);
+        }
+
+        @Override
+        public void deleteTile(int tileX, int tileY) throws DataStoreException {
+            base.deleteTile(tileX, tileY);
+        }
+
+    }
+
+
 }

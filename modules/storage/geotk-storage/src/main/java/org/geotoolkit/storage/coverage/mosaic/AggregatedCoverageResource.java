@@ -158,6 +158,17 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         return sampleDimensions;
     }
 
+    /**
+     * Force sample dimensions.
+     *
+     * @param sampleDimensions
+     */
+    public synchronized void setSampleDimensions(List<SampleDimension> sampleDimensions) throws DataStoreException {
+        initModel();
+        ArgumentChecks.ensureNonNull("sampleDimensions", sampleDimensions);
+        this.sampleDimensions = sampleDimensions;
+    }
+
     @Override
     public Optional<Envelope> getEnvelope() throws DataStoreException {
         final GridGeometry grid = getGridGeometry();

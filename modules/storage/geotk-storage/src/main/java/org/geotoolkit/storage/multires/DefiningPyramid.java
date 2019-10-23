@@ -18,7 +18,10 @@ package org.geotoolkit.storage.multires;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
@@ -34,7 +37,7 @@ public class DefiningPyramid implements Pyramid {
     private final String identifier;
     private final String format;
     private final CoordinateReferenceSystem crs;
-    private final List<Mosaic> mosaics;
+    private final Map<String,Mosaic> mosaics = new HashMap<>();
 
     public DefiningPyramid(CoordinateReferenceSystem crs) {
         this(null,null,crs,new ArrayList());
@@ -44,7 +47,10 @@ public class DefiningPyramid implements Pyramid {
         this.identifier = identifier;
         this.format = format;
         this.crs = crs;
-        this.mosaics = mosaics;
+
+        for (Mosaic m : mosaics) {
+            this.mosaics.put(m.getIdentifier(), m);
+        }
     }
 
     @Override
@@ -54,7 +60,7 @@ public class DefiningPyramid implements Pyramid {
 
     @Override
     public Collection<Mosaic> getMosaics() {
-        return mosaics;
+        return Collections.unmodifiableCollection(mosaics.values());
     }
 
     @Override
@@ -84,13 +90,13 @@ public class DefiningPyramid implements Pyramid {
     public Mosaic createMosaic(Mosaic template) throws DataStoreException {
         final DefiningMosaic m2 = new DefiningMosaic(UUID.randomUUID().toString(),
                 template.getUpperLeftCorner(), template.getScale(), template.getTileSize(), template.getGridSize());
-        mosaics.add(m2);
+        mosaics.put(m2.getIdentifier(), m2);
         return m2;
     }
 
     @Override
     public void deleteMosaic(String mosaicId) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+        mosaics.remove(mosaicId);
     }
 
 }

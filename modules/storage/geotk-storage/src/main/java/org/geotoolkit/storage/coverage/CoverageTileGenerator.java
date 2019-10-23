@@ -35,17 +35,17 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.storage.multires.AbstractTileGenerator;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
-import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.storage.multires.AbstractTileGenerator;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.Tile;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -70,12 +70,10 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         try {
             List<SampleDimension> sampleDimensions = resource.getSampleDimensions();
-
-            if (sampleDimensions == null) {
-                GridGeometry onepixel = resource.getGridGeometry().derive().sliceByRatio(1).build();
-                GridCoverage coverage = resource.read(onepixel);
-                sampleDimensions = coverage.getSampleDimensions();
+            if (sampleDimensions == null || sampleDimensions.isEmpty()) {
+                throw new DataStoreException("Base resource sample dimensions are undefined");
             }
+            
             empty = new double[sampleDimensions.size()];
             for (int i=0;i<empty.length;i++) {
                 empty[i] = getEmptyValue(sampleDimensions.get(i));

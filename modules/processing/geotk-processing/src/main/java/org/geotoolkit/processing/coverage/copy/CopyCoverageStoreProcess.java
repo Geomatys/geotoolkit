@@ -31,10 +31,6 @@ import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.storage.multires.DefiningMosaic;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -48,6 +44,10 @@ import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
+import org.geotoolkit.storage.multires.DefiningMosaic;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -138,7 +138,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                         }
                     }
 
-                    final GridCoverageResource outRef = (GridCoverageResource) outAggregate.add(new DefiningCoverageResource(name, null));
+                    final GridCoverageResource outRef = (GridCoverageResource) outAggregate.add(new DefiningCoverageResource(name));
 
                     if(inRef instanceof MultiResolutionResource && outRef instanceof MultiResolutionResource){
                         savePMtoPM((MultiResolutionResource)inRef, (MultiResolutionResource)outRef);

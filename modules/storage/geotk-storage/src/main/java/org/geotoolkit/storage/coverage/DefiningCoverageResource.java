@@ -16,20 +16,17 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
-import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
-import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.StoreEvent;
-import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
 /**
@@ -58,46 +55,28 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefiningCoverageResource implements Resource {
+public class DefiningCoverageResource extends AbstractGridResource implements org.apache.sis.storage.GridCoverageResource {
 
     private final GenericName name;
-    private final Metadata metadata;
+    private GridGeometry gridGeometry;
+    private final List<SampleDimension> sampleDimensions = new ArrayList<>();
 
     /**
      *
      * @param name mandatory new resource name
      */
     public DefiningCoverageResource(String name) {
-        this(NamesExt.valueOf(name),null);
-    }
-    /**
-     *
-     * @param name mandatory new resource name
-     */
-    public DefiningCoverageResource(GenericName name) {
-        this(name,null);
+        this(NamesExt.valueOf(name));
     }
 
     /**
      *
      * @param name mandatory new resource name
-     * @param metadata can be null, a default one will be created.
      */
-    public DefiningCoverageResource(GenericName name, Metadata metadata) {
+    public DefiningCoverageResource(GenericName name) {
+        super(null);
         ArgumentChecks.ensureNonNull("name", name);
         this.name = name;
-        if (metadata == null) {
-            //create a basic one with identifier
-            final DefaultMetadata md = new DefaultMetadata();
-            final DefaultDataIdentification ident = new DefaultDataIdentification();
-            final DefaultCitation citation = new DefaultCitation();
-            citation.setTitle(new SimpleInternationalString(name.toString()));
-            citation.setIdentifiers(Arrays.asList(new NamedIdentifier(name)));
-            ident.setCitation(citation);
-            md.setIdentificationInfo(Arrays.asList(ident));
-            metadata = md;
-        }
-        this.metadata = metadata;
     }
 
     @Override
@@ -114,23 +93,28 @@ public class DefiningCoverageResource implements Resource {
         return name;
     }
 
-    /**
-     * The returned metadata contains only general informations about this type.
-     * Numeric and statistic informations should not be available.
-     *
-     * @return Metadata
-     * @throws DataStoreException
-     */
     @Override
-    public Metadata getMetadata() throws DataStoreException {
-        return metadata;
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        return gridGeometry;
+    }
+
+    public void setGridGeometry(GridGeometry gridGeometry) {
+        this.gridGeometry = gridGeometry;
     }
 
     @Override
-    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        return Collections.unmodifiableList(sampleDimensions);
+    }
+
+    public void setSampleDimensions(List<SampleDimension> sampleDimensions) {
+        this.sampleDimensions.clear();
+        this.sampleDimensions.addAll(sampleDimensions);
     }
 
     @Override
-    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
     }
+
 }

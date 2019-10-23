@@ -19,10 +19,14 @@ package org.geotoolkit.storage.coverage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.multires.DefiningPyramid;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.util.GenericName;
 
 /**
@@ -31,7 +35,7 @@ import org.opengis.util.GenericName;
  */
 public class DefiningPyramidResource extends DefiningCoverageResource implements MultiResolutionResource {
 
-    public final List<MultiResolutionModel> models = new ArrayList<>();
+    public final Map<String,MultiResolutionModel> models = new HashMap<>();
 
     public DefiningPyramidResource(GenericName identifier) {
         super(identifier);
@@ -39,18 +43,25 @@ public class DefiningPyramidResource extends DefiningCoverageResource implements
 
     @Override
     public Collection<? extends MultiResolutionModel> getModels() throws DataStoreException {
-        return Collections.unmodifiableList(models);
+        return Collections.unmodifiableCollection(models.values());
     }
 
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+        if (template instanceof Pyramid) {
+            Pyramid p = (Pyramid) template;
+            DefiningPyramid cp = new DefiningPyramid(p.getIdentifier(), p.getFormat(), p.getCoordinateReferenceSystem(), new ArrayList<>());
+            Pyramids.copyStructure(p, cp);
+            models.put(cp.getIdentifier(), cp);
+            return cp;
+        } else {
+            throw new DataStoreException("Unsupported model "+ template);
+        }
     }
 
     @Override
     public void removeModel(String identifier) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+        models.remove(identifier);
     }
-
 
 }
