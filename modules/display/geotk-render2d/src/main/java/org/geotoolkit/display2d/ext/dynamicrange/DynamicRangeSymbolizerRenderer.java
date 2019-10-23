@@ -32,9 +32,9 @@ import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -42,8 +42,8 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.math.Histogram;
-import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
+import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.Metadata;
@@ -190,7 +190,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             try {
                 dataCoverage = getObjectiveCoverage(projectedCoverage,
                         renderingContext.getGridGeometry(), false, toRead);
-            } catch (DisjointCoverageDomainException ex) {
+            } catch (NoSuchDataException ex) {
                 return false;
             }
             if (dataCoverage == null) {

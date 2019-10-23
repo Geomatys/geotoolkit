@@ -32,9 +32,9 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.Process;
@@ -73,7 +73,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             if (sampleDimensions == null || sampleDimensions.isEmpty()) {
                 throw new DataStoreException("Base resource sample dimensions are undefined");
             }
-            
+
             empty = new double[sampleDimensions.size()];
             for (int i=0;i<empty.length;i++) {
                 empty[i] = getEmptyValue(sampleDimensions.get(i));
@@ -137,7 +137,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         GridCoverage coverage;
         try {
             coverage = resource.read(gridGeomNd);
-        } catch (DisjointCoverageDomainException ex) {
+        } catch (NoSuchDataException ex) {
             //create an empty tile
             final BufferedImage img = BufferedImages.createImage(tileSize.width, tileSize.height, empty.length, DataBuffer.TYPE_DOUBLE);
             final WritablePixelIterator ite = WritablePixelIterator.create(img);

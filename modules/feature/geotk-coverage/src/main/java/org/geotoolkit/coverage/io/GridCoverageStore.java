@@ -482,7 +482,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final CoordinateReferenceSystem requestCRS,
             final IIOParam                  imageParam,
             final boolean                   isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
-            throws TransformException, FactoryException, CoverageStoreException
+            throws TransformException, FactoryException, DataStoreException
     {
         final GridExtent      gridExtent = gridGeometry.getExtent2D();
         final MathTransform2D gridToCRS  = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);

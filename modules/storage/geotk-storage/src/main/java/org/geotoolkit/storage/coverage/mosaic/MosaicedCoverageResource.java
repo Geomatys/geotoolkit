@@ -38,6 +38,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -210,7 +211,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
                         InterpolationCase.NEIGHBOR, ResampleBorderComportement.FILL_VALUE, null);
                 resample.fillImage(true);
 
-            } catch (DisjointCoverageDomainException ex) {
+            } catch (NoSuchDataException | DisjointExtentException ex) {
                 //may happen, envelepe is larger then data
                 //quad tree may also return more results
             } catch (FactoryException ex) {

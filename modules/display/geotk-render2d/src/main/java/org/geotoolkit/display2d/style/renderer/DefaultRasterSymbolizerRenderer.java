@@ -45,15 +45,14 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -71,7 +70,6 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.reformat.ReformatProcess;
@@ -80,6 +78,8 @@ import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
+import org.geotoolkit.storage.coverage.ImageStatistics;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
@@ -250,7 +250,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             renderingContext.switchToDisplayCRS();
-        } catch (DisjointCoverageDomainException e) {
+        } catch (NoSuchDataException e) {
             LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);

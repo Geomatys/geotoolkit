@@ -47,6 +47,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.StoreEvent;
@@ -584,7 +585,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     }
                 }
 
-            } catch (DisjointCoverageDomainException | DisjointExtentException ex) {
+            } catch (NoSuchDataException | DisjointExtentException ex) {
                 //may happen, enveloppe is larger then data or mask do not intersect anymore
                 //quad tree may also return more results
             } catch (FactoryException ex) {

@@ -45,7 +45,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.ReducedGridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
@@ -440,7 +439,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     }
 
     private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
-            throws CoverageStoreException, TransformException, FactoryException, ProcessException {
+            throws DataStoreException, TransformException, FactoryException, ProcessException {
 
         // HACK : This method cannot manage incomplete grid geometries, so we have to skip
         if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {

@@ -69,23 +69,23 @@ class ProductResource extends AbstractCoverageResource implements WritableGridCo
         }
 
         @Override
-        public GenericName getCoverageName() throws CoverageStoreException {
+        public GenericName getCoverageName() throws DataStoreException {
             return ProductResource.this.getIdentifier().orElse(null);
         }
 
         @Override
-        public GridGeometry getGridGeometry() throws CoverageStoreException {
+        public GridGeometry getGridGeometry() throws DataStoreException {
             return CoverageUtilities.forceLowerToZero(product.getGridGeometry());
         }
 
         @Override
-        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException {
+        public List<SampleDimension> getSampleDimensions() throws DataStoreException {
             return product.getSampleDimensions();
         }
 
         @Override
         protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
-                throws CoverageStoreException, TransformException, CancellationException {
+                throws DataStoreException, TransformException, CancellationException {
             try {
                 final GridGeometry gg = getGridGeometry();
                 final GridGeometry subg = GeoReferencedGridCoverageReader.getGridGeometry(gg, areaLower, areaUpper, subsampling);
@@ -101,22 +101,22 @@ class ProductResource extends AbstractCoverageResource implements WritableGridCo
         }
 
         @Override
-        public GenericName getCoverageName() throws CoverageStoreException {
+        public GenericName getCoverageName() throws DataStoreException {
             return ProductResource.this.getIdentifier().orElse(null);
         }
 
         @Override
-        public GridGeometry getGridGeometry() throws CoverageStoreException {
+        public GridGeometry getGridGeometry() throws DataStoreException {
             return CoverageUtilities.forceLowerToZero(product.getGridGeometry());
         }
 
         @Override
-        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException {
+        public List<SampleDimension> getSampleDimensions() throws DataStoreException {
             return product.getSampleDimensions();
         }
 
         @Override
-        public GridCoverage read(final GridCoverageReadParam param) throws CoverageStoreException {
+        public GridCoverage read(final GridCoverageReadParam param) throws DataStoreException {
             Envelope envelope = null;
             double[] resolution = null;
             if (param != null) {

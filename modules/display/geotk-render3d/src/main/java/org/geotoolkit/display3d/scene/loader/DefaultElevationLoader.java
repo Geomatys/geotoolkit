@@ -36,9 +36,9 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -142,7 +142,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
             try {
                 final GridCoverage coverage = coverageRef.read(coverageRef.getGridGeometry().derive().subgrid(outputEnv).build());
                 return extractTileImage(outputEnv, coverage, outputToCoverage, outputDimension);
-            } catch (DisjointCoverageDomainException de) {
+            } catch (NoSuchDataException de) {
                 //tile outside of the coverage, it's possible
                 //create a fake tile at minimum elevation
                 final BufferedImage img = BufferedImages.createImage(
