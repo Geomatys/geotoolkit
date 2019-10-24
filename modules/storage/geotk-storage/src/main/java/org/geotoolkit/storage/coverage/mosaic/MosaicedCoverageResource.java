@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.storage.coverage.mosaic;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -278,16 +281,38 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         for (Entry<GridGeometry,Tile[]> entry : calculator.tiles().entrySet()) {
 
             final Tile[] tiles = entry.getValue();
-            GridGeometry grid = entry.getKey();
 
-            if (tiles.length == 1) {
-                mosaics.add(tiles[0].getResource());
-            } else {
-                //set the crs which is missing from the grid geometry
-                CoordinateReferenceSystem crs = entry.getValue()[0].getResource().getGridGeometry().getCoordinateReferenceSystem();
-                grid = new GridGeometry(grid.getExtent(), PixelInCell.CELL_CENTER, grid.getGridToCRS(PixelInCell.CELL_CENTER), crs);
+            //keep tiles with the same subsampling together
+            //we consider different subsampling as different mosaics
+            final Map<Dimension,List<GridCoverageResource>> groups = new HashMap<>();
 
-                mosaics.add(new MosaicedCoverageResource(grid, entry.getValue()));
+            for (Tile tile : tiles) {
+                List<GridCoverageResource> lst = groups.get(tile.getSubsampling());
+                if (lst == null) {
+                    lst = new ArrayList<>();
+                    groups.put(tile.getSubsampling(), lst);
+                }
+                lst.add(tile.getResource());
+            }
+
+            for (List<GridCoverageResource> lst : groups.values()) {
+//                if (lst.size() == 1) {
+//                   mosaics.add(lst.get(0));
+//                } else {
+
+                    final RegionCalculator calculator2 = new RegionCalculator();
+                    for (GridCoverageResource resource : lst) {
+                        append(resource, calculator2);
+                    }
+                    Entry<GridGeometry, Tile[]> next = calculator2.tiles().entrySet().iterator().next();
+                    GridGeometry grid = next.getKey();
+
+                    //set the crs which is missing from the grid geometry
+                    CoordinateReferenceSystem crs = next.getValue()[0].getResource().getGridGeometry().getCoordinateReferenceSystem();
+                    grid = new GridGeometry(grid.getExtent(), PixelInCell.CELL_CENTER, grid.getGridToCRS(PixelInCell.CELL_CENTER), crs);
+
+                    mosaics.add(new MosaicedCoverageResource(grid, next.getValue()));
+//                }
             }
         }
         return mosaics;

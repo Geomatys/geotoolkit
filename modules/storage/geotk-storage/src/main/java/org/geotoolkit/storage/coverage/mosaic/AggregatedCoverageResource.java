@@ -288,6 +288,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private synchronized void initModel() throws DataStoreException {
         if (gridGeometry != null) return;
 
+        tree = new Quadtree();
+
         if (components.isEmpty()) {
             //no data yet
             this.sampleDimensions = new ArrayList<>();
@@ -312,7 +314,6 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
 
         //compute envelope and check sample dimensions
-        tree = new Quadtree();
         GeneralEnvelope env = new GeneralEnvelope(outputCrs);
         env.setToNaN();
         int index = 0;
