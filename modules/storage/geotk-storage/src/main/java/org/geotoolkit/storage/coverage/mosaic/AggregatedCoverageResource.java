@@ -429,7 +429,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         GridGeometry canvas = domain;
         canvas = CoverageUtilities.forceLowerToZero(canvas);
 
-        final Envelope envelope = domain.getEnvelope();
+        Envelope envelope = domain.getEnvelope();
+        try {
+            envelope = Envelopes.transform(envelope, outputCrs);
+        } catch (TransformException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
         List<Map.Entry<Integer,GridCoverageResource>> results = tree.query(new JTSEnvelope2D(envelope));
 
         //single result
@@ -464,7 +469,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     }
                     ratios.put(entry.getValue(), order);
                     ordered.add(entry.getValue());
-                } catch (DisjointExtentException | FactoryException | TransformException ex) {
+                } catch (DisjointExtentException ex) {
+                    continue;
+                } catch (FactoryException | TransformException ex) {
                     continue;
                 }
             }
