@@ -88,8 +88,13 @@ public class DefiningPyramid implements Pyramid {
 
     @Override
     public Mosaic createMosaic(Mosaic template) throws DataStoreException {
-        final DefiningMosaic m2 = new DefiningMosaic(UUID.randomUUID().toString(),
-                template.getUpperLeftCorner(), template.getScale(), template.getTileSize(), template.getGridSize());
+        String uid = template.getIdentifier();
+        if (mosaics.containsKey(uid)) {
+            uid = UUID.randomUUID().toString();
+        }
+
+        final DefiningMosaic m2 = new DefiningMosaic(uid, template.getUpperLeftCorner(),
+                template.getScale(), template.getTileSize(), template.getGridSize());
         mosaics.put(m2.getIdentifier(), m2);
         return m2;
     }

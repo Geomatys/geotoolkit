@@ -535,7 +535,7 @@ public final class Pyramids extends Static {
             gridSize.height = (int) Math.ceil(nbY);
 
             final DefiningMosaic m = new DefiningMosaic(UUID.randomUUID().toString(), upperLeft, resolution, tileSize, new Dimension(gridSize));
-            pyramid.getMosaics().add(m);
+            pyramid.createMosaic(m);
 
             //multiply resolution by 2 until we reach a 1x1 grid size
             while (gridSize.width > 1 || gridSize.height > 1) {
@@ -546,7 +546,7 @@ public final class Pyramids extends Static {
                 gridSize.height = (int) Math.ceil(nbY);
 
                 final DefiningMosaic m2 = new DefiningMosaic(UUID.randomUUID().toString(), upperLeft, resolution, tileSize, new Dimension(gridSize));
-                pyramid.getMosaics().add(m2);
+                pyramid.createMosaic(m2);
             }
         }
 
