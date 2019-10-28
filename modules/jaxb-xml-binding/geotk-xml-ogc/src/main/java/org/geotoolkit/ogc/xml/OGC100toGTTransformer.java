@@ -375,9 +375,13 @@ public class OGC100toGTTransformer {
         for(Object obj : content){
             if(obj != null && !obj.toString().trim().isEmpty()){
                 //try to convert it to a number
-                try{
-                    obj = Double.valueOf(obj.toString().trim());
-                }catch(NumberFormatException ex){
+                try {
+                    obj = Integer.valueOf(obj.toString().trim());
+                } catch (NumberFormatException ex) {
+                    try {
+                        obj = Double.valueOf(obj.toString().trim());
+                    } catch (NumberFormatException ex2) {
+                    }
                 }
                 return filterFactory.literal(obj);
             }
