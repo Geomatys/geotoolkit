@@ -1,1 +1,2 @@
-org.geotoolkit.coverage.geotiff.LandsatProvider
+org.geotoolkit.coverage.tiff.LandsatProvider
+org.geotoolkit.coverage.tiff.TiffProvider

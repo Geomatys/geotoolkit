@@ -50,9 +50,9 @@ import org.opengis.util.GenericName;
  * @version 1.0
  * @since   1.0
  */
-final class LandsatCoverageResource extends StoreListeners implements GridCoverageResource, ResourceOnFileSystem, StoreResource {
+final class LandsatResource extends StoreListeners implements GridCoverageResource, ResourceOnFileSystem, StoreResource {
 
-    private final LandsatCoverageStore store;
+    private final LandsatStore store;
     private final GenericName name;
 
     /**
@@ -81,7 +81,7 @@ final class LandsatCoverageResource extends StoreListeners implements GridCovera
      * @param parentDirectory path metadata file parent folder.
      * @param metadataParser Landsat 8 parent directory.
      */
-    public LandsatCoverageResource(final LandsatCoverageStore store, final Path parentDirectory,
+    public LandsatResource(final LandsatStore store, final Path parentDirectory,
                 final LandsatMetadataParser metadataParser, final CoverageGroup group) {
         super(null, null);
         this.store = store;

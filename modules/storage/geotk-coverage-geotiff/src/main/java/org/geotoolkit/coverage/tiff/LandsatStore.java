@@ -44,7 +44,7 @@ import org.apache.sis.storage.StorageConnector;
  * @author Remi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class LandsatCoverageStore extends org.apache.sis.storage.earthobservation.LandsatStore implements Aggregate, ResourceOnFileSystem {
+public class LandsatStore extends org.apache.sis.storage.earthobservation.LandsatStore implements Aggregate, ResourceOnFileSystem {
 
     private final List<Resource> resources = new ArrayList<>();
 
@@ -63,22 +63,22 @@ public class LandsatCoverageStore extends org.apache.sis.storage.earthobservatio
         }
     };
 
-    public LandsatCoverageStore(final StorageConnector connector) throws DataStoreException {
+    public LandsatStore(final StorageConnector connector) throws DataStoreException {
         this(connector, connector.getStorageAs(Path.class));
     }
     /**
      * Build Landsat Coverage store.
      */
-    private LandsatCoverageStore(final StorageConnector connector, Path path) throws DataStoreException {
+    private LandsatStore(final StorageConnector connector, Path path) throws DataStoreException {
         super(null, connector);
         metadataParser = getMetadataParser(path);
         final Path origin = metadataParser.getPath().getParent();
 
-        final LandsatCoverageResource reflectiveRef = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.REFLECTIVE);
+        final LandsatResource reflectiveRef = new LandsatResource(this, origin, metadataParser, CoverageGroup.REFLECTIVE);
         resources.add(reflectiveRef);
-        final LandsatCoverageResource panchroRef    = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.PANCHROMATIC);
+        final LandsatResource panchroRef    = new LandsatResource(this, origin, metadataParser, CoverageGroup.PANCHROMATIC);
         resources.add(panchroRef);
-        final LandsatCoverageResource thermicRef    = new LandsatCoverageResource(this, origin, metadataParser, CoverageGroup.THERMAL);
+        final LandsatResource thermicRef    = new LandsatResource(this, origin, metadataParser, CoverageGroup.THERMAL);
         resources.add(thermicRef);
     }
 

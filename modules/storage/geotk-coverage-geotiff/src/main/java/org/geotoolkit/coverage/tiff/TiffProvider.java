@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2015, Geomatys
+ *    (C) 2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,34 +17,34 @@
 package org.geotoolkit.coverage.tiff;
 
 import java.net.URI;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
+ * This is a temporary provider until geotiff is moved to Apache SIS.
  *
- * @author Remi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 @StoreMetadataExt(resourceTypes = ResourceType.GRID)
-public class LandsatProvider extends DataStoreProvider implements ProviderOnFileSystem {
+public class TiffProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
-    /** factory identification **/
-    public static final String NAME = "Landsat";
-    public static final String MIME_TYPE = "application/x-landsat";
+    public static final String NAME = "geotk-geotiff";
+    public static final String MIME_TYPE = "image/tiff;subtype=geotiff";
 
     /**
-     * Mandatory - the folder uri
+     * Mandatory - the file uri
      */
     public static final ParameterDescriptor<URI> PATH;
 
@@ -52,25 +52,15 @@ public class LandsatProvider extends DataStoreProvider implements ProviderOnFile
 
     static {
         final ParameterBuilder builder = new ParameterBuilder();
-        PATH = builder.setRequired(true).addName(DataStoreProvider.LOCATION).addName("path")
-                      .setDescription("Landsat product file : Landsat8, MTL.txt (*.txt)")
+        PATH = builder.setRequired(true).addName(DataStoreProvider.LOCATION)
                       .create(URI.class, null);
 
-        PARAMETERS_DESCRIPTOR = builder.addName(NAME).addName("LandSatParameters")
-                      .createGroup(PATH);
+        PARAMETERS_DESCRIPTOR = builder.addName(NAME).createGroup(PATH);
     }
 
     @Override
     public String getShortName() {
         return NAME;
-    }
-
-    public CharSequence getDescription() {
-        return Bundle.formatInternational(Bundle.Keys.description);
-    }
-
-    public CharSequence getDisplayName() {
-        return Bundle.formatInternational(Bundle.Keys.title);
     }
 
     @Override
@@ -84,23 +74,30 @@ public class LandsatProvider extends DataStoreProvider implements ProviderOnFile
     }
 
     @Override
-    public LandsatStore open(StorageConnector sc) throws DataStoreException {
-        return new LandsatStore(sc);
+    public TiffStore open(StorageConnector sc) throws DataStoreException {
+        return new TiffStore(sc.getStorageAs(Path.class));
     }
 
     /**
-     * @return collection with the MTL.txt landsat extension.
+     * @return collection with tiff and geotiff extensions.
      */
     @Override
     public Collection<String> getSuffix() {
-        return Collections.singleton("txt");
+        return Arrays.asList("tiff", "tif", "geotiff", "geotif");
     }
 
     /**
-     * @return signature of the landsat MTL file, starting by 'GROUP'
+     * @return signature of the tiff file
      */
     @Override
     public Collection<byte[]> getSignature() {
-        return Collections.singleton(new byte[]{'G','R','O','U','P'});
+        return Arrays.asList(
+                // big endian signatures
+                new byte[]{'M', 0x00, 0x2B, 0x00, 0x08, 0x00, 0x00},
+                new byte[]{'M', 0x00, 0x2A},
+                // little endian signatures
+                new byte[]{'I', 0x2B, 0x00, 0x08, 0x00, 0x00, 0x00},
+                new byte[]{'I', 0x2A, 0x00}
+        );
     }
 }
