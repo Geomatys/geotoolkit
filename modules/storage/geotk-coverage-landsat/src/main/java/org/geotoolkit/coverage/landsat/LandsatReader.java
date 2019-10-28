@@ -45,7 +45,6 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -93,7 +92,7 @@ final class LandsatReader extends GeoReferencedGridCoverageReader {
      * @param metadata path to metadata file.
      * @throws IOException if problem during metadatas parser building.
      */
-    LandsatReader(GridCoverageResource res, final Path parentDirectory, final Path metadata, LandsatConstants.CoverageGroup group) throws IOException {
+    LandsatReader(LandsatCoverageResource res, final Path parentDirectory, final Path metadata, LandsatConstants.CoverageGroup group) throws IOException {
         super(res);
         ArgumentChecks.ensureNonNull("parent directory path", parentDirectory);
         ArgumentChecks.ensureNonNull("metadata path", metadata);
@@ -109,7 +108,7 @@ final class LandsatReader extends GeoReferencedGridCoverageReader {
      * @param metadataParser metadata parser for Landsat8.
      * @throws IOException if problem during metadatas parser building.
      */
-    LandsatReader(GridCoverageResource res, final Path parentDirectory, final LandsatMetadataParser metadataParser, LandsatConstants.CoverageGroup group) throws IOException {
+    LandsatReader(LandsatCoverageResource res, final Path parentDirectory, final LandsatMetadataParser metadataParser, LandsatConstants.CoverageGroup group) throws IOException {
         super(res);
         ArgumentChecks.ensureNonNull("parent directory path", parentDirectory);
         ArgumentChecks.ensureNonNull("metadata parser", metadataParser);

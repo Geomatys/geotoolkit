@@ -58,9 +58,9 @@ import org.opengis.util.GenericName;
  */
 public abstract class GeoReferencedGridCoverageReader extends AbstractGridCoverageReader {
 
-    protected final GridCoverageResource ref;
+    protected final org.apache.sis.storage.GridCoverageResource ref;
 
-    protected GeoReferencedGridCoverageReader(GridCoverageResource ref) {
+    protected GeoReferencedGridCoverageReader(org.apache.sis.storage.GridCoverageResource ref) {
         this.ref = ref;
     }
 

@@ -81,7 +81,7 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
      * @param areaUpper readInGridCRS upper corner, exclusive
      * @param subsampling image subsampling in pixels
      */
-    protected GridCoverage readInGridCRS(int[] areaLower, int[] areaUpper, int[] subsampling)
+    protected GridCoverage readInGridCRS(int[] areaLower, int[] areaUpper, int[] subsampling, int ... range)
             throws DataStoreException, TransformException {
 
         //ensure we readInGridCRS at least 3x3 pixels otherwise the gridgeometry won't be
@@ -136,7 +136,7 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
     /**
      * Read a coverage slice with defined image area.
      */
-    protected abstract GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling) throws DataStoreException;
+    protected abstract GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, int ... range) throws DataStoreException;
 
     /**
      * Calculate the final size of each dimension.

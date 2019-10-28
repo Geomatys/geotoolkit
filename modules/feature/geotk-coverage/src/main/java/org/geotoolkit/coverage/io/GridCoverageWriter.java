@@ -55,6 +55,7 @@ import org.apache.sis.storage.DataStoreException;
  * @since 3.14
  * @module
  */
+@Deprecated
 public interface GridCoverageWriter {
 
     /**

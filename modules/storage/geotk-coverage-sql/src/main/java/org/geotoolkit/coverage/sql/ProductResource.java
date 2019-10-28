@@ -17,126 +17,39 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.List;
-import java.util.concurrent.CancellationException;
+import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.DisjointExtentException;
-import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.WritableGridCoverageResource;
-import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
-import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
+import org.apache.sis.storage.GridCoverageResource;
+import org.geotoolkit.storage.AbstractResource;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.GenericName;
 
 
 /**
  * Interoperability with legacy API.
  */
-class ProductResource extends AbstractCoverageResource implements WritableGridCoverageResource {
+class ProductResource extends AbstractResource implements GridCoverageResource, StoreResource {
+
+    protected final DataStore store;
     final ProductEntry product;
 
     ProductResource(final DataStore store, final ProductEntry product)  {
-        super(store, product.getIdentifier());
+        super(product.getIdentifier());
+        this.store = store;
         this.product = product;
     }
 
     @Override
-    public boolean isWritable() {
-        return true;
+    public DataStore getOriginator() {
+        return store;
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CatalogException {
-        if (product.isImplementedBySIS()) {
-            return new DirectReader();
-        }
-        return new Reader();
-    }
-
-    private final class Reader extends GeoReferencedGridCoverageReader {
-        Reader() {
-            super(ProductResource.this);
-        }
-
-        @Override
-        public GenericName getCoverageName() throws DataStoreException {
-            return ProductResource.this.getIdentifier().orElse(null);
-        }
-
-        @Override
-        public GridGeometry getGridGeometry() throws DataStoreException {
-            return CoverageUtilities.forceLowerToZero(product.getGridGeometry());
-        }
-
-        @Override
-        public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-            return product.getSampleDimensions();
-        }
-
-        @Override
-        protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, GridCoverageReadParam param)
-                throws DataStoreException, TransformException, CancellationException {
-            try {
-                final GridGeometry gg = getGridGeometry();
-                final GridGeometry subg = GeoReferencedGridCoverageReader.getGridGeometry(gg, areaLower, areaUpper, subsampling);
-                return CoverageUtilities.toGeotk(product.read(subg, null));
-            } catch (DataStoreException ex) {
-                throw new CoverageStoreException(ex.getMessage(), ex);
-            }
-        }
-    }
-
-    private final class DirectReader extends AbstractGridCoverageReader {
-        DirectReader() {
-        }
-
-        @Override
-        public GenericName getCoverageName() throws DataStoreException {
-            return ProductResource.this.getIdentifier().orElse(null);
-        }
-
-        @Override
-        public GridGeometry getGridGeometry() throws DataStoreException {
-            return CoverageUtilities.forceLowerToZero(product.getGridGeometry());
-        }
-
-        @Override
-        public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-            return product.getSampleDimensions();
-        }
-
-        @Override
-        public GridCoverage read(final GridCoverageReadParam param) throws DataStoreException {
-            Envelope envelope = null;
-            double[] resolution = null;
-            if (param != null) {
-                envelope = param.getEnvelope();
-                resolution = param.getResolution();
-            }
-            try {
-                GridGeometry gg = product.getGridGeometry();
-                if (envelope != null) {
-                    gg = gg.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(envelope, resolution).build();
-                }
-                return CoverageUtilities.toGeotk(product.read(gg, null));
-            } catch (DisjointExtentException e) {
-                throw new DisjointCoverageDomainException(e.getMessage(), e);
-            } catch (CoverageStoreException e) {
-                throw e;
-            } catch (DataStoreException e) {
-                throw new CatalogException(e);
-            }
-        }
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.ofNullable(product.getEnvelope());
     }
 
     @Override

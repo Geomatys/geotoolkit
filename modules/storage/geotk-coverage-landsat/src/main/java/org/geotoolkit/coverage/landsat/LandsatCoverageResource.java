@@ -21,17 +21,24 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
 import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
-import org.geotoolkit.storage.coverage.AbstractCoverageResource;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -43,7 +50,10 @@ import org.opengis.util.GenericName;
  * @version 1.0
  * @since   1.0
  */
-final class LandsatCoverageResource extends AbstractCoverageResource implements ResourceOnFileSystem {
+final class LandsatCoverageResource extends StoreListeners implements GridCoverageResource, ResourceOnFileSystem, StoreResource {
+
+    private final LandsatCoverageStore store;
+    private final GenericName name;
 
     /**
      * {@link Path} of the parent directory which contain all
@@ -73,10 +83,32 @@ final class LandsatCoverageResource extends AbstractCoverageResource implements 
      */
     public LandsatCoverageResource(final LandsatCoverageStore store, final Path parentDirectory,
                 final LandsatMetadataParser metadataParser, final CoverageGroup group) {
-        super(store, group.createName(store.getSceneName()));
+        super(null, null);
+        this.store = store;
+        this.name = group.createName(store.getSceneName());
         this.parentDirectory = parentDirectory;
         this.metadataParser = metadataParser;
         this.group = group;
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(name);
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        GridGeometry gg = getGridGeometry();
+        if (gg.isDefined(GridGeometry.ENVELOPE)) {
+            return Optional.ofNullable(gg.getEnvelope());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public DataStore getOriginator() {
+        return store;
     }
 
     @Override
@@ -85,7 +117,7 @@ final class LandsatCoverageResource extends AbstractCoverageResource implements 
         try {
             return reader.getGridGeometry();
         } finally {
-            recycle(reader);
+            reader.dispose();
         }
     }
 
@@ -95,12 +127,12 @@ final class LandsatCoverageResource extends AbstractCoverageResource implements 
         try {
             return reader.getSampleDimensions();
         } finally {
-            recycle(reader);
+            reader.dispose();
         }
     }
 
     @Override
-    protected DefaultMetadata createMetadata() throws DataStoreException {
+    public DefaultMetadata getMetadata() throws DataStoreException {
         try {
             return metadataParser.getMetadata(group);
         } catch (FactoryException ex) {
@@ -110,12 +142,33 @@ final class LandsatCoverageResource extends AbstractCoverageResource implements 
         }
     }
 
-    @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         try {
             return new LandsatReader(this, parentDirectory, metadataParser, group);
         } catch (IOException ex) {
             throw new CoverageStoreException(ex);
+        }
+    }
+
+    @Override
+    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        if (range != null && range.length > 0) {
+            param.setSourceBands(range);
+            param.setDestinationBands(range);
+        }
+
+        if (domain != null && domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
+            param.setEnvelope(domain.getEnvelope());
+        }
+        if (domain != null && domain.isDefined(GridGeometry.RESOLUTION)) {
+            param.setResolution(domain.getResolution(true));
+        }
+        GridCoverageReader reader = acquireReader();
+        try {
+            return reader.read(param);
+        } finally {
+            reader.dispose();
         }
     }
 

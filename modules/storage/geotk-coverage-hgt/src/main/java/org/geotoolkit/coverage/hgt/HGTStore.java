@@ -192,7 +192,7 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
         }
 
         @Override
-        protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling) throws DataStoreException {
+        protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, int ... range) throws DataStoreException {
 
             final GridGeometry allGridGeom = getGridGeometry();
             final GridGeometry gridGeometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
