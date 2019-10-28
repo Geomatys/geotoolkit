@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.landsat;
+package org.geotoolkit.coverage.tiff;
 
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
@@ -73,8 +73,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
-import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
+import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
+import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
 import org.geotoolkit.temporal.object.DefaultInstant;

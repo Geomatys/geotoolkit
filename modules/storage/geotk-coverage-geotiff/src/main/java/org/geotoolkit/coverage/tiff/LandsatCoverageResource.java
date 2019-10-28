@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.landsat;
+package org.geotoolkit.coverage.tiff;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -36,8 +36,8 @@ import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
-import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
+import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
+import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;

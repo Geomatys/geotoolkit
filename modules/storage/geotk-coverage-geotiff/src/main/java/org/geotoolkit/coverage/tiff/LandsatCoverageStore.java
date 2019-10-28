@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.landsat;
+package org.geotoolkit.coverage.tiff;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -32,9 +32,8 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
-
-import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
+import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
+import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.StorageConnector;

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.landsat;
+package org.geotoolkit.coverage.tiff;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -38,8 +38,8 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import static org.geotoolkit.coverage.landsat.LandsatConstants.*;
-import org.geotoolkit.coverage.landsat.LandsatConstants.CoverageGroup;
+import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
+import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.landsat;
+package org.geotoolkit.coverage.tiff;
 
 import java.net.URI;
 import java.util.Collection;
