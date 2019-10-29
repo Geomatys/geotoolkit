@@ -745,7 +745,7 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
                 env = param.getEnvelope();
                 res = param.getResolution();
             }
-            if (crs == null && gridGeometry.isDefined(GridGeometry2D.CRS)) {
+            if (crs == null && gridGeometry.isDefined(GridGeometry.CRS)) {
                 if (imageWriter instanceof MultidimensionalImageStore
                  || isNetcdfHack
                  || isTiffHack) {
@@ -754,7 +754,7 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
                     crs = gridGeometry.getCoordinateReferenceSystem2D();
                 }
             }
-            if (env == null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE)) {
+            if (env == null && gridGeometry.isDefined(GridGeometry.ENVELOPE)) {
                 if (imageWriter instanceof MultidimensionalImageStore
                  || isNetcdfHack
                  || isTiffHack) {

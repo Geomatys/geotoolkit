@@ -1014,7 +1014,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         MathTransform candidate = gridToCRS;
         if (candidate == null) {
             final GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(getGridGeometry(false));
-            if (gridGeometry == null || (!force && !gridGeometry.isDefined(GridGeometry2D.GRID_TO_CRS))) {
+            if (gridGeometry == null || (!force && !gridGeometry.isDefined(GridGeometry.GRID_TO_CRS))) {
                 return null;
             }
             final PixelInCell pixelAnchor = this.pixelAnchor;
