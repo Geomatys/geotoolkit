@@ -20,10 +20,13 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Logger;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.logging.Logging;
@@ -48,6 +51,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadata(
+        formatName = MIFProvider.NAME,
+        capabilities = {Capability.READ},
+        resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
         geometryTypes ={Geometry.class,

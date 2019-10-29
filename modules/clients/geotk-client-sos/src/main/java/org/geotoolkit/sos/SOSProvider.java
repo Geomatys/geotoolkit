@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.sos;
 
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
@@ -30,7 +32,11 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
-@StoreMetadataExt(resourceTypes = ResourceType.SENSOR, canWrite = true)
+@StoreMetadata(
+        formatName = SOSProvider.NAME,
+        capabilities = {Capability.READ, Capability.WRITE},
+        resourceTypes = {})
+@StoreMetadataExt(resourceTypes = ResourceType.SENSOR)
 public class SOSProvider extends AbstractClientProvider{
 
     /** factory identification **/

@@ -18,6 +18,8 @@
 package org.geotoolkit.csw;
 
 import java.net.URL;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
@@ -38,6 +40,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
+@StoreMetadata(
+        formatName = CSWProvider.NAME,
+        capabilities = {Capability.READ},
+        resourceTypes = {})
 @StoreMetadataExt(resourceTypes = ResourceType.METADATA)
 public class CSWProvider extends AbstractClientProvider {
 

@@ -20,8 +20,11 @@ package org.geotoolkit.data.dbf;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory;
@@ -39,7 +42,11 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel
  * @module
  */
-@StoreMetadataExt(resourceTypes = ResourceType.VECTOR, canCreate = true, canWrite = true)
+@StoreMetadata(
+        formatName = DbaseFeatureStoreFactory.NAME,
+        capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
+        resourceTypes = {FeatureSet.class})
+@StoreMetadataExt(resourceTypes = ResourceType.VECTOR)
 public class DbaseFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/

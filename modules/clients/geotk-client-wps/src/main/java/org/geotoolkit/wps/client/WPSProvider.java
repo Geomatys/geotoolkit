@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wps.client;
 
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientProvider;
@@ -29,6 +31,10 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
+@StoreMetadata(
+        formatName = WPSProvider.NAME,
+        capabilities = {Capability.READ},
+        resourceTypes = {})
 @StoreMetadataExt(resourceTypes = ResourceType.OTHER)
 public class WPSProvider extends AbstractClientProvider{
 

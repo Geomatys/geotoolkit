@@ -17,15 +17,19 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
@@ -37,6 +41,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
+@StoreMetadata(
+        formatName = WMSCProvider.NAME,
+        capabilities = {Capability.READ},
+        resourceTypes = {GridCoverageResource.class, MultiResolutionResource.class})
 @StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
 public class WMSCProvider extends AbstractClientProvider {
 

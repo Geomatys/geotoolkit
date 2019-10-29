@@ -23,6 +23,8 @@ import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.internal.storage.io.IOUtilities;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
@@ -49,10 +51,12 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadata(
+        formatName = GeoJSONProvider.NAME,
+        capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
+        resourceTypes = {})
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
-        canCreate = true,
-        canWrite = true,
         geometryTypes ={Geometry.class,
                         Point.class,
                         LineString.class,

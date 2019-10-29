@@ -51,6 +51,8 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 
 import static org.geotoolkit.coverage.sql.UpgradableLock.Stamp;
 
@@ -77,7 +79,11 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      *
      * @see DatabaseStore#open(DataSource, Path, boolean)
      */
-    @StoreMetadataExt(resourceTypes = ResourceType.GRID, canWrite = true)
+    @StoreMetadata(
+        formatName = Provider.NAME,
+        capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
+        resourceTypes = {GridCoverageResource.class})
+    @StoreMetadataExt(resourceTypes = ResourceType.GRID)
     public static final class Provider extends DataStoreProvider {
         /**
          * Factory identification.

@@ -37,6 +37,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -85,8 +87,9 @@ public class ExportFeatureSetItem extends TreeMenuItem {
         //select file factories which support writing
         final Set<DataStoreProvider> factories = DataStores.getProviders((Class) FileFeatureStoreFactory.class);
         for(DataStoreProvider ff : factories){
-            final StoreMetadataExt metadata = ff.getClass().getAnnotation(StoreMetadataExt.class);
-            if(metadata != null && metadata.canCreate()&& metadata.canWrite()&& metadata.geometryTypes() != null){
+            final StoreMetadataExt metadataExt = ff.getClass().getAnnotation(StoreMetadataExt.class);
+            final StoreMetadata metadata = ff.getClass().getAnnotation(StoreMetadata.class);
+            if(metadataExt != null && metadata != null && ArraysExt.contains(metadata.capabilities(), Capability.CREATE) && metadataExt.geometryTypes() != null){
                 final Collection<String> exts = ((FileFeatureStoreFactory)ff).getSuffix();
                 final String name = ff.getShortName();
                 final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, new ArrayList(exts));

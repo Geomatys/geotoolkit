@@ -17,7 +17,10 @@
 package org.geotoolkit.db.oracle;
 
 import java.io.IOException;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.DATABASE;
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.HOST;
@@ -41,9 +44,12 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadata(
+        formatName = OracleFeatureStoreFactory.NAME,
+        capabilities = {Capability.READ, Capability.WRITE},
+        resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
-        canWrite = true,
         geometryTypes ={Geometry.class,
                         Point.class,
                         LineString.class,

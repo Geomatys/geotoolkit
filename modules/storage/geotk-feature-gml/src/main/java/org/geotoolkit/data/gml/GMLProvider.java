@@ -21,11 +21,14 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory;
@@ -49,10 +52,12 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadata(
+        formatName = GMLProvider.NAME,
+        capabilities = {Capability.READ,Capability.WRITE,Capability.CREATE},
+        resourceTypes = FeatureSet.class)
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
-        canCreate = false,
-        canWrite = false,
         geometryTypes ={Geometry.class,
                         Point.class,
                         LineString.class,

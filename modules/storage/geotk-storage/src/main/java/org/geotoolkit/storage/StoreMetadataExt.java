@@ -49,20 +49,6 @@ public @interface StoreMetadataExt {
     Class[] geometryTypes() default {};
 
     /**
-     * Indicate if this factory can create new stores.
-     *
-     * @return true if writing is supported
-     */
-    boolean canCreate() default false;
-
-    /**
-     * Indicate if this factory can write datas is stores.
-     *
-     * @return true if writing is supported
-     */
-    boolean canWrite() default false;
-
-    /**
      * Feature store may produce 2 kinds of features.
      * Standard unstyled features like : shapefile, postgresql,
      *

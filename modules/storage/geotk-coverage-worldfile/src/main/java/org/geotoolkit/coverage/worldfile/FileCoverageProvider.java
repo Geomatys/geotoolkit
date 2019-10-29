@@ -31,10 +31,13 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.image.io.SpatialImageReader;
@@ -52,7 +55,11 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-@StoreMetadataExt(resourceTypes = ResourceType.GRID, canCreate = true, canWrite = true)
+@StoreMetadata(
+        formatName = FileCoverageProvider.NAME,
+        capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
+        resourceTypes = GridCoverageResource.class)
+@StoreMetadataExt(resourceTypes = ResourceType.GRID)
 public class FileCoverageProvider extends DataStoreProvider {
 
     /** factory identification **/

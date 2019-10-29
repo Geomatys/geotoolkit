@@ -16,8 +16,11 @@
  */
 package org.geotoolkit.wmts;
 
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.ResourceType;
@@ -31,6 +34,10 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadata(
+        formatName = WMTSProvider.NAME,
+        capabilities = {Capability.READ},
+        resourceTypes = {GridCoverageResource.class})
 @StoreMetadataExt(resourceTypes = ResourceType.PYRAMID)
 public class WMTSProvider extends AbstractClientProvider {
 

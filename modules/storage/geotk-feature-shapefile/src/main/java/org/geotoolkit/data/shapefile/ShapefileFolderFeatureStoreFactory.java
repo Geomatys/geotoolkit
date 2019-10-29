@@ -21,13 +21,16 @@ import java.net.URI;
 import java.nio.file.*;
 import java.util.EnumSet;
 import java.util.logging.Level;
-import org.geotoolkit.storage.feature.AbstractFolderFeatureStoreFactory;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.nio.PosixPathMatcher;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.feature.AbstractFolderFeatureStoreFactory;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -42,10 +45,12 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadata(
+        formatName = "shapefile-folder",
+        capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
+        resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
-        canCreate = true,
-        canWrite = true,
         geometryTypes ={Point.class,
                         MultiPoint.class,
                         MultiLineString.class,

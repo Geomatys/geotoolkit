@@ -17,8 +17,11 @@
  */
 package org.geotoolkit.wms;
 
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -33,6 +36,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module
  */
+@StoreMetadata(
+        formatName = WMSProvider.NAME,
+        capabilities = {Capability.READ},
+        resourceTypes = {GridCoverageResource.class})
 @StoreMetadataExt(resourceTypes = ResourceType.COVERAGE)
 public class WMSProvider extends AbstractClientProvider {
 

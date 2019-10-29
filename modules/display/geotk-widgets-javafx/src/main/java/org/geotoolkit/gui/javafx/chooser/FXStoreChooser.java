@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.chooser;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,6 +51,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStore;
@@ -74,6 +77,7 @@ import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.storage.ResourceType;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.parameter.ParameterValueGroup;
@@ -148,11 +152,11 @@ public class FXStoreChooser extends BorderPane {
     };
 
     private final Accordion accordion = new Accordion();
-    private final ListView<Object> factoryView = new ListView<>();
+    private final ListView<Object> providerView = new ListView<>();
     private final FXResourceChooser resourceChooser = new FXResourceChooser();
     private final Label placeholder = new Label(" . . . ");
     private final FXParameterEditor paramEditor = new FXParameterEditor();
-    private final ScrollPane listScroll = new ScrollPane(factoryView);
+    private final ScrollPane listScroll = new ScrollPane(providerView);
     private final Button connectButton = new Button(GeotkFX.getString(FXStoreChooser.class,"apply"));
     private final Label infoLabel = new Label();
     private final BooleanProperty decorateProperty = new SimpleBooleanProperty(false);
@@ -167,14 +171,14 @@ public class FXStoreChooser extends BorderPane {
         final Set factoriesLst = new HashSet();
         factoriesLst.addAll(DataStores.providers());
 
-        ObservableList factories = FXCollections.observableArrayList(factoriesLst);
-        Collections.sort(factories, SORTER);
-        if(factoryFilter!=null){
-            factories = factories.filtered(factoryFilter);
+        ObservableList providers = FXCollections.observableArrayList(factoriesLst);
+        Collections.sort(providers, SORTER);
+        if (factoryFilter != null) {
+            providers = providers.filtered(factoryFilter);
         }
 
-        factoryView.setItems(factories);
-        factoryView.setCellFactory((ListView<Object> param) -> new FactoryCell());
+        providerView.setItems(providers);
+        providerView.setCellFactory((ListView<Object> param) -> new FactoryCell());
         listScroll.setFitToHeight(true);
         listScroll.setFitToWidth(true);
 
@@ -200,12 +204,12 @@ public class FXStoreChooser extends BorderPane {
 
         setCenter(accordion);
 
-        factoryView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        factoryView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Object>() {
+        providerView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        providerView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Object>() {
 
             @Override
             public void onChanged(ListChangeListener.Change<? extends Object> c) {
-                final Object factory = factoryView.getSelectionModel().getSelectedItem();
+                final Object factory = providerView.getSelectionModel().getSelectedItem();
 
                 final ParameterValueGroup param;
                 if (factory instanceof DataStoreProvider) {
@@ -252,7 +256,7 @@ public class FXStoreChooser extends BorderPane {
      * @throws DataStoreException if store creation failed
      */
     private DataStore getStore() throws DataStoreException {
-        final Object factory = factoryView.getSelectionModel().getSelectedItem();
+        final Object factory = providerView.getSelectionModel().getSelectedItem();
         final ParameterValueGroup param = (ParameterValueGroup) paramEditor.getParameter();
 
         if (factory instanceof DataStoreProvider) {
@@ -263,7 +267,7 @@ public class FXStoreChooser extends BorderPane {
     }
 
     private void setStore(DataStore store) {
-        factoryView.getSelectionModel().clearAndSelect(factoryView.getItems().indexOf(store.getProvider()));
+        providerView.getSelectionModel().clearAndSelect(providerView.getItems().indexOf(store.getProvider()));
         paramEditor.setParameter(store.getOpenParameters().get());
         connect();
     }
@@ -402,12 +406,36 @@ public class FXStoreChooser extends BorderPane {
         @Override
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
-
+            setStyle("-fx-font-family: 'monospaced';");
             setText(null);
             setGraphic(null);
-            if(!empty && item!=null){
+            if (!empty && item != null) {
                 if (item instanceof DataStoreProvider) {
-                    setText(((DataStoreProvider)item).getShortName());
+                    final DataStoreProvider provider = (DataStoreProvider) item;
+                    final StoreMetadata metadata = provider.getClass().getAnnotation(StoreMetadata.class);
+
+                    final StringBuilder sb = new StringBuilder();
+
+                    String name = provider.getShortName();
+                    sb.append(name.toUpperCase());
+
+                    if (metadata != null) {
+                        final Capability[] capabilities = metadata.capabilities();
+
+                        sb.append(' ');
+                        sb.append('[');
+                        sb.append(ArraysExt.contains(capabilities, Capability.READ) ? 'R' : '-');
+                        sb.append('/');
+                        sb.append(ArraysExt.contains(capabilities, Capability.WRITE) ? 'W' : '-');
+                        sb.append('/');
+                        sb.append(ArraysExt.contains(capabilities, Capability.CREATE) ? 'C' : '-');
+                        sb.append(']');
+
+                    } else {
+                        sb.append(" [?/?/?]");
+                    }
+
+                    setText(sb.toString());
                 }
                 setGraphic(new ImageView(findIcon(item)));
             }
@@ -425,6 +453,33 @@ public class FXStoreChooser extends BorderPane {
     private static final Image ICON_PRODUCT = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ATLAS, 24, FontAwesomeIcons.DISABLE_COLOR),null);
 
     private static Image findIcon(Object candidate){
+
+        if (candidate != null) {
+            final StoreMetadata metadata = candidate.getClass().getAnnotation(StoreMetadata.class);
+            if (metadata != null) {
+                Class<? extends Resource>[] resourceTypes = metadata.resourceTypes().clone();
+                Arrays.sort(resourceTypes, (Class<? extends Resource> o1, Class<? extends Resource> o2) -> o1.getName().compareTo(o2.getName()));
+                String text = null;
+                for (Class c : resourceTypes) {
+                    if (c.isAssignableFrom(FeatureSet.class)) {
+                        text += FontAwesomeIcons.ICON_VECTOR_SQUARE + "   ";
+                    } else if (c.isAssignableFrom(GridCoverageResource.class)) {
+                        text += FontAwesomeIcons.ICON_IMAGE + "   ";
+                    } else if (c.isAssignableFrom(MultiResolutionResource.class)) {
+                        text += FontAwesomeIcons.ICON_TH + "   ";
+                    }
+                }
+                if (text != null) {
+
+                    BufferedImage icon = IconBuilder.createImage(text, null, FontAwesomeIcons.DISABLE_COLOR, IconBuilder.FONT.get().deriveFont(24f), null, null, 2, false, true);
+
+                    return SwingFXUtils.toFXImage(icon,null);
+                }
+            }
+        } else {
+            return ICON_OTHER;
+        }
+
 
         if(candidate instanceof AbstractJDBCFeatureStoreFactory){
             return ICON_DATABASE;

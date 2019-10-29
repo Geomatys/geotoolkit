@@ -18,10 +18,13 @@
 package org.geotoolkit.data.wfs;
 
 import java.net.URL;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.AbstractClientProvider;
@@ -44,9 +47,12 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadata(
+        formatName = WFSProvider.NAME,
+        capabilities = {Capability.READ,Capability.WRITE},
+        resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
-        canWrite = true,
         geometryTypes ={Geometry.class,
                         Point.class,
                         LineString.class,

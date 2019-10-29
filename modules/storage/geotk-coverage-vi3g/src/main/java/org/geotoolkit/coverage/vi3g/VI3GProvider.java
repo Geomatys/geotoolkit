@@ -19,9 +19,12 @@ package org.geotoolkit.coverage.vi3g;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
@@ -37,6 +40,10 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadata(
+        formatName = VI3GProvider.NAME,
+        capabilities = {Capability.READ},
+        resourceTypes = {GridCoverageResource.class})
 @StoreMetadataExt(resourceTypes = ResourceType.GRID)
 public class VI3GProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
