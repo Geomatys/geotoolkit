@@ -22,9 +22,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.Monitor;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
@@ -128,11 +132,17 @@ public interface Mosaic {
      */
     default BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         final ArrayBlockingQueue queue = new ArrayBlockingQueue(positions.size()+1);
-        for(Point p : positions){
-            final Tile t = getTile(p.x, p.y, hints);
-            if (t != null) {
-                queue.offer(t);
-            }
+        try {
+            positions.parallelStream().forEach((Point p) -> {
+                try {
+                    final Tile t = getTile(p.x, p.y, hints);
+                    if (t != null) queue.offer(t);
+                } catch (DataStoreException ex) {
+                    throw new BackingStoreException(ex);
+                }
+            });
+        } catch (BackingStoreException ex) {
+            throw (DataStoreException) ex.getCause();
         }
         queue.offer(END_OF_QUEUE);
         return queue;

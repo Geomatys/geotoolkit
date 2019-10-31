@@ -72,7 +72,6 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  * @param <T>
- * @param <GridCoverageResource>
  * @module
  */
 public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {

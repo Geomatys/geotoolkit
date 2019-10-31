@@ -20,10 +20,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.storage.AbstractResource;
@@ -46,6 +49,7 @@ import org.opengis.util.GenericName;
 public class GeneralProgressiveResource extends AbstractResource implements ProgressiveResource {
 
     protected final MultiResolutionResource base;
+    private final Map<String,ProgressivePyramid> cacheMap = new HashMap<>();
     protected TileGenerator generator;
 
     public GeneralProgressiveResource(MultiResolutionResource base, TileGenerator generator) throws DataStoreException {
@@ -68,18 +72,46 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         this.generator = generator;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
-    public MultiResolutionModel createModel(MultiResolutionModel model) throws DataStoreException {
-        MultiResolutionModel rm = base.createModel(model);
-        if (rm instanceof Pyramid) {
-            rm = new ProgressivePyramid((Pyramid) rm);
+    public Collection<Pyramid> getModels() throws DataStoreException {
+        final Collection<Pyramid> parentPyramids = (Collection<Pyramid>) base.getModels();
+
+        //check pyramids, we need to do this until an event system is created
+
+        //add missing pyramids in the view
+        final Set<String> keys = new HashSet<>();
+        for (Pyramid candidate : parentPyramids) {
+            if (!cacheMap.containsKey(candidate.getIdentifier())) {
+                cacheMap.put(candidate.getIdentifier(), new ProgressivePyramid(candidate));
+            }
+            keys.add(candidate.getIdentifier());
         }
-        return rm;
+        if (cacheMap.size() != parentPyramids.size()) {
+            //some pyramids have been deleted from parent
+            cacheMap.keySet().retainAll(keys);
+        }
+
+        return Collections.unmodifiableCollection(cacheMap.values());
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
+        final MultiResolutionModel newParentPyramid = base.createModel(template);
+        final ProgressivePyramid cached = new ProgressivePyramid((Pyramid) newParentPyramid);
+        cacheMap.put(cached.getIdentifier(), cached);
+        return cached;
     }
 
     @Override
     public void removeModel(String identifier) throws DataStoreException {
         base.removeModel(identifier);
+        cacheMap.remove(identifier);
     }
 
     @Override
@@ -98,21 +130,6 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         } catch (InterruptedException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
-    }
-
-    @Override
-    public Collection<? extends MultiResolutionModel> getModels() throws DataStoreException {
-        final Collection<? extends MultiResolutionModel> models = base.getModels();
-        final List<MultiResolutionModel> mapped = new ArrayList<>(models.size());
-        final Iterator<? extends MultiResolutionModel> ite = models.iterator();
-        while (ite.hasNext()) {
-            MultiResolutionModel mr = ite.next();
-            if (mr instanceof Pyramid) {
-                mr = new ProgressivePyramid((Pyramid) mr);
-            }
-            mapped.add(mr);
-        }
-        return mapped;
     }
 
     private final class ProgressivePyramid implements Pyramid {
