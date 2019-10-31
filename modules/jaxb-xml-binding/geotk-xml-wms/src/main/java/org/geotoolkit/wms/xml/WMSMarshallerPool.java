@@ -89,14 +89,14 @@ public final class WMSMarshallerPool {
     private static final MarshallerPool DEFAULT;
     static {
         try {
-            DEFAULT = new MarshallerPool(createJAXBContext(
+            DEFAULT = createIgnoreDTD(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
                     "org.geotoolkit.wms.xml.v111:" +
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
                     "org.geotoolkit.inspire.xml.vs:" +
                     "org.apache.sis.internal.jaxb.geometry",
-                    WMSMarshallerPool.class.getClassLoader()), null);
+                    WMSMarshallerPool.class.getClassLoader()));
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

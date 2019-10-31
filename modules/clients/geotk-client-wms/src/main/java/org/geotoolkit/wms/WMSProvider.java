@@ -17,14 +17,19 @@
  */
 package org.geotoolkit.wms;
 
+import java.net.URL;
 import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.AbstractClientProvider;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -44,6 +49,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class WMSProvider extends AbstractClientProvider {
 
     public static final String NAME = "wms";
+    private static final String MIME_TYPE = "ogc/wms";
 
     /**
      * Version, Mandatory.
@@ -84,6 +90,24 @@ public class WMSProvider extends AbstractClientProvider {
     public WebMapClient open(ParameterValueGroup params) throws DataStoreException {
         ensureCanProcess(params);
         return new WebMapClient(params);
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        try {
+            URL url = connector.getStorageAs(java.net.URL.class);
+            String protocol = url.getProtocol();
+
+            if (protocol.startsWith("http")) {
+                WebMapClient client = new WebMapClient(url);
+                AbstractWMSCapabilities capability = client.getServiceCapabilities();
+                return new ProbeResult(true, MIME_TYPE, null);
+            }
+
+        } catch (IllegalArgumentException | CapabilitiesException ex) {
+            //do nothing
+        }
+        return new ProbeResult(false, null, null);
     }
 
 }
