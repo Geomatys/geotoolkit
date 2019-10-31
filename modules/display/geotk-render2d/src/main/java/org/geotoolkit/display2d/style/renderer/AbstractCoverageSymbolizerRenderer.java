@@ -441,6 +441,14 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
             throws DataStoreException, TransformException, FactoryException, ProcessException {
 
+        CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
+
+        if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
+            //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
+            return areaOfInterest;
+        }
+
         // HACK : This method cannot manage incomplete grid geometries, so we have to skip
         if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {
             return areaOfInterest;

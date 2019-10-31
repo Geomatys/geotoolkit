@@ -56,6 +56,7 @@ import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.multires.Pyramid;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -103,6 +104,11 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
                 break;
             }
         }
+
+        return getGridGeometry(pyramid);
+    }
+
+    private static GridGeometry getGridGeometry(Pyramid pyramid) {
 
         if (pyramid == null) {
             //-- empty pyramid set
@@ -194,31 +200,36 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
     }
 
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        GridGeometry canvas = getGridGeometry();
-        if (domain != null) {
-            canvas = canvas.derive().subgrid(domain).build();
+
+        //choose the most appropriate pyramid based on requested CRS
+        if (domain == null) {
+            domain = getGridGeometry();
         }
 
-        if (range != null)
-            LOGGER.log(Level.FINE, "Source or destination bands can not be used on pyramidal coverages."
-                                    + " Continue Coverage reading without sources and destinations bands interpretations.");
-
-        Envelope paramEnv = canvas.getEnvelope();
-        double[] resolution = canvas.getResolution(true);
-
-        CoordinateReferenceSystem crs = canvas.getCoordinateReferenceSystem();
-
-        //-- estimate resolution if not given
-        if (resolution == null)
-            //-- set resolution to infinite, will select the last mosaic level
-            resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
-
-
-        org.geotoolkit.storage.multires.Pyramid pyramid;
+        CoordinateReferenceSystem crs = domain.getCoordinateReferenceSystem();
+        Pyramid pyramid;
         try {
              pyramid = coverageFinder.findPyramid(ref, crs);
         } catch (FactoryException | DataStoreException ex) {
             throw new CoverageStoreException(ex);
+        }
+        crs = pyramid.getCoordinateReferenceSystem();
+
+        GridGeometry canvas = getGridGeometry(pyramid);
+        canvas = canvas.derive().subgrid(domain).build();
+
+        if (range != null) {
+            LOGGER.log(Level.FINE, "Source or destination bands can not be used on pyramidal coverages."
+                                    + " Continue Coverage reading without sources and destinations bands interpretations.");
+        }
+
+        Envelope paramEnv = canvas.getEnvelope();
+        double[] resolution = canvas.getResolution(true);
+
+        //-- estimate resolution if not given
+        if (resolution == null) {
+            //-- set resolution to infinite, will select the last mosaic level
+            resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
         }
 
         //-- no reliable pyramid
