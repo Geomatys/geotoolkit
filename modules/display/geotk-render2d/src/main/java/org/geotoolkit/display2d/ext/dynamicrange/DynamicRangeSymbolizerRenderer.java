@@ -89,11 +89,6 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             CoverageDescription covdesc = null;
 
             if (!allLiteral) {
-                if (covref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-                    org.geotoolkit.storage.coverage.GridCoverageResource gcr = (org.geotoolkit.storage.coverage.GridCoverageResource) covref;
-                    covdesc = gcr.getCoverageDescription();
-                }
-
                 if (covdesc == null) {
                     Metadata metadata = covref.getMetadata();
                     if (metadata != null) {

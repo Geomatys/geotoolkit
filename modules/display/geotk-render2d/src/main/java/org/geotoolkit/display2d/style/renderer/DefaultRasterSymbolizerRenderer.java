@@ -515,9 +515,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //if there is no geophysic, the same coverage is returned
             coverage = coverage.forConvertedValues(true);
             CoverageDescription covRefMetadata = null;
-            if(ref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-                covRefMetadata = ((org.geotoolkit.storage.coverage.GridCoverageResource)ref).getCoverageDescription();
-            }
 
             if (covRefMetadata == null) {
                 final Metadata metadata;
@@ -739,11 +736,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
                         final Resource resource = projectedCoverage.getLayer().getResource();
-                        if (resource instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                        if (resource instanceof GridCoverageResource) {
                             try {
-                                final GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
-                                final Map<String,Object> analyze = StatisticOp.analyze(reader);
-                                ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).recycle(reader);
+                                final GridCoverageResource reader = (GridCoverageResource) resource;
+                                final Map<String,Object> analyze = StatisticOp.analyze(reader.read(null).render(null));
                                 final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
                                 final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
                                 final double min = findExtremum(minArray, true);

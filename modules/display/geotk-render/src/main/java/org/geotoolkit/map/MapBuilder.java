@@ -212,6 +212,6 @@ public final class MapBuilder {
      * @return ElevationModel
      */
     public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws DataStoreException {
-        return new ElevationModel((org.geotoolkit.storage.coverage.GridCoverageResource) ref, azimuthAngle, altitudeAngle, altitudeScale);
+        return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
  }

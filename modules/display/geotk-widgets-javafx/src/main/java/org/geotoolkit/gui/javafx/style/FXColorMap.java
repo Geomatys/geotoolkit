@@ -74,7 +74,6 @@ import org.geotoolkit.gui.javafx.util.FXTableCell;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.style.StyleConstants;
@@ -238,10 +237,9 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
 
     @FXML
     private void fitToData(ActionEvent event) {
-        if(!(layer instanceof CoverageMapLayer)) return;
+        if(!(layer.getResource() instanceof GridCoverageResource)) return;
 
-        final CoverageMapLayer cml = (CoverageMapLayer)layer;
-        final GridCoverageResource cref = cml.getResource();
+        final GridCoverageResource cref = (GridCoverageResource) layer.getResource();
 
         final Double[] range = findMinMaxInMeta();
         if(range!=null && range[0]!=null && range[1]!=null){
@@ -295,8 +293,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
      * @return min,max array or null if metadatas do not contain the informations.
      */
     private Double[] findMinMaxInMeta(){
-        final CoverageMapLayer cml = (CoverageMapLayer)layer;
-        final GridCoverageResource cref = cml.getResource();
+        final GridCoverageResource cref = (GridCoverageResource) layer.getResource();
         CoverageDescription covdesc = null;
         if (cref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
             covdesc = ((org.geotoolkit.storage.coverage.GridCoverageResource) cref).getCoverageDescription();
@@ -333,7 +330,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     @FXML
     private void generate(ActionEvent event) {
 
-        if(!(layer instanceof CoverageMapLayer)){
+        if(!(layer.getResource() instanceof GridCoverageResource)){
             return;
         }
 
@@ -404,15 +401,14 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             }
             steps = inverted;
         }
-        if(layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer)layer;
+        if (layer.getResource() instanceof GridCoverageResource) {
             try {
-                if(mustInterpolation){
+                if (mustInterpolation) {
                     double min = uiMinimum.valueProperty().get().doubleValue();
                     double max = uiMaximum.valueProperty().get().doubleValue();
                     lst.addAll(getInterpolationPoints(min, max, steps));
-                }else{
-                    for(int s=0,l=steps.size();s<l;s++){
+                } else {
+                    for (int s=0,l=steps.size();s<l;s++) {
                         final Entry<Double, Color> step = steps.get(s);
                         lst.add(new InterOrCategorize(step.getKey(), step.getValue()));
                     }
@@ -424,10 +420,10 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         }
 
         final String method = uiMethod.getSelectionModel().getSelectedItem();
-        if("Categorize".equals(method)){
-            if(!lst.isEmpty()){
+        if ("Categorize".equals(method)) {
+            if (!lst.isEmpty()) {
                 final InterOrCategorize ioc = lst.get(0);
-                if(!StyleConstants.CATEGORIZE_LESS_INFINITY.equals(ioc.value.getValue())){
+                if (!StyleConstants.CATEGORIZE_LESS_INFINITY.equals(ioc.value.getValue())) {
                     //first category must contains -inf
                     lst.add(new InterOrCategorize(StyleConstants.CATEGORIZE_LESS_INFINITY, TRS));
                 }
@@ -636,7 +632,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         //uiNoData.setVisible(function instanceof Jenks);
         //noDataContainer.setVisible(function instanceof Jenks);
 
-        final boolean da = !(layer instanceof CoverageMapLayer);
+        final boolean da = !(layer.getResource() instanceof GridCoverageResource);
         uiPalette.setDisable(da);
         uiPaletteLbl.setDisable(da);
         uiBand.setDisable(da);
@@ -653,8 +649,8 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     private void initBandSpinner() {
         //update nbBands spinner
         try {
-            if (layer instanceof CoverageMapLayer) {
-                final GridCoverageResource covRef = ((CoverageMapLayer) layer).getResource();
+            if (layer.getResource() instanceof GridCoverageResource) {
+                final GridCoverageResource covRef = (GridCoverageResource) layer.getResource();
                 final GridGeometry gridGeometry = covRef.getGridGeometry();
 
                 if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
