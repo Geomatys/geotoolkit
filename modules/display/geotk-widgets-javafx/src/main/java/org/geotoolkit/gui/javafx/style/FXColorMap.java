@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -91,6 +92,7 @@ import org.geotoolkit.style.interval.Palette;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.referencing.datum.PixelInCell;
@@ -295,8 +297,14 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     private Double[] findMinMaxInMeta(){
         final GridCoverageResource cref = (GridCoverageResource) layer.getResource();
         CoverageDescription covdesc = null;
-        if (cref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-            covdesc = ((org.geotoolkit.storage.coverage.GridCoverageResource) cref).getCoverageDescription();
+        try {
+            for (ContentInformation ci : cref.getMetadata().getContentInfo()) {
+                if (ci instanceof CoverageDescription) {
+                    covdesc = (CoverageDescription) ci;
+                }
+            }
+        } catch (DataStoreException ex) {
+            Loggers.JAVAFX.log(Level.FINE, ex.getMessage(),ex);
         }
         if (covdesc == null) return null;
         final Integer index = uiBand.valueProperty().get().intValue();

@@ -24,6 +24,7 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
@@ -67,7 +68,7 @@ public class MathCalcProcess extends AbstractProcess {
         final GridCoverage[] inCoverages = inputParameters.getValue(MathCalcDescriptor.IN_COVERAGES);
         final String inFormula = inputParameters.getValue(MathCalcDescriptor.IN_FORMULA);
         final String[] inMapping = inputParameters.getValue(MathCalcDescriptor.IN_MAPPING);
-        final GridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
+        final WritableGridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
 
         final GridGeometry gg;
         try {
@@ -98,7 +99,7 @@ public class MathCalcProcess extends AbstractProcess {
             if(outRef instanceof MultiResolutionResource){
                 filler.fill((MultiResolutionResource)outRef, evaluator);
             }else{
-                filler.fill((org.geotoolkit.storage.coverage.GridCoverageResource) outRef, evaluator, null);
+                filler.fill(outRef, evaluator, null);
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

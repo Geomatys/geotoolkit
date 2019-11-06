@@ -33,20 +33,20 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.storage.coverage.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -78,11 +78,9 @@ public class FillCoverage {
      * @param env , envelope where new values will be evaluated.
      * @throws org.geotoolkit.coverage.io.CoverageStoreException
      */
-    public void fill(GridCoverageResource outRef, SampleEvaluator evaluator, Envelope env) throws DataStoreException {
+    public void fill(WritableGridCoverageResource outRef, SampleEvaluator evaluator, Envelope env) throws DataStoreException {
 
         final GridGeometry gg;
-        final GridCoverageWriter outWriter;
-        outWriter = outRef.acquireWriter();
         gg = outRef.getGridGeometry();
 
         // prepare dynamic pick object
@@ -127,7 +125,7 @@ public class FillCoverage {
 
         //loop on all slices pieces
         final MathTransformFactory mathFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
-        while(ite.hasNext()){
+        while (ite.hasNext()) {
             final HyperCubeIterator.HyperCube cube = ite.next();
             final long[] hcubeLower = cube.getLower();
             final long[] hcubeUpper = cube.getUpper();
@@ -160,8 +158,7 @@ public class FillCoverage {
             }
 
             //Calculate grid to crs of this zone
-            final GeneralMatrix matrix = new GeneralMatrix(nbDim+1);
-            matrix.setIdentity();
+            final MatrixSIS matrix = Matrices.createDiagonal(nbDim+1, nbDim+1);
             for(int i=0;i<nbDim;i++){
                 matrix.setElement(i, nbDim, hcubeLower[i]);
             }
@@ -178,8 +175,7 @@ public class FillCoverage {
             gcb.setRenderedImage(zoneImage);
             gcb.setGridToCRS(concat);
             final GridCoverage zoneCoverage = gcb.getGridCoverage2D();
-            final GridCoverageWriteParam param = new GridCoverageWriteParam();
-            outWriter.write(zoneCoverage, param);
+            outRef.write(zoneCoverage, WritableGridCoverageResource.CommonOption.UPDATE);
         }
 
     }
