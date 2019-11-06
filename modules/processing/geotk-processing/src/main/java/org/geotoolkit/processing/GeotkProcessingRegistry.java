@@ -140,7 +140,6 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 //vector
                 org.geotoolkit.processing.vector.clipgeometry.ClipGeometryDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.clip.ClipDescriptor.INSTANCE,
-                org.geotoolkit.processing.vector.douglaspeucker.DouglasPeuckerDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.intersect.IntersectDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.nearest.NearestDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.spatialjoin.SpatialJoinDescriptor.INSTANCE,
