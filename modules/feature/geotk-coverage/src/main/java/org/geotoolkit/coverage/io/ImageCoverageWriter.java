@@ -105,7 +105,7 @@ import org.opengis.util.InternationalString;
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class ImageCoverageWriter extends GridCoverageStore implements GridCoverageWriter {
+public class ImageCoverageWriter extends GridCoverageStore {
 
     /**
      * The output (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
@@ -181,7 +181,6 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
      *
      * @see ImageWriter#getOutput()
      */
-    @Override
     public Object getOutput() throws CoverageStoreException {
         return output;
     }
@@ -200,7 +199,6 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
      * @throws IllegalArgumentException if output is not a valid instance for this writer.
      * @throws CoverageStoreException if the operation failed.
      */
-    @Override
     public void setOutput(final Object output) throws CoverageStoreException {
         try {
             close();
@@ -474,7 +472,6 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
      * The default implementation wraps the given coverage in a {@linkplain Collections#singleton(Object)
      * singleton set} and delegates to {@link #write(Iterable, GridCoverageWriteParam)}.
      */
-    @Override
     public void write(final GridCoverage coverage, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
@@ -507,7 +504,6 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
      * @see ImageWriter#write(IIOMetadata, IIOImage, ImageWriteParam)
      * @see ImageWriter#writeToSequence(IIOImage, ImageWriteParam)
      */
-    @Override
     public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
@@ -981,7 +977,9 @@ public class ImageCoverageWriter extends GridCoverageStore implements GridCovera
     }
 
     /**
-     * {@inheritDoc}
+     * Restores to its initial state.
+     *
+     * @throws DataStoreException If an error occurs while restoring to the initial state.
      *
      * @see ImageWriter#reset()
      */

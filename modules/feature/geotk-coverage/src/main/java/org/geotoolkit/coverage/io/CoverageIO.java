@@ -133,7 +133,7 @@ public final class CoverageIO extends Static {
             param = new GridCoverageWriteParam();
             param.setFormatName(formatName);
         }
-        final GridCoverageWriter writer = new ImageCoverageWriter();
+        final ImageCoverageWriter writer = new ImageCoverageWriter();
         try {
             writer.setOutput(output);
             writer.write(coverages, param);
@@ -177,7 +177,7 @@ public final class CoverageIO extends Static {
      *
      * @since 3.20
      */
-    public static GridCoverageWriter createSimpleWriter(final Object output) throws DataStoreException {
+    public static ImageCoverageWriter createSimpleWriter(final Object output) throws DataStoreException {
         ensureNonNull("output", output);
         final ImageCoverageWriter writer = new ImageCoverageWriter();
         writer.setOutput(output);

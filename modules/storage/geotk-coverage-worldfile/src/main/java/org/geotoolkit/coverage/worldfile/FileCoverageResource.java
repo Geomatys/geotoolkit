@@ -48,7 +48,6 @@ import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.opengis.geometry.Envelope;
@@ -234,7 +233,7 @@ public final class FileCoverageResource extends AbstractGridResource implements 
 
     @Override
     public synchronized void write(GridCoverage coverage, Option... options) throws DataStoreException {
-        final GridCoverageWriter writer = acquireWriter();
+        final ImageCoverageWriter writer = acquireWriter();
         try {
             writer.write(coverage, null);
         } finally {

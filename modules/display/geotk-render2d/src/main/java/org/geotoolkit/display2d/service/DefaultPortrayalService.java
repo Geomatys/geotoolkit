@@ -69,7 +69,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
@@ -126,7 +125,7 @@ public final class DefaultPortrayalService implements PortrayalService{
     /**
      * Cache the last CoverageWriter.
      */
-    private static final AtomicReference<GridCoverageWriter> WRITER_CACHE = new AtomicReference<>();
+    private static final AtomicReference<ImageCoverageWriter> WRITER_CACHE = new AtomicReference<>();
 
     /**
      * Cache the link between mime-type -> java-type
@@ -617,7 +616,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
 
         //get a writer
-        GridCoverageWriter writer = WRITER_CACHE.getAndSet(null);
+        ImageCoverageWriter writer = WRITER_CACHE.getAndSet(null);
         if(writer == null){
             writer = new ImageCoverageWriter();
         }
