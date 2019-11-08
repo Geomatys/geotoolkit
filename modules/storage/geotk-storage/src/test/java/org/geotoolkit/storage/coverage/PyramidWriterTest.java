@@ -30,17 +30,13 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.multires.DefiningMosaic;
 import org.geotoolkit.storage.multires.DefiningPyramid;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.DefiningPyramidResource;
-import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.PyramidWriter;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -89,18 +85,15 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
 
         //write over the tile
         final PyramidWriter writer = new PyramidWriter(ref);
-        final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        param.setEnvelope(env);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setGridToCRS(new AffineTransform(1, 0, 0, -1, -180, 90));
         gcb.setCoordinateReferenceSystem(CRS84);
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(360, 180, Color.RED));
-        writer.write(gcb.build(), param);
-        writer.dispose();
+        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //image should be red
         candidate = ref.read(null).render(null);
@@ -129,18 +122,15 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
 
         //write over the tile
         final PyramidWriter writer = new PyramidWriter(ref);
-        final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        param.setEnvelope(env);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setGridToCRS(new AffineTransform(10, 0, 0, -10, -180, 90));
         gcb.setCoordinateReferenceSystem(CRS84);
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(36, 18, Color.RED));
-        writer.write(gcb.build(), param);
-        writer.dispose();
+        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //image should be red
         candidate = ref.read(null).render(null);
@@ -169,18 +159,15 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
 
         //write over the tile
         final PyramidWriter writer = new PyramidWriter(ref);
-        final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
-        param.setEnvelope(env);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setGridToCRS(new AffineTransform(10, 0, 0, -10, -120, 60));
         gcb.setCoordinateReferenceSystem(CRS84);
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
-        writer.write(gcb.build(), param);
-        writer.dispose();
+        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //image should be black/red
         candidate = ref.read(null).render(null);
@@ -231,18 +218,15 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
 
         //write over the tile
         final PyramidWriter writer = new PyramidWriter(ref);
-        final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
-        param.setEnvelope(env);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setGridToCRS(new AffineTransform(10, 0, 0, -10, -120, 60));
         gcb.setCoordinateReferenceSystem(CRS84);
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
-        writer.write(gcb.build(), param);
-        writer.dispose();
+        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);
@@ -323,18 +307,15 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
 
         //write over the tile
         final PyramidWriter writer = new PyramidWriter(ref);
-        final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
-        param.setEnvelope(env);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setGridToCRS(new AffineTransform(10, 0, 0, -10, -120, 60));
         gcb.setCoordinateReferenceSystem(CRS84);
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
-        writer.write(gcb.build(), param);
-        writer.dispose();
+        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);
@@ -415,18 +396,15 @@ public class PyramidWriterTest <T extends MultiResolutionResource & org.apache.s
 
         //write over the tile
         final PyramidWriter writer = new PyramidWriter(ref);
-        final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(EPSG4326);
         env.setRange(0, -30, +60);
         env.setRange(1, -120, +70);
-        param.setEnvelope(env);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setGridToCRS(new AffineTransform(-10, 0, 0, 10, 60,-120));
         gcb.setCoordinateReferenceSystem(EPSG4326);
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(9, 19, Color.RED));
-        writer.write(gcb.build(), param);
-        writer.dispose();
+        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);

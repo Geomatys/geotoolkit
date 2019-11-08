@@ -45,9 +45,7 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.AbstractGridCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
@@ -58,7 +56,6 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.coverage.InterpolationMethod;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -75,7 +72,7 @@ import org.opengis.util.FactoryException;
  * @author Cédric Briançon (Geomatys)
  * @author Rémi Maréchal (Geomatys)
  */
-public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridCoverageWriter {
+public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
 
     private final T reference;
 
@@ -91,28 +88,9 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
         this.reference = reference;
     }
 
-    /**
-     * {@inheritedoc}
-     */
-    @Override
-    public void write(GridCoverage coverage, final GridCoverageWriteParam param) throws CoverageStoreException, CancellationException {
+    public void write(GridCoverage coverage, Envelope requestedEnvelope, InterpolationCase interpolation) throws CoverageStoreException, CancellationException {
         if (coverage == null) {
             return;
-        }
-        //geographic area where pixel values changes.
-        Envelope requestedEnvelope = null;
-        InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
-        if(param != null){
-            requestedEnvelope = param.getEnvelope();
-            final InterpolationMethod inter = param.getInterpolation();
-            if(InterpolationMethod.BICUBIC.equals(inter)){
-                interpolation = InterpolationCase.BICUBIC;
-            }else if(InterpolationMethod.LINEAR.equals(inter)){
-                interpolation = InterpolationCase.BILINEAR;
-            }else{
-                //NOTE : we can not map other types of interpolations yet.
-                interpolation = InterpolationCase.NEIGHBOR;
-            }
         }
 
         if (requestedEnvelope == null) {
