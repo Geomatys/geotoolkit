@@ -153,7 +153,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         if (domain != null) {
             try {
             canvas = canvas.derive()
-                    .margin(3)
+                    .margin(3, 3)
                     .rounding(GridRoundingMode.ENCLOSING)
                     .subgrid(domain)
                     .build();
@@ -179,7 +179,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         for (Tile tile : results) {
             final GridCoverageResource resource = tile.getResource();
             try {
-                GridCoverage coverage = resource.read(domain, range);
+                GridCoverage coverage = resource.read(canvas, range);
                 RenderedImage tileImage = coverage.render(null);
 
                 if (buffer == null) {
