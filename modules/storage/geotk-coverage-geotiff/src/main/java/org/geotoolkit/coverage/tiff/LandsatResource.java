@@ -16,31 +16,51 @@
  */
 package org.geotoolkit.coverage.tiff;
 
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.event.StoreListeners;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
 import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
+import org.geotoolkit.image.io.plugin.TiffImageReader;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
+import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Reader adapted to read and aggregate directly needed bands to build appropriate
@@ -50,7 +70,12 @@ import org.opengis.util.GenericName;
  * @version 1.0
  * @since   1.0
  */
-final class LandsatResource extends StoreListeners implements GridCoverageResource, ResourceOnFileSystem, StoreResource {
+final class LandsatResource extends GeoreferencedGridCoverageResource implements GridCoverageResource, ResourceOnFileSystem, StoreResource {
+
+    /**
+     * TiffImageReader SPI used to read images
+     */
+    private static final TiffImageReader.Spi TIFF_SPI = new TiffImageReader.Spi();
 
     private final LandsatStore store;
     private final GenericName name;
@@ -65,6 +90,11 @@ final class LandsatResource extends StoreListeners implements GridCoverageResour
      * {@link Path} to the metadata landsat 8 file.
      */
     private final LandsatMetadataParser metadataParser;
+
+    /**
+     * Array which contains all sample dimension for each read index.
+     */
+    private List gsdLandsat = null;
 
     private final CoverageGroup group;
 
@@ -83,7 +113,7 @@ final class LandsatResource extends StoreListeners implements GridCoverageResour
      */
     public LandsatResource(final LandsatStore store, final Path parentDirectory,
                 final LandsatMetadataParser metadataParser, final CoverageGroup group) {
-        super(null, null);
+        super(null);
         this.store = store;
         this.name = group.createName(store.getSceneName());
         this.parentDirectory = parentDirectory;
@@ -112,64 +142,65 @@ final class LandsatResource extends StoreListeners implements GridCoverageResour
     }
 
     @Override
-    public GridGeometry getGridGeometry() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
+    protected void createMetadata(MetadataBuilder metadata) throws DataStoreException {
         try {
-            return reader.getGridGeometry();
-        } finally {
-            reader.dispose();
-        }
-    }
-
-    @Override
-    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        final GridCoverageReader reader = acquireReader();
-        try {
-            return reader.getSampleDimensions();
-        } finally {
-            reader.dispose();
-        }
-    }
-
-    @Override
-    public DefaultMetadata getMetadata() throws DataStoreException {
-        try {
-            return metadataParser.getMetadata(group);
+            //TODO merge this metadata in default one
+            metadataParser.getMetadata(group);
         } catch (FactoryException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         } catch (ParseException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
-    }
-
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
-        try {
-            return new LandsatReader(this, parentDirectory, metadataParser, group);
-        } catch (IOException ex) {
-            throw new CoverageStoreException(ex);
-        }
+        super.createMetadata(metadata);
     }
 
     @Override
-    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        if (range != null && range.length > 0) {
-            param.setSourceBands(range);
-            param.setDestinationBands(range);
-        }
+    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
 
-        if (domain != null && domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
-            param.setEnvelope(domain.getEnvelope());
-        }
-        if (domain != null && domain.isDefined(GridGeometry.RESOLUTION)) {
-            param.setResolution(domain.getResolution(true));
-        }
-        GridCoverageReader reader = acquireReader();
+        final GridExtent gridExtent;
+        final MathTransform gridToCRS;
+        final CoordinateReferenceSystem crs;
         try {
-            return reader.read(param);
-        } finally {
-            reader.dispose();
+            gridExtent = metadataParser.getGridExtent(group);
+            gridToCRS  = metadataParser.getGridToCRS(group);
+            crs        = metadataParser.getCRS();
+        } catch (Exception ex) {
+            throw new CoverageStoreException(ex);
         }
+        return new GridGeometry2D(gridExtent, PixelInCell.CELL_CORNER, gridToCRS, crs);
+    }
+
+    /**
+     * {@inheritDoc }
+     *
+     * @param index 0, 1 or 2 for respectively ({@link LandsatConstants#REFLECTIVE_LABEL},
+     * {@link LandsatConstants#PANCHROMATIC_LABEL}, {@link LandsatConstants#THERMAL_LABEL}).
+     */
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
+        if (gsdLandsat != null) {
+            return gsdLandsat;
+        }
+        final int[] bandId = group.bands;
+        final List<SampleDimension> gList = new ArrayList<>();
+        for (int i : bandId) {
+            final String bandName = metadataParser.getValue(true, BAND_NAME_LABEL + i);
+            final Path resolve = parentDirectory.resolve(bandName);
+            final ImageCoverageReader imageCoverageReader = new ImageCoverageReader();
+            try {
+                final ImageReader tiffReader = TIFF_SPI.createReaderInstance();
+                tiffReader.setInput(resolve);
+                imageCoverageReader.setInput(tiffReader);
+                final List<SampleDimension> candidates = imageCoverageReader.getSampleDimensions();
+                if (candidates != null) gList.addAll(candidates);
+            } catch (IOException ex) {
+                throw new CoverageStoreException(ex);
+            } finally {
+                imageCoverageReader.dispose();
+            }
+        }
+        gsdLandsat = gList;
+        return gsdLandsat;
     }
 
     @Override
@@ -181,4 +212,66 @@ final class LandsatResource extends StoreListeners implements GridCoverageResour
         }
         return paths.toArray(new Path[paths.size()]);
     }
+
+    private GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+        final String sceneName  = metadataParser.getValue(false, SCENE_ID);
+        return group.createName(sceneName);
+    }
+
+    @Override
+    protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, int... range) throws DataStoreException {
+        GridGeometry geometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
+
+        //-- get all needed band to build coverage (see Landsat spec)
+        final int[] bandId = group.bands;
+        final RenderedImage[] bands = new RenderedImage[bandId.length];
+
+        try {
+            int currentCov = 0;
+            for (int i : bandId) {
+                //-- get band name
+                final String bandName = metadataParser.getValue(true, BAND_NAME_LABEL + i);
+                //-- add to coverage name
+                final Path band = parentDirectory.resolve(bandName);
+
+                //-- reader config
+                final TiffImageReader tiffReader = (TiffImageReader) TIFF_SPI.createReaderInstance();
+                tiffReader.setInput(band);
+
+                Rectangle rec = new Rectangle(
+                        areaLower[0],
+                        areaLower[1],
+                        areaUpper[0] - areaLower[0],
+                        areaUpper[1] - areaLower[1]);
+
+                final ImageReadParam readParam = tiffReader.getDefaultReadParam();
+                readParam.setSourceRegion(rec);
+                readParam.setSourceSubsampling(subsampling[0], subsampling[1], 0, 0);
+
+                try {
+                    BufferedImage read = tiffReader.read(0, readParam);
+                    bands[currentCov++] = read;
+                } finally {
+                    tiffReader.dispose();
+                }
+            }
+            final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "image:bandcombine");
+            final ParameterValueGroup params = desc.getInputDescriptor().createValue();
+            params.parameter("images").setValue(bands);
+            final org.geotoolkit.process.Process process = desc.createProcess(params);
+            final ParameterValueGroup result = process.call();
+            final RenderedImage outImage =  (RenderedImage) result.parameter("result").getValue();
+
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setRenderedImage(outImage);
+            gcb.setGridGeometry(geometry);
+            gcb.setName(getCoverageName().toString());
+
+            return gcb.build();
+
+        } catch(IOException | NoSuchIdentifierException | ProcessException ex) {
+            throw new CoverageStoreException(ex.getMessage(), ex);
+        }
+    }
+
 }
