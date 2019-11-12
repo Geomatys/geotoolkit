@@ -37,7 +37,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.internal.storage.StoreResource;
-import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -51,7 +50,6 @@ import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
 import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
@@ -220,7 +218,7 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
 
     @Override
     protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, int... range) throws DataStoreException {
-        GridGeometry geometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
+        GridGeometry geometry = getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
 
         //-- get all needed band to build coverage (see Landsat spec)
         final int[] bandId = group.bands;

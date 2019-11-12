@@ -25,11 +25,16 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -71,7 +76,11 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
             areaUpper[i] = Math.toIntExact(extent.getHigh(i)+1l);
         }
 
-        return readGridSlice(areaLower, areaUpper, subsampling);
+        try {
+            return readInGridCRS(areaLower, areaUpper, subsampling, range);
+        } catch (TransformException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -154,5 +163,34 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
         }
 
         return outExtent;
+    }
+
+    /**
+     * Derivate a grid geometry from the original grid geometry and the features
+     * image parameters.
+     *
+     * @param gridGeom original grid geometry
+     * @param areaLower image features lower corner
+     * @param areaUpper image features upper corner
+     * @param subsampling image subsampling
+     * @return derivated grid geometry.
+     */
+    public static GridGeometry getGridGeometry(GridGeometry gridGeom,
+            int[] areaLower, int[] areaUpper, int[] subsampling) {
+
+        //calculate output size
+        final long[] outExtent = getResultExtent(areaLower, areaUpper, subsampling);
+
+        //build grid geometry
+        int dim = areaLower.length;
+        final Matrix matrix = Matrices.createDiagonal(dim+1, dim+1);
+        for(int i=0;i<dim;i++){
+            matrix.setElement(i, i, subsampling[i]);
+            matrix.setElement(i, dim, areaLower[i]);
+        }
+        final MathTransform ssToGrid = MathTransforms.linear(matrix);
+        final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS(PixelInCell.CELL_CENTER));
+        final GridExtent extent = new GridExtent(null, null, outExtent, false);
+        return new GridGeometry(extent, PixelInCell.CELL_CENTER, ssToCrs, gridGeom.getCoordinateReferenceSystem());
     }
 }

@@ -49,7 +49,6 @@ import org.apache.sis.util.Numbers;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.GeoReferencedGridCoverageReader;
 import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.Envelope;
@@ -249,7 +248,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
         protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, int ... range) throws DataStoreException {
 
             final GridGeometry allGridGeom = getGridGeometry();
-            final GridGeometry gridGeometry = GeoReferencedGridCoverageReader.getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
+            final GridGeometry gridGeometry = getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
             final GridExtent extent = allGridGeom.getExtent();
 
             short[] allData;
