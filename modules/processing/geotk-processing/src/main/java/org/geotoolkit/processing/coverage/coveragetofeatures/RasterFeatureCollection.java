@@ -30,7 +30,7 @@ import org.opengis.feature.Feature;
  */
 public abstract class RasterFeatureCollection extends AbstractCollection<Feature> {
 
-    private final GridCoverageResource reader;
+    private final GridCoverageResource resource;
     private final long minX;
     private final long minY;
     private final long maxX;
@@ -38,11 +38,11 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
 
     /**
      * Constructor
-     * @param reader GridCoverageReader
+     * @param reader GridCoverageResource
      * @param range GridExtent
      */
     public RasterFeatureCollection(final GridCoverageResource reader, final GridExtent range) {
-        this.reader = reader;
+        this.resource = reader;
 
         this.minX = range.getLow(0);
         this.minY = range.getLow(1);
@@ -63,10 +63,10 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
 
     /**
      * Return the reader
-     * @return GridCoverageReader
+     * @return GridCoverageResource
      */
-    protected GridCoverageResource getReader() {
-        return reader;
+    protected GridCoverageResource getResource() {
+        return resource;
     }
 
     /**

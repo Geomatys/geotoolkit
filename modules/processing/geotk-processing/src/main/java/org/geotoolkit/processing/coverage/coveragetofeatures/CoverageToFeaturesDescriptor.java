@@ -50,7 +50,7 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
      */
     public static final ParameterDescriptor<GridCoverageResource> READER_IN = new ParameterBuilder()
             .addName("reader_in")
-            .setRemarks("Inpute GridCoverageReader")
+            .setRemarks("Inpute GridCoverageResource")
             .setRequired(true)
             .create(GridCoverageResource.class, null);
     /**
