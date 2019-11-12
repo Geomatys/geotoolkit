@@ -34,7 +34,6 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
@@ -168,7 +167,7 @@ final class TiffStore extends DataStore implements ResourceOnFileSystem, Writabl
             if (domain != null && domain.isDefined(GridGeometry.RESOLUTION)) {
                 param.setResolution(domain.getResolution(true));
             }
-            GridCoverageReader reader = acquireReader();
+            ImageCoverageReader reader = acquireReader();
             try {
                 return reader.read(param);
             } finally {
@@ -199,7 +198,7 @@ final class TiffStore extends DataStore implements ResourceOnFileSystem, Writabl
             if (sampleDimensions != null) return;
 
             if (Files.exists(path)) {
-                GridCoverageReader reader = acquireReader();
+                ImageCoverageReader reader = acquireReader();
                 try {
                     sampleDimensions = reader.getSampleDimensions();
                     gridGeometry = reader.getGridGeometry();
@@ -211,7 +210,7 @@ final class TiffStore extends DataStore implements ResourceOnFileSystem, Writabl
             }
         }
 
-        private GridCoverageReader acquireReader() throws DataStoreException {
+        private ImageCoverageReader acquireReader() throws DataStoreException {
             final TiffImageReader tiffreader = new TiffImageReader(new TiffImageReader.Spi());
             tiffreader.setInput(path);
             final ImageCoverageReader reader = new ImageCoverageReader();

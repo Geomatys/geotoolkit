@@ -32,7 +32,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
@@ -207,7 +207,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         Setup.initialize(null);
 
         final File input = new File("src/test/resources/org/geotoolkit/display2d/clouds.jpg");
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
+        final ImageCoverageReader reader = CoverageIO.createSimpleReader(input);
 
         final BufferedImage img = ImageIO.read(input);
         final GridCoverage gridcov = reader.read(null);

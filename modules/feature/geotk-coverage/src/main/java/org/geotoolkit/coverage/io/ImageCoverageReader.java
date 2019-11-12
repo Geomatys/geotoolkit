@@ -1098,7 +1098,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                             resolutions.add(resolution);
                         } catch (IncommensurableException e) {
                             // In case of failure, do not create a Resolution object.
-                            Logging.recoverableException(LOGGER, AbstractGridCoverageReader.class, "getMetadata", e);
+                            Logging.recoverableException(LOGGER, ImageCoverageReader.class, "getMetadata", e);
                         }
                     }
                 }
@@ -1116,7 +1116,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                         // Not a big deal if we fail. We will just let the identification section unchanged.
                         if (!failed) {
                             failed = true; // Log only once.
-                            Logging.recoverableException(LOGGER, AbstractGridCoverageReader.class, "getMetadata", e);
+                            Logging.recoverableException(LOGGER, ImageCoverageReader.class, "getMetadata", e);
                         }
                     }
                 }

@@ -54,7 +54,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import static org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory.PATH;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.GeoJSONProvider;
@@ -324,13 +324,13 @@ public class WPSConvertersUtils {
 
             } else if (object instanceof File || object instanceof Path) {
                 final Path objPath = (object instanceof File) ? ((File) object).toPath() : (Path) object;
-                final GridCoverageReader reader = CoverageIO.createSimpleReader(objPath);
+                final ImageCoverageReader reader = CoverageIO.createSimpleReader(objPath);
                 env = Envelopes.transform(reader.getGridGeometry().getEnvelope(), outCRS);
                 crsCode = IdentifiedObjects.lookupEPSG(reader.getGridGeometry().getCoordinateReferenceSystem());
                 IOUtilities.copy(objPath, coverageFile, StandardCopyOption.REPLACE_EXISTING);
 
-            } else if (object instanceof GridCoverageReader) {
-                final GridCoverageReader reader = (GridCoverageReader) object;
+            } else if (object instanceof ImageCoverageReader) {
+                final ImageCoverageReader reader = (ImageCoverageReader) object;
                 env = Envelopes.transform(reader.getGridGeometry().getEnvelope(), outCRS);
                 crsCode = IdentifiedObjects.lookupEPSG(reader.getGridGeometry().getCoordinateReferenceSystem());
                 Object in = reader.getInput();

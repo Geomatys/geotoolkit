@@ -10,7 +10,7 @@ import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -41,7 +41,7 @@ public class CoverageReaderDemo {
         // Here is the parameter which tells the reader to perform lazy loading.
         readParam.setDeferred(true);
 
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(tempData);
+        final ImageCoverageReader reader = CoverageIO.createSimpleReader(tempData);
         final GridCoverage coverage = (GridCoverage) reader.read(readParam);
 
         // Ok, so how to use it now ?

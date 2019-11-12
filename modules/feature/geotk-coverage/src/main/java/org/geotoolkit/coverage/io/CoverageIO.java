@@ -155,7 +155,7 @@ public final class CoverageIO extends Static {
      * @return A coverage reader for the given input.
      * @throws DataStoreException If the reader can not be created for the given file.
      */
-    public static GridCoverageReader createSimpleReader(final Object input) throws DataStoreException {
+    public static ImageCoverageReader createSimpleReader(final Object input) throws DataStoreException {
         ensureNonNull("input", input);
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(input);

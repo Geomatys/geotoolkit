@@ -29,7 +29,7 @@ import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.wps.io.WPSEncoding;
@@ -37,11 +37,11 @@ import org.geotoolkit.wps.xml.v200.Reference;
 ;
 
 /**
- * Implementation of ObjectConverter to convert a reference into a GridCoverageReader.
+ * Implementation of ObjectConverter to convert a reference into a ImageCoverageReader.
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToGridCoverageReaderConverter extends AbstractReferenceInputConverter<GridCoverageReader> {
+public final class ReferenceToGridCoverageReaderConverter extends AbstractReferenceInputConverter<ImageCoverageReader> {
 
     private static ReferenceToGridCoverageReaderConverter INSTANCE;
 
@@ -56,8 +56,8 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
     }
 
     @Override
-    public Class<GridCoverageReader> getTargetClass() {
-        return GridCoverageReader.class;
+    public Class<ImageCoverageReader> getTargetClass() {
+        return ImageCoverageReader.class;
     }
 
     /**
@@ -66,7 +66,7 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
      * @return GridCoverageReader.
      */
     @Override
-    public GridCoverageReader convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
+    public ImageCoverageReader convert(final Reference source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
 

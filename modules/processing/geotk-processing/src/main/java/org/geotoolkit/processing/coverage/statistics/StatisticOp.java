@@ -19,9 +19,7 @@ package org.geotoolkit.processing.coverage.statistics;
 import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.process.ProcessException;
@@ -37,37 +35,6 @@ public class StatisticOp extends Static {
 
     public static final String MINIMUM = "min";
     public static final String MAXIMUM = "max";
-
-    /**
-     * Analyse image to return min and max value per bands. No-data are excluded.
-     * @param reader
-     * @param imageIndex
-     * @return A Map with two Entry.
-     * Each Entry have a name ("min", "max") and values are an double[] for each bands.
-     * @throws CoverageStoreException
-     * @deprecated use {@link Statistics#analyse(org.geotoolkit.coverage.io.GridCoverageReader, int, boolean)}
-     */
-    public static Map<String,Object> analyze(GridCoverageReader reader) throws CoverageStoreException {
-        return analyze(reader, ViewType.GEOPHYSICS);
-    }
-
-    /**
-     * Analyse image to return min and max value per bands. No-data are excluded.
-     * @param reader
-     * @param imageIndex
-     * @return A Map with two Entry.
-     * Each Entry have a name ("min", "max") and values are an double[] for each bands.
-     * @throws CoverageStoreException
-     * @deprecated use {@link Statistics#analyse(org.geotoolkit.coverage.io.GridCoverageReader, int, boolean)}
-     */
-    public static Map<String,Object> analyze(GridCoverageReader reader, ViewType viewType) throws CoverageStoreException {
-        try {
-            final ImageStatistics analyse = Statistics.analyse(reader, true);
-            return toMap(analyse);
-        } catch (ProcessException e) {
-            throw new CoverageStoreException(e.getMessage(), e);
-        }
-    }
 
     /**
      * Analyse image to return min and max value per bands.

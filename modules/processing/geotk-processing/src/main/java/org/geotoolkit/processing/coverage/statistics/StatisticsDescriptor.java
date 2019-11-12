@@ -20,7 +20,6 @@ import java.awt.image.RenderedImage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -78,17 +77,6 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
             .create(GridCoverageResource.class, null);
 
     /*
-    * GridCoverageReader to analyse
-    */
-    public static final String IN_READER_PARAM_NAME = "inReader";
-    public static final InternationalString IN_READER_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inReader);
-    public static final ParameterDescriptor<GridCoverageReader> READER = new ParameterBuilder()
-            .addName(IN_READER_PARAM_NAME)
-            .setRemarks(IN_READER_PARAM_REMARKS)
-            .setRequired(false)
-            .create(GridCoverageReader.class, null);
-
-    /*
      * Flag to exclude no-data from distribution
      */
     public static final String IN_EXCLUDE_NO_DATA_PARAM_NAME = "inExcludeNoData";
@@ -103,7 +91,7 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(
-                    IMAGE, COVERAGE, REF, READER, EXCLUDE_NO_DATA);
+                    IMAGE, COVERAGE, REF, EXCLUDE_NO_DATA);
 
     /*
      * Coverage result

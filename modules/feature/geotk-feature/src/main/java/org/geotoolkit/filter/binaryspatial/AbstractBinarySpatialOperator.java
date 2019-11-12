@@ -27,12 +27,12 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.filter.AbstractFilter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.JTS;
@@ -116,11 +116,11 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             //use the coverage envelope
             final GridCoverage coverage = (GridCoverage) value;
             candidate = JTS.toGeometry(coverage.getGridGeometry().getEnvelope());
-        }else if(value instanceof GridCoverageReader){
+        }else if(value instanceof GridCoverageResource){
             //use the coverage envelope
-            final GridCoverageReader reader = (GridCoverageReader) value;
+            final GridCoverageResource resource = (GridCoverageResource) value;
             try{
-                GridGeometry gg = reader.getGridGeometry();
+                GridGeometry gg = resource.getGridGeometry();
                 candidate = JTS.toGeometry(gg.getEnvelope());
                 candidate.setUserData(gg.getCoordinateReferenceSystem());
             }catch(DataStoreException ex){
