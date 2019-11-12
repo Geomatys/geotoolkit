@@ -23,12 +23,12 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.storage.query.CoverageQuery;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -126,10 +126,6 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                         resolution = DefaultRasterSymbolizerRenderer.fixResolutionWithCRS(resolution, coverageMapLayerCRS);
                     }
 
-                    final GridCoverageReadParam param = new GridCoverageReadParam();
-                    param.setEnvelope(bounds);
-                    param.setResolution(resolution);
-
                     GridCoverage inCoverage = coverageReference.read(coverageReference.getGridGeometry().derive().subgrid(bounds, resolution).build());
                     inCoverage = inCoverage.forConvertedValues(true);
 
@@ -151,6 +147,10 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     final GridCoverage resampledCoverage = (GridCoverage) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
                     final GridCoverageResource resampledCovRef = new InMemoryGridCoverageResource(coverageReference.getIdentifier().orElse(null), resampledCoverage);
 
+                    final CoverageQuery query = new CoverageQuery();
+                    query.setDomain(resampledCovRef.getGridGeometry().derive().subgrid(bounds, resolution).build());
+                    final GridCoverageResource subref = resampledCovRef.subset(query);
+
                     /////////////////////
                     // 2.2 - Compute isolines
                     ////////////////////
@@ -158,8 +158,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     ProcessDescriptor isolineDesc = symbol.getIsolineDesc();
                     if (isolineDesc != null) {
                         final Parameters inputs = Parameters.castOrWrap(isolineDesc.getInputDescriptor().createValue());
-                        inputs.getOrCreate(IsolineDescriptor2.COVERAGE_REF).setValue(resampledCovRef);
-                        inputs.getOrCreate(IsolineDescriptor2.READ_PARAM).setValue(param);
+                        inputs.getOrCreate(IsolineDescriptor2.COVERAGE_REF).setValue(subref);
                         inputs.getOrCreate(IsolineDescriptor2.INTERVALS).setValue(intervales);
                         final org.geotoolkit.process.Process process = isolineDesc.createProcess(inputs);
                         final ParameterValueGroup result = process.call();

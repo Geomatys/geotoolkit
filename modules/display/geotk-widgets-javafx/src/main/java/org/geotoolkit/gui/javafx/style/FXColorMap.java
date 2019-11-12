@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -60,12 +59,10 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.DefaultLiteral;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
@@ -97,7 +94,6 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ColorMap;
 
 /**
@@ -679,11 +675,6 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                         res[i] = Double.MAX_VALUE;
                     }
 
-                    GridCoverageReadParam readParam = new GridCoverageReadParam();
-                    readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
-                    readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
-                    readParam.setResolution(res);
-
                     final List<SampleDimension> sd = covRef.getSampleDimensions();
                     int nbBands = 10;
                     if (sd != null && !sd.isEmpty()) {
@@ -697,8 +688,6 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         } catch (CoverageStoreException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         } catch (DataStoreException ex) {
-            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
-        } catch (TransformException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         }
     }

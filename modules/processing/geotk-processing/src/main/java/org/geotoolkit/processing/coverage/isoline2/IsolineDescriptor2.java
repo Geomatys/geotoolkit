@@ -20,7 +20,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
@@ -82,18 +81,9 @@ public class IsolineDescriptor2 extends AbstractProcessDescriptor {
             .setRequired(true)
             .create(double[].class, null);
 
-    /**
-     * Optional - reader parameter to read just a part of coverage
-     */
-    public static final ParameterDescriptor<GridCoverageReadParam> READ_PARAM = new ParameterBuilder()
-            .addName("readParam")
-            .setRemarks("Coverage reading parameters.")
-            .setRequired(false)
-            .create(GridCoverageReadParam.class, null);
-
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE_REF, READ_PARAM, FEATURE_STORE, FEATURE_NAME, INTERVALS);
+            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE_REF, FEATURE_STORE, FEATURE_NAME, INTERVALS);
 
     /*
      * FeatureCollection of isoline

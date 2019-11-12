@@ -42,7 +42,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.multires.Mosaic;
@@ -94,7 +93,6 @@ public class Isoline2 extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         final GridCoverageResource coverageRef = inputParameters.getValue(COVERAGE_REF);
-        final GridCoverageReadParam readParam = inputParameters.getValue(READ_PARAM);
         DataStore featureStore = inputParameters.getValue(FEATURE_STORE);
         final String featureTypeName = inputParameters.getValue(FEATURE_NAME);
         intervals = inputParameters.getValue(INTERVALS);
@@ -117,11 +115,6 @@ public class Isoline2 extends AbstractProcess {
                 final MathTransform gridtoCRS = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
                 GridGeometry query = coverageRef.getGridGeometry();
-                if (readParam != null) {
-                    query.derive()
-                        .subgrid(readParam.getEnvelope(), readParam.getResolution())
-                        .build();
-                }
                 query = query.derive().sliceByRatio(0.5, 0, 1).build();
 
                 final GridCoverage coverage = coverageRef.read(query).forConvertedValues(true);
