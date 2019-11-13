@@ -81,6 +81,7 @@ public class WPSConverterRegistry {
         register(ReferenceToGeometryConverter               .getInstance());
         register(ReferenceToGridCoverage2DConverter         .getInstance());
         register(ReferenceToGridCoverageReaderConverter     .getInstance());
+        register(ReferenceToGridCoverageResourceConverter   .getInstance());
         register(ReferenceToRenderedImageConverter          .getInstance());
         register(ReferenceToStringConverter                 .getInstance());
         register(ReferenceToGeometryArrayConverter          .getInstance());
