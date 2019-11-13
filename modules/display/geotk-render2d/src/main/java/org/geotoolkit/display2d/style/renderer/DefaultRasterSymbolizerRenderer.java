@@ -443,7 +443,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             //-- ReliefShadow creating --------------------
-            final GridCoverage2D mntCoverage;
+            final GridCoverage mntCoverage;
             if (elevationCoverage != null) {
                 //TODO replace by a simple sobel effect for relief shading
                 mntCoverage = null;
@@ -458,14 +458,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             gcb.setGridGeometry(coverage.getGridGeometry());
             gcb.setRenderedImage(colorMappedImage);
             gcb.setName("tempimg");
-            final GridCoverage2D ti = gcb.getGridCoverage2D();
+            final GridCoverage ti = gcb.getGridCoverage2D();
 
             final MathTransform1D trs = (MathTransform1D) MathTransforms.linear(factor, 0);
             final org.geotoolkit.processing.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.processing.coverage.shadedrelief.ShadedRelief(
                     ti, mntCoverage, trs);
             final ParameterValueGroup res = proc.call();
-            final GridCoverage2D shaded = (GridCoverage2D) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
-            colorMappedImage = shaded.getRenderedImage();
+            final GridCoverage shaded = (GridCoverage) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
+            colorMappedImage = shaded.render(null);
         }
         return colorMappedImage;
     }

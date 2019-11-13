@@ -19,8 +19,8 @@ package org.geotoolkit.storage.coverage;
 import java.awt.Point;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramids;
@@ -42,7 +42,7 @@ public final class GridMosaicCoverage2D {
      * @param mosaic
      * @return
      */
-    public static GridCoverage2D create(org.apache.sis.storage.GridCoverageResource ref, Mosaic mosaic) throws DataStoreException{
+    public static GridCoverage create(org.apache.sis.storage.GridCoverageResource ref, Mosaic mosaic) throws DataStoreException{
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setCoordinateReferenceSystem(mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
         gcb.setGridToCRS((MathTransform)Pyramids.getTileGridToCRS(mosaic, new Point(0, 0)));

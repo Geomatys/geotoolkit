@@ -43,19 +43,17 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -119,16 +117,8 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
         final MathTransform srcCRSToGrid;
         RenderedImage image = null;
         try {
-            if (coverage instanceof GridCoverage2D) {
-                image        = ((GridCoverage2D)coverage).getRenderedImage();
-                srcCRSToGrid = ((GridCoverage2D)coverage).getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
-            } else {
-                final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                gcb.setGridCoverage(coverage);
-                gcb.setPixelAnchor(PixelInCell.CELL_CENTER);
-                image        = gcb.getRenderedImage();
-                srcCRSToGrid = gcb.getGridToCRS().inverse();
-            }
+            image        = coverage.render(null);
+            srcCRSToGrid = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
         } catch (NoninvertibleTransformException ex) {
             throw new CoverageStoreException(ex);
         }

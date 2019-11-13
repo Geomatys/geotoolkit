@@ -27,6 +27,7 @@ import java.util.Vector;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -35,9 +36,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
@@ -45,6 +43,8 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -77,7 +77,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage {
 
         dataEnv = ref.getGridGeometry().getEnvelope();
 
-        final RenderedImage prototype = getTileCoverage(0, 0).getRenderedImage();
+        final RenderedImage prototype = getTileCoverage(0, 0).render(null);
         colorModel = prototype.getColorModel();
         sampleModel = prototype.getSampleModel();
 
@@ -264,21 +264,21 @@ public class CoverageReferenceRenderedImage implements RenderedImage {
         return sampleModel;
     }
 
-    public GridCoverage2D getTileCoverage(int idx, int idy) throws DataStoreException, TransformException {
+    public GridCoverage getTileCoverage(int idx, int idy) throws DataStoreException, TransformException {
         Envelope tenv = Pyramids.computeTileEnvelope(mosaic, idx, idy);
         final GeneralEnvelope genv = new GeneralEnvelope(tenv);
         genv.setRange(0, tenv.getMinimum(0) - mosaic.getScale(), tenv.getMaximum(0) + mosaic.getScale());
         genv.setRange(1, tenv.getMinimum(1) - mosaic.getScale(), tenv.getMaximum(1) + mosaic.getScale());
         tenv = ReferencingUtilities.transform(genv, dataEnv.getCoordinateReferenceSystem());
-        return (GridCoverage2D) ref.read(ref.getGridGeometry().derive().subgrid(tenv).build());
+        return ref.read(ref.getGridGeometry().derive().subgrid(tenv).build());
     }
 
     @Override
     public Raster getTile(int idx, int idy) {
         try{
-            final GridCoverage2D coverage = getTileCoverage(idx, idy);
-            final Envelope coverageEnvelope = coverage.getEnvelope2D();
-            final RenderedImage image = coverage.getRenderedImage();
+            final GridCoverage coverage = getTileCoverage(idx, idy);
+            final CoordinateReferenceSystem coverageCrs2D = CRS.getHorizontalComponent(coverage.getCoordinateReferenceSystem());
+            final RenderedImage image = coverage.render(null);
             final SampleDimension[] sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
             Interpolation interpolation = Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(image), InterpolationCase.NEIGHBOR, 2);
 
@@ -311,8 +311,8 @@ public class CoverageReferenceRenderedImage implements RenderedImage {
             final double mosULY = mosaic.getUpperLeftCorner().getOrdinate(1);
 
             CoordinateReferenceSystem destCrs2D = CRSUtilities.getCRS2D(mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
-            MathTransform crsDestToCrsCoverage = CRS.findOperation(destCrs2D, coverageEnvelope.getCoordinateReferenceSystem(), null).getMathTransform();
-            MathTransform srcCRSToGrid = ((GridCoverage2D)coverage).getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
+            MathTransform crsDestToCrsCoverage = CRS.findOperation(destCrs2D, coverageCrs2D, null).getMathTransform();
+            MathTransform srcCRSToGrid = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
             MathTransform crsDestToSrcGrid = MathTransforms.concatenate(crsDestToCrsCoverage, srcCRSToGrid);
 
 

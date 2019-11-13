@@ -45,7 +45,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.TypeMap;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
@@ -136,7 +135,7 @@ public final class FileCoverageResource extends AbstractGridResource implements 
                     }
                     param.setEnvelope(reader.getGridGeometry().getEnvelope());
                     param.setDeferred(true);
-                    final GridCoverage2D coverage = reader.read(param);
+                    final GridCoverage coverage = reader.read(param);
                     final RenderedImage img = coverage.render(null);
                     final SampleModel sampleModel = img.getSampleModel();
                     final int numBands = sampleModel.getNumBands();

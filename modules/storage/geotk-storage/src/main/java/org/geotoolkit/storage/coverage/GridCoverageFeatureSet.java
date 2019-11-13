@@ -42,12 +42,12 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.geotoolkit.storage.AbstractResource;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
@@ -173,15 +173,11 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
             coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
         }
 
-        if (coverage instanceof GridCoverage2D) {
-            final int nbBand = ((GridCoverage2D)coverage).getRenderedImage().getSampleModel().getNumBands();
-            for (int i=0;i<nbBand;i++) {
-                ftb.addAttribute(Double.class).setName(""+i).setMinimumOccurs(1).setMaximumOccurs(1);
-            }
-            return ftb.build();
-        } else {
-            throw new CoverageStoreException("Unsupported coverage type "+coverage);
+        final int nbBand = coverage.render(null).getSampleModel().getNumBands();
+        for (int i=0;i<nbBand;i++) {
+            ftb.addAttribute(Double.class).setName(""+i).setMinimumOccurs(1).setMaximumOccurs(1);
         }
+        return ftb.build();
 
     }
 
@@ -259,15 +255,11 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
             coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
         }
 
-        if (coverage instanceof GridCoverage2D) {
-            final int nbBand = ((GridCoverage2D)coverage).getRenderedImage().getSampleModel().getNumBands();
-            for (int i=0;i<nbBand;i++) {
-                ftb.addAttribute(Double.class).setName(""+i).setMinimumOccurs(1).setMaximumOccurs(1);
-            }
-            return ftb.build();
-        } else {
-            throw new CoverageStoreException("Unsupported coverage type "+coverage);
+        final int nbBand = coverage.render(null).getSampleModel().getNumBands();
+        for (int i=0;i<nbBand;i++) {
+            ftb.addAttribute(Double.class).setName(""+i).setMinimumOccurs(1).setMaximumOccurs(1);
         }
+        return ftb.build();
 
     }
 

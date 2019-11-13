@@ -25,15 +25,16 @@ import java.util.logging.Level;
 import javax.vecmath.Vector3f;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -41,8 +42,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 
 /**
  *
@@ -78,7 +77,7 @@ public class ShadedRelief extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         GridCoverage2D coverage = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.COVERAGE));
-        GridCoverage2D elevation = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.ELEVATION));
+        GridCoverage elevation = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.ELEVATION));
         MathTransform1D eleConv = inputParameters.getValue(ShadedReliefDescriptor.ELECONV);
         //prepare coverage for the expected work
         coverage = coverage.view(ViewType.RENDERED);
@@ -93,7 +92,7 @@ public class ShadedRelief extends AbstractProcess {
         final ColorModel cm = baseImage.getColorModel();
         final Raster baseRaster = getData(baseImage);
 
-        final Raster eleImage = getData(elevation.getRenderedImage());
+        final Raster eleImage = getData(elevation.render(null));
         final int width = baseImage.getWidth();
         final int height = baseImage.getHeight();
         final BufferedImage resImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
