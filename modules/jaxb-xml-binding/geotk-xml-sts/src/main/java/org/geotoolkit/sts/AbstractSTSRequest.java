@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.sts;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.util.Version;
-import org.geotoolkit.ows.xml.RequestBase;
 import org.opengis.filter.sort.SortOrder;
 
 /**
@@ -106,6 +107,9 @@ public abstract class AbstractSTSRequest implements STSRequest {
      * In the response, the service SHALL return the specified content, if available, along with any available expanded navigation properties.
      */
     protected List<String> select;
+
+    @JsonIgnore
+    protected Map<String, String> extraFilter = new HashMap<>();
 
     /**
      * @return the filter
@@ -208,6 +212,14 @@ public abstract class AbstractSTSRequest implements STSRequest {
      */
     public void setSelect(List<String> select) {
         this.select = select;
+    }
+
+    public Map<String, String> getExtraFilter() {
+        return extraFilter;
+    }
+
+    public void setExtraFilter(Map<String, String> extraFilter) {
+        this.extraFilter = extraFilter;
     }
 
     @Override

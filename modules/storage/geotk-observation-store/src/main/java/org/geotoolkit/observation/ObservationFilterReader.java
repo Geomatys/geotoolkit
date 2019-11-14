@@ -21,7 +21,9 @@ import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
 import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.observation.Process;
 
 /**
  *
@@ -51,12 +53,30 @@ public interface ObservationFilterReader extends ObservationFilter {
 
     /**
      *
-     * @param version the sosversion for the xml object returned.
+     * @param version the sos version for the xml object returned.
      *
      * @return
      * @throws DataStoreException
      */
     List<SamplingFeature> getFeatureOfInterests(final String version) throws DataStoreException;
+
+    /**
+     *
+     * @param version the sos version for the xml object returned.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    List<Phenomenon> getPhenomenons(final String version) throws DataStoreException;
+
+    /**
+     *
+     * @param version the sos version for the xml object returned.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    List<Process> getProcesses(final String version) throws DataStoreException;
 
     /**
      * Return an encoded block of data in a string.

@@ -105,6 +105,38 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
+    public Phenomenon getPhenomenon(String identifier, String version) throws DataStoreException {
+        for (Object xmlObject : xmlObjects) {
+            if (xmlObject instanceof ObservationCollection) {
+                final ObservationCollection collection = (ObservationCollection)xmlObject;
+                for (Observation obs : collection.getMember()) {
+                    final AbstractObservation o = (AbstractObservation)obs;
+                    final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+                    Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
+                    if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
+                        org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
+                        if (identifier.equals(phe.getName().getCode())) {
+                            return ph;
+                        }
+                    }
+                }
+
+            } else if (xmlObject instanceof AbstractObservation) {
+                final AbstractObservation obs = (AbstractObservation)xmlObject;
+                final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
+                Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
+                if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
+                    org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
+                    if (identifier.equals(phe.getName().getCode())) {
+                        return ph;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException {
         final Set<Phenomenon> phenomenons = new HashSet<>();
         for (Object xmlObject : xmlObjects) {
@@ -328,6 +360,11 @@ public class XmlObservationReader implements ObservationReader {
     @Override
     public boolean existProcedure(final String href) throws DataStoreException {
         return getProcedureNames().contains(href);
+    }
+
+    @Override
+    public org.opengis.observation.Process getProcess(String identifier, String version) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

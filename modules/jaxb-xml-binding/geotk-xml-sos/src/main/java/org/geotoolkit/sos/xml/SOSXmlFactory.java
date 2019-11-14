@@ -33,6 +33,8 @@ import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.observation.xml.OMXmlFactory;
+import org.geotoolkit.observation.xml.v100.ProcessType;
+import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
@@ -72,6 +74,7 @@ import org.opengis.observation.CompositePhenomenon;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.observation.Process;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -1010,6 +1013,16 @@ public class SOSXmlFactory {
             return GMLXmlFactory.buildPoint("3.2.1", id, pos);
         } else if ("1.0.0".equals(currentVersion)) {
             return GMLXmlFactory.buildPoint("3.1.1", id, pos);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static Process buildProcess(final String currentVersion, final String href) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new OMProcessPropertyType(href);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new ProcessType(href);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
