@@ -323,7 +323,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "            </gmd:linkage>" + '\n' +
         "        </inspire_vs:MetadataUrl>" + '\n' +
         "        <inspire_vs:ResourceType>" + '\n' +
-        "            <gmd:MD_ScopeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_ScopeCode\" codeListValue=\"service\">Service</gmd:MD_ScopeCode>" + '\n' +
+        "            <gmd:MD_ScopeCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode\" codeListValue=\"service\">Service</gmd:MD_ScopeCode>" + '\n' +
         "        </inspire_vs:ResourceType>" + '\n' +
         "        <inspire_vs:TemporalRefererence>" + '\n' +
         "            <gmd:EX_Extent>" + '\n' +
@@ -366,19 +366,19 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                                                    <gmd:URL>http://www.epsg.org</gmd:URL>\n" +
         "                                                </gmd:linkage>\n" +
         "                                                <gmd:function>\n" +
-        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>\n" +
+        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>\n" +
         "                                                </gmd:function>\n" +
         "                                            </gmd:CI_OnlineResource>\n" +
         "                                        </gmd:onlineResource>\n" +
         "                                    </gmd:CI_Contact>\n" +
         "                                </gmd:contactInfo>\n" +
         "                                <gmd:role>" + '\n' +
-        "                                    <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\">Principal investigator</gmd:CI_RoleCode>" + '\n' +
+        "                                    <gmd:CI_RoleCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\">Principal investigator</gmd:CI_RoleCode>" + '\n' +
         "                                </gmd:role>" + '\n' +
         "                            </gmd:CI_ResponsibleParty>" + '\n' +
         "                        </gmd:citedResponsibleParty>" + '\n' +
         "                        <gmd:presentationForm>" + '\n' +
-        "                            <gmd:CI_PresentationFormCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_PresentationFormCode\" codeListValue=\"tableDigital\">Table digital</gmd:CI_PresentationFormCode>" + '\n' +
+        "                            <gmd:CI_PresentationFormCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_PresentationFormCode\" codeListValue=\"tableDigital\">Table digital</gmd:CI_PresentationFormCode>" + '\n' +
         "                        </gmd:presentationForm>" + '\n' +
         "                    </gmd:CI_Citation>" + '\n' +
         "                </gmd:specification>" + '\n' +
@@ -403,14 +403,14 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                                    <gmd:URL>http://www.epsg.org</gmd:URL>\n" +
         "                                </gmd:linkage>\n" +
         "                                <gmd:function>\n" +
-        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>\n" +
+        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>\n" +
         "                                </gmd:function>\n" +
         "                            </gmd:CI_OnlineResource>\n" +
         "                        </gmd:onlineResource>\n" +
         "                    </gmd:CI_Contact>\n" +
         "                </gmd:contactInfo>\n" +
         "                <gmd:role>" + '\n' +
-        "                    <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\">Principal investigator</gmd:CI_RoleCode>" + '\n' +
+        "                    <gmd:CI_RoleCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\">Principal investigator</gmd:CI_RoleCode>" + '\n' +
         "                </gmd:role>" + '\n' +
         "            </gmd:CI_ResponsibleParty>" + '\n' +
         "        </inspire_vs:MetadataPointOfContact>" + '\n' +
@@ -459,7 +459,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "            </gmd:linkage>" + '\n' +
         "        </inspire_vs:MetadataUrl>" + '\n' +
         "        <inspire_vs:ResourceType>" + '\n' +
-        "            <gmd:MD_ScopeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_ScopeCode\" codeListValue=\"service\"/>" + '\n' +
+        "            <gmd:MD_ScopeCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode\" codeListValue=\"service\"/>" + '\n' +
         "        </inspire_vs:ResourceType>" + '\n' +
         "        <inspire_vs:TemporalRefererence>" + '\n' +
         "            <gmd:EX_Extent>" + '\n' +
@@ -505,19 +505,19 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
         "                                                </gmd:linkage>" + '\n' +
         "                                                <gmd:function>" + '\n' +
-        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
+        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
         "                                                </gmd:function>" + '\n' +
         "                                            </gmd:CI_OnlineResource>" + '\n' +
         "                                        </gmd:onlineResource>" + '\n' +
         "                                    </gmd:CI_Contact>" + '\n' +
         "                                </gmd:contactInfo>" + '\n' +
         "                                <gmd:role>" + '\n' +
-        "                                    <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>" + '\n' +
+        "                                    <gmd:CI_RoleCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>" + '\n' +
         "                                </gmd:role>" + '\n' +
         "                            </gmd:CI_ResponsibleParty>" + '\n' +
         "                        </gmd:citedResponsibleParty>" + '\n' +
         "                        <gmd:presentationForm>" + '\n' +
-        "                            <gmd:CI_PresentationFormCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_PresentationFormCode\" codeListValue=\"tableDigital\"/>" + '\n' +
+        "                            <gmd:CI_PresentationFormCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_PresentationFormCode\" codeListValue=\"tableDigital\"/>" + '\n' +
         "                        </gmd:presentationForm>" + '\n' +
         "                    </gmd:CI_Citation>" + '\n' +
         "                </gmd:specification>" + '\n' +
@@ -542,14 +542,14 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
         "                                </gmd:linkage>" + '\n' +
         "                                <gmd:function>" + '\n' +
-        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
+        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
         "                                </gmd:function>" + '\n' +
         "                            </gmd:CI_OnlineResource>" + '\n' +
         "                        </gmd:onlineResource>" + '\n' +
         "                    </gmd:CI_Contact>" + '\n' +
         "                </gmd:contactInfo>" + '\n' +
         "                <gmd:role>" + '\n' +
-        "                    <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>" + '\n' +
+        "                    <gmd:CI_RoleCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>" + '\n' +
         "                </gmd:role>" + '\n' +
         "            </gmd:CI_ResponsibleParty>" + '\n' +
         "        </inspire_vs:MetadataPointOfContact>" + '\n' +
