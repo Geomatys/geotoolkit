@@ -202,7 +202,7 @@ abstract class VelocityComponent {
         double valueAt(final double x, final double y) {
             position.x = x;
             position.y = y;
-            return ((org.geotoolkit.coverage.grid.GridCoverage) coverage).evaluate(position, samples)[0];
+            return coverage.evaluate(position, samples)[0];
         }
     }
 
