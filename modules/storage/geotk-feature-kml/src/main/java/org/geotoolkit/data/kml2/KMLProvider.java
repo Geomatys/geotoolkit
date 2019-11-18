@@ -25,9 +25,12 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import java.net.URI;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.internal.storage.xml.AbstractProvider;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -36,10 +39,12 @@ import org.geotoolkit.storage.StoreMetadataExt;
  *
  * @author Johann Sorel (Geomatys)
  */
+@StoreMetadata(
+        formatName = KMLProvider.NAME,
+        capabilities = {Capability.READ},
+        resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
-        canCreate = false,
-        canWrite = false,
         geometryTypes ={Geometry.class,
                         Point.class,
                         LineString.class,

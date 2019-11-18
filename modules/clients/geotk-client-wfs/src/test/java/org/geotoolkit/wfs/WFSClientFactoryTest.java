@@ -30,10 +30,6 @@ import org.junit.Test;
  * @module
  */
 public class WFSClientFactoryTest extends org.geotoolkit.test.TestBase {
-
-    public WFSClientFactoryTest() {
-    }
-
     @Test
     public void testFactory() {
 

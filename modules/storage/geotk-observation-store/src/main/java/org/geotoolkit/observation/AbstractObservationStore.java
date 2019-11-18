@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.observation;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.Resource;
@@ -37,8 +38,8 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.ofNullable(parameters);
     }
 
     /**

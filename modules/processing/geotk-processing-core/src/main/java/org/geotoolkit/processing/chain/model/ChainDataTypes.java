@@ -20,8 +20,8 @@ import java.awt.image.RenderedImage;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
@@ -60,7 +60,7 @@ public final class ChainDataTypes {
                 List.class,
                 Metadata.class,
                 Filter.class,
-                GridCoverage2D.class,
+                GridCoverage.class,
                 RenderedImage.class,
                 Date.class,
                 Envelope.class,

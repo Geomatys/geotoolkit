@@ -19,7 +19,7 @@ package org.geotoolkit.wmts.map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -69,7 +69,6 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Sets the format for the output response. By default sets to {@code image/png}.
-     * @param format
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
@@ -78,7 +77,6 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Gets the extension for the output response. By default {@code image/png}.
-     * @return
      */
     public String getFormat() {
         Object val = getUserProperty(Pyramids.HINT_FORMAT);
@@ -99,9 +97,6 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
         return null;
     }
 
-    /**
-     * @param tileSetStyle
-     */
     public void setTileSetStyle(String tileSetStyle) {
         ArgumentChecks.ensureNonNull("tileSetStyle", tileSetStyle);
         setUserProperty(WMTSPyramidSet.HINT_STYLE, tileSetStyle);
@@ -109,7 +104,6 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Returns the {@link WebMapTileClient} to request. Can't be {@code null}.
-     * @return
      */
     public WebMapTileClient getServer() {
         return server;

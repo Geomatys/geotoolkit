@@ -64,11 +64,6 @@ public class ConceptualSchemeType {
 
     /**
      * Obtient la valeur de la propriété name.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getName() {
         return name;
@@ -76,11 +71,6 @@ public class ConceptualSchemeType {
 
     /**
      * Définit la valeur de la propriété name.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setName(String value) {
         this.name = value;
@@ -88,11 +78,6 @@ public class ConceptualSchemeType {
 
     /**
      * Obtient la valeur de la propriété document.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getDocument() {
         return document;
@@ -100,11 +85,6 @@ public class ConceptualSchemeType {
 
     /**
      * Définit la valeur de la propriété document.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setDocument(String value) {
         this.document = value;
@@ -112,11 +92,6 @@ public class ConceptualSchemeType {
 
     /**
      * Obtient la valeur de la propriété authority.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getAuthority() {
         return authority;
@@ -124,14 +99,8 @@ public class ConceptualSchemeType {
 
     /**
      * Définit la valeur de la propriété authority.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setAuthority(String value) {
         this.authority = value;
     }
-
 }

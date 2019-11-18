@@ -62,11 +62,15 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
             public ObservableValue<String> call(CellDataFeatures<Resource, String> param) {
                 try {
                     final Resource r = param.getValue().getValue();
-                    String id = MetadataUtilities.getIdentifier(r.getMetadata());
-                    if (id == null || (id = id.trim()).isEmpty()) {
-                        id = r.getIdentifier().map(GenericName::toString).orElse("Unknown");
+                    final GenericName id = r.getIdentifier().orElse(null);
+                    if (id != null) {
+                        return new SimpleObjectProperty<>(id.toString());
                     }
-                    return new SimpleObjectProperty<>(id);
+                    String metaIdd = MetadataUtilities.getIdentifier(r.getMetadata());
+                    if (metaIdd == null || (metaIdd = metaIdd.trim()).isEmpty()) {
+                        metaIdd = r.getIdentifier().map(GenericName::toString).orElse("Unknown");
+                    }
+                    return new SimpleObjectProperty<>(metaIdd);
                 } catch (DataStoreException ex) {
                    return new SimpleObjectProperty<>(ex.getMessage());
                 }

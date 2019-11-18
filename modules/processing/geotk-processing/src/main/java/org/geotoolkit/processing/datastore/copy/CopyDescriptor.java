@@ -18,9 +18,9 @@ package org.geotoolkit.processing.datastore.copy;
 
 import java.util.Date;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.query.Query;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.vector.VectorDescriptor;

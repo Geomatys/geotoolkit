@@ -19,51 +19,45 @@
     <ns0:attDateTime>2005-08-21T15:43:12.052Z</ns0:attDateTime>
     <ns0:attBoolean>true</ns0:attBoolean>
     <ns0:geomPoint>
-        <gml:Point  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g0">
-            <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml:pos>
+        <gml:Point srsDimension="2" srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g0">
+            <gml:pos>5.0 10.0</gml:pos>
         </gml:Point>
     </ns0:geomPoint>
     <ns0:geomMultiPoint>
-        <gml:MultiPoint  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g1">
+        <gml:MultiPoint srsDimension="2" srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g1">
             <gml:pointMember>
-                <gml:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g2">
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml:pos>
+                <gml:Point gml:id="id-156_g2">
+                    <gml:pos>5.0 10.0</gml:pos>
                 </gml:Point>
             </gml:pointMember>
             <gml:pointMember>
-                <gml:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g3">
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">15.0 20.0</gml:pos>
+                <gml:Point gml:id="id-156_g3">
+                    <gml:pos>15.0 20.0</gml:pos>
                 </gml:Point>
             </gml:pointMember>
         </gml:MultiPoint>
     </ns0:geomMultiPoint>
     <ns0:geomLine>
-        <gml:LineString  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g4">
-            <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">10.0 10.0</gml:pos>
-            <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">20.0 20.0</gml:pos>
-            <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">30.0 30.0</gml:pos>
+        <gml:LineString srsDimension="2" srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g4">
+            <gml:posList>10.0 10.0 20.0 20.0 30.0 30.0</gml:posList>
         </gml:LineString>
     </ns0:geomLine>
     <ns0:geomMultiLine>
-        <gml:MultiCurve  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g5">
+        <gml:MultiCurve srsDimension="2" srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g5">
             <gml:curveMember>
-                <gml:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g6">
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">10.0 10.0</gml:pos>
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">20.0 20.0</gml:pos>
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">30.0 30.0</gml:pos>
+                <gml:LineString gml:id="id-156_g6">
+                    <gml:posList>10.0 10.0 20.0 20.0 30.0 30.0</gml:posList>
                 </gml:LineString>
             </gml:curveMember>
             <gml:curveMember>
-                <gml:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g7">
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">11.0 11.0</gml:pos>
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">21.0 21.0</gml:pos>
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">31.0 31.0</gml:pos>
+                <gml:LineString gml:id="id-156_g7">
+                    <gml:posList>11.0 11.0 21.0 21.0 31.0 31.0</gml:posList>
                 </gml:LineString>
             </gml:curveMember>
         </gml:MultiCurve>
     </ns0:geomMultiLine>
     <ns0:geomPolygon>
-        <gml:Polygon  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g8">
+        <gml:Polygon srsDimension="2" srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g8">
             <gml:exterior>
                 <gml:LinearRing>
                     <gml:posList>0.0 0.0 10.0 0.0 10.0 10.0 0.0 0.0</gml:posList>
@@ -72,9 +66,9 @@
         </gml:Polygon>
     </ns0:geomPolygon>
     <ns0:geomMultiPolygon>
-        <gml:MultiSurface  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g9">
+        <gml:MultiSurface srsDimension="2" srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g9">
             <gml:surfaceMember>
-                <gml:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g10">
+                <gml:Polygon gml:id="id-156_g10">
                     <gml:exterior>
                         <gml:LinearRing>
                             <gml:posList>0.0 0.0 10.0 0.0 10.0 10.0 0.0 0.0</gml:posList>
@@ -83,7 +77,7 @@
                 </gml:Polygon>
             </gml:surfaceMember>
             <gml:surfaceMember>
-                <gml:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g11">
+                <gml:Polygon gml:id="id-156_g11">
                     <gml:exterior>
                         <gml:LinearRing>
                             <gml:posList>1.0 1.0 11.0 1.0 11.0 11.0 1.0 1.0</gml:posList>
@@ -94,22 +88,22 @@
         </gml:MultiSurface>
     </ns0:geomMultiPolygon>
     <ns0:geomMultiGeometry>
-        <gml:MultiPoint  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g12">
+        <gml:MultiPoint srsDimension="2" srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g12">
             <gml:pointMember>
-                <gml:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g13">
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml:pos>
+                <gml:Point gml:id="id-156_g13">
+                    <gml:pos>5.0 10.0</gml:pos>
                 </gml:Point>
             </gml:pointMember>
             <gml:pointMember>
-                <gml:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g14">
-                    <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">15.0 20.0</gml:pos>
+                <gml:Point gml:id="id-156_g14">
+                    <gml:pos>15.0 20.0</gml:pos>
                 </gml:Point>
             </gml:pointMember>
         </gml:MultiPoint>
     </ns0:geomMultiGeometry>
     <ns0:geomAnyGeometry>
-        <gml:Point  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g15">
-            <gml:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml:pos>
+        <gml:Point srsDimension="2" srsName="urn:ogc:def:crs:epsg:7.9:4326" gml:id="id-156_g15">
+            <gml:pos>5.0 10.0</gml:pos>
         </gml:Point>
     </ns0:geomAnyGeometry>
 </ns0:TestSimple>

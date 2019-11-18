@@ -32,7 +32,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
@@ -95,15 +95,15 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      *
      * @param image coverage image.
      * @param crs coverage {@link CoordinateReferenceSystem}
-     * @param ordinates coverage envelope ordinate values.(xmin, ymin, ... xmax, ymax ...)
+     * @param coordinates coverage envelope ordinate values.(xmin, ymin, ... xmax, ymax ...)
      * @return {@link GridCoverage2D} from image, {@link CoordinateReferenceSystem}
      * and double table values which represent geographic envelope in {@link CoordinateReferenceSystem} units.
      */
-    private GridCoverage createCoverage(RenderedImage image, CoordinateReferenceSystem crs, double...ordinates) {
+    private GridCoverage createCoverage(RenderedImage image, CoordinateReferenceSystem crs, double...coordinates) {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setRenderedImage(image);
-        gcb.setEnvelope(ordinates);
+        gcb.setEnvelope(coordinates);
         return gcb.getGridCoverage2D();
     }
 
@@ -207,7 +207,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         Setup.initialize(null);
 
         final File input = new File("src/test/resources/org/geotoolkit/display2d/clouds.jpg");
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
+        final ImageCoverageReader reader = CoverageIO.createSimpleReader(input);
 
         final BufferedImage img = ImageIO.read(input);
         final GridCoverage gridcov = reader.read(null);

@@ -88,10 +88,6 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
      * with the correct bounds and transform datas.
      * You may provide a null Graphic2D if you need to prepare a context for only a "hit"
      * operation.
-     * @param context
-     * @param output
-     * @param paintingDisplayShape
-     * @return
      */
     public RenderingContext2D prepareContext(final RenderingContext2D context,
             final Graphics2D output, Shape paintingDisplayShape){
@@ -206,9 +202,6 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
      * Visit the {@code Graphics} that occupy the given shape.
      * You should give an Area Object if you can, this will avoid many creation
      * while testing.
-     * @param displayShape
-     * @param visitor
-     * @param filter
      */
     public void getGraphicsIn(final Shape displayShape, final GraphicVisitor visitor, final VisitFilter filter) {
         ensureNonNull("mask", displayShape);

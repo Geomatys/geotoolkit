@@ -307,28 +307,27 @@ public class Resolution {
      * Generate all sequences possibilities from dimension.
      *
      * @param dimension space dimension.
-     * @return
      */
     private int[] generate(final int dimension) {
-        final int[] ordinates = new int[dimension];
-        fill(ordinates, 0, ordinates.length);
-        return ordinates;
+        final int[] coordinates = new int[dimension];
+        fill(coordinates, 0, coordinates.length);
+        return coordinates;
     }
 
-    private void fill(final int[] ordinates, final int currentColumn, final int numDim) {
+    private void fill(final int[] coordinates, final int currentColumn, final int numDim) {
 next:   for (int i=0; i<numDim; i++) {
             // Skip the values already used by previous iteration.
             for (int j=currentColumn; --j>=0;) {
-                if (ordinates[j] == i) {
+                if (coordinates[j] == i) {
                     // Ordinate already used. Search for the next one.
                     continue next;
                 }
             }
-            ordinates[currentColumn] = i;
-            if (currentColumn+1 < ordinates.length) {
-                fill(ordinates, currentColumn+1, numDim);
+            coordinates[currentColumn] = i;
+            if (currentColumn+1 < coordinates.length) {
+                fill(coordinates, currentColumn+1, numDim);
             } else {
-                listOrdinate.add(ordinates);
+                listOrdinate.add(coordinates);
             }
         }
     }

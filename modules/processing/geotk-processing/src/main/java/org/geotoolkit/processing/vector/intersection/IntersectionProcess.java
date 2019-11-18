@@ -16,19 +16,18 @@
  */
 package org.geotoolkit.processing.vector.intersection;
 
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.processing.AbstractProcess;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
-
+import static org.geotoolkit.processing.vector.intersection.IntersectionDescriptor.*;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import static org.geotoolkit.processing.vector.intersection.IntersectionDescriptor.*;
 
 /**
  * Generate a FeatureCollection where each Feature are the intersections of the two input
@@ -68,7 +67,7 @@ public class IntersectionProcess extends AbstractProcess {
      */
     public static FeatureCollection intersetFeature(final Feature oldFeature, final FeatureType newType,
             final FeatureCollection featureClippingList, final String geometryName)
-            throws FactoryException, MismatchedDimensionException, TransformException, ProcessException {
+            throws FactoryException, MismatchedDimensionException, TransformException, ProcessException, DataStoreException {
 
         return VectorProcessUtils.intersectionFeatureToColl(oldFeature, featureClippingList, geometryName);
     }

@@ -61,6 +61,8 @@ public class WPSConverterRegistry {
         register(ComplexToFeatureArrayConverter             .getInstance());
         register(ComplexToFeatureCollectionArrayConverter   .getInstance());
         register(ComplexToFeatureCollectionConverter        .getInstance());
+        register(ComplexToFeatureSetArrayConverter          .getInstance());
+        register(ComplexToFeatureSetConverter               .getInstance());
         register(ComplexToFeatureConverter                  .getInstance());
         register(ComplexToFeatureTypeConverter              .getInstance());
         register(ComplexToGeometryArrayConverter            .getInstance());
@@ -72,12 +74,14 @@ public class WPSConverterRegistry {
         //ReferenceType -> Object Converters
         register(ReferenceToAffineTransformConverter        .getInstance());
         register(ReferenceToFeatureCollectionConverter      .getInstance());
+        register(ReferenceToFeatureSetConverter             .getInstance());
         register(ReferenceToFeatureConverter                .getInstance());
         register(ReferenceToFeatureTypeConverter            .getInstance());
         register(ReferenceToFileConverter                   .getInstance());
         register(ReferenceToGeometryConverter               .getInstance());
         register(ReferenceToGridCoverage2DConverter         .getInstance());
         register(ReferenceToGridCoverageReaderConverter     .getInstance());
+        register(ReferenceToGridCoverageResourceConverter   .getInstance());
         register(ReferenceToRenderedImageConverter          .getInstance());
         register(ReferenceToStringConverter                 .getInstance());
         register(ReferenceToGeometryArrayConverter          .getInstance());
@@ -86,6 +90,7 @@ public class WPSConverterRegistry {
 
         //Object -> ComplexData converters
         register(FeatureCollectionToComplexConverter        .getInstance());
+        register(FeatureSetToComplexConverter               .getInstance());
         register(FeatureToComplexConverter                  .getInstance());
         register(FeatureTypeToComplexConverter              .getInstance());
         register(GeometryArrayToComplexConverter            .getInstance());
@@ -98,6 +103,7 @@ public class WPSConverterRegistry {
         register(CoverageToReferenceConverter               .getInstance());
         register(FeatureToReferenceConverter                .getInstance());
         register(FeatureCollectionToReferenceConverter      .getInstance());
+        register(FeatureSetToReferenceConverter             .getInstance());
         register(FeatureTypeToReferenceConverter            .getInstance());
         register(GeometryToReferenceConverter               .getInstance());
         register(RenderedImageToReferenceConverter          .getInstance());

@@ -165,11 +165,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Obtient la valeur de la propriété distributedSearch.
-     *
-     * @return
-     *     possible object is
-     *     {@link DistributedSearchType }
-     *
      */
     @Override
     public DistributedSearchType getDistributedSearch() {
@@ -178,11 +173,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Définit la valeur de la propriété distributedSearch.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link DistributedSearchType }
-     *
      */
     public void setDistributedSearch(DistributedSearchType value) {
         this.distributedSearch = value;
@@ -202,13 +192,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * <pre>
      *    getResponseHandler().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     public List<String> getResponseHandler() {
         if (responseHandler == null) {
@@ -249,11 +232,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Obtient la valeur de la propriété any.
-     *
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *
      */
     public Object getAny() {
         return any;
@@ -261,11 +239,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Définit la valeur de la propriété any.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *
      */
     public void setAny(Object value) {
         this.any = value;
@@ -273,11 +246,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Obtient la valeur de la propriété requestId.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getRequestId() {
@@ -286,11 +254,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Définit la valeur de la propriété requestId.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     @Override
     public void setRequestId(String value) {
@@ -299,11 +262,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Obtient la valeur de la propriété outputFormat.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getOutputFormat() {
@@ -316,11 +274,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Définit la valeur de la propriété outputFormat.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     @Override
     public void setOutputFormat(String value) {
@@ -329,11 +282,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Obtient la valeur de la propriété outputSchema.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getOutputSchema() {
@@ -346,11 +294,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Définit la valeur de la propriété outputSchema.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     @Override
     public void setOutputSchema(String value) {
@@ -359,11 +302,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Obtient la valeur de la propriété startPosition.
-     *
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *
      */
     @Override
     public Integer getStartPosition() {
@@ -376,11 +314,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Définit la valeur de la propriété startPosition.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *
      */
     @Override
     public void setStartPosition(Integer value) {
@@ -389,11 +322,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Obtient la valeur de la propriété maxRecords.
-     *
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *
      */
     @Override
     public Integer getMaxRecords() {
@@ -406,11 +334,6 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Définit la valeur de la propriété maxRecords.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *
      */
     @Override
     public void setMaxRecords(Integer value) {

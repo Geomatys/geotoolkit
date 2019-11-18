@@ -49,7 +49,7 @@ public final class Axes {
     /**
      * Default axis info for longitudes.
      *
-     * Increasing ordinates values go {@linkplain AxisDirection#EAST East}
+     * Increasing coordinates values go {@linkplain AxisDirection#EAST East}
      * and units are {@linkplain Units#DEGREE decimal degrees}.
      *
      * The abbreviation is "&lambda;" (lambda).
@@ -62,7 +62,7 @@ public final class Axes {
     /**
      * Default axis info for latitudes.
      *
-     * Increasing ordinates values go {@linkplain AxisDirection#NORTH North}
+     * Increasing coordinates values go {@linkplain AxisDirection#NORTH North}
      * and units are {@linkplain Units#DEGREE decimal degrees}.
      *
      * The abbreviation is "&phi;" (phi).
@@ -76,7 +76,7 @@ public final class Axes {
      * The default axis for height values above the ellipsoid in a
      * {@linkplain org.opengis.referencing.crs.GeographicCRS geographic CRS}.
      *
-     * Increasing ordinates values go {@linkplain AxisDirection#UP up}
+     * Increasing coordinates values go {@linkplain AxisDirection#UP up}
      * and units are {@linkplain Units#METRE metres}.
      *
      * The ISO 19111 name is "<cite>ellipsoidal heigt</cite>" and the abbreviation is lower case
@@ -97,7 +97,7 @@ public final class Axes {
      * Default axis info for <var>x</var> values in a
      * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
-     * Increasing ordinates values go {@linkplain AxisDirection#EAST East}
+     * Increasing coordinates values go {@linkplain AxisDirection#EAST East}
      * and units are {@linkplain Units#METRE metres}.
      *
      * The abbreviation is lower case "<var>x</var>".
@@ -117,7 +117,7 @@ public final class Axes {
      * Default axis info for <var>y</var> values in a
      * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
-     * Increasing ordinates values go {@linkplain AxisDirection#NORTH North}
+     * Increasing coordinates values go {@linkplain AxisDirection#NORTH North}
      * and units are {@linkplain Units#METRE metres}.
      *
      * The abbreviation is lower case "<var>y</var>".
@@ -137,7 +137,7 @@ public final class Axes {
      * Default axis info for <var>z</var> values in a
      * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
-     * Increasing ordinates values go {@linkplain AxisDirection#UP up}
+     * Increasing coordinates values go {@linkplain AxisDirection#UP up}
      * and units are {@linkplain Units#METRE metres}.
      *
      * The abbreviation is lower case "<var>z</var>".
@@ -151,7 +151,7 @@ public final class Axes {
      * Default axis info for Easting values in a
      * {@linkplain org.opengis.referencing.crs.ProjectedCRS projected CRS}.
      *
-     * Increasing ordinates values go {@linkplain AxisDirection#EAST East}
+     * Increasing coordinates values go {@linkplain AxisDirection#EAST East}
      * and units are {@linkplain Units#METRE metres}.
      *
      * The ISO 19111 name is "<cite>easting</cite>" and the abbreviation is upper case
@@ -166,7 +166,7 @@ public final class Axes {
      * Default axis info for Northing values in a
      * {@linkplain org.opengis.referencing.crs.ProjectedCRS projected CRS}.
      *
-     * Increasing ordinates values go {@linkplain AxisDirection#NORTH North}
+     * Increasing coordinates values go {@linkplain AxisDirection#NORTH North}
      * and units are {@linkplain Units#METRE metres}.
      *
      * The ISO 19111 name is "<cite>northing</cite>" and the abbreviation is upper case

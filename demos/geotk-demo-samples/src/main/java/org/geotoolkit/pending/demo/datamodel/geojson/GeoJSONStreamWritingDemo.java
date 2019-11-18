@@ -4,7 +4,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;

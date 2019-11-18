@@ -60,6 +60,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.sis.core</groupId>
+      <version>${sis.version}</version>
       <artifactId>sis-utility</artifactId>
     </dependency>
   </dependencies>

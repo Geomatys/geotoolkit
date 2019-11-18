@@ -65,11 +65,6 @@ public class AppearanceType extends AbstractFeatureType {
 
     /**
      * Gets the value of the theme property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getTheme() {
         return theme;
@@ -77,11 +72,6 @@ public class AppearanceType extends AbstractFeatureType {
 
     /**
      * Sets the value of the theme property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setTheme(String value) {
         this.theme = value;
@@ -89,7 +79,6 @@ public class AppearanceType extends AbstractFeatureType {
 
     /**
      * Gets the value of the surfaceDataMember property.
-     *
      */
     public List<SurfaceDataPropertyType> getSurfaceDataMember() {
         if (surfaceDataMember == null) {
@@ -100,7 +89,6 @@ public class AppearanceType extends AbstractFeatureType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfAppearance property.
-     *
      */
     public List<Object> getGenericApplicationPropertyOfAppearance() {
         if (genericApplicationPropertyOfAppearance == null) {

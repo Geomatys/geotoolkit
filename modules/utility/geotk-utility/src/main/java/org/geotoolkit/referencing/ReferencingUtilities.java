@@ -30,10 +30,12 @@ import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CRS;
+
 import static org.apache.sis.referencing.CRS.getHorizontalComponent;
 import static org.apache.sis.referencing.CRS.getSingleComponents;
 import static org.apache.sis.referencing.CRS.getTemporalComponent;
 import static org.apache.sis.referencing.CRS.getVerticalComponent;
+
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
@@ -74,6 +76,8 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
+import static java.lang.Math.*;
 
 
 /**
@@ -239,7 +243,7 @@ public final class ReferencingUtilities {
 
         //at current step, resolution may have negative values du to derivate.
         for(int i=0; i<newResolution.length; i++) {
-            newResolution[i] = Math.abs(newResolution[i]);
+            newResolution[i] = abs(newResolution[i]);
             if (Double.isNaN(newResolution[i]) && (i == targetMinOrdi || i == targetMinOrdi+1)) {
                 //if a value is NaN, peek resolution of the other horizontal axis
                 newResolution[i] = newResolution[i == targetMinOrdi ? i+1 : i-1];
@@ -273,7 +277,7 @@ public final class ReferencingUtilities {
 
             final GeneralEnvelope res = new GeneralEnvelope(env);
 
-            if (Math.abs(o2-o1) >= csSpan) {
+            if (abs(o2-o1) >= csSpan) {
                 /*
                  * If the range exceed the CS span, then we have to replace it by the
                  * full span, otherwise the range computed by the "else" block is too
@@ -296,8 +300,8 @@ public final class ReferencingUtilities {
                     res.setRange(i, minimum, maximum);
                 }
 
-//                o1 = Math.floor((o1 - minimum) / csSpan) * csSpan;
-//                o2 = Math.floor((o2 - minimum) / csSpan) * csSpan;
+//                o1 = floor((o1 - minimum) / csSpan) * csSpan;
+//                o2 = floor((o2 - minimum) / csSpan) * csSpan;
 //                if (o1 != 0){
 //                    res.setRange(i, res.getMinimum(i)-o1, res.getMaximum(i));
 //                }
@@ -684,7 +688,7 @@ public final class ReferencingUtilities {
     @Deprecated
     public static MathTransform toTransform(final MathTransform base, double[] ... values){
 
-        MathTransform result = PassThroughTransform.create(0, base, values.length);
+        MathTransform result = MathTransforms.passThrough(0, base, values.length);
         final int baseDim = base.getSourceDimensions();
         for(int i=0; i<values.length; i++){
             final double[] array = values[i];
@@ -696,7 +700,7 @@ public final class ReferencingUtilities {
             }else{
                 axistrs = LinearInterpolator1D.create(array);
             }
-            final MathTransform mask = PassThroughTransform.create(baseDim+i, axistrs, values.length-i-1);
+            final MathTransform mask = MathTransforms.passThrough(baseDim+i, axistrs, values.length-i-1);
             result = MathTransforms.concatenate(result, mask);
         }
 
@@ -719,7 +723,7 @@ public final class ReferencingUtilities {
                                             final Map<Integer, double[]> axisValues, final int expectedTargetDimension) {
         checkMTToTransform(firstBaseOrdinate, subTransform, axisValues, expectedTargetDimension);
 
-        MathTransform result = PassThroughTransform.create(firstBaseOrdinate, subTransform, expectedTargetDimension - subTransform.getTargetDimensions() - firstBaseOrdinate);
+        MathTransform result = MathTransforms.passThrough(firstBaseOrdinate, subTransform, expectedTargetDimension - subTransform.getTargetDimensions() - firstBaseOrdinate);
         for (Integer dim : axisValues.keySet()) {
             final double[] currentAxisValues = axisValues.get(dim);
             final MathTransform1D axistrs;
@@ -729,7 +733,7 @@ public final class ReferencingUtilities {
             } else {
                 axistrs = LinearInterpolator1D.create(currentAxisValues);
             }
-            final MathTransform mask = PassThroughTransform.create(dim, axistrs, expectedTargetDimension - dim - 1);
+            final MathTransform mask = MathTransforms.passThrough(dim, axistrs, expectedTargetDimension - dim - 1);
             result                   = MathTransforms.concatenate(result, mask);
         }
         return result;
@@ -814,7 +818,7 @@ public final class ReferencingUtilities {
         final CoordinateReferenceSystem destCRS = destination.getCoordinateReferenceSystem();
 
         // If they're the same, we can return the source envelope.
-        if (org.geotoolkit.referencing.CRS.equalsApproximatively(sourceCRS, destCRS)) {
+        if (Utilities.equalsApproximately(sourceCRS, destCRS)) {
             destination = new GeneralEnvelope(source);
         }
 
@@ -856,7 +860,7 @@ public final class ReferencingUtilities {
                     continue;
                 }
 
-                if (org.geotoolkit.referencing.CRS.equalsApproximatively(srcCurrent, destCurrent)) {
+                if (Utilities.equalsApproximately(srcCurrent, destCurrent)) {
                     final GeneralEnvelope srcSubEnvelope = source.subEnvelope(srcLowerAxis, srcLowerAxis + srcAxisCount);
                     destination.subEnvelope(destLowerAxis, destLowerAxis+ srcSubEnvelope.getDimension()).setEnvelope(srcSubEnvelope);
                     usedCRS.add(destCurrent);
@@ -921,7 +925,7 @@ public final class ReferencingUtilities {
                     }
                 }
 
-                // We found matching CRS, Now we can transfer ordinates.
+                // We found matching CRS, Now we can transfer coordinates.
                 if (compatible) {
                     final GeneralEnvelope srcSubEnvelope = source.subEnvelope(srcLowerAxis, srcLowerAxis + srcAxisCount);
                     srcSubEnvelope.setCoordinateReferenceSystem(srcCurrent);
@@ -1150,4 +1154,29 @@ public final class ReferencingUtilities {
                 .map(DefaultGeographicBoundingBox::new )
                 .reduce((b1, b2) -> {b1.add(b2); return b1;});
     }
+
+    /**
+     * Returns the orthodromic distance between two geographic coordinates.
+     * The orthodromic distance is the shortest distance between two points
+     * on a sphere's surface. The orthodromic path is always on a great circle.
+     *
+     * @param  λ1  longitude of first point (in decimal degrees).
+     * @param  φ1  latitude of first point (in decimal degrees).
+     * @param  λ2  longitude of second point (in decimal degrees).
+     * @param  φ2  latitude of second point (in decimal degrees).
+     * @return the orthodromic distance (in the units of this ellipsoid's axis).
+     */
+    public static double orthodromicDistance(final double radius, double λ1, double φ1, double λ2, double φ2) {
+        φ1 = toRadians(φ1);
+        φ2 = toRadians(φ2);
+        final double dx = toRadians(abs(λ2-λ1) % 360);
+        double rho = sin(φ1)*sin(φ2) + cos(φ1)*cos(φ2)*cos(dx);
+        assert abs(rho) < 1.0000001 : rho;
+        if (rho > +1) rho = +1;                         // Catch rounding error.
+        if (rho < -1) rho = -1;                         // Catch rounding error.
+        return acos(rho) * radius;
+    }
+
+    /** Authalic sphere radius in metres. */
+    public static final double EARTH_RADIUS = 6371007;
 }

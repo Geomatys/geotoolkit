@@ -65,11 +65,6 @@ public class ExternalReferenceType {
 
     /**
      * Gets the value of the informationSystem property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getInformationSystem() {
         return informationSystem;
@@ -77,11 +72,6 @@ public class ExternalReferenceType {
 
     /**
      * Sets the value of the informationSystem property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setInformationSystem(final String value) {
         this.informationSystem = value;
@@ -89,11 +79,6 @@ public class ExternalReferenceType {
 
     /**
      * Gets the value of the externalObject property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ExternalObjectReferenceType }
-     *
      */
     public ExternalObjectReferenceType getExternalObject() {
         return externalObject;
@@ -101,14 +86,8 @@ public class ExternalReferenceType {
 
     /**
      * Sets the value of the externalObject property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ExternalObjectReferenceType }
-     *
      */
     public void setExternalObject(final ExternalObjectReferenceType value) {
         this.externalObject = value;
     }
-
 }

@@ -89,7 +89,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     /**
      * Constructor with only URL
-     * @param serverURL
      */
     public WebMapClient(final URL serverURL){
         this(serverURL, null, null, null);
@@ -161,7 +160,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
      */
     public WebMapClient(final URL serverURL, final ClientSecurity security,
             WMSVersion version, final AbstractWMSCapabilities capabilities) {
-        super(create(WMSClientFactory.PARAMETERS, serverURL, security));
+        super(create(WMSProvider.PARAMETERS, serverURL, security));
 
         this.capabilities = capabilities;
 
@@ -184,7 +183,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
                 version = WMSVersion.v130;
             }
         }
-        parameters.getOrCreate(WMSClientFactory.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(WMSProvider.VERSION).setValue(version.getCode());
     }
 
     public WebMapClient(ParameterValueGroup params) {
@@ -192,8 +191,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     }
 
     @Override
-    public WMSClientFactory getProvider() {
-        return (WMSClientFactory) DataStores.getProviderById(WMSClientFactory.NAME);
+    public WMSProvider getProvider() {
+        return (WMSProvider) DataStores.getProviderById(WMSProvider.NAME);
     }
 
     /**
@@ -261,22 +260,20 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
         }
 
         WMSVersion version = WMSVersion.getVersion(this.capabilities.getVersion());
-        parameters.getOrCreate(WMSClientFactory.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(WMSProvider.VERSION).setValue(version.getCode());
         return capabilities;
     }
 
     /**
      * Returns the request version.
-     * @return
      */
     public WMSVersion getVersion() {
-            return WMSVersion.getVersion(parameters.getValue(WMSClientFactory.VERSION));
+            return WMSVersion.getVersion(parameters.getValue(WMSProvider.VERSION));
     }
 
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetMapRequest createGetMap() {
@@ -297,7 +294,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
@@ -321,7 +317,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetLegendRequest createGetLegend(){
@@ -340,7 +335,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetFeatureInfoRequest createGetFeatureInfo() {
@@ -360,7 +354,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     /**
      * Returns the request header map for this server.
-     * @return
      */
     public Map<String,String> getRequestHeaderMap() {
         return requestHeaderMap;
@@ -399,7 +392,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
         } else if (isGroup) {
             result = new WMSAggregate(this, layer);
         } else if (isData) {
-            result = new WMSCoverageResource(this, layer.getName());
+            result = new WMSResource(this, layer.getName());
         } else {
             result = null;
         }
@@ -409,12 +402,9 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
 
     /**
      * Override by WMS-c and NCWMS.
-     *
-     * @param name
-     * @return
      */
     protected GridCoverageResource createReference(GenericName name) throws DataStoreException{
-        return new WMSCoverageResource(this,name);
+        return new WMSResource(this,name);
     }
 
     @Override

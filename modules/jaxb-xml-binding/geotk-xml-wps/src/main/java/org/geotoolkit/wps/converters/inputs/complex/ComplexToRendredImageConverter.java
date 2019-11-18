@@ -21,10 +21,10 @@ import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import net.iharder.Base64;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v200.Data;
@@ -63,7 +63,7 @@ public class ComplexToRendredImageConverter extends AbstractComplexInputConverte
                     throw new UnconvertibleObjectException("Only one object in Complex content.");
                 }
                 final String encodedImage = (String) data.get(0);
-                final byte[] byteData = Base64.decode(encodedImage.trim());
+                final byte[] byteData = Base64.getDecoder().decode(encodedImage.trim());
                 if (byteData != null && byteData.length > 0) {
                     final InputStream is = new ByteArrayInputStream(byteData);
                     if (is != null) {

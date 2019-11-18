@@ -1,6 +1,6 @@
 package org.geotoolkit.data.geojson.utils;
 
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.util.collection.CloseableIterator;
 

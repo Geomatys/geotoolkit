@@ -51,7 +51,6 @@ public class TransformRGBtoYUV420 implements Transform {
      *
      * This transform try to rescale src picture on dst size with linear method.
      *
-     * @param src
      * @param dst must has a multiple of two for width and height. If not, last pixel forget.
      */
     public void transform(Picture src, Picture dst) {

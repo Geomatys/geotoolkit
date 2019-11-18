@@ -24,9 +24,10 @@ import org.geotoolkit.feature.ReprojectMapper;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
+
 import static org.junit.Assert.*;
+
 import org.junit.Test;
-import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -63,7 +64,6 @@ public class ReprojectFeatureTypeTest {
 
     @Test
     public void reprojectOperationTest(){
-
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.addAttribute(Point.class).setName("attGeom").setCRS(CommonCRS.WGS84.geographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);

@@ -59,11 +59,6 @@ public class AppearancePropertyType extends FeaturePropertyType {
 
     /**
      * Gets the value of the appearance property.
-     *
-     * @return
-     *     possible object is
-     *     {@link AppearanceType }
-     *
      */
     public AppearanceType getAppearance() {
         return appearance;
@@ -71,11 +66,6 @@ public class AppearancePropertyType extends FeaturePropertyType {
 
     /**
      * Sets the value of the appearance property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link AppearanceType }
-     *
      */
     public void setAppearance(AppearanceType value) {
         this.appearance = value;

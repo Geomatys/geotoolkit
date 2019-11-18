@@ -69,7 +69,6 @@ public class FXDateField extends DecorationPane{
 
         /**
          * Overriden to support null values.
-         * @return
          */
         @Override
         public LocalDateTime getValue() {

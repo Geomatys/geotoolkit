@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.coverage.io;
 
+import org.apache.sis.storage.NoSuchDataException;
+
 
 /**
  * Thrown when the {@linkplain GridCoverageReadParam#getEnvelope() envelope parameter}
@@ -29,7 +31,7 @@ package org.geotoolkit.coverage.io;
  * @since 3.20
  * @module
  */
-public class DisjointCoverageDomainException extends CoverageStoreException {
+public class DisjointCoverageDomainException extends NoSuchDataException {
     /**
      * For cross-version compatibility.
      */

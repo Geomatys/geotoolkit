@@ -73,11 +73,6 @@ public class GeometryTestParser {
         wktFactory = new GeometryParser(geomFact, primFact, posFact, null );
     }
 
-    /**
-     *
-     * @param inputSource
-     * @return
-     */
     public GeometryTestContainer parseTestDefinition(final InputSource inputSource) {
         Document doc = null;
         try {
@@ -107,9 +102,6 @@ public class GeometryTestParser {
 
     /**
      * Processes the root "run" node
-     * @param node
-     * @return
-     * @throws ParseException
      */
     public GeometryTestContainer processRootNode(final Node node) throws ParseException {
         if (!node.getNodeName().equalsIgnoreCase("run")) {
@@ -143,9 +135,6 @@ public class GeometryTestParser {
      * testbuilder program works, I think its safe to assume that
      * there will always be just one or two objects, named a and
      * b.
-     *
-     * @param testCaseNode
-     * @return
      */
     private GeometryTestCase readTestCase(final Node testCaseNode) throws ParseException {
         Node child = testCaseNode.getFirstChild();
@@ -180,7 +169,6 @@ public class GeometryTestParser {
      * and looks for arg1, arg2, and arg3. The value of the text subnode is
      * the value of the expected result
      * @param testNode a test node from the xml file
-     * @return
      */
     private GeometryTestOperation loadTestOperation(final Node testNode) {
 

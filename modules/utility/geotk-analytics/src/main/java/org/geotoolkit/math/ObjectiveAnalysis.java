@@ -99,7 +99,7 @@ public class ObjectiveAnalysis {
     /**
      * Creates a new instance for interpolating values in the given region.
      *
-     * @param gridRegion The grid bounding box. The maximal ordinates are inclusive.
+     * @param gridRegion The grid bounding box. The maximal coordinates are inclusive.
      * @param nx The number of grid cells along the <var>x</var> axis.
      * @param ny The number of grid cells along the <var>y</var> axis.
      * @param cellLocation The position to evaluate in each grid cell.
@@ -131,8 +131,8 @@ public class ObjectiveAnalysis {
      * {@link #interpolate(double[]) interpolate} methods for interpolating new values
      * at the locations defined by {@link #getOutputLocation(int, Point2D.Double)}.
      *
-     * @param xp The <var>x</var> ordinates of a random set of points.
-     * @param yp The <var>y</var> ordinates of a random set of points.
+     * @param xp The <var>x</var> coordinates of a random set of points.
+     * @param yp The <var>y</var> coordinates of a random set of points.
      * @param zp The <var>z</var> values at the (<var>x</var>,<var>y</var>) coordinates
      *           defined by the {@code xp} and {@code yp} arguments.
      */

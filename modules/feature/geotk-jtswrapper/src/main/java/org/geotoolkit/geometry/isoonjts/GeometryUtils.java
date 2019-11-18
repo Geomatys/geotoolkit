@@ -443,11 +443,11 @@ public final class GeometryUtils {
             transform.transform(dp, dp2);
         } catch (FactoryException fe) {
             LOGGER.log(Level.WARNING,"Could not create CoordinateOperation to convert DirectPosition CRS "
-                + crs.getName() + " to WGS84, using original ordinates", fe);
+                + crs.getName() + " to WGS84, using original coordinates", fe);
             //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (TransformException e) {
             LOGGER.log(Level.WARNING,"Could not transform DirectPosition CRS "
-                + crs.getName() + " to WGS84, using original ordinates", e);
+                + crs.getName() + " to WGS84, using original coordinates", e);
             //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (MismatchedDimensionException e) {
             // PENDING(NL): There's probably something better we can do here
@@ -455,7 +455,7 @@ public final class GeometryUtils {
             // and if one has altitude and the other doesn't that shouldn't
             // be a showstopper.
             LOGGER.log(Level.WARNING,"Dimension mismatch prevented conversion of DirectPosition CRS "
-                + crs.getName() + " to WGS84, using original ordinates", e);
+                + crs.getName() + " to WGS84, using original coordinates", e);
             //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         }
         return dp2;
@@ -484,16 +484,16 @@ public final class GeometryUtils {
                 return dp2;
             } else {
                 getLog().warn(
-                    "Attempted to convert coordinate CRS, transform method returned DirectPosition with null CRS, using original ordinates",
+                    "Attempted to convert coordinate CRS, transform method returned DirectPosition with null CRS, using original coordinates",
                     new IllegalArgumentException("Unconvertible coordinate CRS"));
             }
         } catch (FactoryException fe) {
             getLog().warn("Could not create CoordinateOperation to convert DirectPosition CRS "
-                + crs.getName() + " to WGS84, using original ordinates", fe);
+                + crs.getName() + " to WGS84, using original coordinates", fe);
             //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (TransformException e) {
             getLog().warn("Could not transform DirectPosition CRS "
-                + crs.getName() + " to WGS84, using original ordinates", e);
+                + crs.getName() + " to WGS84, using original coordinates", e);
             //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (MismatchedDimensionException e) {
             // PENDING(NL): There's probably something better we can do here
@@ -501,11 +501,11 @@ public final class GeometryUtils {
             // and if one has altitude and the other doesn't that shouldn't
             // be a showstopper.
             getLog().warn("Dimension mismatch prevented conversion of DirectPosition CRS "
-                + crs.getName() + " to WGS84, using original ordinates", e);
+                + crs.getName() + " to WGS84, using original coordinates", e);
             //throw new IllegalArgumentException("Unconvertible coordinate CRS");
         } catch (RuntimeException e) {
             getLog().warn("Could not convert DirectPosition CRS "
-                + crs.getName() + " to WGS84, using original ordinates", e);
+                + crs.getName() + " to WGS84, using original coordinates", e);
             //throw e;
         }
         return dp;*/

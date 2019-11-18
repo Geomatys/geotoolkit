@@ -18,14 +18,13 @@ package org.geotoolkit.processing.coverage.coveragetofeatures;
 
 import java.util.Collection;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.Process;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.opengis.feature.Feature;
-
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -47,13 +46,13 @@ import org.opengis.parameter.ParameterValueGroup;
 public final class CoverageToFeaturesDescriptor extends AbstractProcessDescriptor{
 
     /**
-     * Mandatory - CoverageReader
+     * Mandatory - GridCoverageResource
      */
-    public static final ParameterDescriptor<GridCoverageReader> READER_IN = new ParameterBuilder()
+    public static final ParameterDescriptor<GridCoverageResource> READER_IN = new ParameterBuilder()
             .addName("reader_in")
-            .setRemarks("Inpute GridCoverageReader")
+            .setRemarks("Inpute GridCoverageResource")
             .setRequired(true)
-            .create(GridCoverageReader.class, null);
+            .create(GridCoverageResource.class, null);
     /**
      * Mandatory - Resulting Feature Collection
      */

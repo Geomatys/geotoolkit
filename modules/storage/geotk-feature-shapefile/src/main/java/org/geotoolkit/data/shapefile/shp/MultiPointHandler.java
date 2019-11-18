@@ -18,16 +18,15 @@
 package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
-
+import java.nio.DoubleBuffer;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
-import java.nio.DoubleBuffer;
-
-import org.geotoolkit.geometry.jts.JTS;
-import org.apache.sis.storage.DataStoreException;
 
 /**
  *
@@ -95,18 +94,18 @@ public class MultiPointHandler extends AbstractShapeHandler {
         return length;
     }
 
-    protected Object createNull() {
+    protected Geometry createNull() {
         return GEOMETRY_FACTORY.createMultiPoint(new Point[0]);
     }
 
     @Override
-    public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
+    public Geometry estimated(final double minX, final double maxX, final double minY, final double maxY) {
         final Coordinate coord = new Coordinate((minX + maxX) / 2, (minY + maxY) / 2);
         return GEOMETRY_FACTORY.createMultiPoint(new Coordinate[] {coord});
     }
 
     @Override
-    public Object read(final ByteBuffer buffer, final ShapeType type) {
+    public Geometry read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }

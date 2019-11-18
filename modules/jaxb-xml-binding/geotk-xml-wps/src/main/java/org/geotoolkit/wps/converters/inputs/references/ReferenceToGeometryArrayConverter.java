@@ -16,23 +16,23 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import org.geotoolkit.feature.FeatureExt;
+import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
-import org.opengis.feature.Feature;import org.opengis.feature.Feature;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -58,13 +58,14 @@ public class ReferenceToGeometryArrayConverter extends AbstractReferenceInputCon
     public Geometry[] convert(Reference source, Map<String, Object> params) throws UnconvertibleObjectException {
         if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
             try {
-                final FeatureCollection featureCollection = WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(source.getHref()));
+                final FeatureSet featureset = WPSConvertersUtils.readFeatureCollectionFromJson(URI.create(source.getHref()));
 
-                if (featureCollection.size() != 1)
-                    throw new UnconvertibleObjectException("Expected size for feature collection was 1." + "Found : " + featureCollection.size());
+                Long count = FeatureStoreUtilities.getCount(featureset);
+                if (count != 1)
+                    throw new UnconvertibleObjectException("Expected size for feature collection was 1." + "Found : " + count);
 
-                try (final FeatureIterator iterator = featureCollection.iterator()) {
-                    final Feature feature = iterator.next();
+                try (Stream<Feature> stream = featureset.features(false)) {
+                    final Feature feature = stream.findFirst().get();
                     final GeometryCollection geometryCollection = FeatureExt.getDefaultGeometryValue(feature)
                             .filter(GeometryCollection.class::isInstance)
                             .map(GeometryCollection.class::cast)

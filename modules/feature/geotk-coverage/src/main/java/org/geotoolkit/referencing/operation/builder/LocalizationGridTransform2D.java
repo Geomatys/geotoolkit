@@ -106,8 +106,8 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
      *
      * @param width  Number of grid's columns.
      * @param height Number of grid's rows.
-     * @param gridX  The localization grid for <var>x</var> ordinates.
-     * @param gridY  The localization grid for <var>y</var> ordinates.
+     * @param gridX  The localization grid for <var>x</var> coordinates.
+     * @param gridY  The localization grid for <var>y</var> coordinates.
      * @param global A global affine transform for the whole grid.
      */
     protected LocalizationGridTransform2D(final int width, final int height,
@@ -159,7 +159,7 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
          * Calculation of affine transform has 6 unknown terms.     P00──────P10
          * Consequently its solution requierts 6 equations. We       │  .     │
          * get them by using the 3 nearest points, each point        │        │
-         * having 2 ordinates. Example: (. is the pt to eval)       P01────(ignored)
+         * having 2 coordinates. Example: (. is the pt to eval)     P01────(ignored)
          */
         final int offset00 = (col + row*width);
         final int offset01 = offset00 + sgnRow*width;

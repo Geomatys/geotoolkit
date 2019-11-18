@@ -405,8 +405,8 @@ public class LocalizationGrid {
     }
 
     /**
-     * Makes sure that the grid doesn't contains identical consecutive ordinates. If many
-     * consecutive ordinates are found to be identical in a row or in a column, then
+     * Makes sure that the grid doesn't contains identical consecutive coordinates. If many
+     * consecutive coordinates are found to be identical in a row or in a column, then
      * the first one is left unchanged and the other ones are linearly interpolated.
      */
     public void removeSingularities() {
@@ -417,7 +417,7 @@ public class LocalizationGrid {
     }
 
     /**
-     * Applies a linear interpolation on consecutive identical ordinates.
+     * Applies a linear interpolation on consecutive identical coordinates.
      *
      * @param grid The grid to process, either {@link #gridX} or {@link #gridY}.
      * @param vertical {@code true} to scan the grid vertically, or {@code false}

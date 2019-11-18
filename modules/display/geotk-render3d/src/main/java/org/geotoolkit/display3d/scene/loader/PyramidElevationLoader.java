@@ -26,18 +26,17 @@ import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.measure.IncommensurableException;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.image.PixelIterator;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.Pyramids;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.utils.TextureUtils;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -45,7 +44,10 @@ import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -60,7 +62,7 @@ import org.opengis.util.FactoryException;
  */
 public class PyramidElevationLoader extends AbstractElevationLoader {
 
-    private final PyramidalCoverageResource coverageRef;
+    private final MultiResolutionResource coverageRef;
     private Pyramid dataSource;
     private final double minElevation;
     private final double maxElevation;
@@ -69,7 +71,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
 
-    public PyramidElevationLoader(final PyramidalCoverageResource ref) throws FactoryException, IncommensurableException, DataStoreException {
+    public PyramidElevationLoader(final MultiResolutionResource ref) throws FactoryException, IncommensurableException, DataStoreException {
         ArgumentChecks.ensureNonNull("pyramid reference", ref);
         this.coverageRef = ref;
 
@@ -80,7 +82,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
 
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
 
-        final SampleDimension elevationDim = ref.getSampleDimensions().get(0).forConvertedValues(true);
+        final SampleDimension elevationDim = ((GridCoverageResource)ref).getSampleDimensions().get(0).forConvertedValues(true);
         this.minElevation = SampleDimensionUtils.getMinimumValue(elevationDim);
         this.maxElevation = SampleDimensionUtils.getMaximumValue(elevationDim);
     }
@@ -97,7 +99,6 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
 
     /**
      * Return the current outputCRS if set, else null
-     * @return
      */
     public CoordinateReferenceSystem getOutputCRS() {
         return outputCrs;
@@ -133,7 +134,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
+        if (!Utilities.equalsApproximately(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 
@@ -145,6 +146,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         }
 
         final double scale = env.getSpan(0)/outputDimension.width;
+        final double[] scales = dataSource.getScales();
         final int indexImg = TextureUtils.getNearestScaleIndex(dataSource.getScales(), scale);
 
         if (dataRenderedImage != null) {
@@ -152,7 +154,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
             final double mosaicScale = gridMosaic.getScale();
             final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
             if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
-                final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(indexImg);
+                final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
                     dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
                 } else {
@@ -161,7 +163,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
                 }
             }
         } else {
-            final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(indexImg);
+            final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
             if (!mosaics.isEmpty()) {
                 dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
             } else {

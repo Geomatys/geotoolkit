@@ -56,11 +56,11 @@ public class SurfaceImplTest {
          double delta = 360.0 / (double) NUMBER;
          PointArray points = postitionFactory.createPointArray();
          for( double angle = 0.0; angle < 360.0; angle += delta ){
-             double ordinates[] = new double[]{
+             double coordinates[] = new double[] {
                      Math.sin( Math.toRadians(angle) ),
                      Math.cos( Math.toRadians(angle) )
              };
-             DirectPosition point = postitionFactory.createDirectPosition( ordinates );
+             DirectPosition point = postitionFactory.createDirectPosition( coordinates );
              points.add( point );
          }
          List<OrientableCurve> curves = new ArrayList<OrientableCurve>();

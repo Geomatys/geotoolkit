@@ -47,9 +47,9 @@ import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.coverage.*;
@@ -581,8 +581,6 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         /**
          * Message completed, all chunk are aggregated into buffer attribute.
          * Create an InputStream from that buffer and update PackImage and add it tho queue.
-         *
-         * @param e
          */
         private void messageCompleted(final MessageEvent e) {
             final Integer channelID = e.getChannel().getId();

@@ -1,18 +1,11 @@
 package org.geotoolkit.wps.xml.v100;
 
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.XMLBindingTestBuilder;
-import org.junit.Test;
 import org.geotoolkit.wps.xml.v200.Capabilities;
-import org.geotoolkit.wps.xml.v200.ComplexData;
-import org.geotoolkit.wps.xml.v200.Data;
-import org.geotoolkit.wps.xml.v200.DataOutput;
 import org.geotoolkit.wps.xml.v200.Execute;
-import org.geotoolkit.wps.xml.v200.Format;
 import org.geotoolkit.wps.xml.v200.ProcessOfferings;
 import org.geotoolkit.wps.xml.v200.Result;
+import org.junit.Test;
 
 /**
  *
@@ -52,10 +45,10 @@ public class BindingV1Test {
         XMLBindingTestBuilder.test("xml/v100/ExecuteResponse.xml", Result.class);
         //XMLBindingTestBuilder.test("xml/v100/ExecuteResponse2.xml", Result.class); //on perd le CData et c normal
     }
-    
+
     /*@Test
     public void marshTest() throws Exception {
-       
+
         Format f = new Format("enc", "mime", "schem", Integer.MAX_VALUE);
         //ComplexData cdata = new ComplexData(Arrays.asList(f));
         //cdata.getContent().add("this is a test");
@@ -64,6 +57,6 @@ public class BindingV1Test {
         Result res = new Result(Arrays.asList(out), "jid");
         res.setVersion("1.0");
         WPSMarshallerPool.getInstance().acquireMarshaller().marshal(res, new OutputStreamWriter(System.out));
-        
+
     }*/
 }

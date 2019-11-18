@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStore;
@@ -41,8 +42,8 @@ public abstract class MetadataStore extends DataStore {
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return params;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.ofNullable(params);
     }
 
     public abstract MetadataReader getReader();

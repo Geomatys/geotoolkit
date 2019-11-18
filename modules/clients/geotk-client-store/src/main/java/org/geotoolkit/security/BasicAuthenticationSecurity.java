@@ -17,7 +17,7 @@
 package org.geotoolkit.security;
 
 import java.net.URLConnection;
-import net.iharder.Base64;
+import java.util.Base64;
 import org.apache.sis.util.ArgumentChecks;
 
 /**
@@ -42,7 +42,7 @@ public class BasicAuthenticationSecurity extends DefaultClientSecurity{
     public URLConnection secure(URLConnection cnx) {
         cnx = super.secure(cnx);
         final String userPassword = user + ":" + password;
-        final String encoding = Base64.encodeBytes(userPassword.getBytes());
+        final String encoding = Base64.getEncoder().encodeToString(userPassword.getBytes());
         cnx.setRequestProperty ("Authorization", "Basic " + encoding);
         return cnx;
     }

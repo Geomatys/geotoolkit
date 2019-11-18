@@ -39,5 +39,7 @@ public interface AbstractGeometry extends AbstractGML {
      */
     Integer getSrsDimension();
 
+    void setSrsDimension(Integer srsDimension);
+
     CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean longitudeFirst);
 }

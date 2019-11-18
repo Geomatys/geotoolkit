@@ -19,17 +19,18 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.filter.WrapFilterFactory2;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -67,7 +68,7 @@ public class MathCalcProcess extends AbstractProcess {
         final GridCoverage[] inCoverages = inputParameters.getValue(MathCalcDescriptor.IN_COVERAGES);
         final String inFormula = inputParameters.getValue(MathCalcDescriptor.IN_FORMULA);
         final String[] inMapping = inputParameters.getValue(MathCalcDescriptor.IN_MAPPING);
-        final GridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
+        final WritableGridCoverageResource outRef = inputParameters.getValue(MathCalcDescriptor.IN_RESULT_COVERAGE);
 
         final GridGeometry gg;
         try {
@@ -95,10 +96,10 @@ public class MathCalcProcess extends AbstractProcess {
 
         final FillCoverage filler = new FillCoverage();
         try {
-            if(outRef instanceof PyramidalCoverageResource){
-                filler.fill((PyramidalCoverageResource)outRef, evaluator);
+            if(outRef instanceof MultiResolutionResource){
+                filler.fill((MultiResolutionResource)outRef, evaluator);
             }else{
-                filler.fill((org.geotoolkit.storage.coverage.GridCoverageResource) outRef, evaluator, null);
+                filler.fill(outRef, evaluator, null);
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

@@ -122,7 +122,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
     /**
      * Verifies the metadata provided by the given reader.
      */
-    private void verify(final GridCoverageReader reader) throws DataStoreException {
+    private void verify(final ImageCoverageReader reader) throws DataStoreException {
         verify(reader.getGridGeometry(), 360, 180, 90);
         image = reader.read(null).render(null);
         assertCurrentChecksumEquals("verify", MosaicReadWriteTest.IMAGE_CHECKSUMS);
@@ -138,7 +138,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
     @Test
     public void testCreateMosaic() throws IOException, DataStoreException {
         final File directory = TestData.file(TileTest.class, null);
-        final GridCoverageReader reader = CoverageIO.createMosaicReader(directory, null);
+        final ImageCoverageReader reader = CoverageIO.createMosaicReader(directory, null);
         final TileManager manager = (TileManager) reader.getInput();
         assertEquals("Expected the 8 original tiles.", 8, manager.getTiles().size());
         verify(reader);
@@ -162,7 +162,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
         assertFalse("The cache directory should not exist prior this test.", cacheDirectory.exists());
         try {
             for (int step=0; step<2; step++) {
-                final GridCoverageReader reader = CoverageIO.writeOrReuseMosaic(directory.toPath());
+                final ImageCoverageReader reader = CoverageIO.writeOrReuseMosaic(directory.toPath());
                 assertEquals("Cache status: ", step == 0, ((MosaicCoverageReader) reader).saved);
 
                 final TileManager manager = (TileManager) reader.getInput();

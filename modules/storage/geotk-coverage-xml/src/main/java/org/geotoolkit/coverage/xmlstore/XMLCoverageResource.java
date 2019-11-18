@@ -43,8 +43,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
@@ -54,14 +59,15 @@ import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.data.multires.MultiResolutionModel;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.MultiResolutionModel;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
+import org.geotoolkit.storage.coverage.PyramidReader;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 
@@ -73,7 +79,7 @@ import org.opengis.util.GenericName;
  * @module
  */
 @XmlRootElement(name="CoverageReference")
-public class XMLCoverageResource extends AbstractPyramidalCoverageResource implements WritableGridCoverageResource {
+public class XMLCoverageResource extends AbstractGridResource implements MultiResolutionResource, StoreResource, WritableGridCoverageResource {
 
     /**
      * Changes :
@@ -221,20 +227,27 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
      */
     private ColorModel colorModel;
 
+    private XMLCoverageStore store;
     private NamedIdentifier id;
     private Path mainfile;
     //caches
     private List<SampleDimension> cacheDimensions = null;
 
     public XMLCoverageResource() {
-        super(null, DEFAULT_NAME);
+        super(null);
     }
 
     public XMLCoverageResource(XMLCoverageStore store, GenericName name, XMLPyramidSet set) {
-        super(store,name);
+        super(null);
+        this.store = store;
         id = new NamedIdentifier(name);
         this.set = set;
         this.set.setRef(this);
+    }
+
+    @Override
+    public DataStore getOriginator() {
+        return store;
     }
 
     public List<XMLSampleDimension> getXMLSampleDimensions() {
@@ -432,7 +445,6 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
     /**
      * {@inheritDoc }.
      */
-    @Override
     public void setSampleDimensions(List<SampleDimension> dimensions) throws DataStoreException {
         if (dimensions == null || dimensions.isEmpty()) return;
         this.cacheDimensions = null; //clear cache
@@ -471,7 +483,6 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
      * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
      * @see ImageUtils#createColorModel(int, int, short, short, long[])
      */
-    @Override
     public ColorModel getColorModel() {
         if (colorModel == null) {
             if (checkAttributs()) {
@@ -504,7 +515,6 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
      * @throws DataStoreException
      * @see #photometricInterpretation
      */
-    @Override
     public void setColorModel(ColorModel colorModel) throws DataStoreException {
         ArgumentChecks.ensureNonNull("colorModel", colorModel);
         //--photometric
@@ -553,7 +563,6 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
      * @return {@link SampleModel} associated with internal pyramid data.
      * @see ImageUtils#buildImageTypeSpecifier(int, int, short, short, short, long[])
      */
-    @Override
     public SampleModel getSampleModel() {
         if (sampleModel == null) {
             final ColorModel colMod = getColorModel();
@@ -593,7 +602,6 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
      * @see #sampleType
      * @see #samplePerPixel
      */
-    @Override
     public void setSampleModel(SampleModel sampleModel) throws DataStoreException {
 //        this.sampleType          = sampleModel.getDataType();
         this.nbBands             = sampleModel.getNumBands();
@@ -692,7 +700,6 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
     /**
      * {@inheritDoc }.
      */
-    @Override
     public ViewType getPackMode() {
         return ViewType.valueOf(packMode);
     }
@@ -700,7 +707,6 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
     /**
      * {@inheritDoc }.
      */
-    @Override
     public void setPackMode(ViewType packMode) {
         this.packMode = packMode.name();
     }
@@ -712,7 +718,6 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
     /**
      * {@inheritDoc }.
      */
-    @Override
     public boolean isWritable() throws CoverageStoreException {
         return true;
     }
@@ -738,6 +743,21 @@ public class XMLCoverageResource extends AbstractPyramidalCoverageResource imple
 
     public Runnable acquireTileWriter(final BlockingQueue<XMLTileWriter.XMLTileInfo> tilesToWrite) {
         return new XMLTileWriter(tilesToWrite, this);
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        return new PyramidReader<>(this).getGridGeometry();
+    }
+
+    @Override
+    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        return new PyramidReader<>(this).read(domain, range);
+    }
+
+    @Override
+    public void write(GridCoverage coverage, Option... options) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
     }
 
 }

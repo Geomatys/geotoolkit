@@ -109,8 +109,6 @@ public abstract class CachedDisplacement{
 
     /**
      *
-     * @param candidate
-     * @param coeff
      * @return maximum displacement value along x and y.
      */
     public abstract float getMargin(Object candidate, float coeff);

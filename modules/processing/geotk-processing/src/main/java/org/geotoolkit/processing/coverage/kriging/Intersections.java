@@ -57,10 +57,10 @@ final class Intersections {
      * Values vary from 0 to the image width or height, depending on whatever the
      * grid line is horizontal or vertical.
      */
-    private double[] ordinates;
+    private double[] coordinates;
 
     /**
-     * Number of valid elements in the {@link #ordinates} array.
+     * Number of valid elements in the {@link #coordinates} array.
      */
     private int size;
 
@@ -70,14 +70,14 @@ final class Intersections {
      * since it will growth if needed.
      */
     Intersections(final int size) {
-        ordinates = new double[Math.max(1, size)];
+        coordinates = new double[Math.max(1, size)];
     }
 
     /**
      * Creates a copy of the given instance, using only the required array size.
      */
     Intersections(final Intersections toCopy) {
-        ordinates = Arrays.copyOf(toCopy.ordinates, toCopy.size);
+        coordinates = Arrays.copyOf(toCopy.coordinates, toCopy.size);
         size = toCopy.size;
     }
 
@@ -99,7 +99,7 @@ final class Intersections {
      * Returns the ordinate value at the given index.
      */
     final double ordinate(final int i) {
-        return ordinates[i];
+        return coordinates[i];
     }
 
     /**
@@ -109,13 +109,13 @@ final class Intersections {
      */
     final void add(final double ordinate) {
         assert ordinate >= 0 : ordinate;
-        if (size >= ordinates.length) {
-            ordinates = Arrays.copyOf(ordinates, size*2);
+        if (size >= coordinates.length) {
+            coordinates = Arrays.copyOf(coordinates, size*2);
         }
-        ordinates[size++] = ordinate;
+        coordinates[size++] = ordinate;
         // Do the assertion after we added the point in order to allow the
         // developer to see his value in the Intersections.toString() output.
-        assert (size == 1) || (((int) ordinate > (int) ordinates[size-2])) : this;
+        assert (size == 1) || (((int) ordinate > (int) coordinates[size-2])) : this;
     }
 
     /**
@@ -125,7 +125,7 @@ final class Intersections {
      */
     final boolean removeAt(final int index) {
         assert (index >= 0 && index < size) : index;
-        System.arraycopy(ordinates, index+1, ordinates, index, --size - index);
+        System.arraycopy(coordinates, index+1, coordinates, index, --size - index);
         return size == 0;
     }
 
@@ -158,7 +158,7 @@ final class Intersections {
             final Intersections[] perpendicular, final int gridLineIndex, int ordinateIndex,
             final double distanceSquared)
     {
-        final double ordinate = ordinates[ordinateIndex];
+        final double ordinate = coordinates[ordinateIndex];
         final int intOrdinate = (int) ordinate;
         int modCount;
         /*
@@ -170,7 +170,7 @@ final class Intersections {
             modCount = grid.modCount;
             assert gridLines[gridLineIndex] == this : gridLineIndex;
             assert (ordinateIndex >= 0 && ordinateIndex < size) : ordinateIndex;
-            assert ordinates[ordinateIndex] == ordinate;
+            assert coordinates[ordinateIndex] == ordinate;
             /*
              * This method needs the coordinate of a point to exclude, in order to prevent polylines
              * to be closed with themselves after only 2 points. When the point specified by the
@@ -289,7 +289,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                          * The '- (pointId & 1)' trick does exactly that.
                          */
                         ordinateIndexOfNeighbor = ~ordinateIndexOfNeighbor - (pointId & 1);
-                    } else if (neighbor != excludedGridLine || neighbor.ordinates[ordinateIndexOfNeighbor] != excludedOrdinate) {
+                    } else if (neighbor != excludedGridLine || neighbor.coordinates[ordinateIndexOfNeighbor] != excludedOrdinate) {
                         /*
                          * If there is an exact match, set 'pointDirection' to 0 in order to
                          * use that value directly without moving to a value before or after.
@@ -308,7 +308,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                     if (ordinateIndexOfNeighbor < 0 || ordinateIndexOfNeighbor >= neighbor.size) {
                         continue nextPoint; // Out of line bounds, check an other point.
                     }
-                    ordinateOfNeighbor = neighbor.ordinates[ordinateIndexOfNeighbor];
+                    ordinateOfNeighbor = neighbor.coordinates[ordinateIndexOfNeighbor];
                 } while (neighbor == excludedGridLine && ordinateOfNeighbor == excludedOrdinate);
                 final double delta = ordinateOfNeighbor - (isPerpendicular ? gridLineIndex : ordinate);
                 neighborDistanceSquared += delta*delta; // Final value for this variable.
@@ -401,8 +401,8 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
             if (nearest != null) {
                 assert gridLines         [gridLineIndex]          == this;
                 assert gridLinesOfNearest[gridLineIndexOfNearest] == nearest;
-                assert ordinates[ordinateIndex] == ordinate;
-                assert nearest.ordinates[nearest.binarySearch(ordinateOfNearest, ordinateIndexOfNearest)] == ordinateOfNearest;
+                assert coordinates[ordinateIndex] == ordinate;
+                assert nearest.coordinates[nearest.binarySearch(ordinateOfNearest, ordinateIndexOfNearest)] == ordinateOfNearest;
                 final int toRemove = grid.createLineSegment(
                         gridLines,          gridLineIndex,          ordinate,
                         gridLinesOfNearest, gridLineIndexOfNearest, ordinateOfNearest);
@@ -440,17 +440,17 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
      * this method returns a negative value.
      */
     final int binarySearch(final double ordinate, final int expected) {
-        if (expected >= 0 && expected < size && ordinates[expected] == ordinate) {
+        if (expected >= 0 && expected < size && coordinates[expected] == ordinate) {
             return expected;
         }
-        return Arrays.binarySearch(ordinates, 0, size, ordinate);
+        return Arrays.binarySearch(coordinates, 0, size, ordinate);
     }
 
     /**
      * Returns the index of the given ordinate value.
      */
     final int binarySearch(final double ordinate) {
-        return Arrays.binarySearch(ordinates, 0, size, ordinate);
+        return Arrays.binarySearch(coordinates, 0, size, ordinate);
     }
 
     /**
@@ -463,7 +463,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                 buffer.append(" … ");
                 i = size - 5; // Skip some values.
             }
-            buffer.append(ordinates[i]);
+            buffer.append(coordinates[i]);
             separator = ", ";
         }
     }

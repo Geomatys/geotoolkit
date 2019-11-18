@@ -223,8 +223,6 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
 
     /**
      * Transform the recordType into a SummaryRecordType.
-     *
-     * @return
      */
     @Override
     public SummaryRecordType toSummary() {
@@ -237,8 +235,6 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
 
     /**
      * Transform the recordType into a BriefRecordType.
-     *
-     * @return
      */
     @Override
     public BriefRecordType toBrief() {

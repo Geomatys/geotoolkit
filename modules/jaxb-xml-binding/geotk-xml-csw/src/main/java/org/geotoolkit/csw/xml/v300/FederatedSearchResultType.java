@@ -63,11 +63,6 @@ public class FederatedSearchResultType extends FederatedSearchResultBaseType imp
 
     /**
      * Obtient la valeur de la propriété searchResult.
-     *
-     * @return
-     *     possible object is
-     *     {@link SearchResultsType }
-     *
      */
     @Override
     public SearchResultsType getSearchResult() {
@@ -76,11 +71,6 @@ public class FederatedSearchResultType extends FederatedSearchResultBaseType imp
 
     /**
      * Définit la valeur de la propriété searchResult.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link SearchResultsType }
-     *
      */
     public void setSearchResult(SearchResultsType value) {
         this.searchResult = value;

@@ -39,7 +39,7 @@ public class NcWMSServerFactoryTest extends org.geotoolkit.test.TestBase {
         final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof NcWMSClientFactory){
+            if(ite.next() instanceof NcWMSProvider){
                 found = true;
             }
         }

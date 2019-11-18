@@ -17,7 +17,8 @@
 package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.io.IOException;
-import org.geotoolkit.data.FeatureCollection;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -36,7 +37,7 @@ public class ComplexToFeatureCollectionConverterTest extends org.geotoolkit.test
  in geoJSON converts to valid FeatureCollection
      */
     @Test
-    public void testJSONConversion() throws IOException {
+    public void testJSONConversion() throws IOException, DataStoreException {
         FeatureCollection featureCollection = ConvertersTestUtils.initAndRunInputConversion(Data.class,
                                                 FeatureCollection.class,
                                                 "/inputs/featurecollection.json",

@@ -68,9 +68,7 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
@@ -127,7 +125,7 @@ public final class DefaultPortrayalService implements PortrayalService{
     /**
      * Cache the last CoverageWriter.
      */
-    private static final AtomicReference<GridCoverageWriter> WRITER_CACHE = new AtomicReference<>();
+    private static final AtomicReference<ImageCoverageWriter> WRITER_CACHE = new AtomicReference<>();
 
     /**
      * Cache the link between mime-type -> java-type
@@ -328,10 +326,6 @@ public final class DefaultPortrayalService implements PortrayalService{
      * Unlike a call to a portray method, the returned rendered image will be calculated
      * progressively.
      *
-     * @param mosaic
-     * @param def
-     * @param sceneDef
-     * @param viewDef
      * @return RenderedImage , never null
      */
     public static RenderedImage prepareImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
@@ -342,11 +336,10 @@ public final class DefaultPortrayalService implements PortrayalService{
     /**
      * Manipulate a MapContext as if it was an ARGB coverage of infinite resolution.
      *
-     * @param sceneDef
      * @return GridCoverageReader, never null
      */
-    public static GridCoverageReader asCoverageReader(final SceneDef sceneDef){
-        return new PortrayalCoverageReader(sceneDef);
+    public static GridCoverageResource asResource(final SceneDef sceneDef){
+        return new PortrayalCoverageResource(sceneDef);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -420,9 +413,6 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     /**
      *
-     * @param canvasDef
-     * @param sceneDef
-     * @param viewDef
      * @param outputDef : The compression parameter will not necesarly be used
      *              if the mime type write can not support it.
      * @throws PortrayalException
@@ -626,7 +616,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
 
         //get a writer
-        GridCoverageWriter writer = WRITER_CACHE.getAndSet(null);
+        ImageCoverageWriter writer = WRITER_CACHE.getAndSet(null);
         if(writer == null){
             writer = new ImageCoverageWriter();
         }
@@ -740,12 +730,6 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     /**
      * Generate presentation objects for a scene.
-     *
-     * @param canvasDef
-     * @param sceneDef
-     * @param viewDef
-     * @return
-     * @throws PortrayalException
      */
     public static Spliterator<Presentation> present(final CanvasDef canvasDef,
             final SceneDef sceneDef, final ViewDef viewDef) throws PortrayalException, DataStoreException{
@@ -1050,7 +1034,6 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     /**
      *
-     * @param image
      * @return String containing a technical description of the image.
      */
     private static String toImageInformation(final RenderedImage image){

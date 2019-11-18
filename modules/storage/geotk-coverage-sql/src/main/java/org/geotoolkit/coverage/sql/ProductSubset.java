@@ -23,9 +23,7 @@ import org.opengis.geometry.Envelope;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.WarningListeners;
 import org.apache.sis.internal.storage.AbstractGridResource;
 
 
@@ -63,7 +61,7 @@ final class ProductSubset extends AbstractGridResource {
     ProductSubset(final ProductEntry product, final Envelope areaOfInterest, final double[] resolution,
             final List<GridCoverageEntry> entries)
     {
-        super((WarningListeners<DataStore>) null);
+        super(null);
         this.product        = product;
         this.areaOfInterest = areaOfInterest;
         this.resolution     = resolution;

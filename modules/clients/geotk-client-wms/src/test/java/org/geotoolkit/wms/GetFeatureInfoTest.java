@@ -68,7 +68,6 @@ public class GetFeatureInfoTest extends org.geotoolkit.test.TestBase {
     /**
      * Prepare a Get Map request with parameters fitting {@link #checkBefore130(org.geotoolkit.wms.GetMapRequest) }
      * and {@link #checkSince130(org.geotoolkit.wms.GetMapRequest) } tests.
-     * @param request
      */
     private void fillParameters(final GetFeatureInfoRequest request) {
         final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();

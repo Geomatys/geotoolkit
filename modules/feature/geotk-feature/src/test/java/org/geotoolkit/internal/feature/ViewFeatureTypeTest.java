@@ -21,12 +21,13 @@ import java.util.Collections;
 import org.apache.sis.feature.FeatureOperations;
 import org.geotoolkit.feature.ViewMapper;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 
@@ -35,10 +36,8 @@ import org.opengis.feature.PropertyType;
  * @author Johann Sorel (Geomatys)
  */
 public class ViewFeatureTypeTest {
-
     @Test
     public void filterAttributeTest(){
-
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.addAttribute(String.class).setName("attString");
@@ -59,16 +58,14 @@ public class ViewFeatureTypeTest {
 
         final Feature viewFeature = viewType.apply(baseFeature);
         assertEquals(123.456, (Double)viewFeature.getPropertyValue("attDouble"), 0);
-        try{
+        try {
             viewFeature.getPropertyValue("attString");
             fail("Property attString should not have been accessible");
-        }catch(PropertyNotFoundException ex){/*ok*/}
-
+        } catch(PropertyNotFoundException ex) {/*ok*/}
     }
 
     @Test
-    public void filterOperationTest(){
-
+    public void filterOperationTest() {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         final AttributeType<String> attString = ftb.addAttribute(String.class).setName("attString").build();
@@ -89,11 +86,9 @@ public class ViewFeatureTypeTest {
 
         final Feature viewFeature = viewType.apply(baseFeature);
         assertEquals("hello world", viewFeature.getPropertyValue("attRef"));
-        try{
+        try {
             viewFeature.getPropertyValue("attString");
             fail("Property attString should not have been accessible");
-        }catch(PropertyNotFoundException ex){/*ok*/}
-
+        } catch(PropertyNotFoundException ex) {/*ok*/}
     }
-
 }

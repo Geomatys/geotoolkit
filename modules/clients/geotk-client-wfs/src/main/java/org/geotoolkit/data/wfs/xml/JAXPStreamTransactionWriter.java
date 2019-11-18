@@ -29,8 +29,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.wfs.Delete;
 import org.geotoolkit.data.wfs.IdentifierGenerationOption;
 import org.geotoolkit.data.wfs.Insert;
@@ -238,7 +238,7 @@ public class JAXPStreamTransactionWriter {
         }
 
         //write features--------------------------------------------------------
-        final FeatureCollection col = element.getFeatures();
+        final FeatureSet col = element.getFeatures();
         final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
         fw.setOutput(writer);
         fw.writeFeatureCollection(col, null, true);

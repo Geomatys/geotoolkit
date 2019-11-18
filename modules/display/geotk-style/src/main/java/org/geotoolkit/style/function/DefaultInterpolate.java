@@ -283,7 +283,6 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
     /**
      * Recolor image
-     * @param image
      * @return recolored image
      */
     private RenderedImage evaluateImage (final RenderedImage image) {

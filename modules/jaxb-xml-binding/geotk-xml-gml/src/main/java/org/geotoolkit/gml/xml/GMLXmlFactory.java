@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.sis.util.NullArgumentException;
+import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 //import org.opengis.temporal.Position;
@@ -43,7 +44,7 @@ public class GMLXmlFactory {
 
     public static Point buildPoint(final String version, final String id, final org.opengis.geometry.DirectPosition pos) {
         if ("3.2.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v321.PointType(id, pos);
+            return new org.geotoolkit.gml.xml.v321.PointType(id, pos, false);
         } else if ("3.1.1".equals(version)) {
             return new org.geotoolkit.gml.xml.v311.PointType(id, pos);
         } else {
@@ -74,6 +75,26 @@ public class GMLXmlFactory {
                 pointList.add(new org.geotoolkit.gml.xml.v311.PointPropertyType((org.geotoolkit.gml.xml.v311.PointType)pt));
             }
             return new org.geotoolkit.gml.xml.v311.MultiPointType(srsName, pointList);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+
+    public static LineString buildLineString(final String version, final List<Double> coordList, final String srsName, final Integer srsDimension) {
+        if ("3.2.1".equals(version)) {
+            final org.geotoolkit.gml.xml.v321.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v321.DirectPositionListType(coordList);
+            org.geotoolkit.gml.xml.v321.LineStringType ls = new org.geotoolkit.gml.xml.v321.LineStringType((org.geotoolkit.gml.xml.v321.CoordinatesType) null);
+            ls.setSrsName(srsName);
+            ls.setSrsDimension(srsDimension);
+            ls.setPosList(dpList);
+            return ls;
+        } else if ("3.1.1".equals(version)) {
+            final org.geotoolkit.gml.xml.v311.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v311.DirectPositionListType(coordList);
+            org.geotoolkit.gml.xml.v311.LineStringType ls = new org.geotoolkit.gml.xml.v311.LineStringType((CoordinatesType)null);
+            ls.setSrsName(srsName);
+            ls.setSrsDimension(srsDimension);
+            ls.setPosList(dpList);
+            return ls;
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }
@@ -126,22 +147,35 @@ public class GMLXmlFactory {
     }
 
     public static LinearRing buildLinearRing(final String version,  final List<Double> coordList, final String srsName) {
+        return buildLinearRing(version, coordList, srsName, null);
+    }
+
+    public static LinearRing buildLinearRing(final String version,  final List<Double> coordList, final String srsName, Integer srsDimension) {
         if ("3.2.1".equals(version)) {
             final org.geotoolkit.gml.xml.v321.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v321.DirectPositionListType(coordList);
-            dpList.setSrsName(srsName);
             // Replaced previous version that omitted srs name, because there's been a corrigendum in GML 3.2.2.
             // The problem in 3.2.1 was that LinearRing extended AbstractRing, which did not extend AbstractCurve. That
             // was an error, and a correction has been added in corrigendum 3.2.2.
-            return new org.geotoolkit.gml.xml.v321.LinearRingType(srsName, dpList);
+            final org.geotoolkit.gml.xml.v321.LinearRingType lr = new org.geotoolkit.gml.xml.v321.LinearRingType(srsName, dpList);
+            lr.setSrsDimension(srsDimension);
+            lr.setSrsName(srsName);
+            return lr;
         } else if ("3.1.1".equals(version)) {
             final org.geotoolkit.gml.xml.v311.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v311.DirectPositionListType(coordList);
-            return new org.geotoolkit.gml.xml.v311.LinearRingType(srsName, dpList);
+            final org.geotoolkit.gml.xml.v311.LinearRingType lr = new org.geotoolkit.gml.xml.v311.LinearRingType(srsName, dpList);
+            lr.setSrsDimension(srsDimension);
+            lr.setSrsName(srsName);
+            return lr;
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }
     }
 
     public static Polygon buildPolygon(final String version, final AbstractRing gmlExterior, final List<AbstractRing> gmlInterior, final String srsName) {
+        return buildPolygon(version, gmlExterior, gmlInterior, srsName, null);
+    }
+
+    public static Polygon buildPolygon(final String version, final AbstractRing gmlExterior, final List<AbstractRing> gmlInterior, final String srsName, final Integer srsDimension) {
         if ("3.2.1".equals(version)) {
             final List<org.geotoolkit.gml.xml.v321.AbstractRingType> interiors = new ArrayList<>();
             if (gmlInterior != null) {
@@ -153,7 +187,9 @@ public class GMLXmlFactory {
                     }
                 }
             }
-            return new org.geotoolkit.gml.xml.v321.PolygonType(srsName, (org.geotoolkit.gml.xml.v321.AbstractRingType) gmlExterior, interiors);
+            org.geotoolkit.gml.xml.v321.PolygonType po = new org.geotoolkit.gml.xml.v321.PolygonType(srsName, (org.geotoolkit.gml.xml.v321.AbstractRingType) gmlExterior, interiors);
+            po.setSrsDimension(srsDimension);
+            return po;
         } else if ("3.1.1".equals(version)) {
             final List<org.geotoolkit.gml.xml.v311.AbstractRingType> interiors = new ArrayList<>();
             if (gmlInterior != null) {
@@ -165,7 +201,9 @@ public class GMLXmlFactory {
                     }
                 }
             }
-            return new org.geotoolkit.gml.xml.v311.PolygonType(srsName, (org.geotoolkit.gml.xml.v311.AbstractRingType)gmlExterior, interiors);
+            org.geotoolkit.gml.xml.v311.PolygonType po = new org.geotoolkit.gml.xml.v311.PolygonType(srsName, (org.geotoolkit.gml.xml.v311.AbstractRingType)gmlExterior, interiors);
+            po.setSrsDimension(srsDimension);
+            return po;
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }

@@ -43,16 +43,15 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.Resource;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -70,19 +69,18 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.reformat.ReformatProcess;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
+import org.geotoolkit.storage.coverage.ImageStatistics;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-
-import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.processing.coverage.reformat.ReformatProcess;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.CompatibleColorModel;
@@ -251,7 +249,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             renderingContext.switchToDisplayCRS();
-        } catch (DisjointCoverageDomainException e) {
+        } catch (NoSuchDataException e) {
             LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
@@ -445,7 +443,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             //-- ReliefShadow creating --------------------
-            final GridCoverage2D mntCoverage;
+            final GridCoverage mntCoverage;
             if (elevationCoverage != null) {
                 //TODO replace by a simple sobel effect for relief shading
                 mntCoverage = null;
@@ -460,14 +458,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             gcb.setGridGeometry(coverage.getGridGeometry());
             gcb.setRenderedImage(colorMappedImage);
             gcb.setName("tempimg");
-            final GridCoverage2D ti = gcb.getGridCoverage2D();
+            final GridCoverage ti = gcb.getGridCoverage2D();
 
             final MathTransform1D trs = (MathTransform1D) MathTransforms.linear(factor, 0);
             final org.geotoolkit.processing.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.processing.coverage.shadedrelief.ShadedRelief(
                     ti, mntCoverage, trs);
             final ParameterValueGroup res = proc.call();
-            final GridCoverage2D shaded = (GridCoverage2D) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
-            colorMappedImage = shaded.getRenderedImage();
+            final GridCoverage shaded = (GridCoverage) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
+            colorMappedImage = shaded.render(null);
         }
         return colorMappedImage;
     }
@@ -516,9 +514,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //if there is no geophysic, the same coverage is returned
             coverage = coverage.forConvertedValues(true);
             CoverageDescription covRefMetadata = null;
-            if(ref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-                covRefMetadata = ((org.geotoolkit.storage.coverage.GridCoverageResource)ref).getCoverageDescription();
-            }
 
             if (covRefMetadata == null) {
                 final Metadata metadata;
@@ -666,8 +661,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * Returns {@code true} if a default style is needed to interpret current data
      * else {@code false} if java 2d will be able to interprete data.
      *
-     * @param sampleModel
-     * @param colorModel
      * @return {@code true} if a style creation is needed to show image datas else {@code false}.
      */
     private static boolean defaultStyleIsNeeded(final SampleModel sampleModel, final ColorModel colorModel) {
@@ -742,11 +735,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
                         final Resource resource = projectedCoverage.getLayer().getResource();
-                        if (resource instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
+                        if (resource instanceof GridCoverageResource) {
                             try {
-                                final GridCoverageReader reader = ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).acquireReader();
-                                final Map<String,Object> analyze = StatisticOp.analyze(reader);
-                                ((org.geotoolkit.storage.coverage.GridCoverageResource) resource).recycle(reader);
+                                final GridCoverageResource reader = (GridCoverageResource) resource;
+                                final Map<String,Object> analyze = StatisticOp.analyze(reader.read(null).render(null));
                                 final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
                                 final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
                                 final double min = findExtremum(minArray, true);
@@ -888,11 +880,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     /**
      * Create a geoide coverage to mimic an elevation model.
-     * @param coverage
-     * @return
-     * @throws IllegalArgumentException
-     * @throws FactoryException
-     * @throws TransformException
      */
     public static GridCoverage2D getGeoideCoverage(final GridCoverage2D coverage) throws IllegalArgumentException, FactoryException, TransformException{
 
@@ -1229,9 +1216,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     private boolean isInView(final ProjectedCoverage candidate) {
         try {
-            final GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
-                    Envelopes.transform(candidate.getLayer().getBounds(), renderingContext.getObjectiveCRS2D())
-            );
+            Envelope bounds = candidate.getLayer().getBounds();
+            GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
+                    Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
+            if (boundary.isEmpty()) {
+                //we may have NaN values with envelopes which cross poles
+                //normalizing envelope before transform often solve this issue
+                bounds = new GeneralEnvelope(bounds);
+                ((GeneralEnvelope) bounds).normalize();
+                boundary = GeneralEnvelope.castOrCopy(
+                    Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
+            }
+
             return boundary.intersects(renderingContext.getCanvasObjectiveBounds2D());
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Cannot compare layer bbox with rendering context", e);

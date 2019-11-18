@@ -23,13 +23,13 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.storage.query.CoverageQuery;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.memory.MemoryCoverageStore;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -47,7 +47,6 @@ import org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.function.Jenks;
 import org.opengis.geometry.Envelope;
@@ -127,10 +126,6 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                         resolution = DefaultRasterSymbolizerRenderer.fixResolutionWithCRS(resolution, coverageMapLayerCRS);
                     }
 
-                    final GridCoverageReadParam param = new GridCoverageReadParam();
-                    param.setEnvelope(bounds);
-                    param.setResolution(resolution);
-
                     GridCoverage inCoverage = coverageReference.read(coverageReference.getGridGeometry().derive().subgrid(bounds, resolution).build());
                     inCoverage = inCoverage.forConvertedValues(true);
 
@@ -150,28 +145,30 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     final Parameters output = Parameters.castOrWrap(resampleProcess.call());
 
                     final GridCoverage resampledCoverage = (GridCoverage) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
-                    final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getIdentifier().get().tip().toString());
-                    final GridCoverageResource resampledCovRef = (GridCoverageResource) DataStores.flatten(memoryCoverageStore, true, GridCoverageResource.class).iterator().next();
+                    final GridCoverageResource resampledCovRef = new InMemoryGridCoverageResource(coverageReference.getIdentifier().orElse(null), resampledCoverage);
+
+                    final CoverageQuery query = new CoverageQuery();
+                    query.setDomain(resampledCovRef.getGridGeometry().derive().subgrid(bounds, resolution).build());
+                    final GridCoverageResource subref = resampledCovRef.subset(query);
 
                     /////////////////////
                     // 2.2 - Compute isolines
                     ////////////////////
-                    FeatureCollection isolines = null;
+                    FeatureSet isolines = null;
                     ProcessDescriptor isolineDesc = symbol.getIsolineDesc();
                     if (isolineDesc != null) {
                         final Parameters inputs = Parameters.castOrWrap(isolineDesc.getInputDescriptor().createValue());
-                        inputs.getOrCreate(IsolineDescriptor2.COVERAGE_REF).setValue(resampledCovRef);
-                        inputs.getOrCreate(IsolineDescriptor2.READ_PARAM).setValue(param);
+                        inputs.getOrCreate(IsolineDescriptor2.COVERAGE_REF).setValue(subref);
                         inputs.getOrCreate(IsolineDescriptor2.INTERVALS).setValue(intervales);
                         final org.geotoolkit.process.Process process = isolineDesc.createProcess(inputs);
                         final ParameterValueGroup result = process.call();
-                        isolines = (FeatureCollection) result.parameter(IsolineDescriptor2.FCOLL.getName().getCode()).getValue();
+                        isolines = (FeatureSet) result.parameter(IsolineDescriptor2.FCOLL.getName().getCode()).getValue();
                     }
 
                     /////////////////////
                     // 2.3 - Render isolines
                     ////////////////////
-                    if (isolines != null && !isolines.isEmpty()) {
+                    if (isolines != null) {
                         MutableStyle featureStyle = null;
                         if (textSymbolizer != null) {
                             featureStyle = GO2Utilities.STYLE_FACTORY.style(lineSymbolizer, textSymbolizer);

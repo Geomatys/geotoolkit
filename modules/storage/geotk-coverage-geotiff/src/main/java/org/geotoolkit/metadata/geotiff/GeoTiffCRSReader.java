@@ -82,7 +82,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.Krovak;
 import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
-import org.geotoolkit.referencing.operation.provider.Orthographic;
+import org.apache.sis.internal.referencing.provider.Orthographic;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -943,9 +943,9 @@ final class GeoTiffCRSReader {
              */
             if (name.equalsIgnoreCase("Orthographic")
                     || code == CT_Orthographic) {
-                parameters = mtFactory.getDefaultParameters(code(Orthographic.PARAMETERS));
-                parameters.parameter(code(Orthographic.LATITUDE_OF_CENTRE)).setValue(getOriginLat(metadata));
-                parameters.parameter(code(Orthographic.LONGITUDE_OF_CENTRE)).setValue(getOriginLong(metadata));
+                parameters = mtFactory.getDefaultParameters(code(new Orthographic().getParameters()));
+                parameters.parameter(code(Orthographic.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
+                parameters.parameter(code(Orthographic.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(Orthographic.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(Orthographic.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
                 return parameters;

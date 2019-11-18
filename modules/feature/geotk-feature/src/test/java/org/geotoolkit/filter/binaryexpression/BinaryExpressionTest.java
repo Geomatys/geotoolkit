@@ -22,7 +22,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
@@ -31,14 +31,8 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @module
  */
 public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
-
-
-    public BinaryExpressionTest() {
-    }
-
     @Test
     public void testAdd() {
-
         final double correctResult = 151;
         final Literal combineLiteral = FF.literal(50);
 
@@ -72,12 +66,10 @@ public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
         assertEquals(result, correctResult, 0.0000001d);
 
         assertSerializedEquals(exp); //test serialize
-
     }
 
     @Test
     public void testDivide() {
-
         final double correctResult = 25.25;
         final Literal combineLiteral = FF.literal(4);
 
@@ -111,12 +103,10 @@ public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
         assertEquals(result, correctResult, 0.0000001d);
 
         assertSerializedEquals(exp); //test serialize
-
     }
 
     @Test
     public void testMultiply() {
-
         final double correctResult = 303;
         final Literal combineLiteral = FF.literal(3);
 
@@ -150,12 +140,10 @@ public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
         assertEquals(result, correctResult, 0.0000001d);
 
         assertSerializedEquals(exp); //test serialize
-
     }
 
     @Test
     public void testSubtract() {
-
         final double correctResult = 31;
         final Literal combineLiteral = FF.literal(70);
 
@@ -189,8 +177,5 @@ public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
         assertEquals(result, correctResult, 0.0000001d);
 
         assertSerializedEquals(exp); //test serialize
-
     }
-
-
 }

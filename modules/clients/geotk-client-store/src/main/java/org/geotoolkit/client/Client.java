@@ -19,10 +19,11 @@ package org.geotoolkit.client;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -41,7 +42,7 @@ public interface Client extends AutoCloseable {
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getOpenParameters();
+    Optional<ParameterValueGroup> getOpenParameters();
 
     /**
      * Get the factory which created this source.
@@ -73,14 +74,11 @@ public interface Client extends AutoCloseable {
 
     /**
      * Store a value for this server in a hashmap using the given key.
-     * @param key
-     * @param value
      */
     void setUserProperty(String key,Object value);
 
     /**
      * Get a stored value knowing the key.
-     * @param key
      * @return user property object , can be null
      */
     Object getUserProperty(String key);
@@ -96,14 +94,14 @@ public interface Client extends AutoCloseable {
      * when data changes.
      * @param listener to add
      */
-    <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType);
+    <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener);
 
     /**
      * Remove a storage listener
      * @param listener to remove
      */
-    <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType);
+    <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener);
 
+    @Override
     void close() throws DataStoreException;
-
 }

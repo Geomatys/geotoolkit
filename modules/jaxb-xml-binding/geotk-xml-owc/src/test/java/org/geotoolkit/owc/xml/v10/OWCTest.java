@@ -30,8 +30,10 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.xml.DocumentComparator;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.MetadataAssert.*;
+
 
 public class OWCTest extends org.geotoolkit.test.TestBase {
     private static final org.w3._2005.atom.ObjectFactory OBJ_ATOM_FACT = new org.w3._2005.atom.ObjectFactory();
@@ -132,9 +134,7 @@ public class OWCTest extends org.geotoolkit.test.TestBase {
         final StringWriter sw = new StringWriter();
         marsh.marshal(feed, sw);
         pool.recycle(marsh);
-        DocumentComparator comparator = new DocumentComparator(EXP_RESULT, sw.toString());
-        comparator.compare();
+
+        assertXmlEquals(EXP_RESULT, sw.toString(), "xmlns:*");
     }
 }
-
-

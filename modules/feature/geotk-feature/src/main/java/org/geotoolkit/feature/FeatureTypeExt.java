@@ -46,15 +46,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * @author Johann Sorel (Geomatys)
  */
 public final class FeatureTypeExt extends Static {
-
-
-    /**
-     *
-     * @param featureType
-     * @param properties
-     * @return
-     * @throws MismatchedFeatureException
-     */
     public static FeatureType createSubType(final FeatureType featureType,
             final String ... properties) throws MismatchedFeatureException{
         if (properties == null || isAllProperties(featureType, properties)) {
@@ -125,10 +116,6 @@ public final class FeatureTypeExt extends Static {
 
     /**
      * Test field equality ignoring convention properties.
-     *
-     * @param type1
-     * @param type2
-     * @return
      */
     public static boolean equalsIgnoreConvention(FeatureType type1, FeatureType type2){
 
@@ -299,10 +286,6 @@ public final class FeatureTypeExt extends Static {
 
     /**
      * Returns true if property is a component of the feature type primary key.
-     *
-     * @param type
-     * @param propertyName
-     * @return
      */
     public static boolean isPartOfPrimaryKey(FeatureType type, String propertyName) {
         PropertyType property;
@@ -318,5 +301,4 @@ public final class FeatureTypeExt extends Static {
         }
         return false;
     }
-
 }

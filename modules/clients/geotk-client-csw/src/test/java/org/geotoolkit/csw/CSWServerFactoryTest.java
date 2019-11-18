@@ -39,7 +39,7 @@ public class CSWServerFactoryTest extends org.geotoolkit.test.TestBase {
         final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof CSWClientFactory){
+            if(ite.next() instanceof CSWProvider){
                 found = true;
             }
         }

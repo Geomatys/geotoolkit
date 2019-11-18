@@ -18,6 +18,7 @@
 package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * A ShapeHandler defines what is needed to construct and persist geometries
@@ -52,7 +53,7 @@ public interface ShapeHandler {
      * @param buffer The ByteBuffer to read from.
      * @return A geometry object.
      */
-    public Object read(ByteBuffer buffer, ShapeType type);
+    public Geometry read(ByteBuffer buffer, ShapeType type);
 
     /**
      * Generate and estimated geometry calculated from the bounding box.
@@ -61,7 +62,7 @@ public interface ShapeHandler {
      *
      * @return an average shape generated using the bounding box
      */
-    public Object estimated(double minX, double maxX, double minY, double maxY);
+    public Geometry estimated(double minX, double maxX, double minY, double maxY);
 
     /**
      * Write the geometry into the ByteBuffer. The position, byteOrder, and

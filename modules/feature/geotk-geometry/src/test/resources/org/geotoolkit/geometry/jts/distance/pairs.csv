@@ -8,5 +8,5 @@
 # Columns: title for the segment, longitude of start point, latitude of start point, longitude of end point, latitude of end point, orthodromic distance betweeen start and end point, loxodromic distance between start and end point
 # separator: Tabulation
 TITLE	START_LON	START_LAT	END_LON	END_LAT	ORTHODROMIC	LOXODROMIC
-Tokyo-Paris	139	35	2	49	9777	11354
+Tokyo-Paris	139	35	2	49	9777	11382
 Paris-New_York	2	49	-74	41	5803	6027

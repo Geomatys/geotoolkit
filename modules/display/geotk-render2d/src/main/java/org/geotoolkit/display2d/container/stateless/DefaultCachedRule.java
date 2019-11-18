@@ -52,8 +52,6 @@ public final class DefaultCachedRule {
 
     /**
      * sort the rules, isolate the else rules, they must be handle differently
-     * @param sortedRules
-     * @return
      */
     public static int sortByElseRule(final CachedRule[] sortedRules){
         int elseRuleIndex = sortedRules.length;

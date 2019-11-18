@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema targetNamespace="http://www.geotoolkit.org/custom" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+  <xs:element type="SimpleGeomType" substitutionGroup="gml:_Feature" name="SimpleGeom" xmlns="http://www.geotoolkit.org/custom" xmlns:gml="http://www.opengis.net/gml"/>
+  <xs:complexType name="SimpleGeomType">
+    <xs:complexContent>
+      <xs:extension base="gml:AbstractFeatureType" xmlns:gml="http://www.opengis.net/gml">
+        <xs:sequence>
+          <xs:element type="xs:string" nillable="true" minOccurs="1" maxOccurs="1" name="attString"/>
+          <xs:element type="gml:PointPropertyType" nillable="true" minOccurs="0" maxOccurs="unbounded" name="geomPoint"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

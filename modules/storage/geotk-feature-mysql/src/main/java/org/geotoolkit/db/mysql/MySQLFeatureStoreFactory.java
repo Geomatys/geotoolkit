@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.db.mysql;
 
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -32,7 +35,11 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-@StoreMetadataExt(resourceTypes = ResourceType.VECTOR, canCreate = true, canWrite = true)
+@StoreMetadata(
+        formatName = MySQLFeatureStoreFactory.NAME,
+        capabilities = {Capability.READ, Capability.WRITE},
+        resourceTypes = {FeatureSet.class})
+@StoreMetadataExt(resourceTypes = ResourceType.VECTOR)
 public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
 
     /** factory identification **/

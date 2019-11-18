@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.util;
 
 import java.io.ByteArrayInputStream;
@@ -26,6 +25,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,15 +36,15 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.nio.IOUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -81,7 +81,6 @@ public final class DomUtilities extends Static {
      *
      * @param doc : DOM document to write
      * @param output : output file, url, uri, outputstream
-     * @throws TransformerException
      */
     public static void write(final Document doc, final Object output) throws TransformerException, FileNotFoundException, IOException{
         final Source source = new DOMSource(doc);
@@ -359,6 +358,18 @@ public final class DomUtilities extends Static {
         }
 
         return IOUtilities.open(input);
+    }
+
+    /**
+     * Reformat and indent an xml file.
+     */
+    public static void prettyPrint(Path input, Path output) throws TransformerConfigurationException, ParserConfigurationException, SAXException, IOException, TransformerException {
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        StreamResult result = new StreamResult(output.toFile());
+        DOMSource source = new DOMSource(read(input));
+        transformer.transform(source, result);
     }
 
 }

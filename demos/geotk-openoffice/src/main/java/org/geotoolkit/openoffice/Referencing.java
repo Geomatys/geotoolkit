@@ -328,8 +328,8 @@ public final class Referencing extends Formulas implements XReferencing {
                 continue;
             }
             for (int i=dim; --i>=0;) {
-                sourcePt.ordinates[i] = (i<src.length) ? src[i] : 0;
-                targetPt.ordinates[i] = (i<dst.length) ? dst[i] : 0;
+                sourcePt.coordinates[i] = (i<src.length) ? src[i] : 0;
+                targetPt.coordinates[i] = (i<dst.length) ? dst[i] : 0;
             }
             try {
                 calculator.setStartPoint(sourcePt);
@@ -376,7 +376,7 @@ public final class Referencing extends Formulas implements XReferencing {
                 continue;
             }
             for (int i=dim; --i>=0;) {
-                sourcePt.ordinates[i] = (i < src.length) ? src[i] : 0;
+                sourcePt.coordinates[i] = (i < src.length) ? src[i] : 0;
             }
             double distance=0, azimuth=0;
             switch (mov.length) {

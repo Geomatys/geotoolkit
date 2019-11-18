@@ -27,6 +27,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,14 +46,12 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.util.iso.Names;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -61,13 +60,10 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.coverage.DefaultCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -80,7 +76,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -114,7 +109,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     private static final GridCoverageBuilder GCF = new GridCoverageBuilder();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
-    private final List<FeatureCollection> featureColls = new ArrayList<>();
+    private final List<FeatureSet> featureColls = new ArrayList<>();
     private final List<GridCoverage> coverages = new ArrayList<>();
     private final List<Envelope> envelopes = new ArrayList<>();
     private final List<Date[]> dates = new ArrayList<>();
@@ -129,33 +124,26 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         sftb.addAttribute(String.class).setName("att1");
         sftb.addAttribute(Double.class).setName("att2");
         final FeatureType sft = sftb.build();
-        FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
 
-        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriter(
-                QueryBuilder.filtered(sft.getName().toString(),Filter.EXCLUDE));
+        WritableFeatureSet col = new InMemoryFeatureSet("id", sft);
 
-        Feature sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, -90)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, 90)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
+        Feature sf1 = sft.newInstance();
+        sf1.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));
+        sf1.setPropertyValue("att1", "value1");
+        Feature sf2 = sft.newInstance();
+        sf2.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, -90)));
+        sf2.setPropertyValue("att1", "value1");
+        Feature sf3 = sft.newInstance();
+        sf3.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, 90)));
+        sf3.setPropertyValue("att1", "value1");
+        Feature sf4 = sft.newInstance();
+        sf4.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
+        sf4.setPropertyValue("att1", "value1");
+        Feature sf5 = sft.newInstance();
+        sf5.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
+        sf5.setPropertyValue("att1", "value1");
 
-        writer.close();
+        col.add(Arrays.asList(sf1, sf2, sf3, sf4, sf5).iterator());
 
         featureColls.add(col);
 
@@ -253,7 +241,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testFeatureRendering() throws Exception {
-        for(FeatureCollection col : featureColls){
+        for(FeatureSet col : featureColls){
             final MapLayer layer = MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer()));
             testRendering(layer);
         }
@@ -283,7 +271,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         final Feature f = ft.newInstance();
         f.setPropertyValue("coverage",gcb.getGridCoverage2D());
-        final FeatureCollection collection = FeatureStoreUtilities.collection(f);
+        final FeatureSet collection = new InMemoryFeatureSet(ft, Arrays.asList(f));
 
 
         final String name = "mySymbol";
@@ -465,7 +453,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
      * Test the CoverageReader view of a scene.
      */
     @Test
-    public void testPortrayalCoverageReader() throws DataStoreException {
+    public void testPortrayalCoverageResource() throws DataStoreException {
 
         //create a test coverage
         final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
@@ -487,12 +475,12 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         context.layers().add(cl);
 
         final SceneDef sceneDef = new SceneDef(context);
-        final GridCoverageReader reader = DefaultPortrayalService.asCoverageReader(sceneDef);
+        final GridCoverageResource resource = DefaultPortrayalService.asResource(sceneDef);
 
-        final GridGeometry gridGeom = reader.getGridGeometry();
+        final GridGeometry gridGeom = resource.getGridGeometry();
         assertNotNull(gridGeom);
 
-        final GridCoverage result = reader.read(null);
+        final GridCoverage result = resource.read(null);
         final RenderedImage image = result.render(null);
         assertEquals(1000, image.getWidth());
     }
@@ -522,8 +510,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(pt, crs);
         feature.setPropertyValue("geom", pt);
 
-        final FeatureCollection col = FeatureStoreUtilities.collection(feature);
-        final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col,SF.style(symbolizer));
+        final FeatureSet col = new InMemoryFeatureSet(ft, Arrays.asList(feature));
+        final MapLayer layer = MapBuilder.createFeatureLayer(col,SF.style(symbolizer));
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
 
@@ -562,7 +550,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setGridGeometry(gg);
         final GridCoverage coverage = gcb.getGridCoverage2D();
 
-        final GridCoverageResource gcr = new DefaultCoverageResource(coverage, Names.createLocalName(null, null, CoverageUtilities.getName(coverage)));
+        final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
         final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
         layer.setSelectable(true);
 

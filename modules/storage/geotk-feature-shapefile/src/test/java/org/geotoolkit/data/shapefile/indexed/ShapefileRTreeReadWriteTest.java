@@ -24,15 +24,15 @@ import java.net.MalformedURLException;
 import org.geotoolkit.ShapeTestData;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
 
 import org.locationtech.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.test.TestData;
 import org.opengis.util.GenericName;
 

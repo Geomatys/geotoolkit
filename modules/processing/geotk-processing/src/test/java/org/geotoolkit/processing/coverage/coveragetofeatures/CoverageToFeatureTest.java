@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -30,13 +31,14 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -66,6 +68,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -92,7 +95,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
         final PixelInCell pixPos = PixelInCell.CELL_CENTER;
-        final GridCoverageReader reader = buildReader(pixPos);
+        final GridCoverageResource reader = buildResource(pixPos);
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, CoverageToFeaturesDescriptor.NAME);
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
@@ -133,7 +136,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         }
     }
 
-    private GridCoverageReader buildReader(PixelInCell pixPos) throws NoSuchAuthorityCodeException, FactoryException {
+    private GridCoverageResource buildResource(PixelInCell pixPos) throws NoSuchAuthorityCodeException, FactoryException {
 
         final BufferedImage image = new BufferedImage(max, max, BufferedImage.TYPE_INT_RGB);
 
@@ -245,19 +248,23 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static class SimpleCoverageReader extends AbstractGridCoverageReader {
+    private static class SimpleCoverageReader extends AbstractGridResource {
 
         private final GridCoverage coverage;
         private final PixelInCell pixPos;
+        private final GenericName name;
 
         public SimpleCoverageReader(final GridCoverage coverage, PixelInCell pixPos) {
+            super(null);
             this.coverage = coverage;
             this.pixPos = pixPos;
+            InternationalString nam = CoverageUtilities.getName(coverage);
+            this.name = nam == null ? null : Names.createLocalName(null, null, nam);
         }
 
         @Override
-        public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
-            return Names.createLocalName(null, null, CoverageUtilities.getName(coverage));
+        public Optional<GenericName> getIdentifier() throws DataStoreException {
+            return Optional.ofNullable(name);
         }
 
         @Override
@@ -271,11 +278,10 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         }
 
         @Override
-        public GridCoverage read(final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
-            return coverage;
+        protected void createMetadata(MetadataBuilder metadata) throws DataStoreException {
+            super.createMetadata(metadata); //To change body of generated methods, choose Tools | Templates.
         }
 
-        @Override
         public SpatialMetadata getCoverageMetadata() throws CoverageStoreException {
             SpatialMetadata meta = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
             GridDomainAccessor grid = new GridDomainAccessor(meta);
@@ -283,6 +289,11 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
             ReferencingBuilder ref = new ReferencingBuilder(meta);
             ref.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem());
             return meta;
+        }
+
+        @Override
+        public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+            return coverage;
         }
     }
 }

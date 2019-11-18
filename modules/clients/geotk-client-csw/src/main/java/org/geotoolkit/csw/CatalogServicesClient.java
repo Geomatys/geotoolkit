@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
@@ -35,7 +36,6 @@ import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.csw.xml.CSWBindingUtilities;
 import org.geotoolkit.csw.xml.CSWVersion;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 
@@ -68,14 +68,14 @@ public class CatalogServicesClient extends AbstractClient {
      * @throws IllegalStateException throws an exception if the capabilities cannot be resolved for serverUrl
      */
     public CatalogServicesClient(final URL serverURL) throws IllegalStateException{
-        super(create(CSWClientFactory.PARAMETERS, serverURL, null, null));
+        super(create(CSWProvider.PARAMETERS, serverURL, null, null));
         final AbstractCapabilities capa = getServiceCapabilities();
         if(capa == null){
             throw new IllegalStateException("Cannot get Capabilities document from the server "+serverURL.toString());
         }
         final String v = capa.getVersion();
         try {
-            parameters.parameter(CSWClientFactory.VERSION.getName().getCode()).setValue(CSWVersion.fromCode(v).getCode());
+            parameters.parameter(CSWProvider.VERSION.getName().getCode()).setValue(CSWVersion.fromCode(v).getCode());
         } catch (IllegalArgumentException ex) {
             throw new IllegalStateException("unknown CSW version : " + v,ex);
         }
@@ -96,14 +96,14 @@ public class CatalogServicesClient extends AbstractClient {
     }
 
     public CatalogServicesClient(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(CSWClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(CSWProvider.PARAMETERS, serverURL, security, null));
         ArgumentChecks.ensureNonNull("version", version);
-        parameters.parameter(CSWClientFactory.VERSION.getName().getCode()).setValue(version);
+        parameters.parameter(CSWProvider.VERSION.getName().getCode()).setValue(version);
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(CSWClientFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(CSWProvider.NAME);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class CatalogServicesClient extends AbstractClient {
      * Returns the currently used version for this server
      */
     public CSWVersion getVersion() {
-        return CSWVersion.fromCode(parameters.getValue(CSWClientFactory.VERSION));
+        return CSWVersion.fromCode(parameters.getValue(CSWProvider.VERSION));
     }
 
     /**

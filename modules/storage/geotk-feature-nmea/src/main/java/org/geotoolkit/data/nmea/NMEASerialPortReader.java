@@ -41,11 +41,11 @@ import net.sf.marineapi.nmea.io.SentenceReader;
 import net.sf.marineapi.nmea.sentence.SentenceValidator;
 import net.sf.marineapi.provider.event.ProviderListener;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import static org.geotoolkit.data.nmea.NMEAStore.NMEA_TYPE;
-import static org.geotoolkit.data.nmea.NMEAStore.TYPE_NAME;
 
 /**
  * Scan serial ports to find GPS data, and then initialize a reader on matching stream.
@@ -68,7 +68,7 @@ public class NMEASerialPortReader implements ProviderListener<NMEABuilder.Featur
     private final CommPort port;
     private InputStream input = null;
 
-    private WeakReference<MemoryFeatureStore> store = null;
+    private WeakReference<WritableFeatureSet> store = null;
 
     private SentenceReader reader = null;
     private NMEABuilder builder = null;
@@ -156,14 +156,14 @@ public class NMEASerialPortReader implements ProviderListener<NMEABuilder.Featur
      * @return The {@link MemoryFeatureStore} in which read data will be stored.
      * @throws IOException If a problem occurs when opening port input stream.
      */
-    public MemoryFeatureStore read() throws IOException {
+    public WritableFeatureSet read() throws IOException {
         // Start GPS measure reading
         if (input == null && port != null) {
             input = port.getInputStream();
         }
         reader = new SentenceReader(input);
 
-        final MemoryFeatureStore fStore = new MemoryFeatureStore(NMEA_TYPE, true);
+        final WritableFeatureSet fStore = new InMemoryFeatureSet(NMEA_TYPE);
         store = new WeakReference<>(fStore);
 
         builder = new NMEABuilder(reader);
@@ -226,7 +226,7 @@ public class NMEASerialPortReader implements ProviderListener<NMEABuilder.Featur
     public void providerUpdate(NMEABuilder.FeatureEvent evt) {
         if (store.get() != null && evt != null && evt.getData() != null) {
             try {
-                store.get().addFeatures(TYPE_NAME.toString(), Collections.singleton(evt.getData()));
+                store.get().add(Collections.singleton(evt.getData()).iterator());
             } catch (DataStoreException ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }

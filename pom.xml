@@ -133,7 +133,7 @@
     <profile>
       <id>JDK9</id>
       <activation>
-        <jdk>[1.9,)</jdk>
+        <jdk>[9,)</jdk>
       </activation>
       <properties>
         <sis.build.helper.version>${sis.version}</sis.build.helper.version>
@@ -147,16 +147,15 @@
               <release>8</release>
             </configuration>
           </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <argLine>--add-modules java.xml.bind,java.xml.ws.annotation,javafx.graphics</argLine>
-              <trimStackTrace>false</trimStackTrace>
-            </configuration>
-          </plugin>
         </plugins>
       </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-runtime</artifactId>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
     </profile>
     <profile>
       <id>sign-artifacts</id>
@@ -204,12 +203,12 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-M11</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>2.0-M0069</sis.version>
+    <geoapi.version>4.0-M12</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>2.0-M0070</sis.version>
     <sis.build.helper.version>0.8</sis.build.helper.version>
-    <sis.non-free.version>1.0-M1</sis.non-free.version>
+    <sis.non-free.version>1.0</sis.non-free.version>
     <netcdf.version>4.6.13</netcdf.version>
-    <lucene.version>5.4.1</lucene.version>
+    <lucene.version>5.4.1</lucene.version>        <!-- Can not upgrade to 8.2.0 because the module that uses it is designed for a specific ElasticSearch version. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
@@ -245,31 +244,6 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- Apache SIS -->
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-utility</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.opengis</groupId>
-          <artifactId>geoapi-pending</artifactId>
-          <version>${geoapi.version}</version>
-      </dependency>
-        <dependency>
-          <groupId>org.opengis</groupId>
-          <artifactId>geoapi-conformance</artifactId>
-          <version>${geoapi.version}</version>
-        </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-utility</artifactId>
-          <version>${sis.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-      </dependency>
-
       <dependency>
           <groupId>org.apache.sis.core</groupId>
           <artifactId>sis-referencing</artifactId>
@@ -299,58 +273,6 @@
       </dependency>
 
       <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-referencing</artifactId>
-          <version>${sis.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-metadata</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-metadata</artifactId>
-          <version>${sis.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.core</groupId>
-          <artifactId>sis-feature</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.storage</groupId>
-          <artifactId>sis-storage</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.storage</groupId>
-          <artifactId>sis-netcdf</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.storage</groupId>
-          <artifactId>sis-geotiff</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.sis.profiles</groupId>
-          <artifactId>sis-french-profile</artifactId>
-          <version>${sis.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_core</artifactId>
         <version>1.1.3</version>
@@ -371,51 +293,28 @@
         <version>2.0.235</version>
       </dependency>
 
-      <!-- Geometries -->
-      <dependency>
-        <groupId>org.locationtech.jts</groupId>
-        <artifactId>jts-core</artifactId>
-        <version>1.16.1</version>
-        <exclusions>
-          <exclusion>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
       <!-- Miscellaneous utilities -->
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
         <artifactId>quartz</artifactId>
-        <version>2.0.1</version>
+        <version>2.3.1</version>
       </dependency>
       <dependency>
         <groupId>commons-beanutils</groupId> <!-- @todo see excludes in sub-modules. -->
         <artifactId>commons-beanutils</artifactId>
-        <version>1.8.3</version>
+        <version>1.9.4</version>
       </dependency>
       <dependency>
           <groupId>io.netty</groupId>
           <artifactId>netty</artifactId>
-          <version>3.9.4.Final</version>
+          <version>3.9.4.Final</version>        <!-- Can not upgrade to 3.10.6 because it breaks Geotk build. -->
       </dependency>
 
       <!-- XML -->
       <dependency>
-        <groupId>org.jdom</groupId>
-        <artifactId>jdom</artifactId>
-        <version>1.1.3</version>
-      </dependency>
-      <dependency>
-        <groupId>xerces</groupId>  <!-- @todo - used only in JTS exclusion. Should we omit? -->
-        <artifactId>xercesImpl</artifactId>
-        <version>2.7.1</version>
-      </dependency>
-      <dependency>
         <groupId>com.fasterxml.woodstox</groupId>
         <artifactId>woodstox-core</artifactId>
-        <version>5.1.0</version>
+        <version>6.0.0</version>
       </dependency>
       <dependency>
         <groupId>jaxen</groupId>
@@ -426,81 +325,35 @@
        <!-- JSON -->
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>2.6.4</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>2.6.4</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>2.6.4</version>
+        <version>2.10.0</version>
       </dependency>
 
       <!-- Web -->
       <dependency>
-        <groupId>net.iharder</groupId> <!-- This dependency will be removed with JDK8. -->
-        <artifactId>base64</artifactId>
-        <version>2.3.8</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>1.3.2</version>
       </dependency>
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>3.1.0</version> <!-- TODO: version mismatch with constellation. -->
-      </dependency>
-      <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>3.1</version>
-        <!-- Transitive dependencies: commons-codec 1.2 and commons-logging 1.0.4.
-             Those two dependencies are overwritten with more recent versions in this pom.xml. -->
-      </dependency>
-      <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>1.9</version>                  <!-- See comment for edu.ucar dependency. -->
-      </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
-        </dependency>
+
       <!-- Logging -->
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>1.2</version>                  <!-- See comment for edu.ucar dependency. -->
+        <version>1.2</version>
       </dependency>
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>1.2.16</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.7.22</version>               <!-- See comment for edu.ucar dependency. -->
+        <version>1.2.17</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-jdk14</artifactId>
-        <version>1.7.22</version>               <!-- See comment for edu.ucar dependency. -->
+        <version>1.7.22</version>               <!-- Version used by edu.ucar dependency. -->
         <scope>runtime</scope>                  <!-- Should never be needed at compile time. -->
       </dependency>
 
-      <!--
-        NetCDF dependency. If the version is updated, remember to update the information below.
-        Transitive dependencies relevant to Geotk (for dependencies convergence) are:
-
-           slf4j                1.7.22
-           commons-logging      1.2
-           commons-codec        1.9
-           commons-httpclient   4.5.1    (Geotk is currently on an older version)
-           jdom                 2.0.4    (Geotk is currently on an older version)
-      -->
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>cdm</artifactId>
@@ -511,23 +364,17 @@
       <dependency>
         <groupId>net.postgis</groupId>
         <artifactId>postgis-jdbc</artifactId>
-        <version>2.2.1</version>
+        <version>2.3.0</version>
       </dependency>
       <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.16</version>
+        <version>8.0.17</version>
       </dependency>
       <dependency>
         <groupId>commons-dbcp</groupId>
         <artifactId>commons-dbcp</artifactId>
         <version>1.4</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>1.4.5</version>
-        <scope>provided</scope> <!-- Already included in JEE -->
       </dependency>
 
       <!-- GUI and application platform -->
@@ -538,56 +385,8 @@
       </dependency>
       <dependency>
         <groupId>org.swinglabs</groupId>
-        <artifactId>swing-worker</artifactId>
-        <version>1.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.swinglabs</groupId>
         <artifactId>jxlayer</artifactId>
         <version>3.0.4</version>
-      </dependency>
-      <dependency>
-        <groupId>org.netbeans</groupId>
-        <artifactId>wizard</artifactId>
-        <version>0.998.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-swing-outline</artifactId>
-        <version>RELEASE802</version>
-      </dependency>
-      <dependency>
-        <groupId>org.netbeans.api</groupId>
-        <artifactId>org-openide-awt</artifactId>
-        <version>RELEASE802</version>
-      </dependency>
-      <dependency>
-        <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-api-visual</artifactId>
-        <version>RELEASE802</version>
-      </dependency>
-      <dependency>
-        <groupId>net.java.dev.timingframework</groupId>
-        <artifactId>timingframework</artifactId>
-        <version>1.0</version>
-      </dependency>
-      <dependency>
-        <groupId>jfree</groupId>
-        <artifactId>jfreechart</artifactId>
-        <version>1.0.13</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun</groupId>
-        <artifactId>jlfgr</artifactId>
-        <version>1.0</version>
-        <scope>runtime</scope>
-      </dependency>
-
-      <!-- latest jaxb version, there are bugs in the jdk7 jaxb version with particule group lists-->
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>2.2.7</version>
       </dependency>
 
       <!-- Lucene -->
@@ -603,6 +402,11 @@
       </dependency>
 
       <!-- Batik SVG -->
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>xmlgraphics-commons</artifactId>
+        <version>2.3</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.xmlgraphics</groupId>
         <artifactId>batik-transcoder</artifactId>
@@ -623,28 +427,28 @@
       <dependency>
         <groupId>net.sf.jasperreports</groupId>
         <artifactId>jasperreports</artifactId>
-        <version>6.1.0</version>
+        <version>6.1.0</version>                <!-- Can not upgrade to 6.9.0 because it breaks Geotk tests. -->
       </dependency>
 
       <!-- Groovy -->
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>2.2.2</version>
+        <version>2.4.17</version>               <!-- Versions 2.5+ are no longer packaged as JAR files. -->
       </dependency>
 
       <!-- YAML -->
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
-        <version>1.13</version>
+        <version>1.13</version>                 <!-- Can not upgrade to 1.25 because it breaks Geotk compilation. -->
       </dependency>
 
       <!-- Data sources -->
       <dependency>
         <groupId>net.sf.marineapi</groupId>
         <artifactId>marineapi</artifactId>
-        <version>0.9.0</version>
+        <version>0.11.0</version>
       </dependency>
       <dependency>
         <groupId>org.rxtx</groupId>
@@ -1111,7 +915,6 @@
            Modules for the build in approximate dependency order
        =========================================================== -->
   <modules>
-    <module>build</module>
     <module>modules</module>
     <module>demos</module>
   </modules>

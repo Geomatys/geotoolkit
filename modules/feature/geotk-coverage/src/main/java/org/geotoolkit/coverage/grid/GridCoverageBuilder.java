@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
@@ -53,6 +54,7 @@ import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Units;
@@ -65,11 +67,13 @@ import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Cloneable;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -864,19 +868,19 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * See {@link #setEnvelope(Envelope)} for information about recommended practices and
      * precedence.
      *
-     * @param  ordinates The ordinates of the new envelope to use, or {@code null}.
+     * @param  coordinates The coordinates of the new envelope to use, or {@code null}.
      * @throws IllegalArgumentException if the envelope is illegal.
      */
-    public void setEnvelope(final double... ordinates) throws IllegalArgumentException {
+    public void setEnvelope(final double... coordinates) throws IllegalArgumentException {
         GeneralEnvelope env = null;
-        if (ordinates != null) {
+        if (coordinates != null) {
             final CoordinateReferenceSystem crs = this.crs;
             if (crs != null) {
                 env = new GeneralEnvelope(crs);
             } else {
-                env = new GeneralEnvelope(ordinates.length / 2);
+                env = new GeneralEnvelope(coordinates.length / 2);
             }
-            env.setEnvelope(ordinates);
+            env.setEnvelope(coordinates);
         }
         setEnvelope(env);
     }
@@ -1010,7 +1014,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         MathTransform candidate = gridToCRS;
         if (candidate == null) {
             final GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(getGridGeometry(false));
-            if (gridGeometry == null || (!force && !gridGeometry.isDefined(GridGeometry2D.GRID_TO_CRS))) {
+            if (gridGeometry == null || (!force && !gridGeometry.isDefined(GridGeometry.GRID_TO_CRS))) {
                 return null;
             }
             final PixelInCell pixelAnchor = this.pixelAnchor;
@@ -1465,12 +1469,295 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         final double[] maximum = getArrayProperty("maximum");
         if (names != null || minimum != null || maximum != null || units != null || colors != null) {
             if (raster != null) {
-                return RenderedSampleDimension.create(names, raster, minimum, maximum, units, hints);
+                return create(names, raster, minimum, maximum, units, hints);
             } else if (image != null) {
-                return RenderedSampleDimension.create(names, image, minimum, maximum, units, hints);
+                return create(names, image, minimum, maximum, units, hints);
             }
         }
         return null;
+    }
+
+    /**
+     * Creates a set of sample dimensions for the given image. The array length of both
+     * arguments must matches the number of bands in the supplied {@code image}.
+     *
+     * @param  name   The name for data (e.g. "Elevation"), or {@code null} if none.
+     * @param  image  The image for which to create a set of sample dimensions, or {@code null}.
+     * @param  src    User-provided sample dimensions, or {@code null} if none.
+     * @param  dst    The array where to put sample dimensions.
+     * @return {@code true} if all sample dimensions are geophysics (quantitative), or
+     *         {@code false} if all sample dimensions are non-geophysics (qualitative).
+     * @throws IllegalArgumentException if geophysics and non-geophysics dimensions are mixed.
+     */
+    static boolean create(final CharSequence  name,
+                          final RenderedImage image,
+                          final SampleDimension[] src,
+                          final SampleDimension[] dst)
+    {
+        final SampleModel model = image.getSampleModel();
+        final int numBands = model.getNumBands();
+        if (src != null && src.length != numBands) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
+                    numBands, src.length, "SampleDimension"));
+        }
+        if (dst.length != numBands) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
+                    numBands, dst.length, "SampleDimension"));
+        }
+        /*
+         * Now, we know that the number of bands and the array length are consistent.
+         * Search if there is any null SampleDimension. If any, replace the null value
+         * by a default SampleDimension. In all cases, count the number of geophysics
+         * and non-geophysics sample dimensions.
+         */
+        int countGeophysics = 0;
+        int countIndexed    = 0;
+        SampleDimension[] defaultSD = null;
+        for (int i=0; i<numBands; i++) {
+            SampleDimension sd = (src!=null) ? src[i] : null;
+            if (sd == null) {
+                /*
+                 * If the user didn't provided explicitly a SampleDimension, create a default one.
+                 * We will creates a SampleDimension for all bands in one step, even if only a few
+                 * of them are required.
+                 */
+                if (defaultSD == null) {
+                    defaultSD = new SampleDimension[numBands];
+                    CharSequence[] names = null;
+                    if (name != null) {
+                        names = new CharSequence[numBands];
+                        Arrays.fill(names, name);
+                    }
+                    GridCoverageBuilder.create(names, PixelIterator.create(image),
+                            model, null, null, null, defaultSD, null);
+                }
+                sd = defaultSD[i];
+            }
+            dst[i] = sd;
+            /*
+             * We use a equality test and not == because in some cases
+             * the inverse sample dimension can be the original sample dimension
+             * inverse, which is a GridSample dimension and not a RenderedSampleDimension.
+             */
+            if (sd.forConvertedValues(true ).equals(sd)) countGeophysics++;
+            if (sd.forConvertedValues(false).equals(sd)) countIndexed++;
+        }
+        if (countGeophysics == numBands) {
+            return true;
+        }
+        if (countIndexed == numBands) {
+            return false;
+        }
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.MixedCategories));
+    }
+
+    /**
+     * Creates a set of sample dimensions for the given rendered image.
+     *
+     * @param  names The name for each bands (e.g. "Elevation"), or {@code null} if none.
+     * @param  image The rendered image.
+     * @param  min The minimal value for each bands, or {@code null} for computing it automatically.
+     * @param  max The maximal value for each bands, or {@code null} for computing it automatically.
+     * @param  units The units of sample values, or {@code null} if unknown.
+     * @param  hints An optional set of rendering hints, or {@code null} if none. Those hints will
+     *         not affect the sample dimensions to be created. However, they may affect the sample
+     *         dimensions to be returned by <code>{@link #geophysics geophysics}(false)</code>, i.e.
+     *         the view to be used at rendering time. The optional hint
+     *         {@link Hints#SAMPLE_DIMENSION_TYPE} specifies the {@link SampleDimensionType}
+     *         to be used at rendering time, which can be one of
+     *         {@link SampleDimensionType#UBYTE UBYTE} or
+     *         {@link SampleDimensionType#USHORT USHORT}.
+     * @return The sample dimension for the given image.
+     */
+    static SampleDimension[] create(final CharSequence[] names,
+                                    final RenderedImage  image,
+                                    final double[]       min,
+                                    final double[]       max,
+                                    final Unit<?>[]      units,
+                                    final RenderingHints hints)
+    {
+        final SampleModel model = image.getSampleModel();
+        final SampleDimension[] dst = new SampleDimension[model.getNumBands()];
+        create(names, (min == null || max == null) ? PixelIterator.create(image) : null,
+               model, min, max, units, dst, hints);
+        return dst;
+    }
+
+    /**
+     * Creates a set of sample dimensions for the given raster.
+     *
+     * @param  names The name for each bands (e.g. "Elevation"), or {@code null} if none.
+     * @param  raster The raster.
+     * @param  min The minimal value for each bands, or {@code null} for computing it automatically.
+     * @param  max The maximal value for each bands, or {@code null} for computing it automatically.
+     * @param  units The units of sample values, or {@code null} if unknown.
+     * @param  hints An optional set of rendering hints, or {@code null} if none. Those hints will
+     *         not affect the sample dimensions to be created. However, they may affect the sample
+     *         dimensions to be returned by <code>{@link #geophysics geophysics}(false)</code>, i.e.
+     *         the view to be used at rendering time. The optional hint
+     *         {@link Hints#SAMPLE_DIMENSION_TYPE} specifies the {@link SampleDimensionType}
+     *         to be used at rendering time, which can be one of
+     *         {@link SampleDimensionType#UBYTE UBYTE} or
+     *         {@link SampleDimensionType#USHORT USHORT}.
+     * @return The sample dimension for the given raster.
+     */
+    static SampleDimension[] create(final CharSequence[] names,
+                                    final Raster         raster,
+                                    final double[]       min,
+                                    final double[]       max,
+                                    final Unit<?>[]      units,
+                                    final RenderingHints hints)
+    {
+        final SampleDimension[] dst = new SampleDimension[raster.getNumBands()];
+        create(names, (min == null || max == null) ? new PixelIterator.Builder().create(raster) : null,
+               raster.getSampleModel(), min, max, units, dst, hints);
+        return dst;
+    }
+
+    /**
+     * Creates a set of sample dimensions for the data backing the given iterator.
+     *
+     * @param  names The name for each band (e.g. "Elevation"), or {@code null} if none.
+     * @param  iterator The iterator through the raster data, or {@code null}.
+     * @param  model The image or raster sample model.
+     * @param  min The minimal value, or {@code null} for computing it automatically.
+     * @param  max The maximal value, or {@code null} for computing it automatically.
+     * @param  units The units of sample values, or {@code null} if unknown.
+     * @param  dst The array where to store sample dimensions. The array length must matches
+     *         the number of bands.
+     * @param  hints An optional set of rendering hints, or {@code null} if none.
+     *         Those hints will not affect the sample dimensions to be created. However,
+     *         they may affect the sample dimensions to be returned by
+     *         <code>{@link #geophysics geophysics}(false)</code>, i.e.
+     *         the view to be used at rendering time. The optional hint
+     *         {@link Hints#SAMPLE_DIMENSION_TYPE} specifies the {@link SampleDimensionType}
+     *         to be used at rendering time, which can be one of
+     *         {@link SampleDimensionType#UBYTE UBYTE} or
+     *         {@link SampleDimensionType#USHORT USHORT}.
+     */
+    static void create(final CharSequence[]        names,
+                               final PixelIterator         iterator,
+                               final SampleModel           model,
+                               double[]                    min,
+                               double[]                    max,
+                               final Unit<?>[]             units,
+                               final SampleDimension[] dst,
+                               final RenderingHints        hints)
+    {
+        final int numBands = dst.length;
+        if (min != null && min.length != numBands) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
+                    numBands, min.length, "min[i]"));
+        }
+        if (max != null && max.length != numBands) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
+                    numBands, max.length, "max[i]"));
+        }
+        /*
+         * Arguments are known to be valid. We now need to compute two ranges:
+         *
+         * STEP 1: Range of target (sample) values. This is computed in the following block.
+         * STEP 2: Range of source (geophysics) values. It will be computed one block later.
+         *
+         * The target (sample) values will typically range from 0 to 255 or 0 to 65535, but the
+         * general case is handled as well. If the source (geophysics) raster uses floating point
+         * numbers, then a "nodata" category may be added in order to handle NaN values. If the
+         * source raster use integer numbers instead, then we will rescale samples only if they
+         * would not fit in the target data type.
+         */
+        boolean addNoData = false;
+        final SampleDimensionType sourceType = TypeMap.getSampleDimensionType(model, 0);
+        final boolean          sourceIsFloat = TypeMap.isFloatingPoint(sourceType);
+        SampleDimensionType targetType = null;
+        if (hints != null) {
+            targetType = (SampleDimensionType) hints.get(Hints.SAMPLE_DIMENSION_TYPE);
+        }
+        if (targetType == null) {
+            // Default to TYPE_BYTE for floating point images only; otherwise keep unchanged.
+            targetType = sourceIsFloat ? SampleDimensionType.UNSIGNED_8BITS : sourceType;
+        }
+        // Default setting: no scaling
+        final boolean  targetIsFloat = TypeMap.isFloatingPoint(targetType);
+        NumberRange<?> targetRange   = TypeMap.getRange(targetType);
+        final boolean needScaling;
+        if (targetIsFloat) {
+            // Never rescale if the target is floating point numbers.
+            needScaling = false;
+        } else if (sourceIsFloat) {
+            // Always rescale for "float to integer" conversions. In addition,
+            // Use 0 value as a "no data" category for unsigned data type only.
+            needScaling = true;
+            if (!TypeMap.isSigned(targetType)) {
+                addNoData = true;
+                targetRange = TypeMap.getPositiveRange(targetType);
+            }
+        } else {
+            // In "integer to integer" conversions, rescale only if
+            // the target range is smaller than the source range.
+            needScaling = !targetRange.containsAny(TypeMap.getRange(sourceType));
+        }
+        /*
+         * Computes the minimal and maximal values, if not explicitly provided.
+         * This information is required for determining the range of geophysics
+         * values.
+         */
+        if (needScaling && (min == null || max == null)) {
+            final boolean computeMin;
+            final boolean computeMax;
+            if (computeMin = (min == null)) {
+                min = new double[numBands];
+                Arrays.fill(min, Double.POSITIVE_INFINITY);
+            }
+            if (computeMax = (max == null)) {
+                max = new double[numBands];
+                Arrays.fill(max, Double.NEGATIVE_INFINITY);
+            }
+            while (iterator.next()) {
+                for (int b = 0; b < numBands; b++) {
+                    final double z = iterator.getSampleDouble(b);
+                    if (computeMin && z < min[b]) min[b] = z;
+                    if (computeMax && z > max[b]) max[b] = z;
+                    if (computeMin && computeMax) {
+                        if (!(min[b] < max[b])) {
+                            min[b] = 0;
+                            max[b] = 1;
+                        }
+                    }
+                }
+            }
+        }
+        /*
+         * Now, constructs the sample dimensions. We will unconditionally provides a "nodata"
+         * category for floating point images targeting unsigned integers, since we don't know
+         * if the user plan to have NaN values. Even if the current image doesn't have NaN values,
+         * it could have NaN later if the image uses a writable raster.
+         */
+        final SampleDimension.Builder builder = new SampleDimension.Builder();
+        CharSequence untitled = null;
+        for (int b=0; b<numBands; b++) {
+            if (addNoData) {
+                builder.addQualitative(null, 0);
+            }
+            CharSequence name = (names != null) ? names[b] : null;
+            if (name == null) {
+                if (untitled == null) {
+                    untitled = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
+                }
+                name = untitled;
+                if (numBands != 1) {
+                    name = Vocabulary.formatInternational(Vocabulary.Keys.Hyphen_2, name, (b+1));
+                }
+            }
+            NumberRange<?> sourceRange = TypeMap.getRange(sourceType);
+            if (needScaling) {
+                final NumberRange<Double> range = NumberRange.create(min[b], true, max[b], true);
+                sourceRange = range.castTo((Class) sourceRange.getElementType());   // TODO
+                builder.addQuantitative(name, targetRange, sourceRange);
+            }
+            builder.setName(name);
+            dst[b] = builder.build().forConvertedValues(true);
+            builder.clear();
+        }
     }
 
     /**

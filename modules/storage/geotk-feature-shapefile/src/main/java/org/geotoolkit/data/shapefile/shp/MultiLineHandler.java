@@ -18,15 +18,14 @@
 package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
-
+import java.nio.DoubleBuffer;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
-import java.nio.DoubleBuffer;
-
-import org.geotoolkit.geometry.jts.JTS;
-import org.apache.sis.storage.DataStoreException;
 
 /**
  * The default JTS handler for shapefile. Currently uses the default JTS
@@ -87,19 +86,19 @@ public class MultiLineHandler extends AbstractShapeHandler {
         }
     }
 
-    protected Object createNull() {
+    protected Geometry createNull() {
         return GEOMETRY_FACTORY.createMultiLineString((LineString[]) null);
     }
 
     @Override
-    public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
+    public Geometry estimated(final double minX, final double maxX, final double minY, final double maxY) {
         final double[] array = new double[]{minX,minY,maxX,maxY};
         return GEOMETRY_FACTORY.createMultiLineString(new LineString[] {
                GEOMETRY_FACTORY.createLineString(new ShapeCoordinateSequence2D(array,2))});
     }
 
     @Override
-    public Object read(final ByteBuffer buffer, final ShapeType type) {
+    public Geometry read(final ByteBuffer buffer, final ShapeType type) {
 
         if (type == ShapeType.NULL) {
             return createNull();

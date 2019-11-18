@@ -70,7 +70,6 @@ public class GetMapTest extends org.geotoolkit.test.TestBase {
     /**
      * Prepare a Get Map request with parameters fitting {@link #checkBefore130(org.geotoolkit.wms.GetMapRequest) }
      * and {@link #checkSince130(org.geotoolkit.wms.GetMapRequest) } tests.
-     * @param request
      */
     private void fillGetMap(final GetMapRequest request) {
         final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();

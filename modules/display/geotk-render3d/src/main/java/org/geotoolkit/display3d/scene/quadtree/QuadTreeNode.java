@@ -72,10 +72,7 @@ public class QuadTreeNode extends SceneNode3D {
     /**
      * Constructor for root QuadTree node
      *
-     * @param map
-     * @param parent
      * @param envelope if null, get map.getTerrain().getEnvelope()
-     * @param position
      */
     public QuadTreeNode(Map3D map, QuadTreeNode parent, Envelope envelope, Point position) {
         super(map);
@@ -154,9 +151,6 @@ public class QuadTreeNode extends SceneNode3D {
      * Get or create the child at position of succession of couple (x,y)
      * Couple (x,y) can be :
      * (0,0),(0,1),(1,0) or (1,1)
-     *
-     * @param id
-     * @return
      */
     public QuadTreeNode getOrCreateChild(Point[] id) {
         if (id == null) return null;
@@ -171,9 +165,6 @@ public class QuadTreeNode extends SceneNode3D {
      * Get or create the child at position (x,y)
      * Couple (x,y) can be :
      * (0,0),(0,1),(1,0) or (1,1)
-     *
-     * @param pos
-     * @return
      */
     public QuadTreeNode getOrCreateChild(Point pos) {
         if (pos == null) return null;
@@ -183,7 +174,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Return the object id of this node
-     * @return
      */
     public Point[] getId() {
         final Point[] stack = new Point[getTreeDepth()];
@@ -199,7 +189,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Get the sceneNode to draw
-     * @return
      */
     public SceneNode3D getData() {
         return this.data;
@@ -211,8 +200,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Create data and initialize with first parents nodes with data
-     *
-     * @return
      */
     public SceneNode3D getOrCreateData() {
         if (this.data == null) {
@@ -346,8 +333,6 @@ public class QuadTreeNode extends SceneNode3D {
     /**
      * Return first parent with data != null
      * return null else or if this node is the root node
-     *
-     * @return
      */
     private QuadTreeNode getFirstParentWithDataImage() {
         if (this.getTreeDepth() == 0) return null;
@@ -365,8 +350,6 @@ public class QuadTreeNode extends SceneNode3D {
     /**
      * Return first parent with data != null
      * return null else or if this node is the root node
-     *
-     * @return
      */
     private QuadTreeNode getFirstParentWithDataMNT() {
         if (this.getTreeDepth() == 0) return null;
@@ -383,7 +366,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Shortcut to id.length
-     * @return
      */
     public int getTreeDepth() {
         return this.pyramidPosition.z;
@@ -391,7 +373,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Return the QuadTreeNode position relative to his parent
-     * @return
      */
     public Point getNodePosition() {
         return this.parentPosition;
@@ -399,7 +380,6 @@ public class QuadTreeNode extends SceneNode3D {
 
     /**
      * Return the QuadTreeNode position relative to mosaic
-     * @return
      */
     public Point3i getPosition() {
         return this.pyramidPosition;

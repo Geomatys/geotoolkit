@@ -388,10 +388,6 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
 
     /**
      * Remove a child
-     * @param childIndex
-     * @return
-     * @throws UnsupportedOperationException
-     * @throws IndexOutOfBoundsException
      */
     public Node removeChild(int childIndex) throws UnsupportedOperationException, IndexOutOfBoundsException {
         if (isReadOnly()) {
@@ -409,7 +405,6 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
 
     /**
      * Remove all child node of current element parent.
-     * @throws UnsupportedOperationException
      */
     public void removeChildren() throws UnsupportedOperationException {
         if (isReadOnly()) {

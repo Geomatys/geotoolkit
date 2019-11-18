@@ -286,7 +286,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             if (env == null) {
                 throw new TransformException("Failed to transform area to WKT and CRS has no defined domain of validity");
             }
-            area = new Envelope2D(env);
+            area = bounds = new Envelope2D(env);
         }
         final boolean mergeLeft  = bounds.getMinX() < Longitude.MIN_VALUE;
         final boolean mergeRight = bounds.getMaxX() > Longitude.MAX_VALUE;
@@ -296,7 +296,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
                 area = bounds = new IntervalRectangle(Longitude.MIN_VALUE, Math.max(Latitude.MIN_VALUE, bounds.getMinY()),
                                                       Longitude.MAX_VALUE, Math.min(Latitude.MAX_VALUE, bounds.getMaxY()));
             } else {
-               merged = new Area(area);
+                merged = new Area(area);
                 if (mergeLeft)  add(area, Longitude.MAX_VALUE - Longitude.MIN_VALUE, merged);
                 if (mergeRight) add(area, Longitude.MIN_VALUE - Longitude.MAX_VALUE, merged);
                 merged.intersect(GEOGRAPHIC_AREA);

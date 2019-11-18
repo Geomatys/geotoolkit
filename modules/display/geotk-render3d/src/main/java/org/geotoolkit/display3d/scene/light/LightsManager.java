@@ -45,8 +45,6 @@ public class LightsManager {
     public LightsManager() {}
 
     /**
-     * @param lightNum
-     * @param position
      * @return the {@link Light} object added, null if lightNum is wrong
      */
     public Light addLight(int lightNum, float[] position) {
@@ -78,12 +76,6 @@ public class LightsManager {
         return lights.get(lightInd);
     }
 
-    /**
-     * @param face
-     * @param type
-     * @param color
-     * @return
-     */
     public Material addMaterial(int face, int type, Color color) {
         return materials.put(type, new Material(face, type, color));
     }

@@ -31,6 +31,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -50,7 +51,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
-import net.iharder.Base64;
 import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
@@ -317,53 +317,53 @@ public final class Utils {
         CLASS_BINDING.put("Name",               String.class);
 
 
-        // GML geometry types
-        CLASS_BINDING.put("AbstractGeometry",              Geometry.class);
-        CLASS_BINDING.put("AbstractGeometryType",          Geometry.class);
-        CLASS_BINDING.put("AbstractGeometryTypeCollection",Geometry.class);
-        CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
-        CLASS_BINDING.put("MultiPoint",                    MultiPoint.class);
-        CLASS_BINDING.put("MultiPointType",                MultiPoint.class);
-        CLASS_BINDING.put("MultiPointPropertyType",        MultiPoint.class);
-        CLASS_BINDING.put("Point",                         Point.class);
-        CLASS_BINDING.put("PointType",                     Point.class);
-        CLASS_BINDING.put("PointPropertyType",             Point.class);
-        CLASS_BINDING.put("Curve",                         LineString.class);
-        CLASS_BINDING.put("CurveType",                     LineString.class);
-        CLASS_BINDING.put("CurvePropertyType",             LineString.class);
-        CLASS_BINDING.put("MultiGeometry",                 GeometryCollection.class);
-        CLASS_BINDING.put("MultiGeometryType",             GeometryCollection.class);
-        CLASS_BINDING.put("MultiGeometryPropertyType",     GeometryCollection.class);
-        CLASS_BINDING.put("CompositeCurve",                MultiLineString.class);
-        CLASS_BINDING.put("CompositeCurveType",            MultiLineString.class);
-        CLASS_BINDING.put("CompositeCurvePropertyType",    MultiLineString.class);
-        CLASS_BINDING.put("MultiLineString",               MultiLineString.class);
-        CLASS_BINDING.put("MultiLineStringType",           MultiLineString.class);
-        CLASS_BINDING.put("MultiLineStringPropertyType",   MultiLineString.class);
-        CLASS_BINDING.put("MultiCurve",                    MultiLineString.class);
-        CLASS_BINDING.put("MultiCurveType",                MultiLineString.class);
-        CLASS_BINDING.put("MultiCurvePropertyType",        MultiLineString.class);
-        CLASS_BINDING.put("Envelope",                      Envelope.class);
-        CLASS_BINDING.put("EnvelopeType",                  Envelope.class);
-        CLASS_BINDING.put("EnvelopePropertyType",          Envelope.class);
-        CLASS_BINDING.put("PolyHedralSurface",             MultiPolygon.class);
-        CLASS_BINDING.put("PolyHedralSurfaceType",         MultiPolygon.class);
-        CLASS_BINDING.put("PolyHedralSurfacePropertyType", MultiPolygon.class);
-        CLASS_BINDING.put("MultiSurfacePropertyType",      MultiPolygon.class);
-        CLASS_BINDING.put("MultiPolygon",                  MultiPolygon.class);
-        CLASS_BINDING.put("MultiPolygonType",              MultiPolygon.class);
-        CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
-        CLASS_BINDING.put("SurfaceType",                   Polygon.class);
-        CLASS_BINDING.put("SurfacePropertyType",           Polygon.class);
-        CLASS_BINDING.put("Polygon",                       Polygon.class);
-        CLASS_BINDING.put("PolygonType",                   Polygon.class);
-        CLASS_BINDING.put("PolygonPropertyType",           Polygon.class);
-        CLASS_BINDING.put("Ring",                          LinearRing.class);
-        CLASS_BINDING.put("RingType",                      LinearRing.class);
-        CLASS_BINDING.put("RingPropertyType",              LinearRing.class);
-        CLASS_BINDING.put("LinearRing",                    LinearRing.class);
-        CLASS_BINDING.put("LinearRingType",                LinearRing.class);
-        CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
+//        // GML geometry types
+//        CLASS_BINDING.put("AbstractGeometry",              Geometry.class);
+//        CLASS_BINDING.put("AbstractGeometryType",          Geometry.class);
+//        CLASS_BINDING.put("AbstractGeometryTypeCollection",Geometry.class);
+//        CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
+//        CLASS_BINDING.put("MultiPoint",                    MultiPoint.class);
+//        CLASS_BINDING.put("MultiPointType",                MultiPoint.class);
+//        CLASS_BINDING.put("MultiPointPropertyType",        MultiPoint.class);
+//        CLASS_BINDING.put("Point",                         Point.class);
+//        CLASS_BINDING.put("PointType",                     Point.class);
+//        CLASS_BINDING.put("PointPropertyType",             Point.class);
+//        CLASS_BINDING.put("Curve",                         LineString.class);
+//        CLASS_BINDING.put("CurveType",                     LineString.class);
+//        CLASS_BINDING.put("CurvePropertyType",             LineString.class);
+//        CLASS_BINDING.put("MultiGeometry",                 GeometryCollection.class);
+//        CLASS_BINDING.put("MultiGeometryType",             GeometryCollection.class);
+//        CLASS_BINDING.put("MultiGeometryPropertyType",     GeometryCollection.class);
+//        CLASS_BINDING.put("CompositeCurve",                MultiLineString.class);
+//        CLASS_BINDING.put("CompositeCurveType",            MultiLineString.class);
+//        CLASS_BINDING.put("CompositeCurvePropertyType",    MultiLineString.class);
+//        CLASS_BINDING.put("MultiLineString",               MultiLineString.class);
+//        CLASS_BINDING.put("MultiLineStringType",           MultiLineString.class);
+//        CLASS_BINDING.put("MultiLineStringPropertyType",   MultiLineString.class);
+//        CLASS_BINDING.put("MultiCurve",                    MultiLineString.class);
+//        CLASS_BINDING.put("MultiCurveType",                MultiLineString.class);
+//        CLASS_BINDING.put("MultiCurvePropertyType",        MultiLineString.class);
+//        CLASS_BINDING.put("Envelope",                      Envelope.class);
+//        CLASS_BINDING.put("EnvelopeType",                  Envelope.class);
+//        CLASS_BINDING.put("EnvelopePropertyType",          Envelope.class);
+//        CLASS_BINDING.put("PolyHedralSurface",             MultiPolygon.class);
+//        CLASS_BINDING.put("PolyHedralSurfaceType",         MultiPolygon.class);
+//        CLASS_BINDING.put("PolyHedralSurfacePropertyType", MultiPolygon.class);
+//        CLASS_BINDING.put("MultiSurfacePropertyType",      MultiPolygon.class);
+//        CLASS_BINDING.put("MultiPolygon",                  MultiPolygon.class);
+//        CLASS_BINDING.put("MultiPolygonType",              MultiPolygon.class);
+//        CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
+//        CLASS_BINDING.put("SurfaceType",                   Polygon.class);
+//        CLASS_BINDING.put("SurfacePropertyType",           Polygon.class);
+//        CLASS_BINDING.put("Polygon",                       Polygon.class);
+//        CLASS_BINDING.put("PolygonType",                   Polygon.class);
+//        CLASS_BINDING.put("PolygonPropertyType",           Polygon.class);
+//        CLASS_BINDING.put("Ring",                          LinearRing.class);
+//        CLASS_BINDING.put("RingType",                      LinearRing.class);
+//        CLASS_BINDING.put("RingPropertyType",              LinearRing.class);
+//        CLASS_BINDING.put("LinearRing",                    LinearRing.class);
+//        CLASS_BINDING.put("LinearRingType",                LinearRing.class);
+//        CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
 
         for(Entry<String,Class> entry : CLASS_BINDING.entrySet()){
             if(Geometry.class.isAssignableFrom(entry.getValue())){
@@ -475,35 +475,34 @@ public final class Utils {
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_311 = new HashMap<Class, QName>();
     static {
 
-        GEOMETRY_NAME_BINDING_311.put(MultiPoint.class,         new QName(GML_311_NAMESPACE, "MultiPoint"));
-        GEOMETRY_NAME_BINDING_311.put(Point.class,              new QName(GML_311_NAMESPACE, "Point"));
-        GEOMETRY_NAME_BINDING_311.put(LineString.class,         new QName(GML_311_NAMESPACE, "Curve"));
-        GEOMETRY_NAME_BINDING_311.put(GeometryCollection.class, new QName(GML_311_NAMESPACE, "MultiGeometry"));
-        GEOMETRY_NAME_BINDING_311.put(MultiLineString.class,    new QName(GML_311_NAMESPACE, "CompositeCurve"));
-        GEOMETRY_NAME_BINDING_311.put(Envelope.class,           new QName(GML_311_NAMESPACE, "Envelope"));
-        GEOMETRY_NAME_BINDING_311.put(MultiPolygon.class,       new QName(GML_311_NAMESPACE, "MultiPolygon"));
-        GEOMETRY_NAME_BINDING_311.put(Polygon.class,            new QName(GML_311_NAMESPACE, "Polygon"));
-        GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "Ring"));
+        GEOMETRY_NAME_BINDING_311.put(MultiPoint.class,         new QName(GML_311_NAMESPACE, "MultiPointPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(Point.class,              new QName(GML_311_NAMESPACE, "PointPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(LineString.class,         new QName(GML_311_NAMESPACE, "CurvePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(GeometryCollection.class, new QName(GML_311_NAMESPACE, "MultiGeometryPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(MultiLineString.class,    new QName(GML_311_NAMESPACE, "CompositeCurvePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(Envelope.class,           new QName(GML_311_NAMESPACE, "EnvelopePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(MultiPolygon.class,       new QName(GML_311_NAMESPACE, "MultiPolygonPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(Polygon.class,            new QName(GML_311_NAMESPACE, "PolygonPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "RingPropertyType", "gml"));
     }
 
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<Class, QName>();
     static {
 
-        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPointPropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "PointPropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "CurvePropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometryPropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "MultiCurvePropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "EnvelopeType"));
-        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiSurfacePropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "SurfacePropertyType"));
-        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingPropertyType"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPointPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "PointPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "CurvePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometryPropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "MultiCurvePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "EnvelopeType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiSurfacePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "SurfacePropertyType", "gml"));
+        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingPropertyType", "gml"));
     }
     /**
-     * Return a QName intended to be used in a xsd XML file fro mthe specified class.
+     * Return a QName intended to be used in a xsd XML file from the specified class.
      *
-     * @param type A prmitive type Class.
-     * @param gmlVersion
+     * @param type  a primitive type Class.
      * @return A QName describing the class.
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
@@ -518,9 +517,9 @@ public final class Utils {
                 }
                 if (result == null) {
                     if ("3.2.1".equals(gmlVersion)) {
-                        return new QName(GML_321_NAMESPACE, "GeometryPropertyType");
+                        return new QName(GML_321_NAMESPACE, "GeometryPropertyType", "gml");
                     } else {
-                        return new QName(GML_311_NAMESPACE, "GeometryPropertyType");
+                        return new QName(GML_311_NAMESPACE, "GeometryPropertyType", "gml");
                     }
                 }
             // maybe we can find a better way to handle Enum. for now we set a String value
@@ -529,9 +528,9 @@ public final class Utils {
 
             } else if (binding.equals(Object.class)) {
               if ("3.2.1".equals(gmlVersion)) {
-                    result = new QName(GML_321_NAMESPACE, "AbstractObject");
+                    result = new QName(GML_321_NAMESPACE, "AbstractObject", "gml");
                 } else {
-                    result = new QName(GML_311_NAMESPACE, "_Object");
+                    result = new QName(GML_311_NAMESPACE, "_Object", "gml");
                 }
             } else {
                 result = NAME_BINDING.get(binding);
@@ -610,7 +609,7 @@ public final class Utils {
         } else if (obj instanceof Number || obj instanceof Boolean || obj instanceof URI) {
             return obj.toString();
         } else if (obj instanceof byte[]) {
-            return Base64.encodeBytes((byte[])obj);
+            return Base64.getEncoder().encodeToString((byte[])obj);
         } else if (obj != null) {
             LOGGER.log(Level.WARNING, "Unhandled type :" + obj.getClass(),new IllegalArgumentException());
         }
@@ -645,7 +644,7 @@ public final class Utils {
 
     public static URI resolveURI(URI base, String location) throws MalformedURLException, URISyntaxException{
         //try an url
-        if (location.startsWith("http://") || location.startsWith("https://") || location.startsWith("file:")) {
+        if (location.startsWith("http://") || location.startsWith("https://") || location.startsWith("file:") || location.startsWith("jar:")) {
             return new URI(location);
         }
 
@@ -785,6 +784,15 @@ public final class Utils {
             int idx = Integer.max(baseLocation.lastIndexOf('/'), baseLocation.lastIndexOf('\\'));
             baseLocation = baseLocation.substring(0, idx+1);
         }
+
+        while (schemaLocation.startsWith("../")) {
+            schemaLocation = schemaLocation.substring(3);
+            //move back in base location
+            baseLocation = baseLocation.substring(0, baseLocation.length()-1);
+            int idx = Integer.max(baseLocation.lastIndexOf('/'), baseLocation.lastIndexOf('\\'));
+            baseLocation = baseLocation.substring(0, idx+1);
+        }
+
         if (schemaLocation.startsWith("./")) {
             schemaLocation = schemaLocation.substring(2);
         }
@@ -822,6 +830,8 @@ public final class Utils {
 
         if (name.endsWith("PropertyType")) {
             return name;
+        } else if (name.endsWith("Property")) {
+            return name += "Type";
         } else {
             return name += "PropertyType";
         }

@@ -77,7 +77,6 @@ public class GetRecordsResponseType implements GetRecordsResponse {
      * An empty constructor used by JAXB
      */
     GetRecordsResponseType() {
-
     }
 
     /**
@@ -93,11 +92,6 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Obtient la valeur de la propriété requestId.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getRequestId() {
@@ -106,11 +100,6 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Définit la valeur de la propriété requestId.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     @Override
     public void setRequestId(String value) {
@@ -119,11 +108,6 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Obtient la valeur de la propriété searchStatus.
-     *
-     * @return
-     *     possible object is
-     *     {@link RequestStatusType }
-     *
      */
     @Override
     public RequestStatusType getSearchStatus() {
@@ -132,11 +116,6 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Définit la valeur de la propriété searchStatus.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link RequestStatusType }
-     *
      */
     public void setSearchStatus(RequestStatusType value) {
         this.searchStatus = value;
@@ -144,11 +123,6 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Obtient la valeur de la propriété searchResults.
-     *
-     * @return
-     *     possible object is
-     *     {@link SearchResultsType }
-     *
      */
     public SearchResultsType getSearchResults() {
         return searchResults;
@@ -156,11 +130,6 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Définit la valeur de la propriété searchResults.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link SearchResultsType }
-     *
      */
     public void setSearchResults(SearchResultsType value) {
         this.searchResults = value;
@@ -168,11 +137,6 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Obtient la valeur de la propriété version.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getVersion() {
         return version;
@@ -180,14 +144,8 @@ public class GetRecordsResponseType implements GetRecordsResponse {
 
     /**
      * Définit la valeur de la propriété version.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setVersion(String value) {
         this.version = value;
     }
-
 }

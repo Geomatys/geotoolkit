@@ -4,13 +4,13 @@ package org.geotoolkit.pending.demo.clients.wmts;
 import java.net.URL;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -47,7 +47,7 @@ public class WMTSClientDemo {
                     ref,
                     new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 
-            PyramidalCoverageResource model = (PyramidalCoverageResource) ref;
+            MultiResolutionResource model = (MultiResolutionResource) ref;
             System.out.println(model);
 
             layer.setDescription(SF.description(n.tip().toString(), n.tip().toString()));

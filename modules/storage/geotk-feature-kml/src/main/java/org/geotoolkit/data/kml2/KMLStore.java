@@ -47,11 +47,9 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.data.query.QueryFeatureSet;
+import org.geotoolkit.storage.feature.query.QueryFeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.kml.xml.KMLMarshallerPool;
@@ -132,8 +130,8 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return params;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(params);
     }
 
     @Override
@@ -176,8 +174,8 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
 
     @Override
     public FeatureSet subset(Query query) throws UnsupportedQueryException, DataStoreException {
-        if (query instanceof org.geotoolkit.data.query.Query) {
-            return QueryFeatureSet.apply(this, (org.geotoolkit.data.query.Query)query);
+        if (query instanceof org.geotoolkit.storage.feature.query.Query) {
+            return QueryFeatureSet.apply(this, (org.geotoolkit.storage.feature.query.Query)query);
         }
         return FeatureSet.super.subset(query);
     }
@@ -384,15 +382,6 @@ public class KMLStore extends DataStore implements FeatureSet, ResourceOnFileSys
     }
 
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
     public void close() throws DataStoreException {
     }
-
 }

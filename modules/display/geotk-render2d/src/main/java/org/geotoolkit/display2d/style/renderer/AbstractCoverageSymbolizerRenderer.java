@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.apache.sis.coverage.grid.*;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -46,9 +45,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.ReducedGridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -128,12 +125,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 return portray(pc);
             }else  if(obj instanceof GridCoverageResource){
                 final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
-                params.update(renderingContext);
-                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
-                return portray(pc);
-            }else  if(obj instanceof GridCoverageReader){
-                final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageReader)obj);
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
@@ -441,7 +432,15 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     }
 
     private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
-            throws CoverageStoreException, TransformException, FactoryException, ProcessException {
+            throws DataStoreException, TransformException, FactoryException, ProcessException {
+
+        CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
+
+        if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
+            //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
+            return areaOfInterest;
+        }
 
         // HACK : This method cannot manage incomplete grid geometries, so we have to skip
         if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {
@@ -508,7 +507,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * Pragmatic approach trying to solve intersection of areas with
      * different meridian origin such as -180/+180 to +0/+360.
      *
-     * @param areaOfInterest
      * @param resolution, may be changed by this method.
      * @return update area of interest envelope, CRS may have changed and new resolution
      *         or null if unchanged.

@@ -97,11 +97,6 @@ public class PatternSymbolizerType extends SymbolizerType {
 
     /**
      * Gets the value of the threshholdsBelongTo property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ThreshholdsBelongToType }
-     *
      */
     public ThreshholdsBelongToType getThreshholdsBelongTo() {
         return threshholdsBelongTo;
@@ -109,11 +104,6 @@ public class PatternSymbolizerType extends SymbolizerType {
 
     /**
      * Sets the value of the threshholdsBelongTo property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ThreshholdsBelongToType }
-     *
      */
     public void setThreshholdsBelongTo(final ThreshholdsBelongToType value) {
         this.threshholdsBelongTo = value;

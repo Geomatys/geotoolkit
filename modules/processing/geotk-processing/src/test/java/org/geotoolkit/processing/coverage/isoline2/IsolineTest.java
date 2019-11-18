@@ -20,21 +20,20 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.memory.MemoryCoverageStore;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
-import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -58,9 +57,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {100,100,100}
         });
         final GridCoverage coverage = gcb.getGridCoverage2D();
-        final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final GridCoverageResource ref = DataStores.flatten(store, true, GridCoverageResource.class).iterator().next();
-
+        final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
@@ -68,12 +65,8 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         procparams.parameter("inIntervals").setValue(new double[]{150});
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
-        FeatureCollection col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
-        assertEquals(1, col.size());
-        for(Feature f : col){
-            System.out.println(f);
-        }
-
+        FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
+        assertEquals(1l, FeatureStoreUtilities.getCount(col, true).longValue());
 
     }
 
@@ -92,8 +85,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {10,15,10},
         });
         final GridCoverage coverage = gcb.getGridCoverage2D();
-        final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final GridCoverageResource ref = DataStores.flatten(store, true, GridCoverageResource.class).iterator().next();
+        final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -102,11 +94,8 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         procparams.parameter("inIntervals").setValue(new double[]{15});
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
-        FeatureCollection col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
-        assertEquals(2, col.size());
-        for(Feature f : col){
-            System.out.println(f);
-        }
+        FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
+        assertEquals(2, FeatureStoreUtilities.getCount(col, true).longValue());
 
     }
 
@@ -126,8 +115,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {10,15,10},
         });
         final GridCoverage coverage = gcb.getGridCoverage2D();
-        final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final GridCoverageResource ref = DataStores.flatten(store, true, GridCoverageResource.class).iterator().next();
+        final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -136,11 +124,8 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         procparams.parameter("inIntervals").setValue(new double[]{15});
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
-        FeatureCollection col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
-        assertEquals(4, col.size());
-        for(Feature f : col){
-            System.out.println(f);
-        }
+        FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
+        assertEquals(4, FeatureStoreUtilities.getCount(col, true).longValue());
 
     }
 
@@ -163,8 +148,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         });
 
         final GridCoverage coverage = gcb.getGridCoverage2D();
-        final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
-        final GridCoverageResource ref = DataStores.flatten(store, true, GridCoverageResource.class).iterator().next();
+        final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
         double[] intervales = {3.163};
 
@@ -174,10 +158,10 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         procparams.parameter("inIntervals").setValue(intervales);
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
-        FeatureCollection col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
-        assertEquals(1, col.size());
+        FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
+        assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
 
-        org.opengis.feature.Feature candidate = col.iterator().next();
+        org.opengis.feature.Feature candidate = col.features(false).iterator().next();
         Geometry geom = (Geometry) candidate.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
         assertTrue(geom instanceof LineString);
         LineString line = (LineString) geom;

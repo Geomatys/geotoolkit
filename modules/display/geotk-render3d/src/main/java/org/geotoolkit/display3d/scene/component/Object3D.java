@@ -58,7 +58,6 @@ public abstract class Object3D extends SceneNode3D {
 
     /**
      * Copy constructor
-     * @param orig
      */
     public Object3D(final Object3D orig){
         super(orig.getCanvas());

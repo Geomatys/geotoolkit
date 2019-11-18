@@ -39,7 +39,6 @@ import org.apache.sis.internal.coverage.ColorModelFactory;
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
 import org.opengis.filter.capability.FunctionName;
@@ -73,7 +72,8 @@ import org.opengis.filter.expression.Literal;
  */
 public class DefaultCategorize extends AbstractExpression implements Categorize {
 
-    private static final Object NEG_INF = StyleConstants.CATEGORIZE_LESS_INFINITY.getValue();
+    // Note we do not use StyleConstants.CATEGORIZE_LESS_INFINITY.getValue() to avoid an initialisation loop
+    private static final Object NEG_INF = "CATEGORIZE_LESS_INFINITY";
     private static final Comparator<Expression> COMPARATOR = new Comparator<Expression>() {
 
         @Override
@@ -174,10 +174,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
     /**
      *
-     * @param LookUpValue
      * @param values map with threadholds keys.
-     * @param belongs
-     * @param fallback
      */
     public DefaultCategorize(final Expression LookUpValue, final Map<Expression,Expression> values,
             final ThreshholdsBelongTo belongs, final Literal fallback){
@@ -303,7 +300,6 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
     /**
      * Recolor image
-     * @param image
      * @return recolored image
      */
     private RenderedImage evaluateImage(final RenderedImage image) {

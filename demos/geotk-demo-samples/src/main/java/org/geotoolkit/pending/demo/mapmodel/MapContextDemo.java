@@ -4,16 +4,14 @@ package org.geotoolkit.pending.demo.mapmodel;
 
 import java.io.File;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.jai.Registry;
@@ -21,6 +19,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.pending.demo.rendering.PortrayalDemo;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -45,7 +44,7 @@ public class MapContextDemo {
         final MapContext context = MapBuilder.createContext();
 
         //create a feature layer
-        final FeatureCollection features = openShapeFile();
+        final FeatureSet features = openShapeFile();
         final MutableStyle featureStyle = SF.style(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
         final MapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
 
@@ -80,20 +79,16 @@ public class MapContextDemo {
 
     }
 
-    public static FeatureCollection openShapeFile() throws Exception{
+    private static FeatureSet openShapeFile() throws DataStoreException, URISyntaxException {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
-        params.put("path", MapContextDemo.class.getResource("/data/world/Countries.shp").toURI());
-
-        final FeatureStore store = (FeatureStore) DataStores.open(params);
-        final Session session = store.createSession(true);
-        final Query query = QueryBuilder.all(store.getNames().iterator().next());
-        final FeatureCollection collection = session.getFeatureCollection(query);
-        return collection;
+        params.put("path", PortrayalDemo.class.getResource("/data/world/Countries.shp").toURI());
+        final DataStore store = DataStores.open(params);
+        return DataStores.flatten(store, true, FeatureSet.class).iterator().next();
     }
 
-    public static GridCoverageReader openWorldFile() throws Exception{
-        File cloudFile = new File(MapContextDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
-        return CoverageIO.createSimpleReader(cloudFile);
+    private static GridCoverageResource openWorldFile() throws DataStoreException, URISyntaxException {
+        DataStore store = org.apache.sis.storage.DataStores.open(PortrayalDemo.class.getResource("/data/coverage/clouds.jpg"));
+        return DataStores.flatten(store, true, GridCoverageResource.class).iterator().next();
     }
 
 

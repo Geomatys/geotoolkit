@@ -43,8 +43,6 @@ public class AnimationNotValidException extends Exception {
     /**
      * Constructs an instance of
      * <code>AnimationNotValidException</code>
-     *
-     * @param cause
      */
     public AnimationNotValidException(Throwable cause) {
         super(cause);

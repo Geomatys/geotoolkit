@@ -64,12 +64,14 @@
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-metadata</artifactId>
+      <version>${sis.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -87,7 +89,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-feature-store</module>
+    <module>geotk-storage</module>
     <module>geotk-feature-dbf</module>
     <module>geotk-feature-csv</module>
     <module>geotk-feature-gml</module>
@@ -102,17 +104,17 @@
     <module>geotk-feature-mapinfo</module>
     <module>geotk-feature-nmea</module>
     <module>geotk-feature-oracle</module>
+    <module>geotk-coverage-worldfile</module>
     <module>geotk-coverage-bil</module>
     <module>geotk-coverage-geotiff</module>
     <module>geotk-coverage-imagery</module>
-    <module>geotk-coverage-landsat</module>
-    <module>geotk-coverage-postgresql</module>
+    <!-- Obsolete module, still contains interesting things, salvage what we can before removing it -->
+    <!--module>geotk-coverage-postgresql</module-->
     <module>geotk-coverage-xml</module>
-    <module>geotk-coverage-store</module>
     <module>geotk-coverage-sql</module>
     <module>geotk-coverage-wkb</module>
-    <module>geotk-coverage-timed</module>
     <module>geotk-coverage-hgt</module>
+    <module>geotk-coverage-vi3g</module>
     <module>geotk-observation-store</module>
     <module>geotk-metadata-store</module>
   </modules>

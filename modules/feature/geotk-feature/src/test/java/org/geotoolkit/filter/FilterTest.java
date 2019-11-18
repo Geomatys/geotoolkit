@@ -34,7 +34,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.Identifier;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.opengis.feature.Feature;
 
@@ -44,11 +44,6 @@ import org.opengis.feature.Feature;
  * @module
  */
 public class FilterTest extends org.geotoolkit.test.TestBase {
-
-
-    public FilterTest() {
-    }
-
     @Test
     public void testId() {
         Set<Identifier> ids = new HashSet<>();
@@ -192,14 +187,11 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
 
         between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
         assertFalse(between.evaluate(CANDIDATE_1));
-
     }
 
     @Test
     public void testIsLike(){
-
         PropertyName testAttribute = FF.property("testString");
-
 
         PropertyIsLike filter = FF.like(testAttribute, "test*", "*", ".", "!");
         assertTrue(filter.evaluate(CANDIDATE_1));
@@ -216,8 +208,6 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
         // Test we do match if the single char is there
         filter = FF.like(testAttribute, "test*dat.", "*", ".", "!");
         assertTrue(filter.evaluate(CANDIDATE_1));
-
-
     }
 
     @Test
@@ -236,5 +226,4 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
         assertEquals(exp.evaluate(CANDIDATE_1), "test string data");
         assertSerializedEquals(exp); //test serialize
     }
-
 }

@@ -56,11 +56,6 @@ public abstract class AbstractRecordType implements AbstractRecord {
 
     /**
      * Obtient la valeur de la propriété deleted.
-     *
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *
      */
     public boolean isDeleted() {
         if (deleted == null) {
@@ -72,14 +67,8 @@ public abstract class AbstractRecordType implements AbstractRecord {
 
     /**
      * Définit la valeur de la propriété deleted.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *
      */
     public void setDeleted(Boolean value) {
         this.deleted = value;
     }
-
 }

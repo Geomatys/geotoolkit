@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
@@ -65,7 +65,7 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
      * @return A stream of parsed data. Never null, but can be empty. WARNING:
      * You have to properly close the stream after usage.
      */
-    static Stream<FeatureCollection> readFeatureArrays(final Data source) {
+    static Stream<FeatureSet> readFeatureArrays(final Data source) {
         ArgumentChecks.ensureNonNull("Source complex data", source);
 
         if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
@@ -88,7 +88,7 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
      * @param source
      * @return
      */
-    private static Stream<FeatureCollection> fromGeoJSON(final Data source) {
+    private static Stream<FeatureSet> fromGeoJSON(final Data source) {
         return source.getContent().stream()
                 .map(WPSConvertersUtils::geojsonContentAsString)
                 .map(text -> {
@@ -110,7 +110,7 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
                 });
     }
 
-    private static Stream<FeatureCollection> fromXml(final Data source) {
+    private static Stream<FeatureSet> fromXml(final Data source) {
         final XmlFeatureReader fcollReader;
         try {
             fcollReader = WPSIO.getFeatureReader(source.getSchema());
@@ -118,7 +118,7 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
             throw new UnconvertibleObjectException("Unable to reach the schema url.", ex);
         }
 
-        final Stream<FeatureCollection> result = source.getContent().stream()
+        final Stream<FeatureSet> result = source.getContent().stream()
                 .map(in -> {
                     try {
                         return fcollReader.read(in);

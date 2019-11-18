@@ -60,10 +60,6 @@
       in the JARs' list that maven will put in the directory "target/binaries".
     -->
     <dependencies>
-        <!--dependency>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </dependency-->
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-feature-catalogue</artifactId>
@@ -84,11 +80,6 @@
             <artifactId>geotk-xml-ows</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-xml-metadata-imagery</artifactId>
-          <version>${project.version}</version>
-        </dependency-->
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-xsd</artifactId>
@@ -97,27 +88,8 @@
         <dependency>
             <groupId>org.apache.sis.profiles</groupId>
             <artifactId>sis-french-profile</artifactId>
+            <version>${sis.version}</version>
         </dependency>
-        <!--dependency>
-            <groupId>com.geomatys</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>2.2.7</version>
-        </dependency>
-        <dependency>
-            <groupId>com.geomatys</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.2.7</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.fastinfoset</groupId>
-            <artifactId>FastInfoset</artifactId>
-            <version>1.2.12</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.2.7</version>
-        </dependency-->
     </dependencies>
 
 </project>

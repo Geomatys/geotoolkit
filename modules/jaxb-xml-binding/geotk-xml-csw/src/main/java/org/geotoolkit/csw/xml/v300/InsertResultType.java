@@ -66,7 +66,6 @@ public class InsertResultType implements InsertResult {
     protected String handleRef;
 
     public InsertResultType() {
-
     }
 
     /**
@@ -96,13 +95,6 @@ public class InsertResultType implements InsertResult {
      * <pre>
      *    getBriefRecord().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link BriefRecordType }
-     *
-     *
      */
     public List<Object> getBriefRecord() {
         if (briefRecord == null) {
@@ -113,11 +105,6 @@ public class InsertResultType implements InsertResult {
 
     /**
      * Obtient la valeur de la propriété handleRef.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getHandleRef() {
         return handleRef;
@@ -125,14 +112,8 @@ public class InsertResultType implements InsertResult {
 
     /**
      * Définit la valeur de la propriété handleRef.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setHandleRef(String value) {
         this.handleRef = value;
     }
-
 }

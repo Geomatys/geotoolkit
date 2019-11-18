@@ -66,14 +66,21 @@ public class GeometrytoJTS {
 
     public static Geometry toJTS(final AbstractGeometry gml)
             throws NoSuchAuthorityCodeException, FactoryException {
-        return toJTS(gml, true);
+        return toJTS(gml, true, false);
     }
 
     public static Geometry toJTS(final AbstractGeometry gml, boolean longitudeFirst)
             throws NoSuchAuthorityCodeException, FactoryException{
+        return toJTS(gml, longitudeFirst, false);
+    }
+
+
+    public static Geometry toJTS(final AbstractGeometry gml, boolean longitudeFirst, boolean forceMultiPolygon)
+            throws NoSuchAuthorityCodeException, FactoryException{
 
         GeometryTransformer gt = new GeometryTransformer(gml);
         gt.setLongitudeFirst(longitudeFirst);
+        gt.setForceMultiPolygon(forceMultiPolygon);
 
         return gt.get();
     }

@@ -63,8 +63,8 @@ import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
  *        grids.}
  *
  * Output coordinates are the values stored in the grid at the specified grid coordinate. If the
- * grid ordinates are non-integer values, then output coordinates are interpolated using a bilinear
- * interpolation. If the grid ordinates are outside the grid domain ([0 &hellip; width-2] &times;
+ * grid coordinates are non-integer values, then output coordinates are interpolated using a bilinear
+ * interpolation. If the grid coordinates are outside the grid domain ([0 &hellip; width-2] &times;
  * [0 &hellip; height-2] where {@linkplain #width} and {@linkplain #height} are the number of
  * columns and rows in the grid), then output coordinates are extrapolated.
  * <p>
@@ -269,7 +269,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
 
     /**
      * Transforms a source coordinate into target coordinate. The transformation will
-     * involve bilinear interpolations if the source ordinates are not integer values.
+     * involve bilinear interpolations if the source coordinates are not integer values.
      * This method can also estimate the derivative at the location of the transformed
      * points.
      *
@@ -361,7 +361,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
 
     /**
      * Transforms a source coordinate into target coordinate. The transformation will
-     * involve bilinear interpolations if the source ordinates are not integer values.
+     * involve bilinear interpolations if the source coordinates are not integer values.
      *
      * @param  srcPts  The source coordinates.
      * @param  srcOff  Index of the first valid ordinate in the {@code srcPts} array.
@@ -377,7 +377,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
 
     /**
      * Transforms a source coordinate into target coordinate. The transformation will
-     * involve bilinear interpolations if the source ordinates are not integer values.
+     * involve bilinear interpolations if the source coordinates are not integer values.
      *
      * @param  srcPts  The source coordinates.
      * @param  srcOff  Index of the first valid ordinate in the {@code srcPts} array.
@@ -393,7 +393,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
 
     /**
      * Transforms a source coordinate into target coordinate. The transformation will
-     * involve bilinear interpolations if the source ordinates are not integer values.
+     * involve bilinear interpolations if the source coordinates are not integer values.
      *
      * @param  srcPts  The source coordinates.
      * @param  srcOff  Index of the first valid ordinate in the {@code srcPts} array.
@@ -409,7 +409,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
 
     /**
      * Transforms a source coordinate into target coordinate. The transformation will
-     * involve bilinear interpolations if the source ordinates are not integer values.
+     * involve bilinear interpolations if the source coordinates are not integer values.
      *
      * @param  srcPts  The source coordinates.
      * @param  srcOff  Index of the first valid ordinate in the {@code srcPts} array.

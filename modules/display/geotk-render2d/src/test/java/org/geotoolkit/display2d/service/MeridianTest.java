@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.display2d.service;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -29,28 +24,34 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.junit.Assert;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
@@ -530,8 +531,6 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
     /**
      * Test the image content.
      * The image must be completely white and pixels inside the fille areas must be black.
-     * @param image
-     * @param fillAreas
      */
     private void checkImage(BufferedImage image, Rectangle ... fillAreas){
 
@@ -570,7 +569,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
         feature.setPropertyValue("geom",geometry);
-        final FeatureCollection col = FeatureStoreUtilities.collection(feature);
+        final FeatureSet col = new InMemoryFeatureSet(type, Arrays.asList(feature));
 
         final PolygonSymbolizer symbol = SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0), SF.fill(Color.RED), null);
         final MutableStyle style = SF.style(symbol);
@@ -591,7 +590,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
         feature.setPropertyValue("geom",geometry);
-        final FeatureCollection col = FeatureStoreUtilities.collection(feature);
+        final FeatureSet col = new InMemoryFeatureSet(type, Arrays.asList(feature));
 
         final List<GraphicalSymbol> symbols = new ArrayList<>();
         symbols.add(SF.mark(StyleConstants.MARK_SQUARE, SF.fill(Color.RED), SF.stroke(Color.BLACK, 0)));

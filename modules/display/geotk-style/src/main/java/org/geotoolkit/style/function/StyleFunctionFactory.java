@@ -20,7 +20,6 @@ package org.geotoolkit.style.function;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.filter.function.AbstractFunctionFactory;
-import org.geotoolkit.filter.function.FunctionFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;

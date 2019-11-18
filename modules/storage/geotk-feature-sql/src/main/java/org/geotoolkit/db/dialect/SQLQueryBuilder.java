@@ -27,7 +27,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.query.Query;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.db.DBRelationOperation;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;

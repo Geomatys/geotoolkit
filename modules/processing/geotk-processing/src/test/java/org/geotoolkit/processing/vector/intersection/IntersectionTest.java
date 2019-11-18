@@ -16,33 +16,31 @@
  */
 package org.geotoolkit.processing.vector.intersection;
 
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.opengis.util.NoSuchIdentifierException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.vector.AbstractProcessTest;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiPoint;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
-import org.junit.Test;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of intersect process
@@ -63,9 +61,9 @@ public class IntersectionTest extends AbstractProcessTest {
     public void testIntersection() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection featureList = buildFeatureList();
+        final FeatureSet featureList = buildFeatureList();
 
-        final FeatureCollection featureInterList = buildFeatureInterList();
+        final FeatureSet featureInterList = buildFeatureInterList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:intersection");
 
@@ -76,11 +74,11 @@ public class IntersectionTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
 
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultList();
+        final FeatureSet featureListResult = buildResultList();
         compare(featureListResult,featureListOut);
     }
 
@@ -103,7 +101,7 @@ public class IntersectionTest extends AbstractProcessTest {
         return ftb.build();
     }
 
-    private static FeatureCollection buildFeatureList() throws FactoryException {
+    private static FeatureSet buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
@@ -170,7 +168,7 @@ public class IntersectionTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureInterList() throws FactoryException {
+    private static FeatureSet buildFeatureInterList() throws FactoryException {
 
         type = createSimpleType();
 
@@ -236,7 +234,7 @@ public class IntersectionTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection buildResultList() throws FactoryException {
+    private static FeatureSet buildResultList() throws FactoryException {
 
 
         type = createSimpleResultType();

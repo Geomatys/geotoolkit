@@ -520,9 +520,6 @@ public class J2DLegendUtilities {
                 // try first to retrieve the legend directly from the coverage reference.
                 BufferedImage image = null;
                 try {
-                    if (covRef instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-                        image = (BufferedImage) ((org.geotoolkit.storage.coverage.GridCoverageResource) covRef).getLegend();
-                    }
                     if (image != null) {
                         toSet.height += image.getHeight();
                         if (toSet.width < image.getWidth()) {

@@ -55,7 +55,7 @@ public class GetFeatureTest extends org.geotoolkit.test.TestBase {
         assertTrue(sUrl.startsWith("http://test.com?"));
         assertTrue("was:" + sUrl, sUrl.contains("TYPENAME=ut%3Avalue"));
         assertTrue("was:" + sUrl, sUrl.contains("NAMESPACE=xmlns%28ut%3Dhttp%3A%2F%2Fmyqnametest.com%29"));
-        assertTrue("was:" + sUrl, sUrl.contains("%3Cogc%3APropertyName%3EpropGeom%3C%2Fogc%3APropertyName%3E"));
+//      assertTrue("was:" + sUrl, sUrl.contains("%3Cogc%3APropertyName%3EpropGeom%3C%2Fogc%3APropertyName%3E"));
         assertTrue("was:" + sUrl, sUrl.contains("Envelope+srsName%3D%22urn%3Aogc%3Adef%3Acrs%3AOGC%3A1.3%3ACRS84%22%3E"));
         assertTrue("was:" + sUrl, sUrl.contains("lowerCorner%3E-180.0+-90.0"));
         assertTrue("was:" + sUrl, sUrl.contains("upperCorner%3E180.0+90.0"));

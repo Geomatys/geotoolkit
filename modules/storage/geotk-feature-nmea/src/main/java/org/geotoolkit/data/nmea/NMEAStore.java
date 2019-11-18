@@ -37,8 +37,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.StorageConnector;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
@@ -101,8 +99,8 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return parameters;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
     }
 
     @Override
@@ -145,15 +143,6 @@ public class NMEAStore extends DataStore implements FeatureSet, ResourceOnFileSy
     }
 
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> cl, Class<T> type) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> cl, Class<T> type) {
-    }
-
-    @Override
     public void close() throws DataStoreException {
     }
-
 }

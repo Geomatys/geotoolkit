@@ -26,7 +26,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -37,7 +36,9 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.remote.SerializableRenderedImage;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.referencing.PositionTransformer;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
@@ -51,7 +52,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.internal.referencing.PositionTransformer;
 
 
 /**
@@ -203,17 +203,11 @@ public class GridCoverage2D extends GridCoverage {
      * default will be inferred from image type (integers, floats...) and range of values. If
      * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
      * is thrown.
-     *
-     * @return
      */
     private static Collection<SampleDimension> fillSampleDimensions(final CharSequence name, final RenderedImage image, final SampleDimension[] bands) {
-        RenderedSampleDimension[] sampleDimensions = new RenderedSampleDimension[image.getSampleModel().getNumBands()];
-        RenderedSampleDimension.create(name, image, bands, sampleDimensions);
-        final List<SampleDimension> dims = new ArrayList<>(sampleDimensions.length);
-        for (RenderedSampleDimension rsd : sampleDimensions) {
-            dims.add(rsd.dimension);
-        }
-        return dims;
+        final SampleDimension[] sampleDimensions = new SampleDimension[image.getSampleModel().getNumBands()];
+        GridCoverageBuilder.create(name, image, bands, sampleDimensions);
+        return new ArrayList<>(Arrays.asList(sampleDimensions));
     }
 
     /**
@@ -225,7 +219,7 @@ public class GridCoverage2D extends GridCoverage {
     private static GridGeometry2D fillGridGeometry(final RenderedImage image, GridGeometry2D gridGeometry) {
         final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
         final int dimension = crs.getCoordinateSystem().getDimension();
-        if (!gridGeometry.isDefined(GridGeometry2D.EXTENT)) {
+        if (!gridGeometry.isDefined(GridGeometry.EXTENT)) {
             final long[] low = new long[dimension];
             final long[] high = new long[dimension];
             Arrays.fill(low, 0);
@@ -236,7 +230,7 @@ public class GridCoverage2D extends GridCoverage {
             high[1] = image.getHeight();
 
             final GridExtent r = new GridExtent(null, low, high, false);
-            if (gridGeometry.isDefined(GridGeometry2D.GRID_TO_CRS)) {
+            if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)) {
                 gridGeometry = new GridGeometry2D(r, PIXEL_IN_CELL,
                         gridGeometry.getGridToCRS(PIXEL_IN_CELL), crs);
             } else {
@@ -254,10 +248,10 @@ public class GridCoverage2D extends GridCoverage {
              */
             gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
         }
-        assert gridGeometry.isDefined(GridGeometry2D.CRS        |
-                                      GridGeometry2D.ENVELOPE   |
-                                      GridGeometry2D.EXTENT |
-                                      GridGeometry2D.GRID_TO_CRS);
+        assert gridGeometry.isDefined(GridGeometry.CRS        |
+                                      GridGeometry.ENVELOPE   |
+                                      GridGeometry.EXTENT |
+                                      GridGeometry.GRID_TO_CRS);
         /*
          * Last argument checks. The image size must be consistent with the grid envelope
          * and the georeferenced envelope must be non-empty.

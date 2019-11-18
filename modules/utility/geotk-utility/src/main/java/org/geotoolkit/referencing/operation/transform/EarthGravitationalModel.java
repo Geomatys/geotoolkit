@@ -31,7 +31,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.datum.GeodeticDatum;
 
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -41,6 +40,7 @@ import org.apache.sis.util.collection.WeakValueHashMap;
 import org.apache.sis.util.ComparisonMode;
 
 import org.apache.sis.util.Utilities;
+
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -145,7 +145,7 @@ public class EarthGravitationalModel extends VerticalTransform {
             throws IllegalArgumentException, FactoryException
     {
         EarthGravitationalModel model;
-        final Integer key = hashCode(CRS.equalsApproximatively(CommonCRS.WGS84.datum(), datum), nmax);
+        final Integer key = hashCode(Utilities.equalsApproximately(CommonCRS.WGS84.datum(), datum), nmax);
         synchronized (POOL) {
             model = POOL.get(key);
             if (model == null) {
@@ -202,7 +202,7 @@ public class EarthGravitationalModel extends VerticalTransform {
         ensureNonNull("datum", datum);
         ensureBetween("nmax", 2, 9999, nmax); // Arbitrary upper limit.
         this.nmax = nmax;
-        isWGS84 = CRS.equalsApproximatively(CommonCRS.WGS84.datum(), datum);
+        isWGS84 = Utilities.equalsApproximately(CommonCRS.WGS84.datum(), datum);
         if (isWGS84) {
             /*
              * WGS84 model values.

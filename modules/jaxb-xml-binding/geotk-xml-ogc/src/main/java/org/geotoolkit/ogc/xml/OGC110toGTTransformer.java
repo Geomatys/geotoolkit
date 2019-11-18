@@ -533,9 +533,13 @@ public class OGC110toGTTransformer {
                         }
                     }else{
                         //try to convert it to a number
-                        try{
-                            obj = Double.valueOf(str);
-                        }catch(NumberFormatException ex){
+                        try {
+                            obj = Integer.valueOf(str);
+                        } catch (NumberFormatException ex) {
+                            try {
+                                obj = Double.valueOf(str);
+                            } catch (NumberFormatException ex2) {
+                            }
                         }
                     }
 

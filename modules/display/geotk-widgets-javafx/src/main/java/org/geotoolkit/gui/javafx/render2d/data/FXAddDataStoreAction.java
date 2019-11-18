@@ -26,7 +26,7 @@ import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.MapItem;
 
 /**
  *
@@ -43,9 +43,9 @@ public class FXAddDataStoreAction extends FXMapAction {
     public void accept(ActionEvent event) {
 
         try {
-            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,null);
+            final List<MapItem> layers = FXStoreChooser.showLayerDialog(null,null);
 
-            for(MapLayer layer : layers){
+            for(MapItem layer : layers){
                 if(layer == null) continue;
                 map.getContainer().getContext().items().add(layer);
             }

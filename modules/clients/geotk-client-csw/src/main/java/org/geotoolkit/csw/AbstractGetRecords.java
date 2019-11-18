@@ -26,27 +26,26 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+import org.apache.sis.cql.CQLException;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
+import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
+import static org.geotoolkit.csw.xml.CswXmlFactory.*;
+import org.geotoolkit.csw.xml.DistributedSearch;
 import org.geotoolkit.csw.xml.ElementSetName;
 import org.geotoolkit.csw.xml.ElementSetType;
-import org.geotoolkit.csw.xml.ResultType;
-import org.geotoolkit.metadata.TypeNames;
 import org.geotoolkit.csw.xml.Query;
-import org.geotoolkit.csw.xml.DistributedSearch;
 import org.geotoolkit.csw.xml.QueryConstraint;
+import org.geotoolkit.csw.xml.ResultType;
 import org.geotoolkit.filter.FilterFactoryImpl;
+import org.geotoolkit.metadata.TypeNames;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortOrder;
-
 import static org.opengis.filter.sort.SortOrder.ASCENDING;
 import static org.opengis.filter.sort.SortOrder.DESCENDING;
-import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
-import static org.geotoolkit.csw.xml.CswXmlFactory.*;
 
 /**
  * Abstract implementation of {@link GetRecordsRequest}, which defines the

@@ -44,7 +44,6 @@ public final class NamesExt extends Static {
      *
      * @param namespace if null or empty will not be used for the name
      * @param local mandatory
-     * @return GenericName
      */
     public static GenericName create(final String namespace, final String local) {
 
@@ -63,9 +62,6 @@ public final class NamesExt extends Static {
      *
      * if the given string do not match any, then a Name with no namespace will be
      * created and the localpart will be the given string.
-     *
-     * @param candidate
-     * @return Name
      */
     public static GenericName valueOf(final String candidate){
 
@@ -120,8 +116,6 @@ public final class NamesExt extends Static {
      * String can be written with only the local part or in extendedform or JCR
      * extended form.
      *
-     * @param name
-     * @param candidate
      * @return true if the string match the name
      */
     public static boolean match(final GenericName name, final String candidate){
@@ -154,7 +148,7 @@ public final class NamesExt extends Static {
 
     public static String getNamespace(GenericName name){
         if (name instanceof ScopedName) {
-            return ((ScopedName)name).path().toString();
+            return ((ScopedName) name).path().toString();
         } else if (name instanceof Identifier) {
             return ((Identifier) name).getCodeSpace();
         }

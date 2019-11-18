@@ -78,11 +78,6 @@ public class HarvestResponseType implements HarvestResponse {
 
     /**
      * Obtient la valeur de la propriété acknowledgement.
-     *
-     * @return
-     *     possible object is
-     *     {@link AcknowledgementType }
-     *
      */
     public AcknowledgementType getAcknowledgement() {
         return acknowledgement;
@@ -90,11 +85,6 @@ public class HarvestResponseType implements HarvestResponse {
 
     /**
      * Définit la valeur de la propriété acknowledgement.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link AcknowledgementType }
-     *
      */
     public void setAcknowledgement(AcknowledgementType value) {
         this.acknowledgement = value;
@@ -102,11 +92,6 @@ public class HarvestResponseType implements HarvestResponse {
 
     /**
      * Obtient la valeur de la propriété transactionResponse.
-     *
-     * @return
-     *     possible object is
-     *     {@link TransactionResponseType }
-     *
      */
     public TransactionResponseType getTransactionResponse() {
         return transactionResponse;
@@ -114,14 +99,8 @@ public class HarvestResponseType implements HarvestResponse {
 
     /**
      * Définit la valeur de la propriété transactionResponse.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TransactionResponseType }
-     *
      */
     public void setTransactionResponse(TransactionResponseType value) {
         this.transactionResponse = value;
     }
-
 }

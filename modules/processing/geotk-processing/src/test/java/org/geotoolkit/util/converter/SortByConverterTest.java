@@ -16,19 +16,17 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.processing.util.converter.StringToSortByConverter;
-import org.geotoolkit.filter.DefaultPropertyName;
-import org.geotoolkit.filter.sort.DefaultSortBy;
-import org.opengis.filter.sort.SortOrder;
-import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ObjectConverter;
-
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.processing.util.converter.StringToSortByConverter;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-
-import org.junit.Test;
-import org.opengis.filter.sort.SortBy;
-import static org.junit.Assert.*;
 
 /**
  * Junit test for StringToSortByConverter
@@ -51,8 +49,8 @@ public class SortByConverterTest extends org.geotoolkit.test.TestBase {
 
     private SortBy[] buildResultSortBy() throws FactoryException {
         SortBy[] sorters = new SortBy[2];
-        sorters[0] = new DefaultSortBy(new DefaultPropertyName("name"), SortOrder.ASCENDING);
-        sorters[1] = new DefaultSortBy(new DefaultPropertyName("age"), SortOrder.DESCENDING);
+        sorters[0] = DefaultFactories.forBuildin(FilterFactory.class).sort("name", SortOrder.ASCENDING);
+        sorters[1] = DefaultFactories.forBuildin(FilterFactory.class).sort("age", SortOrder.DESCENDING);
 
         return sorters;
     }

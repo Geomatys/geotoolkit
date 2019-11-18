@@ -99,7 +99,6 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
 
     /**
      * {@inheritDoc }
-     * @return
      */
     @Override
     public String[] getLayers() {
@@ -369,11 +368,6 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
 
     /**
      * Return a map containing BBOX, SRS (or CRS), TIME and ELEVATION parameters.
-     *
-     * @param env
-     * @return
-     */    /**
-     * {@inheritDoc }
      */
     protected Map<String,String> toString(final Envelope env) throws FactoryException {
         final Map<String,String> map = new HashMap<>();

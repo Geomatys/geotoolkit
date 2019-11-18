@@ -23,10 +23,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.dbf.Closeable;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * The general use of this class is: <CODE><PRE>
@@ -76,10 +76,10 @@ public final class ShapefileReader implements Closeable{
 
         int end = 0; // Relative to the whole file
 
-        Object shape = null;
+        Geometry shape = null;
 
         /** Fetch the shape stored in this record. */
-        public Object shape() {
+        public Geometry shape() {
             if (shape == null) {
                 buffer.position(start);
                 buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -95,7 +95,7 @@ public final class ShapefileReader implements Closeable{
          *
          * @return an average shape generated using the bounding box
          */
-        public Object estimatedShape() {
+        public Geometry estimatedShape() {
             return handler.estimated(minX, maxX, minY, maxY);
         }
 

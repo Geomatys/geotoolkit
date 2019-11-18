@@ -90,11 +90,6 @@ public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCa
 
     /**
      * Obtient la valeur de la propriété filterCapabilities.
-     *
-     * @return
-     *     possible object is
-     *     {@link FilterCapabilities }
-     *
      */
     @Override
     public FilterCapabilities getFilterCapabilities() {
@@ -103,11 +98,6 @@ public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCa
 
     /**
      * Définit la valeur de la propriété filterCapabilities.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link FilterCapabilities }
-     *
      */
     public void setFilterCapabilities(FilterCapabilities value) {
         this.filterCapabilities = value;

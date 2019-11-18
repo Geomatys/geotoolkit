@@ -257,11 +257,6 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
 
     /**
      * Picking not supported.
-     *
-     * @param graphic
-     * @param mask
-     * @param filter
-     * @return
      */
     @Override
     public boolean hit(ProjectedObject graphic, SearchAreaJ2D mask, VisitFilter filter) {
@@ -270,11 +265,6 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
 
     /**
      * Picking not supported.
-     *
-     * @param graphic
-     * @param mask
-     * @param filter
-     * @return
      */
     @Override
     public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
@@ -283,9 +273,6 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
 
     /**
      * Coverage no supported.
-     *
-     * @param graphic
-     * @throws PortrayalException
      */
     @Override
     public boolean portray(ProjectedCoverage graphic) throws PortrayalException {

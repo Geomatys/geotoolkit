@@ -49,7 +49,6 @@ public class ComboBoxCompletion {
 
     /**
      * Update available {@link ComboBox#items} according to typed value.
-     * @param event
      */
     private void onKeyReleased(KeyEvent event) {
         if (baseData == null || baseData.isEmpty()) {

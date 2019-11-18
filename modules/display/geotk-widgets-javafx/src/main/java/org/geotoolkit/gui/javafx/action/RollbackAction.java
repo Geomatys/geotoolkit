@@ -25,14 +25,14 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.event.ChangeEvent;
+import org.apache.sis.storage.event.StoreEvent;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.control.action.ActionUtils;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.event.StorageListener;
 
 /**
  * Action to rollback a feature maplayer session.
@@ -41,7 +41,7 @@ import org.geotoolkit.storage.StorageListener;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class RollbackAction extends Action implements Consumer<ActionEvent>, org.apache.sis.storage.event.ChangeListener<ChangeEvent> {
+public final class RollbackAction extends Action implements Consumer<ActionEvent>, org.apache.sis.storage.event.StoreListener<StoreEvent> {
 
     private final ObjectProperty<FeatureMapLayer> layerProperty = new SimpleObjectProperty<>();
     private final StorageListener.Weak weakListener;
@@ -63,11 +63,11 @@ public final class RollbackAction extends Action implements Consumer<ActionEvent
                     final FeatureSet newResource = newValue.getResource();
                     if (newResource instanceof FeatureCollection) weakListener.registerSource(((FeatureCollection)newResource).getSession());
                 }
-                changeOccured(null);
+                eventOccured(null);
             }
         });
         setEventHandler(this);
-        changeOccured(null);
+        eventOccured(null);
     }
 
     public RollbackAction(FeatureMapLayer layer) {
@@ -99,7 +99,7 @@ public final class RollbackAction extends Action implements Consumer<ActionEvent
     }
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         final FeatureMapLayer layer = getLayer();
         setDisabled(layer==null || !(layer.getResource() instanceof FeatureCollection) || !((FeatureCollection)layer.getResource()).getSession().hasPendingChanges());
     }

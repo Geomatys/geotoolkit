@@ -17,8 +17,8 @@
 package org.geotoolkit.processing.vector.reproject;
 
 import org.geotoolkit.feature.ReprojectMapper;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStreams;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;

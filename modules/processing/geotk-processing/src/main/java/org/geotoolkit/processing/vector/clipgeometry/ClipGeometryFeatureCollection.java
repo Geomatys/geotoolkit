@@ -18,8 +18,8 @@ package org.geotoolkit.processing.vector.clipgeometry;
 
 import org.locationtech.jts.geom.Geometry;
 
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.WrapFeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;

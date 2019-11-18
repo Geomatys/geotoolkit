@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import org.opengis.filter.expression.Function;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.geotoolkit.filter.function.string.LengthFunction;
 import org.geotoolkit.filter.function.string.StringFunctionFactory;
@@ -34,20 +34,10 @@ import org.geotoolkit.filter.function.string.StringFunctionFactory;
  * @module
  */
 public class FunctionTest extends org.geotoolkit.test.TestBase {
-
-
-    public FunctionTest() {
-
-    }
-
     @Test
     public void testFunctionLenght() {
-
         Function f = FF.function(StringFunctionFactory.LENGTH, FF.property("."));
         assertInstanceOf("EXPRESSION_VALUE_LENGHT", LengthFunction.class, f);
         assertSerializedEquals(f); //test serialize
-
     }
-
-
 }

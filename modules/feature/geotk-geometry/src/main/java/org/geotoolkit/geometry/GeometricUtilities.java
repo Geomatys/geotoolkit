@@ -33,7 +33,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -43,7 +42,6 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.opengis.geometry.coordinate.PointArray;
@@ -111,11 +109,6 @@ public class GeometricUtilities {
          */
         CONTIGUOUS
     }
-
-    /**
-     *  WGS 1984 ellipsoid with axis in {@linkplain Units#METRE metres}.
-     */
-    private static final DefaultEllipsoid DE = DefaultEllipsoid.castOrCopy(CommonCRS.WGS84.ellipsoid());
 
     private GeometricUtilities() {}
 
@@ -269,7 +262,7 @@ public class GeometricUtilities {
      * @return The distance between 2 points on earth expressed in the specified units
      */
     public static double getOrthodromicDistance(final double x1, final double y1, final double x2, final double y2, final String units) {
-        final double result = DE.orthodromicDistance(y1, x1, y2, x2);
+        final double result = ReferencingUtilities.orthodromicDistance(ReferencingUtilities.EARTH_RADIUS, y1, x1, y2, x2);
         if (units.equals("meters") || units.equals("m"))
             return result;
 

@@ -77,7 +77,7 @@ final class ImageCoverageStore extends Static {
             final Object codec, final ImageReaderWriterSpi spi)
     {
         assert caller.isInstance(store) : caller;
-        final boolean write = (store instanceof GridCoverageWriter);
+        final boolean write = (store instanceof ImageCoverageWriter);
         final Locale locale = store.locale;
         String message = Loggings.getResources(locale).getString(
                 Loggings.Keys.CreatedCodecOfClass_2, write ? 1 : 0, codec.getClass().getName());

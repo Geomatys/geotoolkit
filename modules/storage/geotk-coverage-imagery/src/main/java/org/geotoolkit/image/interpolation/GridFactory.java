@@ -30,9 +30,9 @@ import org.opengis.referencing.operation.TransformException;
  * transforms as below:
  * <p>
  * <ul>
- *   <li>Offset all input ordinates by 0.5 in order to get the coordinates of pixel centers.</li>
+ *   <li>Offset all input coordinates by 0.5 in order to get the coordinates of pixel centers.</li>
  *   <li>Apply the transform.</li>
- *   <li>Offset all output ordinates by -0.5 in order to compensate for the input offset.</li>
+ *   <li>Offset all output coordinates by -0.5 in order to compensate for the input offset.</li>
  * </ul>
  * <p>
  * This semantic implies that the {@linkplain GridGeometry#getGridToCRS() grid to CRS} transforms

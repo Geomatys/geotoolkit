@@ -103,7 +103,7 @@ import org.apache.sis.coverage.grid.GridExtent;
  */
 public interface MultidimensionalImageStore {
     /**
-     * The standard dimension index of pixel columns (<var>x</var> ordinates) in images,
+     * The standard dimension index of pixel columns (<var>x</var> coordinates) in images,
      * which is {@value}. This is for example the standard dimension index of
      * {@linkplain java.awt.image.RenderedImage#getWidth() image width} in
      * {@linkplain GridExtent grid envelopes}.
@@ -121,7 +121,7 @@ public interface MultidimensionalImageStore {
     int X_DIMENSION = 0;
 
     /**
-     * The standard dimension index of pixel rows (<var>y</var> ordinates) in images,
+     * The standard dimension index of pixel rows (<var>y</var> coordinates) in images,
      * which is {@value}. This is for example the standard dimension index of
      * {@linkplain java.awt.image.RenderedImage#getHeight() image height} in
      * {@linkplain GridExtent grid envelopes}.

@@ -49,6 +49,7 @@
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -62,12 +63,25 @@
   </dependencies>
 
 
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Modules included in the build
+           Lucene 5 is incompatible with Java 11, but we can not
+           update this dependency to Lucene 8 yet because we need
+           version 5 for an Elastic Search plugin.
+       =========================================================== -->
   <modules>
     <module>geotk-index</module>
-    <module>geotk-spatial-lucene</module>
   </modules>
+  <profiles>
+    <profile>
+      <id>JDK8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <modules>
+        <module>geotk-spatial-lucene</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>

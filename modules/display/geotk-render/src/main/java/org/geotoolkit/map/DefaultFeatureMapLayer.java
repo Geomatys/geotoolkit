@@ -34,7 +34,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import static org.geotoolkit.map.MapLayer.SELECTION_FILTER_PROPERTY;

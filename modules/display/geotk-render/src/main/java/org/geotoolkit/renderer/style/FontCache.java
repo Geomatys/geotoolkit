@@ -116,8 +116,6 @@ public class FontCache {
 
     /**
      * Tries to load the specified font name as a URL
-     * @param fontUrl
-     * @return
      */
     Font loadFromUrl(final String fontUrl) {
         // may be its a file or url

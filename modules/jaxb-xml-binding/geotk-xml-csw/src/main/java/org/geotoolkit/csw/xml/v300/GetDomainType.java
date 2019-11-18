@@ -186,7 +186,6 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         protected ResultTypeType resultType;
 
         public ValueReference() {
-
         }
 
         public ValueReference(String value) {
@@ -195,11 +194,6 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
 
         /**
          * Obtient la valeur de la propriété value.
-         *
-         * @return
-         *     possible object is
-         *     {@link String }
-         *
          */
         public String getValue() {
             return value;
@@ -207,11 +201,6 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
 
         /**
          * Définit la valeur de la propriété value.
-         *
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *
          */
         public void setValue(String value) {
             this.value = value;
@@ -219,11 +208,6 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
 
         /**
          * Obtient la valeur de la propriété resultType.
-         *
-         * @return
-         *     possible object is
-         *     {@link ResultTypeType }
-         *
          */
         public ResultTypeType getResultType() {
             if (resultType == null) {
@@ -235,16 +219,9 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
 
         /**
          * Définit la valeur de la propriété resultType.
-         *
-         * @param value
-         *     allowed object is
-         *     {@link ResultTypeType }
-         *
          */
         public void setResultType(ResultTypeType value) {
             this.resultType = value;
         }
-
     }
-
 }

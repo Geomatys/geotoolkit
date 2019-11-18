@@ -51,7 +51,7 @@ public class BDHObjectiveAnalysis extends org.geotoolkit.math.ObjectiveAnalysis 
     /**
      * Creates a new instance for interpolating values in the given region.
      *
-     * @param gridRegion The grid bounding box. The maximal ordinates are inclusive.
+     * @param gridRegion The grid bounding box. The maximal coordinates are inclusive.
      * @param size The number of grid cells along the <var>x</var> and <var>y</var> axes.
      */
     public BDHObjectiveAnalysis(final Rectangle2D gridRegion, final Dimension size) {

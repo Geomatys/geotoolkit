@@ -58,11 +58,11 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final JAXBContext context) throws JAXBException {
-        this(null, context, null, new HashMap<String,URI>(), null);
+        this(context, null, new HashMap<String,URI>(), null);
     }
 
     public AnchoredMarshallerPool(final JAXBContext context, final Map<String, Object> properties) throws JAXBException {
-        this(null, context, null, new HashMap<String,URI>(), properties);
+        this(context, null, new HashMap<String,URI>(), properties);
     }
 
     /**
@@ -78,23 +78,11 @@ public class AnchoredMarshallerPool extends MarshallerPool {
     /**
      * Creates a new factory for the given class to be bound.
      *
-     * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
      * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetadata.class}.
      * @throws JAXBException    If the JAXB context can not be created.
      */
-    public AnchoredMarshallerPool(final String rootNamespace, final Class<?>... classesToBeBound) throws JAXBException {
-        this(rootNamespace, null, classesToBeBound);
-    }
-
-    /**
-     * Creates a new factory for the given class to be bound.
-     *
-     * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
-     * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetadata.class}.
-     * @throws JAXBException    If the JAXB context can not be created.
-     */
-    public AnchoredMarshallerPool(final String rootNamespace, final String schemaLocation, final Class<?>... classesToBeBound) throws JAXBException {
-        this(rootNamespace, JAXBContext.newInstance(classesToBeBound), schemaLocation, new HashMap<String,URI>(), null);
+    public AnchoredMarshallerPool(final String schemaLocation, final Class<?>... classesToBeBound) throws JAXBException {
+        this(JAXBContext.newInstance(classesToBeBound), schemaLocation, new HashMap<String,URI>(), null);
     }
 
     /**
@@ -106,38 +94,25 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String packages) throws JAXBException {
-        this(null, packages);
+        this(packages, (String) null);
     }
 
     /**
      * Creates a new factory for the given packages. The separator character for the packages is the colon.
      *
-     * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
-     * @param  packages         The packages in which JAXB will search for annotated classes to be bound,
-     *                          for example {@code "org.apache.sis.metadata.iso:org.apache.sis.metadata.iso.citation"}.
-     * @throws JAXBException    If the JAXB context can not be created.
-     */
-    public AnchoredMarshallerPool(final String rootNamespace, final String packages) throws JAXBException {
-        this(rootNamespace, packages, (String) null);
-    }
-
-    /**
-     * Creates a new factory for the given packages. The separator character for the packages is the colon.
-     *
-     * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
      * @param  packages         The packages in which JAXB will search for annotated classes to be bound,
      *                          for example {@code "org.apache.sis.metadata.iso:org.apache.sis.metadata.iso.citation"}.
      * @param schemaLocation    The main xsd schema location for all the returned xml.
      * @throws JAXBException    If the JAXB context can not be created.
      */
-    public AnchoredMarshallerPool(final String rootNamespace, final String packages, final String schemaLocation) throws JAXBException {
-        this(rootNamespace, JAXBContext.newInstance(packages), schemaLocation, new HashMap<String,URI>(), null);
+    public AnchoredMarshallerPool(final String packages, final String schemaLocation) throws JAXBException {
+        this(JAXBContext.newInstance(packages), schemaLocation, new HashMap<String,URI>(), null);
     }
 
-    private AnchoredMarshallerPool(final String rootNamespace, final JAXBContext context, final String schemaLocation,
+    private AnchoredMarshallerPool(final JAXBContext context, final String schemaLocation,
             final Map<String,URI> anchors, final Map<String, Object> properties) throws JAXBException
     {
-        super(context, getProperties(rootNamespace, anchors, properties));
+        super(context, getProperties(anchors, properties));
         this.schemaLocation = schemaLocation;
         this.anchors = anchors;
     }
@@ -145,32 +120,15 @@ public class AnchoredMarshallerPool extends MarshallerPool {
     /**
      * Return a Map of Marshaller properties.
      *
-     * @param rootNamespace The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
-     */
-    public static Map<String, String> getProperties(final String rootNamespace) {
-        final Map<String, String> properties = new HashMap<>();
-        properties.put(XML.DEFAULT_NAMESPACE, rootNamespace);
-        return properties;
-    }
-
-    /**
-     * Return a Map of Marshaller properties.
-     *
-     * @param rootNamespace The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
      * @param anchors Map of anchors to be stored as the {@link #anchors} field.
      */
-    private static Map<String, Object> getProperties(final String rootNamespace, final Map<String,URI> anchors, final Map<String, Object> previousProperties) {
+    private static Map<String, Object> getProperties(final Map<String,URI> anchors, final Map<String, Object> previousProperties) {
         final Map<String, Object> properties;
         if (previousProperties != null) {
             properties = previousProperties;
         } else {
             properties = new HashMap<>();
         }
-
-        if (rootNamespace != null) {
-            properties.put(XML.DEFAULT_NAMESPACE, rootNamespace);
-        }
-        properties.put(XML.DEFAULT_NAMESPACE, rootNamespace);
         properties.put(XML.RESOLVER, new ReferenceResolver() {
             @Override
             public XLink anchor(final MarshalContext context, final Object value, final CharSequence text) {

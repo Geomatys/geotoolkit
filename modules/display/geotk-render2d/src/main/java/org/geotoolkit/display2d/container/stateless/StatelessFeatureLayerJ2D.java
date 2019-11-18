@@ -44,15 +44,12 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
@@ -87,7 +84,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleUtilities;
@@ -117,7 +114,7 @@ import org.opengis.util.GenericName;
  * @author johann sorel (Geomatys)
  * @module
  */
-public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements ChangeListener<ChangeEvent> {
+public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements StoreListener<StoreEvent> {
 
     protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
@@ -133,14 +130,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         params = new StatelessContextParams(canvas,layer);
 
         final FeatureSet resource = layer.getResource();
-        if (resource instanceof FeatureCollection) {
-            final Session session = ((FeatureCollection)resource).getSession();
-            weakSessionListener.registerSource(session);
+        if (resource instanceof FeatureSet) {
+            weakSessionListener.registerSource(resource);
         }
     }
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             getCanvas().repaint();
@@ -235,8 +231,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * Render styled features.
-     *
-     * @param context
      */
     private boolean renderStyledFeature(final RenderingContext2D context){
 
@@ -292,23 +286,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
         currentQuery = prepareQuery(context, item, requieredAtts, rules, symbolsMargin);
         final Query query = currentQuery;
-        final FeatureSet col = item.getResource().subset(query);
-        if (col instanceof FeatureCollection) {
-            return FeatureStreams.cached((FeatureCollection)col, 1000);
-        } else {
-            return col;
-        }
+        return item.getResource().subset(query);
     }
 
     protected FeatureSet optimizeCollection(final RenderingContext2D context) throws Exception {
         currentQuery = prepareQuery(context, item, symbolsMargin);
         final Query query = currentQuery;
-        final FeatureSet col = item.getResource().subset(query);
-        if (col instanceof FeatureCollection) {
-            return FeatureStreams.cached((FeatureCollection)col, 1000);
-        } else {
-            return col;
-        }
+        return item.getResource().subset(query);
     }
 
     protected FeatureId id(Object candidate) {
@@ -317,29 +301,24 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     protected GraphicIterator getIterator(final FeatureSet features,
             final RenderingContext2D renderingContext, final StatelessContextParams params) throws DataStoreException {
-        final Hints iteHints = new Hints();
 
         final FeatureIterator iterator;
-        if (features instanceof FeatureCollection) {
-            iterator = ((FeatureCollection)features).iterator(iteHints);
-        } else {
-            final Stream<Feature> stream = features.features(false);
-            final Iterator<Feature> i = stream.iterator();
-            iterator = new FeatureIterator() {
-                @Override
-                public Feature next() throws FeatureStoreRuntimeException {
-                    return i.next();
-                }
-                @Override
-                public boolean hasNext() throws FeatureStoreRuntimeException {
-                    return i.hasNext();
-                }
-                @Override
-                public void close() {
-                    stream.close();
-                }
-            };
-        }
+        final Stream<Feature> stream = features.features(false);
+        final Iterator<Feature> i = stream.iterator();
+        iterator = new FeatureIterator() {
+            @Override
+            public Feature next() throws FeatureStoreRuntimeException {
+                return i.next();
+            }
+            @Override
+            public boolean hasNext() throws FeatureStoreRuntimeException {
+                return i.hasNext();
+            }
+            @Override
+            public void close() {
+                stream.close();
+            }
+        };
         final ProjectedFeature projectedFeature = new ProjectedFeature(params);
         return new GraphicIterator(iterator, projectedFeature);
     }
@@ -1073,11 +1052,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * Render by object order.
-     * @param candidates
-     * @param renderers
-     * @param context
-     * @param params
-     * @throws PortrayalException
      */
     protected final boolean renderByObjectOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules,
@@ -1151,11 +1125,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * render by symbol order.
-     * @param candidates
-     * @param context
-     * @param rules
-     * @param params
-     * @throws org.geotoolkit.display.PortrayalException
      */
     protected final boolean renderBySymbolOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)

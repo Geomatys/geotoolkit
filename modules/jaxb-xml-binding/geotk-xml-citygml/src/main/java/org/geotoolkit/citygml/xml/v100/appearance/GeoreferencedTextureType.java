@@ -85,11 +85,6 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the preferWorldFile property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *
      */
     public Boolean isPreferWorldFile() {
         return preferWorldFile;
@@ -97,11 +92,6 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Sets the value of the preferWorldFile property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *
      */
     public void setPreferWorldFile(Boolean value) {
         this.preferWorldFile = value;
@@ -109,11 +99,6 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the referencePoint property.
-     *
-     * @return
-     *     possible object is
-     *     {@link PointPropertyType }
-     *
      */
     public PointPropertyType getReferencePoint() {
         return referencePoint;
@@ -121,11 +106,6 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Sets the value of the referencePoint property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link PointPropertyType }
-     *
      */
     public void setReferencePoint(PointPropertyType value) {
         this.referencePoint = value;
@@ -133,7 +113,6 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the orientation property.
-     *
      */
     public List<Double> getOrientation() {
         if (orientation == null) {
@@ -144,7 +123,6 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the target property.
-     *
      */
     public List<String> getTarget() {
         if (target == null) {
@@ -155,7 +133,6 @@ public class GeoreferencedTextureType extends AbstractTextureType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfGeoreferencedTexture property.
-     *
      */
     public List<Object> getGenericApplicationPropertyOfGeoreferencedTexture() {
         if (genericApplicationPropertyOfGeoreferencedTexture == null) {

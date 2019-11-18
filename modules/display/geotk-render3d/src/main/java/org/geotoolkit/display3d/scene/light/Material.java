@@ -34,7 +34,6 @@ public class Material {
 
     /**
      *
-     * @param color
      * @link http://www.opengl.org/sdk/docs/man2/xhtml/glMaterial.xml
      *
      * @param face  Specifies which face or faces are being updated.

@@ -19,6 +19,7 @@ package org.geotoolkit.sensor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.sml.xml.AbstractSensorML;
@@ -36,7 +37,7 @@ public interface SensorStore extends AutoCloseable {
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getOpenParameters();
+    Optional<ParameterValueGroup> getOpenParameters();
 
     /**
      * Get the factory which created this source.

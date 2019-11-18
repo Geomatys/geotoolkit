@@ -25,16 +25,16 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
 import org.geotoolkit.style.MutableRule;
 import org.opengis.filter.Filter;
 import org.opengis.style.Description;
 import org.opengis.util.InternationalString;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *

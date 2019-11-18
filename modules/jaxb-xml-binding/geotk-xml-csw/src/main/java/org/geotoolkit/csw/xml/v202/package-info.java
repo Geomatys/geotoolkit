@@ -14,5 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/cat/csw/2.0.2", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "http://www.opengis.net/cat/csw/2.0.2", elementFormDefault = XmlNsForm.QUALIFIED,
+  xmlns = {
+    @XmlNs(prefix = "csw2", namespaceURI = "http://www.opengis.net/cat/csw/2.0.2")
+  })
 package org.geotoolkit.csw.xml.v202;
+
+import javax.xml.bind.annotation.XmlNs;
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;

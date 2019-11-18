@@ -442,7 +442,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     /**
      * Set minimum scale do display.
      * Scale is in SE scale.
-     * @param minscale
      */
     public void setMinscale(double minscale) {
         this.minscale = minscale;
@@ -460,7 +459,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     /**
      * Set maximum scale do display.
      * Scale is in SE scale.
-     * @param maxscale
      */
     public void setMaxscale(double maxscale) {
         this.maxscale = maxscale;
@@ -818,10 +816,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     /**
-     *
-     * @param s
      * @param center in Display CRS
-     * @throws NoninvertibleTransformException
      */
     public void scale(final double s, final Point2D center) throws NoninvertibleTransformException {
         final AffineTransform2D objToDisp = getObjectiveToDisplay();
@@ -937,7 +932,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
     /**
      * Set objective to display transform at canvas center.
-     * @param trs
      */
     public void setCenterTransform(AffineTransform trs) {
 
@@ -1046,8 +1040,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     /**
      * Set the scale, in a ground unit manner, relation between map display size
      * and real ground unit meters;
-     * @param scale
-     * @throws org.opengis.referencing.operation.TransformException
      */
     public void setGeographicScale(final double scale) throws TransformException {
         double currentScale = getGeographicScale();
@@ -1063,7 +1055,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Returns the geographic scale, in a ground unit manner, relation between map display size
      * and real ground unit meters.
      *
-     * @return
      * @throws org.opengis.referencing.operation.TransformException
      * @throws IllegalStateException If the affine transform used for conversion is in
      *                               illegal state.
@@ -1239,7 +1230,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Search an axis index.
      * Comparator must return 0 when found.
      *
-     * @param comparator
      * @return -1 if not found
      */
     public int getAxisIndex(final Comparator<CoordinateSystemAxis> comparator) {

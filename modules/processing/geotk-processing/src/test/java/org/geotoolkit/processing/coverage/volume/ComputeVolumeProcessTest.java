@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.volume;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
@@ -25,18 +24,15 @@ import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.referencing.CRS;
+import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.AbstractGridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import static org.junit.Assert.*;
@@ -48,9 +44,6 @@ import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.util.GenericName;
 
 /**
  * Test {@link ComputeVolumeProcess process} to compute volume from DEM.
@@ -141,7 +134,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         System.arraycopy(envelopeAndGeomCoordinates, 0, envCoords, 0, 4);
         GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setEnvelope(envCoords);
-        GridCoverageReader gcrTest = new GridCovReaderTest(buff, env);
+        TestResource gcrTest = new TestResource(buff, env);
 
         // define area where volume is computed.
         final double[] geomCoords = new double[envelopeAndGeomCoordinates.length - 4];
@@ -187,7 +180,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         }
         GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setEnvelope(0 ,0, 7, 7);
-        GridCoverageReader gcrTest = new GridCovReaderTest(buff, env);
+        TestResource gcrTest = new TestResource(buff, env);
         Geometry geomTest = getGeometry(3, 1,
                                         3, 2,
                                         2, 2,
@@ -310,7 +303,7 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
             env.setEnvelope(0 ,0, maxx, maxy);
 
             // create appropriate gridcoverage reader.
-            GridCoverageReader gcrTest = new GridCovReaderTest(buff, env);
+            TestResource gcrTest = new TestResource(buff, env);
 
             // create geometry.
             Geometry geomTest = getGeometry(0, 0, 0, maxy, maxx, maxy, maxx, 0, 0, 0);
@@ -404,23 +397,27 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
     }
 
     /**
-     * {@link GridCoverageReader} need to test {@link ComputeVolumeProcess} class.
+     * {@link GridCoverageResource} need to test {@link ComputeVolumeProcess} class.
      */
-    private class GridCovReaderTest extends AbstractGridCoverageReader {
+    private class TestResource extends AbstractGridResource {
 
         final GridCoverage coverage;
 
-        GridCovReaderTest(final RenderedImage image, final Envelope envelope){
+        TestResource(final RenderedImage image, final Envelope envelope){
+            super(null);
+
+
+            final SampleDimension.Builder builder = new SampleDimension.Builder();
+            builder.setName(Names.createLocalName(null, null, "dim0"));
+            builder.addQuantitative("val", -128, +128, null);
+            final SampleDimension gsd = builder.build();
+
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
             gcb.setEnvelope(envelope);
             gcb.setRenderedImage(image);
+            gcb.setSampleDimensions(gsd);
             coverage = gcb.getGridCoverage2D();
-        }
-
-        @Override
-        public GenericName getCoverageName() throws CoverageStoreException, CancellationException {
-            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
@@ -430,49 +427,12 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
 
         @Override
         public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return coverage.getSampleDimensions();
         }
 
         @Override
-        public GridCoverage read(GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-            try {
-                Envelope readEnvelope            = param.getEnvelope();
-                MathTransform paramToCoverageCrs = CRS.findOperation(param.getCoordinateReferenceSystem(), coverage.getCoordinateReferenceSystem(), null).getMathTransform();
-                readEnvelope                     = Envelopes.transform(paramToCoverageCrs, readEnvelope);
-                GeneralEnvelope readGenEnvelope  = new GeneralEnvelope(readEnvelope);
-                readGenEnvelope.intersects(coverage.getGridGeometry().getEnvelope(), true);
-                MathTransform crsToGrid          = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
-                GeneralEnvelope gridEnvelope     = Envelopes.transform(crsToGrid, readGenEnvelope);
-                final RenderedImage covImg       = coverage.render(null);
-
-                // new coverage
-                Rectangle rect = new Rectangle((int)gridEnvelope.getLower(0),(int) gridEnvelope.getLower(1),
-                                               (int) Math.ceil(gridEnvelope.getSpan(0)), (int) Math.ceil(gridEnvelope.getSpan(1)));
-
-                final BufferedImage newImage = new BufferedImage(covImg.getColorModel(), covImg.getColorModel().createCompatibleWritableRaster(rect.width, rect.height), false, null);
-                final PixelIterator pix      = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).setRegionOfInterest(rect).create(covImg);
-                final WritablePixelIterator copypix  = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(newImage);
-                while (pix.next()) {
-                    copypix.next();
-                    copypix.setSample(0, pix.getSampleDouble(0));
-                }
-
-                final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                gcb.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem());
-                gcb.setEnvelope(readGenEnvelope);
-                gcb.setRenderedImage(newImage);
-                gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-
-                final SampleDimension.Builder builder = new SampleDimension.Builder();
-                builder.setName(Names.createLocalName(null, null, "dim0"));
-                builder.addQuantitative("val", -128, +128, null);
-                final SampleDimension gsd = builder.build();
-
-                gcb.setSampleDimensions(gsd);
-                return gcb.getGridCoverage2D();
-            } catch (Exception ex) {
-                throw new CoverageStoreException(ex);
-            }
+        public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+            return coverage;
         }
     }
 }

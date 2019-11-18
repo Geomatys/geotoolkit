@@ -216,11 +216,6 @@ public class BriefRecordType extends AbstractRecordType {
 
     /**
      * Obtient la valeur de la propriété type.
-     *
-     * @return
-     *     possible object is
-     *     {@link SimpleLiteral }
-     *
      */
     public SimpleLiteral getType() {
         return type;
@@ -228,11 +223,6 @@ public class BriefRecordType extends AbstractRecordType {
 
     /**
      * Définit la valeur de la propriété type.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link SimpleLiteral }
-     *
      */
     public void setType(SimpleLiteral value) {
         this.type = value;
@@ -258,8 +248,6 @@ public class BriefRecordType extends AbstractRecordType {
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
      * {@link JAXBElement }{@code <}{@link WGS84BoundingBoxType }{@code >}
-     *
-     *
      */
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
         if (boundingBox == null) {
@@ -267,5 +255,4 @@ public class BriefRecordType extends AbstractRecordType {
         }
         return this.boundingBox;
     }
-
 }

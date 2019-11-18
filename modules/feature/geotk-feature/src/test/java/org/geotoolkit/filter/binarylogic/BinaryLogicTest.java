@@ -25,7 +25,7 @@ import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Or;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
@@ -34,15 +34,8 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @module
  */
 public class BinaryLogicTest extends org.geotoolkit.test.TestBase {
-
-
-    public BinaryLogicTest() {
-
-    }
-
     @Test
     public void testAnd() {
-
         Filter filter1 = FF.equals(FF.property("testInteger"), FF.literal(101));
         Filter filter2 = FF.equals(FF.property("testGeometry"), FF.literal(RIGHT_GEOMETRY));
         Filter filter3 = FF.equals(FF.property("testString"), FF.literal("test string data"));
@@ -66,12 +59,10 @@ public class BinaryLogicTest extends org.geotoolkit.test.TestBase {
         filters.add(filter3);
         and = FF.and(filters);
         assertSerializedEquals(and); //test serialize
-
     }
 
     @Test
     public void testOr() {
-
         Filter filter1 = FF.equals(FF.property("testInteger"), FF.literal(101));
         Filter filter2 = FF.equals(FF.property("testGeometry"), FF.literal(RIGHT_GEOMETRY));
         Filter filter3 = FF.equals(FF.property("testString"), FF.literal("test string data"));
@@ -103,7 +94,5 @@ public class BinaryLogicTest extends org.geotoolkit.test.TestBase {
         filters.add(filter3);
         or = FF.or(filters);
         assertSerializedEquals(or); //test serialize
-
     }
-
 }

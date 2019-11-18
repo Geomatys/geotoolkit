@@ -37,7 +37,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.referencing.ImmutableIdentifier;
 import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;

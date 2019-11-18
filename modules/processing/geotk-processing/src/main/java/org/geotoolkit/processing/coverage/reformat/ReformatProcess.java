@@ -82,7 +82,7 @@ public class ReformatProcess extends AbstractProcess {
         final RenderedImage inputImage = inputCoverage.render(null);
         final SampleModel inputSampleModel = inputImage.getSampleModel();
         //check type, if same return the original coverage
-        if(inputSampleModel.getDataType() == inputType){
+        if (inputSampleModel.getDataType() == inputType) {
             outputParameters.getOrCreate(OUT_COVERAGE).setValue(inputCoverage);
             return;
         }
@@ -113,6 +113,7 @@ public class ReformatProcess extends AbstractProcess {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(resultImage);
         gcb.setGridGeometry(inputCoverage.getGridGeometry());
+        gcb.setSampleDimensions(inputCoverage.getSampleDimensions());
         final GridCoverage resultCoverage = gcb.getGridCoverage2D();
 
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);

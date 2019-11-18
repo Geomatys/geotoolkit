@@ -33,10 +33,8 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractCurveSegment;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -167,6 +165,14 @@ public class GeometryTransformer implements Supplier<Geometry> {
     Boolean isLongitudeFirst;
 
     /**
+     * A parameter which can be set by user to force the transformation of PolygonType into MultiPolygon instead of Polygon.
+     * This is needed for special case of a gml SurfacePropertyType who can either contains a SurfaceType (MultiPolygon) or a PolygonType (Polygon).
+     * False by default.
+     * Warning this flag is only applied on the parent configuration.
+     */
+    Boolean forceMultiPolygon;
+
+    /**
      * Prepare conversion of a GML geometry.
      * @param source The geometry to convert to JTS.
      */
@@ -218,6 +224,12 @@ public class GeometryTransformer implements Supplier<Geometry> {
             geometry = convertRing((Ring) source);
         } else if (source instanceof org.geotoolkit.gml.xml.Polygon) {
             geometry = convertPolygon((org.geotoolkit.gml.xml.Polygon) source);
+            if (isForceMultiPolygon()) {
+                Polygon[] polys = {(Polygon)geometry};
+                final MultiPolygon result = GF.createMultiPolygon(polys);
+                applyCRS(result);
+                geometry = result;
+            }
         } else if (source instanceof AbstractSurface) {
             if (source instanceof SurfaceType) {
                 geometry = convertSurface((SurfaceType)source);
@@ -257,7 +269,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 values = (Map) userData;
             } else if (userData instanceof CoordinateReferenceSystem) {
                 values = new HashMap();
-                values.put(HintsPending.JTS_GEOMETRY_CRS, userData);
+                values.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, userData);
             } else if (userData == null) {
                 values = new HashMap();
             } else {
@@ -596,6 +608,17 @@ public class GeometryTransformer implements Supplier<Geometry> {
         isLongitudeFirst = forceLongitudeFirst;
     }
 
+    public boolean isForceMultiPolygon() {
+        if (forceMultiPolygon != null) {
+            return forceMultiPolygon;
+        }
+        return false;
+    }
+
+    public void setForceMultiPolygon(final Boolean forceMultiPolygon) {
+        this.forceMultiPolygon = forceMultiPolygon;
+    }
+
     protected Stream<GeometryTransformer> familyTree() {
         final Stream<GeometryTransformer> self = Stream.of(this);
         if (parent == null)
@@ -730,16 +753,15 @@ public class GeometryTransformer implements Supplier<Geometry> {
         return poly;
     }
 
-    private MultiLineString convertCurve(final Curve mc) {
+    private LineString convertCurve(final Curve mc) {
         CurveSegmentArrayProperty segments = mc.getSegments();
-        final List<LineString> lines = new ArrayList<>();
+        final List<Coordinate> coords = new ArrayList<>();
         for (AbstractCurveSegment cs : segments.getAbstractCurveSegment()) {
-            final Coordinate[] coordinates = StreamSupport.stream(getCoordinates(cs), false)
-                    .toArray(size -> new Coordinate[size]);
-            lines.add(GF.createLineString(coordinates));
+            StreamSupport.stream(getCoordinates(cs), false)
+                    .forEach(coords::add);
         }
 
-        final MultiLineString mls = GF.createMultiLineString(lines.toArray(new LineString[lines.size()]));
+        final LineString mls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
         applyCRS(mls);
         return mls;
     }
@@ -1013,12 +1035,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
             azimuth = ((azimuth + 180) % 360) - 180;
             gc.setStartingAzimuth(azimuth);
             gc.setGeodesicDistance(r);
-            final DirectPosition pt;
-            try {
-                pt = gc.getEndPoint();
-            } catch (TransformException ex) {
-                throw new BackingStoreException(ex);
-            }
+            final DirectPosition pt = gc.getEndPoint();
             return new Coordinate(
                 pt.getOrdinate(xAxis),
                 pt.getOrdinate(yAxis)

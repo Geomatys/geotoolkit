@@ -16,6 +16,12 @@
  */
 package org.geotoolkit.cql;
 
+import java.text.ParseException;
+import org.apache.sis.cql.CQLException;
+import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -27,11 +33,6 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import java.text.ParseException;
-import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.temporal.object.TemporalUtilities;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;

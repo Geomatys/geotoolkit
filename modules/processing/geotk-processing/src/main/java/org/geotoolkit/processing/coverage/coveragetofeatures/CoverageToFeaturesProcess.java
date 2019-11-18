@@ -26,10 +26,10 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.locationtech.jts.geom.Coordinate;
@@ -71,11 +71,11 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      *
      * @param reader source coverage reader
      */
-    public CoverageToFeaturesProcess(GridCoverageReader reader){
+    public CoverageToFeaturesProcess(GridCoverageResource reader){
         super(CoverageToFeaturesDescriptor.INSTANCE, asParameters(reader));
     }
 
-    private static ParameterValueGroup asParameters(GridCoverageReader reader){
+    private static ParameterValueGroup asParameters(GridCoverageResource reader){
         final Parameters params = Parameters.castOrWrap(CoverageToFeaturesDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(CoverageToFeaturesDescriptor.READER_IN).setValue(reader);
         return params;
@@ -95,7 +95,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException{
         try {
-            final GridCoverageReader reader = inputParameters.getValue(CoverageToFeaturesDescriptor.READER_IN);
+            final GridCoverageResource reader = inputParameters.getValue(CoverageToFeaturesDescriptor.READER_IN);
             final GridCoverage coverage = reader.read(null);
             final GridGeometry gridGeom = reader.getGridGeometry();
 
@@ -113,7 +113,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      *
      * @return the FeatureType of Features
      */
-    static FeatureType createFeatureType(final GridCoverage coverage, final GridCoverageReader reader) throws DataStoreException {
+    static FeatureType createFeatureType(final GridCoverage coverage, final GridCoverageResource reader) throws DataStoreException {
 
         final int nbBand = coverage.getSampleDimensions().size();
 
@@ -137,13 +137,13 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      * @param x
      * @param y
      * @param coverage
-     * @param reader
+     * @param resource
      * @param gridGeom
      * @return the cell Feature
      * @throws CoverageStoreException
      * @throws TransformException
      */
-    static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage2D coverage, GridCoverageReader reader,
+    static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage2D coverage, GridCoverageResource resource,
             GridGeometry gridGeom) throws DataStoreException, TransformException {
 
         final GeometryFactory geomFac = new GeometryFactory();

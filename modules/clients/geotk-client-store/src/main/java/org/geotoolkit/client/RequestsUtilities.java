@@ -88,9 +88,6 @@ public final class RequestsUtilities {
 
     /**
      * Parse a boolean from a string value.
-     *
-     * @param strTransparent
-     * @return
      */
     public static boolean toBoolean(final String strTransparent) {
         if (strTransparent == null) {

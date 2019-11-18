@@ -61,7 +61,7 @@
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature-store</artifactId>
+            <artifactId>geotk-storage</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

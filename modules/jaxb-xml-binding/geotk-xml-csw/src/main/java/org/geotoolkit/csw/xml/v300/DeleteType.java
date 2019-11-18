@@ -83,11 +83,6 @@ public class DeleteType implements Delete {
 
     /**
      * Obtient la valeur de la propriété constraint.
-     *
-     * @return
-     *     possible object is
-     *     {@link QueryConstraintType }
-     *
      */
     @Override
     public QueryConstraintType getConstraint() {
@@ -96,11 +91,6 @@ public class DeleteType implements Delete {
 
     /**
      * Définit la valeur de la propriété constraint.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link QueryConstraintType }
-     *
      */
     public void setConstraint(QueryConstraintType value) {
         this.constraint = value;
@@ -108,11 +98,6 @@ public class DeleteType implements Delete {
 
     /**
      * Obtient la valeur de la propriété typeName.
-     *
-     * @return
-     *     possible object is
-     *     {@link QName }
-     *
      */
     @Override
     public QName getTypeName() {
@@ -121,11 +106,6 @@ public class DeleteType implements Delete {
 
     /**
      * Définit la valeur de la propriété typeName.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link QName }
-     *
      */
     public void setTypeName(QName value) {
         this.typeName = value;
@@ -133,11 +113,6 @@ public class DeleteType implements Delete {
 
     /**
      * Obtient la valeur de la propriété handle.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getHandle() {
@@ -146,14 +121,8 @@ public class DeleteType implements Delete {
 
     /**
      * Définit la valeur de la propriété handle.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setHandle(String value) {
         this.handle = value;
     }
-
 }

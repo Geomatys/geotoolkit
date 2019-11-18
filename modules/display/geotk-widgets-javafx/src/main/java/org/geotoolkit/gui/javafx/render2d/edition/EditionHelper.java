@@ -16,7 +16,41 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
-import org.opengis.feature.Feature;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.ArgumentChecks;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.gui.javafx.render2d.FXMap;
+import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -31,51 +65,17 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.distance.DistanceOp;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.map.FeatureMapLayer;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.StringUtilities;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.display2d.GO2Utilities;
-import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
-import org.geotoolkit.gui.javafx.render2d.FXMap;
-import org.geotoolkit.internal.Loggers;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
-import org.opengis.filter.FilterFactory;
 
 /**
  *
@@ -384,8 +384,7 @@ public class EditionHelper {
 
         Feature candidate = null;
 
-        FeatureCollection editgeoms = null;
-        FeatureIterator fi = null;
+        FeatureSet editgeoms = null;
         try {
             final Polygon geo = mousePositionToGeometry(mx, my);
             Filter flt = toFilter(geo, editedLayer);
@@ -413,40 +412,35 @@ public class EditionHelper {
                 flt = FF.and(flt, dimFilter);
             }
 
-            QueryBuilder qb = new QueryBuilder(editedLayer.getResource().getType().getName().toString());
+            final FeatureSet resource = editedLayer.getResource();
+
             //we filter in the map CRS
-            qb.setCRS(map.getCanvas().getObjectiveCRS2D());
-            editgeoms = (FeatureCollection) editedLayer.getResource().subset(qb.buildQuery());
+            SimpleQuery reproject = QueryBuilder.reproject(editgeoms.getType(), map.getCanvas().getObjectiveCRS2D());
+            editgeoms = editgeoms.subset(reproject);
 
             //we filter ourself since we want the filter to occure after the reprojection
-            editgeoms = FeatureStreams.filter(editgeoms, flt);
+            SimpleQuery query = new SimpleQuery();
+            query.setFilter(flt);
+            editgeoms = editgeoms.subset(query);
 
-            fi = editgeoms.iterator();
-            if (fi.hasNext()) {
-                Feature sf = fi.next();
+            try (Stream<Feature> stream = editgeoms.features(false)) {
+                Iterator<Feature> fi = stream.iterator();
+                if (fi.hasNext()) {
+                    Feature sf = fi.next();
 
-                //get the original, in it's data crs
-                flt = FF.id(Collections.singleton(FeatureExt.getId(sf)));
-                sf = null;
-                fi.close();
+                    //get the original, in it's data crs
+                    flt = FF.id(Collections.singleton(FeatureExt.getId(sf)));
+                    sf = null;
 
-                qb.reset();
-                qb.setTypeName(editedLayer.getResource().getType().getName());
-                qb.setFilter(flt);
-                editgeoms = (FeatureCollection) editedLayer.getResource().subset(qb.buildQuery());
-                fi = editgeoms.iterator();
-                if (fi.hasNext()){
-                    sf = fi.next();
+                    final SimpleQuery queryid = new SimpleQuery();
+                    queryid.setFilter(flt);
+                    editgeoms = resource.subset(queryid);
+                    sf = editgeoms.features(false).findFirst().orElse(null);
+                    return sf;
                 }
-
-                return sf;
             }
         }catch(Exception ex){
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
-        }finally{
-            if(fi != null){
-                fi.close();
-            }
         }
 
         return candidate;
@@ -1280,7 +1274,6 @@ public class EditionHelper {
 
     /**
      *
-     * @param fml
      * @return true if layer resource is a FeatureCollection and is Writable.
      */
     public static boolean isWritable(FeatureMapLayer fml) {

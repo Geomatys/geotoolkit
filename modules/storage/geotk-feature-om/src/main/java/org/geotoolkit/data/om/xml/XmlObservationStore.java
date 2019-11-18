@@ -24,24 +24,32 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.internal.storage.AbstractFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStreams;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.gml.GMLUtilities;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.AbstractRing;
@@ -49,7 +57,7 @@ import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationFilter;
 import org.geotoolkit.observation.ObservationReader;
@@ -61,12 +69,13 @@ import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.util.NamesExt;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Geometry;
+import org.opengis.metadata.Metadata;
 import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
@@ -82,70 +91,54 @@ import org.opengis.util.GenericName;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class XmlObservationStore extends AbstractFeatureStore implements ResourceOnFileSystem,ObservationStore {
+public class XmlObservationStore extends DataStore implements Aggregate, ResourceOnFileSystem,ObservationStore {
+
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.om");
 
     protected final GenericNameIndex<FeatureType> types;
-    private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
+    private final ParameterValueGroup parameters;
     private final Path xmlFile;
+    private final List<Resource> components = new ArrayList<>();
 
     public XmlObservationStore(final ParameterValueGroup params) throws IOException {
-        super(params);
+        this.parameters = params;
         xmlFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
+
+        for (GenericName name : types.getNames()) {
+            components.add(new FeatureView(name));
+        }
     }
 
     public XmlObservationStore(final Path xmlFile) {
-        super(null);
+        parameters = XmlObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        parameters.parameter(FILE_PATH.getName().toString()).setValue(xmlFile.toUri());
         this.xmlFile = xmlFile;
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
-    }
 
-    @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(XmlObservationStoreFactory.NAME);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // FEATURE STORE ///////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Set<GenericName> getNames() throws DataStoreException {
-        return types.getNames();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        typeCheck(typeName);
-        return types.get(this, typeName);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return capabilities;
-    }
-
-    @Override
-    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
-
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        final FeatureType sft = getFeatureType(gquery.getTypeName());
-        try {
-            return FeatureStreams.subset(new XmlFeatureReader(xmlFile,sft), gquery);
-        } catch (IOException | JAXBException ex) {
-            throw new DataStoreException(ex);
+        for (GenericName name : types.getNames()) {
+            components.add(new FeatureView(name));
         }
+    }
+
+    @Override
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(XmlObservationStoreFactory.NAME);
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        return new DefaultMetadata();
+    }
+
+    @Override
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
+    }
+
+    @Override
+    public Collection<? extends Resource> components() throws DataStoreException {
+        return components;
     }
 
     static Object unmarshallObservationFile(final Path f) throws JAXBException, IOException {
@@ -204,7 +197,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
     @Override
     public ExtractionResult getResults(String affectedSensorID, List<String> sensorIds, Set<Phenomenon> phenomenons, final Set<org.opengis.observation.sampling.SamplingFeature> samplingFeatures) throws DataStoreException {
         if (affectedSensorID != null) {
-            getLogger().warning("XMLObservation store does not allow to override sensor ID");
+            LOGGER.warning("XMLObservation store does not allow to override sensor ID");
         }
         final ExtractionResult result = new ExtractionResult();
         result.spatialBound.initBoundary();
@@ -356,7 +349,7 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
             SOSMarshallerPool.getInstance().recycle(um);
             return obj;
         } catch (IOException | JAXBException ex) {
-            getLogger().log(Level.WARNING, "Error while reading  file", ex);
+            LOGGER.log(Level.WARNING, "Error while reading  file", ex);
         }
         return null;
     }
@@ -445,4 +438,36 @@ public class XmlObservationStore extends AbstractFeatureStore implements Resourc
         throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
     }
 
+    private final class FeatureView extends AbstractFeatureSet implements StoreResource {
+
+        private final GenericName name;
+
+        FeatureView(GenericName name) {
+            super(null);
+            this.name = name;
+        }
+
+        @Override
+        public FeatureType getType() throws DataStoreException {
+            return types.get(XmlObservationStore.this, name.toString());
+        }
+
+        @Override
+        public DataStore getOriginator() {
+            return XmlObservationStore.this;
+        }
+
+        @Override
+        public Stream<Feature> features(boolean parallel) throws DataStoreException {
+            final FeatureType sft = getType();
+            try {
+                final XmlFeatureReader reader = new XmlFeatureReader(xmlFile,sft);
+                final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
+                final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
+                return stream.onClose(reader::close);
+            } catch (JAXBException | IOException ex) {
+                throw new DataStoreException(ex);
+            }
+        }
+    }
 }

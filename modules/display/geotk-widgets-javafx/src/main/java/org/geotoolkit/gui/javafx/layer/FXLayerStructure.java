@@ -36,20 +36,18 @@ import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.SampleDimensionType;
-import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.amended.AmendedCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.referencing.IdentifiedObject;
@@ -91,11 +89,11 @@ public class FXLayerStructure extends FXPropertyPane {
     }
 
     public boolean canHandle(Object target) {
-        return target instanceof CoverageMapLayer;
+        return target instanceof MapLayer;
     }
 
     public boolean init(Object target) {
-        if(!(target instanceof CoverageMapLayer)){
+        if(!(target instanceof MapLayer)){
             return false;
         }
 
@@ -107,11 +105,12 @@ public class FXLayerStructure extends FXPropertyPane {
         sb.append("<html><head><meta charset=\"UTF-16\">");
         sb.append(CSS);
         sb.append("</head><body>");
-        if(layer instanceof FeatureMapLayer){
-            final FeatureMapLayer fml = (FeatureMapLayer) layer;
+        final Resource resource = layer.getResource();
+        if (resource instanceof FeatureSet) {
+            final FeatureSet fml = (FeatureSet) layer;
             final FeatureType type;
             try {
-                type = fml.getResource().getType();
+                type = fml.getType();
                 String str = type.toString().replace("&", "&amp;");
                 str = str.replace("<", "&lt;");
                 str = str.replace(">", "&gt;");
@@ -125,9 +124,8 @@ public class FXLayerStructure extends FXPropertyPane {
             }
 
 
-        }else if(layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource ref = cml.getResource();
+        } else if (resource instanceof GridCoverageResource) {
+            final GridCoverageResource ref = (GridCoverageResource) resource;
             try {
                 final GridGeometry gridgeom = ref.getGridGeometry();
                 final List<SampleDimension> dimensions = ref.getSampleDimensions();
@@ -196,7 +194,6 @@ public class FXLayerStructure extends FXPropertyPane {
 
                 if (dimensions!=null) {
                     for (SampleDimension dim : dimensions) {
-                        final SampleDimensionType st = SampleDimensionUtils.getSampleDimensionType(dim);
                         final MathTransform1D sampletoGeo = dim.getTransferFunction().orElse(null);
                         final Unit unit = dim.getUnits().orElse(null);
                         final InternationalString desc = dim.getName().toInternationalString();
@@ -257,38 +254,37 @@ public class FXLayerStructure extends FXPropertyPane {
             tabs.getTabs().add(tabprops);
 
             //dimension editor
-            if (ref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-                final CoverageDescription desc = ((org.geotoolkit.storage.coverage.GridCoverageResource) ref).getCoverageDescription();
-                if(desc!=null && !desc.getAttributeGroups().isEmpty()){
-                    final Tab tabbands = new Tab("Bands");
-                    tabs.getTabs().add(tabbands);
+            if (ref instanceof GridCoverageResource) {
+                try {
+                    for (ContentInformation ci : ref.getMetadata().getContentInfo()) {
+                        if (ci instanceof CoverageDescription) {
+                            final CoverageDescription desc = (CoverageDescription) ci;
+                            if(desc!=null && !desc.getAttributeGroups().isEmpty()){
+                                final Tab tabbands = new Tab("Bands");
+                                tabs.getTabs().add(tabbands);
 
-                    final VBox vbox = new VBox();
-                    final ScrollPane scroll = new ScrollPane(vbox);
-                    scroll.setFitToWidth(true);
-                    scroll.setFitToHeight(true);
-                    scroll.setPrefSize(200, 200);
-                    tabbands.setContent(scroll);
+                                final VBox vbox = new VBox();
+                                final ScrollPane scroll = new ScrollPane(vbox);
+                                scroll.setFitToWidth(true);
+                                scroll.setFitToHeight(true);
+                                scroll.setPrefSize(200, 200);
+                                tabbands.setContent(scroll);
 
-                    final AttributeGroup attg = desc.getAttributeGroups().iterator().next();
-                    for (RangeDimension rd : attg.getAttributes()){
-                        if (rd instanceof org.opengis.metadata.content.SampleDimension) {
-                            final FXCoverageBand fxcb = new FXCoverageBand();
-                            fxcb.init((org.opengis.metadata.content.SampleDimension) rd);
-                            vbox.getChildren().add(fxcb);
+                                final AttributeGroup attg = desc.getAttributeGroups().iterator().next();
+                                for (RangeDimension rd : attg.getAttributes()){
+                                    if (rd instanceof org.opengis.metadata.content.SampleDimension) {
+                                        final FXCoverageBand fxcb = new FXCoverageBand();
+                                        fxcb.init((org.opengis.metadata.content.SampleDimension) rd);
+                                        vbox.getChildren().add(fxcb);
+                                    }
+                                }
+                            }
                         }
                     }
+                } catch (DataStoreException ex) {
+                    ex.printStackTrace();
                 }
             }
-
-            //override projection
-            if(ref instanceof AmendedCoverageResource){
-                final Tab taboverride = new Tab("Overrides");
-                taboverride.setContent(new FXCoverageDecoratorPane((AmendedCoverageResource) ref));
-                tabs.getTabs().add(taboverride);
-            }
-
-
         }
 
         sb.append("</body></html>");

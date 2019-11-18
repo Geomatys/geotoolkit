@@ -104,7 +104,7 @@ class GeoJSONWriter implements Closeable, Flushable {
         writer.writeStringField(TYPE, FEATURE_COLLECTION);
         writeNewLine();
 
-        if (crs != null && !Utilities.equalsApproximatively(crs, CommonCRS.defaultGeographic())) {
+        if (crs != null && !Utilities.equalsApproximately(crs, CommonCRS.defaultGeographic())) {
             if (writeCRS(crs)) {
                 writeNewLine();
             } else {
@@ -182,7 +182,7 @@ class GeoJSONWriter implements Closeable, Flushable {
         //write CRS
         if (single) {
             final CoordinateReferenceSystem crs = FeatureExt.getCRS(feature.getType());
-            if (crs != null && !Utilities.equalsApproximatively(crs, CommonCRS.defaultGeographic())) {
+            if (crs != null && !Utilities.equalsApproximately(crs, CommonCRS.defaultGeographic())) {
                 if (!writeCRS(crs)) {
                     throw new IOException("Cannot determine a valid URN for "+crs.getName());
                 }

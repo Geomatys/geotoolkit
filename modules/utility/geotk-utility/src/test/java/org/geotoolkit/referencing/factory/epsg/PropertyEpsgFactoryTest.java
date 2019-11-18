@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.metadata.iso.citation.Citations;
-import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.referencing.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactoryTest;
 
 import org.apache.sis.test.DependsOn;

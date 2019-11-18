@@ -17,8 +17,8 @@
 package org.geotoolkit.wps.converters.inputs.references;
 
 import java.util.Map;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v200.Reference;
 ;

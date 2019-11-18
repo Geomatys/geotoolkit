@@ -46,19 +46,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.internal.feature.FunctionRegister;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Resource;
 import org.fxmisc.richtext.CodeArea;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.cql.CQLLexer;
 import org.geotoolkit.cql.CQLParser;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -165,12 +165,16 @@ public class FXCQLEditor extends BorderPane {
 
     public void setTarget(Object candidate) throws DataStoreException{
         FeatureType ft = null;
-        if(candidate instanceof FeatureType){
+        if (candidate instanceof FeatureType) {
             ft = (FeatureType) candidate;
-        }else if(candidate instanceof FeatureCollection) {
-            ft = ((FeatureCollection)candidate).getType();
-        }else if(candidate instanceof FeatureMapLayer){
-            ft = ((FeatureMapLayer)candidate).getResource().getType();
+        } else if (candidate instanceof FeatureSet) {
+            ft = ((FeatureSet) candidate).getType();
+        } else if (candidate instanceof MapLayer) {
+            MapLayer layer = (MapLayer) candidate;
+            Resource resource = layer.getResource();
+            if (resource instanceof FeatureSet) {
+                ft = ((FeatureSet) resource).getType();
+            }
         }
 
         final ObservableList properties = FXCollections.observableArrayList();

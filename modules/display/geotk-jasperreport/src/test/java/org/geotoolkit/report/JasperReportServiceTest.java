@@ -17,44 +17,40 @@
 
 package org.geotoolkit.report;
 
-import java.io.File;
-import java.io.IOException;
-import java.awt.Dimension;
-import java.net.URL;
-import java.util.Map.Entry;
-import java.awt.Rectangle;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.coverage.grid.GridCoverage;
-
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.map.MapBuilder;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.display2d.service.OutputDef;
-import org.geotoolkit.display2d.service.ViewDef;
-import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.CanvasDef;
-import org.geotoolkit.report.graphic.map.MapDef;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.map.MapContext;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-
+import org.geotoolkit.display2d.service.CanvasDef;
+import org.geotoolkit.display2d.service.OutputDef;
+import org.geotoolkit.display2d.service.SceneDef;
+import org.geotoolkit.display2d.service.ViewDef;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.report.graphic.map.MapDef;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -98,7 +94,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
         final JasperReport report = entry.getKey();
         final FeatureType type = entry.getValue();
 
-        FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
+        List<Feature> collection = new ArrayList<>();
         Feature feature = type.newInstance();
         feature.setPropertyValue("map",new MapDef(
                 new CanvasDef(new Dimension(1, 1), Color.RED),
@@ -127,7 +123,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
         final JasperReport report = entry.getKey();
         final FeatureType type = entry.getValue();
 
-        FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
+        List<Feature> collection = new ArrayList<>();
         Feature feature = type.newInstance();
         feature.setPropertyValue("map",new MapDef(
                 new CanvasDef(new Dimension(1, 1), Color.RED),

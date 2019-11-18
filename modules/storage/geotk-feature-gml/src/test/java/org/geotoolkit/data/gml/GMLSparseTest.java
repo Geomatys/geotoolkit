@@ -33,7 +33,7 @@ public class GMLSparseTest {
 
         URL xsdUrl = GMLSparseTest.class.getResource("/org/geotoolkit/data/gml/sparse/cite-gmlsf0.xsd");
 
-        GMLSparseFeatureStore store = new GMLSparseFeatureStore(
+        GMLSparseStore store = new GMLSparseStore(
                 new File(xsdUrl.toURI()).getParentFile(),
                 xsdUrl.toString(),
                 "PrimitiveGeoFeature"

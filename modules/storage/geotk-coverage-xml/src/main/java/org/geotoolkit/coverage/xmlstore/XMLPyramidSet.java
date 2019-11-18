@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.*;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

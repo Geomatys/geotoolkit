@@ -17,12 +17,11 @@
 package org.geotoolkit.processing.util.converter;
 
 
-import org.geotoolkit.filter.DefaultPropertyName;
-import org.geotoolkit.filter.sort.DefaultSortBy;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 import org.geotoolkit.feature.util.converter.SimpleConverter;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -82,12 +81,12 @@ public class StringToSortByConverter extends SimpleConverter<String, SortBy[]> {
             //one property sorter "property:order"
             final String[] aSorter = sorters[i].split(":");
 
-            final PropertyName property = new DefaultPropertyName(aSorter[0]);
+            final String property = aSorter[0];
 
             if(aSorter[1].equalsIgnoreCase("asc")){
-                sortBy[i] = new DefaultSortBy(property, SortOrder.ASCENDING);
+                sortBy[i] = DefaultFactories.forBuildin(FilterFactory.class).sort(property, SortOrder.ASCENDING);
             }else if(aSorter[1].equalsIgnoreCase("desc")){
-                sortBy[i] = new DefaultSortBy(property, SortOrder.DESCENDING);
+                sortBy[i] = DefaultFactories.forBuildin(FilterFactory.class).sort(property, SortOrder.DESCENDING);
             }else{
                 throw new UnconvertibleObjectException("Invalid SortBy");
             }

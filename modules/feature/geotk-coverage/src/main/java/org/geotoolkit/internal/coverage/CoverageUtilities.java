@@ -42,7 +42,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -100,7 +99,7 @@ public final class CoverageUtilities extends Static {
         if (coverage instanceof GridCoverage) {
             final GridGeometry2D geometry =
                     GridGeometry2D.castOrCopy(((GridCoverage) coverage).getGridGeometry());
-            if (geometry.isDefined(GridGeometry2D.CRS)) {
+            if (geometry.isDefined(GridGeometry.CRS)) {
                 return geometry.getCoordinateReferenceSystem2D();
             } else try {
                 return geometry.reduce(coverage.getCoordinateReferenceSystem());
@@ -129,7 +128,7 @@ public final class CoverageUtilities extends Static {
         if (coverage instanceof GridCoverage) {
             final GridGeometry2D geometry =
                     GridGeometry2D.castOrCopy(((GridCoverage) coverage).getGridGeometry());
-            if (geometry.isDefined(GridGeometry2D.ENVELOPE)) {
+            if (geometry.isDefined(GridGeometry.ENVELOPE)) {
                 return geometry.getEnvelope2D();
             } else {
                 return geometry.reduce(coverage.getGridGeometry().getEnvelope());

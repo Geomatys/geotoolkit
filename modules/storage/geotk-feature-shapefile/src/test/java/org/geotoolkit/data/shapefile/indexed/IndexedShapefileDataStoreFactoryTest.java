@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;

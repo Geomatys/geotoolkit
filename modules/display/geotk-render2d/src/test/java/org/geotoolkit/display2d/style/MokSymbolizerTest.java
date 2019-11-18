@@ -16,18 +16,15 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureWriter;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.Arrays;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.WritableFeatureSet;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -35,20 +32,21 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.Filter;
 
 /**
  * Test that symbolizer renderer are properly called and only once.
@@ -80,31 +78,25 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
         sftb.addAttribute(String.class).setName("att1");
         sftb.addAttribute(Double.class).setName("att2");
         final FeatureType sft = sftb.build();
-        FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
+        WritableFeatureSet col = new InMemoryFeatureSet("id", sft);
 
-        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriter(
-                QueryBuilder.filtered(sft.getName().toString(),Filter.EXCLUDE));
-        Feature sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, -90)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, 90)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        sf = writer.next();
-        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
-        sf.setPropertyValue("att1", "value1");
-        writer.write();
-        writer.close();
+        Feature sf1 = sft.newInstance();
+        sf1.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));
+        sf1.setPropertyValue("att1", "value1");
+        Feature sf2 = sft.newInstance();
+        sf2.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, -90)));
+        sf2.setPropertyValue("att1", "value1");
+        Feature sf3 = sft.newInstance();
+        sf3.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, 90)));
+        sf3.setPropertyValue("att1", "value1");
+        Feature sf4 = sft.newInstance();
+        sf4.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
+        sf4.setPropertyValue("att1", "value1");
+        Feature sf5 = sft.newInstance();
+        sf5.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
+        sf5.setPropertyValue("att1", "value1");
+
+        col.add(Arrays.asList(sf1,sf2,sf3,sf4,sf5).iterator());
 
         context.layers().add(MapBuilder.createFeatureLayer(col, SF.style(new MokSymbolizer())));
 

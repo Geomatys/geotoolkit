@@ -89,7 +89,6 @@ public abstract class ResolutionTest extends org.geotoolkit.test.TestBase {
 
     /**Compute {@code Envelope} area in euclidian space.
      *
-     * @param envelope
      * @return candidate area.
      */
     private double getGeneralEnvelopArea(final Envelope envelope){

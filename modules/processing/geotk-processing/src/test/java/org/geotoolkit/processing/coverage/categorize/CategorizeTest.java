@@ -11,12 +11,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.coverage.memory.MemoryCoverageStore;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierTest;
-import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.test.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,8 +33,6 @@ public class CategorizeTest {
     }
 
     private void test2D(final boolean subset) throws DataStoreException, ProcessException {
-        final MemoryCoverageStore store = new MemoryCoverageStore();
-        final GridCoverageResource input = store.add(new DefiningCoverageResource("input"));
 
         final BufferedImage inputImage = SampleClassifierTest.createGrayScale(3, 3, new double[]{
             0, 1, 2,
@@ -65,9 +60,9 @@ public class CategorizeTest {
         builder.setEnvelope(-20, -20, 10, 10);
         final GridCoverage sourceCvg = builder.build();
 
-        ((WritableGridCoverageResource) input).write(sourceCvg);
+        WritableGridCoverageResource input = new InMemoryGridCoverageResource(sourceCvg);
+        WritableGridCoverageResource output = new InMemoryGridCoverageResource(null, null);
 
-        final GridCoverageResource output = store.add(new DefiningCoverageResource("output"));
         final Envelope roi;
         final Categorize process;
         if (subset) {
@@ -104,8 +99,6 @@ public class CategorizeTest {
                 CommonCRS.defaultGeographic(),
                 CommonCRS.Vertical.MEAN_SEA_LEVEL.crs()
         );
-        final MemoryCoverageStore store = new MemoryCoverageStore();
-        final GridCoverageResource input = store.add(new DefiningCoverageResource("input"));
 
         final double[][] inputs = {
             {
@@ -142,21 +135,18 @@ public class CategorizeTest {
             }
         };
 
-        final GridCoverageWriter writer = ((org.geotoolkit.storage.coverage.GridCoverageResource) input).acquireWriter();
-        try {
-            for (int i = 0; i < inputs.length; i++) {
-                final GridCoverageBuilder builder = new GridCoverageBuilder();
-                builder.setRenderedImage(SampleClassifierTest.createGrayScale(3, 3, inputs[i]));
-                builder.setCoordinateReferenceSystem(inputCrs);
-                builder.setEnvelope(-10, -10, i, 10, 10, i);
-                final GridCoverage sourceCvg = builder.build();
-                writer.write(sourceCvg, new GridCoverageWriteParam());
-            }
-        } finally {
-            ((org.geotoolkit.storage.coverage.GridCoverageResource) input).recycle(writer);
+        WritableGridCoverageResource input = new InMemoryGridCoverageResource();
+        WritableGridCoverageResource output = new InMemoryGridCoverageResource();
+
+        for (int i = 0; i < inputs.length; i++) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder();
+            builder.setRenderedImage(SampleClassifierTest.createGrayScale(3, 3, inputs[i]));
+            builder.setCoordinateReferenceSystem(inputCrs);
+            builder.setEnvelope(-10, -10, i, 10, 10, i);
+            final GridCoverage sourceCvg = builder.build();
+            input.write(sourceCvg, WritableGridCoverageResource.CommonOption.UPDATE);
         }
 
-        final GridCoverageResource output = store.add(new DefiningCoverageResource("output"));
         final Categorize process = create(input, output, null);
         process.call();
 

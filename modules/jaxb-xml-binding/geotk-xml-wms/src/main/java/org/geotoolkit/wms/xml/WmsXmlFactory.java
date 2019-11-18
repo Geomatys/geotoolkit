@@ -50,7 +50,7 @@ public class WmsXmlFactory {
     }
 
     public static AbstractBoundingBox createBoundingBox(final String currentVersion, final String crs, final double minx, final double miny,
-            final double maxx, final double maxy, final double resx, final double resy) {
+            final double maxx, final double maxy, final Double resx, final Double resy) {
         if ("1.1.1".equals(currentVersion)) {
             return new org.geotoolkit.wms.xml.v111.BoundingBox(crs, minx, miny, maxx, maxy, resx, resy);
         } else if ("1.3.0".equals(currentVersion)) {

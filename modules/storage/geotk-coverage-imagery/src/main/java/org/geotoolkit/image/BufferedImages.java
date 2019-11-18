@@ -30,14 +30,16 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.awt.image.WritableRenderedImage;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.ColorModelFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
-import org.apache.sis.internal.coverage.ColorModelFactory;
 
 /**
  *
@@ -184,5 +186,12 @@ public class BufferedImages extends Static {
             }
         }
         return true;
+    }
+
+    public static void setAll(WritableRenderedImage img, double[] pixel) {
+        final WritablePixelIterator ite = WritablePixelIterator.create(img);
+        while (ite.next()) {
+            ite.setPixel(pixel);
+        }
     }
 }
