@@ -23,10 +23,10 @@ import java.awt.image.SampleModel;
 import java.util.Hashtable;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -34,6 +34,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.reformat.ReformatDescriptor.*;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -110,11 +111,12 @@ public class ReformatProcess extends AbstractProcess {
 
 
         // REBUILD COVERAGE ////////////////////////////////////////////////////
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(resultImage);
-        gcb.setGridGeometry(inputCoverage.getGridGeometry());
-        gcb.setSampleDimensions(inputCoverage.getSampleDimensions());
-        final GridCoverage resultCoverage = gcb.getGridCoverage2D();
+        final GridCoverage resultCoverage;
+        try {
+            resultCoverage = new GridCoverage2D(inputCoverage.getGridGeometry(), inputCoverage.getSampleDimensions(), resultImage);
+        } catch (FactoryException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
 
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);
     }

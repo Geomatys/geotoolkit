@@ -7,19 +7,6 @@ import java.util.TreeMap;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import javax.annotation.Nonnull;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.SingleCRS;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -32,10 +19,20 @@ import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Helps define a complete Grid geometry for resampling operation. Also provides math transform to go from
@@ -48,7 +45,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @implNote This object uses an internal {@link #cache} to avoid re-computing information. However, if you add methods
  * which impacts target grid geometry, you should ALWAYS call {@link Cache#clear()} after alteration.
  */
-final class OutputGridBuilder {
+public final class OutputGridBuilder {
 
     @Nonnull
     final GridGeometry source;
@@ -88,7 +85,7 @@ final class OutputGridBuilder {
      * @throws FactoryException If a conversion is needed between source and target CRS, but SIS registry fails to
      * provide one.
      */
-    OutputGridBuilder(@Nonnull GridGeometry source, @Nonnull GridGeometry target) throws FactoryException {
+    public OutputGridBuilder(@Nonnull GridGeometry source, @Nonnull GridGeometry target) throws FactoryException {
         ensureNonNull("Source grid geometry", source);
         if (!source.isDefined(GridGeometry.EXTENT|GridGeometry.GRID_TO_CRS))
             throw new IllegalArgumentException("Source grid geometry is incomplete.");
@@ -369,7 +366,7 @@ final class OutputGridBuilder {
      * @throws FactoryException If we cannot find any valid transform between source and target CRSs.
      * @throws NoninvertibleTransformException If we cannot invert transform between source and target CRSs.
      */
-    MathTransform forDefaultRendering() throws FactoryException, NoninvertibleTransformException {
+    public MathTransform forDefaultRendering() throws FactoryException, NoninvertibleTransformException {
         return forRendering(source.getExtent(), target.getExtent());
     }
 
@@ -389,7 +386,7 @@ final class OutputGridBuilder {
      * @throws FactoryException If we cannot find any valid transform between source and target CRSs.
      * @throws NoninvertibleTransformException If we cannot invert transform between source and target CRSs.
      */
-    MathTransform forRendering(final GridExtent sourceRendering, final GridExtent targetRendering) throws FactoryException, NoninvertibleTransformException {
+    public MathTransform forRendering(final GridExtent sourceRendering, final GridExtent targetRendering) throws FactoryException, NoninvertibleTransformException {
         final MathTransform bridge = cache.getOrCreateBridge2D(PixelInCell.CELL_CENTER);
         final AffineTransform2D source = new AffineTransform2D(
                 1, 0, 0, 1,

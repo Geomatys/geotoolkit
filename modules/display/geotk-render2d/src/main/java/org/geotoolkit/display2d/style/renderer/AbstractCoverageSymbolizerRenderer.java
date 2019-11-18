@@ -30,8 +30,8 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
@@ -44,7 +44,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.ReducedGridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
@@ -65,12 +64,12 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.resample.OutputGridBuilder;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.SingleCRS;
@@ -357,10 +356,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
     private GridCoverage forwardResample(GridCoverage coverage, GridGeometry canvasGrid) throws FactoryException, NoninvertibleTransformException, TransformException {
 
-        if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
-            //interpolate in geophysic
-            coverage = coverage.forConvertedValues(true);
-        }
+        //interpolate in geophysic
+        coverage = coverage.forConvertedValues(true);
 
         //reduce the canvas grid to 2D
         if (canvasGrid.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
@@ -368,13 +365,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
         //compute forward transform
-        final Envelope geoEnv = Envelopes.transform(canvasGrid.getEnvelope(), CommonCRS.WGS84.normalizedGeographic());
-        final GeographicBoundingBox bbox = new DefaultGeographicBoundingBox(geoEnv.getMinimum(0), geoEnv.getMaximum(0), geoEnv.getMinimum(1), geoEnv.getMaximum(1));
         final GridGeometry coverageGridGeom = coverage.getGridGeometry();
-        final MathTransform gridToCov = coverageGridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
-        final MathTransform covToCanvas = CRS.findOperation(coverage.getCoordinateReferenceSystem(), canvasGrid.getCoordinateReferenceSystem(), bbox).getMathTransform();
-        final MathTransform canvasToGrid = canvasGrid.getGridToCRS(PixelInCell.CELL_CENTER).inverse();
-        final MathTransform transform = MathTransforms.concatenate(gridToCov, covToCanvas, canvasToGrid);
+        final OutputGridBuilder ogb = new OutputGridBuilder(canvasGrid, coverageGridGeom);
+        final MathTransform transform = ogb.forDefaultRendering();
 
         //create result image
         final RenderedImage img = coverage.render(null);
@@ -387,9 +380,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //fill out image with NaN
         final double[] pixel = new double[img.getSampleModel().getNumBands()];
         Arrays.fill(pixel, Double.NaN);
-        while (output.next()) {
-            output.setPixel(pixel);
-        }
+        BufferedImages.setAll(result, pixel);
 
         //resample
         final Rasterizer canvas = new Rasterizer();
@@ -423,12 +414,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             canvas.drawTriangle(v1, v3, v4);
         }
 
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("forwadResampled");
-        gcb.setSampleDimensions(coverage.getSampleDimensions());
-        gcb.setGridGeometry(canvasGrid);
-        gcb.setRenderedImage(result);
-        return gcb.getGridCoverage2D();
+        return new GridCoverage2D(canvasGrid, coverage.getSampleDimensions(), result);
     }
 
     private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
