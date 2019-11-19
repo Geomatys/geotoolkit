@@ -39,7 +39,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.opengis.geometry.DirectPosition;
@@ -328,7 +327,7 @@ public final class Pyramids extends Static {
      * @param wantedEnv searched envelope in mosaic {@link CoordinateReferenceSystem}
      * @return
      */
-    public static Rectangle getTilesInEnvelope(Mosaic mosaic, Envelope wantedEnv) throws CoverageStoreException {
+    public static Rectangle getTilesInEnvelope(Mosaic mosaic, Envelope wantedEnv) throws DataStoreException {
         if (wantedEnv == null) {
             return new Rectangle(mosaic.getGridSize());
         }
@@ -355,7 +354,7 @@ public final class Pyramids extends Static {
             wantedEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(wantedEnv,   mosCRS2D));
             mosEnv2D    = GeneralEnvelope.castOrCopy(Envelopes.transform(mosEnvelope, mosCRS2D));
         } catch(Exception ex) {
-            throw new CoverageStoreException(ex);
+            throw new DataStoreException(ex);
         }
 
         //-- define appropriate gridToCRS
@@ -375,7 +374,7 @@ public final class Pyramids extends Static {
         try {
             gridOfInterest = Envelopes.transform(gridToCrs2D.inverse(), envelopOfInterest2D);
         } catch (Exception ex) {
-            throw new CoverageStoreException(ex);
+            throw new DataStoreException(ex);
         }
 
         final long bBoxMinX = StrictMath.round(gridOfInterest.getMinimum(0));

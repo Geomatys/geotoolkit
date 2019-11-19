@@ -18,7 +18,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -36,7 +35,7 @@ public class DemoFrame extends JFrame {
     private final JXTree guiTree = new JXTree();
     private final JPanel mainPane = new JPanel(new BorderLayout());
 
-    public DemoFrame() throws CoverageStoreException, MalformedURLException{
+    public DemoFrame() throws DataStoreException, MalformedURLException{
         Demos.init();
 
         setTitle("SLD/SE 1.1 demo.");
@@ -82,7 +81,7 @@ public class DemoFrame extends JFrame {
         setContentPane(split);
     }
 
-    private static TreeModel createModel() throws URISyntaxException, CoverageStoreException, DataStoreException, MalformedURLException{
+    private static TreeModel createModel() throws URISyntaxException, DataStoreException, DataStoreException, MalformedURLException{
         final DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
 
         // Point demo -------------------------------------------------------
@@ -139,7 +138,7 @@ public class DemoFrame extends JFrame {
     }
 
 
-    public static void main(String[] args) throws CoverageStoreException, MalformedURLException {
+    public static void main(String[] args) throws DataStoreException, MalformedURLException {
         WorldFileImageReader.Spi.registerDefaults(null);
 
         try {

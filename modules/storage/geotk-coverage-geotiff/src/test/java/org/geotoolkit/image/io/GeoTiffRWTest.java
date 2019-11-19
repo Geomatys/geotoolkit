@@ -38,7 +38,6 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
@@ -882,7 +881,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
     /**
      * Copy coverage, in new file and retest it later.
      */
-    private File write(final GridCoverage coverage, final SpatialMetadata metadata) throws IOException, CoverageStoreException{
+    private File write(final GridCoverage coverage, final SpatialMetadata metadata) throws IOException, DataStoreException{
         final File tempFile = File.createTempFile("coverage", ".tiff", tempDir);
         tempFile.deleteOnExit();
 

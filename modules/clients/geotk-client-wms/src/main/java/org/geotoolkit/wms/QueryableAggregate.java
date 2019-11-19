@@ -30,7 +30,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.opengis.geometry.Envelope;
 
@@ -45,12 +44,12 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
 
     final NamedIdentifier name;
 
-    public QueryableAggregate(final WebMapClient client, final AbstractLayer layer) throws CoverageStoreException {
+    public QueryableAggregate(final WebMapClient client, final AbstractLayer layer) throws DataStoreException {
         super(client, layer);
         if (layer.getName() == null) {
-            throw new CoverageStoreException("Cannot create a queryable resource over an unnamed layer.");
+            throw new DataStoreException("Cannot create a queryable resource over an unnamed layer.");
         } else if (!layer.isQueryable()) {
-            throw new CoverageStoreException("Cannot create a queryable resource over an unqueryable layer.");
+            throw new DataStoreException("Cannot create a queryable resource over an unqueryable layer.");
         }
         this.layer = layer;
         name = new NamedIdentifier(Names.createScopedName(null, ":", layer.getName()));

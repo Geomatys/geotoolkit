@@ -20,8 +20,8 @@ import java.awt.geom.Rectangle2D;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.GraphicVisitor;
@@ -30,7 +30,6 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
-import org.apache.sis.storage.GridCoverageResource;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.operation.TransformException;
 
@@ -103,7 +102,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
             final GridCoverage data = covRef.read(context.getGridGeometry()).forConvertedValues(true);
             return CoverageExtractor.rayExtraction(dp, data);
         } else {
-            throw new CoverageStoreException("Resource is not a coverage.");
+            throw new DataStoreException("Resource is not a coverage.");
         }
     }
 }

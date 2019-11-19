@@ -57,7 +57,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.NamesExt;
@@ -462,7 +461,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
         }
 
         if (range != null && range.length != 0) {
-            throw new CoverageStoreException("Source or destination bands can not be used on WMS coverages.");
+            throw new DataStoreException("Source or destination bands can not be used on WMS coverages.");
         }
 
         GeneralEnvelope env;
@@ -478,7 +477,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
         try {
             crs2d = CRSUtilities.getCRS2D(crs);
         } catch (TransformException ex) {
-            throw new CoverageStoreException("WMS reading expect a CRS whose first component is 2D.", ex);
+            throw new DataStoreException("WMS reading expect a CRS whose first component is 2D.", ex);
         }
 
         final CoordinateReferenceSystem candidateCRS = env.getDimension() > 2? crs : crs2d;
@@ -488,7 +487,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
             try {
                 env = GeneralEnvelope.castOrCopy(Envelopes.transform(env, candidateCRS));
             } catch (TransformException ex) {
-                throw new CoverageStoreException("Could not transform coverage envelope to given crs.", ex);
+                throw new DataStoreException("Could not transform coverage envelope to given crs.", ex);
             }
         }
 
@@ -514,7 +513,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
             prepareQuery(request, env, dim, null);
             LOGGER.fine(request.getURL().toExternalForm());
         } catch (Exception ex) {
-            throw new CoverageStoreException(ex.getMessage(), ex);
+            throw new DataStoreException(ex.getMessage(), ex);
         }
 
         //read image
@@ -535,7 +534,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
             return gcb.build();
 
         } catch (IOException|TransformException ex) {
-            throw new CoverageStoreException(ex.getMessage(), ex);
+            throw new DataStoreException(ex.getMessage(), ex);
         }
 
     }

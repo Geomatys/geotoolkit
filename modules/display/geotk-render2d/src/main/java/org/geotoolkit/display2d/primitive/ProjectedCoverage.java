@@ -28,7 +28,6 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
@@ -143,7 +142,7 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      * @param param : expected coverage parameters
      * @return GridCoverage2D or null if the requested parameters are out of the coverage area.
      *
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      */
     public GridCoverage getElevationCoverage(final GridGeometry param) throws DataStoreException {
         ElevationModel elevationModel = layer.getElevationModel();

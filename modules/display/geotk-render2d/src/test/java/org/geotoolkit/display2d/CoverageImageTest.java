@@ -31,7 +31,6 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -197,7 +196,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      * Test between output image from renderer and source image within {@link GridCoverageReader}.
      *
      * @throws PortrayalException
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      * @throws IOException
      */
     @Test

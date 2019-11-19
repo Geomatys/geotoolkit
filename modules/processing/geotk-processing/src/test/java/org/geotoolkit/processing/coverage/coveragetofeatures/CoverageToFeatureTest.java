@@ -38,7 +38,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -268,12 +267,12 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         }
 
         @Override
-        public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
             return (GridGeometry) coverage.getGridGeometry();
         }
 
         @Override
-        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+        public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
             return coverage.getSampleDimensions();
         }
 
@@ -282,7 +281,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
             super.createMetadata(metadata); //To change body of generated methods, choose Tools | Templates.
         }
 
-        public SpatialMetadata getCoverageMetadata() throws CoverageStoreException {
+        public SpatialMetadata getCoverageMetadata() throws DataStoreException {
             SpatialMetadata meta = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
             GridDomainAccessor grid = new GridDomainAccessor(meta);
             grid.setGridGeometry(coverage.getGridGeometry(), pixPos, CellGeometry.POINT, -1);

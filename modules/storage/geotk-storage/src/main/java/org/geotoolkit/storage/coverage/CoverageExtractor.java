@@ -25,7 +25,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.lang.Static;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -65,7 +64,7 @@ public class CoverageExtractor extends Static {
      * @param point position given to evaluate function.
      * @param source GridCoverage containing data to evaluate.
      * @return Ray bean object.
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      * @throws TransformException
      */
     public static Ray rayExtraction(GeneralDirectPosition point, GridCoverage source) throws DataStoreException, TransformException {
@@ -82,7 +81,7 @@ public class CoverageExtractor extends Static {
      * @param directPos position given to evaluate function.
      * @param coverage GridCoverage2D or GridCoverageStack coverage.
      * @param result recursively filled with extracted values
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      * @throws TransformException
      */
     private static void evaluateAllSlices(GeneralDirectPosition directPos, GridCoverage coverage, Ray result)

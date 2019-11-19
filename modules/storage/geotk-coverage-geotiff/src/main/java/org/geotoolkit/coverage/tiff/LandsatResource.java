@@ -42,7 +42,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
 import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
@@ -153,7 +152,7 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
     }
 
     @Override
-    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
 
         final GridExtent gridExtent;
         final MathTransform gridToCRS;
@@ -163,7 +162,7 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
             gridToCRS  = metadataParser.getGridToCRS(group);
             crs        = metadataParser.getCRS();
         } catch (Exception ex) {
-            throw new CoverageStoreException(ex);
+            throw new DataStoreException(ex);
         }
         return new GridGeometry2D(gridExtent, PixelInCell.CELL_CORNER, gridToCRS, crs);
     }
@@ -192,7 +191,7 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
                 final List<SampleDimension> candidates = imageCoverageReader.getSampleDimensions();
                 if (candidates != null) gList.addAll(candidates);
             } catch (IOException ex) {
-                throw new CoverageStoreException(ex);
+                throw new DataStoreException(ex);
             } finally {
                 imageCoverageReader.dispose();
             }
@@ -211,7 +210,7 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
         return paths.toArray(new Path[paths.size()]);
     }
 
-    private GenericName getCoverageName() throws CoverageStoreException, CancellationException {
+    private GenericName getCoverageName() throws DataStoreException, CancellationException {
         final String sceneName  = metadataParser.getValue(false, SCENE_ID);
         return group.createName(sceneName);
     }
@@ -267,8 +266,8 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
 
             return gcb.build();
 
-        } catch(IOException | NoSuchIdentifierException | ProcessException ex) {
-            throw new CoverageStoreException(ex.getMessage(), ex);
+        } catch (IOException | NoSuchIdentifierException | ProcessException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
         }
     }
 

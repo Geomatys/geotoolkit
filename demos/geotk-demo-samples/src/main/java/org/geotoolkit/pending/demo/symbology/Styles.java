@@ -16,10 +16,6 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -30,6 +26,9 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -782,7 +781,7 @@ public class Styles {
         return context;
     }
 
-    public static MapContext createRasterContext(MutableStyle style) throws CoverageStoreException, URISyntaxException {
+    public static MapContext createRasterContext(MutableStyle style) throws DataStoreException, URISyntaxException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));

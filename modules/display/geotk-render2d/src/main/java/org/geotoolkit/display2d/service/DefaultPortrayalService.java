@@ -67,7 +67,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.display.PortrayalException;
@@ -621,14 +620,14 @@ public final class DefaultPortrayalService implements PortrayalService{
             writer = new ImageCoverageWriter();
         }
 
-        try{
+        try {
             final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();
             writeParam.setEnvelope(env);
             writeParam.setResolution(resolution);
             writeParam.setFormatName(javaType);
             writeParam.setCompressionQuality(outputDef.getCompression());
 
-            if(backgroundColor != null){
+            if (backgroundColor != null) {
                 final int r = backgroundColor.getRed();
                 final int g = backgroundColor.getGreen();
                 final int b = backgroundColor.getBlue();
@@ -639,15 +638,15 @@ public final class DefaultPortrayalService implements PortrayalService{
             writer.setOutput(outputDef.getOutput());
             writer.write(CoverageUtilities.toGeotk(coverage), writeParam);
 
-        }catch(CoverageStoreException ex){
+        } catch (DataStoreException ex) {
             throw new PortrayalException(ex);
-        }finally{
+        } finally {
             try {
                 writer.reset();
                 if(!WRITER_CACHE.compareAndSet(null, writer)){
                     try {
                         writer.dispose();
-                    } catch (CoverageStoreException ex) {
+                    } catch (DataStoreException ex) {
                         throw new PortrayalException(ex);
                     }
                 }

@@ -40,14 +40,13 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.geometry.HyperCubeIterator;
+import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.storage.coverage.*;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
-import org.geotoolkit.geometry.HyperCubeIterator;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.coverage.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
@@ -76,7 +75,7 @@ public class FillCoverage {
      *
      * @param evaluator , used to generate the new sample values.
      * @param env , envelope where new values will be evaluated.
-     * @throws org.geotoolkit.coverage.io.CoverageStoreException
+     * @throws DataStoreException
      */
     public void fill(WritableGridCoverageResource outRef, SampleEvaluator evaluator, Envelope env) throws DataStoreException {
 
@@ -98,9 +97,9 @@ public class FillCoverage {
             maxs[i] = Math.toIntExact(ge.getHigh(i)+1); //high value is inclusive in grid envelopes
         }
         //adjust the writing hyper-cube if an envelope is provided
-        if(env!=null){
-            if(!Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),gg.getCoordinateReferenceSystem())){
-                throw new CoverageStoreException("Envelope is not in data CRS.");
+        if (env != null) {
+            if (!Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),gg.getCoordinateReferenceSystem())) {
+                throw new DataStoreException("Envelope is not in data CRS.");
             }
             try {
                 final MathTransform crsToGrid = gridToCrs.inverse();
@@ -112,7 +111,7 @@ public class FillCoverage {
                 }
 
             } catch (TransformException ex) {
-                throw new CoverageStoreException(ex.getMessage(), ex);
+                throw new DataStoreException(ex.getMessage(), ex);
             }
         }
 
@@ -153,20 +152,20 @@ public class FillCoverage {
                         raster.setSample(Math.toIntExact(x-hcubeLower[0]), Math.toIntExact(y-hcubeLower[1]), 0, sampleData[0]);
                     }
                 }
-            }catch(TransformException ex){
-                throw new CoverageStoreException(ex.getMessage(), ex);
+            } catch (TransformException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
             }
 
             //Calculate grid to crs of this zone
             final MatrixSIS matrix = Matrices.createDiagonal(nbDim+1, nbDim+1);
-            for(int i=0;i<nbDim;i++){
+            for (int i=0;i<nbDim;i++) {
                 matrix.setElement(i, nbDim, hcubeLower[i]);
             }
             final MathTransform cornerToGrid;
             try {
                 cornerToGrid = mathFactory.createAffineTransform(matrix);
             } catch (FactoryException ex) {
-                throw new CoverageStoreException(ex.getMessage(), ex);
+                throw new DataStoreException(ex.getMessage(), ex);
             }
             final MathTransform concat = MathTransforms.concatenate(cornerToGrid, gridToCrs);
 

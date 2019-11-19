@@ -25,7 +25,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.process.Monitor;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -177,7 +176,7 @@ public abstract class AbstractMosaic implements Mosaic {
         }
     }
 
-    protected abstract boolean isWritable() throws CoverageStoreException;
+    protected abstract boolean isWritable() throws DataStoreException;
 
     @Override
     public void writeTiles(Stream<Tile> tiles, Monitor monitor) throws DataStoreException {

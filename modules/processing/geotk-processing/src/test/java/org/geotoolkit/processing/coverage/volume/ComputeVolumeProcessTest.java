@@ -32,7 +32,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import static org.junit.Assert.*;
@@ -421,12 +420,12 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
         }
 
         @Override
-        public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+        public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
             return coverage.getGridGeometry();
         }
 
         @Override
-        public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+        public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
             return coverage.getSampleDimensions();
         }
 
