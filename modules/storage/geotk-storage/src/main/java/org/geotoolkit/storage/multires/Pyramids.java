@@ -598,4 +598,44 @@ public final class Pyramids extends Static {
         return new DefiningPyramid("Pyramid", "", crs, mosaics);
     }
 
+    /**
+     * Find the matching pyramid depth for given resolution.
+     *
+     * @param resolution in WGS:84 units
+     * @return
+     */
+    public static int computeWorldWGS84DepthForResolution(double resolution) {
+        int depth = 0;
+        double scale = 180.0 / 256.0;
+        while (scale > resolution) {
+            depth++;
+            scale = scale / 2.0;
+        }
+        return depth;
+    }
+
+    /**
+     * Find the matching pyramid depth for given resolution.
+     *
+     * @param resolution in PseudoMercator units
+     * @return
+     * @throws org.opengis.util.FactoryException
+     */
+    public static int computePseudoMercatorDepthForResolution(double resolution) throws FactoryException {
+        final CoordinateReferenceSystem pseudoMercator = CRS.forCode("EPSG:3857");
+
+        //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E)
+        //Y goes from 0 (top edge is 85.0511 °N) to 2^zoom -1 (bottom edge is 85.0511 °S) in a Mercator projection
+        GeneralEnvelope MERCATOR_EXTEND = new GeneralEnvelope(pseudoMercator);
+        MERCATOR_EXTEND.setRange(0, -20037508.342789244d, 20037508.342789244d);
+        MERCATOR_EXTEND.setRange(1, -20037508.342789244d, 20037508.342789244d);
+
+        int depth = 0;
+        double scale = MERCATOR_EXTEND.getSpan(0) / 256.0;
+        while (scale > resolution) {
+            depth++;
+            scale = scale / 2.0;
+        }
+        return depth;
+    }
 }
