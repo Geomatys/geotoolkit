@@ -20,29 +20,16 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 
 /**
+ * Experimental event used to notify the content of the resource has change.
+ * For FeatureSet this implies features have been added, deleted or updated.
+ * For GridCoverageResource this implies the coverage samples have change.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ManagementEvent extends StoreEvent {
+public class ContentEvent extends StoreEvent {
 
-    public static final int TYPE_ADD = 1;
-    public static final int TYPE_REMOVE = 2;
-
-    private final int type;
-    private final Resource[] changes;
-
-    public ManagementEvent(Resource source, int type, Resource ... changes) {
-        super(source);
-        this.type = type;
-        this.changes = changes;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public Resource[] getChanges() {
-        return changes;
+    public ContentEvent(Resource resource) {
+        super(resource);
     }
 
 }

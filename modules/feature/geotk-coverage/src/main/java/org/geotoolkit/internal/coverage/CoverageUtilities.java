@@ -37,6 +37,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
@@ -51,6 +52,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -591,4 +593,35 @@ public final class CoverageUtilities extends Static {
         final int subHeight = Math.toIntExact(Math.round(subgrid.getSize(imgAxes[1])));
         return baseImage.getSubimage(subX, subY, subWidth, subHeight);
     }
+
+    /**
+     * Compute an estimation of the resolution in another crs.
+     *
+     * @param env resource where resolution applies
+     * @param res resolution in given envelope
+     * @param crs wanted resolution crs
+     * @return resolution in target crs.
+     * @throws FactoryException
+     * @throws MismatchedDimensionException
+     * @throws TransformException
+     */
+    public static double[] estimateResolution(Envelope env, double[] res, CoordinateReferenceSystem crs) throws FactoryException, MismatchedDimensionException, TransformException {
+        final int dim = env.getDimension();
+        final GeneralDirectPosition center = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
+        final GeneralDirectPosition vec = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
+        for (int i = 0; i < dim; i++) {
+            center.setOrdinate(i, env.getMedian(i));
+            vec.setOrdinate(i, env.getMedian(i) + res[i]);
+        }
+
+        final MathTransform trs = CRS.findOperation(env.getCoordinateReferenceSystem(), crs, null).getMathTransform();
+        DirectPosition center2 = trs.transform(center, null);
+        DirectPosition vec2 = trs.transform(vec, null);
+        double[] res2 = new double[center2.getDimension()];
+        for (int i = 0; i < res2.length; i++) {
+            res2[i] = Math.abs(vec2.getOrdinate(i) - center2.getOrdinate(i));
+        }
+        return res2;
+    }
+
 }

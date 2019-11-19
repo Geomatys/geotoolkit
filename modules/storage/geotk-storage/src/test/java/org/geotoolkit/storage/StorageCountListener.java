@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.storage;
 
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 
@@ -27,19 +27,30 @@ import org.apache.sis.storage.event.StoreListener;
  */
 public final class StorageCountListener implements StoreListener<StoreEvent> {
 
-    public int numManageEvent = 0;
-    public int numContentEvent = 0;
-    public FeatureStoreManagementEvent lastManagementEvent = null;
-    public FeatureStoreContentEvent lastContentEvent = null;
+    private final List<StoreEvent> events = new ArrayList<>();
 
     @Override
     public void eventOccured(StoreEvent event) {
-        if (event instanceof FeatureStoreManagementEvent) {
-            numManageEvent++;
-            this.lastManagementEvent = (FeatureStoreManagementEvent) event;
-        } else if (event instanceof FeatureStoreContentEvent) {
-            numContentEvent++;
-            this.lastContentEvent = (FeatureStoreContentEvent) event;
-        }
+        events.add(event);
     }
+
+    public <T extends StoreEvent> T last(Class<T> clazz) {
+        for (StoreEvent event : events) {
+            if (clazz.isInstance(event)) {
+                return (T) event;
+            }
+        }
+        return null;
+    }
+
+    public <T extends StoreEvent> int count(Class<T> clazz) {
+        int nb = 0;
+        for (StoreEvent event : events) {
+            if (clazz.isInstance(event)) {
+                nb++;
+            }
+        }
+        return nb;
+    }
+
 }

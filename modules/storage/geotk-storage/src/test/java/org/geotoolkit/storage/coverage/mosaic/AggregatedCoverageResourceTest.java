@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage.mosaic;
 
-import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
@@ -34,9 +33,14 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
+import org.apache.sis.storage.event.StoreEvent;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.storage.StorageCountListener;
+import org.geotoolkit.storage.event.AggregationEvent;
+import org.geotoolkit.storage.event.ContentEvent;
+import org.geotoolkit.storage.event.ModelEvent;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -113,10 +117,14 @@ public class AggregatedCoverageResourceTest {
         | 1 | 2 | 3 |
         +---+---+---+
         */
-        final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
-                null, AggregatedCoverageResource.Mode.ORDER,
-                resource1, resource2, resource3);
-        ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);;
+        aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.add(resource1);
+        aggregate.add(resource2);
+        aggregate.add(resource3);
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
@@ -216,10 +224,15 @@ public class AggregatedCoverageResourceTest {
         |NaN|NaN| 2 | 2 | 1 | 1 |
         +---+---+---+---+---+---+
         */
-        final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
-                null, AggregatedCoverageResource.Mode.SCALE,
-                resource1, resource2, resource3);
-        ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+        aggregate.setMode(AggregatedCoverageResource.Mode.SCALE);
+        aggregate.add(resource1);
+        aggregate.add(resource2);
+        aggregate.add(resource3);
+        //we must obtain the lowest resolution
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{0.5,0.5}, resolution, 0.0);
 
         final GridCoverage coverage = aggregate.read(grid2);
         final RenderedImage image = coverage.render(null);
@@ -317,6 +330,9 @@ public class AggregatedCoverageResourceTest {
     @Test
     public void testModifyAggregation() throws DataStoreException, TransformException {
 
+        //event counters
+        StorageCountListener listener = new StorageCountListener();
+
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GeneralEnvelope expected = new GeneralEnvelope(crs);
 
@@ -335,21 +351,31 @@ public class AggregatedCoverageResourceTest {
         final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
 
         final AggregatedCoverageResource agg = new AggregatedCoverageResource();
+        agg.addListener(StoreEvent.class, listener);
         Assert.assertNull(agg.getEnvelope().orElse(null));
 
         agg.add(resource1);
+        Assert.assertEquals(1, listener.count(ContentEvent.class));
+        Assert.assertEquals(1, listener.count(ModelEvent.class));
+        Assert.assertEquals(1, listener.count(AggregationEvent.class));
         Envelope envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 3);
         expected.setRange(1, 0, 1);
         Assert.assertEquals(expected, new GeneralEnvelope(envelope));
 
         agg.add(resource2);
+        Assert.assertEquals(2, listener.count(ContentEvent.class));
+        Assert.assertEquals(2, listener.count(ModelEvent.class));
+        Assert.assertEquals(2, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 4);
         expected.setRange(1, 0, 1);
         Assert.assertEquals(expected, new GeneralEnvelope(envelope));
 
         agg.add(resource3);
+        Assert.assertEquals(3, listener.count(ContentEvent.class));
+        Assert.assertEquals(3, listener.count(ModelEvent.class));
+        Assert.assertEquals(3, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 5);
         expected.setRange(1, 0, 1);
@@ -357,6 +383,9 @@ public class AggregatedCoverageResourceTest {
 
         agg.remove(resource1);
         agg.remove(resource2);
+        Assert.assertEquals(5, listener.count(ContentEvent.class));
+        Assert.assertEquals(5, listener.count(ModelEvent.class));
+        Assert.assertEquals(5, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 2, 5);
         expected.setRange(1, 0, 1);

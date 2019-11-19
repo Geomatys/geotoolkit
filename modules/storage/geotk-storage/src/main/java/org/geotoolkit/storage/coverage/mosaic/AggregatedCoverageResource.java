@@ -38,6 +38,7 @@ import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -52,16 +53,22 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.apache.sis.storage.event.StoreListeners;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.FrequencySortedSet;
+import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.storage.event.AggregationEvent;
+import org.geotoolkit.storage.event.ContentEvent;
+import org.geotoolkit.storage.event.ModelEvent;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -91,6 +98,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         SCALE
     }
 
+    private final StoreListeners listeners = new StoreListeners(null, this);
     private final List<GridCoverageResource> components = new ArrayList<>();
 
     //user defined parameters
@@ -196,6 +204,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         if (!components.remove(resource)) {
             throw new DataStoreException("Resource not found");
         }
+        listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource), AggregationEvent.class);
         eraseCaches();
     }
 
@@ -219,6 +228,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 components.remove(resource);
                 throw ex;
             }
+            listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_ADD, resource), AggregationEvent.class);
             return resource;
         } else {
             throw new DataStoreException("Resource must be an instance of GridCoverageResource");
@@ -317,14 +327,29 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         GeneralEnvelope env = new GeneralEnvelope(outputCrs);
         env.setToNaN();
         int index = 0;
+        double[] estimatedResolution = new double[outputCrs.getCoordinateSystem().getDimension()];
+        Arrays.fill(estimatedResolution, Double.POSITIVE_INFINITY);
         for (GridCoverageResource resource : components) {
-            Envelope envelope = resource.getGridGeometry().getEnvelope();
+            final GridGeometry componentGrid = resource.getGridGeometry();
+            Envelope envelope = componentGrid.getEnvelope();
             try {
                 envelope = Envelopes.transform(envelope, outputCrs);
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
             tree.insert(new JTSEnvelope2D(envelope), new AbstractMap.SimpleImmutableEntry<>(index++,resource));
+
+            //try to find an estimated resolution
+            if (estimatedResolution != null) {
+                try {
+                    final double[] est = CoverageUtilities.estimateResolution(componentGrid.getEnvelope(), componentGrid.getResolution(true), outputCrs);
+                    for (int i=0; i < estimatedResolution.length; i++) {
+                        estimatedResolution[i] = Math.min(estimatedResolution[i], est[i]);
+                    }
+                } catch (FactoryException | MismatchedDimensionException | TransformException | IncompleteGridGeometryException ex) {
+                    estimatedResolution = null;
+                }
+            }
 
             if (env.isAllNaN()) {
                 env.setEnvelope(envelope);
@@ -368,8 +393,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             }
         }
 
-        gridGeometry = new GridGeometry(null, env);
-
+        if (estimatedResolution != null) {
+            gridGeometry = new EstimatedGridGeometry(env, estimatedResolution);
+        } else {
+            gridGeometry = new GridGeometry(null, env);
+        }
 
         //add a no-data category
         //the no-data is needed to fill possible gaps between coverages
@@ -412,6 +440,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         gridGeometry = null;
         sampleDimensions = null;
         tree = null;
+        listeners.fire(new ModelEvent(this), ModelEvent.class);
+        listeners.fire(new ContentEvent(this), ContentEvent.class);
     }
 
     @Override
@@ -610,10 +640,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
     @Override
     public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+        listeners.addListener(eventType, listener);
     }
 
     @Override
     public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+        listeners.removeListener(eventType, listener);
     }
 
     /**
