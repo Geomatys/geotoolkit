@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.converters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -37,7 +38,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import net.sf.json.JSONObject;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -55,8 +55,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import static org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory.PATH;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.GeoJSONProvider;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
@@ -69,6 +67,8 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.storage.DataStores;
+import static org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory.PATH;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.util.NamesExt;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
@@ -360,16 +360,15 @@ public class WPSConvertersUtils {
             jsonMap.put("bbox", bboxMap);
             jsonMap.put("srs", "EPSG:" + crsCode);
 
+            final String json = new ObjectMapper().writeValueAsString(jsonMap);
+            complex.getContent().add(json);
+            return complex;
+
         } catch (TransformException e) {
             throw new UnconvertibleObjectException("The geographic envelope of the layer can't be retrieved", e);
         } catch (Exception e) {
             throw new UnconvertibleObjectException(e.getMessage(), e);
         }
-
-        final String json = JSONObject.fromObject(jsonMap).toString();
-        complex.getContent().add(json);
-        return complex;
-
     }
 
     /**
