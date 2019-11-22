@@ -14,7 +14,9 @@ import javax.measure.Unit;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.filter.DefaultLiteral;
@@ -26,9 +28,6 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -744,11 +743,11 @@ public class Styles {
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 
-        FeatureStore store;
-        FeatureCollection fs;
+        DataStore store;
+        FeatureSet fs;
 
         store = new ShapefileFeatureStore(Styles.class.getResource("/data/world/Countries.shp").toURI());
-        fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
+        fs = (FeatureSet) store.findResource("Countries");
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));
         }
@@ -765,11 +764,11 @@ public class Styles {
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 
-        FeatureStore store;
-        FeatureCollection fs;
+        DataStore store;
+        FeatureSet fs;
 
         store = new ShapefileFeatureStore(Styles.class.getResource("/data/world/city.shp").toURI());
-        fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
+        fs = (FeatureSet) store.findResource("city");
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));
         }

@@ -7,10 +7,9 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.map.MapBuilder;
@@ -46,8 +45,8 @@ public class GraphicBuilderDemo {
         //create a feature layer
         Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put( "path", GraphicBuilderDemo.class.getResource("/data/weather/stations2.shp").toURI() );
-        FeatureStore store = (FeatureStore) DataStores.open(params);
-        FeatureCollection fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
+        DataStore store = DataStores.open(params);
+        FeatureSet fs = (FeatureSet) store.findResource("stations2");
         MutableStyle style = SF.style();
         MapLayer layer = MapBuilder.createFeatureLayer(fs, style);
         layer.setDescription(SF.description("stations", ""));

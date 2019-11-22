@@ -38,11 +38,10 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.feature.FeatureExt;
@@ -50,6 +49,9 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.FeatureMapUpdate;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -252,7 +254,7 @@ public class EditionHelper {
 
 
     private final FXMap map;
-    private final FeatureMapLayer editedLayer;
+    private final MapLayer editedLayer;
     private Geometry constraint = null;
     private boolean showAtributeditor;
     private int mousePointerSize = 4;
@@ -262,7 +264,7 @@ public class EditionHelper {
      * @param map source map
      * @param editedLayer edited layer
      */
-    public EditionHelper(final FXMap map, final FeatureMapLayer editedLayer) {
+    public EditionHelper(final FXMap map, final MapLayer editedLayer) {
         ArgumentChecks.ensureNonNull("map", map);
         ArgumentChecks.ensureNonNull("layer", editedLayer);
         this.map = map;
@@ -390,29 +392,31 @@ public class EditionHelper {
             Filter flt = toFilter(geo, editedLayer);
 
             //concatenate with temporal range if needed ----------------------------
-            for (final FeatureMapLayer.DimensionDef def : editedLayer.getExtraDimensions()) {
-                final CoordinateReferenceSystem crs = def.getCrs();
-                final org.opengis.geometry.Envelope canvasEnv = map.getCanvas().getVisibleEnvelope();
-                final org.opengis.geometry.Envelope dimEnv;
-                try {
-                    dimEnv = Envelopes.transform(canvasEnv, crs);
-                } catch (TransformException ex) {
-                    continue;
+            if (editedLayer instanceof FeatureMapLayer) {
+                for (final FeatureMapLayer.DimensionDef def : ((FeatureMapLayer) editedLayer).getExtraDimensions()) {
+                    final CoordinateReferenceSystem crs = def.getCrs();
+                    final org.opengis.geometry.Envelope canvasEnv = map.getCanvas().getVisibleEnvelope();
+                    final org.opengis.geometry.Envelope dimEnv;
+                    try {
+                        dimEnv = Envelopes.transform(canvasEnv, crs);
+                    } catch (TransformException ex) {
+                        continue;
+                    }
+
+                    final Filter dimFilter = FILTER_FACTORY.and(
+                        FF.or(
+                                FF.isNull(def.getLower()),
+                                FF.lessOrEqual(def.getLower(), FF.literal(dimEnv.getMaximum(0)) )),
+                        FF.or(
+                                FF.isNull(def.getUpper()),
+                                FF.greaterOrEqual(def.getUpper(), FF.literal(dimEnv.getMinimum(0)) ))
+                    );
+
+                    flt = FF.and(flt, dimFilter);
                 }
-
-                final Filter dimFilter = FILTER_FACTORY.and(
-                    FF.or(
-                            FF.isNull(def.getLower()),
-                            FF.lessOrEqual(def.getLower(), FF.literal(dimEnv.getMaximum(0)) )),
-                    FF.or(
-                            FF.isNull(def.getUpper()),
-                            FF.greaterOrEqual(def.getUpper(), FF.literal(dimEnv.getMinimum(0)) ))
-                );
-
-                flt = FF.and(flt, dimFilter);
             }
 
-            final FeatureSet resource = editedLayer.getResource();
+            final FeatureSet resource = (FeatureSet) editedLayer.getResource();
 
             //we filter in the map CRS
             SimpleQuery reproject = QueryBuilder.reproject(editgeoms.getType(), map.getCanvas().getObjectiveCRS2D());
@@ -439,7 +443,7 @@ public class EditionHelper {
                     return sf;
                 }
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
@@ -1037,7 +1041,7 @@ public class EditionHelper {
     public Geometry toObjectiveCRS(Geometry geom){
         try{
             final MathTransform trs = CRS.findOperation(
-                    FeatureExt.getCRS(editedLayer.getResource().getType()),
+                    FeatureExt.getCRS(((FeatureSet) editedLayer.getResource()).getType()),
                     map.getCanvas().getObjectiveCRS2D(), null).getMathTransform();
 
             geom = JTS.transform(geom, trs);
@@ -1057,9 +1061,9 @@ public class EditionHelper {
      * @return geometry filter
      * @throws org.opengis.geometry.MismatchedDimensionException if crs dimensions do not match
      */
-    public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws MismatchedDimensionException, DataStoreException {
+    public Filter toFilter(final Geometry poly, final MapLayer fl) throws MismatchedDimensionException, DataStoreException {
 
-        final PropertyType desc = FeatureExt.getDefaultGeometry(fl.getResource().getType());
+        final PropertyType desc = FeatureExt.getDefaultGeometry(((FeatureSet) fl.getResource()).getType());
         final String geoStr = desc.getName().tip().toString();
         final Expression geomField = FF.property(geoStr);
 
@@ -1081,7 +1085,7 @@ public class EditionHelper {
 
             final FeatureType featureType;
             try {
-                featureType = (FeatureType) editedLayer.getResource().getType();
+                featureType = ((FeatureSet) editedLayer.getResource()).getType();
             } catch (DataStoreException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
                 return null;
@@ -1099,7 +1103,7 @@ public class EditionHelper {
 
             if (isWritable(editedLayer)) {
                 try {
-                    ((FeatureCollection)editedLayer.getResource()).add(feature);
+                    ((WritableFeatureSet) editedLayer.getResource()).add(Arrays.asList(feature).iterator());
                 } catch (Exception ex) {
                     LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
                 }
@@ -1130,7 +1134,7 @@ public class EditionHelper {
 
             try {
                 final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-                final FeatureType featureType = editedLayer.getResource().getType();
+                final FeatureType featureType = ((FeatureSet) editedLayer.getResource()).getType();
                 final PropertyType geomAttribut = FeatureExt.getDefaultGeometry(featureType);
                 final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(geomAttribut);
 
@@ -1143,7 +1147,7 @@ public class EditionHelper {
                     geom = geo;
                 }
 
-                ((FeatureCollection)editedLayer.getResource()).update(filter, Collections.singletonMap(geomAttribut.getName().toString(), geom));
+                ((WritableFeatureSet) editedLayer.getResource()).replaceIf(filter::evaluate, new FeatureMapUpdate(Collections.singletonMap(geomAttribut.getName().toString(), geom)));
             } catch (final Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             } finally {
@@ -1166,7 +1170,7 @@ public class EditionHelper {
             Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
 
             try {
-                ((FeatureCollection)editedLayer.getResource()).remove(filter);
+                ((WritableFeatureSet) editedLayer.getResource()).removeIf(filter::evaluate);
             } catch (final Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
@@ -1276,11 +1280,7 @@ public class EditionHelper {
      *
      * @return true if layer resource is a FeatureCollection and is Writable.
      */
-    public static boolean isWritable(FeatureMapLayer fml) {
-        FeatureSet resource = fml.getResource();
-        if (resource instanceof FeatureCollection) {
-            return ((FeatureCollection)resource).isWritable();
-        }
-        return false;
+    public static boolean isWritable(MapLayer fml) {
+        return fml.getResource() instanceof WritableFeatureSet;
     }
 }
