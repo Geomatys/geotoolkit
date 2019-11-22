@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridGeometry;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -141,13 +142,12 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      */
     private final transient Map<CoordinateReferenceSystem,MathTransform> transforms = new HashMap<>();
 
+    private GridGeometry gridGeometry = new GridGeometry(null, CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()));
     /**
      * Contains the canvas bounds.
      */
     private final Rectangle2D displayBounds = new Rectangle2D.Double(0,0,1,1);
     private final AffineTransform objToDisp = new AffineTransform();
-    private CoordinateReferenceSystem objectiveCRS;
-    private CoordinateReferenceSystem objectiveCRS2D;
     private double proportion = 1;
     private boolean autoRepaint = false;
 
@@ -168,28 +168,23 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     public AbstractCanvas2D(CoordinateReferenceSystem crs, Hints hints) {
         super(hints);
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
-        objectiveCRS = crs;
-        try {
-            objectiveCRS2D = CRSUtilities.getCRS2D(objectiveCRS);
-        } catch (TransformException ex) {
-            getLogger().log(Level.WARNING, null, ex);
-        }
-        envelope = new GeneralEnvelope(objectiveCRS);
+        envelope = new GeneralEnvelope(crs);
+        gridGeometry = new GridGeometry(null, envelope);
     }
 
     public CoordinateReferenceSystem getObjectiveCRS() {
-        return objectiveCRS;
+        return gridGeometry.getCoordinateReferenceSystem();
     }
 
     public void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException{
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
-        if(Utilities.equalsIgnoreMetadata(objectiveCRS, crs)){
+        if (Utilities.equalsIgnoreMetadata(gridGeometry.getCoordinateReferenceSystem(), crs)) {
             return;
         }
 
         //store the visible area to restore it later
         GeneralEnvelope preserve = null;
-        if(!displayBounds.isEmpty()){
+        if (!displayBounds.isEmpty()) {
             preserve = new GeneralEnvelope(envelope);
         }
 
@@ -199,13 +194,16 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             throw new TransformException("Fail to change objective CRS", ex);
         }
 
-        final CoordinateReferenceSystem oldCRS = objectiveCRS;
-        objectiveCRS = crs;
+        final CoordinateReferenceSystem oldCRS = gridGeometry.getCoordinateReferenceSystem();
+        CoordinateReferenceSystem objectiveCRS = crs;
+
         envelope = new GeneralEnvelope(objectiveCRS);
-        objectiveCRS2D = CRSUtilities.getCRS2D(objectiveCRS);
+        gridGeometry = new GridGeometry(null, envelope);
+
+        CoordinateReferenceSystem objectiveCRS2D = CRS.getHorizontalComponent(objectiveCRS);
         firePropertyChange(OBJECTIVE_CRS_KEY, oldCRS, crs);
 
-        if(preserve != null){
+        if (preserve != null) {
             //restore previous visible area
             GeneralEnvelope env = new GeneralEnvelope(Envelopes.transform(preserve, objectiveCRS2D));
             if(!isValid(env)) env = null;
@@ -249,7 +247,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public CoordinateReferenceSystem getObjectiveCRS2D() {
-        return objectiveCRS2D;
+        return CRS.getHorizontalComponent(getObjectiveCRS());
     }
 
     public CoordinateReferenceSystem getDisplayCRS() {
