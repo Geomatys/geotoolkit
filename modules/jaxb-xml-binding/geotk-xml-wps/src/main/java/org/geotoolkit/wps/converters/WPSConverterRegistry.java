@@ -123,6 +123,7 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(StringToSortByConverter.getInstance()));
         register(new WPSObjectConverterAdapter(StringToNumberRangeConverter.getInstance()));
         register(new WPSObjectConverterAdapter(new StringToDateConverter()));
+        register(new WPSObjectConverterAdapter(new StringToBooleanArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToDoubleArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToFloatArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToIntegerArrayConverter()));
@@ -134,6 +135,7 @@ public class WPSConverterRegistry {
 
         // Object -> String converters
         register(new WPSObjectConverterAdapter(new DoubleArrayToStringConverter()));
+        register(new WPSObjectConverterAdapter(new BooleanArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new IntegerArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new FloatArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new LongArrayToStringConverter()));
