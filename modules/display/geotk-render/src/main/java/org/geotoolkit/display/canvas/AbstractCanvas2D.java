@@ -151,8 +151,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     private double proportion = 1;
     private boolean autoRepaint = false;
 
-    private GeneralEnvelope envelope;
-
     //navigation constraint
     private double minscale = Double.NaN;
     private double maxscale = Double.NaN;
@@ -168,8 +166,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     public AbstractCanvas2D(CoordinateReferenceSystem crs, Hints hints) {
         super(hints);
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
-        envelope = new GeneralEnvelope(crs);
-        gridGeometry = new GridGeometry(null, envelope);
+        gridGeometry = new GridGeometry(null, new GeneralEnvelope(crs));
     }
 
     public CoordinateReferenceSystem getObjectiveCRS() {
@@ -185,7 +182,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         //store the visible area to restore it later
         GeneralEnvelope preserve = null;
         if (!displayBounds.isEmpty()) {
-            preserve = new GeneralEnvelope(envelope);
+            preserve = new GeneralEnvelope(gridGeometry.getEnvelope());
         }
 
         try {
@@ -197,8 +194,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final CoordinateReferenceSystem oldCRS = gridGeometry.getCoordinateReferenceSystem();
         CoordinateReferenceSystem objectiveCRS = crs;
 
-        envelope = new GeneralEnvelope(objectiveCRS);
-        gridGeometry = new GridGeometry(null, envelope);
+        gridGeometry = new GridGeometry(null, new GeneralEnvelope(objectiveCRS));
 
         CoordinateReferenceSystem objectiveCRS2D = CRS.getHorizontalComponent(objectiveCRS);
         firePropertyChange(OBJECTIVE_CRS_KEY, oldCRS, crs);
@@ -336,7 +332,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
         fixScale:
         if(!Double.isNaN(minscale) || !Double.isNaN(maxscale)){
-            double scale = CanvasUtilities.computeSEScale(envelope, objToDisp, getDisplayBounds().getBounds());
+            double scale = CanvasUtilities.computeSEScale(getVisibleEnvelope(), objToDisp, getDisplayBounds().getBounds());
 
             final Point2D center = getDisplayCenter();
             if(center== null) break fixScale;
@@ -385,11 +381,13 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             getLogger().log(Level.SEVERE, "Failed to calculate canvas objective bounds", ex);
             return;
         }
-        final Envelope old = new GeneralEnvelope(envelope);
+        final Envelope old = gridGeometry.getEnvelope();
+        GeneralEnvelope envelope = new GeneralEnvelope(gridGeometry.getEnvelope());
         envelope.setRange(0, canvasObjectiveBounds.getMinX(), canvasObjectiveBounds.getMaxX());
         envelope.setRange(1, canvasObjectiveBounds.getMinY(), canvasObjectiveBounds.getMaxY());
 
-        firePropertyChange(ENVELOPE_KEY, old, envelope.clone());
+        gridGeometry = new GridGeometry(null, envelope);
+        firePropertyChange(ENVELOPE_KEY, old, envelope);
     }
 
     /**
@@ -397,16 +395,17 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Can be used to temporal or elevation range of the map.
      */
     private void setRange(final int ordinate, final double min, final double max){
-        if(envelope.getMinimum(ordinate) == min && envelope.getMaximum(ordinate) == max){
+        GeneralEnvelope envelope = new GeneralEnvelope(gridGeometry.getEnvelope());
+        if (envelope.getMinimum(ordinate) == min && envelope.getMaximum(ordinate) == max) {
             //same values
             return;
         }
 
         final GeneralEnvelope old = new GeneralEnvelope(envelope);
         envelope.setRange(ordinate, min, max);
-        final GeneralEnvelope nw = new GeneralEnvelope(envelope);
+        gridGeometry = new GridGeometry(null, envelope);
         repaintIfAuto();
-        firePropertyChange(ENVELOPE_KEY, old, nw);
+        firePropertyChange(ENVELOPE_KEY, old, envelope);
     }
 
     /**
@@ -770,7 +769,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @return visible envelope of the canvas, in Objective CRS
      */
     public Envelope getVisibleEnvelope() {
-        return new GeneralEnvelope(envelope);
+        return gridGeometry.getEnvelope();
     }
 
     /**
