@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.dbf;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -30,30 +29,31 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.storage.feature.AbstractFeatureStore;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureStreams;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.dbf.DbaseFileReader.Row;
-import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
@@ -63,31 +63,25 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DbaseFileFeatureStore extends AbstractFeatureStore implements ResourceOnFileSystem {
+public class DbaseFileStore extends DataStore implements FeatureSet, ResourceOnFileSystem {
 
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.dbf");
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
-    private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
+    private final Parameters parameters;
     private final Path file;
     private String name;
 
     private FeatureType featureType;
 
-    /**
-     * @deprecated use {@link #DbaseFileFeatureStore(Path, String)} instead
-     */
-    public DbaseFileFeatureStore(final File f) throws MalformedURLException, DataStoreException{
-        this(f.toPath());
-    }
-
-    public DbaseFileFeatureStore(final Path f) throws MalformedURLException, DataStoreException{
+    public DbaseFileStore(final Path f) throws MalformedURLException, DataStoreException{
         this(toParameters(f));
     }
 
-    public DbaseFileFeatureStore(final ParameterValueGroup params) throws DataStoreException{
-        super(params);
+    public DbaseFileStore(final ParameterValueGroup params) throws DataStoreException{
+        this.parameters = Parameters.castOrWrap(params);
 
-        final URI uri = (URI) params.parameter(DbaseFeatureStoreFactory.PATH.getName().toString()).getValue();
+        final URI uri = this.parameters.getMandatoryValue(DbaseFileProvider.PATH);
         this.file = Paths.get(uri);
 
         final String path = uri.toString();
@@ -100,9 +94,14 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     private static ParameterValueGroup toParameters(final Path f) throws MalformedURLException{
-        final Parameters params = Parameters.castOrWrap(DbaseFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(DbaseFeatureStoreFactory.PATH).setValue(f.toUri());
+        final Parameters params = Parameters.castOrWrap(DbaseFileProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(DbaseFileProvider.PATH).setValue(f.toUri());
         return params;
+    }
+
+    @Override
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.of(getType().getName());
     }
 
     /**
@@ -110,28 +109,64 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
      */
     @Override
     public DataStoreProvider getProvider() {
-        return DataStores.getProviderById(DbaseFeatureStoreFactory.NAME);
+        return DataStores.getProviderById(DbaseFileProvider.NAME);
+    }
+
+    @Override
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final DefaultDataIdentification idf = new DefaultDataIdentification();
+        final DefaultCitation citation = new DefaultCitation();
+        citation.getIdentifiers().add(NamedIdentifier.castOrCopy(getIdentifier().get()));
+        idf.setCitation(citation);
+        metadata.setIdentificationInfo(Arrays.asList(idf));
+        return metadata;
+    }
+
+    @Override
+    public void close() throws DataStoreException {
+        //do nothing
+    }
+
+    @Override
+    public FeatureType getType() throws DataStoreException {
+        checkExist();
+        return featureType;
+    }
+
+    @Override
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
+        final DBFFeatureReader reader = new DBFFeatureReader();
+        final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED), false);
+        stream.onClose(reader::close);
+        return stream;
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
+        return Optional.empty();
     }
 
     private synchronized void checkExist() throws DataStoreException{
-        if(featureType != null) return;
+        if (featureType != null) return;
 
-        try{
+        try {
             RWLock.readLock().lock();
-            if(Files.exists(file)){
+            if (Files.exists(file)) {
                 featureType = readType();
             }
-        }finally{
+        } finally {
             RWLock.readLock().unlock();
         }
     }
 
-    private Path createWriteFile() throws MalformedURLException{
-        return (Path) IOUtilities.changeExtension(file, "wdbf");
-    }
-
     private FeatureType readType() throws DataStoreException{
-        try (SeekableByteChannel sbc = Files.newByteChannel(file, StandardOpenOption.READ)){
+        try (SeekableByteChannel sbc = Files.newByteChannel(file, StandardOpenOption.READ)) {
             final DbaseFileReader reader = new DbaseFileReader(sbc, true, null);
             final DbaseFileHeader header = reader.getHeader();
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -139,7 +174,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
 
             ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY).setMinimumOccurs(1).setMaximumOccurs(1);
             final List<AttributeType> fields = header.createDescriptors();
-            for(AttributeType at : fields){
+            for (AttributeType at : fields) {
                 ftb.addAttribute(at);
             }
             return ftb.build();
@@ -148,85 +183,12 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<GenericName> getNames() throws DataStoreException {
-        checkExist();
-        if(featureType != null){
-            return Collections.singleton(featureType.getName());
-        }else{
-            return Collections.emptySet();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        typeCheck(typeName); //raise error is type doesnt exist
-        return featureType;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
-
-        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
-        typeCheck(gquery.getTypeName()); //raise error is type doesnt exist
-        final FeatureReader fr = new DBFFeatureReader();
-        return FeatureStreams.subset(fr, gquery);
-    }
-
-
-    ////////////////////////////////////////////////////////////////////////////
-    // FALLTHROUGHT OR NOT IMPLEMENTED /////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Unsupported, throws a {@link DataStoreException}.
-     */
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return new DefaultQueryCapabilities(false, false);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
-            final Hints hints) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures,hints);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updateFeatures(final String groupName, final Filter filter, final Map<String, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeFeatures(final String groupName, final Filter filter) throws DataStoreException {
-        handleRemoveWithFeatureWriter(groupName, filter);
-    }
-
     @Override
     public Path[] getComponentFiles() throws DataStoreException {
         return new Path[] { this.file };
     }
 
-    private class DBFFeatureReader implements FeatureReader{
+    private class DBFFeatureReader implements Iterator<Feature>, AutoCloseable {
 
         protected final DbaseFileReader reader;
         protected final String[] attNames;
@@ -250,11 +212,6 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
                 if(i>0)attNames[i-1] = pd.getName().toString();
                 i++;
             }
-        }
-
-        @Override
-        public FeatureType getFeatureType() {
-            return featureType;
         }
 
         @Override
@@ -300,20 +257,10 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements Resou
             try {
                 reader.close();
             } catch (IOException ex) {
-                getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
         }
 
-        @Override
-        public void remove() {
-            throw new FeatureStoreRuntimeException("Not supported on reader.");
-        }
-
-    }
-
-    @Override
-    public void refreshMetaModel() {
-        featureType = null;
     }
 
 }
