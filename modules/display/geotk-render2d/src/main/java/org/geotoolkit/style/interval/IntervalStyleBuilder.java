@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.style.interval;
 
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -30,18 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.swing.table.AbstractTableModel;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
-import org.geotoolkit.map.FeatureMapLayer;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
+
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -69,6 +54,25 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
+
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.storage.DataStoreException;
+
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 
 /**
  *
@@ -360,9 +364,9 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         //find the geometry class for template
         Class<?> geoClass = null;
         try{
-            PropertyType geo = schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            PropertyType geo = FeatureExt.getDefaultGeometry(schema);
             geoClass = ((AttributeType)((Operation)geo).getResult()).getValueClass();
-        }catch(PropertyNotFoundException ex){
+        }catch(PropertyNotFoundException | IllegalStateException ex){
         }
 
         if(geoClass==null){
