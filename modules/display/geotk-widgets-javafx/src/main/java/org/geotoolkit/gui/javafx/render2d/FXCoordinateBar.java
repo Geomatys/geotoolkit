@@ -70,10 +70,9 @@ public class FXCoordinateBar extends GridPane {
         public void propertyChange(PropertyChangeEvent evt) {
             final String propertyName = evt.getPropertyName();
 
-            if(AbstractCanvas2D.OBJECTIVE_CRS_KEY.equals(propertyName)){
+            if(AbstractCanvas2D.GRIDGEOMETRY_KEY.equals(propertyName)){
                 //update crs button
                 crsButton.crsProperty().set((CoordinateReferenceSystem)evt.getNewValue());
-            }else if(AbstractCanvas2D.ENVELOPE_KEY.equals(propertyName)){
                 //range slider
                 final Date[] range = map.getCanvas().getTemporalRange();
                 if(range==null){

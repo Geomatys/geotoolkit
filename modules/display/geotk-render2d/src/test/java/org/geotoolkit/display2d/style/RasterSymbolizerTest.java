@@ -24,8 +24,14 @@ import java.awt.image.Raster;
 import java.io.File;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.coverage.GridCoverage2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -45,6 +51,8 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.util.FactoryException;
 
 /**
  * Test that raster symbolizer are properly rendered.
@@ -56,6 +64,40 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+
+    /**
+     * Render a coverage with :
+     * - 3 sample dimensions R,G,B
+     * - 1 byte per sample
+     * - Component color model
+     * - 1 raster, not tiled
+     *
+     */
+    @Ignore
+    @Test
+    public void renderRGB8BitCoverage() throws FactoryException {
+
+        final BufferedImage image = new BufferedImage(360, 180, BufferedImage.TYPE_INT_RGB);
+        image.setRGB(0, 0, Color.RED.getRGB());
+        image.setRGB(359, 0, Color.GREEN.getRGB());
+        image.setRGB(0, 179, Color.BLUE.getRGB());
+
+        final GridExtent extent = new GridExtent(360, 180);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, 1, 0, 0);
+        final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
+
+        /*
+         * We volontarely name samples 1,2,3 to avoid use of names as a hint.
+         */
+        final SampleDimension red = new SampleDimension.Builder().setName("1").build();
+        final SampleDimension green = new SampleDimension.Builder().setName("2").build();
+        final SampleDimension blue = new SampleDimension.Builder().setName("3").build();
+
+        final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(red,green,blue), image);
+
+        //TODO must finish merge of canvasDef and ViewDef
+
+    }
 
     /**
      * Check proper image reprojection in UTM

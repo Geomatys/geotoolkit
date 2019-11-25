@@ -21,13 +21,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints.Key;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
@@ -133,63 +131,6 @@ public final class DefaultPortrayalService implements PortrayalService{
     static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<>();
 
     private DefaultPortrayalService(){}
-
-
-    /**
-     * Portray a gridcoverage using amplitute windarrows/cercles
-     *
-     * @param coverage : grid coverage to render
-     * @param mapArea : mapArea to render
-     * @param canvasDimension : size of the wanted image
-     * @return resulting image of the portraying operation
-     */
-    public static Image portray(final GridCoverage coverage, final Envelope mapArea,
-            final Dimension canvasDimension, final boolean strechImage)
-            throws PortrayalException{
-
-        final MapContext context = convertCoverage(coverage);
-        return portray(context,mapArea,canvasDimension,strechImage);
-    }
-
-    /**
-     * Portray a gridcoverage using amplitute windarrows/cercles
-     *
-     * @param coverage : grid coverage to render
-     * @param mapArea : mapArea to render
-     * @param canvasDimension : size of the wanted image
-     * @return resulting image of the portraying operation
-     */
-    public static BufferedImage portray(final GridCoverage coverage, final Rectangle2D mapArea,
-            final Dimension canvasDimension, final boolean strechImage)
-            throws PortrayalException{
-
-        final MapContext context = convertCoverage(coverage);
-        final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(coverage.getCoordinateReferenceSystem(),canvasDimension);
-        final ContextContainer2D renderer = new ContextContainer2D(canvas, false);
-        canvas.setContainer(renderer);
-
-        renderer.setContext(context);
-        try {
-            canvas.setObjectiveCRS(coverage.getCoordinateReferenceSystem());
-        } catch (TransformException ex) {
-            throw new PortrayalException("Could not set objective crs",ex);
-        }
-
-        //we specifically say to not repect X/Y proportions
-        if(strechImage) canvas.setAxisProportions(Double.NaN);
-        try {
-            canvas.setVisibleArea(mapArea);
-        } catch (IllegalArgumentException ex) {
-            throw new PortrayalException("Could not set map to requested area",ex);
-        } catch (NoninvertibleTransformException ex) {
-            throw new PortrayalException(ex);
-        }
-        canvas.repaint();
-        BufferedImage buffer = canvas.getSnapShot();
-        canvas.dispose();
-
-        return buffer;
-    }
 
     ////////////////////////////////////////////////////////////////////////////
     // PAINTING IN A BUFFERED IMAGE ////////////////////////////////////////////
@@ -299,7 +240,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         }
 
         //we specifically say to not repect X/Y proportions
-        if(canvasDef.isStretchImage()) canvas.setAxisProportions(Double.NaN);
+        canvas.setAxisProportions(!canvasDef.isStretchImage());
         try {
             canvas.setVisibleArea(contextEnv);
             if (viewDef.getAzimuth() != 0) {
@@ -699,7 +640,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         }
 
         //we specifically say to not repect X/Y proportions
-        if(strechImage) canvas.setAxisProportions(Double.NaN);
+        canvas.setAxisProportions(!strechImage);
         try {
             canvas.setVisibleArea(contextEnv);
         } catch (NoninvertibleTransformException | TransformException ex) {

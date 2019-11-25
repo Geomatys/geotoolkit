@@ -80,7 +80,7 @@ public final class Portrayer {
         }
 
         //we specifically say to not repect X/Y proportions
-        if(canvasDef.isStretchImage()) canvas.setAxisProportions(Double.NaN);
+        canvas.setAxisProportions(!canvasDef.isStretchImage());
         try {
             canvas.setVisibleArea(contextEnv);
             if (viewDef.getAzimuth() != 0) {

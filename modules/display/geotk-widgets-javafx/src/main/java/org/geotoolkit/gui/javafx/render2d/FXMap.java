@@ -140,7 +140,7 @@ public class FXMap extends BorderPane {
                         }
                     });
 
-                }else if(J2DCanvas.TRANSFORM_KEY.equals(evt.getPropertyName())){
+                }else if(J2DCanvas.GRIDGEOMETRY_KEY.equals(evt.getPropertyName())){
                     nextPreviousList.put(canvas.getCenterTransform());
                 }
             }
