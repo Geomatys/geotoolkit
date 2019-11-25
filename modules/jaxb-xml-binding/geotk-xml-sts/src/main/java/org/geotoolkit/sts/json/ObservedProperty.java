@@ -44,6 +44,12 @@ public class ObservedProperty {
     @JsonProperty("Datastreams@iot.navigationLink")
     private String datastreamsIotNavigationLink = null;
 
+    @JsonProperty("MultiDatastreams")
+    private List<MultiDatastream> multiDatastreams = null;
+
+    @JsonProperty("MultiDatastreams@iot.navigationLink")
+    private String multiDatastreamsIotNavigationLink = null;
+
     public ObservedProperty iotId(String iotId) {
         this.iotId = iotId;
         return this;
@@ -192,6 +198,49 @@ public class ObservedProperty {
         this.datastreamsIotNavigationLink = datastreamsIotNavigationLink;
     }
 
+    public ObservedProperty addMultiDatastreamsItem(MultiDatastream multiDatastreamsItem) {
+        if (this.multiDatastreams == null) {
+            this.multiDatastreams = new ArrayList<>();
+        }
+
+        this.multiDatastreams.add(multiDatastreamsItem);
+        return this;
+    }
+
+    /**
+     * The Observations of a Datastream are measured with the same Sensor. One
+     * Sensor MAY produce zero-to-many Observations in different Datastreams.
+     *
+     * @return datastreams
+  *
+     */
+    public List<MultiDatastream> getMultiDatastreams() {
+        return multiDatastreams;
+    }
+
+    public void setMultiDatastreams(List<MultiDatastream> multiDatastreams) {
+        this.multiDatastreams = multiDatastreams;
+    }
+
+    public ObservedProperty multiDatastreamsIotNavigationLink(String multiDatastreamsIotNavigationLink) {
+        this.multiDatastreamsIotNavigationLink = multiDatastreamsIotNavigationLink;
+        return this;
+    }
+
+    /**
+     * link to related entities
+     *
+     * @return datastreamsIotNavigationLink
+  *
+     */
+    public String getMultiDatastreamsIotNavigationLink() {
+        return multiDatastreamsIotNavigationLink;
+    }
+
+    public void setMultiDatastreamsIotNavigationLink(String multiDatastreamsIotNavigationLink) {
+        this.multiDatastreamsIotNavigationLink = multiDatastreamsIotNavigationLink;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -207,12 +256,14 @@ public class ObservedProperty {
                 && Objects.equals(this.definition, observedProperty.definition)
                 && Objects.equals(this.description, observedProperty.description)
                 && Objects.equals(this.datastreams, observedProperty.datastreams)
-                && Objects.equals(this.datastreamsIotNavigationLink, observedProperty.datastreamsIotNavigationLink);
+                && Objects.equals(this.datastreamsIotNavigationLink, observedProperty.datastreamsIotNavigationLink)
+                && Objects.equals(this.multiDatastreams, observedProperty.multiDatastreams)
+                && Objects.equals(this.multiDatastreamsIotNavigationLink, observedProperty.multiDatastreamsIotNavigationLink);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, name, definition, description, datastreams, datastreamsIotNavigationLink);
+        return java.util.Objects.hash(iotId, iotSelfLink, name, definition, description, datastreams, datastreamsIotNavigationLink, multiDatastreams, multiDatastreamsIotNavigationLink);
     }
 
     @Override
@@ -227,6 +278,8 @@ public class ObservedProperty {
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    datastreams: ").append(toIndentedString(datastreams)).append("\n");
         sb.append("    datastreamsIotNavigationLink: ").append(toIndentedString(datastreamsIotNavigationLink)).append("\n");
+        sb.append("    multiDatastreams: ").append(toIndentedString(multiDatastreams)).append("\n");
+        sb.append("    multiDatastreamsIotNavigationLink: ").append(toIndentedString(multiDatastreamsIotNavigationLink)).append("\n");
         sb.append("}");
         return sb.toString();
     }

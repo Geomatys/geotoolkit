@@ -781,7 +781,7 @@ public class SOSXmlFactory {
 
     public static Phenomenon buildPhenomenon(final String version, final String id, final String phenomenonName) {
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(phenomenonName);
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(id, phenomenonName);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v101.PhenomenonType(id, phenomenonName);
         } else {
@@ -798,7 +798,7 @@ public class SOSXmlFactory {
                 }
                 phens.add((org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon)phen);
             }
-            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalCompositePhenomenon(phenomenonName, phens);
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalCompositePhenomenon(id, phenomenonName, phens);
         } else if ("1.0.0".equals(version)) {
             final List<org.geotoolkit.swe.xml.v101.PhenomenonType> phens = new ArrayList<>();
             for (org.opengis.observation.Phenomenon phen : phenomenons) {

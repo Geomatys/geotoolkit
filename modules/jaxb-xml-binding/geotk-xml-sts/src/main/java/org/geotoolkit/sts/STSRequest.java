@@ -28,4 +28,6 @@ public interface STSRequest extends RequestBase {
      List<String> getExpand();
 
      List<String> getSelect();
+
+     String getResultFormat();
 }

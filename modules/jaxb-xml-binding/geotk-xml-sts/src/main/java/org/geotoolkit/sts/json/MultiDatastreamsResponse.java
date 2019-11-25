@@ -17,34 +17,35 @@
 package org.geotoolkit.sts.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Objects;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * DatastreamsResponse
+ *
+ * @author guilhem
  */
-public class DatastreamsResponse implements STSResponse {
+public class MultiDatastreamsResponse implements STSResponse {
 
     @JsonProperty("@iot.count")
     private BigDecimal iotCount = null;
 
     @JsonProperty("value")
-    private List<Datastream> value = null;
+    private List<MultiDatastream> value = null;
 
     @JsonProperty("@iot.nextLink")
     private String iotNextLink = null;
 
-    public DatastreamsResponse() {
+    public MultiDatastreamsResponse() {
 
     }
 
-    public DatastreamsResponse(List<Datastream> value) {
+    public MultiDatastreamsResponse(List<MultiDatastream> value) {
         this.value = value;
     }
 
-    public DatastreamsResponse iotCount(BigDecimal iotCount) {
+    public MultiDatastreamsResponse iotCount(BigDecimal iotCount) {
         this.iotCount = iotCount;
         return this;
     }
@@ -65,12 +66,12 @@ public class DatastreamsResponse implements STSResponse {
         this.iotCount = iotCount;
     }
 
-    public DatastreamsResponse value(List<Datastream> value) {
+    public MultiDatastreamsResponse value(List<MultiDatastream> value) {
         this.value = value;
         return this;
     }
 
-    public DatastreamsResponse addValueItem(Datastream valueItem) {
+    public MultiDatastreamsResponse addValueItem(MultiDatastream valueItem) {
 
         if (this.value == null) {
             this.value = new ArrayList<>();
@@ -86,15 +87,15 @@ public class DatastreamsResponse implements STSResponse {
      * @return value
   *
      */
-    public List<Datastream> getValue() {
+    public List<MultiDatastream> getValue() {
         return value;
     }
 
-    public void setValue(List<Datastream> value) {
+    public void setValue(List<MultiDatastream> value) {
         this.value = value;
     }
 
-    public DatastreamsResponse iotNextLink(String iotNextLink) {
+    public MultiDatastreamsResponse iotNextLink(String iotNextLink) {
         this.iotNextLink = iotNextLink;
         return this;
     }
@@ -123,7 +124,7 @@ public class DatastreamsResponse implements STSResponse {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DatastreamsResponse datastreamsResponse = (DatastreamsResponse) o;
+        MultiDatastreamsResponse datastreamsResponse = (MultiDatastreamsResponse) o;
         return Objects.equals(this.iotCount, datastreamsResponse.iotCount)
                 && Objects.equals(this.value, datastreamsResponse.value)
                 && Objects.equals(this.iotNextLink, datastreamsResponse.iotNextLink);
@@ -137,7 +138,7 @@ public class DatastreamsResponse implements STSResponse {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class DatastreamsResponse {\n");
+        sb.append("class MultiDatastreamsResponse {\n");
 
         sb.append("    iotCount: ").append(toIndentedString(iotCount)).append("\n");
         sb.append("    value: ").append(toIndentedString(value)).append("\n");
@@ -156,5 +157,4 @@ public class DatastreamsResponse implements STSResponse {
         }
         return o.toString().replace("\n", "\n    ");
     }
-
 }

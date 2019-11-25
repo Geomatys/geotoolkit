@@ -43,6 +43,8 @@ public abstract class AbstractSTSRequestById implements STSRequest {
      */
     protected List<String> select;
 
+     protected String resultFormat;
+
     public AbstractSTSRequestById() {
 
     }
@@ -81,6 +83,15 @@ public abstract class AbstractSTSRequestById implements STSRequest {
      */
     public void setSelect(List<String> select) {
         this.select = select;
+    }
+
+    @Override
+    public String getResultFormat() {
+        return resultFormat;
+    }
+
+    public void setResultFormat(String resultFormat) {
+        this.resultFormat = resultFormat;
     }
 
     @Override

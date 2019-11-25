@@ -108,8 +108,13 @@ public abstract class AbstractSTSRequest implements STSRequest {
      */
     protected List<String> select;
 
+    protected String resultFormat;
+
     @JsonIgnore
     protected Map<String, String> extraFilter = new HashMap<>();
+
+    @JsonIgnore
+    protected Map<String, String> extraFlag = new HashMap<>();
 
     /**
      * @return the filter
@@ -214,12 +219,35 @@ public abstract class AbstractSTSRequest implements STSRequest {
         this.select = select;
     }
 
+    @Override
+    public String getResultFormat() {
+        return resultFormat;
+    }
+
+    public void setResultFormat(String resultFormat) {
+        this.resultFormat = resultFormat;
+    }
+
     public Map<String, String> getExtraFilter() {
+        if (extraFilter == null)  {
+            extraFilter = new HashMap<>();
+        }
         return extraFilter;
     }
 
     public void setExtraFilter(Map<String, String> extraFilter) {
         this.extraFilter = extraFilter;
+    }
+
+    public Map<String, String> getExtraFlag() {
+        if (extraFlag == null)  {
+            extraFlag = new HashMap<>();
+        }
+        return extraFlag;
+    }
+
+    public void setExtraFlag(Map<String, String> extraFlag) {
+        this.extraFlag = extraFlag;
     }
 
     @Override

@@ -33,7 +33,7 @@ public class Observation {
 
     private String phenomenonTime = null;
 
-    private String result = null;
+    private Object result = null;
 
     private String resultTime = null;
 
@@ -54,6 +54,12 @@ public class Observation {
 
     @JsonProperty("FeatureOfInterest@iot.navigationLink")
     private String featureOfInterestIotNavigationLink = null;
+
+    @JsonProperty("MultiDatastream")
+    private MultiDatastream multiDatastream = null;
+
+    @JsonProperty("MultiDatastream@iot.navigationLink")
+    private String multiDatastreamIotNavigationLink = null;
 
     public Observation iotId(String iotId) {
         this.iotId = iotId;
@@ -119,7 +125,7 @@ public class Observation {
         this.phenomenonTime = phenomenonTime;
     }
 
-    public Observation result(String result) {
+    public Observation result(Object result) {
         this.result = result;
         return this;
     }
@@ -130,11 +136,11 @@ public class Observation {
      * @return result
   *
      */
-    public String getResult() {
+    public Object getResult() {
         return result;
     }
 
-    public void setResult(String result) {
+    public void setResult(Object result) {
         this.result = result;
     }
 
@@ -296,6 +302,34 @@ public class Observation {
         this.featureOfInterestIotNavigationLink = featureOfInterestIotNavigationLink;
     }
 
+
+    public MultiDatastream getMultiDatastream() {
+        return multiDatastream;
+    }
+
+    public void setMultiDatastream(MultiDatastream multiDatastream) {
+        this.multiDatastream = multiDatastream;
+    }
+
+    public Observation multiDatastreamIotNavigationLink(String multiDatastreamIotNavigationLink) {
+        this.multiDatastreamIotNavigationLink = multiDatastreamIotNavigationLink;
+        return this;
+    }
+
+    /**
+     * link to related entities
+     *
+     * @return datastreamsIotNavigationLink
+  *
+     */
+    public String getMultiDatastreamIotNavigationLink() {
+        return multiDatastreamIotNavigationLink;
+    }
+
+    public void setMultiDatastreamIotNavigationLink(String multiDatastreamsIotNavigationLink) {
+        this.multiDatastreamIotNavigationLink = multiDatastreamsIotNavigationLink;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -316,12 +350,14 @@ public class Observation {
                 && Objects.equals(this.datastream, observation.datastream)
                 && Objects.equals(this.featureOfInterest, observation.featureOfInterest)
                 && Objects.equals(this.datastreamIotNavigationLink, observation.datastreamIotNavigationLink)
-                && Objects.equals(this.featureOfInterestIotNavigationLink, observation.featureOfInterestIotNavigationLink);
+                && Objects.equals(this.featureOfInterestIotNavigationLink, observation.featureOfInterestIotNavigationLink)
+                && Objects.equals(this.multiDatastream, observation.multiDatastream)
+                && Objects.equals(this.multiDatastreamIotNavigationLink, observation.multiDatastreamIotNavigationLink);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, phenomenonTime, result, resultTime, resultQuality, validTime, parameters, datastream, featureOfInterest, datastreamIotNavigationLink, featureOfInterestIotNavigationLink);
+        return java.util.Objects.hash(iotId, iotSelfLink, phenomenonTime, result, resultTime, resultQuality, validTime, parameters, datastream, featureOfInterest, datastreamIotNavigationLink, featureOfInterestIotNavigationLink, multiDatastream, multiDatastreamIotNavigationLink);
     }
 
     @Override
@@ -341,6 +377,8 @@ public class Observation {
         sb.append("    featureOfInterest: ").append(toIndentedString(featureOfInterest)).append("\n");
         sb.append("    datastreamIotNavigationLink: ").append(toIndentedString(datastreamIotNavigationLink)).append("\n");
         sb.append("    featureOfInterestIotNavigationLink: ").append(toIndentedString(featureOfInterestIotNavigationLink)).append("\n");
+        sb.append("    multiDatastream: ").append(toIndentedString(multiDatastream)).append("\n");
+        sb.append("    multiDatastreamIotNavigationLink: ").append(toIndentedString(multiDatastreamIotNavigationLink)).append("\n");
         sb.append("}");
         return sb.toString();
     }
