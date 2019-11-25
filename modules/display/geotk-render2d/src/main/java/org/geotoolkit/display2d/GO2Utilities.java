@@ -978,7 +978,7 @@ public final class GO2Utilities {
         if (geomName != null && !geomName.trim().isEmpty()) {
             prop = featuretype.getProperty(geomName);
         }else if(featuretype != null){
-            prop = featuretype.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            prop = FeatureExt.getDefaultGeometry(featuretype);
         }else{
             prop = null;
         }
