@@ -31,12 +31,15 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Level;
@@ -44,6 +47,31 @@ import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Id;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.*;
+import org.opengis.util.GenericName;
+
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -56,16 +84,18 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArgumentChecks;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
+import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer.DRChannel;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
@@ -81,15 +111,23 @@ import org.geotoolkit.geometry.jts.awt.DecimateJTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.jai.FloodFill;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.CannotReprojectException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.renderer.style.WKMMarkFactory;
+import org.geotoolkit.storage.coverage.ImageStatistics;
+import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.function.DefaultInterpolate;
+import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Method;
+import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.visitor.PrepareStyleVisitor;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -100,39 +138,10 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Id;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.geometry.Envelope;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.FeatureTypeStyle;
-import org.opengis.style.Fill;
-import org.opengis.style.Mark;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.Rule;
-import org.opengis.style.SelectedChannelType;
-import org.opengis.style.SemanticType;
-import org.opengis.style.Stroke;
-import org.opengis.style.Style;
-import org.opengis.style.StyleFactory;
-import org.opengis.style.StyleVisitor;
-import org.opengis.style.Symbolizer;
-import org.opengis.util.GenericName;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 
 /**
  *
@@ -1510,4 +1519,185 @@ public final class GO2Utilities {
         }
     }
 
+    /**
+     * Try to create a simple style from given statistics. For now, two cases exists:
+     * <ol>
+     *     <li>
+     *         Less than 3 bands are detected. In this case, we simply create a color map over first band. The
+     *         color map make use of standard deviation to compute interpolation boundaries.
+     *     </li>
+     *     <li>
+     *         For 3 bands or more, we create a dynamic range RGB rendering based on first bands in the statistics. We
+     *         define value boundary for each band using {@link #buildRanges(ImageStatistics, int) a custom empiric
+     *         method removing extremums}.
+     *     </li>
+     * </ol>
+     * @param stats The statistics to use for style creation. Can be null or empty, in which case nothing is returned.
+     * @param forceAlpha A flag used only if given statistics contains more than 3 bands. Indicates that for RGB styling,
+     *                   we must interpret 4th band as alpha component.
+     * @return A style inferred from input statistics, or an empty shell if given argument does not contains enough
+     * information.
+     * @throws IOException It can happen when trying to access a color map definition on disk, but it fails.
+     */
+    public static Optional<MutableStyle> inferStyle(final ImageStatistics stats, final boolean forceAlpha) throws IOException {
+        if (stats == null) return Optional.empty();
+        final ImageStatistics.Band[] bands = stats.getBands();
+        if (bands == null || bands.length < 1) return Optional.empty();
+
+        if (bands.length < 3) {
+            LOGGER.log(Level.FINE, "applyColorMapStyle : fallBack way is choosen."
+                    + "GrayScale interpretation of the first coverage image band.");
+
+            final ImageStatistics.Band band0 = bands[0];
+            final double bmin        = band0.getMin();
+            final double bmax        = band0.getMax();
+            final Double mean = band0.getMean();
+            final Double std  = band0.getStd();
+            double palMin = bmin;
+            double palMax = bmax;
+            if (mean != null && std != null) {
+                palMin = Math.max(bmin, mean - 2 * std);
+                palMax = Math.min(bmax, mean + 2 * std);
+            }
+            assert Double.isFinite(palMin) : "Raster Style fallback : minimum value should be finite. min = "+palMin;
+            assert Double.isFinite(palMax) : "Raster Style fallback : maximum value should be finite. max = "+palMax;
+            assert palMin >= bmin;
+            assert palMax <= bmax;
+
+            final List<InterpolationPoint> values = new ArrayList<>();
+            final double[] nodatas = band0.getNoData();
+            if (nodatas != null)
+                for (double nodata : nodatas) {
+                    values.add(STYLE_FACTORY.interpolationPoint(nodata, STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+                }
+
+            values.add(STYLE_FACTORY.interpolationPoint(Float.NaN, STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+
+            //-- Color palette
+//                Color[] colorsPal = PaletteFactory.getDefault().getColors("rainbow-t");
+            Color[] colorsPal = PaletteFactory.getDefault().getColors("grayscale");
+            assert colorsPal.length >= 2;
+            if (colorsPal.length < 4) {
+                final double percent_5 = (colorsPal.length == 3) ? 0.1 : 0.05;
+                final Color[] colorsPalTemp = colorsPal;
+                colorsPal = Arrays.copyOf(colorsPal, colorsPal.length + 2);
+                System.arraycopy(colorsPalTemp, 2, colorsPal, 2, colorsPalTemp.length - 2);
+                colorsPal[colorsPal.length - 1] = colorsPalTemp[colorsPalTemp.length - 1];
+                colorsPal[1] = DefaultInterpolate.interpolate(colorsPalTemp[0], colorsPalTemp[1], percent_5);
+                colorsPal[colorsPal.length - 2] = DefaultInterpolate.interpolate(colorsPalTemp[colorsPalTemp.length - 2], colorsPalTemp[colorsPalTemp.length - 1], 1 - percent_5);
+
+            }
+
+            //-- if difference between band minimum statistic and palette minimum,
+            //-- define values between them as transparency
+            values.add(STYLE_FACTORY.interpolationPoint(bmin, STYLE_FACTORY.literal(colorsPal[0])));
+
+            assert colorsPal.length >= 4;
+
+            final double step = (palMax - palMin) / (colorsPal.length - 3);//-- min and max transparency
+            double currentVal = palMin;
+            for (int c = 1; c <= colorsPal.length - 2; c++) {
+                values.add(STYLE_FACTORY.interpolationPoint(currentVal, STYLE_FACTORY.literal(colorsPal[c])));
+                currentVal += step;
+            }
+            assert StrictMath.abs(currentVal - step - palMax) < 1E-9;
+            values.add(STYLE_FACTORY.interpolationPoint(bmax, STYLE_FACTORY.literal(colorsPal[colorsPal.length - 1])));
+
+            final Function function = STYLE_FACTORY.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
+            final ColorMap colorMap = STYLE_FACTORY.colorMap(function);
+            final RasterSymbolizer symbol = STYLE_FACTORY.rasterSymbolizer(band0.getName(), null, null, null, colorMap, null, null, null);
+            return Optional.of(STYLE_FACTORY.style(symbol));
+
+        } else {
+            LOGGER.log(Level.FINE, "RGBStyle : fallBack way is choosen."
+                    + "RGB interpretation of the three first coverage image bands.");
+
+            final int rgbNumBand = forceAlpha && bands.length > 3 ? 4 : 3;
+
+            assert rgbNumBand <= bands.length;
+
+            final double[][] ranges = buildRanges(stats, 4);
+            final List<DRChannel> channels = new ArrayList<>();
+            for (int i = 0 ; i < rgbNumBand ; i++) {
+                final DRChannel channel = new DRChannel();
+
+                channel.setBand(bands[i].getName());
+                channel.setColorSpaceComponent(DynamicRangeSymbolizer.DRChannel.RGBA_COMPONENTS[i]);
+
+                DynamicRangeSymbolizer.DRBound drBound = new DynamicRangeSymbolizer.DRBound();
+                drBound.setValue(FILTER_FACTORY.literal(ranges[i][0]));
+                channel.setLower(drBound);
+                drBound = new DynamicRangeSymbolizer.DRBound();
+                drBound.setValue(FILTER_FACTORY.literal(ranges[i][1]));
+                channel.setUpper(drBound);
+
+                channels.add(channel);
+            }
+
+            final DynamicRangeSymbolizer drgb = new DynamicRangeSymbolizer();
+            drgb.setChannels(channels);
+
+            return Optional.of(STYLE_FACTORY.style(drgb));
+        }
+    }
+
+    /**
+     * Check given image statistics to find extremums to use for color interpretation.
+     *
+     * @implNote : Current code uses statistics min and max values directly only
+     * if no histogram with more than 3 values is available. Otherwise, we try to
+     * restrain extremums by ignoring 2% of extremum values. Note that we don't
+     * use standard deviation to build extremums, because in practice, it's very
+     * difficult to obtain coherent extremums using this information.
+     *
+     * @param stats Ready-to-use image statistics.
+     * @param numBands In case we don't want the same number of bands as described
+     * in the statistics (Example : we want an rgba image from rgb one).
+     * @return A 2D array, whose first dimension represents band indices, and
+     * second dimension has 2 values : chosen minimum at index 0 and maximum at
+     * index 1. Never null. Empty only if input statistics has no band defined.
+     */
+    private static double[][] buildRanges(final ImageStatistics stats, final int numBands) {
+        final ImageStatistics.Band[] bands = stats.getBands();
+        final double[][] ranges = new double[numBands][2];
+        for (int bandIdx = 0 ; bandIdx < bands.length && bandIdx < numBands; bandIdx++) {
+            ranges[bandIdx][0] = Double.NEGATIVE_INFINITY;
+            ranges[bandIdx][1] = Double.POSITIVE_INFINITY;
+            final ImageStatistics.Band b = bands[bandIdx];
+            final long[] histogram = b.getHistogram();
+            // We remove extremums only if we've got a coherent histogram (contains more than just min/mean/max)
+            if (histogram != null && histogram.length > 3) {
+                final long valueCount = Arrays.stream(histogram).sum();
+                final long twoPercent = Math.round(valueCount * 0.02);
+                final double histogramStep = (b.getMax() - b.getMin()) / histogram.length;
+                long currentSum = 0;
+                for (int i = 0 ; i < histogram.length ; i++) {
+                    currentSum += histogram[i];
+                    if (currentSum > twoPercent) {
+                        ranges[bandIdx][0] = b.getMin() + histogramStep * i;
+                        break;
+                    }
+                }
+
+                currentSum = 0;
+                for (int i = histogram.length -1 ; i > 0 ; i--) {
+                    currentSum += histogram[i];
+                    if (currentSum > twoPercent) {
+                        ranges[bandIdx][1] = b.getMax() - histogramStep * (histogram.length - i - 1);
+                        break;
+                    }
+                }
+            }
+
+            if (!Double.isFinite(ranges[bandIdx][0])) {
+                ranges[bandIdx][0] = b.getMin();
+            }
+
+            if (!Double.isFinite(ranges[bandIdx][1])) {
+                ranges[bandIdx][1] = b.getMax();
+            }
+        }
+
+        return ranges;
+    }
 }
