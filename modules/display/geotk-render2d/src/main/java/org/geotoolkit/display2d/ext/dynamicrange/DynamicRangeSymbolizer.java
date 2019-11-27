@@ -20,27 +20,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import javax.measure.quantity.Length;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.se.xml.v110.ParameterValueType;
-import org.geotoolkit.se.xml.v110.SymbolizerType;
-import org.geotoolkit.sld.xml.StyleXmlIO;
+
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
+
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.measure.Units;
+import org.apache.sis.util.ArgumentChecks;
+
 import org.geotoolkit.display2d.GO2Utilities;
-import org.opengis.filter.expression.PropertyName;
+import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.se.xml.v110.ParameterValueType;
+import org.geotoolkit.se.xml.v110.SymbolizerType;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 
 /**
  *
@@ -118,6 +120,8 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         public static final String BAND_GREEN = "G";
         public static final String BAND_BLUE = "B";
         public static final String BAND_ALPHA = "A";
+
+        public static final String[] RGBA_COMPONENTS = {BAND_RED, BAND_GREEN, BAND_BLUE, BAND_ALPHA};
 
         @XmlElement(name = "Band",namespace="http://geotoolkit.org")
         private String band;
