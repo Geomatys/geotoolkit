@@ -19,7 +19,6 @@ package org.geotoolkit.index.tree.manager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,43 +48,37 @@ public class SQLRtreeManager extends AbstractRtreeManager {
         if (tree == null || tree.isClosed()) {
             if (existTree(directory)) {
 
-                if (PGDataSource.isSetPGDataSource()) {
-                    if (PGDataSource.isPostgres) {
-                        try {
-                            DataSource ds = PGDataSource.getDataSource();
-                            TreeElementMapper treeMapper = new LucenePostgresSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
-                            byte[] data = TreeAccessSQLByteArray.getData(directory, ds);
-                            tree = new PGTreeWrapper(data, directory, ds, treeMapper);
-
-                        } catch (SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
-                            LOGGER.log(Level.SEVERE, null, e);
-                            return null;
+                TreeElementMapper treeMapper = null;
+                try {
+                    if (PGDataSource.isSetPGDataSource()) {
+                        if (PGDataSource.isPostgres) {
+                                DataSource ds = PGDataSource.getDataSource();
+                                treeMapper = new LucenePostgresSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
+                                byte[] data = TreeAccessSQLByteArray.getData(directory, ds);
+                                tree = new PGTreeWrapper(data, directory, ds, treeMapper);
+                        } else {
+                                DataSource ds = PGDataSource.getDataSource();
+                                treeMapper = new LuceneHSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
+                                byte[] data = TreeAccessSQLByteArray.getData(directory, ds);
+                                tree = new PGTreeWrapper(data, directory, ds, treeMapper);
                         }
                     } else {
-                        try {
-                            DataSource ds = PGDataSource.getDataSource();
-                            TreeElementMapper treeMapper = new LuceneHSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
-                            byte[] data = TreeAccessSQLByteArray.getData(directory, ds);
-                            tree = new PGTreeWrapper(data, directory, ds, treeMapper);
-
-                        } catch (SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
-                            LOGGER.log(Level.SEVERE, null, e);
-                            return null;
+                        // derby DB as default
+                            final Path treeFile = directory.resolve("tree.bin");
+                            DataSource ds = LuceneDerbySQLTreeEltMapper.getDataSource(directory);
+                            treeMapper = new LuceneDerbySQLTreeEltMapper(DEFAULT_CRS, ds);
+                            tree = new FileStarRTree<>(treeFile.toFile().toPath(), treeMapper);
+                    }
+                } catch (Exception e) {
+                    if (treeMapper != null) {
+                        try{
+                            treeMapper.close();
+                        } catch (Exception bis) {
+                            e.addSuppressed(bis);
                         }
                     }
-
-                } else {
-                    // derby DB as default
-                    try {
-                        final Path treeFile = directory.resolve("tree.bin");
-                        DataSource ds = LuceneDerbySQLTreeEltMapper.getDataSource(directory);
-                        TreeElementMapper treeMapper = new LuceneDerbySQLTreeEltMapper(DEFAULT_CRS, ds);
-                        tree = new FileStarRTree<>(treeFile.toFile().toPath(), treeMapper);
-
-                    } catch (IllegalArgumentException | StoreIndexException | IOException e) {
-                        LOGGER.log(Level.SEVERE, null, e);
-                        return null;
-                    }
+                    LOGGER.log(Level.SEVERE, "Cannot re-open RTRee", e);
+                    return null;
                 }
 
             } else {
@@ -107,6 +100,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
 
     private static Tree buildNewTree(final Path directory) {
         if (Files.exists(directory)) {
+            TreeElementMapper treeMapper = null;
             try {
                 //creating tree (R-Tree)------------------------------------------------
                 final Path treeFile = directory.resolve("tree.bin");
@@ -114,24 +108,27 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                 // postgres
                 if (PGDataSource.isSetPGDataSource()) {
                      if (PGDataSource.isPostgres) {
-                        TreeElementMapper treeMapper = LucenePostgresSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
-                        return new PGTreeWrapper(directory, PGDataSource.getDataSource(), treeMapper, DEFAULT_CRS);
+                         treeMapper = LucenePostgresSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
+                         return new PGTreeWrapper(directory, PGDataSource.getDataSource(), treeMapper, DEFAULT_CRS);
                      } else {
-                         TreeElementMapper treeMapper = LuceneHSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
+                         treeMapper = LuceneHSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
                         return new PGTreeWrapper(directory, PGDataSource.getDataSource(), treeMapper, DEFAULT_CRS);
                      }
 
                 } else {
-                    TreeElementMapper treeMapper = LuceneDerbySQLTreeEltMapper.createTreeEltMapperWithDB(directory);
+                    treeMapper = LuceneDerbySQLTreeEltMapper.createTreeEltMapperWithDB(directory);
                     return new FileStarRTree(treeFile.toFile().toPath(), 5, DEFAULT_CRS, treeMapper);
                 }
 
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Unable to create file to write Tree", ex);
-            } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Exception while creating treemap database", ex);
-            } catch (org.geotoolkit.index.tree.StoreIndexException ex) {
-                LOGGER.log(Level.WARNING, "Unable to create Tree", ex);
+            } catch (SQLException | IOException | StoreIndexException ex) {
+                if (treeMapper != null) {
+                    try {
+                        treeMapper.close();
+                    } catch (Exception bis) {
+                        ex.addSuppressed(bis);
+                    }
+                }
+                LOGGER.log(Level.WARNING, "Unable to create RTree", ex);
             }
         }
         return null;
