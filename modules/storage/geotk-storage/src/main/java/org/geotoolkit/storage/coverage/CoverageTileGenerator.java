@@ -73,7 +73,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             if (sampleDimensions == null || sampleDimensions.isEmpty()) {
                 throw new DataStoreException("Base resource sample dimensions are undefined");
             }
-
             empty = new double[sampleDimensions.size()];
             for (int i=0;i<empty.length;i++) {
                 empty[i] = getEmptyValue(sampleDimensions.get(i));

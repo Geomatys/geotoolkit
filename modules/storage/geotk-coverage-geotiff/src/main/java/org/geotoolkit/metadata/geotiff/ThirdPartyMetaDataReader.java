@@ -30,25 +30,25 @@ import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.measure.NumberRange;
 
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.FactoryException;
-
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Numbers;
-import org.apache.sis.util.logging.Logging;
 
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Numbers;
 import org.apache.sis.util.iso.Names;
+import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -59,10 +59,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import static org.geotoolkit.coverage.SampleDimensionUtils.*;
+import static org.geotoolkit.coverage.SampleDimensionUtils.NODATA_CATEGORY_NAME;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_METADATA_KEY;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
-import org.opengis.referencing.operation.MathTransform1D;
 
 /**
  * Tiff format may contain multiple additional tags.
@@ -146,11 +145,16 @@ public strictfp class ThirdPartyMetaDataReader {
                     * |0, 0,  0, 1 |
                     */
                     //-- scaleZ
-                    if (StrictMath.abs(modelTransformation[10]) > 1E-9) {
+                    /* HACK + WARNING : As of now (2019-11-26), the reason why sample transfer function is deduced from
+                     * projection matrix is unknown. One hypothesis is that for DEMs, whose sample values could be
+                     * considered as position altitude, the Z scale and offset relates to it. Well, be very careful with
+                     * that code.
+                     */
+                    if (StrictMath.abs(modelTransformation[10]) > 1E-9 || StrictMath.abs(modelTransformation[11]) > 1E-9) {
                         if (modelPixelScale != null) assert StrictMath.abs(StrictMath.abs(modelTransformation[10]) - StrictMath.abs(modelPixelScale[2])) < 1E-9;
                         sampleToGeoScale = modelTransformation[10];
+                        sampleToGeoOffset = modelTransformation[11];
                     }
-                    sampleToGeoOffset = modelTransformation[11];
                     break;
                 }
             }
