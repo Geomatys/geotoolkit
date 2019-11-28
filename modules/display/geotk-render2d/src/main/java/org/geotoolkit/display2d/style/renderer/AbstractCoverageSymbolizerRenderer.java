@@ -354,7 +354,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         return false;
     }
 
-    private GridCoverage forwardResample(GridCoverage coverage, GridGeometry canvasGrid) throws FactoryException, NoninvertibleTransformException, TransformException {
+    private static GridCoverage forwardResample(GridCoverage coverage, GridGeometry canvasGrid) throws FactoryException, NoninvertibleTransformException, TransformException {
 
         //interpolate in geophysic
         coverage = coverage.forConvertedValues(true);
@@ -417,7 +417,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         return new GridCoverage2D(canvasGrid, coverage.getSampleDimensions(), result);
     }
 
-    private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
+    private static GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
             throws DataStoreException, TransformException, FactoryException, ProcessException {
 
         CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
@@ -425,6 +425,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
             //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
+
+            if (margin[0] > 0) {
+                //try to adjust margin
+                //TODO : we should use a GridCoverageResource.subset with a margin value but this isn't implemented yet
+                Envelope env = fullArea.getEnvelope();
+                double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
+                double[] aest = areaOfInterest.getResolution(true);
+                margin[0] = (int) Math.ceil(margin[0] * (est[0]/aest[1]));
+                margin[1] = (int) Math.ceil(margin[1] * (est[0]/aest[1]));
+            }
+
+            areaOfInterest = areaOfInterest.derive().margin(margin).resize(null).build();
             return areaOfInterest;
         }
 
@@ -497,7 +509,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @return update area of interest envelope, CRS may have changed and new resolution
      *         or null if unchanged.
      */
-    private Map.Entry<Envelope, double[]> solveWrapAround(final GridGeometry grid, Envelope areaOfInterest, double[] resolution) throws TransformException, FactoryException {
+    private static Map.Entry<Envelope, double[]> solveWrapAround(final GridGeometry grid, Envelope areaOfInterest, double[] resolution) throws TransformException, FactoryException {
 
         // unchanged
         if (areaOfInterest == null) return null;
