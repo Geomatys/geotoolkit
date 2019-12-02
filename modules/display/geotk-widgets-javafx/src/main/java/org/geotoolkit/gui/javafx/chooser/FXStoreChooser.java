@@ -64,7 +64,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.parameter.FXParameterEditor;
@@ -478,11 +477,6 @@ public class FXStoreChooser extends BorderPane {
             }
         } else {
             return ICON_OTHER;
-        }
-
-
-        if(candidate instanceof AbstractJDBCFeatureStoreFactory){
-            return ICON_DATABASE;
         }
 
         ResourceType[] types = new ResourceType[0];

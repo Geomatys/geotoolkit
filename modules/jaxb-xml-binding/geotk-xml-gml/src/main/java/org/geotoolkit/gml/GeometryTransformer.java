@@ -756,9 +756,11 @@ public class GeometryTransformer implements Supplier<Geometry> {
     private LineString convertCurve(final Curve mc) {
         CurveSegmentArrayProperty segments = mc.getSegments();
         final List<Coordinate> coords = new ArrayList<>();
-        for (AbstractCurveSegment cs : segments.getAbstractCurveSegment()) {
-            StreamSupport.stream(getCoordinates(cs), false)
-                    .forEach(coords::add);
+        if (segments != null) {
+            for (AbstractCurveSegment cs : segments.getAbstractCurveSegment()) {
+                StreamSupport.stream(getCoordinates(cs), false)
+                        .forEach(coords::add);
+            }
         }
 
         final LineString mls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
