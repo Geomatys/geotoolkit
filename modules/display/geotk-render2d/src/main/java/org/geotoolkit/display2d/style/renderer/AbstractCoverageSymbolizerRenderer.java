@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.IntStream;
+
 import org.apache.sis.coverage.grid.*;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -420,24 +422,35 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     private static GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
             throws DataStoreException, TransformException, FactoryException, ProcessException {
 
-        CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
-        CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
-
-        if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
-            //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
-
-            if (margin[0] > 0) {
-                //try to adjust margin
-                //TODO : we should use a GridCoverageResource.subset with a margin value but this isn't implemented yet
-                Envelope env = fullArea.getEnvelope();
-                double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
-                double[] aest = areaOfInterest.getResolution(true);
-                margin[0] = (int) Math.ceil(margin[0] * (est[0]/aest[1]));
-                margin[1] = (int) Math.ceil(margin[1] * (est[0]/aest[1]));
+        boolean mustApplyMargin = false;
+        for (int i = 0 ; i < margin.length && !mustApplyMargin; i++) {
+            if (margin[i] > 0) {
+                mustApplyMargin = true;
             }
+        }
 
-            areaOfInterest = areaOfInterest.derive().margin(margin).resize(null).build();
-            return areaOfInterest;
+        if (mustApplyMargin) {
+            /* TODO: The way we apply margin for now is not optimum. We are forced to decompose derivation in two steps,
+             * to ensure margin is applied on source data resolution. In the future, we should find a more consistent
+             * way of setting an interpolation padding without such complex grid derivation.
+             */
+            final int[] positiveMarginIndices = IntStream.range(0, margin.length)
+                    .filter(idx -> margin[idx] > 0)
+                    .toArray();
+            if (positiveMarginIndices.length > 0) {
+                areaOfInterest = fullArea.derive()
+                        .rounding(GridRoundingMode.ENCLOSING)
+                        .margin(margin)
+                        .subgrid(areaOfInterest.getEnvelope())
+                        .build();
+
+                // adapt resolution
+                final double[] resolution = areaOfInterest.getResolution(true);
+                areaOfInterest = areaOfInterest.derive()
+                        .rounding(GridRoundingMode.ENCLOSING)
+                        .resize(null, resolution)
+                        .build();
+            }
         }
 
         // HACK : This method cannot manage incomplete grid geometries, so we have to skip
