@@ -86,6 +86,22 @@ public class ContactPersonType {
     @XmlAttribute(name = "uuid")
     protected String uuid;
 
+    public ContactPersonType() {
+
+    }
+
+    public ContactPersonType(String uuid, String firstName, String middleName, String lastName, AddressType address, PhoneType phone, String email) {
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.address = address;
+        this.phone = new ArrayList<>();
+        this.phone.add(phone);
+        this.email = new ArrayList<>();
+        this.email.add(email);
+        this.uuid = uuid;
+    }
+
     /**
      * Obtient la valeur de la propriété firstName.
      *

@@ -89,7 +89,7 @@ public class TemporalInfoType {
      */
     public List<String> getAncillaryTemporalKeyword() {
         if (ancillaryTemporalKeyword == null) {
-            ancillaryTemporalKeyword = new ArrayList<String>();
+            ancillaryTemporalKeyword = new ArrayList<>();
         }
         return this.ancillaryTemporalKeyword;
     }

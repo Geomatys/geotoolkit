@@ -59,6 +59,14 @@ public class ISOTopicCategoryType {
     @XmlAttribute(name = "uuid")
     protected String uuid;
 
+    public ISOTopicCategoryType() {
+
+    }
+
+    public ISOTopicCategoryType(String value) {
+        this.value = value;
+    }
+
     /**
      * Obtient la valeur de la propriété value.
      *

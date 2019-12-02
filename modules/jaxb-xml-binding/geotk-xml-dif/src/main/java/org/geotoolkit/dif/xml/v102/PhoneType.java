@@ -14,8 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-
 package org.geotoolkit.dif.xml.v102;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,24 +22,23 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  *
- *                 DIF used discrete fields for different phone numbers (fax,
- *                 work, etc.) UMM defines a "name-value" style list which
- *                 should future proof phone numbers.
+ * DIF used discrete fields for different phone numbers (fax, work, etc.) UMM
+ * defines a "name-value" style list which should future proof phone numbers.
  *
- *                 * Number : phone number
- *                 * Type : The type of telephone number provided
+ *                 * Number : phone number * Type : The type of telephone number provided
  *
- *                 | DIF 9    | ECHO 10   | UMM     | DIF 10   | Notes |
- *                 | -------- | ----------| ------- | -------- | ----- |
- *                 | Phone    | Phone     | Phone   | Phone    |       |
+ * | DIF 9 | ECHO 10 | UMM | DIF 10 | Notes | | -------- | ----------| ------- |
+ * -------- | ----- | | Phone | Phone | Phone | Phone | |
  *
  *
- * <p>Classe Java pour PhoneType complex type.
+ * <p>
+ * Classe Java pour PhoneType complex type.
  *
- * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
+ * <p>
+ * Le fragment de schéma suivant indique le contenu attendu figurant dans cette
+ * classe.
  *
  * <pre>
  * &lt;complexType name="PhoneType">
@@ -71,12 +68,19 @@ public class PhoneType {
     @XmlSchemaType(name = "string")
     protected PhoneTypeEnum type;
 
+    public PhoneType() {
+
+    }
+
+    public PhoneType(String number, PhoneTypeEnum type) {
+        this.number = number;
+        this.type = type;
+    }
+
     /**
      * Obtient la valeur de la propriété number.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getNumber() {
@@ -86,9 +90,7 @@ public class PhoneType {
     /**
      * Définit la valeur de la propriété number.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setNumber(String value) {
@@ -98,9 +100,7 @@ public class PhoneType {
     /**
      * Obtient la valeur de la propriété type.
      *
-     * @return
-     *     possible object is
-     *     {@link PhoneTypeEnum }
+     * @return possible object is {@link PhoneTypeEnum }
      *
      */
     public PhoneTypeEnum getType() {
@@ -110,9 +110,7 @@ public class PhoneType {
     /**
      * Définit la valeur de la propriété type.
      *
-     * @param value
-     *     allowed object is
-     *     {@link PhoneTypeEnum }
+     * @param value allowed object is {@link PhoneTypeEnum }
      *
      */
     public void setType(PhoneTypeEnum value) {

@@ -89,6 +89,19 @@ public class RelatedURLType {
     @XmlElement(name = "Mime_Type")
     protected String mimeType;
 
+    public RelatedURLType() {
+
+    }
+
+    public RelatedURLType(URLContentType urlContentType, String protocol, List<String> url, String title, DisplayableTextType description, String mimeType) {
+        this.description = description;
+        this.mimeType = mimeType;
+        this.protocol = protocol;
+        this.title = title;
+        this.url = url;
+        this.urlContentType = urlContentType;
+    }
+
     /**
      * Obtient la valeur de la propriété urlContentType.
      *
@@ -161,7 +174,7 @@ public class RelatedURLType {
      */
     public List<String> getURL() {
         if (url == null) {
-            url = new ArrayList<String>();
+            url = new ArrayList<>();
         }
         return this.url;
     }

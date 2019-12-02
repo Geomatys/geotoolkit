@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.dif.xml.v102;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,30 +21,35 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  *
  *
- *                 A union of the DIF Metadata event date fields with the three ECHO event time fields.
- *                 For each event authors can choose to write either a date or datetime field depending on the known or desired resolution.
- *                 DateTime is preferred but for legacy records may not be available.
+ * A union of the DIF Metadata event date fields with the three ECHO event time
+ * fields. For each event authors can choose to write either a date or datetime
+ * field depending on the known or desired resolution. DateTime is preferred but
+ * for legacy records may not be available.
  *
- *                 | DIF 9                   | ECHO 10      | UMM                  | DIF 10                 | Notes                            |
- *                 | ----------------------- | ------------ | -------------------- | ---------------------- | -------------------------------- |
- *                 | /DIF_Creation_Date      |       -      | MetadataCreationDate | Metadata_Creation      | Metadata Record was created      |
- *                 | /Last_DIF_Revision_Date |       -      | MetadataRevisionDate | Metadata_Last_Revision | Metadata Record was updated      |
- *                 | /Future_DIF_Review_Date |       -      | MetadataReviewDate   | Metadata_Future_Review | Metadata Record is to be updated |
- *                 |            -            |              |           -          | Metadata_Delete        | Metadata Record was deleted      |
- *                 |            -            | InsertTime   |           -          | Data_Creation          | Granular data was inserted       |
- *                 |            -            | LastUpdate   |           -          | Data_Last_Revision     | Granular data was updated        |
- *                 |            -            | RevisionDate |           -          | Data_Future_Review     | Granular data is to be updated   |
- *                 |            -            | DeleteTime   |           -          | Data_Delete            | Granular data removed            |
+ * | DIF 9 | ECHO 10 | UMM | DIF 10 | Notes | | ----------------------- |
+ * ------------ | -------------------- | ---------------------- |
+ * -------------------------------- | | /DIF_Creation_Date | - |
+ * MetadataCreationDate | Metadata_Creation | Metadata Record was created | |
+ * /Last_DIF_Revision_Date | - | MetadataRevisionDate | Metadata_Last_Revision |
+ * Metadata Record was updated | | /Future_DIF_Review_Date | - |
+ * MetadataReviewDate | Metadata_Future_Review | Metadata Record is to be
+ * updated | | - | | - | Metadata_Delete | Metadata Record was deleted | | - |
+ * InsertTime | - | Data_Creation | Granular data was inserted | | - |
+ * LastUpdate | - | Data_Last_Revision | Granular data was updated | | - |
+ * RevisionDate | - | Data_Future_Review | Granular data is to be updated | | -
+ * | DeleteTime | - | Data_Delete | Granular data removed |
  *
  *
  *
- * <p>Classe Java pour MetadataDatesType complex type.
+ * <p>
+ * Classe Java pour MetadataDatesType complex type.
  *
- * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
+ * <p>
+ * Le fragment de schéma suivant indique le contenu attendu figurant dans cette
+ * classe.
  *
  * <pre>
  * &lt;complexType name="MetadataDatesType">
@@ -98,12 +102,18 @@ public class MetadataDatesType {
     @XmlElement(name = "Data_Delete")
     protected String dataDelete;
 
+    public MetadataDatesType() {
+
+    }
+
+    public MetadataDatesType(String metadataCreation) {
+        this.metadataCreation = metadataCreation;
+    }
+
     /**
      * Obtient la valeur de la propriété metadataCreation.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getMetadataCreation() {
@@ -113,9 +123,7 @@ public class MetadataDatesType {
     /**
      * Définit la valeur de la propriété metadataCreation.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setMetadataCreation(String value) {
@@ -125,9 +133,7 @@ public class MetadataDatesType {
     /**
      * Obtient la valeur de la propriété metadataLastRevision.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getMetadataLastRevision() {
@@ -137,9 +143,7 @@ public class MetadataDatesType {
     /**
      * Définit la valeur de la propriété metadataLastRevision.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setMetadataLastRevision(String value) {
@@ -149,9 +153,7 @@ public class MetadataDatesType {
     /**
      * Obtient la valeur de la propriété metadataFutureReview.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getMetadataFutureReview() {
@@ -161,9 +163,7 @@ public class MetadataDatesType {
     /**
      * Définit la valeur de la propriété metadataFutureReview.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setMetadataFutureReview(String value) {
@@ -173,9 +173,7 @@ public class MetadataDatesType {
     /**
      * Obtient la valeur de la propriété metadataDelete.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getMetadataDelete() {
@@ -185,9 +183,7 @@ public class MetadataDatesType {
     /**
      * Définit la valeur de la propriété metadataDelete.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setMetadataDelete(String value) {
@@ -197,9 +193,7 @@ public class MetadataDatesType {
     /**
      * Obtient la valeur de la propriété dataCreation.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getDataCreation() {
@@ -209,9 +203,7 @@ public class MetadataDatesType {
     /**
      * Définit la valeur de la propriété dataCreation.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setDataCreation(String value) {
@@ -221,9 +213,7 @@ public class MetadataDatesType {
     /**
      * Obtient la valeur de la propriété dataLastRevision.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getDataLastRevision() {
@@ -233,9 +223,7 @@ public class MetadataDatesType {
     /**
      * Définit la valeur de la propriété dataLastRevision.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setDataLastRevision(String value) {
@@ -245,9 +233,7 @@ public class MetadataDatesType {
     /**
      * Obtient la valeur de la propriété dataFutureReview.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getDataFutureReview() {
@@ -257,9 +243,7 @@ public class MetadataDatesType {
     /**
      * Définit la valeur de la propriété dataFutureReview.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setDataFutureReview(String value) {
@@ -269,9 +253,7 @@ public class MetadataDatesType {
     /**
      * Obtient la valeur de la propriété dataDelete.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getDataDelete() {
@@ -281,9 +263,7 @@ public class MetadataDatesType {
     /**
      * Définit la valeur de la propriété dataDelete.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setDataDelete(String value) {
