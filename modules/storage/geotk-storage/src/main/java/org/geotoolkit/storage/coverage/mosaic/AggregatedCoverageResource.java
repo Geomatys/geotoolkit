@@ -99,7 +99,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     private final StoreListeners listeners = new StoreListeners(null, this);
-    private final List<GridCoverageResource> components = new ArrayList<>();
+    private final List<CoverageMapping> components = new ArrayList<>();
 
     //user defined parameters
     private Mode mode = Mode.SCALE;
@@ -125,12 +125,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         } else if (resources.length == 1) {
             return resources[0];
         } else {
-            return new AggregatedCoverageResource(Arrays.asList(resources), mode, resultCrs);
+            return new AggregatedCoverageResource(toMapping(Arrays.asList(resources)), mode, resultCrs);
         }
     }
 
-    private AggregatedCoverageResource(List<GridCoverageResource> resources, Mode mode, CoordinateReferenceSystem resultCrs) throws DataStoreException, TransformException {
-        this.components.addAll(resources);
+    private AggregatedCoverageResource(List<CoverageMapping> mapping, Mode mode, CoordinateReferenceSystem resultCrs) throws DataStoreException, TransformException {
+        this.components.addAll(mapping);
         this.mode = mode;
         this.outputCrs = resultCrs;
         initModel();
@@ -188,7 +188,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
     @Override
     public Collection<? extends Resource> components() throws DataStoreException {
-        return Collections.unmodifiableList(components);
+        return components.stream().map(CoverageMapping::getResource).collect(Collectors.toList());
     }
 
     /**
@@ -201,7 +201,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     @Override
     public synchronized void remove(Resource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
-        if (!components.remove(resource)) {
+        boolean found = false;
+        for (CoverageMapping mapping : components) {
+            if (mapping.resource == resource) {
+                found = true;
+                components.remove(mapping);
+                break;
+            }
+        }
+        if (!found) {
             throw new DataStoreException("Resource not found");
         }
         listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource), AggregationEvent.class);
@@ -219,13 +227,14 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     @Override
     public synchronized Resource add(Resource resource) throws DataStoreException {
         if (resource instanceof GridCoverageResource) {
-            components.add((GridCoverageResource) resource);
+            CoverageMapping cm = toMapping((GridCoverageResource) resource);
+            components.add(cm);
             eraseCaches();
             try {
                 initModel();
             } catch (DataStoreException ex) {
                 //restore to an usable state
-                components.remove(resource);
+                components.remove(cm);
                 throw ex;
             }
             listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_ADD, resource), AggregationEvent.class);
@@ -307,7 +316,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             return;
         } else if (components.size() == 1) {
             //copy exact definition
-            GridCoverageResource resource = components.get(0);
+            GridCoverageResource resource = components.get(0).resource;
             this.gridGeometry = resource.getGridGeometry();
             this.sampleDimensions = resource.getSampleDimensions();
             return;
@@ -317,8 +326,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             //use most common crs
             //TODO find a better approach to determinate a common crs
             final FrequencySortedSet<CoordinateReferenceSystem> map = new FrequencySortedSet<>();
-            for (GridCoverageResource resource : components) {
-                map.add(resource.getGridGeometry().getCoordinateReferenceSystem());
+            for (CoverageMapping mapping : components) {
+                map.add(mapping.resource.getGridGeometry().getCoordinateReferenceSystem());
             }
             outputCrs = map.last();
         }
@@ -329,15 +338,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         int index = 0;
         double[] estimatedResolution = new double[outputCrs.getCoordinateSystem().getDimension()];
         Arrays.fill(estimatedResolution, Double.POSITIVE_INFINITY);
-        for (GridCoverageResource resource : components) {
-            final GridGeometry componentGrid = resource.getGridGeometry();
+        for (CoverageMapping mapping : components) {
+            final GridGeometry componentGrid = mapping.resource.getGridGeometry();
             Envelope envelope = componentGrid.getEnvelope();
             try {
                 envelope = Envelopes.transform(envelope, outputCrs);
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
-            tree.insert(new JTSEnvelope2D(envelope), new AbstractMap.SimpleImmutableEntry<>(index++,resource));
+            tree.insert(new JTSEnvelope2D(envelope), new AbstractMap.SimpleImmutableEntry<>(index++,mapping.resource));
 
             //try to find an estimated resolution
             if (estimatedResolution != null) {
@@ -358,7 +367,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             }
 
             boolean hasUndefinedUnits = false;
-            List<SampleDimension> sampleDimensions = resource.getSampleDimensions();
+            List<SampleDimension> sampleDimensions = mapping.resource.getSampleDimensions();
             if (this.sampleDimensions == null) {
                 this.sampleDimensions = new ArrayList<>(sampleDimensions);
             } else {
@@ -450,7 +459,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         if (components.size() == 1) {
             //bypass aggregation
-            GridCoverageResource resource = components.get(0);
+            GridCoverageResource resource = components.get(0).resource;
             return resource.read(domain, range);
         }
 
@@ -677,4 +686,39 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         return Math.sqrt(x*x + y*y);
     }
 
+
+    private static List<CoverageMapping> toMapping(List<GridCoverageResource> resources) throws DataStoreException {
+        List<CoverageMapping> lst = new ArrayList();
+        for (GridCoverageResource gcr : resources) {
+            lst.add(toMapping(gcr));
+        }
+        return lst;
+    }
+
+    private static CoverageMapping toMapping(GridCoverageResource resource) throws DataStoreException {
+        final CoverageMapping cm = new CoverageMapping();
+        cm.resource = resource;
+        final List<SampleDimension> sds = resource.getSampleDimensions();
+        for (int i=0;i<sds.size();i++) {
+            final BandMapping bm = new BandMapping();
+            cm.bands.add(bm);
+        }
+        return cm;
+    }
+
+    public static class CoverageMapping {
+        public GridCoverageResource resource;
+        public List<BandMapping> bands = new ArrayList<>();
+
+        public GridCoverageResource getResource() {
+            return resource;
+        }
+    }
+
+    public static class BandMapping {
+        //leave space for possible futur parameters
+        //public int sourcebandIndex;
+        //public int targetbandIndex;
+        //public MapTransform1D sampleTransform;
+    }
 }
