@@ -26,7 +26,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -99,7 +101,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     private final StoreListeners listeners = new StoreListeners(null, this);
-    private final List<CoverageMapping> components = new ArrayList<>();
+    private final List<VirtualBand> bands = new ArrayList<>();
 
     //user defined parameters
     private Mode mode = Mode.SCALE;
@@ -109,8 +111,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     //computed informations
     private GenericName identifier;
     private Quadtree tree;
-    private GridGeometry gridGeometry;
-    private List<SampleDimension> sampleDimensions;
+    private GridGeometry cachedGridGeometry;
     private boolean forceTransformedValues;
     private double[] noData;
 
@@ -129,8 +130,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
     }
 
-    private AggregatedCoverageResource(List<CoverageMapping> mapping, Mode mode, CoordinateReferenceSystem resultCrs) throws DataStoreException, TransformException {
-        this.components.addAll(mapping);
+    public AggregatedCoverageResource(List<VirtualBand> bands, Mode mode, CoordinateReferenceSystem resultCrs) throws DataStoreException, TransformException {
+        this.bands.addAll(bands);
         this.mode = mode;
         this.outputCrs = resultCrs;
         initModel();
@@ -156,13 +157,17 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     @Override
     public synchronized GridGeometry getGridGeometry() throws DataStoreException {
         initModel();
-        return gridGeometry;
+        return cachedGridGeometry;
     }
 
     @Override
     public synchronized List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        initModel();
-        return sampleDimensions;
+        initSampleDimensions();
+        final List<SampleDimension> dims = new ArrayList<>(bands.size());
+        for (VirtualBand vb : bands) {
+            dims.add(vb.cachedSampleDimension);
+        }
+        return dims;
     }
 
     /**
@@ -171,9 +176,13 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * @param sampleDimensions
      */
     public synchronized void setSampleDimensions(List<SampleDimension> sampleDimensions) throws DataStoreException {
-        initModel();
-        ArgumentChecks.ensureNonNull("sampleDimensions", sampleDimensions);
-        this.sampleDimensions = sampleDimensions;
+        eraseCaches();
+        if (bands.size() != sampleDimensions.size()) {
+            throw new DataStoreException("Provided dimensions do not match virtual bands size");
+        }
+        for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
+            bands.get(i).userDefinedSampleDimension = sampleDimensions.get(i);
+        }
     }
 
     @Override
@@ -188,7 +197,13 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
     @Override
     public Collection<? extends Resource> components() throws DataStoreException {
-        return components.stream().map(CoverageMapping::getResource).collect(Collectors.toList());
+        final Set<GridCoverageResource> components = new HashSet<>();
+        for (VirtualBand band : bands) {
+            for (Source source : band.sources) {
+                components.add(source.resource);
+            }
+        }
+        return components;
     }
 
     /**
@@ -200,19 +215,28 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      */
     @Override
     public synchronized void remove(Resource resource) throws DataStoreException {
+        remove(resource, true);
+    }
+
+    private synchronized void remove(Resource resource, boolean sendEvent) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
         boolean found = false;
-        for (CoverageMapping mapping : components) {
-            if (mapping.resource == resource) {
-                found = true;
-                components.remove(mapping);
-                break;
+        for (VirtualBand band : bands) {
+            final ListIterator<Source> ite = band.sources.listIterator();
+            while (ite.hasNext()) {
+                Source source = ite.next();
+                if (source.resource == resource) {
+                    found = true;
+                    ite.remove();
+                }
             }
         }
         if (!found) {
             throw new DataStoreException("Resource not found");
         }
-        listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource), AggregationEvent.class);
+        if (sendEvent) {
+            listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource), AggregationEvent.class);
+        }
         eraseCaches();
     }
 
@@ -227,14 +251,31 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     @Override
     public synchronized Resource add(Resource resource) throws DataStoreException {
         if (resource instanceof GridCoverageResource) {
-            CoverageMapping cm = toMapping((GridCoverageResource) resource);
-            components.add(cm);
+            final GridCoverageResource gcr = (GridCoverageResource) resource;
+            if (bands.isEmpty()) {
+                //first resource in the aggregation
+                bands.addAll(toMapping(Arrays.asList(gcr)));
+                eraseCaches();
+                listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_ADD, resource), AggregationEvent.class);
+                return resource;
+            }
+
+            final List<SampleDimension> sampleDimensions = gcr.getSampleDimensions();
+            if (sampleDimensions.size() != bands.size()) {
+                throw new DataStoreException("Coverage sample dimension size " + sampleDimensions.size() + "do not match bands size " + bands.size());
+            }
+
+            for (int i = 0, n = sampleDimensions.size(); i < n; i++) {
+                final VirtualBand band = bands.get(i);
+                band.sources.add(new Source(gcr, i));
+            }
+
             eraseCaches();
             try {
                 initModel();
             } catch (DataStoreException ex) {
                 //restore to an usable state
-                components.remove(cm);
+                remove(resource, false);
                 throw ex;
             }
             listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_ADD, resource), AggregationEvent.class);
@@ -305,20 +346,30 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * Compute grid geometry and sample dimensions.
      */
     private synchronized void initModel() throws DataStoreException {
-        if (gridGeometry != null) return;
+        initGridGeometry();
+        initSampleDimensions();
+    }
+
+    private void initGridGeometry() throws DataStoreException {
+        if (cachedGridGeometry != null) return;
 
         tree = new Quadtree();
 
+        final Set<GridCoverageResource> components = new HashSet<>();
+        for (VirtualBand band : bands) {
+            for (Source source : band.sources) {
+                components.add(source.resource);
+            }
+        }
+
         if (components.isEmpty()) {
             //no data yet
-            this.sampleDimensions = new ArrayList<>();
-            this.gridGeometry = new GridGeometry(new GridExtent(1, 1), null);
+            this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null);
             return;
         } else if (components.size() == 1) {
             //copy exact definition
-            GridCoverageResource resource = components.get(0).resource;
-            this.gridGeometry = resource.getGridGeometry();
-            this.sampleDimensions = resource.getSampleDimensions();
+            GridCoverageResource resource = components.iterator().next();
+            this.cachedGridGeometry = resource.getGridGeometry();
             return;
         }
 
@@ -326,8 +377,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             //use most common crs
             //TODO find a better approach to determinate a common crs
             final FrequencySortedSet<CoordinateReferenceSystem> map = new FrequencySortedSet<>();
-            for (CoverageMapping mapping : components) {
-                map.add(mapping.resource.getGridGeometry().getCoordinateReferenceSystem());
+            for (GridCoverageResource resource : components) {
+                map.add(resource.getGridGeometry().getCoordinateReferenceSystem());
             }
             outputCrs = map.last();
         }
@@ -338,15 +389,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         int index = 0;
         double[] estimatedResolution = new double[outputCrs.getCoordinateSystem().getDimension()];
         Arrays.fill(estimatedResolution, Double.POSITIVE_INFINITY);
-        for (CoverageMapping mapping : components) {
-            final GridGeometry componentGrid = mapping.resource.getGridGeometry();
+        for (GridCoverageResource resource : components) {
+            final GridGeometry componentGrid = resource.getGridGeometry();
             Envelope envelope = componentGrid.getEnvelope();
             try {
                 envelope = Envelopes.transform(envelope, outputCrs);
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
-            tree.insert(new JTSEnvelope2D(envelope), new AbstractMap.SimpleImmutableEntry<>(index++,mapping.resource));
+            tree.insert(new JTSEnvelope2D(envelope), resource);
 
             //try to find an estimated resolution
             if (estimatedResolution != null) {
@@ -365,60 +416,72 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             } else {
                 env.add(envelope);
             }
-
-            boolean hasUndefinedUnits = false;
-            List<SampleDimension> sampleDimensions = mapping.resource.getSampleDimensions();
-            if (this.sampleDimensions == null) {
-                this.sampleDimensions = new ArrayList<>(sampleDimensions);
-            } else {
-                //check dimensions count
-                if (sampleDimensions.size() != this.sampleDimensions.size()) {
-                    throw new DataStoreException("Uncompatible sample dimensions, size differ.");
-                }
-                //check dimensions units
-                for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
-                    SampleDimension baseDim = this.sampleDimensions.get(i);
-                    SampleDimension dim = sampleDimensions.get(i);
-                    Unit<?> baseUnit = baseDim.getUnits().orElse(null);
-                    Unit<?> unit = baseDim.getUnits().orElse(null);
-
-                    if (baseUnit == null) {
-                        hasUndefinedUnits = true;
-                        if (unit != null) {
-                            //replace the declared unit, more accurate
-                            this.sampleDimensions.set(i, dim);
-                        }
-                    } else if (unit == null) {
-                        //we assume all datas have the implicite same unit
-                        //if there is no conflict
-                        hasUndefinedUnits = true;
-
-                    } else {
-                        if (!baseUnit.equals(unit)) {
-                            throw new DataStoreException("Uncompatible sample dimensions, different units found : "+baseUnit +", "+unit);
-                        }
-                    }
-                }
-            }
         }
 
         if (estimatedResolution != null) {
-            gridGeometry = new EstimatedGridGeometry(env, estimatedResolution);
+            cachedGridGeometry = new EstimatedGridGeometry(env, estimatedResolution);
         } else {
-            gridGeometry = new GridGeometry(null, env);
+            cachedGridGeometry = new GridGeometry(null, env);
+        }
+    }
+
+    private void initSampleDimensions() throws DataStoreException {
+        if (bands.isEmpty()) return;
+        if (bands.get(0).cachedSampleDimension != null) return;
+
+        for (int i = 0, n = bands.size(); i < n; i++) {
+            final VirtualBand band = bands.get(i);
+            if (band.userDefinedSampleDimension != null) {
+                band.cachedSampleDimension = band.userDefinedSampleDimension;
+            } else {
+                //compute sampleDimension
+                boolean hasUndefinedUnits = false;
+                SampleDimension dim = null;
+                for (Source source : band.sources) {
+                    final SampleDimension sourceBand = source.resource.getSampleDimensions().get(source.bandIndex);
+                    if (dim == null) {
+                        dim = sourceBand;
+                    } else {
+                        final Unit<?> baseUnit = dim.getUnits().orElse(null);
+                        final Unit<?> unit = sourceBand.getUnits().orElse(null);
+                        if (baseUnit == null) {
+                            hasUndefinedUnits = true;
+                            if (unit != null) {
+                                //replace the declared unit, more accurate
+                                dim = sourceBand;
+                            }
+                        } else if (unit == null) {
+                            //we assume all datas have the implicite same unit
+                            //if there is no conflict
+                            hasUndefinedUnits = true;
+                        } else {
+                            if (!baseUnit.equals(unit)) {
+                                throw new DataStoreException("Uncompatible sample dimensions, different units found : "+baseUnit +", "+unit);
+                            }
+                        }
+                    }
+                }
+                if (dim == null) {
+                    throw new DataStoreException("Sample dimension " + i + " is undefined");
+                }
+                band.cachedSampleDimension = dim;
+            }
         }
 
-        //add a no-data category
-        //the no-data is needed to fill possible gaps between coverages
-        //TODO need to improve detection cases to avoid switching to transformed values all the time
+        /*
+         * Add a no-data category
+         * the no-data is needed to fill possible gaps between coverages
+         * TODO need to improve detection cases to avoid switching to transformed values all the time
+         */
         forceTransformedValues = false;
-        noData = new double[sampleDimensions.size()];
-        for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
-            SampleDimension baseDim = sampleDimensions.get(i);
+        noData = new double[bands.size()];
+        for (int i = 0,n = bands.size(); i < n; i++) {
+            VirtualBand band = bands.get(i);
+            SampleDimension baseDim = band.cachedSampleDimension;
             Set<Number> noData = baseDim.getNoDataValues();
             Optional<Number> background = baseDim.getBackground();
             if (noData.isEmpty() && !background.isPresent()) {
-                baseDim = sampleDimensions.get(i).forConvertedValues(true);
+                baseDim = band.cachedSampleDimension.forConvertedValues(true);
                 final SampleDimension.Builder builder = new SampleDimension.Builder();
                 final Unit<?> unit = baseDim.getUnits().orElse(null);
 
@@ -433,7 +496,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 baseDim = builder.build();
                 noData = baseDim.getNoDataValues();
                 background = baseDim.getBackground();
-                sampleDimensions.set(i, baseDim);
+                band.cachedSampleDimension = baseDim;
                 forceTransformedValues = true;
             }
 
@@ -446,8 +509,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     private void eraseCaches() {
-        gridGeometry = null;
-        sampleDimensions = null;
+        cachedGridGeometry = null;
+        for (VirtualBand vb : bands) {
+            vb.cachedSampleDimension = null;
+        }
         tree = null;
         listeners.fire(new ModelEvent(this), ModelEvent.class);
         listeners.fire(new ContentEvent(this), ContentEvent.class);
@@ -457,82 +522,133 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
         initModel();
 
-        if (components.size() == 1) {
-            //bypass aggregation
-            GridCoverageResource resource = components.get(0).resource;
-            return resource.read(domain, range);
+        final GridGeometry gridGeometry = getGridGeometry();
+        if (domain == null) domain = gridGeometry;
+
+        // List the bands requested ////////////////////////////////////////////
+        final List<SampleDimension> sampleDimensions;
+        final List<VirtualBand> bands;
+        if (range.length != 0) {
+            bands = new ArrayList<>();
+            sampleDimensions = new ArrayList<>();
+            for (int i : range) {
+                bands.add(this.bands.get(i));
+                sampleDimensions.add(this.bands.get(i).cachedSampleDimension);
+            }
+        } else {
+            bands = this.bands;
+            sampleDimensions = getSampleDimensions();
         }
 
-        if (domain == null) domain = getGridGeometry();
-
-        GridGeometry canvas = domain;
-        canvas = CoverageUtilities.forceLowerToZero(canvas);
-
+        // Extract resources which intersect request ///////////////////////////
         Envelope envelope = domain.getEnvelope();
         try {
             envelope = Envelopes.transform(envelope, outputCrs);
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
-        List<Map.Entry<Integer,GridCoverageResource>> results = tree.query(new JTSEnvelope2D(envelope));
+        final List<GridCoverageResource> treeResults = tree.query(new JTSEnvelope2D(envelope));
 
-        //single result
-        if (results == null || results.isEmpty()) {
+        if (treeResults == null || treeResults.isEmpty()) {
             throw new DisjointCoverageDomainException();
-        } else if (results.size() == 1) {
-            GridCoverageResource resource = results.get(0).getValue();
-            return resource.read(canvas, range);
         }
 
-        results = new ArrayList(results);
+        // Build expected GridGeometry /////////////////////////////////////////
 
-        final List<GridCoverageResource> ordered;
-        if (mode == Mode.ORDER) {
-            //sort by user order
-            Collections.sort(results, (Map.Entry<Integer, GridCoverageResource> o1, Map.Entry<Integer, GridCoverageResource> o2) -> o1.getKey().compareTo(o2.getKey()));
-            ordered = results.stream().map(Map.Entry::getValue).collect(Collectors.toList());
+        final GridGeometry canvas;
+        if (gridGeometry.isDefined(GridGeometry.EXTENT)) {
+            canvas = gridGeometry.derive().subgrid(domain).build();
+        } else if (domain.isDefined(GridGeometry.EXTENT)) {
+            canvas = domain;
         } else {
-            //the most accurate order would be to render in order coverages
-            //with scale going from 1.0 to 0.0 then from 1.0 to +N
-            //filling only the gaps at each coverage
+            throw new DataStoreException("Aggregated resource require a grid extent to be defined on the resource or on the requested domain");
+        }
 
-            ordered = new ArrayList<>();
 
-            final Map<GridCoverageResource,Double> ratios = new HashMap<>();
-            for (Map.Entry<Integer,GridCoverageResource> entry : results) {
-                try {
-                    double ratio = estimateRatio(entry.getValue().getGridGeometry(), canvas);
-                    double order = ratio;
-                    if (ratio <= 1.05) { //little tolerance du to crs deformations and math
-                        order = 1.05 - ratio;
-                    }
-                    ratios.put(entry.getValue(), order);
-                    ordered.add(entry.getValue());
-                } catch (DisjointExtentException ex) {
-                    continue;
-                } catch (FactoryException | TransformException ex) {
-                    continue;
+        // aggregate tiles /////////////////////////////////////////////////////
+        final BufferedImage[] bandImages = new BufferedImage[bands.size()];
+        for (int bandIndex = 0, n = bands.size(); bandIndex < n; bandIndex++) {
+            final VirtualBand band = bands.get(bandIndex);
+
+            //pick and sort resources as user mode requested
+            final List<Source> sorted = new ArrayList<>();
+            for (Source source : band.sources) {
+                if (treeResults.contains(source.resource)) {
+                    sorted.add(source);
                 }
             }
-            ordered.sort((GridCoverageResource o1, GridCoverageResource o2) -> ratios.get(o1).compareTo(ratios.get(o2)));
+            if (sorted.isEmpty()) {
+                continue;
+            }
+            if (Mode.SCALE.equals(mode)) {
+                //the most accurate order is to render in order coverages
+                //with relative scale going from 1.0 to 0.0 then from 1.0 to +N
+                //filling only the gaps at each coverage
+
+                List<Source> ordered = new ArrayList<>();
+                final Map<GridCoverageResource,Double> ratios = new HashMap<>();
+                for (Source entry : sorted) {
+                    try {
+                        double ratio = estimateRatio(entry.resource.getGridGeometry(), canvas);
+                        double order = ratio;
+                        if (ratio <= 1.05) { //little tolerance du to crs deformations and math
+                            order = 1.05 - ratio;
+                        }
+                        ratios.put(entry.resource, order);
+                        ordered.add(entry);
+                    } catch (DisjointExtentException ex) {
+                        continue;
+                    } catch (FactoryException | TransformException ex) {
+                        continue;
+                    }
+                }
+                ordered.sort((Source o1, Source o2) -> ratios.get(o1.resource).compareTo(ratios.get(o2.resource)));
+                sorted.clear();
+                sorted.addAll(ordered);
+            }
+            if (sorted.isEmpty()) {
+                continue;
+            }
+
+            bandImages[bandIndex] = aggregate(sorted, canvas, bandIndex);
         }
 
-        if (ordered.isEmpty()) {
-            throw new DisjointCoverageDomainException();
-        } else if (ordered.size() == 1) {
-            return ordered.get(0).read(domain, range);
+        BufferedImage result = null;
+        if (bandImages.length == 1) {
+            result = bandImages[0];
+        } else {
+            result = BufferedImages.createImage(bandImages[0].getWidth(), bandImages[1].getHeight(), bandImages.length, DataBuffer.TYPE_DOUBLE);
+            WritablePixelIterator writer = WritablePixelIterator.create(result);
+            for (int bandIndex = 0; bandIndex < bandImages.length; bandIndex++) {
+                final PixelIterator reader = PixelIterator.create(bandImages[bandIndex]);
+                while (reader.next()) {
+                    final Point pt = reader.getPosition();
+                    writer.moveTo(pt.x, pt.y);
+                    writer.setSample(bandIndex, reader.getSampleDouble(0));
+                }
+            }
         }
 
 
-        //aggregate tiles
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("Aggregated");
+        gcb.setGridGeometry(canvas);
+        gcb.setSampleDimensions(sampleDimensions);
+        gcb.setRenderedImage(result);
+        return gcb.build();
+    }
+
+    private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex) throws DataStoreException {
+
+        final double[] noData = new double[]{this.noData[bandIndex]};
+
         BufferedImage result = null;
         BufferedImage intermediate = null;
-        List<SampleDimension> sampleDimensions = getSampleDimensions();
 
         //start by creating a mask of filled datas
         final BitSet2D mask = new BitSet2D((int) canvas.getExtent().getSize(0), (int) canvas.getExtent().getSize(1));
 
-        for (GridCoverageResource resource : ordered) {
+        for (Source source : ordered) {
             try {
                 //check the mask if we have finish
                 final GridExtent maskExtent = mask.areaCleared().orElse(null);
@@ -541,7 +657,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
                 //expend grid geometry a little for interpolation
                 GridGeometry readGridGeom;
-                GridGeometry coverageGridGeometry = resource.getGridGeometry();
+                GridGeometry coverageGridGeometry = source.resource.getGridGeometry();
                 if (coverageGridGeometry.isDefined(GridGeometry.EXTENT)) {
                     readGridGeom = coverageGridGeometry.derive()
                             .margin(5,5)
@@ -551,7 +667,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     readGridGeom = maskGrid.derive().margin(5,5).build();
                 }
 
-                final GridCoverage coverage = resource.read(readGridGeom, range).forConvertedValues(true);
+                final GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(true);
+                if (coverage.getSampleDimensions().size() != 1) {
+                    throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
+                }
                 final RenderedImage tileImage = coverage.render(null);
 
                 final BufferedImage workImage;
@@ -560,11 +679,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     GridExtent extent = canvas.getExtent();
                     int sizeX = Math.toIntExact(extent.getSize(0));
                     int sizeY = Math.toIntExact(extent.getSize(1));
-                    if (forceTransformedValues) {
-                        result = BufferedImages.createImage(sizeX, sizeY, noData.length, DataBuffer.TYPE_DOUBLE);
-                    } else {
-                        result = BufferedImages.createImage(sizeX, sizeY, tileImage);
-                    }
+                    result = BufferedImages.createImage(sizeX, sizeY, 1, DataBuffer.TYPE_DOUBLE);
                     workImage = result;
                     if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(result, noData);
                 } else {
@@ -583,33 +698,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     WritablePixelIterator write = WritablePixelIterator.create(result);
                     final double[] pixelr = new double[read.getNumBands()];
                     final double[] pixelw = new double[read.getNumBands()];
-                    final boolean monoBand = pixelr.length == 1;
                     while (read.next() & write.next()) {
-                        if (monoBand) {
-                            read.getPixel(pixelr);
-                            if (noData[0] == pixelr[0] || Double.isNaN(pixelr[0])) continue;
-                            write.getPixel(pixelw);
-                            if (noData[0] == pixelw[0] || Double.isNaN(pixelw[0])) {
-                                write.setPixel(pixelr);
-                                //fill the mask
-                                Point pt = read.getPosition();
-                                mask.set2D(pt.x, pt.y);
-                            }
-                        } else {
-                            //TODO what approach when a NaN is defined on one band and not another ?
-                            //should we have one mask per band ?
-                            read.getPixel(pixelr);
-                            write.getPixel(pixelw);
-                            for (int i=0;i<pixelr.length;i++) {
-                                if (noData[i] == pixelr[i] || Double.isNaN(pixelr[i])) {
-                                    //do nothing
-                                } else if (noData[i] == pixelw[i] || Double.isNaN(pixelw[i])) {
-                                    write.setPixel(pixelr);
-                                    //fill the mask
-                                    Point pt = read.getPosition();
-                                    mask.set2D(pt.x, pt.y);
-                                }
-                            }
+                        read.getPixel(pixelr);
+                        if (noData[0] == pixelr[0] || Double.isNaN(pixelr[0])) continue;
+                        write.getPixel(pixelw);
+                        if (noData[0] == pixelw[0] || Double.isNaN(pixelw[0])) {
+                            write.setPixel(pixelr);
+                            //fill the mask
+                            Point pt = read.getPosition();
+                            mask.set2D(pt.x, pt.y);
                         }
                     }
                 } else {
@@ -635,17 +732,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             }
         }
 
-        if (result == null) {
-            throw new DisjointCoverageDomainException();
-        }
-
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("Aggregated");
-        gcb.setGridGeometry(canvas);
-        gcb.setSampleDimensions(sampleDimensions);
-        gcb.setRenderedImage(result);
-        return gcb.build();
+        return result;
     }
+
 
     @Override
     public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
@@ -687,38 +776,51 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
 
-    private static List<CoverageMapping> toMapping(List<GridCoverageResource> resources) throws DataStoreException {
-        List<CoverageMapping> lst = new ArrayList();
+    private static List<VirtualBand> toMapping(List<GridCoverageResource> resources) throws DataStoreException {
+        final List<VirtualBand> lst = new ArrayList();
         for (GridCoverageResource gcr : resources) {
-            lst.add(toMapping(gcr));
+            final List<SampleDimension> sampleDimensions = gcr.getSampleDimensions();
+            for (int i = 0, n = sampleDimensions.size(); i < n; i++) {
+                final VirtualBand band;
+                if (i < lst.size()) {
+                    band = lst.get(i);
+                } else {
+                    band = new VirtualBand();
+                    lst.add(band);
+                }
+                band.sources.add(new Source(gcr, i));
+            }
         }
         return lst;
     }
 
-    private static CoverageMapping toMapping(GridCoverageResource resource) throws DataStoreException {
-        final CoverageMapping cm = new CoverageMapping();
-        cm.resource = resource;
-        final List<SampleDimension> sds = resource.getSampleDimensions();
-        for (int i=0;i<sds.size();i++) {
-            final BandMapping bm = new BandMapping();
-            cm.bands.add(bm);
+    public static class VirtualBand {
+        private SampleDimension userDefinedSampleDimension;
+        SampleDimension cachedSampleDimension;
+        private final List<Source> sources = new ArrayList<>();
+
+        public List<Source> getSources() {
+            return Collections.unmodifiableList(sources);
         }
-        return cm;
-    }
 
-    public static class CoverageMapping {
-        public GridCoverageResource resource;
-        public List<BandMapping> bands = new ArrayList<>();
+        public SampleDimension getSampleDimension() {
+            return userDefinedSampleDimension;
+        }
 
-        public GridCoverageResource getResource() {
-            return resource;
+        public void setSampleDimension(SampleDimension userDefinedSampleDimension) {
+            this.userDefinedSampleDimension = userDefinedSampleDimension;
         }
     }
 
-    public static class BandMapping {
+    public static class Source {
+        public final GridCoverageResource resource;
+        public final int bandIndex;
         //leave space for possible futur parameters
-        //public int sourcebandIndex;
-        //public int targetbandIndex;
         //public MapTransform1D sampleTransform;
+
+        public Source(GridCoverageResource resource, int bandIndex) {
+            this.resource = resource;
+            this.bandIndex = bandIndex;
+        }
     }
 }

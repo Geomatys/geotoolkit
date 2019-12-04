@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRenderedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -226,7 +227,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         return gcb.build();
     }
 
-    static void resample(GridCoverage coverage, RenderedImage coverageImage, GridGeometry canvasGridGeometry, BufferedImage canvasImage) throws TransformException, FactoryException {
+    static void resample(GridCoverage coverage, RenderedImage coverageImage, GridGeometry canvasGridGeometry, WritableRenderedImage canvasImage) throws TransformException, FactoryException {
 
         final GridGeometry coverageGridGeometry = coverage.getGridGeometry();
         GridExtent sourceRendering = coverageGridGeometry.getExtent();

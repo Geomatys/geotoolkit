@@ -16,16 +16,25 @@
  */
 package org.geotoolkit.storage.memory;
 
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.util.NamesExt;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
@@ -83,6 +92,33 @@ public class InMemoryGridCoverageResource extends AbstractGridResource implement
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
         if (coverage == null) throw new DataStoreException("Coverage is undefined");
+
+        if (range != null && range.length != 0) {
+            final RenderedImage image = coverage.render(null);
+            final GridGeometry grid = CoverageUtilities.forceLowerToZero(coverage.getGridGeometry());
+            final BufferedImage newImage = BufferedImages.createImage(image, null, null, range.length, null);
+
+            final WritablePixelIterator wite = WritablePixelIterator.create(newImage);
+            final PixelIterator rite = PixelIterator.create(image);
+            while (wite.next()) {
+                final Point position = wite.getPosition();
+                rite.moveTo(position.x, position.y);
+                for (int i=0;i<range.length;i++) {
+                    wite.setSample(i, rite.getSampleDouble(range[i]));
+                }
+            }
+            final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
+            final List<SampleDimension> sds = new ArrayList<>(range.length);
+            for (int i = 0; i < range.length; i++) {
+                sds.add(sampleDimensions.get(i));
+            }
+
+            try {
+                return new GridCoverage2D(grid, sds, newImage);
+            } catch (FactoryException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
         return coverage;
     }
 

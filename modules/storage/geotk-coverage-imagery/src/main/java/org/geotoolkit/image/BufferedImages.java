@@ -48,6 +48,39 @@ import org.apache.sis.util.Static;
 public class BufferedImages extends Static {
 
     /**
+     * Create a new image, trying to preserve raster, sample model and color model
+     * when possible.
+     *
+     * @param reference not null
+     * @param width if null reference image width is copied
+     * @param height if null reference image height is copied
+     * @param nbBand if null reference image number of bands is copied
+     * @param dataType if null reference image data type is copied
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static BufferedImage createImage(RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType) throws IllegalArgumentException{
+        if (width == null) width = reference.getWidth();
+        if (height == null) height = reference.getHeight();
+        if (nbBand == null) nbBand = reference.getSampleModel().getNumBands();
+        if (dataType == null) dataType = reference.getSampleModel().getDataType();
+        ArgumentChecks.ensureStrictlyPositive("width", width);
+        ArgumentChecks.ensureStrictlyPositive("height", height);
+        ArgumentChecks.ensureStrictlyPositive("nbBand", nbBand);
+
+        if (nbBand == reference.getSampleModel().getNumBands() && dataType == reference.getSampleModel().getDataType()) {
+            //we can preserver color model and raster configuration
+            final WritableRaster raster = reference.getTile(0, 0).createCompatibleWritableRaster(width, height);
+            final ColorModel cm = reference.getColorModel();
+            final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
+            return resultImage;
+        } else {
+            //we need to create a new image
+            return createImage(width, height, nbBand, dataType);
+        }
+    }
+
+    /**
      * Create a new image of the same type with a different size.
      *
      * @param width
@@ -56,13 +89,8 @@ public class BufferedImages extends Static {
      * @return
      * @throws IllegalArgumentException
      */
-    public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException{
-        ArgumentChecks.ensureStrictlyPositive("width", width);
-        ArgumentChecks.ensureStrictlyPositive("height", height);
-        final WritableRaster raster = reference.getTile(0, 0).createCompatibleWritableRaster(width, height);
-        final ColorModel cm = reference.getColorModel();
-        final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
-        return resultImage;
+    public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException {
+        return createImage(reference, width, height, null, null);
     }
 
     public static BufferedImage createImage(final int width, final int height, final int nbBand, final int dataType) throws IllegalArgumentException{
