@@ -423,21 +423,19 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             throws DataStoreException, TransformException, FactoryException, ProcessException {
 
         boolean mustApplyMargin = false;
-        for (int i = 0 ; i < margin.length && !mustApplyMargin; i++) {
+        for (int i = 0 ; i < margin.length; i++) {
             if (margin[i] > 0) {
                 mustApplyMargin = true;
+                break;
             }
         }
 
         if (mustApplyMargin) {
-            /* TODO: The way we apply margin for now is not optimum. We are forced to decompose derivation in two steps,
-             * to ensure margin is applied on source data resolution. In the future, we should find a more consistent
-             * way of setting an interpolation padding without such complex grid derivation.
-             */
-            final int[] positiveMarginIndices = IntStream.range(0, margin.length)
-                    .filter(idx -> margin[idx] > 0)
-                    .toArray();
-            if (positiveMarginIndices.length > 0) {
+            if (fullArea.isDefined(GridGeometry.EXTENT)) {
+                /* TODO: The way we apply margin for now is not optimum. We are forced to decompose derivation in two steps,
+                 * to ensure margin is applied on source data resolution. In the future, we should find a more consistent
+                 * way of setting an interpolation padding without such complex grid derivation.
+                 */
                 areaOfInterest = fullArea.derive()
                         .rounding(GridRoundingMode.ENCLOSING)
                         .margin(margin)
@@ -450,6 +448,26 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                         .rounding(GridRoundingMode.ENCLOSING)
                         .resize(null, resolution)
                         .build();
+            } else if (fullArea.isDefined(GridGeometry.RESOLUTION)) {
+                CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
+                CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
+                if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
+                    //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
+                    if (margin[0] > 0) {
+                        //try to adjust margin
+                        //TODO : we should use a GridCoverageResource.subset with a margin value but this isn't implemented yet
+                        Envelope env = fullArea.getEnvelope();
+                        double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
+                        double[] aest = areaOfInterest.getResolution(true);
+                        margin[0] = (int) Math.ceil(margin[0] * (est[0]/aest[1]));
+                        margin[1] = (int) Math.ceil(margin[1] * (est[0]/aest[1]));
+                    }
+                    areaOfInterest = areaOfInterest.derive().margin(margin).resize(null).build();
+                    return areaOfInterest;
+                }
+            } else {
+                //we have no way to apply margin
+                //must wait for GridCoverageResource.subset with a margin
             }
         }
 
