@@ -18,6 +18,7 @@
 package org.geotoolkit.observation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.namespace.QName;
@@ -37,18 +38,20 @@ public interface ObservationFilter {
      *
      * @param requestMode
      * @param resultModel
+     * @param hints
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void initFilterObservation(final ResponseModeType requestMode, final QName resultModel) throws DataStoreException;
+    void initFilterObservation(final ResponseModeType requestMode, final QName resultModel, final Map<String,String> hints) throws DataStoreException;
 
     /**
      * Initialize the query for an extraction restricted to the results request.
      *
      * @param procedure
      * @param resultModel
+     * @param hints
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void initFilterGetResult(final String procedure, final QName resultModel) throws DataStoreException;
+    void initFilterGetResult(final String procedure, final QName resultModel, final Map<String,String> hints) throws DataStoreException;
 
     /**
      * Initialize the query for extracting feature of interest request.

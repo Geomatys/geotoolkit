@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -75,6 +76,9 @@ public class DataArray {
      * @return the dataArray
      */
     public List<Object> getDataArray() {
+        if (dataArray == null) {
+            dataArray = new ArrayList<>();
+        }
         return dataArray;
     }
 
@@ -111,5 +115,51 @@ public class DataArray {
      */
     public void setMultiDatastreamIotNavigationLink(String multiDatastreamIotNavigationLink) {
         this.multiDatastreamIotNavigationLink = multiDatastreamIotNavigationLink;
+    }
+    
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DataArray da = (DataArray) o;
+        return Objects.equals(this.components, da.components)
+                && Objects.equals(this.dataArray, da.dataArray)
+                && Objects.equals(this.datastreamIotNavigationLink, da.datastreamIotNavigationLink)
+                && Objects.equals(this.iotCount, da.iotCount)
+                && Objects.equals(this.multiDatastreamIotNavigationLink, da.multiDatastreamIotNavigationLink);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(components, dataArray, datastreamIotNavigationLink, iotCount, multiDatastreamIotNavigationLink);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class DataArray {\n");
+
+        sb.append("    iotCount: ").append(toIndentedString(iotCount)).append("\n");
+        sb.append("    dataArray: ").append(toIndentedString(dataArray)).append("\n");
+        sb.append("    datastreamIotNavigationLink: ").append(toIndentedString(datastreamIotNavigationLink)).append("\n");
+        sb.append("    multiDatastreamIotNavigationLink: ").append(toIndentedString(multiDatastreamIotNavigationLink)).append("\n");
+        sb.append("    components: ").append(toIndentedString(components)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    protected String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
     }
 }
