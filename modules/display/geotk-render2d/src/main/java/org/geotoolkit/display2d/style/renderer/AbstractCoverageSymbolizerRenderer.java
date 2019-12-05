@@ -459,8 +459,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                         Envelope env = fullArea.getEnvelope();
                         double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
                         double[] aest = areaOfInterest.getResolution(true);
-                        margin[0] = (int) Math.ceil(margin[0] * (est[0]/aest[1]));
-                        margin[1] = (int) Math.ceil(margin[1] * (est[0]/aest[1]));
+                        margin[0] = (int) Math.ceil(margin[0] * (est[0]/aest[0]));
+                        margin[1] = (int) Math.ceil(margin[1] * (est[1]/aest[1]));
                     }
                     areaOfInterest = areaOfInterest.derive().margin(margin).resize(null).build();
                     return areaOfInterest;
