@@ -50,8 +50,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -64,6 +62,8 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -221,9 +221,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, -90, 90);
 
         DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), null),
-                new SceneDef(context),
-                new ViewDef(env));
+                new CanvasDef(new Dimension(800, 600), env),
+                new SceneDef(context));
 
 
 
@@ -234,9 +233,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, -90, 90);
 
         DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), null),
-                new SceneDef(context),
-                new ViewDef(env));
+                new CanvasDef(new Dimension(800, 600), env),
+                new SceneDef(context));
     }
 
     @Test
@@ -295,14 +293,13 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
 
-        final CanvasDef cdef = new CanvasDef(new Dimension(360, 180), null);
         final SceneDef sdef = new SceneDef(context);
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef vdef = new ViewDef(env);
+        final CanvasDef cdef = new CanvasDef(new Dimension(360, 180), env);
 
-        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef, vdef);
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
         final Raster raster = result.getData();
         final int[] pixel = new int[4];
         final int[] trans = new int[]{0,0,0,0};
@@ -361,10 +358,9 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, -20037508.342789244, 20037508.342789244);
 
         final SceneDef scene = new SceneDef(context);
-        final ViewDef view = new ViewDef(env);
-        final CanvasDef canvas = new CanvasDef(new Dimension(256, 256),null);
+        final CanvasDef canvas = new CanvasDef(new Dimension(256, 256), env);
 
-        final BufferedImage result = DefaultPortrayalService.portray(canvas, scene, view);
+        final BufferedImage result = DefaultPortrayalService.portray(canvas, scene);
         final int color = Color.BLUE.getRGB();
         for (int y=0;y<256;y++) {
             for (int x=0;x<256;x++) {
@@ -409,10 +405,9 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -180, 180);
 
-        BufferedImage buffer = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(360, 360), Color.WHITE),
-                new SceneDef(context, hints),
-                new ViewDef(env));
+        CanvasDef cdef = new CanvasDef(new Dimension(360, 360), env);
+        cdef.setBackground(Color.WHITE);
+        BufferedImage buffer = DefaultPortrayalService.portray(cdef, new SceneDef(context, hints));
         //ImageIO.write(buffer, "png", new File("sanity.png"));
         assertEquals(360,buffer.getWidth());
         assertEquals(360,buffer.getHeight());
@@ -430,10 +425,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
 
         //east=horizontal test, image should be a red horizontal band in the middle
-        buffer = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(360, 360), Color.WHITE),
-                new SceneDef(context, hints),
-                new ViewDef(env).setLongitudeFirst());
+        cdef = new CanvasDef(new Dimension(360, 360), env);
+        cdef.setBackground(Color.WHITE);
+        cdef.setLongitudeFirst();
+        buffer = DefaultPortrayalService.portray(cdef, new SceneDef(context, hints));
         //ImageIO.write(buffer, "png", new File("flip.png"));
         assertEquals(360,buffer.getWidth());
         assertEquals(360,buffer.getHeight());
@@ -519,11 +514,11 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, 0, 10);
         env.setRange(1, 0, 10);
 
-        final CanvasDef cdef = new CanvasDef(new Dimension(10, 10), Color.WHITE);
+        final CanvasDef cdef = new CanvasDef(new Dimension(10, 10), env);
+        cdef.setBackground(Color.WHITE);
         final SceneDef sdef = new SceneDef(context);
-        final ViewDef vdef = new ViewDef(env);
 
-        final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
+        final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef);
 
         assertEquals(Color.BLACK.getRGB(), img.getRGB(9, 5));
         assertEquals(Color.BLACK.getRGB(), img.getRGB(8, 5));
@@ -586,11 +581,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
 
         final SceneDef scene = new SceneDef(context);
-        final CanvasDef canvas = new CanvasDef(new Dimension(360, 180), null);
-        final ViewDef view = new ViewDef(viewEnv);
+        final CanvasDef canvas = new CanvasDef(new Dimension(360, 180), viewEnv);
         final VisitDef visit = new VisitDef(new Rectangle(10, 80, 2, 2), gv);
 
-        DefaultPortrayalService.visit(canvas, scene, view, visit);
+        DefaultPortrayalService.visit(canvas, scene, visit);
 
         assertEquals(1, count.get());
     }
@@ -606,10 +600,11 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
             for(Date[] drange : dates){
                 for(Double[] erange : elevations){
                     final Envelope cenv = ReferencingUtilities.combine(env, drange, erange);
+                    final CanvasDef cdef = new CanvasDef(new Dimension(800,600), cenv);
+                    cdef.setAzimuth(0);
+                    cdef.setMonitor(monitor);
                     final BufferedImage img = DefaultPortrayalService.portray(
-                        new CanvasDef(new Dimension(800, 600), null),
-                        new SceneDef(context),
-                        new ViewDef(cenv,0,monitor));
+                        cdef, new SceneDef(context));
                     assertNull(monitor.getLastException());
                     assertNotNull(img);
                 }

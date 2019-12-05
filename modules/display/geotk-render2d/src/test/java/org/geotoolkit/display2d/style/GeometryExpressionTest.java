@@ -16,37 +16,36 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import org.apache.sis.measure.Units;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.apache.sis.referencing.CRS;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
@@ -97,11 +96,13 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -20, +20);
         env.setRange(1, -20, +20);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(40, 40), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef();
+        canvasDef.setEnvelope(env);
+        canvasDef.setDimension(new Dimension(40, 40));
+        canvasDef.setBackground(Color.WHITE);
         final SceneDef sceneDef = new SceneDef(context);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
 
         //we must obtain a red point of 10pixel width at image center
         final int red = Color.RED.getRGB();
@@ -159,11 +160,13 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final Point pt = (Point) JTS.transform(point, CRS.findOperation(crs2154, crs3857, null).getMathTransform());
         env.setRange(0, pt.getX()-500, pt.getX()+500);
         env.setRange(1, pt.getY()-500, pt.getY()+500);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(100, 100), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef();
+        canvasDef.setEnvelope(env);
+        canvasDef.setDimension(new Dimension(100, 100));
+        canvasDef.setBackground(Color.WHITE);
         final SceneDef sceneDef = new SceneDef(context);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         ImageIO.write(image, "png", new File("test.png"));
 
         //we must obtain a red point of 20pixel width at image center

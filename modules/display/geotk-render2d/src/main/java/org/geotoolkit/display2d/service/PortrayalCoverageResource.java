@@ -146,11 +146,11 @@ final class PortrayalCoverageResource extends AbstractGridResource {
 
 
         final CanvasDef canvas = new CanvasDef(dim, null);
-        final ViewDef view = new ViewDef(paramEnv);
+        canvas.setEnvelope(paramEnv);
 
         final RenderedImage image;
         try {
-            image = DefaultPortrayalService.portray(canvas, scene, view);
+            image = DefaultPortrayalService.portray(canvas, scene);
         } catch (PortrayalException ex) {
             throw new DataStoreException(ex.getMessage(),ex);
         }

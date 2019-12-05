@@ -25,6 +25,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -33,12 +34,10 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.geometry.Envelope;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -145,10 +144,11 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
                 final MapContext context = MapBuilder.createContext();
                 context.items().add(item);
 
-                final CanvasDef cdef = new CanvasDef(dim, null);
-                final ViewDef vdef = new ViewDef(env);
+                final CanvasDef cdef = new CanvasDef();
+                cdef.setDimension(dim);
+                cdef.setEnvelope(env);
                 final SceneDef sdef = new SceneDef(context);
-                final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
+                final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef);
 
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                 gcb.setEnvelope(env2d);

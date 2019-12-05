@@ -52,9 +52,9 @@ public final class Portrayer {
         container.setContext(EMPTY_CONTEXT);
     }
 
-    public BufferedImage portray(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef) throws PortrayalException{
+    public BufferedImage portray(final CanvasDef canvasDef, final SceneDef sceneDef) throws PortrayalException{
 
-        final Envelope contextEnv = viewDef.getEnvelope();
+        final Envelope contextEnv = canvasDef.getEnvelope();
         final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
 
         canvas.setSize(canvasDef.getDimension());
@@ -66,7 +66,7 @@ public final class Portrayer {
             canvas.setBackgroundPainter(new SolidColorPainter(bgColor));
         }
 
-        final CanvasMonitor monitor = viewDef.getMonitor();
+        final CanvasMonitor monitor = canvasDef.getMonitor();
         if(monitor != null){
             canvas.setMonitor(monitor);
         }
@@ -83,8 +83,8 @@ public final class Portrayer {
         canvas.setAxisProportions(!canvasDef.isStretchImage());
         try {
             canvas.setVisibleArea(contextEnv);
-            if (viewDef.getAzimuth() != 0) {
-                canvas.rotate( -Math.toRadians(viewDef.getAzimuth()) );
+            if (canvasDef.getAzimuth() != 0) {
+                canvas.rotate( -Math.toRadians(canvasDef.getAzimuth()) );
             }
         } catch (NoninvertibleTransformException ex) {
             throw new PortrayalException(ex);

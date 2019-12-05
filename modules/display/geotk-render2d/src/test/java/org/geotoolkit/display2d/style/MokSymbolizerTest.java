@@ -24,16 +24,15 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.After;
@@ -127,10 +126,9 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
         hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_SECOND);
 
         MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(500, 500),Color.WHITE),
-                new SceneDef(context,hints),
-                new ViewDef(env));
+        CanvasDef cdef = new CanvasDef(new Dimension(500, 500), env);
+        cdef.setBackground(Color.WHITE);
+        DefaultPortrayalService.portray(cdef, new SceneDef(context,hints));
 
         assertEquals(5, MokSymbolizerRenderer.called);
 
@@ -141,10 +139,7 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
         hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_SECOND);
 
         MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(500, 500),Color.WHITE),
-                new SceneDef(context,hints),
-                new ViewDef(env));
+        DefaultPortrayalService.portray(cdef, new SceneDef(context, hints));
 
         assertEquals(5, MokSymbolizerRenderer.called);
 
@@ -155,10 +150,7 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
         hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_PRIME);
 
         MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(500, 500),Color.WHITE),
-                new SceneDef(context,hints),
-                new ViewDef(env));
+        DefaultPortrayalService.portray(cdef, new SceneDef(context,hints));
 
         assertEquals(5, MokSymbolizerRenderer.called);
 
@@ -169,15 +161,9 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
         hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_PRIME);
 
         MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(500, 500),Color.WHITE),
-                new SceneDef(context,hints),
-                new ViewDef(env));
+        DefaultPortrayalService.portray(cdef, new SceneDef(context,hints));
 
         assertEquals(5, MokSymbolizerRenderer.called);
-
-
-
     }
 
 }

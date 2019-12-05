@@ -28,7 +28,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -39,7 +38,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -134,10 +132,10 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final Hints hints = new Hints();
         final SceneDef scenedef = new SceneDef(context,hints);
-        final ViewDef viewdef = new ViewDef(env);
-        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 800), Color.WHITE);
+        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 800), env);
+        canvasdef.setBackground(Color.WHITE);
 
-        final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
+        final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef);
         ImageIO.write(buffer, "PNG", new File("test.png"));
 
         //We should obtain a green triangle crossing the image looking like this :

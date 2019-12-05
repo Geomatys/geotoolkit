@@ -38,7 +38,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.report.graphic.map.MapDef;
@@ -96,10 +95,11 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
         List<Feature> collection = new ArrayList<>();
         Feature feature = type.newInstance();
+        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getBounds());
+        cdef.setBackground(Color.RED);
         feature.setPropertyValue("map",new MapDef(
-                new CanvasDef(new Dimension(1, 1), Color.RED),
+                cdef,
                 new SceneDef(context),
-                new ViewDef(context.getBounds()),
                 null));
         collection.add(feature);
 
@@ -125,10 +125,10 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
         List<Feature> collection = new ArrayList<>();
         Feature feature = type.newInstance();
-        feature.setPropertyValue("map",new MapDef(
-                new CanvasDef(new Dimension(1, 1), Color.RED),
+        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getBounds());
+        cdef.setBackground(Color.RED);
+        feature.setPropertyValue("map",new MapDef(cdef,
                 new SceneDef(context),
-                new ViewDef(context.getBounds()),
                 null));
         collection.add(feature);
 

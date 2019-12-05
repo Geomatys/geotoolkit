@@ -96,10 +96,6 @@ public class PortrayalRenderedImage implements RenderedImage{
      */
     private final SceneDef sceneDef;
 
-    /**
-     * Portrayal ViewDef with requested envelope.
-     */
-    private final ViewDef viewDef;
 
     /** listener support */
     private final EventListenerList listeners = new EventListenerList();
@@ -110,7 +106,7 @@ public class PortrayalRenderedImage implements RenderedImage{
      *
      * @param canvasDef : canvas size will be ignored.
      */
-    public PortrayalRenderedImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
+    public PortrayalRenderedImage(final CanvasDef canvasDef, final SceneDef sceneDef,
             final Dimension gridSize, final Dimension tileSize, final double scale) throws PortrayalException{
         this.gridSize = gridSize;
         this.tileSize = tileSize;
@@ -119,10 +115,8 @@ public class PortrayalRenderedImage implements RenderedImage{
         this.sampleModel = colorModel.createCompatibleSampleModel(1, 1);
         this.canvasDef = canvasDef;
         this.sceneDef = sceneDef;
-        this.viewDef = viewDef;
 
-
-        this.viewEnvelope = viewDef.getEnvelope();
+        this.viewEnvelope = canvasDef.getEnvelope();
         crs = viewEnvelope.getCoordinateReferenceSystem();
         this.upperleft = new Point2D.Double(
                 viewEnvelope.getMinimum(0),
@@ -341,7 +335,7 @@ public class PortrayalRenderedImage implements RenderedImage{
                 cvs = new J2DCanvasBuffered(
                     crs, new Dimension(tileSize.width,tileSize.height));
                 cvs.setRenderingHint(GO2Hints.KEY_COLOR_MODEL, colorModel);
-                DefaultPortrayalService.prepareCanvas(cvs, canvasDef, sceneDef, viewDef);
+                DefaultPortrayalService.prepareCanvas(cvs, canvasDef, sceneDef);
             }
 
             cvs.setVisibleArea(canvasEnv);

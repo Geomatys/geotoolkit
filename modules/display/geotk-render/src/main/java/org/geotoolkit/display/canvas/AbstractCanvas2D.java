@@ -452,12 +452,14 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
                 final List<MathTransform> components = new ArrayList<>();
                 if (idx > 0) {
                     final TransformSeparator sep = new TransformSeparator(gridToCRS);
+                    sep.addSourceDimensionRange(0, idx);
                     sep.addTargetDimensionRange(0, idx);
                     components.add(sep.separate());
                 }
                 components.add(new AffineTransform2D(objToDisp).inverse());
                 if (idx+2 < extent.getDimension()) {
                     final TransformSeparator sep = new TransformSeparator(gridToCRS);
+                    sep.addSourceDimensionRange(idx+2, extent.getDimension());
                     sep.addTargetDimensionRange(idx+2, extent.getDimension());
                     components.add(sep.separate());
                 }

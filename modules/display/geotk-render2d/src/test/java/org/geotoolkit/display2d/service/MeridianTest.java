@@ -35,13 +35,13 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
@@ -95,10 +95,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef();
+        canvasDef.setDimension(new Dimension(360, 180));
+        canvasDef.setBackground(Color.WHITE);
+        canvasDef.setEnvelope(env);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(180, 80, 20, 10));
     }
 
@@ -122,10 +124,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef();
+        canvasDef.setEnvelope(env);
+        canvasDef.setDimension(new Dimension(360, 180));
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -150,10 +154,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef();
+        canvasDef.setEnvelope(env);
+        canvasDef.setDimension(new Dimension(360, 180));
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -178,10 +184,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef();
+        canvasDef.setEnvelope(env);
+        canvasDef.setDimension(new Dimension(360, 180));
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -206,10 +214,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef();
+        canvasDef.setEnvelope(env);
+        canvasDef.setDimension(new Dimension(360, 180));
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -236,10 +246,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(0, 80, 360, 20));
     }
 
@@ -263,10 +273,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -540, +900); //1 on the left, 2 on the right
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360*4, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360*4, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(180     , 80, 20, 10),
                           new Rectangle(180+ 360, 80, 20, 10),
                           new Rectangle(180+ 720, 80, 20, 10),
@@ -293,10 +303,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -355, +725); //-175 on the left, +545 on the right
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(1080, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(1080, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(-5      , 80, 20, 10),
                           new Rectangle(-5 + 360, 80, 20, 10),
                           new Rectangle(-5 + 720, 80, 20, 10),
@@ -319,10 +329,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
 
         ImageIO.write(image, "PNG", File.createTempFile("test", ".png"));
 
@@ -349,10 +359,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
 
         ImageIO.write(image, "PNG", File.createTempFile("test", ".png"));
 
@@ -378,10 +388,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -402,10 +412,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -425,10 +435,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
     }
@@ -448,10 +458,10 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(60, 50, 260, 110));
     }
 
@@ -470,13 +480,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(0, 0, 360, 180));
     }
-
 
     /**
      * Test coverage that overlaps the +180 meridian.
@@ -494,13 +503,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
-
     }
 
     /**
@@ -519,13 +527,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
-        final ViewDef viewDef = new ViewDef(env);
-        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), env);
+        canvasDef.setBackground(Color.WHITE);
 
-        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef);
         checkImage(image, new Rectangle(350, 80, 10, 20),
                           new Rectangle(0, 80, 10, 20));
-
     }
 
     /**

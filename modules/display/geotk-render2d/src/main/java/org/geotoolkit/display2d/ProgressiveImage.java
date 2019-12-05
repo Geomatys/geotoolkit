@@ -33,12 +33,10 @@ import javax.swing.event.EventListenerList;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -76,7 +74,6 @@ public class ProgressiveImage implements RenderedImage{
 
     private final CanvasDef cdef;
     private final SceneDef sdef;
-    private final ViewDef vdef;
 
     private J2DCanvasBuffered canvas;
 
@@ -90,7 +87,7 @@ public class ProgressiveImage implements RenderedImage{
      *
      * @param canvasDef : canvas size will be ignored
      */
-    public ProgressiveImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
+    public ProgressiveImage(final CanvasDef canvasDef, final SceneDef sceneDef,
             final Dimension gridSize, final Dimension tileSize, final double scale, int nbPainter) throws PortrayalException{
         this.gridSize = gridSize;
         this.tileSize = tileSize;
@@ -105,7 +102,7 @@ public class ProgressiveImage implements RenderedImage{
         this.sampleModel = colorModel.createCompatibleSampleModel(1, 1);
 
 
-        final Envelope envelope = viewDef.getEnvelope();
+        final Envelope envelope = canvasDef.getEnvelope();
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         this.upperleft = new Point2D.Double(
                 envelope.getMinimum(0),
@@ -128,7 +125,6 @@ public class ProgressiveImage implements RenderedImage{
 
         this.cdef = canvasDef;
         this.sdef = sceneDef;
-        this.vdef = viewDef;
 
 //        executor = Executors.newFixedThreadPool(nbPainter, new ThreadFactory() {
 //            private volatile int inc = 0;
@@ -468,11 +464,11 @@ public class ProgressiveImage implements RenderedImage{
 
             final Hints hints = new Hints();
             hints.put(GO2Hints.KEY_COLOR_MODEL, colorModel);
-            canvas = new J2DCanvasBuffered(vdef.getEnvelope().getCoordinateReferenceSystem(), canvasSize, hints);
+            canvas = new J2DCanvasBuffered(cdef.getEnvelope().getCoordinateReferenceSystem(), canvasSize, hints);
         }
 
         try {
-            DefaultPortrayalService.prepareCanvas(canvas, cdef, sdef, vdef);
+            DefaultPortrayalService.prepareCanvas(canvas, cdef, sdef);
         } catch (PortrayalException ex) {
             ex.printStackTrace();
         }
