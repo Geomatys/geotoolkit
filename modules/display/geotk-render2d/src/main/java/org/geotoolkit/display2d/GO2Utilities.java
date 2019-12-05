@@ -75,7 +75,6 @@ import org.opengis.util.GenericName;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -1621,7 +1620,8 @@ public final class GO2Utilities {
             for (int i = 0 ; i < rgbNumBand ; i++) {
                 final DRChannel channel = new DRChannel();
 
-                channel.setBand(bands[i].getName());
+                final String bandName = bands[i].getName();
+                channel.setBand(bandName == null || bandName.isEmpty()? Integer.toString(i) : bandName);
                 channel.setColorSpaceComponent(DynamicRangeSymbolizer.DRChannel.RGBA_COMPONENTS[i]);
 
                 DynamicRangeSymbolizer.DRBound drBound = new DynamicRangeSymbolizer.DRBound();
