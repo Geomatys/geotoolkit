@@ -422,6 +422,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     private static GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
             throws DataStoreException, TransformException, FactoryException, ProcessException {
 
+        double[] resolution = areaOfInterest.getResolution(true);
+
         boolean mustApplyMargin = false;
         for (int i = 0 ; i < margin.length; i++) {
             if (margin[i] > 0) {
@@ -443,7 +445,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                         .build();
 
                 // adapt resolution
-                final double[] resolution = areaOfInterest.getResolution(true);
                 areaOfInterest = areaOfInterest.derive()
                         .rounding(GridRoundingMode.ENCLOSING)
                         .resize(null, resolution)
@@ -458,9 +459,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                         //TODO : we should use a GridCoverageResource.subset with a margin value but this isn't implemented yet
                         Envelope env = fullArea.getEnvelope();
                         double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
-                        double[] aest = areaOfInterest.getResolution(true);
-                        margin[0] = (int) Math.ceil(margin[0] * (est[0]/aest[0]));
-                        margin[1] = (int) Math.ceil(margin[1] * (est[1]/aest[1]));
+                        margin[0] = (int) Math.ceil(margin[0] * (est[0]/resolution[0]));
+                        margin[1] = (int) Math.ceil(margin[1] * (est[1]/resolution[1]));
                     }
                     areaOfInterest = areaOfInterest.derive().margin(margin).resize(null).build();
                     return areaOfInterest;
@@ -478,7 +478,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         // on displayed area
         Envelope canvasEnv = areaOfInterest.getEnvelope();
-        double[] resolution = applyResolution ? areaOfInterest.getResolution(true) : null;
+        if (!applyResolution) resolution = null;
         /////// HACK FOR 0/360 /////////////////////////////////////////////
         try {
             Map.Entry<Envelope, double[]> entry = solveWrapAround(fullArea, canvasEnv, resolution);
