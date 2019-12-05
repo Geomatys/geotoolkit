@@ -24,7 +24,7 @@ import java.util.Objects;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class STSCapabilities {
+public class STSCapabilities implements STSResponse {
 
     protected List<Link> value = new ArrayList<>();
 

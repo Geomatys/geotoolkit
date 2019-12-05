@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * FeatureOfInterest
  */
-public class FeatureOfInterest {
+public class FeatureOfInterest implements STSResponse {
 
     @JsonProperty("@iot.id")
     private String iotId = null;

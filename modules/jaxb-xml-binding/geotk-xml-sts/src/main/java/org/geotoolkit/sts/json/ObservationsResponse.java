@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * ObservationsResponse
  */
-public class ObservationsResponse implements STSResponse {
+public class ObservationsResponse implements STSPagedResponse {
 
     @JsonProperty("@iot.count")
     private BigDecimal iotCount = null;
@@ -41,6 +41,11 @@ public class ObservationsResponse implements STSResponse {
     }
 
     public ObservationsResponse(List<Observation> value) {
+        this.value = value;
+    }
+
+    public ObservationsResponse(BigDecimal iotCount, List<Observation> value) {
+        this.iotCount = iotCount;
         this.value = value;
     }
 

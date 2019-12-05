@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * way. The one constraint is that the observations in a datastream must measure
  * the same observed property (i.e., one phenomenon).
  */
-public class Datastream {
+public class Datastream implements STSResponse {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -56,7 +56,7 @@ public class Datastream {
     private ObservedProperty observedProperty = null;
 
     @JsonProperty("Observations")
-    private List<Observation> observations = null;
+    protected List<Observation> observations = null;
 
     @JsonProperty("Thing@iot.navigationLink")
     private String thingIotNavigationLink = null;
@@ -304,6 +304,18 @@ public class Datastream {
         }
 
         this.observations.add(observationsItem);
+        return this;
+    }
+
+    public Datastream addObservationsItems(List<Observation> observationsItems) {
+        if (observationsItems != null) {
+
+            if (this.observations == null) {
+                this.observations = new ArrayList<>();
+            }
+
+            this.observations.addAll(observationsItems);
+        }
         return this;
     }
 

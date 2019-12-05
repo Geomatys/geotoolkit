@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Thing
  */
-public class Thing {
+public class Thing implements STSResponse {
 
     @JsonProperty("@iot.id")
     private String iotId = null;

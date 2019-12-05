@@ -134,6 +134,9 @@ public abstract class AbstractSTSRequest implements STSRequest {
      * @return the count
      */
     public Boolean getCount() {
+        if (count == null) {
+            return count = Boolean.FALSE;
+        }
         return count;
     }
 

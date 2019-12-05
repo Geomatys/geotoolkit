@@ -26,7 +26,7 @@ import java.util.Objects;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class DataArray {
+public class DataArray implements STSResponse {
 
     @JsonProperty("Datastream@iot.navigationLink")
     private String datastreamIotNavigationLink = null;
@@ -116,7 +116,7 @@ public class DataArray {
     public void setMultiDatastreamIotNavigationLink(String multiDatastreamIotNavigationLink) {
         this.multiDatastreamIotNavigationLink = multiDatastreamIotNavigationLink;
     }
-    
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {

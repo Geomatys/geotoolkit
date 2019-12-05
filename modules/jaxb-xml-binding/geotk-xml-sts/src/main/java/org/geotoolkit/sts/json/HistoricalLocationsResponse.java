@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * HistoricalLocationsResponse
  */
-public class HistoricalLocationsResponse implements STSResponse {
+public class HistoricalLocationsResponse implements STSPagedResponse {
 
     @JsonProperty("@iot.count")
     private BigDecimal iotCount = null;

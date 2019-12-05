@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * HistoricalLocation
  */
-public class HistoricalLocation {
+public class HistoricalLocation implements STSResponse {
 
     @JsonProperty("@iot.id")
     private String iotId = null;

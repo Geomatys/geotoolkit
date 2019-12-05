@@ -26,7 +26,7 @@ import java.util.Objects;
  *
  * @author guilhem
  */
-public class MultiDatastreamsResponse implements STSResponse {
+public class MultiDatastreamsResponse implements STSPagedResponse {
 
     @JsonProperty("@iot.count")
     private BigDecimal iotCount = null;
@@ -54,7 +54,7 @@ public class MultiDatastreamsResponse implements STSResponse {
      * Get iotCount
      *
      * @return iotCount
-  *
+     *
      */
     @Override
     public BigDecimal getIotCount() {
@@ -85,7 +85,7 @@ public class MultiDatastreamsResponse implements STSResponse {
      * Get value
      *
      * @return value
-  *
+     *
      */
     public List<MultiDatastream> getValue() {
         return value;
@@ -104,7 +104,7 @@ public class MultiDatastreamsResponse implements STSResponse {
      * Get iotNextLink
      *
      * @return iotNextLink
-  *
+     *
      */
     @Override
     public String getIotNextLink() {

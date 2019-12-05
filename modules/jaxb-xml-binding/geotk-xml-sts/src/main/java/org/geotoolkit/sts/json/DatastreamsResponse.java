@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * DatastreamsResponse
  */
-public class DatastreamsResponse implements STSResponse {
+public class DatastreamsResponse implements STSPagedResponse {
 
     @JsonProperty("@iot.count")
     private BigDecimal iotCount = null;

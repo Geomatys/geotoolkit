@@ -23,7 +23,7 @@ import java.util.Objects;
  * An Observation is act of measuring or otherwise determining the value of a
  * property [OGC and ISO 19156:2011]
  */
-public class Observation {
+public class Observation implements STSResponse {
 
     @JsonProperty("@iot.id")
     private String iotId = null;

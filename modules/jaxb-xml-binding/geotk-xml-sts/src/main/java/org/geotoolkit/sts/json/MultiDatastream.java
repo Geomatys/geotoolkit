@@ -25,7 +25,7 @@ import java.util.Objects;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class MultiDatastream extends Datastream {
+public class MultiDatastream extends Datastream implements STSResponse {
 
     @JsonProperty("ObservedProperty")
     private List<ObservedProperty> observedProperties = null;
@@ -112,7 +112,7 @@ public class MultiDatastream extends Datastream {
         sb.append("    thing: ").append(toIndentedString(super.getThing())).append("\n");
         sb.append("    sensor: ").append(toIndentedString(super.getSensor())).append("\n");
         sb.append("    observedProperty: ").append(toIndentedString(super.getObservedProperty())).append("\n");
-        sb.append("    observations: ").append(toIndentedString(super.getObservations())).append("\n");
+        sb.append("    observations: ").append(toIndentedString(observations)).append("\n");
         sb.append("    thingIotNavigationLink: ").append(toIndentedString(super.getThingIotNavigationLink())).append("\n");
         sb.append("    sensorIotNavigationLink: ").append(toIndentedString(super.getSensorIotNavigationLink())).append("\n");
         sb.append("    observedPropertyIotNavigationLink: ").append(toIndentedString(super.getObservedPropertyIotNavigationLink())).append("\n");

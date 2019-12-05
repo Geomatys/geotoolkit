@@ -16,11 +16,19 @@
  */
 package org.geotoolkit.sts.json;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface STSResponse {
+public interface STSPagedResponse extends STSResponse {
 
+    BigDecimal getIotCount();
 
+    void setIotCount(BigDecimal iotCount);
+
+    String getIotNextLink();
+
+    void setIotNextLink(String iotNextLink);
 }
