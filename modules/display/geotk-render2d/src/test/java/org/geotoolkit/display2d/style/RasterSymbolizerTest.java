@@ -35,6 +35,7 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
@@ -42,6 +43,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -69,11 +71,9 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
      * - 1 byte per sample
      * - Component color model
      * - 1 raster, not tiled
-     *
      */
-    @Ignore
     @Test
-    public void renderRGB8BitCoverage() throws FactoryException {
+    public void renderRGB8BitsCoverage() throws FactoryException, PortrayalException {
 
         final BufferedImage image = new BufferedImage(360, 180, BufferedImage.TYPE_INT_RGB);
         image.setRGB(0, 0, Color.RED.getRGB());
@@ -93,8 +93,15 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(red,green,blue), image);
 
-        //TODO must finish merge of canvasDef and ViewDef
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
 
+        final CanvasDef cdef = new CanvasDef(grid);
+        final SceneDef sdef = new SceneDef(context);
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
+        assertEquals(Color.GREEN.getRGB(), result.getRGB(359, 0));
+        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 179));
     }
 
     /**
