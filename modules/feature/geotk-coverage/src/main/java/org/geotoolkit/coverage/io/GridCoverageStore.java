@@ -30,6 +30,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOParam;
+
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.cs.EllipsoidalCS;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
@@ -47,11 +62,10 @@ import org.apache.sis.util.Localized;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.PerformanceLevel;
+
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.factory.Hints;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.nio.IOUtilities;
@@ -59,19 +73,10 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LogProducer;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.cs.EllipsoidalCS;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
+
+import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
+import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
 
 /**
@@ -412,7 +417,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     MathTransform2D geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
             final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam,
             final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
-            throws CoverageStoreException
+            throws DataStoreException
     {
         final boolean needsLongitudeShift = needsLongitudeShift(
                 gridGeometry.getCoordinateReferenceSystem().getCoordinateSystem());
@@ -424,6 +429,9 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                     geodeticParam.getCoordinateReferenceSystem(),
                     pixelParam, isNetcdfHack);
         } catch (CoverageStoreException e) {
+            if (e.getCause() != null && e.getCause() instanceof DataStoreException) throw (DataStoreException) e.getCause();
+            throw e;
+        } catch (DataStoreException e) {
             throw e;
         } catch (Exception e) { // There is many different exceptions thrown by the above.
             throw new CoverageStoreException(formatErrorMessage(e), e);
