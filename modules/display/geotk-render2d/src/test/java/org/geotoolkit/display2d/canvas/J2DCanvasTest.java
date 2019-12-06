@@ -18,27 +18,18 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Dimension;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.util.Date;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
-
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * Test envelope configuration on J2DCanvas.
@@ -111,33 +102,4 @@ public class J2DCanvasTest extends org.geotoolkit.test.TestBase {
         DefaultPortrayalService.portray(context, env, new Dimension(800, 600), true);
      }
 
-    @Test
-    public void testObjectToDisplayTrs() throws Exception {
-        final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(360,180));
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
-        env.setRange(0, -180, +180);
-        env.setRange(1, -90, +90);
-        canvas.setVisibleArea(env);
-
-        final AffineTransform2D objtoDisp = canvas.getObjectiveToDisplay();
-        assertEquals(new AffineTransform2D(1, 0, 0, -1, 180, 90), objtoDisp);
-    }
-
-    @Test
-    public void testCenterTransform() throws NoninvertibleTransformException, TransformException {
-        final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(360,180));
-        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
-        env.setRange(0, -180, +180);
-        env.setRange(1, -90, +90);
-        canvas.setVisibleArea(env);
-
-        final AffineTransform2D objtoDisp = canvas.getObjectiveToDisplay();
-        final AffineTransform centerTrs = canvas.getCenterTransform();
-        assertEquals(new AffineTransform2D(1, 0, 0, -1, 0, 0), centerTrs);
-
-        //reset it and check
-        canvas.setCenterTransform(centerTrs);
-        final AffineTransform objToDisp2 = canvas.getObjectiveToDisplay();
-        assertEquals(objtoDisp, objToDisp2);
-    }
 }

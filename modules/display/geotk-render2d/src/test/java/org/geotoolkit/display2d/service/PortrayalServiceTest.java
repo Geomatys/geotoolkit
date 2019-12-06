@@ -32,12 +32,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.Unit;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
@@ -398,17 +400,24 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         hints.put(GO2Hints.KEY_COLOR_MODEL, ColorModel.getRGBdefault());
 
         //create a map context with a layer that will cover the entire area we will ask for
-        final GeneralEnvelope covenv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
-        covenv.setRange(0, -180, 180);
-        covenv.setRange(1, -90, 90);
-        final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D g = img.createGraphics();
-        g.setColor(Color.RED);
-        g.fill(new Rectangle(0, 0, 360, 180));
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(covenv);
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage;
+        {
+            final GeneralEnvelope covenv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+            covenv.setRange(0, -180, 180);
+            covenv.setRange(1, -90, 90);
+            final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
+            final Graphics2D g = img.createGraphics();
+            g.setColor(Color.RED);
+            g.fill(new Rectangle(0, 0, 360, 180));
+            final GridGeometry grid = new GridGeometry(new GridExtent(360, 180), covenv);
+            final List<SampleDimension> bands = new ArrayList<>();
+            bands.add(new SampleDimension.Builder().setName("r").build());
+            bands.add(new SampleDimension.Builder().setName("g").build());
+            bands.add(new SampleDimension.Builder().setName("b").build());
+            bands.add(new SampleDimension.Builder().setName("a").build());
+            coverage = new GridCoverage2D(grid, bands, img);
+        }
+
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, SF.style(SF.rasterSymbolizer()), "unnamed");
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
@@ -423,7 +432,6 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         CanvasDef cdef = new CanvasDef(new Dimension(360, 360), env);
         cdef.setBackground(Color.WHITE);
         BufferedImage buffer = DefaultPortrayalService.portray(cdef, new SceneDef(context, hints));
-        //ImageIO.write(buffer, "png", new File("sanity.png"));
         assertEquals(360,buffer.getWidth());
         assertEquals(360,buffer.getHeight());
 

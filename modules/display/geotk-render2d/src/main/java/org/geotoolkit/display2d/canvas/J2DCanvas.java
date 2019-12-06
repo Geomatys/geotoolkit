@@ -19,16 +19,21 @@ package org.geotoolkit.display2d.canvas;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import org.geotoolkit.display2d.GraphicVisitor;
-import org.geotoolkit.display.canvas.RenderingContext;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.container.GraphicContainer;
+import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display.primitive.SpatialNode;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -36,17 +41,12 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
-import org.geotoolkit.display.container.GraphicContainer;
-import org.geotoolkit.display.primitive.SceneNode;
-import org.geotoolkit.display.primitive.SpatialNode;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -77,12 +77,6 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
         context2D.dispose();
     }
 
-    protected Shape getObjectiveBounds() throws TransformException{
-        final MathTransform2D transform = (MathTransform2D) getObjectiveToDisplay().inverse();
-        final Shape bounds = getDisplayBounds();
-        return transform.createTransformedShape(bounds);
-    }
-
     /**
      * Prepare the renderingContext before painting, this will initialize the context
      * with the correct bounds and transform datas.
@@ -94,36 +88,30 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 
         final Shape canvasDisplayShape = getDisplayBounds();
 
-        final AffineTransform2D objToDisp = getObjectiveToDisplay();
+        //we are prepare a rendering with Graphics2D, which work in corner.
+        final AffineTransform2D dispToObjCorner;
+        final AffineTransform2D objToDispCorner;
+        try {
+            dispToObjCorner = (AffineTransform2D) getGridGeometry2D().getGridToCRS(PixelInCell.CELL_CORNER);
+            objToDispCorner = dispToObjCorner.inverse();
+        } catch (org.opengis.referencing.operation.NoninvertibleTransformException | FactoryException ex) {
+            throw new IllegalStateException(ex.getMessage(), ex);
+        }
 
         if(output != null) output.addRenderingHints(getHints(true));
 
         final Shape canvasObjectShape;
 
-        try {
-            canvasObjectShape = getObjectiveBounds();
-        } catch (TransformException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            //we can not continue with this kind of error
-            // nothing can be redered with this shape
-            return null;
-        }
+        final Shape displayBounds = getDisplayBounds();
+        canvasObjectShape = dispToObjCorner.createTransformedShape(displayBounds);
 
         final Shape paintingObjectiveShape;
 
-        if(paintingDisplayShape == null){
+        if (paintingDisplayShape == null) {
             paintingDisplayShape = canvasDisplayShape;
             paintingObjectiveShape = canvasObjectShape;
-        }else{
-            try {
-                AffineTransform dispToObj = objToDisp.createInverse();
-                paintingObjectiveShape = dispToObj.createTransformedShape(paintingDisplayShape);
-            } catch (NoninvertibleTransformException ex) {
-                monitor.exceptionOccured(ex, Level.WARNING);
-                //we can not continue with this kind of error
-                // nothing can be redered with this shape
-                return null;
-            }
+        } else {
+            paintingObjectiveShape = dispToObjCorner.createTransformedShape(paintingDisplayShape);
         }
 
         //grab the dpi
@@ -133,7 +121,8 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
         }
 
         context.initParameters(
-                objToDisp,
+                getGridGeometry(),
+                objToDispCorner,
                 monitor,
                 paintingDisplayShape,
                 paintingObjectiveShape,
@@ -146,24 +135,6 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
     }
 
     protected boolean render(final RenderingContext2D context2D, final List<SceneNode> graphics){
-
-        //TODO update multithreading rendering for scene tree model
-//        final Boolean mt = (Boolean) context2D.getRenderingHints().get(GO2Hints.KEY_MULTI_THREAD);
-//
-//        if(Boolean.TRUE.equals(mt)){
-//            final MultiThreadedRendering rendering = new MultiThreadedRendering(this.item, this.itemGraphics, renderingContext);
-//            rendering.render();
-//        }else{
-//            for(final MapItem child : item.items()){
-//                if(renderingContext.getMonitor().stopRequested()) break;
-//                final GraphicJ2D gra = itemGraphics.get(child);
-//                if(gra != null){
-//                    gra.paint(renderingContext);
-//                }else{
-//                    getLogger().log(Level.WARNING, "GrahicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", child.getName());
-//                }
-//            }
-//        }
 
         boolean dataPainted = false;
         /*

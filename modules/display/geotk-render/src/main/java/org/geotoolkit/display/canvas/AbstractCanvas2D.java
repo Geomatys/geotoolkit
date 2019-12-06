@@ -40,6 +40,7 @@ import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -290,7 +291,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     /**
-     * @return a snapshot objective To display transform.
+     * @return a snapshot objective To display transform, in Pixel CENTER
      */
     public final AffineTransform2D getObjectiveToDisplay() {
         try {
@@ -518,7 +519,13 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             XAffineTransform.roundIfAlmostInteger(change, EPS);
             objToDisp.concatenate(change);
         }
-        setTransform(objToDisp);
+
+        //transform is in corner at this point, conver it to pixel center
+        final AffineTransform dispToObj = new AffineTransform(objToDisp);
+        dispToObj.invert();
+        AffineTransform translate = new AffineTransform( (AffineTransform) PixelTranslation.translate(new AffineTransform2D(dispToObj), PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER));
+        translate.invert();
+        setTransform(translate);
     }
 
     //convinient method -----------------------------------------
@@ -889,7 +896,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final Rectangle2D rect = getDisplayBounds();
         final double centerX = rect.getCenterX();
         final double centerY = rect.getCenterY();
-        final AffineTransform trs = new AffineTransform(1, 0, 0, 1, -centerX, -centerY);
+        final AffineTransform trs = new AffineTransform(1, 0, 0, 1, -centerX + 0.5, -centerY + 0.5);
         final AffineTransform objToDisp = getObjectiveToDisplay().clone();
         trs.concatenate(objToDisp);
         return trs;
@@ -903,7 +910,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final Rectangle2D rect = getDisplayBounds();
         final double centerX = rect.getCenterX();
         final double centerY = rect.getCenterY();
-        final AffineTransform centerTrs = new AffineTransform(1, 0, 0, 1, centerX, centerY);
+        final AffineTransform centerTrs = new AffineTransform(1, 0, 0, 1, centerX - 0.5, centerY - 0.5);
         centerTrs.concatenate(trs);
         setTransform(centerTrs);
     }

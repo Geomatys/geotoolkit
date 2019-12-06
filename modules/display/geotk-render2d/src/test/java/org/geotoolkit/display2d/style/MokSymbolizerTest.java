@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.display.PortrayalException;
@@ -60,13 +61,14 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
 
 
     private final MapContext context;
-    private final GeneralEnvelope env;
+    private final ImmutableEnvelope env;
 
     public MokSymbolizerTest() throws Exception {
 
-        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
+        this.env = ImmutableEnvelope.castOrCopy(env);
 
         context = MapBuilder.createContext();
 
