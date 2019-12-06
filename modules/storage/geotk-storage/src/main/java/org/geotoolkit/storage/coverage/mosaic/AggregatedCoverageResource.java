@@ -20,7 +20,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +31,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.measure.Unit;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
@@ -177,7 +175,14 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      */
     public synchronized void setSampleDimensions(List<SampleDimension> sampleDimensions) throws DataStoreException {
         eraseCaches();
-        if (bands.size() != sampleDimensions.size()) {
+        if (bands.isEmpty()) {
+            //create virtual bands with no datas
+            for (SampleDimension sd : sampleDimensions) {
+                final VirtualBand band = new VirtualBand();
+                band.userDefinedSampleDimension = sd;
+                bands.add(band);
+            }
+        } else if (bands.size() != sampleDimensions.size()) {
             throw new DataStoreException("Provided dimensions do not match virtual bands size");
         }
         for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
