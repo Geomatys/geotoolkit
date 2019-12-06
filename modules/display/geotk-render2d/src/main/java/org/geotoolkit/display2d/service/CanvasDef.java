@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.service;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -38,8 +39,9 @@ public class CanvasDef {
     private Color background;
     private boolean stretchImage = true;
     private Envelope envelope = new JTSEnvelope2D(CommonCRS.WGS84.normalizedGeographic());
-    private double azimuth = 0;
-    private CanvasMonitor monitor = null;
+    private double azimuth;
+    private CanvasMonitor monitor;
+    private GridGeometry gridGeometry;
 
     public CanvasDef() {
     }
@@ -47,6 +49,10 @@ public class CanvasDef {
     public CanvasDef(final Dimension dim, final Envelope env) {
         this.dimension = dim;
         this.envelope = env;
+    }
+
+    public CanvasDef(GridGeometry gridGeometry) {
+        this.gridGeometry = gridGeometry;
     }
 
     public void setDimension(final Dimension dimension) {
@@ -95,6 +101,14 @@ public class CanvasDef {
 
     public CanvasMonitor getMonitor() {
         return monitor;
+    }
+
+    public GridGeometry getGridGeometry() {
+        return gridGeometry;
+    }
+
+    public void setGridGeometry(GridGeometry gridGeometry) {
+        this.gridGeometry = gridGeometry;
     }
 
     /**

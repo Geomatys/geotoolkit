@@ -242,21 +242,27 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         final MapContext context = sceneDef.getContext();
         renderer.setContext(context);
-        try {
-            canvas.setObjectiveCRS(crs);
-        } catch (TransformException ex) {
-            throw new PortrayalException("Could not set objective crs",ex);
-        }
 
-        //we specifically say to not repect X/Y proportions
-        canvas.setAxisProportions(!canvasDef.isStretchImage());
-        try {
-            canvas.setVisibleArea(contextEnv);
-            if (canvasDef.getAzimuth() != 0) {
-                canvas.rotate( -Math.toRadians(canvasDef.getAzimuth()) );
+        GridGeometry gridGeometry = canvasDef.getGridGeometry();
+        if (gridGeometry != null) {
+            canvas.setGridGeometry(gridGeometry);
+        } else {
+            try {
+                canvas.setObjectiveCRS(crs);
+            } catch (TransformException ex) {
+                throw new PortrayalException("Could not set objective crs",ex);
             }
-        } catch (NoninvertibleTransformException | TransformException ex) {
-            throw new PortrayalException(ex);
+
+            //we specifically say to not repect X/Y proportions
+            canvas.setAxisProportions(!canvasDef.isStretchImage());
+            try {
+                canvas.setVisibleArea(contextEnv);
+                if (canvasDef.getAzimuth() != 0) {
+                    canvas.rotate( -Math.toRadians(canvasDef.getAzimuth()) );
+                }
+            } catch (NoninvertibleTransformException | TransformException ex) {
+                throw new PortrayalException(ex);
+            }
         }
 
         //paints all extensions

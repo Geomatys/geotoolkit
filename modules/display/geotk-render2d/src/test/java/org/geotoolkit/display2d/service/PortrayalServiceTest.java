@@ -56,6 +56,8 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GraphicVisitor;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
@@ -210,6 +212,22 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         GCF.setRenderedImage(img);
         coverage = GCF.getGridCoverage2D();
         coverages.add(coverage);
+
+    }
+
+    /**
+     * Test the grid geometry we provided is used.
+     */
+    public void testGridGeometryPreserved() throws PortrayalException, FactoryException {
+
+        final SceneDef sceneDef = new SceneDef();
+        final GridGeometry gridGeometry = new GridGeometry(new GridExtent(360, 180), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()));
+        final CanvasDef canvasDef = new CanvasDef(gridGeometry);
+        final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.geographic(), new Dimension(10, 10));
+        DefaultPortrayalService.prepareCanvas(canvas, canvasDef, sceneDef);
+
+        assertEquals(gridGeometry, canvas.getGridGeometry());
+        assertEquals(gridGeometry, canvas.getGridGeometry2D());
 
     }
 
@@ -378,9 +396,6 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         final Hints hints = new Hints();
         hints.put(GO2Hints.KEY_COLOR_MODEL, ColorModel.getRGBdefault());
-
-
-
 
         //create a map context with a layer that will cover the entire area we will ask for
         final GeneralEnvelope covenv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
