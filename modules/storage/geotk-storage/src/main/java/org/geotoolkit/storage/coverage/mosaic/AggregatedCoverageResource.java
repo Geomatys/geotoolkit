@@ -98,6 +98,16 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         SCALE
     }
 
+    /**
+     * Based on sample dimension information, we can define
+     * the most appropriate merge operation.
+     */
+    private static enum MergingMode {
+        COLORED,
+        SAMPLED,
+        CONVERTED
+    }
+
     private final StoreListeners listeners = new StoreListeners(null, this);
     private final List<VirtualBand> bands = new ArrayList<>();
 
@@ -112,6 +122,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private GridGeometry cachedGridGeometry;
     private boolean forceTransformedValues;
     private double[] noData;
+    private MergingMode mergeMode;
 
 
     public static GridCoverageResource create(CoordinateReferenceSystem resultCrs, GridCoverageResource ... resources) throws DataStoreException, TransformException {
@@ -538,11 +549,14 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             sampleDimensions = new ArrayList<>();
             for (int i : range) {
                 bands.add(this.bands.get(i));
-                sampleDimensions.add(this.bands.get(i).cachedSampleDimension);
+                sampleDimensions.add(this.bands.get(i).cachedSampleDimension.forConvertedValues(forceTransformedValues));
             }
         } else {
             bands = this.bands;
-            sampleDimensions = getSampleDimensions();
+            sampleDimensions = new ArrayList<>();
+            for (SampleDimension sd : getSampleDimensions()) {
+                sampleDimensions.add(sd.forConvertedValues(forceTransformedValues));
+            }
         }
 
         // Extract resources which intersect request ///////////////////////////
@@ -672,7 +686,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     readGridGeom = maskGrid.derive().margin(5,5).build();
                 }
 
-                final GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(true);
+                GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(forceTransformedValues);
                 if (coverage.getSampleDimensions().size() != 1) {
                     throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
                 }

@@ -307,10 +307,15 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         for (AttributeGroup attg : covdesc.getAttributeGroups()) {
             for (RangeDimension rd : attg.getAttributes()) {
                 if (!(rd instanceof org.opengis.metadata.content.SampleDimension)) continue;
-                final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
-                if (i == index) {
-                    final org.opengis.metadata.content.SampleDimension sd = (org.opengis.metadata.content.SampleDimension) rd;
-                    return new Double[]{sd.getMinValue(),sd.getMaxValue()};
+                final String str = rd.getSequenceIdentifier().tip().toString();
+                try {
+                    final int i = Integer.parseInt(str);
+                    if (i == index) {
+                        final org.opengis.metadata.content.SampleDimension sd = (org.opengis.metadata.content.SampleDimension) rd;
+                        return new Double[]{sd.getMinValue(),sd.getMaxValue()};
+                    }
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
                 }
             }
         }
