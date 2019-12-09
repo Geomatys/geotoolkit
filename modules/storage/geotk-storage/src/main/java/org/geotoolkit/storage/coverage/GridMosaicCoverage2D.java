@@ -16,16 +16,22 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.image.RenderedImage;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.coverage.GridCoverage2D;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramids;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -42,15 +48,18 @@ public final class GridMosaicCoverage2D {
      * @param mosaic
      * @return
      */
-    public static GridCoverage create(org.apache.sis.storage.GridCoverageResource ref, Mosaic mosaic) throws DataStoreException{
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setCoordinateReferenceSystem(mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
-        gcb.setGridToCRS((MathTransform)Pyramids.getTileGridToCRS(mosaic, new Point(0, 0)));
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setRenderedImage(new GridMosaicRenderedImage(mosaic));
+    public static GridCoverage create(org.apache.sis.storage.GridCoverageResource ref, Mosaic mosaic) throws DataStoreException, FactoryException {
+
+        final LinearTransform gridToCrs = Pyramids.getTileGridToCRS(mosaic, new Point(0, 0), PixelInCell.CELL_CENTER);
+        final CoordinateReferenceSystem crs = mosaic.getUpperLeftCorner().getCoordinateReferenceSystem();
+        final Dimension gridSize = mosaic.getGridSize();
+        final Dimension tileSize = mosaic.getTileSize();
+        final GridExtent extent = new GridExtent(gridSize.width * tileSize.width, gridSize.height * tileSize.height);
+        final GridGeometry gridGeom = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, crs);
+        final RenderedImage image = new GridMosaicRenderedImage(mosaic);
         final List<SampleDimension> dims = ref.getSampleDimensions();
-        gcb.setSampleDimensions(dims.toArray(new SampleDimension[0]));
-        return gcb.getGridCoverage2D();
+
+        return new GridCoverage2D(gridGeom, dims, image);
     }
 
 }

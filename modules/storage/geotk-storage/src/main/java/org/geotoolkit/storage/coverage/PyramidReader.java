@@ -125,7 +125,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         final Mosaic mosaic  = mosaics.get(0);
 
         //-- we expect no rotation
-        final MathTransform gridToCRS = Pyramids.getTileGridToCRS2D(mosaic, new Point(0, 0));
+        final MathTransform gridToCRS = Pyramids.getTileGridToCRS2D(mosaic, new Point(0, 0), PixelInCell.CELL_CORNER);
 
         //-- get all mosaics with same scale
         final double scal = mosaic.getScale();
@@ -437,7 +437,8 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
 
         final GridExtent ge = new GridExtent(null, null, high, false);
         final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
-                new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension());
+                new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension(),
+                PixelInCell.CELL_CORNER);
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);

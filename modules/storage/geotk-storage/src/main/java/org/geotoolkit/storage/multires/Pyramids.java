@@ -169,36 +169,12 @@ public final class Pyramids extends Static {
      *
      * @param mosaic not null
      * @param location not null
-     * @return MathTransform never null
-     */
-    public static LinearTransform getTileGridToCRS(Mosaic mosaic, Point location){
-        return getTileGridToCRS(mosaic, location, PixelInCell.CELL_CORNER);
-    }
-
-    /**
-     * Grid to CRS N dimension. CORNER transform
-     *
-     * @param mosaic not null
-     * @param location not null
      * @param orientation pixel orientation
      * @return MathTransform never null
      */
     public static LinearTransform getTileGridToCRS(Mosaic mosaic, Point location, PixelInCell orientation){
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
         return getTileGridToCRSND(mosaic, location, upperleft.getDimension(), orientation);
-    }
-
-    /**
-     * Grid to CRS N dimension. CORNER Transform.
-     * This allows to create a transform ignoring last axis transform.
-     *
-     * @param mosaic not null
-     * @param location not null
-     * @param nbDim : number of dimension wanted. value must be in range [2...crsNbDim]
-     * @return MathTransform never null
-     */
-    public static LinearTransform getTileGridToCRSND(Mosaic mosaic, Point location, int nbDim){
-        return getTileGridToCRSND(mosaic, location, nbDim, PixelInCell.CELL_CORNER);
     }
 
     /**
@@ -231,18 +207,6 @@ public final class Pyramids extends Static {
             }
             return MathTransforms.linear(gm);
         }
-    }
-
-    /**
-     * Grid to CRS 2D part.
-     * Transform correspond to the CORNER.
-     *
-     * @param mosaic not null
-     * @param location not null
-     * @return AffineTransform2D never null.
-     */
-    public static AffineTransform2D getTileGridToCRS2D(Mosaic mosaic, Point location){
-        return getTileGridToCRS2D(mosaic, location, PixelInCell.CELL_CORNER);
     }
 
     /**

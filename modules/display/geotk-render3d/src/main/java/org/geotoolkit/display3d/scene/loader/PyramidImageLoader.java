@@ -45,6 +45,7 @@ import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -159,7 +160,8 @@ public class PyramidImageLoader implements ImageLoader{
         final double targetTileHeight = tileSize.height;
 
         final Mosaic gridmosaic = dataRenderedImage.getGridMosaic();
-        final MathTransform mosaicCrsToMosaicGrid = Pyramids.getTileGridToCRS(gridmosaic, new Point(0, 0)).inverse();
+        final MathTransform mosaicCrsToMosaicGrid = Pyramids.getTileGridToCRS(
+                gridmosaic, new Point(0, 0), PixelInCell.CELL_CORNER).inverse();
 
         final AffineTransform2D targetGridToTargetCrs = new AffineTransform2D(
                 tileEnvelope.getSpan(0)/targetTileWidth,
