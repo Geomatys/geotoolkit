@@ -37,7 +37,7 @@ import org.geotoolkit.display3d.utils.TextureUtils;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
@@ -61,7 +61,7 @@ public class PyramidImageLoader implements ImageLoader{
 
     private final MultiResolutionResource ref;
     private final Pyramid dataSource;
-    private GridMosaicRenderedImage dataRenderedImage = null;
+    private MosaicImage dataRenderedImage = null;
 
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
@@ -128,7 +128,7 @@ public class PyramidImageLoader implements ImageLoader{
             if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
                 final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
-                    dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
+                    dataRenderedImage = new MosaicImage(mosaics.iterator().next());
                 } else {
                     dataRenderedImage = null;
                     return null;
@@ -137,7 +137,7 @@ public class PyramidImageLoader implements ImageLoader{
         } else {
             final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
             if (!mosaics.isEmpty()) {
-                dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
+                dataRenderedImage = new MosaicImage(mosaics.iterator().next());
             } else {
                 dataRenderedImage = null;
                 return null;
@@ -150,7 +150,7 @@ public class PyramidImageLoader implements ImageLoader{
         }
     }
 
-    private static BufferedImage extractTileImage(final Envelope tileEnvelope, final GridMosaicRenderedImage dataRenderedImage,
+    private static BufferedImage extractTileImage(final Envelope tileEnvelope, final MosaicImage dataRenderedImage,
             final MathTransform transformFromOutput, final Dimension tileSize) throws TransformException {
         if (dataRenderedImage == null) {
             return null;

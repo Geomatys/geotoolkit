@@ -46,7 +46,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
-import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryStore;
@@ -150,7 +150,7 @@ public class Isoline2 extends AbstractProcess {
             }
 
             for (final Mosaic mosaic : pyramid.getMosaics()) {
-                final GridMosaicRenderedImage gridImage = new GridMosaicRenderedImage(mosaic);
+                final MosaicImage gridImage = new MosaicImage(mosaic);
 
                 for (int y=0; y<gridImage.getNumYTiles(); y++) {
                     for (int x=0; x<gridImage.getNumXTiles(); x++) {

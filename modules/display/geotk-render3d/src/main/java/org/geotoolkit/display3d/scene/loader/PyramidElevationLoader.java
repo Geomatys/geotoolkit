@@ -43,7 +43,7 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
@@ -67,7 +67,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
     private Pyramid dataSource;
     private final double minElevation;
     private final double maxElevation;
-    private GridMosaicRenderedImage dataRenderedImage = null;
+    private MosaicImage dataRenderedImage = null;
 
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
@@ -157,7 +157,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
             if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
                 final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
-                    dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
+                    dataRenderedImage = new MosaicImage(mosaics.iterator().next());
                 } else {
                     dataRenderedImage = null;
                     return null;
@@ -166,7 +166,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         } else {
             final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
             if (!mosaics.isEmpty()) {
-                dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
+                dataRenderedImage = new MosaicImage(mosaics.iterator().next());
             } else {
                 dataRenderedImage = null;
                 return null;
@@ -180,7 +180,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
     }
 
     private static BufferedImage extractTileImage(final Envelope tileEnvelope,
-            final GridMosaicRenderedImage dataRenderedImage, final MathTransform transformFromOutput,
+            final MosaicImage dataRenderedImage, final MathTransform transformFromOutput,
             final Dimension tileSize) throws TransformException {
         if (dataRenderedImage == null) {
             return null;

@@ -19,6 +19,7 @@ package org.geotoolkit.storage.coverage;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,9 +28,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Tile;
-import org.geotoolkit.math.XMath;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -40,7 +41,7 @@ import org.geotoolkit.math.XMath;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class GridMosaicRenderedImage implements RenderedImage {
+public class MosaicImage implements RenderedImage {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
@@ -70,10 +71,15 @@ public class GridMosaicRenderedImage implements RenderedImage {
     private SampleModel sampleModel = null;
 
     /**
+     * keep a reference to first tile used as a model.
+     */
+    private WeakReference<RenderedImage> firstTile = new WeakReference<>(null);
+
+    /**
      * Constructor
      * @param mosaic the mosaic to read as a rendered image
      */
-    public GridMosaicRenderedImage(final Mosaic mosaic){
+    public MosaicImage(final Mosaic mosaic){
         this(mosaic,new Rectangle(mosaic.getGridSize()));
     }
 
@@ -83,7 +89,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
      * @param gridRange the tile to include in the rendered image.
      *        rectangle max max values are exclusive.
      */
-    public GridMosaicRenderedImage(final Mosaic mosaic, Rectangle gridRange){
+    public MosaicImage(final Mosaic mosaic, Rectangle gridRange){
         ArgumentChecks.ensureNonNull("mosaic", mosaic);
         ArgumentChecks.ensureNonNull("range", gridRange);
 
@@ -100,15 +106,14 @@ public class GridMosaicRenderedImage implements RenderedImage {
         }
     }
 
-    private RenderedImage getFirstTile() {
-        RenderedImage firstTile = null;
-        if (colorModel == null && sampleModel == null) {
+    private synchronized RenderedImage getFirstTile() {
+        RenderedImage firstTile = this.firstTile.get();
+        if (firstTile == null) {
             try {
                 //search the first non missing tile of the Mosaic
                 final GridExtent dataArea = mosaic.getDataExtent();
                 final Dimension tileSize = mosaic.getTileSize();
                 if (dataArea != null) {
-
                     final Tile tile = mosaic.getTile(
                             dataArea.getLow(0) / tileSize.width,
                             dataArea.getLow(1) / tileSize.height);
@@ -123,6 +128,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
                 throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
             }
         }
+        this.firstTile = new WeakReference<>(firstTile);
         return firstTile;
     }
 
@@ -191,6 +197,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
             RenderedImage firstTile = getFirstTile();
             if (firstTile != null) {
                 this.sampleModel = firstTile.getSampleModel();
+            } else {
+                //TODO : what should we return ?
             }
         }
 
@@ -274,7 +282,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
      */
     @Override
     public int getTileHeight() {
-        return this.mosaic.getTileSize().width;
+        return this.mosaic.getTileSize().height;
     }
 
     /**
@@ -317,7 +325,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
                     buffer = tile.getImage().getData().getDataBuffer();
                 }
 
-                if(buffer==null){
+                if (buffer == null) {
                     //create an empty buffer
                     buffer = getSampleModel().createDataBuffer();
                 }
@@ -365,18 +373,15 @@ public class GridMosaicRenderedImage implements RenderedImage {
             }
 
             try {
-
                 for (int y = 0; y < this.getNumYTiles(); y++) {
-                    for (int x = 0; x < this.getNumYTiles(); x++) {
+                    for (int x = 0; x < this.getNumXTiles(); x++) {
                         if (!isTileMissing(x, y)) {
                             final ImageTile tile = getTileReference(x, y);
                             final RenderedImage sourceImg = tile.getImage();
                             final Raster rasterIn = sourceImg.getData();
-
                             rasterOut.getSampleModel().setDataElements(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight(),
                                     rasterIn.getSampleModel().getDataElements(0, 0, this.getTileWidth(), this.getTileHeight(), null, rasterIn.getDataBuffer()),
                                     rasterOut.getDataBuffer());
-
                         }
                     }
                 }

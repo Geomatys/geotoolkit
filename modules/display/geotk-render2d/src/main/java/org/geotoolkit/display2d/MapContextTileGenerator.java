@@ -17,6 +17,7 @@
 package org.geotoolkit.display2d;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -37,9 +38,12 @@ import java.util.function.LongConsumer;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
@@ -67,6 +71,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Displacement;
 import org.opengis.style.FeatureTypeStyle;
@@ -130,11 +135,16 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
     @Override
     public Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord) throws DataStoreException {
+        final LinearTransform tileGridToCrs = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
+        final Dimension tileSize = mosaic.getTileSize();
+        final GridGeometry gridGeom = new GridGeometry(
+                new GridExtent(tileSize.width, tileSize.height),
+                PixelInCell.CELL_CENTER,
+                tileGridToCrs, mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
 
         final CanvasDef canvas = new CanvasDef();
-        canvas.setDimension(mosaic.getTileSize());
+        canvas.setGridGeometry(gridGeom);
         canvas.setBackground(canvasDef.getBackground());
-        canvas.setEnvelope(Pyramids.computeTileEnvelope(mosaic, tileCoord.x, tileCoord.y));
         try {
             final BufferedImage image = DefaultPortrayalService.portray(canvas, sceneDef);
             return new DefaultImageTile(image, tileCoord);

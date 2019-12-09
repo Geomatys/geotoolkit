@@ -268,7 +268,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         }
 
         //-- features the data
-        final boolean deferred = false; //param.isDeferred();
+        final boolean deferred = true; //param.isDeferred();
         if (mosaics.size() == 1) {
 
             //-- features a single slice
@@ -316,7 +316,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         RenderedImage image = null;
         if (deferred) {
             //delay reading tiles
-            image = new GridMosaicRenderedImage(mosaic, tilesInEnvelope);
+            image = new MosaicImage(mosaic, tilesInEnvelope);
         } else {
             //tiles to render, coordinate in grid -> image offset
             final Collection<Point> candidates = new ArrayList<>();

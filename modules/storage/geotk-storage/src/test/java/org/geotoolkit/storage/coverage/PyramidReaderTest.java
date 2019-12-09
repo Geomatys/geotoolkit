@@ -1,4 +1,19 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2019, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
@@ -19,15 +34,13 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.multires.DefiningMosaic;
 import org.geotoolkit.storage.multires.DefiningPyramid;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.DefiningPyramidResource;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
