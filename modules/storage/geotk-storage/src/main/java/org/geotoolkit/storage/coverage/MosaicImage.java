@@ -305,9 +305,9 @@ public class MosaicImage implements RenderedImage {
      * {@inheritDoc}
      */
     @Override
-    public Raster getTile(int tileX, int tileY) {
-        tileX += gridRange.x;
-        tileY += gridRange.y;
+    public Raster getTile(final int tileX, final int tileY) {
+        final int mosaictileX = gridRange.x + tileX;
+        final int mosaictileY = gridRange.y + tileY;
 
         Raster raster;
         try {
@@ -320,8 +320,8 @@ public class MosaicImage implements RenderedImage {
             try {
                 DataBuffer buffer = null;
 
-                if (!mosaic.isMissing(tileX,tileY)) {
-                    final ImageTile tile = (ImageTile) mosaic.getTile(tileX,tileY);
+                if (!mosaic.isMissing(mosaictileX,mosaictileY)) {
+                    final ImageTile tile = (ImageTile) mosaic.getTile(mosaictileX,mosaictileY);
                     buffer = tile.getImage().getData().getDataBuffer();
                 }
 
@@ -332,8 +332,8 @@ public class MosaicImage implements RenderedImage {
 
                 //create a raster from tile image with tile position offset.
                 LOGGER.log(Level.FINE, "Request tile {0}:{1} ", new Object[]{tileX,tileY});
-                final int rX = tileX*this.getTileWidth();
-                final int rY = tileY*this.getTileHeight();
+                final int rX = tileX * this.getTileWidth();
+                final int rY = tileY * this.getTileHeight();
 
                 raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
 

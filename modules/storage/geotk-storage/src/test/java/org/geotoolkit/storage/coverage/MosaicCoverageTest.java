@@ -29,6 +29,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
@@ -80,7 +81,7 @@ public class MosaicCoverageTest {
             Assert.assertEquals(0, render.getMinY());
             Assert.assertEquals(2, render.getNumXTiles());
             Assert.assertEquals(1, render.getNumYTiles());
-
+            iteratorTest(render);
         }
 
         { // level 1
@@ -93,6 +94,7 @@ public class MosaicCoverageTest {
             Assert.assertEquals(0, render.getMinY());
             Assert.assertEquals(4, render.getNumXTiles());
             Assert.assertEquals(2, render.getNumYTiles());
+            iteratorTest(render);
         }
 
         { // level 2
@@ -105,6 +107,7 @@ public class MosaicCoverageTest {
             Assert.assertEquals(0, render.getMinY());
             Assert.assertEquals(8, render.getNumXTiles());
             Assert.assertEquals(4, render.getNumYTiles());
+            iteratorTest(render);
         }
     }
 
@@ -139,6 +142,7 @@ public class MosaicCoverageTest {
             Assert.assertEquals(0, render.getMinY());
             Assert.assertEquals(1, render.getNumXTiles());
             Assert.assertEquals(1, render.getNumYTiles());
+            iteratorTest(render);
         }
 
         { // level 1
@@ -151,6 +155,7 @@ public class MosaicCoverageTest {
             Assert.assertEquals(0, render.getMinY());
             Assert.assertEquals(2, render.getNumXTiles());
             Assert.assertEquals(1, render.getNumYTiles());
+            iteratorTest(render);
         }
 
         { // level 2
@@ -163,7 +168,14 @@ public class MosaicCoverageTest {
             Assert.assertEquals(0, render.getMinY());
             Assert.assertEquals(4, render.getNumXTiles());
             Assert.assertEquals(2, render.getNumYTiles());
+            iteratorTest(render);
         }
     }
 
+    private static void iteratorTest(RenderedImage image) {
+        PixelIterator ite = PixelIterator.create(image);
+        while (ite.next()) {
+            ite.getSampleDouble(0);
+        }
+    }
 }
