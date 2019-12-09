@@ -105,6 +105,42 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
     }
 
     /**
+     * Render a coverage with :
+     * - 3 sample dimensions R,G,B
+     * - 1 byte indexed color model
+     * - 1 raster, not tiled
+     */
+    @Test
+    public void renderRGBIndexedCoverage() throws FactoryException, PortrayalException {
+
+        final BufferedImage image = new BufferedImage(360, 180, BufferedImage.TYPE_BYTE_INDEXED);
+        image.setRGB(0, 0, Color.RED.getRGB());
+        image.setRGB(359, 0, Color.GREEN.getRGB());
+        image.setRGB(0, 179, Color.BLUE.getRGB());
+
+        final GridExtent extent = new GridExtent(360, 180);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, 1, 0, 0);
+        final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
+
+        /*
+         * We volontarely name samples 1 to avoid use of names as a hint.
+         */
+        final SampleDimension rgb = new SampleDimension.Builder().setName("1").build();
+
+        final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(rgb), image);
+
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
+
+        final CanvasDef cdef = new CanvasDef(grid);
+        final SceneDef sdef = new SceneDef(context);
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
+        assertEquals(Color.GREEN.getRGB(), result.getRGB(359, 0));
+        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 179));
+    }
+
+    /**
      * Check proper image reprojection in UTM
      */
     @Ignore
