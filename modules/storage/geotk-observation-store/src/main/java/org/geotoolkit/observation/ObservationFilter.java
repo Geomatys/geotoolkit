@@ -20,7 +20,6 @@ package org.geotoolkit.observation;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
@@ -239,13 +238,6 @@ public interface ObservationFilter {
      * Return true if template are filled with a default period when there is no eventTime suplied.
      */
     boolean isDefaultTemplateTime();
-
-    /**
-     * Set the global level for information message.
-     *
-     * @param logLevel
-     */
-    void setLoglevel(Level logLevel);
 
     void destroy();
 }
