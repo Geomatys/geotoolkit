@@ -20,6 +20,7 @@ import org.geotoolkit.data.geojson.utils.GeoJSONTypes;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -60,5 +61,44 @@ public class GeoJSONFeature extends GeoJSONObject {
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (properties != null) {
+            sb.append("properties:").append(properties).append('\n');
+        }
+        if (geometry != null) {
+            sb.append("geometry:").append(geometry).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof GeoJSONFeature && super.equals(obj)) {
+            GeoJSONFeature that = (GeoJSONFeature) obj;
+            return Objects.equals(this.geometry,   that.geometry) &&
+                   Objects.equals(this.id,         that.id) &&
+                   Objects.equals(this.properties, that.properties);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + super.hashCode();
+        hash = 59 * hash + Objects.hashCode(this.geometry);
+        hash = 59 * hash + Objects.hashCode(this.id);
+        hash = 59 * hash + Objects.hashCode(this.properties);
+        return hash;
     }
 }
