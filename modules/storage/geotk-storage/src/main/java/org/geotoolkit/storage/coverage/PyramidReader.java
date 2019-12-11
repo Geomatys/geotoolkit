@@ -26,36 +26,28 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.Spliterators;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.image.PixelIterator;
-import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.coverage.finder.CoverageFinder;
-import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -67,6 +59,34 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.logging.Logging;
+
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridIterator;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.finder.CoverageFinder;
+import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.MultiResolutionModel;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.Tile;
+
 /**
  * GridCoverage reader on top of a Pyramidal object.
  *
@@ -75,6 +95,16 @@ import org.opengis.util.FactoryException;
  * @module
  */
 public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
+
+    /**
+     * A hard-coded limit to avoid merging too much tiles in one pass, causing application collapse. This is a needed
+     * security for every pyramid composed of non-regular / sparse level of details. In such cases, a user querying a
+     * low resolution overview could accidentally trigger the extraction of many high resolution tiles, due to the
+     * permissive grid loading system of coverage resources, and the lack of native tile subsampling system.
+     * 
+     * TODO: find a better short-circuit strategy, or set the limit configurable.
+     */
+    public static final int TILE_AGGREGATION_LIMIT = 100;
 
     private final T ref;
     private final CoverageFinder coverageFinder = new DefaultCoverageFinder();
@@ -318,16 +348,36 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             //delay reading tiles
             image = new GridMosaicRenderedImage(mosaic, tilesInEnvelope);
         } else {
-            //tiles to render, coordinate in grid -> image offset
-            final Collection<Point> candidates = new ArrayList<>();
-
-            for (int tileCol = (int) tileMinCol; tileCol < tileMaxCol; tileCol++) {
-                for(int tileRow = (int) tileMinRow; tileRow < tileMaxRow; tileRow++) {
-                    //do not check missing tiles, the query pool will exclude them
-                    //if (mosaic.isMissing(tileCol, tileRow)) continue;//--tile not available
-                    candidates.add(new Point(tileCol, tileRow));
-                }
+            /* TODO: find a better approach. We should:
+             * 1. Use a path iterator, to avoid row-major browsing
+             * 2. User grid-geometry should be passed here, so we can subsample or skip some of the read tiles
+             * 3. Prepare output canvas in advance (requires 2), so we can use Stream reduce operation.
+             */
+            long totalNumTiles = tilesInEnvelope.width*(long)tilesInEnvelope.height;
+            if (totalNumTiles > TILE_AGGREGATION_LIMIT) {
+                throw new DataStoreException("Too many tiles to aggregate: "+totalNumTiles+". Maximum allowed: "+TILE_AGGREGATION_LIMIT);
             }
+
+            final GridIterator tileIterator = new GridIterator(
+                    new GridExtent(null,
+                            new long[]{tileMinCol, tileMinRow},
+                            new long[]{tileMaxCol, tileMaxRow},
+                            false
+                    ),
+                    new int[]{1, 1}
+            );
+            final List<ImageTile> candidates = StreamSupport.stream(Spliterators.spliterator(tileIterator, totalNumTiles, 0), false)
+                    .map(extent -> {
+                        try {
+                            return mosaic.getTile(extent.getLow(0), extent.getLow(1));
+                        } catch (DataStoreException e) {
+                            throw new BackingStoreException(e);
+                        }
+                    })
+                    .filter(ImageTile.class::isInstance)
+                    .map(ImageTile.class::cast)
+                    .limit(TILE_AGGREGATION_LIMIT)
+                    .collect(Collectors.toList());
 
             if (candidates.isEmpty()) {
                 //no tiles intersect
@@ -346,67 +396,48 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             }
 
             //aggregation ----------------------------------------------------------
-            final Map hints = new HashMap();
+            for (ImageTile tile : candidates) {
+                final Point position = tile.getPosition();
+                final Point offset = new Point(
+                        (position.x-tileMinCol)*tileSize.width,
+                        (position.y-tileMinRow)*tileSize.height);
 
-            final BlockingQueue<Object> queue = mosaic.getTiles(candidates, hints);
-
-            int i = 0;
-            while(true){
-                Object obj = null;
+                RenderedImage tileImage;
                 try {
-                    obj = queue.poll(100, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException ex) {
-                    //not important
+                    tileImage = tile.getImage();
+                } catch (IOException ex) {
+                    throw new DataStoreException(ex.getMessage(),ex);
                 }
 
-                if(obj == Mosaic.END_OF_QUEUE){
-                    break;
+                if (image == null) {
+                    ColorModel cm = null;
+                    SampleModel sm = null;
+                    if (cm == null) {
+                        cm = tileImage.getColorModel();
+                    }
+                    if (sm == null) {
+                        //if sample model is null, we need to have a coherent relation with
+                        //the color model. we reuse the tile models.
+                        cm = tileImage.getColorModel();
+                        sm = tileImage.getSampleModel();
+                    }
+                    sm = sm.createCompatibleSampleModel((int)(tileMaxCol-tileMinCol)*tileSize.width,
+                                                           (int)(tileMaxRow-tileMinRow)*tileSize.height);
+                    final WritableRaster raster = WritableRaster.createWritableRaster(sm, null);
+                    image = new BufferedImage(cm,raster,
+                            cm.isAlphaPremultiplied(), new Hashtable<>());
                 }
-
-                if(obj instanceof ImageTile){
-                    final ImageTile tile = (ImageTile)obj;
-                    final Point position = tile.getPosition();
-                    final Point offset = new Point(
-                            (int)(position.x-tileMinCol)*tileSize.width,
-                            (int)(position.y-tileMinRow)*tileSize.height);
-
-                    RenderedImage tileImage;
-                    try {
-                        tileImage = tile.getImage();
-                    } catch (IOException ex) {
-                        throw new DataStoreException(ex.getMessage(),ex);
-                    }
-
-                    if (image == null) {
-                        ColorModel cm = null;
-                        SampleModel sm = null;
-                        if (cm == null) {
-                            cm = tileImage.getColorModel();
-                        }
-                        if (sm == null) {
-                            //if sample model is null, we need to have a coherent relation with
-                            //the color model. we reuse the tile models.
-                            cm = tileImage.getColorModel();
-                            sm = tileImage.getSampleModel();
-                        }
-                        sm = sm.createCompatibleSampleModel((int)(tileMaxCol-tileMinCol)*tileSize.width,
-                                                               (int)(tileMaxRow-tileMinRow)*tileSize.height);
-                        final WritableRaster raster = WritableRaster.createWritableRaster(sm, null);
-                        image = new BufferedImage(cm,raster,
-                                cm.isAlphaPremultiplied(), new Hashtable<>());
-                    }
-                    //-- write current features tile into destination image.
-                    final Rectangle tileBound = new Rectangle(offset.x, offset.y, tileImage.getWidth(), tileImage.getHeight());
-                    final WritablePixelIterator destPix = new PixelIterator.Builder().setRegionOfInterest(tileBound).createWritable((BufferedImage)image);
-                    final PixelIterator tilePix = new PixelIterator.Builder().create(tileImage);
-                    double[] pixel = null;
-                    while (destPix.next()) {
-                        tilePix.next();
-                        pixel = tilePix.getPixel(pixel);
-                        destPix.setPixel(pixel);
-                    }
-                    assert !tilePix.next();
+                //-- write current features tile into destination image.
+                final Rectangle tileBound = new Rectangle(offset.x, offset.y, tileImage.getWidth(), tileImage.getHeight());
+                final WritablePixelIterator destPix = new PixelIterator.Builder().setRegionOfInterest(tileBound).createWritable((BufferedImage)image);
+                final PixelIterator tilePix = new PixelIterator.Builder().create(tileImage);
+                double[] pixel = null;
+                while (destPix.next()) {
+                    tilePix.next();
+                    pixel = tilePix.getPixel(pixel);
+                    destPix.setPixel(pixel);
                 }
+                assert !tilePix.next();
             }
 
             if (image == null) {
@@ -586,4 +617,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
     }
 
 
+    private static class TileAggregator {
+
+    }
 }
