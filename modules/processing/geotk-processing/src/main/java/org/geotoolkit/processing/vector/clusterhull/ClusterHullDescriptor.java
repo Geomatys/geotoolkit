@@ -47,7 +47,7 @@ public final class ClusterHullDescriptor extends AbstractProcessDescriptor {
      * Mandatory - Measure of tolerance used to define cluster hull
      */
     public static final ParameterDescriptor<Double> TOLERANCE_VALUE = new ParameterBuilder()
-            .addName("tolerance")
+            .addName("tolerance_value")
             .setRemarks("Measure of tolerance used")
             .setRequired(true)
             .create(Double.class, null);
@@ -56,7 +56,7 @@ public final class ClusterHullDescriptor extends AbstractProcessDescriptor {
      * Mandatory - Unit of tolerance (METER, KILOMETER, STATUTE MILE, NAUTICAL MILE, INCH) default value initialize at METER
      */
     public static final ParameterDescriptor<Unit> TOLERANCE_UNIT = new ParameterBuilder()
-            .addName("tolerance unit")
+            .addName("tolerance_unit")
             .setRemarks("Unit of tolerance used")
             .setRequired(false)
             .create(Unit.class, null);

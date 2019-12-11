@@ -7,6 +7,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.*;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
@@ -26,6 +27,7 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -57,10 +59,10 @@ public class ClusterHullProcess extends AbstractProcess {
     /**
      * Tolerance units authorized
      */
-    private static ArrayList<Unit<Length>> unitArrayList = new ArrayList<>();
+    private static ArrayList<Unit<Length>> unitList = new ArrayList<>();
 
     /**
-     * Build the featureSet result
+     * Used to build the featureSet result
      */
     private static GeometryFactory geometryFactory = new GeometryFactory();
 
@@ -76,11 +78,11 @@ public class ClusterHullProcess extends AbstractProcess {
      */
     public ClusterHullProcess(final ParameterValueGroup input) {
         super(ClusterHullDescriptor.INSTANCE,input);
-        unitArrayList.add(Units.METRE);
-        unitArrayList.add(Units.KILOMETRE);
-        unitArrayList.add(Units.STATUTE_MILE);
-        unitArrayList.add(Units.NAUTICAL_MILE);
-        unitArrayList.add(Units.INCH);
+        unitList.add(Units.METRE);
+        unitList.add(Units.KILOMETRE);
+        unitList.add(Units.STATUTE_MILE);
+        unitList.add(Units.NAUTICAL_MILE);
+        unitList.add(Units.INCH);
     }
 
     /**
@@ -96,26 +98,28 @@ public class ClusterHullProcess extends AbstractProcess {
     }
 
     /**
-     * Compute the cluster hull from a feature collection with a measure of tolerance.
+     * Compute the cluster hull from a feature set according to the measure of tolerance.
      *
      * @return the cluster hull
      */
     public FeatureSet computeClusterHull(final FeatureSet inputFeatureSet, final Double tolerance, Unit<Length> unit) {
         try {
+            // Convert the current tolerance to meter according to the unit specified
             Double toMeter;
-            if (!unitArrayList.contains(unit)) unit = Units.METRE; //TODO or throw error "unit not permitted"
+            if (!unitList.contains(unit)) unit = Units.METRE;
             final UnitConverter uc = unit.getConverterTo(Units.METRE);
             toMeter = uc.convert((double)tolerance);
+            // Initialise the GeometryCSTransformer (Lambert projection)
             initTransformation(inputFeatureSet);
-            List<Geometry> result = new ArrayList<>();
-            List<Geometry> geometries = extractGeometryListFromFeatureSet(inputFeatureSet);
-            List<List<Geometry>> partition = applyGeometryPartitioning(geometries, toMeter);
-            for (List<Geometry> part : partition) {
-                result.add(applyConvexHullOnGeometryList(part));
-            }
-            FeatureSet clusterHull = createFeatureSetFromGeometryList(result);
-
-            /*clusterHull.setSRID(SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1));*/
+            // Apply the process
+            Set<Geometry> geometries = extractGeometrySet(inputFeatureSet);
+            Set<Geometry> current = new HashSet<>();
+            current.add(geometries.iterator().next());
+            Set<Geometry> clusterHullSet = applyGeometricPartioning(geometries, new HashSet<Geometry>(), current, new HashSet<Geometry>(), toMeter);
+            // Extract the initial CRS
+            CoordinateReferenceSystem crs = getCRSFromFeatureSet(inputFeatureSet);
+            // Build the feature set
+            FeatureSet clusterHull = createFeatureSetFromGeometrySet(clusterHullSet, crs);
             return clusterHull;
         } catch (FactoryException e) {
             e.printStackTrace();
@@ -125,29 +129,8 @@ public class ClusterHullProcess extends AbstractProcess {
         return null;
     }
 
-    private void initTransformation(final FeatureSet inputFeatureSet) throws FactoryException {
-        Double[] median = getMedianPoint(inputFeatureSet);
-        final CoordinateReferenceSystem crs1 = CommonCRS.WGS84.normalizedGeographic();
-        final CoordinateReferenceSystem crs2 = getLocalLambertCRS(median[0], median[1]);
-        final MathTransform mt = CRS.findOperation(crs1, crs2, null).getMathTransform();
-        final CoordinateSequenceTransformer cst = new CoordinateSequenceMathTransformer(mt);
-        trs = new GeometryCSTransformer(cst);
-    }
-
-    private Double customDistance(final Geometry geom1, final Geometry geom2) {
-        try {
-            Geometry trans1 = trs.transform(geom1);
-            Geometry trans2 = trs.transform(geom2);
-
-            return trans1.distance(trans2);
-        } catch (TransformException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private List<Geometry> extractGeometryListFromFeatureSet(final FeatureSet fs) {
-        List<Geometry> geometries   = new ArrayList<Geometry>();
+    private Set<Geometry> extractGeometrySet(final FeatureSet fs) {
+        Set<Geometry> geometries   = new HashSet<Geometry>();
 
         try {
             geometries = fs.features(false)
@@ -155,74 +138,122 @@ public class ClusterHullProcess extends AbstractProcess {
                     .map(p -> p.getValue())
                     .filter(value -> value instanceof Geometry)
                     .map(value -> (Geometry) value)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         } catch(DataStoreException e) {
             e.printStackTrace();
         }
         return geometries;
     }
 
-    private Double[] getMedianPoint(final FeatureSet fs) {
-        Double[] median = {0.0, 0.0};
+    private void initTransformation(final FeatureSet inputFeatureSet) throws FactoryException, DataStoreException {
+        Double[] median = getMedianPoint(inputFeatureSet);
+        CoordinateReferenceSystem crs1 = getCRSFromFeatureSet(inputFeatureSet);
+        if (crs1 == null) crs1 = CommonCRS.WGS84.normalizedGeographic();
+        final CoordinateReferenceSystem crs2 = getLocalLambertCRS(median[0], median[1]);
+        final MathTransform mt = CRS.findOperation(crs1, crs2, null).getMathTransform();
+        final CoordinateSequenceTransformer cst = new CoordinateSequenceMathTransformer(mt);
+        trs = new GeometryCSTransformer(cst);
+    }
+
+    private CoordinateReferenceSystem getCRSFromFeatureSet(FeatureSet fs) throws DataStoreException {
+        final FeatureType type = fs.getType();
+        final PropertyType geometryType = type.getProperty("geometry");
+        final CoordinateReferenceSystem crs = FeatureExt.getCRS(geometryType);
+
+        return crs;
+    }
+
+    private Double customDistance(final Geometry geom1, final Geometry geom2) {
+        Geometry trans1 = null;
+        Geometry trans2 = null;
+
         try {
-            Optional<Envelope> envelope = fs.features(false)
-                    .map(f -> f.getProperty("geometry"))
-                    .map(p -> p.getValue())
-                    .filter(value -> value instanceof Geometry)
-                    .map(value -> (Geometry)value)
-                    .map(Geometry::getEnvelopeInternal)
-                    .reduce((e1, e2) -> {
-                        e1.expandToInclude(e2);
-                        return e1;
-                    });
-            if(envelope.isPresent()){
-                median[0] = (envelope.get().getMinX() + envelope.get().getMaxX()) / 2;
-                median[1] = (envelope.get().getMinY() + envelope.get().getMaxY()) / 2;
-            }
-        } catch(DataStoreException e) {
+            trans1 = trs.transform(geom1);
+            trans2 = trs.transform(geom2);
+        } catch (TransformException e) {
             e.printStackTrace();
         }
 
+        return trans1.distance(trans2);
+    }
+
+    private Double[] getMedianPoint(final FeatureSet fs) throws DataStoreException {
+        Double[] median = {0.0, 0.0};
+        Optional<Envelope> envelope;
+
+        envelope = fs.features(false)
+                .map(f -> f.getProperty("geometry"))
+                .map(p -> p.getValue())
+                .filter(value -> value instanceof Geometry)
+                .map(value -> (Geometry)value)
+                .map(Geometry::getEnvelopeInternal)
+                .reduce((e1, e2) -> {
+                    e1.expandToInclude(e2);
+                    return e1;
+                });
+        if(envelope.isPresent()){
+            median[0] = (envelope.get().getMinX() + envelope.get().getMaxX()) / 2;
+            median[1] = (envelope.get().getMinY() + envelope.get().getMaxY()) / 2;
+        }
         return median;
     }
 
-    private List<List<Geometry>> applyGeometryPartitioning(final List<Geometry> geometries, final Double tolerance) {
-        if (geometries.isEmpty()) return null;
-        Map<Integer, List<Geometry>> partition    = new HashMap<>();
-        Geometry firstGeom                         = geometries.get(0);
-
-        // Init partition
-        partition.put(1, new ArrayList<>());
-        partition.get(1).add(firstGeom);
-
-        // Sort geometry according to tolerance
-        for(int i = 1; i < geometries.size(); i++) {
-            Iterator it = partition.entrySet().iterator();
-            boolean found = false;
-            while (it.hasNext()) {
-                Map.Entry<Integer, List<Geometry>> pair = (Map.Entry<Integer, List<Geometry>>)it.next();
-                Integer part = pair.getKey();
-                List<Geometry> current = pair.getValue();
-
-                for(Geometry c: current) {
-                    System.out.println(computeDistance.apply(geometries.get(i), c));
-                    if (computeDistance.apply(geometries.get(i), c) <= tolerance) {
-                        partition.get(part).add(geometries.get(i));
-                        found = true;
-                        break;
-                    }
+    private Set<Geometry> applyGeometricPartioning(Set<Geometry> in, Set<Geometry> out, Set<Geometry> current, Set<Geometry> store, final Double tolerance) {
+        if (in.isEmpty()) {
+            current.addAll(store);
+            out.add(applyOnSetConvexHull(current));
+            return out;
+        } else {
+            Set<Geometry> K = neighborhood(in, current, tolerance);
+            if (K.isEmpty()) {
+                in.removeAll(current);
+                current.addAll(store);
+                out.add(applyOnSetConvexHull(current));
+                if (in.isEmpty()) {
+                    return out;
+                } else {
+                    final Set<Geometry> newCurrent = new HashSet<>();
+                    newCurrent.add(in.iterator().next());
+                    return applyGeometricPartioning(in, out, newCurrent, new HashSet<Geometry>(), tolerance);
                 }
-            }
-            if (!found) {
-                partition.put(partition.size() + 1, new ArrayList<>());
-                partition.get(partition.size()).add(geometries.get(i));
+            } else {
+                in.removeAll(current);
+                in.removeAll(K);
+                store.addAll(current);
+                return applyGeometricPartioning(in, out, K, store, tolerance);
             }
         }
-        return new ArrayList(partition.values());
+    }
+
+    private Set<Geometry> neighborhood(Set<Geometry> in, Set<Geometry> current, Double tolerance) {
+        Set<Geometry> target = new HashSet<>();
+        Set<Geometry> copyIn = new HashSet<>();
+        copyIn.addAll(in);
+
+        for (Geometry geomIn: copyIn) {
+            for (Geometry geomCurrent: current) {
+                if (computeDistance.apply(geomIn, geomCurrent) <= tolerance) {
+                    target.add(geomIn);
+                    break;
+                }
+            }
+        }
+        return target;
+    }
+
+    private Geometry applyOnSetConvexHull(Set<Geometry> geometries) {
+        Geometry target = geometries.iterator().next();
+
+        for (Geometry geom: geometries) {
+            target = target.union(geom);
+            target = target.convexHull();
+        }
+        return target;
     }
 
     private Geometry applyConvexHullOnGeometryList(final List<Geometry> geometries) {
         Geometry convexHull = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+
         for(Geometry g: geometries) {
             convexHull = convexHull.union(g);
             convexHull = convexHull.convexHull();
@@ -230,37 +261,32 @@ public class ClusterHullProcess extends AbstractProcess {
         return convexHull;
     }
 
-    private FeatureSet createFeatureSetFromGeometryList(final List<Geometry> geometries) throws DataStoreException {
+    private FeatureSet createFeatureSetFromGeometrySet(final Set<Geometry> geometries, final CoordinateReferenceSystem crs) throws DataStoreException {
         final InMemoryStore store = new InMemoryStore();
-        final FeatureType type = createSimpleType();
+        final FeatureType type = createSimpleType(crs);
         List<Feature> features = new ArrayList<>();
 
-        // create the featureStore (ref: featureStoreWritingDemo)
         WritableFeatureSet resource;
         resource = (WritableFeatureSet) store.add(new DefiningFeatureSet(type, null));
-        // adding records
         for (Geometry geometry: geometries) {
             features.add(createDefaultFeatureFromGeometry(geometry, type));
         }
-        // store them
         resource.add(features.iterator());
-
         return resource;
     }
 
     private Feature createDefaultFeatureFromGeometry(final Geometry geometry, final FeatureType type) {
         final Feature feature = type.newInstance();
 
-        feature.setPropertyValue("geom", geometryFactory.createGeometry(geometry));
-
+        feature.setPropertyValue("geometry", geometryFactory.createGeometry(geometry));
         return feature;
     }
 
-    private static FeatureType createSimpleType() {
+    private static FeatureType createSimpleType(final CoordinateReferenceSystem crs) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         ftb.setName("Simple type");
-        ftb.addAttribute(Geometry.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Geometry.class).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         return ftb.build();
     }
 

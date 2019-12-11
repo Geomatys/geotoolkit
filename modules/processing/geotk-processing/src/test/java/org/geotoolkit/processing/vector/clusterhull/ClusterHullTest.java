@@ -1,31 +1,34 @@
 package org.geotoolkit.processing.vector.clusterhull;
 
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.measure.Units;
-import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.WritableFeatureSet;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.geotoolkit.storage.feature.DefiningFeatureSet;
-import org.geotoolkit.storage.memory.InMemoryStore;
+import org.geotoolkit.storage.DataStores;
 import org.junit.Test;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 import org.opengis.util.NoSuchIdentifierException;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.measure.Unit;
+import javax.measure.quantity.Length;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -43,132 +46,138 @@ public class ClusterHullTest extends AbstractProcessTest {
     }
 
     @Test
-    public void testClusterHull1() throws NoSuchIdentifierException, ProcessException {
-        // Inputs
-        final FeatureSet featureSet = buildFeatureSet();
-        // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:clusterhull");
+    public void testClusterHull1() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
+        testClusterHullBasic(
+                "cluster_hull_test_1.json",
+                "cluster_hull_test_1_60km_expected.json",
+                60.0,
+                Units.KILOMETRE
+        );
+    }
+    @Test
+    public void testClusterHull2() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
+        testClusterHullBasic(
+                "cluster_hull_test_2.json",
+                "cluster_hull_test_2_60km_expected.json",
+                60.0,
+                Units.KILOMETRE
+        );
+        testClusterHullBasic(
+                "cluster_hull_test_2.json",
+                "cluster_hull_test_2_80km_expected.json",
+                80.0,
+                Units.KILOMETRE
+        );
+    }
+    @Test
+    public void testClusterHull3() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
+        testClusterHullBasic(
+                "cluster_hull_test_3.json",
+                "cluster_hull_test_3_30km_expected.json",
+                30.0,
+                Units.KILOMETRE
+        );
+        testClusterHullBasic(
+                "cluster_hull_test_3.json",
+                "cluster_hull_test_3_71km_expected.json",
+                71.0,
+                Units.KILOMETRE
+        );
+    }
+    @Test
+    public void testClusterHull4() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
+        testClusterHullBasic(
+                "cluster_hull_test_4.json",
+                "cluster_hull_test_4_60km_expected.json",
+                60.0,
+                Units.KILOMETRE
+        );
+        testClusterHullBasic(
+                "cluster_hull_test_4.json",
+                "cluster_hull_test_4_90km_expected.json",
+                90.0,
+                Units.KILOMETRE
+        );
+        testClusterHullBasic(
+                "cluster_hull_test_4.json",
+                "cluster_hull_test_4_120km_expected.json",
+                120.0,
+                Units.KILOMETRE
+        );
+        testClusterHullBasic(
+                "cluster_hull_test_4.json",
+                "cluster_hull_test_4_150km_expected.json",
+                150.0,
+                Units.KILOMETRE
+        );
+    }
+    @Test
+    public void testClusterHull15() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
+        testClusterHullBasic(
+                "cluster_hull_test_5.json",
+                "cluster_hull_test_5_40km_expected.json",
+                40.0,
+                Units.KILOMETRE
+        );
+        testClusterHullBasic(
+                "cluster_hull_test_5.json",
+                "cluster_hull_test_5_60km_expected.json",
+                60.0,
+                Units.KILOMETRE
+        );
+    }
 
+    private void testClusterHullBasic(String filename_in, String filename_expected, Double tolerance, Unit<Length> unit) throws URISyntaxException, DataStoreException, NoSuchIdentifierException, ProcessException {
+        final FeatureSet featureSet = buildFeatureSet(filename_in);
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:clusterhull");
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_set_in").setValue(featureSet);
-        in.parameter("tolerance_value").setValue(100000.0);
-        in.parameter("tolerance_unit").setValue(Units.METRE);
+        in.parameter("tolerance_value").setValue(tolerance);
+        in.parameter("tolerance_unit").setValue(unit);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
-
         //Feature set out
-        final FeatureSet resultGeom = (FeatureSet) proc.call().parameter("feature_set_out").getValue();
-
-        //Expected Features out
-        final FeatureSet featureSetResult1 = buildFeatureSetResult1();
-        assertTrue(featureSetResult1.equals(resultGeom));
+        final FeatureSet out = (FeatureSet) proc.call().parameter("feature_set_out").getValue();
+        //Feature set expected
+        final FeatureSet expected = buildFeatureSet(filename_expected);
+        //Test
+        GeometryCollection gc1 = extractGeometryCollectionFromFeatureSet(out);
+        GeometryCollection gc2 = extractGeometryCollectionFromFeatureSet(expected);
+        // is same geometry
+        assertTrue(gc1.equalsNorm(gc2));
+        FeatureType type1 = out.getType();
+        FeatureType type2 = expected.getType();
+        // is same feature
+        assertEquals(FeatureExt.getCRS(type1), FeatureExt.getCRS(type2));
     }
 
-    private FeatureSet buildFeatureSet() {
-        List<Geometry> geometries = new ArrayList<Geometry>();
+    private GeometryCollection extractGeometryCollectionFromFeatureSet(final FeatureSet fs) {
+        List<Geometry> geometries = new ArrayList<>();
 
-        Geometry geom1 = geometryFactory.createPoint(new Coordinate(-6.6, 47.3));
-        Geometry geom2 = geometryFactory.createPoint(new Coordinate(-7.6, 47.7));
-        Geometry geom3 = geometryFactory.createPoint(new Coordinate(-6.4, 48.0));
-        Geometry geom4 = geometryFactory.createPoint(new Coordinate(-6.0, 47.6));
-        Geometry geom5 = geometryFactory.createPoint(new Coordinate(-4.9, 47.0));
-        Geometry geom6 = geometryFactory.createPoint(new Coordinate(-4.9, 47.5));
-        Geometry geom7 = geometryFactory.createPoint(new Coordinate(-4.5, 46.7));
-        Geometry geom8 = geometryFactory.createPoint(new Coordinate(-6.2, 46.5));
-        Geometry geom9 = geometryFactory.createPoint(new Coordinate(-7.8, 45.4));
-        Geometry geom10 = geometryFactory.createPoint(new Coordinate(-6.0, 46.0));
-        Geometry geom11 = geometryFactory.createPoint(new Coordinate(-7.7, 46.6));
-        geometries.add(geom1);
-        geometries.add(geom2);
-        geometries.add(geom3);
-        geometries.add(geom4);
-        geometries.add(geom5);
-        geometries.add(geom6);
-        geometries.add(geom7);
-        geometries.add(geom8);
-        geometries.add(geom9);
-        geometries.add(geom10);
-        geometries.add(geom11);
         try {
-            FeatureSet fs = createFeatureSetFromGeometryList(geometries);
+            fs.features(false).collect(Collectors.toList());
 
-            return fs;
-        } catch (DataStoreException e) {
+            geometries = fs.features(false)
+                    .map(f -> f.getProperty("geometry"))
+                    .map(p -> p.getValue())
+                    .filter(value -> value instanceof Geometry)
+                    .map(value -> (Geometry) value)
+                    .collect(Collectors.toList());
+        } catch(DataStoreException e) {
             e.printStackTrace();
         }
-
-        return null;
+        int size = geometries.size();
+        Geometry[] geometries1 = geometries.toArray(new Geometry[size]);
+        return geometryFactory.createGeometryCollection(geometries1);
     }
 
-    private FeatureSet buildFeatureSetResult1() {
-        List<Geometry> geometries = new ArrayList<Geometry>();
+    public FeatureSet buildFeatureSet(String filename) throws URISyntaxException, DataStoreException {
+        final URI uri = ClusterHullTest.class.getResource("/org.geotoolkit.processing.vector.clusterhull/geojson/" + filename).toURI();
+        ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
+        param.parameter(PATH.getName().getCode()).setValue(uri);
+        final DataStore store = DataStores.open(param);
+        GenericName types = DataStores.getNames(store, true, FeatureSet.class).iterator().next();
+        FeatureSet target = (FeatureSet) store.findResource(types.toString());
 
-        Geometry geom1 = geometryFactory.createPolygon(new Coordinate[]{
-                new Coordinate(-6.6, 47.3),
-                new Coordinate(-7.6, 47.7),
-                new Coordinate(-6.4, 48),
-                new Coordinate(-4.9, 47.5),
-                new Coordinate(-6.6, 47.3),
-        });
-        Geometry geom2 = geometryFactory.createPolygon(new Coordinate[]{
-                new Coordinate(-4.5, 46.7),
-                new Coordinate(-4.9, 47),
-                new Coordinate(-4.9, 47.5),
-                new Coordinate(-4.5, 46.7),
-        });
-        Geometry geom3 = geometryFactory.createLineString(new Coordinate[]{
-                new Coordinate(-6.2, 46.5),
-                new Coordinate(-6, 46)
-        });
-        Geometry geom4 = geometryFactory.createPoint(new Coordinate(-7.8, 45.4));
-        Geometry geom5 = geometryFactory.createPoint(new Coordinate(-7.7, 46.6));
-        geometries.add(geom1);
-        geometries.add(geom2);
-        geometries.add(geom3);
-        geometries.add(geom4);
-        geometries.add(geom5);
-        try {
-            FeatureSet fs = createFeatureSetFromGeometryList(geometries);
-
-            return fs;
-        } catch (DataStoreException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    private FeatureSet createFeatureSetFromGeometryList(final List<Geometry> geometries) throws DataStoreException {
-        final InMemoryStore store = new InMemoryStore();
-        final FeatureType type = createSimpleType();
-        List<Feature> features = new ArrayList<>();
-
-        // create the featureStore (ref: featureStoreWritingDemo)
-        WritableFeatureSet resource;
-        resource = (WritableFeatureSet) store.add(new DefiningFeatureSet(type, null));
-        // adding records
-        for (Geometry geometry: geometries) {
-            features.add(createDefaultFeatureFromGeometry(geometry, type));
-        }
-        // store them
-        resource.add(features.iterator());
-
-        return resource;
-    }
-
-    private static FeatureType createSimpleType() {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-
-        ftb.setName("Simple type");
-        ftb.addAttribute(Geometry.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
-
-        return ftb.build();
-    }
-
-    private Feature createDefaultFeatureFromGeometry(final Geometry geometry, final FeatureType type) {
-        final Feature feature = type.newInstance();
-
-        feature.setPropertyValue("geom", geometryFactory.createGeometry(geometry));
-
-        return feature;
+        return target;
     }
 }
