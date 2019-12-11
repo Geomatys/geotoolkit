@@ -46,7 +46,7 @@ import javax.measure.quantity.Length;
  * a feature set of polygons that represent the footprints of the set of elements
  * according to tolerance distance.
  *
- * @author Maxime Gavens
+ * @author Maxime Gavens - décembre 2019
  */
 public class ClusterHullProcess extends AbstractProcess {
 
@@ -115,7 +115,7 @@ public class ClusterHullProcess extends AbstractProcess {
             Set<Geometry> geometries = extractGeometrySet(inputFeatureSet);
             Set<Geometry> current = new HashSet<>();
             current.add(geometries.iterator().next());
-            Set<Geometry> clusterHullSet = applyGeometricPartioning(geometries, new HashSet<Geometry>(), current, new HashSet<Geometry>(), toMeter);
+            Set<Geometry> clusterHullSet = applyClusterHull(geometries, new HashSet<Geometry>(), current, new HashSet<Geometry>(), toMeter);
             // Extract the initial CRS
             CoordinateReferenceSystem crs = getCRSFromFeatureSet(inputFeatureSet);
             // Build the feature set
@@ -198,7 +198,7 @@ public class ClusterHullProcess extends AbstractProcess {
         return median;
     }
 
-    private Set<Geometry> applyGeometricPartioning(Set<Geometry> in, Set<Geometry> out, Set<Geometry> current, Set<Geometry> store, final Double tolerance) {
+    private Set<Geometry> applyClusterHull(Set<Geometry> in, Set<Geometry> out, Set<Geometry> current, Set<Geometry> store, final Double tolerance) {
         if (in.isEmpty()) {
             current.addAll(store);
             out.add(applyOnSetConvexHull(current));
@@ -214,13 +214,13 @@ public class ClusterHullProcess extends AbstractProcess {
                 } else {
                     final Set<Geometry> newCurrent = new HashSet<>();
                     newCurrent.add(in.iterator().next());
-                    return applyGeometricPartioning(in, out, newCurrent, new HashSet<Geometry>(), tolerance);
+                    return applyClusterHull(in, out, newCurrent, new HashSet<Geometry>(), tolerance);
                 }
             } else {
                 in.removeAll(current);
                 in.removeAll(K);
                 store.addAll(current);
-                return applyGeometricPartioning(in, out, K, store, tolerance);
+                return applyClusterHull(in, out, K, store, tolerance);
             }
         }
     }
@@ -249,16 +249,6 @@ public class ClusterHullProcess extends AbstractProcess {
             target = target.convexHull();
         }
         return target;
-    }
-
-    private Geometry applyConvexHullOnGeometryList(final List<Geometry> geometries) {
-        Geometry convexHull = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-
-        for(Geometry g: geometries) {
-            convexHull = convexHull.union(g);
-            convexHull = convexHull.convexHull();
-        }
-        return convexHull;
     }
 
     private FeatureSet createFeatureSetFromGeometrySet(final Set<Geometry> geometries, final CoordinateReferenceSystem crs) throws DataStoreException {
