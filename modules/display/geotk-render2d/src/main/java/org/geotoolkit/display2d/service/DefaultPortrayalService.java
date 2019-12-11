@@ -76,6 +76,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
+import org.geotoolkit.display2d.canvas.J2DCanvasDirect;
 import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
@@ -200,17 +201,30 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         final Envelope contextEnv = canvasDef.getEnvelope();
         final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
+        final Graphics2D graphics = canvasDef.getGraphics();
 
-        final J2DCanvasBuffered canvas = new J2DCanvasBuffered(
+        final J2DCanvas canvas;
+        if (graphics == null) {
+            //render in image
+            canvas = new J2DCanvasBuffered(
                 crs,
                 canvasDef.getDimension(),
                 sceneDef.getHints());
+        } else {
+            //render to provided graphics2D
+            canvas = new J2DCanvasDirect(crs, sceneDef.getHints());
+            ((J2DCanvasDirect) canvas).setGraphics2D(graphics);
+            canvas.setDisplayBounds(new Rectangle(canvasDef.getDimension()));
+        }
 
         prepareCanvas(canvas, canvasDef, sceneDef);
-
         canvas.repaint();
-        final BufferedImage buffer = canvas.getSnapShot();
-        canvas.dispose();
+
+        BufferedImage buffer = null;
+        if (graphics == null) {
+            buffer = (BufferedImage) canvas.getSnapShot();
+            canvas.dispose();
+        }
 
         return buffer;
     }

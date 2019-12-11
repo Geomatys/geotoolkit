@@ -401,7 +401,7 @@ public class MosaicImage implements RenderedImage {
         final RenderedImage firstTile = getFirstTile();
         Raster rasterOut = null;
         if (firstTile != null) {
-            rasterOut = firstTile.getTile(0, 0).createCompatibleWritableRaster(rect.width, rect.height);
+            rasterOut = firstTile.getTile(0, 0).createCompatibleWritableRaster(0, 0, rect.width, rect.height);
 
             // Clear dataBuffer to 0 value for all bank
             for (int s = 0; s < rasterOut.getDataBuffer().getSize(); s++) {
@@ -445,6 +445,7 @@ public class MosaicImage implements RenderedImage {
                         }
                     }
                 }
+                rasterOut = rasterOut.createTranslatedChild(rect.x, rect.y);
 
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "", ex);

@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.service;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -42,6 +43,7 @@ public class CanvasDef {
     private double azimuth;
     private CanvasMonitor monitor;
     private GridGeometry gridGeometry;
+    private Graphics2D graphics;
 
     public CanvasDef() {
     }
@@ -109,6 +111,14 @@ public class CanvasDef {
 
     public void setGridGeometry(GridGeometry gridGeometry) {
         this.gridGeometry = gridGeometry;
+    }
+
+    public Graphics2D getGraphics() {
+        return graphics;
+    }
+
+    public void setGraphics(Graphics2D graphics) {
+        this.graphics = graphics;
     }
 
     /**

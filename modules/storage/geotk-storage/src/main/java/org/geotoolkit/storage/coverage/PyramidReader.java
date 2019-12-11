@@ -40,12 +40,11 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -59,7 +58,6 @@ import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -423,11 +421,13 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
 ////        image = ImageUtils.replaceFloatingColorModel(image);
 
         //build the coverage ---------------------------------------------------
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        ref.getIdentifier().ifPresent((n) -> gcb.setName(n.tip().toString()));
-        final List<SampleDimension> dimensions = getSampleDimensions();
-        if (dimensions != null) {
-            gcb.setSampleDimensions(dimensions.toArray(new SampleDimension[dimensions.size()]));
+        List<SampleDimension> dimensions = getSampleDimensions();
+        if (dimensions == null) {
+            //dimension have not been defined
+            dimensions = new ArrayList<>();
+            for (int i = 0, n = image.getSampleModel().getNumBands(); i < n; i++) {
+                dimensions.add(new SampleDimension.Builder().setName(i).build());
+            }
         }
 
         final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
@@ -437,13 +437,15 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
 
         final GridExtent ge = new GridExtent(null, null, high, false);
         final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
-                new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension(),
-                PixelInCell.CELL_CORNER);
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS);
-        gcb.setGridGeometry(gridgeo);
-        gcb.setRenderedImage(image);
+                new Point(tileMinCol,tileMinRow),wantedCRS.getCoordinateSystem().getDimension(),
+                PixelInCell.CELL_CENTER);
+        final GridGeometry gridgeo = new GridGeometry(ge, PixelInCell.CELL_CENTER, gtc, wantedCRS);
 
-        return gcb.build();
+        try {
+            return new GridCoverage2D(gridgeo, dimensions, image);
+        } catch (FactoryException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
     }
 
      /**
