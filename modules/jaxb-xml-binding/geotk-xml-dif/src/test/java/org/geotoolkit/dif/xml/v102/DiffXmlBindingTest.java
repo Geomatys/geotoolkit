@@ -76,7 +76,7 @@ public class DiffXmlBindingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void marshallingTest() throws Exception {
         DIF dif = new DIF();
-        dif.setEntryID(new EntryIDType("id-1", null));
+        dif.setEntryID(new EntryIDType("dif-1", null));
         dif.setEntryTitle("title");
         dif.setSummary(new SummaryType("some abstract", "some purpose"));
         dif.getMetadataAssociation().add(new MetadataAssociationType(new EntryIDType("id-1", null), MetadataAssociationTypeEnum.PARENT, null));
@@ -150,7 +150,7 @@ public class DiffXmlBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
 
         marshaller.marshal(dif, sw);
-        System.out.println(sw.toString());
+        //System.out.println(sw.toString());
 
         final DocumentComparator comparator = new DocumentComparator(sw.toString(), getResourceAsStream("org/geotoolkit/dif/xml/v102/dif.xml"));
         comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
