@@ -418,30 +418,31 @@ public class MosaicImage implements RenderedImage {
                     for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
                         if (!isTileMissing(x, y)) {
                             final ImageTile tile = getTileReference(x, y);
-                            final Rectangle tileRect = new Rectangle(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
+                            if (tile != null) {
+                                final Rectangle tileRect = new Rectangle(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
 
-                            final int minX, maxX, minY, maxY;
-                            minX = XMath.clamp(rect.x, tileRect.x, tileRect.x + tileRect.width);
-                            maxX = XMath.clamp(rect.x + rect.width, tileRect.x, tileRect.x + tileRect.width);
-                            minY = XMath.clamp(rect.y, tileRect.y, tileRect.y + tileRect.height);
-                            maxY = XMath.clamp(rect.y + rect.height, tileRect.y, tileRect.y + tileRect.height);
+                                final int minX, maxX, minY, maxY;
+                                minX = XMath.clamp(rect.x, tileRect.x, tileRect.x + tileRect.width);
+                                maxX = XMath.clamp(rect.x + rect.width, tileRect.x, tileRect.x + tileRect.width);
+                                minY = XMath.clamp(rect.y, tileRect.y, tileRect.y + tileRect.height);
+                                maxY = XMath.clamp(rect.y + rect.height, tileRect.y, tileRect.y + tileRect.height);
 
-                            final Rectangle rectIn = new Rectangle(minX, minY, maxX - minX, maxY - minY);
-                            rectIn.translate(-tileRect.x, -tileRect.y);
-                            final Rectangle rectOut = new Rectangle(minX, minY, maxX - minX, maxY - minY);
-                            rectOut.translate(-rect.x, -rect.y);
+                                final Rectangle rectIn = new Rectangle(minX, minY, maxX - minX, maxY - minY);
+                                rectIn.translate(-tileRect.x, -tileRect.y);
+                                final Rectangle rectOut = new Rectangle(minX, minY, maxX - minX, maxY - minY);
+                                rectOut.translate(-rect.x, -rect.y);
 
-                            if (rectIn.width <= 0 || rectIn.height <= 0 || rectOut.width <= 0 || rectOut.height <= 0) {
-                                continue;
+                                if (rectIn.width <= 0 || rectIn.height <= 0 || rectOut.width <= 0 || rectOut.height <= 0) {
+                                    continue;
+                                }
+
+                                final RenderedImage sourceImg = tile.getImage();
+                                final Raster rasterIn = sourceImg.getData();
+
+                                rasterOut.getSampleModel().setDataElements(rectOut.x, rectOut.y, rectOut.width, rectOut.height,
+                                        rasterIn.getSampleModel().getDataElements(rectIn.x, rectIn.y, rectIn.width, rectIn.height, null, rasterIn.getDataBuffer()),
+                                        rasterOut.getDataBuffer());
                             }
-
-                            final RenderedImage sourceImg = tile.getImage();
-                            final Raster rasterIn = sourceImg.getData();
-
-                            rasterOut.getSampleModel().setDataElements(rectOut.x, rectOut.y, rectOut.width, rectOut.height,
-                                    rasterIn.getSampleModel().getDataElements(rectIn.x, rectIn.y, rectIn.width, rectIn.height, null, rasterIn.getDataBuffer()),
-                                    rasterOut.getDataBuffer());
-
                         }
                     }
                 }
