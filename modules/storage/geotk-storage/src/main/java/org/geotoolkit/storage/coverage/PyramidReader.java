@@ -43,6 +43,7 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -203,7 +204,11 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         crs = pyramid.getCoordinateReferenceSystem();
 
         GridGeometry canvas = getGridGeometry(pyramid);
-        canvas = canvas.derive().subgrid(domain).build();
+        try {
+            canvas = canvas.derive().subgrid(domain).build();
+        } catch (IllegalArgumentException ex) {
+            throw new NoSuchDataException(ex.getMessage(), ex);
+        }
 
         if (range != null) {
             LOGGER.log(Level.FINE, "Source or destination bands can not be used on pyramidal coverages."

@@ -33,11 +33,11 @@ import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.util.StringUtilities;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.nio.IOUtilities;
 
 
 /**
@@ -389,7 +389,7 @@ public abstract class AbstractRequest implements Request {
             } else {
                 return stream;
             }
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             final StringWriter writer = new StringWriter();
             final TableAppender tablewriter = new TableAppender(writer);
 
@@ -418,6 +418,7 @@ public abstract class AbstractRequest implements Request {
                     writer.append("No error response from server.");
                 }
             }
+            writer.append("\n On URL : " + cnx.getURL());
             throw new IOException('\n'+ writer.toString(), ex);
         }
     }
