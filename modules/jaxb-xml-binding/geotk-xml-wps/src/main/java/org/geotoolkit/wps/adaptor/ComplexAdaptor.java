@@ -24,9 +24,9 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.ReferenceProxy;
-import org.geotoolkit.wps.xml.v200.Format;
 import org.geotoolkit.wps.xml.v200.DataInput;
 import org.geotoolkit.wps.xml.v200.DataOutput;
+import org.geotoolkit.wps.xml.v200.Format;
 import org.geotoolkit.wps.xml.v200.Reference;
 
 /**
@@ -79,6 +79,7 @@ public abstract class ComplexAdaptor<T> implements DataAdaptor<T> {
      * @param candidate
      * @return
      */
+    @Override
     public DataInput toWPS2Input(T candidate) throws UnconvertibleObjectException {
         if (candidate instanceof ReferenceProxy) {
             final Reference reference = ((ReferenceProxy)candidate).getReference();

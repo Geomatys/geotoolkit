@@ -401,15 +401,6 @@ public class MosaicImage implements RenderedImage {
         final RenderedImage firstTile = getFirstTile();
         Raster rasterOut = null;
         if (firstTile != null) {
-            rasterOut = firstTile.getTile(0, 0).createCompatibleWritableRaster(0, 0, rect.width, rect.height);
-
-            // Clear dataBuffer to 0 value for all bank
-            for (int s = 0; s < rasterOut.getDataBuffer().getSize(); s++) {
-                for (int b = 0; b < rasterOut.getDataBuffer().getNumBanks(); b++) {
-                    rasterOut.getDataBuffer().setElem(b, s, 0);
-                }
-            }
-
             try {
                 final Point upperLeftPosition = this.getPositionOf(rect.x, rect.y);
                 final Point lowerRightPosition = this.getPositionOf(rect.x + rect.width - 1, rect.y + rect.height - 1);
@@ -439,17 +430,40 @@ public class MosaicImage implements RenderedImage {
                                 final RenderedImage sourceImg = tile.getImage();
                                 final Raster rasterIn = sourceImg.getData();
 
+                                Object dataElements = rasterIn.getSampleModel().getDataElements(rectIn.x, rectIn.y, rectIn.width, rectIn.height, null, rasterIn.getDataBuffer());
+
+                                if (rasterOut == null) {
+                                    rasterOut = createRaster(rasterIn, rect.width, rect.height);
+                                }
+
                                 rasterOut.getSampleModel().setDataElements(rectOut.x, rectOut.y, rectOut.width, rectOut.height,
-                                        rasterIn.getSampleModel().getDataElements(rectIn.x, rectIn.y, rectIn.width, rectIn.height, null, rasterIn.getDataBuffer()),
+                                        dataElements,
                                         rasterOut.getDataBuffer());
                             }
                         }
                     }
                 }
-                rasterOut = rasterOut.createTranslatedChild(rect.x, rect.y);
+                if (rasterOut == null) {
+                    rasterOut = createRaster(firstTile.getTile(0, 0), rect.width, rect.height);
+                }
+
+                if (rect.x != 0 && rect.y != 0) {
+                    rasterOut = rasterOut.createTranslatedChild(rect.x, rect.y);
+                }
 
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "", ex);
+            }
+        }
+        return rasterOut;
+    }
+
+    private WritableRaster createRaster(Raster base, int width, int height) {
+        WritableRaster rasterOut = base.createCompatibleWritableRaster(0, 0, width, height);
+        // Clear dataBuffer to 0 value for all bank
+        for (int s = 0; s < rasterOut.getDataBuffer().getSize(); s++) {
+            for (int b = 0; b < rasterOut.getDataBuffer().getNumBanks(); b++) {
+                rasterOut.getDataBuffer().setElem(b, s, 0);
             }
         }
         return rasterOut;
