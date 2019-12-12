@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
@@ -66,6 +67,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
     private final T parent;
     private final Map<String,CachePyramid> cacheMap = new HashMap<>();
     private final Cache<String,CacheTile> tiles;
+    private final Set<String> tilesInProcess = ConcurrentHashMap.newKeySet();
     private final boolean noblocking;
 
     /**
@@ -108,6 +110,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         super(null);
         this.parent = parent;
         this.tiles = new Cache<String, CacheTile>(initialCapacity, costLimit, soft);
+        this.tiles.setKeyCollisionAllowed(true);
         this.noblocking = noblocking;
     }
 
@@ -302,7 +305,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
         @Override
         public boolean isMissing(long col, long row) {
-            CacheTile tile = tiles.get(tileId(col, row));
+            CacheTile tile = tiles.peek(tileId(col, row));
             if (tile != null) return false;
             return parent.isMissing(col, row);
         }
@@ -314,17 +317,20 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             CacheTile value = tiles.peek(key);
             if (value == null) {
                 if (noblocking) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                loadTile(col, row, hints);
-                            } catch (DataStoreException ex) {
-                                Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
+                    if (tilesInProcess.add(key)) {
+                        //TODO replace by a thread poll or an executor
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    loadTile(col, row, hints);
+                                } catch (DataStoreException ex) {
+                                    Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
+                                }
                             }
-                        }
 
-                    }.start();
+                        }.start();
+                    }
                 } else {
                     value = loadTile(col, row, hints);
                 }
@@ -356,6 +362,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                 }
             } finally {
                 handler.putAndUnlock(value);
+                tilesInProcess.remove(key);
             }
             return value;
         }

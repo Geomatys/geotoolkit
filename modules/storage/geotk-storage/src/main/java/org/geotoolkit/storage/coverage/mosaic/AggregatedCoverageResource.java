@@ -822,6 +822,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             return Collections.unmodifiableList(sources);
         }
 
+        public void setSources(Source ... sources) {
+            this.sources.clear();
+            this.sources.addAll(Arrays.asList(sources));
+        }
+        public void setSources(List<Source> sources) {
+            this.sources.clear();
+            this.sources.addAll(sources);
+        }
+
         public SampleDimension getSampleDimension() {
             return userDefinedSampleDimension;
         }
