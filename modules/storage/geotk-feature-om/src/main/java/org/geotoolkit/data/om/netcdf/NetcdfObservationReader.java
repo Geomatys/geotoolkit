@@ -215,7 +215,7 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public List<String> getEventTime() throws DataStoreException {
+    public TemporalPrimitive getEventTime(String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 

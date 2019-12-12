@@ -275,7 +275,7 @@ public interface ObservationReader {
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    List<String> getEventTime() throws DataStoreException;
+    TemporalPrimitive getEventTime(String version) throws DataStoreException;
 
     /**
      * Return the list of supported response Mode

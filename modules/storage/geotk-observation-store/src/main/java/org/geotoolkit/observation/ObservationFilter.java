@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
-import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 
 /**
@@ -72,14 +71,26 @@ public interface ObservationFilter {
     void initFilterGetSensor() throws DataStoreException;
 
     /**
-     * Add some procedure filter to the request.
-     * if the list of procedure ID is empty it add all the offering procedure.
-     *
-     * @param procedures
-     * @param offerings
+     * Initialize the query for extracting offering request.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void setProcedure(final List<String> procedures, final List<ObservationOffering> offerings) throws DataStoreException;
+    void initFilterOffering() throws DataStoreException;
+
+    /**
+     * Add some procedure filter to the request.
+     *
+     * @param procedures
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void setProcedure(final List<String> procedures) throws DataStoreException;
+
+    /**
+     * Add some filter ont procedure type to the request.
+     *
+     * @param type
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void setProcedureType(final String type) throws DataStoreException;
 
     /**
      * Add some phenomenon filter to the request.
@@ -163,7 +174,7 @@ public interface ObservationFilter {
      * @param offerings
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void setOfferings(final List<ObservationOffering> offerings) throws DataStoreException;
+    void setOfferings(final List<String> offerings) throws DataStoreException;
 
     /**
      * Add a filter on the result for the specified property.
@@ -217,6 +228,13 @@ public interface ObservationFilter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     Set<String> filterProcedure() throws DataStoreException;
+
+    /**
+     * Execute the current query and return a list of offering ID.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Set<String> filterOffering() throws DataStoreException;
 
     /**
      * Return informations about the implementation class.
