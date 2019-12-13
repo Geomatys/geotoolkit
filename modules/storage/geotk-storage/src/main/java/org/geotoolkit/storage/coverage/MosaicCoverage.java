@@ -75,8 +75,8 @@ public final class MosaicCoverage {
         final Dimension tileSize = mosaic.getTileSize();
         final GridExtent extent = new GridExtent(gridSize.width * tileSize.width, gridSize.height * tileSize.height);
         final GridGeometry gridGeom = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, crs);
-        final RenderedImage image = new MosaicImage(mosaic, gridRange);
         final List<SampleDimension> dims = ref.getSampleDimensions();
+        final RenderedImage image = new MosaicImage(mosaic, gridRange, dims);
         return new GridCoverage2D(gridGeom, dims, image);
     }
 

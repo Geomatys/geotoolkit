@@ -30,6 +30,8 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.PortrayalException;
@@ -102,7 +104,7 @@ public class PyramidImageLoader implements ImageLoader{
 
     @Override
     public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException {
-        if(outputCrs == null){
+        if (outputCrs == null) {
             throw new PortrayalException("Output crs has not been set");
         }
 
@@ -121,31 +123,31 @@ public class PyramidImageLoader implements ImageLoader{
         final double[] scales = dataSource.getScales();
         final int indexImg = TextureUtils.getNearestScaleIndex(scales, scale);
 
-        if (dataRenderedImage != null) {
-            final Mosaic gridMosaic = dataRenderedImage.getGridMosaic();
-            final double mosaicScale = gridMosaic.getScale();
-            final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
-            if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
+        try {
+            if (dataRenderedImage != null) {
+                final Mosaic gridMosaic = dataRenderedImage.getGridMosaic();
+                final double mosaicScale = gridMosaic.getScale();
+                final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
+                if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
+                    final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
+                    if (!mosaics.isEmpty()) {
+                        dataRenderedImage = new MosaicImage(mosaics.iterator().next(), ((GridCoverageResource) ref).getSampleDimensions());
+                    } else {
+                        dataRenderedImage = null;
+                        return null;
+                    }
+                }
+            } else {
                 final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
-                    dataRenderedImage = new MosaicImage(mosaics.iterator().next());
+                    dataRenderedImage = new MosaicImage(mosaics.iterator().next(), ((GridCoverageResource) ref).getSampleDimensions());
                 } else {
                     dataRenderedImage = null;
                     return null;
                 }
             }
-        } else {
-            final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
-            if (!mosaics.isEmpty()) {
-                dataRenderedImage = new MosaicImage(mosaics.iterator().next());
-            } else {
-                dataRenderedImage = null;
-                return null;
-            }
-        }
-        try {
             return extractTileImage(outputEnv, dataRenderedImage, transformFromOutput, outputDimension);
-        } catch (TransformException ex) {
+        } catch (TransformException | DataStoreException ex) {
             throw new PortrayalException(ex);
         }
     }

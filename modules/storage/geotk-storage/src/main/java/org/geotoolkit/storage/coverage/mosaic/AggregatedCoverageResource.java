@@ -43,6 +43,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -57,7 +58,6 @@ import org.apache.sis.storage.event.StoreListeners;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
@@ -585,6 +585,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
 
         // aggregate tiles /////////////////////////////////////////////////////
+        boolean foundDatas = false;
         final BufferedImage[] bandImages = new BufferedImage[bands.size()];
         for (int bandIndex = 0, n = bands.size(); bandIndex < n; bandIndex++) {
             final VirtualBand band = bands.get(bandIndex);
@@ -630,6 +631,25 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             }
 
             bandImages[bandIndex] = aggregate(sorted, canvas, bandIndex);
+            foundDatas |= (bandImages[bandIndex] != null);
+        }
+
+        //if all band images are null, this means not datas really intersected
+        if (!foundDatas) {
+            throw new NoSuchDataException("No data on requested domain");
+        }
+
+        //create blank images with NoData value if a band image is missing
+        for (int i = 0; i < bandImages.length; i++) {
+            if (bandImages[i] == null) {
+                BufferedImage band = BufferedImages.createImage(
+                        (int) canvas.getExtent().getSize(0),
+                        (int) canvas.getExtent().getSize(1),
+                        1, DataBuffer.TYPE_DOUBLE);
+                if (noData[i] != 0) {
+                    BufferedImages.setAll(band, new double[]{noData[i]});
+                }
+            }
         }
 
         BufferedImage result = null;
@@ -648,13 +668,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             }
         }
 
-
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("Aggregated");
-        gcb.setGridGeometry(canvas);
-        gcb.setSampleDimensions(sampleDimensions);
-        gcb.setRenderedImage(result);
-        return gcb.build();
+        try {
+            return new GridCoverage2D(canvas, sampleDimensions, result);
+        } catch (FactoryException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
     }
 
     private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex) throws DataStoreException {
