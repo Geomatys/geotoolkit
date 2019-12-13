@@ -11,6 +11,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
@@ -19,7 +20,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.geotoolkit.processing.AbstractProcess;
@@ -57,41 +57,24 @@ public class ClusterHullProcess extends AbstractProcess {
     private GeometryCSTransformer trs;
 
     /**
-     * Tolerance units authorized
-     */
-    private static ArrayList<Unit<Length>> unitList = new ArrayList<>();
-
-    /**
      * Used to build the featureSet result
      */
     private static GeometryFactory geometryFactory = new GeometryFactory();
-
-    /**
-     * Interface that computing distance between two geometries.
-     * First step, two geometries are projected by Lambert projection,
-     * then the
-     */
-    private BiFunction<Geometry, Geometry, Double> computeDistance = this::customDistance;
 
     /**
      * Default constructor
      */
     public ClusterHullProcess(final ParameterValueGroup input) {
         super(ClusterHullDescriptor.INSTANCE,input);
-        unitList.add(Units.METRE);
-        unitList.add(Units.KILOMETRE);
-        unitList.add(Units.STATUTE_MILE);
-        unitList.add(Units.NAUTICAL_MILE);
-        unitList.add(Units.INCH);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
-        final FeatureSet inputFeatureSet                = inputParameters.getValue(ClusterHullDescriptor.FEATURE_SET_IN);
-        final Double tolerance_value                    = inputParameters.getValue(ClusterHullDescriptor.TOLERANCE_VALUE);
+    protected void execute() throws ProcessException {
+        final FeatureSet inputFeatureSet                = inputParameters.getMandatoryValue(ClusterHullDescriptor.FEATURE_SET_IN);
+        final Double tolerance_value                    = inputParameters.getMandatoryValue(ClusterHullDescriptor.TOLERANCE_VALUE);
         final Unit<Length> tolerance_unit               = inputParameters.getValue(ClusterHullDescriptor.TOLERANCE_UNIT);
         final FeatureSet hull                           = computeClusterHull(inputFeatureSet, tolerance_value, tolerance_unit);
         outputParameters.getOrCreate(ClusterHullDescriptor.FEATURE_SET_OUT).setValue(hull);
@@ -102,11 +85,10 @@ public class ClusterHullProcess extends AbstractProcess {
      *
      * @return the cluster hull
      */
-    public FeatureSet computeClusterHull(final FeatureSet inputFeatureSet, final Double tolerance, Unit<Length> unit) {
+    private FeatureSet computeClusterHull(final FeatureSet inputFeatureSet, final Double tolerance, Unit<Length> unit) throws ProcessException {
         try {
             // Convert the current tolerance to meter according to the unit specified
             Double toMeter;
-            if (!unitList.contains(unit)) unit = Units.METRE;
             final UnitConverter uc = unit.getConverterTo(Units.METRE);
             toMeter = uc.convert((double)tolerance);
             // Initialise the GeometryCSTransformer (Lambert projection)
@@ -121,28 +103,9 @@ public class ClusterHullProcess extends AbstractProcess {
             // Build the feature set
             FeatureSet clusterHull = createFeatureSetFromGeometrySet(clusterHullSet, crs);
             return clusterHull;
-        } catch (FactoryException e) {
-            e.printStackTrace();
-        } catch (DataStoreException e) {
-            e.printStackTrace();
+        } catch (FactoryException | DataStoreException | TransformException e) {
+            throw new ProcessException(e.getMessage(), this, e);
         }
-        return null;
-    }
-
-    private Set<Geometry> extractGeometrySet(final FeatureSet fs) {
-        Set<Geometry> geometries   = new HashSet<Geometry>();
-
-        try {
-            geometries = fs.features(false)
-                    .map(f -> f.getProperty("geometry"))
-                    .map(p -> p.getValue())
-                    .filter(value -> value instanceof Geometry)
-                    .map(value -> (Geometry) value)
-                    .collect(Collectors.toSet());
-        } catch(DataStoreException e) {
-            e.printStackTrace();
-        }
-        return geometries;
     }
 
     private void initTransformation(final FeatureSet inputFeatureSet) throws FactoryException, DataStoreException {
@@ -155,6 +118,16 @@ public class ClusterHullProcess extends AbstractProcess {
         trs = new GeometryCSTransformer(cst);
     }
 
+    private Set<Geometry> extractGeometrySet(final FeatureSet fs) throws DataStoreException {
+        Set<Geometry> geometries = fs.features(false)
+                .map(f -> f.getProperty("geometry"))
+                .map(p -> p.getValue())
+                .filter(value -> value instanceof Geometry)
+                .map(value -> (Geometry) value)
+                .collect(Collectors.toSet());
+        return geometries;
+    }
+
     private CoordinateReferenceSystem getCRSFromFeatureSet(FeatureSet fs) throws DataStoreException {
         final FeatureType type = fs.getType();
         final PropertyType geometryType = type.getProperty("geometry");
@@ -163,16 +136,9 @@ public class ClusterHullProcess extends AbstractProcess {
         return crs;
     }
 
-    private Double customDistance(final Geometry geom1, final Geometry geom2) {
-        Geometry trans1 = null;
-        Geometry trans2 = null;
-
-        try {
-            trans1 = trs.transform(geom1);
-            trans2 = trs.transform(geom2);
-        } catch (TransformException e) {
-            e.printStackTrace();
-        }
+    private Double customDistance(final Geometry geom1, final Geometry geom2) throws TransformException {
+        Geometry trans1 = trs.transform(geom1);
+        Geometry trans2 = trs.transform(geom2);
 
         return trans1.distance(trans2);
     }
@@ -198,7 +164,7 @@ public class ClusterHullProcess extends AbstractProcess {
         return median;
     }
 
-    private Set<Geometry> applyClusterHull(Set<Geometry> in, Set<Geometry> out, Set<Geometry> current, Set<Geometry> store, final Double tolerance) {
+    private Set<Geometry> applyClusterHull(Set<Geometry> in, Set<Geometry> out, Set<Geometry> current, Set<Geometry> store, final Double tolerance) throws TransformException {
         if (in.isEmpty()) {
             current.addAll(store);
             out.add(applyOnSetConvexHull(current));
@@ -225,14 +191,14 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private Set<Geometry> neighborhood(Set<Geometry> in, Set<Geometry> current, Double tolerance) {
+    private Set<Geometry> neighborhood(Set<Geometry> in, Set<Geometry> current, Double tolerance) throws TransformException {
         Set<Geometry> target = new HashSet<>();
         Set<Geometry> copyIn = new HashSet<>();
         copyIn.addAll(in);
 
         for (Geometry geomIn: copyIn) {
             for (Geometry geomCurrent: current) {
-                if (computeDistance.apply(geomIn, geomCurrent) <= tolerance) {
+                if (customDistance(geomIn, geomCurrent) <= tolerance) {
                     target.add(geomIn);
                     break;
                 }
@@ -280,13 +246,13 @@ public class ClusterHullProcess extends AbstractProcess {
         return ftb.build();
     }
 
-    private static ProjectedCRS getLocalLambertCRS(final double central_meridan, final double latitude_of_origin) {
+    private static ProjectedCRS getLocalLambertCRS(final double central_meridian, final double latitude_of_origin) {
         try {
             MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);;
             ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
-            parameters.parameter("central_meridian").setValue(central_meridan);
+            parameters.parameter("central_meridian").setValue(central_meridian);
             parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
-            String scentralMeridian = ((Integer) ((int) (Math.floor(central_meridan)))).toString();
+            String scentralMeridian = ((Integer) ((int) (Math.floor(central_meridian)))).toString();
             String slatitudeOfOrigin = ((Integer) ((int) (Math.floor(latitude_of_origin)))).toString();
             DefiningConversion conversion = new DefiningConversion("My conversion", parameters);
             CRSFactory crsFactory = DefaultFactories.forBuildin(CRSFactory.class);

@@ -1,5 +1,6 @@
 package org.geotoolkit.processing.vector.clusterhull;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -13,6 +14,9 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import javax.measure.Unit;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Parameters description of ClusterHull process.
@@ -53,13 +57,14 @@ public final class ClusterHullDescriptor extends AbstractProcessDescriptor {
             .create(Double.class, null);
 
     /**
-     * Mandatory - Unit of tolerance (METER, KILOMETER, STATUTE MILE, NAUTICAL MILE, INCH) default value initialize at METER
+     * Non Mandatory - Unit of tolerance (METER, KILOMETER, STATUTE MILE, NAUTICAL MILE, INCH) default value initialize at METER
      */
+    static final Unit[] ALLOWED_UNITS = {Units.METRE, Units.KILOMETRE, Units.STATUTE_MILE, Units.NAUTICAL_MILE, Units.INCH};
     public static final ParameterDescriptor<Unit> TOLERANCE_UNIT = new ParameterBuilder()
             .addName("tolerance_unit")
             .setRemarks("Unit of tolerance used")
             .setRequired(false)
-            .create(Unit.class, null);
+            .createEnumerated(Unit.class, ALLOWED_UNITS, Units.METRE);
 
     /**
      * Non Mandatory - the return value
