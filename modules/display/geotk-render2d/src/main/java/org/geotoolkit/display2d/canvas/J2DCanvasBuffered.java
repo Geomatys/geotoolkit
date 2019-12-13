@@ -64,7 +64,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     public J2DCanvasBuffered(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
         super(crs,hints);
-        setSize(dim);
+        if (dim != null) setSize(dim);
     }
 
     public Dimension getSize(){

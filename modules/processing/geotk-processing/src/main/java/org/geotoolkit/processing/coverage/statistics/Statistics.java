@@ -36,7 +36,7 @@ import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
-import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.coverage.MosaicImage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -222,8 +222,8 @@ public class Statistics extends AbstractProcess {
 
         //optimization for GridMosaicRenderedImage impl
         NumericHistogram[] histo = new NumericHistogram[nbBands];
-        if (image instanceof GridMosaicRenderedImage) {
-            final GridMosaicRenderedImage mosaicImage = (GridMosaicRenderedImage) image;
+        if (image instanceof MosaicImage) {
+            final MosaicImage mosaicImage = (MosaicImage) image;
             final Mosaic gridMosaic = mosaicImage.getGridMosaic();
             final Dimension gridSize = gridMosaic.getGridSize();
 

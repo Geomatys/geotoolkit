@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,9 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
@@ -56,7 +58,6 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.NamesExt;
@@ -455,7 +456,6 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-
         if (domain == null) {
             domain = getGridGeometry();
         }
@@ -518,22 +518,34 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
 
         //read image
         try (final InputStream stream = request.getResponseStream()) {
-            final BufferedImage image = ImageIO.read(stream);
+            BufferedImage image = ImageIO.read(stream);
 
             //the envelope CRS may have been changed by prepareQuery method
             final CoordinateReferenceSystem resultCrs = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
             final Envelope env2D = Envelopes.transform(env, resultCrs);
             final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName(getCombinedLayerNames());
-            gcb.setRenderedImage(image);
-            gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-            gcb.setGridToCRS(gridToCRS);
-            gcb.setCoordinateReferenceSystem(resultCrs);
-            return gcb.build();
+            //we must honor the number of sample dimensions we declared
+            //some WMS services returned mixed sample and color model for better compression
+            final List<SampleDimension> sampleDimensions = getSampleDimensions();
+            if (sampleDimensions.size() != image.getSampleModel().getNumBands()) {
+                BufferedImage cp;
+                if (sampleDimensions.size() == 3) {
+                    cp = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+                } else if (sampleDimensions.size() == 4) {
+                    cp = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                } else {
+                    throw new DataStoreException();
+                }
+                cp.createGraphics().drawRenderedImage(image, new AffineTransform());
+                image = cp;
+            }
 
-        } catch (IOException|TransformException ex) {
+            final GridExtent extent = new GridExtent(image.getWidth(), image.getHeight());
+            final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, new AffineTransform2D(gridToCRS), resultCrs);
+            return new GridCoverage2D(grid, sampleDimensions, image);
+
+        } catch (IOException | TransformException | FactoryException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
 

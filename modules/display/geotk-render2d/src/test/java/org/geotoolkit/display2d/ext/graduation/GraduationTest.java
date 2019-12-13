@@ -16,29 +16,27 @@
  */
 package org.geotoolkit.display2d.ext.graduation;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CRS;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
 import org.junit.Assert;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -81,10 +79,12 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
         context.layers().add(layer);
 
         final SceneDef sdef = new SceneDef(context);
-        final CanvasDef cdef = new CanvasDef(new Dimension(100, 100), Color.darkGray);
-        final ViewDef vdef = new ViewDef(CRS.getDomainOfValidity(crs));
+        final CanvasDef cdef = new CanvasDef();
+        cdef.setDimension(new Dimension(100, 100));
+        cdef.setBackground(Color.darkGray);
+        cdef.setEnvelope(CRS.getDomainOfValidity(crs));
 
-        final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
+        final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef);
         Assert.assertNotNull(img);
 
     }

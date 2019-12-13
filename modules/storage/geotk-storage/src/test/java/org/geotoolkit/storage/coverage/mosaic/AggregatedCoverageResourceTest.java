@@ -455,4 +455,90 @@ public class AggregatedCoverageResourceTest {
 
     }
 
+    /**
+     * Test aggregating coverages with a single band to separate output bands.
+     */
+    @Test
+    public void testAggregateOnSeparateBands() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        |NaN| 2 | 3 |
+        +---+---+---+
+
+        Coverage 2
+        +---+---+---+
+        | 4 |NaN| 6 |
+        +---+---+---+
+
+        Coverage 3
+        +---+---+---+
+        | 7 | 8 |NaN|
+        +---+---+---+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setPixel(new double[]{Double.NaN});
+        write1.moveTo(1, 0); write1.setPixel(new double[]{2.0});
+        write1.moveTo(2, 0); write1.setPixel(new double[]{3.0});
+        write2.moveTo(0, 0); write2.setPixel(new double[]{4.0});
+        write2.moveTo(1, 0); write2.setPixel(new double[]{Double.NaN});
+        write2.moveTo(2, 0); write2.setPixel(new double[]{6.0});
+        write3.moveTo(0, 0); write3.setPixel(new double[]{7.0});
+        write3.moveTo(1, 0); write3.setPixel(new double[]{8.0});
+        write3.moveTo(2, 0); write3.setPixel(new double[]{Double.NaN});
+
+
+        /*
+        We expect a final coverage with values on a single row
+        +-------+-------+-------+
+        |NaN:4:7|2:NaN:8|3:6:NaN|
+        +-------+-------+-------+
+        */
+
+        final AggregatedCoverageResource.VirtualBand band0 = new AggregatedCoverageResource.VirtualBand();
+        band0.setSources(new AggregatedCoverageResource.Source(resource1, 0));
+        final AggregatedCoverageResource.VirtualBand band1 = new AggregatedCoverageResource.VirtualBand();
+        band1.setSources(new AggregatedCoverageResource.Source(resource2, 0));
+        final AggregatedCoverageResource.VirtualBand band2 = new AggregatedCoverageResource.VirtualBand();
+        band2.setSources(new AggregatedCoverageResource.Source(resource3, 0));
+
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource(Arrays.asList(band0,band1,band2), AggregatedCoverageResource.Mode.ORDER, crs);
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0);
+        Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        Assert.assertEquals(4, reader.getSampleDouble(1), 0.0);
+        Assert.assertEquals(7, reader.getSampleDouble(2), 0.0);
+        reader.moveTo(1, 0);
+        Assert.assertEquals(2, reader.getSampleDouble(0), 0.0);
+        Assert.assertEquals(Double.NaN, reader.getSampleDouble(1), 0.0);
+        Assert.assertEquals(8, reader.getSampleDouble(2), 0.0);
+        reader.moveTo(2, 0);
+        Assert.assertEquals(3, reader.getSampleDouble(0), 0.0);
+        Assert.assertEquals(6, reader.getSampleDouble(1), 0.0);
+        Assert.assertEquals(Double.NaN, reader.getSampleDouble(2), 0.0);
+    }
+
 }

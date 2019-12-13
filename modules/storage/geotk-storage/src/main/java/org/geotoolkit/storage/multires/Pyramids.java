@@ -169,36 +169,12 @@ public final class Pyramids extends Static {
      *
      * @param mosaic not null
      * @param location not null
-     * @return MathTransform never null
-     */
-    public static LinearTransform getTileGridToCRS(Mosaic mosaic, Point location){
-        return getTileGridToCRS(mosaic, location, PixelInCell.CELL_CORNER);
-    }
-
-    /**
-     * Grid to CRS N dimension. CORNER transform
-     *
-     * @param mosaic not null
-     * @param location not null
      * @param orientation pixel orientation
      * @return MathTransform never null
      */
     public static LinearTransform getTileGridToCRS(Mosaic mosaic, Point location, PixelInCell orientation){
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
         return getTileGridToCRSND(mosaic, location, upperleft.getDimension(), orientation);
-    }
-
-    /**
-     * Grid to CRS N dimension. CORNER Transform.
-     * This allows to create a transform ignoring last axis transform.
-     *
-     * @param mosaic not null
-     * @param location not null
-     * @param nbDim : number of dimension wanted. value must be in range [2...crsNbDim]
-     * @return MathTransform never null
-     */
-    public static LinearTransform getTileGridToCRSND(Mosaic mosaic, Point location, int nbDim){
-        return getTileGridToCRSND(mosaic, location, nbDim, PixelInCell.CELL_CORNER);
     }
 
     /**
@@ -231,18 +207,6 @@ public final class Pyramids extends Static {
             }
             return MathTransforms.linear(gm);
         }
-    }
-
-    /**
-     * Grid to CRS 2D part.
-     * Transform correspond to the CORNER.
-     *
-     * @param mosaic not null
-     * @param location not null
-     * @return AffineTransform2D never null.
-     */
-    public static AffineTransform2D getTileGridToCRS2D(Mosaic mosaic, Point location){
-        return getTileGridToCRS2D(mosaic, location, PixelInCell.CELL_CORNER);
     }
 
     /**
@@ -394,7 +358,7 @@ public final class Pyramids extends Static {
     }
 
     /**
-     * Create a common WGS84 2D pyramid model with a fixed depth.
+     * Create a common WGS84 (CRS:84) 2D pyramid model with a fixed depth.
      * <p>
      * The pyramid covers the world in CRS:84 coordinate reference system.
      * Each mosaic is half the resolution of it's parent.
@@ -439,13 +403,37 @@ public final class Pyramids extends Static {
     }
 
     /**
-     * Create Google Pseudo-Mercator World pyramid.
+     * Create Google Pseudo-Mercator (EPSG:3857) World pyramid.
      *
      * @param maxDepth
      * @return
      */
     public static DefiningPyramid createPseudoMercatorTemplate(int maxDepth) throws FactoryException {
         final CoordinateReferenceSystem pseudoMercator = CRS.forCode("EPSG:3857");
+
+        //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E)
+        //Y goes from 0 (top edge is 85.0511 °N) to 2^zoom -1 (bottom edge is 85.0511 °S) in a Mercator projection
+        GeneralEnvelope MERCATOR_EXTEND = new GeneralEnvelope(pseudoMercator);
+        MERCATOR_EXTEND.setRange(0, -20037508.342789244d, 20037508.342789244d);
+        MERCATOR_EXTEND.setRange(1, -20037508.342789244d, 20037508.342789244d);
+
+        final double[] scales = new double[maxDepth+1];
+        scales[0] = MERCATOR_EXTEND.getSpan(0) / 256.0;
+        for (int i=1;i<scales.length;i++) {
+            scales[i] = scales[i-1] / 2.0;
+        }
+
+        return createTemplate(MERCATOR_EXTEND, new Dimension(256, 256), scales);
+    }
+
+    /**
+     * Create Mercator (EPSG:33950 )World pyramid.
+     *
+     * @param maxDepth
+     * @return
+     */
+    public static DefiningPyramid createMercatorTemplate(int maxDepth) throws FactoryException {
+        final CoordinateReferenceSystem pseudoMercator = CRS.forCode("EPSG:3395");
 
         //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E)
         //Y goes from 0 (top edge is 85.0511 °N) to 2^zoom -1 (bottom edge is 85.0511 °S) in a Mercator projection

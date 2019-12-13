@@ -17,6 +17,7 @@
 package org.geotoolkit.display2d;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -37,24 +38,19 @@ import java.util.function.LongConsumer;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.memory.InMemoryPyramidResource;
-import org.geotoolkit.storage.multires.AbstractTileGenerator;
-import org.geotoolkit.storage.multires.DefaultPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
-import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
@@ -64,10 +60,18 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.memory.InMemoryPyramidResource;
+import org.geotoolkit.storage.multires.AbstractTileGenerator;
+import org.geotoolkit.storage.multires.DefaultPyramid;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Displacement;
 import org.opengis.style.FeatureTypeStyle;
@@ -131,11 +135,18 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
     @Override
     public Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord) throws DataStoreException {
+        final LinearTransform tileGridToCrs = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
+        final Dimension tileSize = mosaic.getTileSize();
+        final GridGeometry gridGeom = new GridGeometry(
+                new GridExtent(tileSize.width, tileSize.height),
+                PixelInCell.CELL_CENTER,
+                tileGridToCrs, mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
 
-        final CanvasDef canvas = new CanvasDef(mosaic.getTileSize(), canvasDef.getBackground());
-        final ViewDef view = new ViewDef(Pyramids.computeTileEnvelope(mosaic, tileCoord.x, tileCoord.y));
+        final CanvasDef canvas = new CanvasDef();
+        canvas.setGridGeometry(gridGeom);
+        canvas.setBackground(canvasDef.getBackground());
         try {
-            final BufferedImage image = DefaultPortrayalService.portray(canvas, sceneDef, view);
+            final BufferedImage image = DefaultPortrayalService.portray(canvas, sceneDef);
             return new DefaultImageTile(image, tileCoord);
         } catch (PortrayalException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -249,9 +260,10 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
                     final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
 
-                    final CanvasDef canvasDef = new CanvasDef(null, this.canvasDef.getBackground());
+                    final CanvasDef canvasDef = new CanvasDef();
+                    canvasDef.setBackground(this.canvasDef.getBackground());
+                    canvasDef.setEnvelope(mosaic.getEnvelope());
                     final SceneDef sceneDef = new SceneDef(parent, hints);
-                    final ViewDef viewDef = new ViewDef(mosaic.getEnvelope());
 
                     //one thread per line, the progressive image generates multiple tiles when drawing
                     //this approach is more efficient from profiling result then using tile by tile
@@ -262,7 +274,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                             final NumberFormat format = NumberFormat.getIntegerInstance(Locale.FRANCE);
                             long nb = 0;
                             try {
-                                final ProgressiveImage img = new ProgressiveImage(canvasDef, sceneDef, viewDef,
+                                final ProgressiveImage img = new ProgressiveImage(canvasDef, sceneDef,
                                 mosaic.getGridSize(), mosaic.getTileSize(), mosaic.getScale(), 0);
 
                                 for (int x=rect.x,xn=rect.x+rect.width;x<xn;x++) {

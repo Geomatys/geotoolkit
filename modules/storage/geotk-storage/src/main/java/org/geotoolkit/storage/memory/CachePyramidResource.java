@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -37,6 +39,7 @@ import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.collection.Cache;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
@@ -64,6 +67,8 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
     private final T parent;
     private final Map<String,CachePyramid> cacheMap = new HashMap<>();
     private final Cache<String,CacheTile> tiles;
+    private final Set<String> tilesInProcess = ConcurrentHashMap.newKeySet();
+    private final boolean noblocking;
 
     /**
      * Creates a new cache using the given initial capacity and cost limit. The initial capacity
@@ -81,9 +86,32 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
      * @param soft             if {@code true}, use {@link SoftReference} instead of {@link WeakReference}.
      */
     public CachePyramidResource(T parent, int initialCapacity, final long costLimit, final boolean soft) {
+        this(parent, initialCapacity, costLimit, soft, false);
+    }
+
+    /**
+     * Creates a new cache using the given initial capacity and cost limit. The initial capacity
+     * is the expected number of values to be stored in this cache. More values are allowed, but
+     * a little bit of CPU time may be saved if the expected capacity is known before the cache
+     * is created.
+     *
+     * <p>The <cite>cost limit</cite> is the maximal value of the <cite>total cost</cite> (the sum
+     * of the {@linkplain #cost cost} of all values) before to replace eldest strong references by
+     * {@linkplain Reference weak or soft references}.</p>
+     *
+     * @param parent           resource to cache tiles
+     * @param initialCapacity  the initial tile cache capacity.
+     * @param costLimit        the maximum cost of tiles to keep by strong reference.
+     * @param soft             if {@code true}, use {@link SoftReference} instead of {@link WeakReference}.
+     * @param noblocking       if {@code true}, only cached tiles are returned right away,
+     *  if the tile is not available, loading starts and it will be available later.
+     */
+    public CachePyramidResource(T parent, int initialCapacity, final long costLimit, final boolean soft, boolean noblocking) {
         super(null);
         this.parent = parent;
         this.tiles = new Cache<String, CacheTile>(initialCapacity, costLimit, soft);
+        this.tiles.setKeyCollisionAllowed(true);
+        this.noblocking = noblocking;
     }
 
     @Override
@@ -277,39 +305,64 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
         @Override
         public boolean isMissing(long col, long row) {
-            CacheTile tile = tiles.get(tileId(col, row));
+            CacheTile tile = tiles.peek(tileId(col, row));
             if (tile != null) return false;
             return parent.isMissing(col, row);
         }
 
         @Override
-        public CacheTile getTile(long col, long row, Map hints) throws DataStoreException {
+        public CacheTile getTile(final long col, final long row, final Map hints) throws DataStoreException {
             final String key = tileId(col, row);
 
             CacheTile value = tiles.peek(key);
             if (value == null) {
-                final Cache.Handler<CacheTile> handler = tiles.lock(key);
-                try {
-                    value = handler.peek();
-                    if (value == null) {
-                        final Tile parentTile = parent.getTile(col, row, hints);
-                        if (parentTile instanceof ImageTile) {
-                            final ImageTile pt = (ImageTile) parentTile;
-                            final RenderedImage image;
-                            try {
-                                image = pt.getImage();
-                            } catch (IOException ex) {
-                                throw new DataStoreException(ex.getMessage(), ex);
+                if (noblocking) {
+                    if (tilesInProcess.add(key)) {
+                        //TODO replace by a thread poll or an executor
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    loadTile(col, row, hints);
+                                } catch (DataStoreException ex) {
+                                    Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
+                                }
                             }
-                            final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
-                            value = new CacheTile(image, 0, coord);
-                        } else {
-                            throw new DataStoreException("Unsuppported tile instance "+ parentTile);
-                        }
+
+                        }.start();
                     }
-                } finally {
-                    handler.putAndUnlock(value);
+                } else {
+                    value = loadTile(col, row, hints);
                 }
+            }
+            return value;
+        }
+
+        private CacheTile loadTile(long col, long row, Map hints) throws DataStoreException {
+            final String key = tileId(col, row);
+            CacheTile value = null;
+            final Cache.Handler<CacheTile> handler = tiles.lock(key);
+            try {
+                value = handler.peek();
+                if (value == null) {
+                    final Tile parentTile = parent.getTile(col, row, hints);
+                    if (parentTile instanceof ImageTile) {
+                        final ImageTile pt = (ImageTile) parentTile;
+                        final RenderedImage image;
+                        try {
+                            image = pt.getImage();
+                        } catch (IOException ex) {
+                            throw new DataStoreException(ex.getMessage(), ex);
+                        }
+                        final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
+                        value = new CacheTile(image, 0, coord);
+                    } else {
+                        throw new DataStoreException("Unsuppported tile instance "+ parentTile);
+                    }
+                }
+            } finally {
+                handler.putAndUnlock(value);
+                tilesInProcess.remove(key);
             }
             return value;
         }

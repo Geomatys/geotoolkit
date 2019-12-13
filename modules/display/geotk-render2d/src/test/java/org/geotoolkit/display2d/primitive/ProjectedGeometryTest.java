@@ -33,7 +33,6 @@ import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
@@ -41,6 +40,7 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
@@ -88,7 +88,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
 
         final ProjectedGeometry pg = createProjectedGeometry(poly,
                 new Dimension(360, 180),
-                new AffineTransform(1, 0, 0, -1, +180, 90));
+                new AffineTransform(1, 0, 0, -1, +179.5, 89.5));
 
         testArray(pg.getObjectiveGeometryJTS(),
                 GF.createPolygon(new Coordinate[]{
@@ -143,7 +143,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
         //we reduce image width to avoid repetition
         final ProjectedGeometry pg = createProjectedGeometry(poly,
                 new Dimension(100, 180),
-                new AffineTransform(1, 0, 0, -1, -10, +90));
+                new AffineTransform(1, 0, 0, -1, -10.5, +89.5));
 
         testArray(pg.getObjectiveGeometryJTS(),
                 GF.createPolygon(new Coordinate[]{

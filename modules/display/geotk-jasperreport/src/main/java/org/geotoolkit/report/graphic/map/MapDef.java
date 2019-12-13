@@ -20,7 +20,6 @@ package org.geotoolkit.report.graphic.map;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.report.RenderableField;
 import org.geotoolkit.util.StringUtilities;
 
@@ -34,17 +33,15 @@ public final class MapDef extends RenderableField{
 
     private CanvasDef canvasDef;
     private SceneDef sceneDef;
-    private ViewDef viewDef;
     private OutputDef outputDef;
 
     public MapDef() {
-        this(null,null,null,null);
+        this(null,null,null);
     }
 
-    public MapDef(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef, final OutputDef outputDef) {
+    public MapDef(final CanvasDef canvasDef, final SceneDef sceneDef, final OutputDef outputDef) {
         this.canvasDef = (canvasDef!=null)? canvasDef : new CanvasDef();
         this.sceneDef = (sceneDef!=null)? sceneDef : new SceneDef();
-        this.viewDef = (viewDef!=null)? viewDef : new ViewDef();
         this.outputDef = (outputDef!=null)? outputDef : new OutputDef("none", new Object(){});
     }
 
@@ -64,14 +61,6 @@ public final class MapDef extends RenderableField{
         this.sceneDef = sceneDef;
     }
 
-    public ViewDef getViewDef() {
-        return viewDef;
-    }
-
-    public void setViewDef(final ViewDef viewDef) {
-        this.viewDef = viewDef;
-    }
-
     public OutputDef getOutputDef() {
         return outputDef;
     }
@@ -83,7 +72,7 @@ public final class MapDef extends RenderableField{
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder("MapFieldDef");
-        builder.append(StringUtilities.toStringTree(canvasDef,sceneDef,viewDef,outputDef));
+        builder.append(StringUtilities.toStringTree(canvasDef,sceneDef,outputDef));
         return builder.toString();
     }
 

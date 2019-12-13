@@ -34,8 +34,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -47,9 +45,12 @@ import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.style.RasterSymbolizer;
 
@@ -164,7 +165,9 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
             }
             try{
                 final MathTransform trs = Pyramids.getTileGridToCRS(
-                        mosaic, new Point((int)coordinate.x, (int)coordinate.y));
+                        mosaic,
+                        new Point((int)coordinate.x, (int)coordinate.y),
+                        PixelInCell.CELL_CORNER);
                 final ImageTile tr = (ImageTile) mosaic.getTile((int)coordinate.x, (int)coordinate.y);
                 final CoordinateReferenceSystem pyramidCRS2D = CRSUtilities.getCRS2D(mosaic.getEnvelope().getCoordinateReferenceSystem());
                 final GridCoverage2D coverage = (GridCoverage2D) prepareTile(env2d.getCoordinateReferenceSystem(), pyramidCRS2D, tr, trs);

@@ -21,7 +21,6 @@ package org.geotoolkit.report.graphic.northarrow;
 
 import net.sf.jasperreports.engine.JRField;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
-
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;
 import org.geotoolkit.report.graphic.map.MapDef;
@@ -73,7 +72,7 @@ public class NorthArrowFieldRenderer implements JRFieldRenderer{
             final Attribute mapProp = (Attribute) feature.getProperty((String)mapChar.getValue());
             if(mapProp != null && mapProp.getValue() instanceof MapDef){
                 final MapDef md = (MapDef) mapProp.getValue();
-                renderable.setRotation(md.getViewDef().getAzimuth());
+                renderable.setRotation(md.getCanvasDef().getAzimuth());
             }
 
             na.setDelegate(renderable);

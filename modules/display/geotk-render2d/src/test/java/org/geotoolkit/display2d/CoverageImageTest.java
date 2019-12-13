@@ -36,7 +36,6 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.map.MapBuilder;
@@ -63,7 +62,6 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
     private static final double EPSILON = 1E-9;
 
     final CanvasDef cdef = new CanvasDef();
-    final ViewDef vdef   = new ViewDef();
     final SceneDef sdef  = new SceneDef();
     final Dimension outputImgDim  = new Dimension();
 
@@ -161,9 +159,9 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
         cdef.setDimension(outputImgDim);
         sdef.setContext(context);
         sdef.setHints(hints);
-        vdef.setEnvelope(resEnv);
+        cdef.setEnvelope(resEnv);
 
-        final BufferedImage imgResult = DefaultPortrayalService.portray(cdef, sdef, vdef);
+        final BufferedImage imgResult = DefaultPortrayalService.portray(cdef, sdef);
         checkImage(sourceImage, imgResult, proportionalityCoefficient);
     }
 

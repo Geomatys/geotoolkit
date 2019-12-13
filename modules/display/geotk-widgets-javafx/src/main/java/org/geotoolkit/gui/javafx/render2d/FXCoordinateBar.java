@@ -44,6 +44,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.controlsfx.control.StatusBar;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
@@ -70,10 +71,10 @@ public class FXCoordinateBar extends GridPane {
         public void propertyChange(PropertyChangeEvent evt) {
             final String propertyName = evt.getPropertyName();
 
-            if(AbstractCanvas2D.OBJECTIVE_CRS_KEY.equals(propertyName)){
+            if(AbstractCanvas2D.GRIDGEOMETRY_KEY.equals(propertyName)){
                 //update crs button
-                crsButton.crsProperty().set((CoordinateReferenceSystem)evt.getNewValue());
-            }else if(AbstractCanvas2D.ENVELOPE_KEY.equals(propertyName)){
+                final GridGeometry grid = (GridGeometry) evt.getNewValue();
+                crsButton.crsProperty().set(grid.getCoordinateReferenceSystem());
                 //range slider
                 final Date[] range = map.getCanvas().getTemporalRange();
                 if(range==null){

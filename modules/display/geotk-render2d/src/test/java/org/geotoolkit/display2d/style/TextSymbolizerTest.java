@@ -30,16 +30,15 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -116,11 +115,11 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
         final Hints hints = new Hints();
         hints.put(GO2Hints.KEY_COLOR_MODEL, ColorModel.getRGBdefault());
 
-        final SceneDef scenedef = new SceneDef(context,hints);
-        final ViewDef viewdef = new ViewDef(env);
-        final CanvasDef canvasdef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        final SceneDef scenedef = new SceneDef(context, hints);
+        final CanvasDef canvasdef = new CanvasDef(new Dimension(360, 180), env);
+        canvasdef.setBackground(Color.WHITE);
 
-        final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
+        final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef);
         //ImageIO.write(buffer, "PNG", new File("test.png"));
 
         //we expect to have a blue label at the center of the image

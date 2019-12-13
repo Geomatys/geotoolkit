@@ -22,7 +22,6 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -53,11 +52,10 @@ public class MapContextImageLoader implements ImageLoader {
     public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension)
             throws PortrayalException {
 
-        final CanvasDef cdef = new CanvasDef(outputDimension, null);
-        final ViewDef vdef = new ViewDef(outputEnv);
+        final CanvasDef cdef = new CanvasDef(outputDimension, outputEnv);
         final SceneDef sdef = new SceneDef(context);
 
-        return DefaultPortrayalService.portray(cdef, sdef, vdef);
+        return DefaultPortrayalService.portray(cdef, sdef);
     }
 
 }

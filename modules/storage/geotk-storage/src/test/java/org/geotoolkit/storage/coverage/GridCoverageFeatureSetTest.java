@@ -40,7 +40,6 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.feature.TypeConventions;
-import org.geotoolkit.storage.coverage.GridCoverageFeatureSet;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.GeometryFactory;

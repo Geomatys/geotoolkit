@@ -113,7 +113,7 @@ public class FXScaleBarDecoration extends BorderPane implements FXMapDecoration 
 
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
-                    if(J2DCanvas.TRANSFORM_KEY.equals(evt.getPropertyName())){
+                    if(J2DCanvas.GRIDGEOMETRY_KEY.equals(evt.getPropertyName())){
                         update();
                     }
                 }

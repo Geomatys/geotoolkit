@@ -30,7 +30,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
@@ -42,19 +41,19 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
+import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.AbstractProcess;
-import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
-import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -151,14 +150,13 @@ public class Isoline2 extends AbstractProcess {
             }
 
             for (final Mosaic mosaic : pyramid.getMosaics()) {
-                final GridMosaicRenderedImage gridImage = new GridMosaicRenderedImage(mosaic);
+                final MosaicImage gridImage = new MosaicImage(mosaic, ((GridCoverageResource) pm).getSampleDimensions());
 
                 for (int y=0; y<gridImage.getNumYTiles(); y++) {
                     for (int x=0; x<gridImage.getNumXTiles(); x++) {
                         if (!mosaic.isMissing(x,y)) {
                             final ImageTile ref = (ImageTile) mosaic.getTile(x, y);
-                            MathTransform gridtoCRS = Pyramids.getTileGridToCRS(mosaic, new Point(x, y));
-                            gridtoCRS = PixelTranslation.translate(gridtoCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
+                            MathTransform gridtoCRS = Pyramids.getTileGridToCRS(mosaic, new Point(x, y), PixelInCell.CELL_CENTER);
                             final RenderedImage image;
                             try {
                                 image = ref.getImage();

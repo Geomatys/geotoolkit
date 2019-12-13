@@ -20,7 +20,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +31,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.measure.Unit;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
@@ -45,6 +43,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.GridCoverage2D;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -59,7 +58,6 @@ import org.apache.sis.storage.event.StoreListeners;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
@@ -100,6 +98,16 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         SCALE
     }
 
+    /**
+     * Based on sample dimension information, we can define
+     * the most appropriate merge operation.
+     */
+    private static enum MergingMode {
+        COLORED,
+        SAMPLED,
+        CONVERTED
+    }
+
     private final StoreListeners listeners = new StoreListeners(null, this);
     private final List<VirtualBand> bands = new ArrayList<>();
 
@@ -114,6 +122,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private GridGeometry cachedGridGeometry;
     private boolean forceTransformedValues;
     private double[] noData;
+    private MergingMode mergeMode;
 
 
     public static GridCoverageResource create(CoordinateReferenceSystem resultCrs, GridCoverageResource ... resources) throws DataStoreException, TransformException {
@@ -177,7 +186,14 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      */
     public synchronized void setSampleDimensions(List<SampleDimension> sampleDimensions) throws DataStoreException {
         eraseCaches();
-        if (bands.size() != sampleDimensions.size()) {
+        if (bands.isEmpty()) {
+            //create virtual bands with no datas
+            for (SampleDimension sd : sampleDimensions) {
+                final VirtualBand band = new VirtualBand();
+                band.userDefinedSampleDimension = sd;
+                bands.add(band);
+            }
+        } else if (bands.size() != sampleDimensions.size()) {
             throw new DataStoreException("Provided dimensions do not match virtual bands size");
         }
         for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
@@ -533,11 +549,14 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             sampleDimensions = new ArrayList<>();
             for (int i : range) {
                 bands.add(this.bands.get(i));
-                sampleDimensions.add(this.bands.get(i).cachedSampleDimension);
+                sampleDimensions.add(this.bands.get(i).cachedSampleDimension.forConvertedValues(forceTransformedValues));
             }
         } else {
             bands = this.bands;
-            sampleDimensions = getSampleDimensions();
+            sampleDimensions = new ArrayList<>();
+            for (SampleDimension sd : getSampleDimensions()) {
+                sampleDimensions.add(sd.forConvertedValues(forceTransformedValues));
+            }
         }
 
         // Extract resources which intersect request ///////////////////////////
@@ -566,6 +585,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
 
         // aggregate tiles /////////////////////////////////////////////////////
+        boolean foundDatas = false;
         final BufferedImage[] bandImages = new BufferedImage[bands.size()];
         for (int bandIndex = 0, n = bands.size(); bandIndex < n; bandIndex++) {
             final VirtualBand band = bands.get(bandIndex);
@@ -611,6 +631,25 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             }
 
             bandImages[bandIndex] = aggregate(sorted, canvas, bandIndex);
+            foundDatas |= (bandImages[bandIndex] != null);
+        }
+
+        //if all band images are null, this means not datas really intersected
+        if (!foundDatas) {
+            throw new NoSuchDataException("No data on requested domain");
+        }
+
+        //create blank images with NoData value if a band image is missing
+        for (int i = 0; i < bandImages.length; i++) {
+            if (bandImages[i] == null) {
+                BufferedImage band = BufferedImages.createImage(
+                        (int) canvas.getExtent().getSize(0),
+                        (int) canvas.getExtent().getSize(1),
+                        1, DataBuffer.TYPE_DOUBLE);
+                if (noData[i] != 0) {
+                    BufferedImages.setAll(band, new double[]{noData[i]});
+                }
+            }
         }
 
         BufferedImage result = null;
@@ -629,13 +668,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             }
         }
 
-
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("Aggregated");
-        gcb.setGridGeometry(canvas);
-        gcb.setSampleDimensions(sampleDimensions);
-        gcb.setRenderedImage(result);
-        return gcb.build();
+        try {
+            return new GridCoverage2D(canvas, sampleDimensions, result);
+        } catch (FactoryException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
     }
 
     private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex) throws DataStoreException {
@@ -667,7 +704,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     readGridGeom = maskGrid.derive().margin(5,5).build();
                 }
 
-                final GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(true);
+                GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(forceTransformedValues);
                 if (coverage.getSampleDimensions().size() != 1) {
                     throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
                 }
@@ -801,6 +838,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         public List<Source> getSources() {
             return Collections.unmodifiableList(sources);
+        }
+
+        public void setSources(Source ... sources) {
+            this.sources.clear();
+            this.sources.addAll(Arrays.asList(sources));
+        }
+        public void setSources(List<Source> sources) {
+            this.sources.clear();
+            this.sources.addAll(sources);
         }
 
         public SampleDimension getSampleDimension() {

@@ -35,16 +35,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.CanvasUtilities;
@@ -64,7 +60,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -218,6 +213,7 @@ public class RenderingContext2D implements RenderingContext{
     private Envelope           canvasObjectiveBBox2D  = null;
     private BoundingBox        canvasObjectiveBBox2DB  = null;
 
+    private GridGeometry gridGeometry;
 
     /**
      * Constructs a new {@code RenderingContext} for the specified canvas.
@@ -228,9 +224,10 @@ public class RenderingContext2D implements RenderingContext{
         this.canvas = canvas;
     }
 
-    public void initParameters(final AffineTransform2D objToDisp, final CanvasMonitor monitor,
+    public void initParameters(GridGeometry gridGeometry, final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
             final Shape canvasDisplayShape, final Shape canvasObjectiveShape, final double dpi){
+        this.gridGeometry = gridGeometry;
         this.canvasObjectiveBBox= canvas.getVisibleEnvelope();
         this.objectiveCRS       = canvasObjectiveBBox.getCoordinateReferenceSystem();
         this.objectiveCRS2D     = canvas.getObjectiveCRS2D();
@@ -648,9 +645,10 @@ public class RenderingContext2D implements RenderingContext{
      */
     public RenderingContext2D create(final Graphics2D g2d){
         final RenderingContext2D context = new RenderingContext2D(canvas);
-        context.initParameters(objectiveToDisplay, monitor,
-                               paintingDisplayShape, paintingObjectiveShape,
-                               canvasDisplayShape, canvasObjectiveShape, dpi);
+        context.initParameters(canvas.getGridGeometry(),
+                objectiveToDisplay, monitor,
+                paintingDisplayShape, paintingObjectiveShape,
+                canvasDisplayShape, canvasObjectiveShape, dpi);
         context.initGraphic(g2d);
         g2d.setRenderingHints(this.graphics.getRenderingHints());
         context.labelRenderer = getLabelRenderer(true);
@@ -690,36 +688,7 @@ public class RenderingContext2D implements RenderingContext{
     }
 
     public GridGeometry getGridGeometry() {
-        final AffineTransform2D dispToObj = getDisplayToObjective();
-        final Rectangle bounds = getCanvasDisplayBounds();
-        final CoordinateReferenceSystem objCrs = getObjectiveCRS();
-
-        if (objCrs.getCoordinateSystem().getDimension() == 2) {
-            final GridExtent extent = new GridExtent(bounds.width, bounds.height);
-            return new GridGeometry(extent, PixelInCell.CELL_CORNER, dispToObj, objCrs);
-        } else {
-            //create and N dimension slice
-            final long[] upper = new long[objCrs.getCoordinateSystem().getDimension()];
-            Arrays.fill(upper, 1);
-            upper[0] = bounds.width;
-            upper[1] = bounds.height;
-            final GridExtent extent = new GridExtent(null, new long[upper.length], upper, false);
-
-            final MatrixSIS m = Matrices.createDiagonal(upper.length+1-2, upper.length+1-2);
-            final Envelope canvasEnv = getCanvasObjectiveBounds();
-            for (int i=2;i<upper.length;i++) {
-                double scale = canvasEnv.getSpan(i);
-                if (scale == 0.0) {
-                    //TODO should be 0 or NaN but causes issues
-                    scale = 0.00001;
-                }
-                m.setElement(i-2, i-2, scale);
-                m.setElement(i-2, upper.length-2, canvasEnv.getMinimum(i));
-            }
-
-            final MathTransform gridToCrs = MathTransforms.compound(dispToObj, MathTransforms.linear(m));
-            return new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, objCrs);
-        }
+        return gridGeometry;
     }
 
     // Informations related to scale datas -------------------------------------
