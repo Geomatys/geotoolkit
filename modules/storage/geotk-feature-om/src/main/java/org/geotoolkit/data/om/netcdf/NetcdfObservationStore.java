@@ -20,21 +20,27 @@ package org.geotoolkit.data.om.netcdf;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import org.apache.sis.internal.storage.AbstractFeatureSet;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
+import org.apache.sis.internal.storage.StoreResource;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.storage.Aggregate;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.Query;
-import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStreams;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.observation.ObservationFilter;
 import org.geotoolkit.observation.ObservationReader;
@@ -45,10 +51,11 @@ import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.metadata.Metadata;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.parameter.ParameterValueGroup;
@@ -59,35 +66,50 @@ import org.opengis.util.GenericName;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class NetcdfObservationStore extends AbstractFeatureStore implements ResourceOnFileSystem,ObservationStore {
+public class NetcdfObservationStore extends DataStore implements Aggregate, ResourceOnFileSystem,ObservationStore {
 
     protected final GenericNameIndex<FeatureType> types;
-    private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
+    private final ParameterValueGroup parameters;
     private final Path dataFile;
     private final NCFieldAnalyze analyze;
+    private final List<Resource> components = new ArrayList<>();
 
     public NetcdfObservationStore(final ParameterValueGroup params) {
-        super(params);
+        this.parameters = params;
         dataFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(dataFile));
+
+        for (GenericName name : types.getNames()) {
+            components.add(new FeatureView(name));
+        }
     }
 
     public NetcdfObservationStore(final Path observationFile) {
-        super(null);
+        parameters = NetcdfObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        parameters.parameter(FILE_PATH.getName().toString()).setValue(observationFile.toUri());
         dataFile = observationFile;
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(dataFile));
+
+        for (GenericName name : types.getNames()) {
+            components.add(new FeatureView(name));
+        }
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(NetcdfObservationStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(NetcdfObservationStoreFactory.NAME);
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(parameters);
+    }
+
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        return new DefaultMetadata();
     }
 
     /**
@@ -97,47 +119,9 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Reso
         return dataFile;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    // FEATURE STORE ///////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public Set<GenericName> getNames() throws DataStoreException {
-        return types.getNames();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        typeCheck(typeName);
-        return types.get(this, typeName);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return capabilities;
-    }
-
-    @Override
-    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
-
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
-        final FeatureType sft = getFeatureType(gquery.getTypeName());
-        try {
-            return FeatureStreams.subset(new NetcdfFeatureReader(dataFile,sft), gquery);
-        } catch (NetCDFParsingException ex) {
-            throw new DataStoreException(ex);
-        }
+    public List<Resource> components() {
+        return components;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -253,12 +237,37 @@ public class NetcdfObservationStore extends AbstractFeatureStore implements Reso
         throw new UnsupportedOperationException("Writing is not supported on this observation store.");
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ObservationFilter cloneObservationFilter(ObservationFilter toClone) {
-        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+    private final class FeatureView extends AbstractFeatureSet implements StoreResource {
+
+        private final GenericName name;
+
+        FeatureView(GenericName name) {
+            super(null);
+            this.name = name;
+        }
+
+        @Override
+        public FeatureType getType() throws DataStoreException {
+            return types.get(NetcdfObservationStore.this, name.toString());
+        }
+
+        @Override
+        public DataStore getOriginator() {
+            return NetcdfObservationStore.this;
+        }
+
+        @Override
+        public Stream<Feature> features(boolean parallel) throws DataStoreException {
+            final FeatureType sft = getType();
+            try {
+                final NetcdfFeatureReader reader = new NetcdfFeatureReader(dataFile, sft);
+                final Spliterator<Feature> spliterator = Spliterators.spliteratorUnknownSize(reader, Spliterator.ORDERED);
+                final Stream<Feature> stream = StreamSupport.stream(spliterator, false);
+                return stream.onClose(reader::close);
+            } catch (NetCDFParsingException ex) {
+                throw new DataStoreException(ex);
+            }
+        }
     }
 
 }

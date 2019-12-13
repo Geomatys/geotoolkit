@@ -45,10 +45,6 @@ public class ExecuteRequest extends AbstractRequest {
 
     /**
      * Constructor, initialize status, lineage and storage to false and output form to "document"
-     *
-     * @param serverURL
-     * @param security
-     * @param timeout
      */
     public ExecuteRequest(Execute content, final String serverURL, final ClientSecurity security, Integer timeout) {
         super(serverURL, security, null, timeout);

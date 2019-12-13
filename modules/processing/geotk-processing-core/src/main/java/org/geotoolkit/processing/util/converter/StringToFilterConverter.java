@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.processing.util.converter;
 
-import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.cql.CQL;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.opengis.filter.Filter;
 

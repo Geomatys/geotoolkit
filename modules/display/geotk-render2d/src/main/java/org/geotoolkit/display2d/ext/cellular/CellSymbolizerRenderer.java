@@ -81,9 +81,6 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
     /**
      * This symbolizer works with groups when it's features.
-     *
-     * @param graphics
-     * @throws PortrayalException
      */
     @Override
     public boolean portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException {

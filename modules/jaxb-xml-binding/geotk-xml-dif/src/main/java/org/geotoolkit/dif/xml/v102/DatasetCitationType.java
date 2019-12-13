@@ -113,6 +113,9 @@ public class DatasetCitationType {
     @XmlSchemaType(name = "anyURI")
     protected String onlineResource;
 
+    public DatasetCitationType() {
+
+    }
     /**
      * Obtient la valeur de la propriété datasetCreator.
      *

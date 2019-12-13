@@ -76,6 +76,10 @@ public class SetupNMEA implements SetupService {
             for (final String libName : RXTX_LIB_NAMES) {
                 final String libFile = System.mapLibraryName(libName);
                 final InputStream resource = SetupNMEA.class.getResourceAsStream(libDir + libFile);
+                if (resource == null) {
+                    LOGGER.warning(libFile + "not found");
+                    continue;
+                }
                 final Path tmpFile = tmpFolder.resolve(libFile);
                 IOUtilities.writeStream(resource, tmpFile);
             }

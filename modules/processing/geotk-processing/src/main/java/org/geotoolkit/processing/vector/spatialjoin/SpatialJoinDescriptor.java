@@ -17,11 +17,10 @@
 package org.geotoolkit.processing.vector.spatialjoin;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.vector.VectorDescriptor;
-
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -50,11 +49,11 @@ public final class SpatialJoinDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Target FeatureCollection
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_TARGET = new ParameterBuilder()
+    public static final ParameterDescriptor<FeatureSet> FEATURE_TARGET = new ParameterBuilder()
             .addName("feature_target")
             .setRemarks("Target Features")
             .setRequired(true)
-            .create(FeatureCollection.class, null);
+            .create(FeatureSet.class, null);
 
      /**
      * Optional - Method used. true => Intersection, false => Nearest
@@ -67,11 +66,11 @@ public final class SpatialJoinDescriptor extends VectorDescriptor {
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, FEATURE_TARGET,INTERSECT);
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURESET_IN, FEATURE_TARGET,INTERSECT);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURESET_OUT);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new SpatialJoinDescriptor();

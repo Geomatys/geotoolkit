@@ -21,11 +21,11 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.opengis.feature.AttributeType;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.data.memory.WrapFeatureCollection;
+import org.geotoolkit.storage.memory.WrapFeatureCollection;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;

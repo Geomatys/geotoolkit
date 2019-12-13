@@ -65,13 +65,6 @@ public final class WMTSUtilities {
 
     private WMTSUtilities(){}
 
-    /**
-     *
-     * @param set
-     * @param setCrs
-     * @param matrix
-     * @return
-     */
     public static double unitsByPixel(final TileMatrixSet set, final CoordinateReferenceSystem setCrs, final TileMatrix matrix){
 
         //predefined scales
@@ -124,11 +117,6 @@ public final class WMTSUtilities {
         return axi0Unit.getConverterTo(Units.METRE).convert(1);
     }
 
-    /**
-     *
-     * @param scaleDenominator
-     * @return
-     */
     public static double getGlobalCRS84PixelScale(double scaleDenominator) {
         return (PIXEL_SIZE * 1.118164528) * scaleDenominator / SCALE ;
     }
@@ -139,8 +127,6 @@ public final class WMTSUtilities {
      * <strong>NOTE: Find another {@code CoordinateReferenceSystem} where envelop will suffer lesser deformation.</strong>
      * </font></blockquote>
      *
-     * @param env
-     * @param listCrs
      * @return more appropriate {@code CoordinateReferenceSystem}.
      * @throws FactoryException if impossible to find {@code MathTransform}.
      * @throws TransformException if impossible to derivative {@code MathTransform}.
@@ -224,7 +210,6 @@ public final class WMTSUtilities {
      *                                      - {@code POSITIVE_INFINITY}.
      * Moreover verify that {@code GeneralMatrix gM} not only contains 0 value.
      *
-     * @param gM
      * @return true if assertion is verified else false.
      */
     public static boolean checkGMatrix(final Matrix gM) {

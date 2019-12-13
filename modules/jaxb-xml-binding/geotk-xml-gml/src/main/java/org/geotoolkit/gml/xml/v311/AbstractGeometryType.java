@@ -27,29 +27,26 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.apache.sis.referencing.CRS;
+import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ComparisonMode;
-
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
-import org.opengis.geometry.Precision;
 import org.opengis.geometry.TransfiniteSet;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.internal.simple.SimpleCitation;
-import org.apache.sis.referencing.crs.AbstractCRS;
-import org.apache.sis.referencing.cs.AxesConvention;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.util.FactoryException;
 
 
 
@@ -101,10 +98,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     private List<String> axisLabels;
     @XmlAttribute
     private List<String> uomLabels;
-
-    // Opengis attribute
-    @XmlTransient
-    private Precision precision;
 
     /**
      * empty constructor used by JAXB
@@ -202,6 +195,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      *     {@link Integer }
      *
      */
+    @Override
     public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
     }
@@ -261,18 +255,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         }
 
         return null;
-    }
-
-    @Override
-    public Precision getPrecision() {
-        return precision;
-    }
-
-    /**
-     * @param precision the precision to set
-     */
-    public void setPrecision(Precision precision) {
-        this.precision = precision;
     }
 
     @Override

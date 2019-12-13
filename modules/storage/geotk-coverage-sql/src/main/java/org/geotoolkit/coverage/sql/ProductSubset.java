@@ -17,14 +17,13 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.List;
+import java.util.Optional;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.WarningListeners;
 import org.apache.sis.internal.storage.AbstractGridResource;
 
 
@@ -62,7 +61,7 @@ final class ProductSubset extends AbstractGridResource {
     ProductSubset(final ProductEntry product, final Envelope areaOfInterest, final double[] resolution,
             final List<GridCoverageEntry> entries)
     {
-        super((WarningListeners<DataStore>) null);
+        super(null);
         this.product        = product;
         this.areaOfInterest = areaOfInterest;
         this.resolution     = resolution;
@@ -75,8 +74,8 @@ final class ProductSubset extends AbstractGridResource {
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return product.createIdentifier("subset");      // TODO: need a unique name.
+    public Optional<GenericName> getIdentifier() {
+        return Optional.of(product.createIdentifier("subset"));      // TODO: need a unique name.
     }
 
     /**

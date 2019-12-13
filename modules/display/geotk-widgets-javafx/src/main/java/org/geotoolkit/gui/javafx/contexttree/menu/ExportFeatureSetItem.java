@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -36,15 +37,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.WritableAggregate;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.DefiningFeatureSet;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -56,6 +61,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Geometry;
 import org.opengis.util.GenericName;
@@ -81,8 +87,9 @@ public class ExportFeatureSetItem extends TreeMenuItem {
         //select file factories which support writing
         final Set<DataStoreProvider> factories = DataStores.getProviders((Class) FileFeatureStoreFactory.class);
         for(DataStoreProvider ff : factories){
-            final StoreMetadataExt metadata = ff.getClass().getAnnotation(StoreMetadataExt.class);
-            if(metadata != null && metadata.canCreate()&& metadata.canWrite()&& metadata.geometryTypes() != null){
+            final StoreMetadataExt metadataExt = ff.getClass().getAnnotation(StoreMetadataExt.class);
+            final StoreMetadata metadata = ff.getClass().getAnnotation(StoreMetadata.class);
+            if(metadataExt != null && metadata != null && ArraysExt.contains(metadata.capabilities(), Capability.CREATE) && metadataExt.geometryTypes() != null){
                 final Collection<String> exts = ((FileFeatureStoreFactory)ff).getSuffix();
                 final String name = ff.getShortName();
                 final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, new ArrayList(exts));
@@ -127,7 +134,7 @@ public class ExportFeatureSetItem extends TreeMenuItem {
                     File folder = chooser.showDialog(null);
                     final FeatureSet baseCol = (FeatureSet) layer.getResource();
 
-                    if (folder!=null && (baseCol instanceof FeatureCollection)) {
+                    if (folder!=null && (baseCol instanceof FeatureSet)) {
                         try {
                             final FeatureType baseType = baseCol.getType();
                             final GenericName baseName = baseType.getName();
@@ -136,17 +143,17 @@ public class ExportFeatureSetItem extends TreeMenuItem {
                             final Class<Geometry>[] supportedGeometryTypes = metadata.geometryTypes();
 
                             //detect if we need one or multiple types.
-                            final FeatureCollection[] cols;
+                            final FeatureSet[] cols;
                             final AttributeType<?> geomAtt = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(baseType))
                                     .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer " + layer.getName()));
                             if(ArraysExt.contains(supportedGeometryTypes,geomAtt.getValueClass()) ){
-                                cols = new FeatureCollection[]{(FeatureCollection)baseCol};
+                                cols = new FeatureSet[]{baseCol};
                             }else{
                                 //split the feature collection in sub geometry types
                                 cols = FeatureStoreUtilities.decomposeByGeometryType((FeatureCollection)baseCol, supportedGeometryTypes);
                             }
 
-                            for(FeatureCollection col : cols){
+                            for(FeatureSet col : cols){
 
                                 final FeatureType inType = col.getType();
                                 final String inTypeName = inType.getName().tip().toString();
@@ -155,14 +162,19 @@ public class ExportFeatureSetItem extends TreeMenuItem {
                                 final File file= new File(folder, inTypeName+"."+((FileFeatureStoreFactory)factory).getSuffix().iterator().next());
 
                                 //create output store
-                                try (FeatureStore store = ((FileFeatureStoreFactory)factory).createDataStore(file.toURI())) {
+                                try (DataStore store = (DataStore) ((FileFeatureStoreFactory)factory).createDataStore(file.toURI())) {
                                     //create output type
-                                    store.createFeatureType(inType);
-                                    final FeatureType outType = store.getFeatureType(inTypeName);
-                                    final GenericName outName = outType.getName();
-                                    //write datas
-                                    final Session session = store.createSession(false);
-                                    session.addFeatures(outName.toString(), col);
+                                    if (store instanceof WritableAggregate) {
+                                        WritableFeatureSet newfs = (WritableFeatureSet) ((WritableAggregate) store).add(new DefiningFeatureSet(inType, null));
+                                        try (Stream<Feature> stream = col.features(false)) {
+                                            newfs.add(stream.iterator());
+                                        }
+                                    } else if (store instanceof WritableFeatureSet) {
+                                        ((WritableFeatureSet) store).updateType(inType);
+                                        try (Stream<Feature> stream = col.features(false)) {
+                                            ((WritableFeatureSet) store).add(stream.iterator());
+                                        }
+                                    }
                                 }
                             }
 

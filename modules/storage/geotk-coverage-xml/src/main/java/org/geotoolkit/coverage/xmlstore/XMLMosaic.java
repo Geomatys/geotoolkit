@@ -18,7 +18,6 @@ package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
@@ -35,6 +34,7 @@ import java.nio.file.Path;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Locale;
@@ -56,7 +56,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import net.iharder.Base64;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -69,8 +69,8 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Tile;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
@@ -125,9 +125,9 @@ public class XMLMosaic implements Mosaic {
     @XmlElement
     int tileHeight;
     @XmlElement
-    int dataPixelWidth;
+    long dataPixelWidth;
     @XmlElement
-    int dataPixelHeight;
+    long dataPixelHeight;
 
     // Use getter /setter to bind those two, because we must perform special operation at flush.
     String existMask;
@@ -186,13 +186,13 @@ public class XMLMosaic implements Mosaic {
         try {
             if (existMask != null && !existMask.isEmpty()) {
                 try {
-                    tileExist = BitSet.valueOf(Base64.decode(existMask));
+                    tileExist = BitSet.valueOf(Base64.getDecoder().decode(existMask));
                     /*
                      * Caching tile state can only be determined at pyramid creation, because a switch of behavior after
                      * that seems a little bit tricky.
                      */
                     cacheTileState = false;
-                } catch (IOException ex) {
+                } catch (IllegalArgumentException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     tileExist = new BitSet(gridWidth * gridHeight);
                 }
@@ -202,8 +202,8 @@ public class XMLMosaic implements Mosaic {
 
             if (emptyMask != null && !emptyMask.isEmpty()) {
                 try {
-                    tileEmpty = BitSet.valueOf(Base64.decode(emptyMask));
-                } catch (IOException ex) {
+                    tileEmpty = BitSet.valueOf(Base64.getDecoder().decode(emptyMask));
+                } catch (IllegalArgumentException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     tileEmpty = new BitSet(gridWidth * gridHeight);
                 }
@@ -312,7 +312,7 @@ public class XMLMosaic implements Mosaic {
     }
 
     private static String updateCompletionString(BitSet input) throws IOException {
-        return Base64.encodeBytes(input.toByteArray(), Base64.GZIP);
+        return Base64.getEncoder().encodeToString(input.toByteArray());
     }
 
     /**
@@ -405,12 +405,12 @@ public class XMLMosaic implements Mosaic {
     }
 
     @Override
-    public boolean isMissing(int col, int row) throws PointOutsideCoverageException {
+    public boolean isMissing(long col, long row) throws PointOutsideCoverageException {
         bitsetLock.readLock().lock();
         try {
             if (tileExist == null || tileExist.isEmpty()) {
                 try {
-                    final Point key = new Point(col, row);
+                    final Point key = new Point(Math.toIntExact(col), Math.toIntExact(row));
                     return getIsMissingCache().getOrCreate(key, new Callable<Boolean>() {
                         @Override
                         public Boolean call() throws Exception {
@@ -424,20 +424,20 @@ public class XMLMosaic implements Mosaic {
                     return true;
                 }
             } else {
-                final int index = getTileIndex(col, row);
+                final long index = getTileIndex(col, row);
                 if (index < 0) {
                     LOGGER.log(Level.FINE, "You try to request a tile out of mosaic tile boundary at coordinates : X = "+col+", Y = "+row
                     +"Expected grid boundary : [(0, 0) ; ("+getGridSize().width+","+getGridSize().height+")]");
                     return true;
                 }
-                return !tileExist.get(index);
+                return !tileExist.get(Math.toIntExact(index));
             }
         } finally {
             bitsetLock.readLock().unlock();
         }
     }
 
-    private boolean isEmpty(int col, int row){
+    private boolean isEmpty(long col, long row){
         bitsetLock.readLock().lock();
         try {
             if (tileEmpty == null || tileEmpty.isEmpty()) {
@@ -446,7 +446,7 @@ public class XMLMosaic implements Mosaic {
                  */
                 return false;
             } else {
-                return tileEmpty.get(getTileIndex(col, row));
+                return tileEmpty.get(Math.toIntExact(getTileIndex(col, row)));
             }
         } finally {
             bitsetLock.readLock().unlock();
@@ -454,19 +454,19 @@ public class XMLMosaic implements Mosaic {
     }
 
     @Override
-    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
+    public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
 
         final ImageTile tile;
         if (isEmpty(col, row)) {
             try {
                 tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
-                        ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())), 0, new Point(col, row));
+                        ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
             }
         } else {
             tile = new DefaultImageTile(pyramid.getPyramidSet().getReaderSpi(),
-                    getTileFile(col, row), 0, new Point(col, row));
+                    getTileFile(col, row), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         }
 
         return tile;
@@ -476,12 +476,14 @@ public class XMLMosaic implements Mosaic {
      * {@inheritDoc }
      */
     @Override
-    public Rectangle getDataExtent() {
+    public GridExtent getDataExtent() {
 
         if (dataPixelWidth != 0 && dataPixelHeight != 0) {
-            return new Rectangle(dataPixelWidth, dataPixelHeight);
+            return new GridExtent(dataPixelWidth, dataPixelHeight);
         }
-        return new Rectangle(gridWidth * tileWidth, gridHeight * tileHeight);
+        return new GridExtent(
+                ((long) gridWidth) * tileWidth,
+                ((long) gridHeight) * tileHeight);
 
         /**
         final Path folder = getFolder();
@@ -544,7 +546,7 @@ public class XMLMosaic implements Mosaic {
      * @return {@linkplain Path file} of tile at col and row index position if exist, else return {@code null}.
      * @throws DataStoreException if tile is not present at path file place.
      */
-    private Path getTileFile(int col, int row) throws DataStoreException {
+    private Path getTileFile(long col, long row) throws DataStoreException {
         checkPosition(col, row);
         for (Path fil : getTileFiles(col, row)) {
             if (Files.isRegularFile(fil)) return fil;
@@ -576,7 +578,7 @@ public class XMLMosaic implements Mosaic {
      * @return all possible {@linkplain Path files} from all suffix from reader spi.
      * @throws DataStoreException if problem during get suffix.
      */
-    private Path[] getTileFiles(int col, int row) throws DataStoreException {
+    private Path[] getTileFiles(long col, long row) throws DataStoreException {
         final String[] suffixx = pyramid.getPyramidSet().getReaderSpi().getFileSuffixes();
         final Path[] fils = new Path[suffixx.length];
         for (int i=0;i<suffixx.length;i++) {
@@ -653,8 +655,8 @@ public class XMLMosaic implements Mosaic {
         if (tileExist != null && isEmpty(image.getData())) {
             bitsetLock.writeLock().lock();
             try {
-                tileExist.set(getTileIndex(col, row), true);
-                tileEmpty.set(getTileIndex(col, row), true);
+                tileExist.set(Math.toIntExact(getTileIndex(col, row)), true);
+                tileEmpty.set(Math.toIntExact(getTileIndex(col, row)), true);
             } finally {
                 bitsetLock.writeLock().unlock();
             }
@@ -680,11 +682,11 @@ public class XMLMosaic implements Mosaic {
             }
             writer.write(image);
             if (tileExist != null) {
-                final int ti = getTileIndex(col, row);
+                final long ti = getTileIndex(col, row);
                 bitsetLock.writeLock().lock();
                 try {
-                    tileExist.set(ti, true);
-                    tileEmpty.set(ti, false);
+                    tileExist.set(Math.toIntExact(ti), true);
+                    tileEmpty.set(Math.toIntExact(ti), false);
                 } finally {
                     bitsetLock.writeLock().unlock();
                 }
@@ -715,7 +717,7 @@ public class XMLMosaic implements Mosaic {
         throw new DataStoreException("Not supported yet.");
     }
 
-    private void checkPosition(int col, int row) throws PointOutsideCoverageException {
+    private void checkPosition(long col, long row) throws PointOutsideCoverageException {
         // TODO : Negative indices are allowed ?
         if(col < 0 || row < 0 || col >= getGridSize().width || row >=getGridSize().height){
             throw new PointOutsideCoverageException("Tile position is outside the grid : " + col + " " + row, new GeneralDirectPosition(col, row));
@@ -735,9 +737,8 @@ public class XMLMosaic implements Mosaic {
         }
     }
 
-    private int getTileIndex(int col, int row){
-        final int index = row*getGridSize().width + col;
-        return index;
+    private long getTileIndex(long col, long row){
+        return row*getGridSize().width + col;
     }
 
     @XmlElement
@@ -761,8 +762,8 @@ public class XMLMosaic implements Mosaic {
         existMask = newValue;
         if (existMask != null && !existMask.isEmpty()) {
             try {
-                tileExist = BitSet.valueOf(Base64.decode(existMask));
-            } catch (IOException ex) {
+                tileExist = BitSet.valueOf(Base64.getDecoder().decode(existMask));
+            } catch (IllegalArgumentException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -789,8 +790,8 @@ public class XMLMosaic implements Mosaic {
         emptyMask = newValue;
         if (emptyMask != null && !emptyMask.isEmpty()) {
             try {
-                tileEmpty = BitSet.valueOf(Base64.decode(emptyMask,Base64.GZIP));
-            } catch (IOException ex) {
+                tileEmpty = BitSet.valueOf(Base64.getDecoder().decode(emptyMask));
+            } catch (IllegalArgumentException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }

@@ -35,15 +35,16 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -96,7 +97,6 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
 
     /**
      * Return the current outputCRS if set, else null
-     * @return
      */
     public CoordinateReferenceSystem getOutputCRS() {
         return outputCrs;
@@ -134,7 +134,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
             throw new PortrayalException("Output crs has not been set");
         }
 
-        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)) {
+        if (!Utilities.equalsApproximately(outputEnv.getCoordinateReferenceSystem(), outputCrs)) {
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 
@@ -142,7 +142,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
             try {
                 final GridCoverage coverage = coverageRef.read(coverageRef.getGridGeometry().derive().subgrid(outputEnv).build());
                 return extractTileImage(outputEnv, coverage, outputToCoverage, outputDimension);
-            } catch (DisjointCoverageDomainException de) {
+            } catch (NoSuchDataException de) {
                 //tile outside of the coverage, it's possible
                 //create a fake tile at minimum elevation
                 final BufferedImage img = BufferedImages.createImage(

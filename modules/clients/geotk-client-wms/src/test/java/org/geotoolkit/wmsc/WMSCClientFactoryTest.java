@@ -39,7 +39,7 @@ public class WMSCClientFactoryTest extends org.geotoolkit.test.TestBase {
         final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof WMSCClientFactory){
+            if(ite.next() instanceof WMSCProvider){
                 found = true;
             }
         }

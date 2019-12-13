@@ -18,12 +18,16 @@
 package org.geotoolkit.filter;
 
 
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.PropertyName;
-
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
+import org.apache.sis.internal.feature.FeatureExpression;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.expression.PropertyName;
 
 /**
  * Immutable property name expression.
@@ -31,7 +35,7 @@ import org.geotoolkit.filter.binding.Bindings;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPropertyName extends AbstractExpression implements PropertyName{
+public class DefaultPropertyName extends AbstractExpression implements PropertyName, FeatureExpression {
 
     private final String property;
 
@@ -123,4 +127,8 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
         return hash;
     }
 
+    @Override
+    public PropertyTypeBuilder expectedType(FeatureType type, FeatureTypeBuilder addTo) {
+        return addTo.addProperty((PropertyType) evaluate(type));
+    }
 }

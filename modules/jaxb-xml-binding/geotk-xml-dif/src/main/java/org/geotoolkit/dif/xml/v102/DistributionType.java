@@ -73,6 +73,17 @@ public class DistributionType {
     @XmlElement(name = "Fees")
     protected String fees;
 
+    public DistributionType() {
+
+    }
+
+    public DistributionType(String distributionMedia, String distributionSize, String distributionFormat, String fees) {
+        this.distributionFormat = distributionFormat;
+        this.distributionMedia = distributionMedia;
+        this.distributionSize = distributionSize;
+        this.fees = fees;
+    }
+
     /**
      * Obtient la valeur de la propriété distributionMedia.
      *

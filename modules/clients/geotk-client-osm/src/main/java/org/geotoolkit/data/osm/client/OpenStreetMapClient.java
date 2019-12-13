@@ -20,9 +20,11 @@ package org.geotoolkit.data.osm.client;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
@@ -50,7 +52,6 @@ import org.geotoolkit.data.osm.client.v060.Upload060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -76,9 +77,9 @@ public class OpenStreetMapClient extends AbstractClient {
     }
 
     public OpenStreetMapClient(final URL url, final ClientSecurity security, final OSMVersion version){
-        super(create(OSMClientFactory.PARAMETERS, url, security, null));
+        super(create(OSMProvider.PARAMETERS, url, security, null));
         ArgumentChecks.ensureNonNull("version", version);
-        parameters.getOrCreate(OSMClientFactory.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(OSMProvider.VERSION).setValue(version.getCode());
     }
 
     public OpenStreetMapClient(final ParameterValueGroup params){
@@ -86,17 +87,17 @@ public class OpenStreetMapClient extends AbstractClient {
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(OSMClientFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(OSMProvider.NAME);
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     public OSMVersion getVersion(){
-        return OSMVersion.getVersion(parameters.getValue(OSMClientFactory.VERSION));
+        return OSMVersion.getVersion(parameters.getValue(OSMProvider.VERSION));
     }
 
     public Api getServiceCapabilities(){

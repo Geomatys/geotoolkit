@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.MultiPointProperty;
 
 
 /**
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "MultiPointPropertyType", propOrder = {
     "multiPoint"
 })
-public class MultiPointPropertyType {
+public class MultiPointPropertyType implements MultiPointProperty {
 
     @XmlElement(name = "MultiPoint")
     private MultiPointType multiPoint;
@@ -92,6 +93,7 @@ public class MultiPointPropertyType {
      *     {@link MultiPointType }
      *
      */
+    @Override
     public MultiPointType getMultiPoint() {
         return multiPoint;
     }

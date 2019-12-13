@@ -82,6 +82,14 @@ public class LocationType {
     @XmlAttribute(name = "uuid")
     protected String uuid;
 
+    public LocationType() {
+
+    }
+
+    public LocationType(String detailedLocation) {
+        this.detailedLocation = detailedLocation;
+    }
+
     /**
      * Obtient la valeur de la propriété locationCategory.
      *

@@ -2,9 +2,9 @@
 
 package org.geotoolkit.pending.demo.filter;
 
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;

@@ -21,6 +21,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.gml.xml.v311.AbstractCurveType;
 
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
@@ -170,7 +171,7 @@ public class GMLUtilities {
             List<LineStringSegmentType> gmlSegments = new ArrayList<LineStringSegmentType>();
             for (CurveSegment segment : segments) {
                 CurveInterpolationType interpolation = CurveInterpolationType.fromValue(segment.getInterpolation().identifier());
-                PointArray array = segment.getSamplePoints();
+                PointArray array = GeometricUtilities.getSamplePoints(segment);
                 List<DirectPosition> positions = new ArrayList<DirectPosition>();
                 for (int i =0; i < array.size(); i++) {
                     positions.add(array.getDirectPosition(i, null));
@@ -188,7 +189,7 @@ public class GMLUtilities {
        } else if (geometry instanceof LineString) {
             LineString line = (LineString) geometry;
 
-            PointArray array = line.getSamplePoints();
+            PointArray array = GeometricUtilities.getSamplePoints(line);
             List<DirectPosition> positions = new ArrayList<DirectPosition>();
             for (int i =0; i < array.size(); i++) {
                 positions.add(array.getDirectPosition(i, null));

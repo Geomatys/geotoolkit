@@ -36,7 +36,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Shapes2D;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.cs.DefaultCompoundCS;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
@@ -482,7 +482,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final CoordinateReferenceSystem requestCRS,
             final IIOParam                  imageParam,
             final boolean                   isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
-            throws TransformException, FactoryException, CoverageStoreException
+            throws TransformException, FactoryException, DataStoreException
     {
         final GridExtent      gridExtent = gridGeometry.getExtent2D();
         final MathTransform2D gridToCRS  = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);

@@ -77,11 +77,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
     /**
      * Gets the value of the worldToTexture property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TexCoordGenType.WorldToTexture }
-     *
      */
     public TexCoordGenType.WorldToTexture getWorldToTexture() {
         return worldToTexture;
@@ -89,11 +84,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
     /**
      * Sets the value of the worldToTexture property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TexCoordGenType.WorldToTexture }
-     *
      */
     public void setWorldToTexture(TexCoordGenType.WorldToTexture value) {
         this.worldToTexture = value;
@@ -101,7 +91,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfTexCoordGen property.
-     *
      */
     public List<Object> getGenericApplicationPropertyOfTexCoordGen() {
         if (genericApplicationPropertyOfTexCoordGen == null) {
@@ -176,11 +165,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the srsName property.
-         *
-         * @return
-         *     possible object is
-         *     {@link String }
-         *
          */
         public String getSrsName() {
             return srsName;
@@ -188,11 +172,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Sets the value of the srsName property.
-         *
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *
          */
         public void setSrsName(String value) {
             this.srsName = value;
@@ -200,11 +179,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the srsDimension property.
-         *
-         * @return
-         *     possible object is
-         *     {@link BigInteger }
-         *
          */
         public Integer getSrsDimension() {
             return srsDimension;
@@ -212,11 +186,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Sets the value of the srsDimension property.
-         *
-         * @param value
-         *     allowed object is
-         *     {@link BigInteger }
-         *
          */
         public void setSrsDimension(Integer value) {
             this.srsDimension = value;
@@ -224,7 +193,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the axisLabels property.
-         *
          */
         public List<String> getAxisLabels() {
             if (axisLabels == null) {
@@ -235,7 +203,6 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
 
         /**
          * Gets the value of the uomLabels property.
-         *
          */
         public List<String> getUomLabels() {
             if (uomLabels == null) {
@@ -274,5 +241,4 @@ public class TexCoordGenType extends AbstractTextureParameterizationType {
             return s.toString();
         }
     }
-
 }

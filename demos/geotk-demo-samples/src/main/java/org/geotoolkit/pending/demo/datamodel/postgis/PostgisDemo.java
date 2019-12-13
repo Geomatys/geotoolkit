@@ -1,10 +1,10 @@
 package org.geotoolkit.pending.demo.datamodel.postgis;
 
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;

@@ -32,17 +32,13 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -50,7 +46,6 @@ import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wmc.xml.v110.*;
 import org.opengis.geometry.Envelope;
@@ -176,28 +171,21 @@ public class WMCUtilities {
                 continue;
             }
 
-            if (server instanceof FeatureStore) {
-                final FeatureStore wfs = (FeatureStore) server;
-                final Session storeSession = wfs.createSession(true);
-                final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
-                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getType());
-                final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
-                context.layers().add(layer);
-            } else {
-                try {
-                    for (Resource r : DataStores.flatten(server, true)) {
-                        GenericName n = r.getIdentifier();
-                        if (n != null && n.tip().toString().equalsIgnoreCase(layerName.tip().toString()) && r instanceof GridCoverageResource) {
-                            final MapLayer mapLayer = MapBuilder.createCoverageLayer(r,
-                                    GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
-                            context.layers().add(mapLayer);
-                        }
-                    }
-                } catch (DataStoreException ex) {
-                    Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
-                    continue;
+            try {
+                Resource resource = server.findResource(layerName.toString());
+                if (resource instanceof FeatureSet) {
+                    final FeatureSet featureSet = (FeatureSet) resource;
+                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(featureSet.getType());
+                    final MapLayer layer = MapBuilder.createFeatureLayer(featureSet, style);
+                    context.layers().add(layer);
+                } else if (resource instanceof GridCoverageResource) {
+                    final MapLayer mapLayer = MapBuilder.createCoverageLayer((GridCoverageResource) resource);
+                    context.layers().add(mapLayer);
                 }
 
+            } catch (DataStoreException ex) {
+                Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
+                continue;
             }
         }
         return context;

@@ -21,7 +21,7 @@ import java.net.URL;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 
@@ -31,7 +31,7 @@ import org.geotoolkit.feature.util.converter.SimpleConverter;
  * @author Quentin Boileau
  * @module
  */
-public class StringToCoverageReaderConverter extends SimpleConverter<String, GridCoverageReader> {
+public class StringToCoverageReaderConverter extends SimpleConverter<String, ImageCoverageReader> {
 
     private static StringToCoverageReaderConverter INSTANCE;
 
@@ -51,12 +51,12 @@ public class StringToCoverageReaderConverter extends SimpleConverter<String, Gri
     }
 
     @Override
-    public Class<GridCoverageReader> getTargetClass() {
-        return GridCoverageReader.class;
+    public Class<ImageCoverageReader> getTargetClass() {
+        return ImageCoverageReader.class;
     }
 
     @Override
-    public GridCoverageReader apply(final String s) throws UnconvertibleObjectException {
+    public ImageCoverageReader apply(final String s) throws UnconvertibleObjectException {
         if (s == null) {
             throw new UnconvertibleObjectException("Empty Coverage File");
         }
@@ -68,7 +68,7 @@ public class StringToCoverageReaderConverter extends SimpleConverter<String, Gri
             } else {
                 url = "file:" + s;
             }
-            GridCoverageReader reader = CoverageIO.createSimpleReader(new URL(url));
+            ImageCoverageReader reader = CoverageIO.createSimpleReader(new URL(url));
 
             if(reader == null){
                 throw new UnconvertibleObjectException("Invalid Coverage File");

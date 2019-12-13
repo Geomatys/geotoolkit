@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.dif.xml.v102;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,24 +21,27 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  *
  *
- *             | DIF 9               | ECHO 10       | UMM        | DIF 10                   | Note                                               |
- *             | ------------------- | ------------- | ---------- | ------------------------ | -------------------------------------------------- |
- *             | Data_Resolution     |       -       | Resolution | Data_Resolution          | No change                                          |
- *             |
- *             | Vertical_Resolution | Resolution    | ?          | Vertical_Resolution      | Should be a number in the future, migrate all over |
- *             |         -           | DistanceUnits | ?          | Vertical_Resolution_Unit |                                                    |
+ * | DIF 9 | ECHO 10 | UMM | DIF 10 | Note | | ------------------- |
+ * ------------- | ---------- | ------------------------ |
+ * -------------------------------------------------- | | Data_Resolution | - |
+ * Resolution | Data_Resolution | No change | | | Vertical_Resolution |
+ * Resolution | ? | Vertical_Resolution | Should be a number in the future,
+ * migrate all over | | - | DistanceUnits | ? | Vertical_Resolution_Unit | |
  *
- *             Resolution is /Collection/VerticalCoordinateSystem/AltitudeSystemDefinition/Resolution/
+ * Resolution is
+ * /Collection/VerticalCoordinateSystem/AltitudeSystemDefinition/Resolution/
  *
  *
  *
- * <p>Classe Java pour DataResolutionType complex type.
+ * <p>
+ * Classe Java pour DataResolutionType complex type.
  *
- * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
+ * <p>
+ * Le fragment de schéma suivant indique le contenu attendu figurant dans cette
+ * classe.
  *
  * <pre>
  * &lt;complexType name="DataResolutionType">
@@ -92,12 +94,19 @@ public class DataResolutionType {
     @XmlElement(name = "Temporal_Resolution_Range")
     protected TemporalResolutionRangeType temporalResolutionRange;
 
+    public DataResolutionType() {
+
+    }
+
+    public DataResolutionType(String latitudeResolution, String longitudeResolution) {
+        this.latitudeResolution = latitudeResolution;
+        this.longitudeResolution = longitudeResolution;
+    }
+
     /**
      * Obtient la valeur de la propriété latitudeResolution.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getLatitudeResolution() {
@@ -107,9 +116,7 @@ public class DataResolutionType {
     /**
      * Définit la valeur de la propriété latitudeResolution.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setLatitudeResolution(String value) {
@@ -119,9 +126,7 @@ public class DataResolutionType {
     /**
      * Obtient la valeur de la propriété longitudeResolution.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getLongitudeResolution() {
@@ -131,9 +136,7 @@ public class DataResolutionType {
     /**
      * Définit la valeur de la propriété longitudeResolution.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setLongitudeResolution(String value) {
@@ -143,9 +146,7 @@ public class DataResolutionType {
     /**
      * Obtient la valeur de la propriété horizontalResolutionRange.
      *
-     * @return
-     *     possible object is
-     *     {@link HorizontalResolutionRangeType }
+     * @return possible object is {@link HorizontalResolutionRangeType }
      *
      */
     public HorizontalResolutionRangeType getHorizontalResolutionRange() {
@@ -155,9 +156,7 @@ public class DataResolutionType {
     /**
      * Définit la valeur de la propriété horizontalResolutionRange.
      *
-     * @param value
-     *     allowed object is
-     *     {@link HorizontalResolutionRangeType }
+     * @param value allowed object is {@link HorizontalResolutionRangeType }
      *
      */
     public void setHorizontalResolutionRange(HorizontalResolutionRangeType value) {
@@ -167,9 +166,7 @@ public class DataResolutionType {
     /**
      * Obtient la valeur de la propriété verticalResolution.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getVerticalResolution() {
@@ -179,9 +176,7 @@ public class DataResolutionType {
     /**
      * Définit la valeur de la propriété verticalResolution.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setVerticalResolution(String value) {
@@ -191,9 +186,7 @@ public class DataResolutionType {
     /**
      * Obtient la valeur de la propriété verticalResolutionUnit.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getVerticalResolutionUnit() {
@@ -203,9 +196,7 @@ public class DataResolutionType {
     /**
      * Définit la valeur de la propriété verticalResolutionUnit.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setVerticalResolutionUnit(String value) {
@@ -215,9 +206,7 @@ public class DataResolutionType {
     /**
      * Obtient la valeur de la propriété verticalResolutionRange.
      *
-     * @return
-     *     possible object is
-     *     {@link VerticalResolutionRangeType }
+     * @return possible object is {@link VerticalResolutionRangeType }
      *
      */
     public VerticalResolutionRangeType getVerticalResolutionRange() {
@@ -227,9 +216,7 @@ public class DataResolutionType {
     /**
      * Définit la valeur de la propriété verticalResolutionRange.
      *
-     * @param value
-     *     allowed object is
-     *     {@link VerticalResolutionRangeType }
+     * @param value allowed object is {@link VerticalResolutionRangeType }
      *
      */
     public void setVerticalResolutionRange(VerticalResolutionRangeType value) {
@@ -239,9 +226,7 @@ public class DataResolutionType {
     /**
      * Obtient la valeur de la propriété temporalResolution.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getTemporalResolution() {
@@ -251,9 +236,7 @@ public class DataResolutionType {
     /**
      * Définit la valeur de la propriété temporalResolution.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setTemporalResolution(String value) {
@@ -263,9 +246,7 @@ public class DataResolutionType {
     /**
      * Obtient la valeur de la propriété temporalResolutionRange.
      *
-     * @return
-     *     possible object is
-     *     {@link TemporalResolutionRangeType }
+     * @return possible object is {@link TemporalResolutionRangeType }
      *
      */
     public TemporalResolutionRangeType getTemporalResolutionRange() {
@@ -275,9 +256,7 @@ public class DataResolutionType {
     /**
      * Définit la valeur de la propriété temporalResolutionRange.
      *
-     * @param value
-     *     allowed object is
-     *     {@link TemporalResolutionRangeType }
+     * @param value allowed object is {@link TemporalResolutionRangeType }
      *
      */
     public void setTemporalResolutionRange(TemporalResolutionRangeType value) {

@@ -16,20 +16,12 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
-
-import org.geotoolkit.data.FeatureCollection;
-
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -42,21 +34,26 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.test.TestData;
 import org.junit.Assert;
-import org.opengis.util.GenericName;
-
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
-import org.geotoolkit.data.FeatureSet;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -127,7 +124,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
             final org.apache.sis.storage.Resource r = store.findResource(typeName);
             Assert.assertTrue(r instanceof FeatureSet);
-            final List<Feature> features = ((FeatureSet)r).features(false).collect(Collectors.toList());
+            final List<Feature> features = ((FeatureSet) r).features(false).collect(Collectors.toList());
             //compare(features, Collections.singleton(f));
             Assert.assertEquals("Written features", 1, features.size());
 

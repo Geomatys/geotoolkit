@@ -29,7 +29,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.IntervalRectangle;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;

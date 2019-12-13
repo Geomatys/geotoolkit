@@ -27,8 +27,8 @@ import java.util.List;
 
 import org.junit.After;
 
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.ShapeTestData;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;

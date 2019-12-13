@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.apache.sis.storage.DataStore;
@@ -45,8 +46,8 @@ public abstract class AbstractSensorStore extends DataStore implements SensorSto
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return config;
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.ofNullable(config);
     }
 
     @Override

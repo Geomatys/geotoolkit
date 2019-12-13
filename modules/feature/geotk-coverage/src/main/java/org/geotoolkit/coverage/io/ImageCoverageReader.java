@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.io;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.spi.ImageReaderSpi;
@@ -45,58 +47,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.storage.MetadataBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.measure.Units;
-import org.apache.sis.metadata.ModifiableMetadata;
-import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
-import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
-import org.apache.sis.metadata.iso.identification.DefaultResolution;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.collection.BackingStoreException;
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import org.apache.sis.util.iso.Names;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.util.resources.Vocabulary;
-import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.io.DimensionSlice;
-import org.geotoolkit.image.io.ImageMetadataException;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import org.geotoolkit.image.io.SampleConversionType;
-import org.geotoolkit.image.io.SpatialImageReadParam;
-import org.geotoolkit.image.io.SpatialImageReader;
-import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.large.LargeRenderedImage;
-import org.geotoolkit.image.io.metadata.MetadataHelper;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
-import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
-import org.geotoolkit.image.io.mosaic.MosaicImageReader;
-import org.geotoolkit.internal.image.io.CheckedImageInputStream;
-import org.geotoolkit.internal.image.io.DimensionAccessor;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.XCollections;
-import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
+
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
@@ -121,8 +72,65 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
+
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.measure.Units;
+import org.apache.sis.metadata.ModifiableMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultResolution;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.iso.Names;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.resources.Vocabulary;
+
+import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.io.DimensionSlice;
+import org.geotoolkit.image.io.ImageMetadataException;
+import org.geotoolkit.image.io.SampleConversionType;
+import org.geotoolkit.image.io.SpatialImageReadParam;
+import org.geotoolkit.image.io.SpatialImageReader;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.large.LargeRenderedImage;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
+import org.geotoolkit.image.io.mosaic.MosaicImageReader;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.collection.XCollections;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 
 
 /**
@@ -163,7 +171,7 @@ import org.w3c.dom.NodeList;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class ImageCoverageReader extends GridCoverageStore implements GridCoverageReader {
+public class ImageCoverageReader extends GridCoverageStore {
     /**
      * The name of metadata nodes we are interested in. Some implementations of
      * {@link ImageReader} may use this information for reading only the metadata
@@ -405,7 +413,6 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
      * Then this method {@linkplain ImageReader#setInput(Object, boolean, boolean) sets the input}
      * of the {@link #imageReader} instance, if it was not already done by the above method calls.
      */
-    @Override
     public void setInput(final Object input) throws DataStoreException {
         final ImageReader oldReader = imageReader;
         try {
@@ -614,9 +621,23 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the list of coverage names available from the current input source. The length
+     * of the returned list is the number of coverages found in the current input source. The
+     * elements in the returned list are the names of each coverage.
+     * <p>
+     * The returned list may be backed by this {@code GridCoverageReader}: it should be used
+     * only as long as this reader and its input source are valid. Iterating over the list
+     * may be costly and the operation performed on the list may throw a
+     * {@link BackingStoreException}.
+     *
+     * @return The names of the coverages.
+     * @throws IllegalStateException If the input source has not been set.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
+     *
+     * @see ImageReader#getNumImages(boolean)
      */
-    @Override
     public GenericName getCoverageName() throws CoverageStoreException {
         if (coverageNames == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
@@ -659,8 +680,17 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
      *   <li>The {@link CoordinateReferenceSystem} and the "<cite>grid to CRS</cite>" conversion
      *       are determined from the {@link SpatialMetadata} if any.</li>
      * </ul>
+     *
+     * @return The grid geometry for the {@link GridCoverage} at the specified index.
+     * @throws IllegalStateException If the input source has not been set.
+     * @throws IndexOutOfBoundsException If the supplied index is out of bounds.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
+     *
+     * @see ImageReader#getWidth(int)
+     * @see ImageReader#getHeight(int)
      */
-    @Override
     public GridGeometry2D getGridGeometry() throws DataStoreException {
         final int index = 0;
         GridGeometry2D gridGeometry = getCached(gridGeometries, index);
@@ -796,9 +826,18 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the sample dimensions for each band of the {@link GridCoverage} to be read.
+     * If sample dimensions are not known, then this method returns {@code null}.
+     *
+     * @return The list of sample dimensions for the {@link GridCoverage} at the specified index,
+     *         or {@code null} if none. This list length is equals to the number of bands in the
+     *         {@link GridCoverage}.
+     * @throws IllegalStateException If the input source has not been set.
+     * @throws IndexOutOfBoundsException If the supplied index is out of bounds.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
      */
-    @Override
     public List<SampleDimension> getSampleDimensions() throws CoverageStoreException {
         return getSampleDimensions(0);
     }
@@ -823,16 +862,23 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                     if (sd != null) return sd;
                     bands = metadata.getListForType(org.geotoolkit.image.io.metadata.SampleDimension.class);
                 }
+
+                if (isNullOrEmpty(bands)) {
+                    // See the convention documented below.
+                    sd = Collections.emptyList();
+                } else try {
+                    // MetadataHelper default implementation returns an unmodifiable list.
+                    sd = getMetadataHelper().getSampleDimensions(bands);
+                } catch (ImageMetadataException e) {
+                    throw new CoverageStoreException(formatErrorMessage(e), e);
+                }
+
+                if (sd == null || sd.isEmpty()) {
+                    // Create mock dimension, because new Coverage API does not allow null sample dimensions.
+                    sd = mock(getDataModel(imageReader, index));
+                }
+
             } catch (IOException e) {
-                throw new CoverageStoreException(formatErrorMessage(e), e);
-            }
-            if (isNullOrEmpty(bands)) {
-                // See the convention documented below.
-                sd = Collections.emptyList();
-            } else try {
-                // MetadataHelper default implementation returns an unmodifiable list.
-                sd = getMetadataHelper().getSampleDimensions(bands);
-            } catch (ImageMetadataException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             Map.Entry<Map<Integer,List<SampleDimension>>,List<SampleDimension>> entry =
@@ -840,15 +886,46 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
             sampleDimensions = entry.getKey();
             sd = entry.getValue();
         }
-        /*
-         * By convention, an empty list means that we already checked for sample dimensions
-         * and didn't found any. This is not the same than a coverage having no bands, which
-         * should not be valid.
-         */
-        if (sd == null || sd.isEmpty()) {
-            return null;
-        }
+
         return sd;
+    }
+
+    /**
+     * Creates a sample dimension without any geophysic interpretation. It will strictly match sample ranges defined by
+     * a given sample model.
+     *
+     * @param dataModel The sample model to use to build "photographic" sample dimensions.
+     * @return A sample dimension per band in given data model. Never null, and never empty (given that input model
+     * always contains at least one band).
+     */
+    private static List<SampleDimension> mock(final SampleModel dataModel) {
+        final int numBands = dataModel.getNumBands();
+        final List<SampleDimension> sds = new ArrayList<>(numBands);
+        for (int i = 0; i < numBands; i++) {
+            sds.add(new SampleDimension.Builder().setName(i).build());
+        }
+
+        return sds;
+    }
+
+    /**
+     * Try to acquire a sample model for given image reader.
+     * @implNote We do not use {@link ImageReader#getRawImageType(int) image raw type}, as it could be very different
+     * from default representation of images returned by the reader. Instead, we will try to get the most natural form
+     * of image through {@link ImageReader#getImageTypes(int)}. If we cannot get any type from it, we will read data
+     * to get a precise sample model.
+     *
+     * @param source The image reader to extract information. Its input must be configured already.
+     * @param imageIndex The index of the image we want a model for.
+     * @return A sample model for wanted image, never null.
+     * @throws IOException If an error occurs while extracting data from the reader.
+     */
+    private static SampleModel getDataModel(final ImageReader source, final int imageIndex) throws IOException {
+        final Iterator<ImageTypeSpecifier> bestTypes = source.getImageTypes(imageIndex);
+        if (bestTypes.hasNext()) return bestTypes.next().getSampleModel();
+        final ImageReadParam littleRead = new ImageReadParam();
+        littleRead.setSourceRegion(new Rectangle(0, 0, 1, 1));
+        return source.read(imageIndex, littleRead).getSampleModel();
     }
 
     /**
@@ -1022,7 +1099,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                                 .filter(CoverageDescription.class::isInstance)
                                 .map(CoverageDescription.class::cast)
                                 .findFirst().orElse(null);
-                        if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).isModifiable()) {
+                        if (cd instanceof ModifiableMetadata && ((ModifiableMetadata)cd).state() != ModifiableMetadata.State.FINAL) {
                             ci = cd;
                         }
                     } else {
@@ -1061,7 +1138,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                  * Resolution along the horizontal axes only, ignoring all other axes. For linear units (feet,
                  * kilometres, etc.), we convert the units to metres for compliance with a current limitation
                  * of Apache SIS, which can handle only metres. For angular resolution (typically in degrees),
-                 * we perform an APPROXIMATIVE conversion to metres using the nautical mile definition. This
+                 * we perform an APPROXIMATE conversion to metres using the nautical mile definition. This
                  * conversion is only valid along the latitudes axis (the number is wrong along the longitude
                  * axis), and more accurate for mid-latitude (the numbers are differents close to equator or
                  * to the poles).
@@ -1098,7 +1175,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                             resolutions.add(resolution);
                         } catch (IncommensurableException e) {
                             // In case of failure, do not create a Resolution object.
-                            Logging.recoverableException(LOGGER, AbstractGridCoverageReader.class, "getMetadata", e);
+                            Logging.recoverableException(LOGGER, ImageCoverageReader.class, "getMetadata", e);
                         }
                     }
                 }
@@ -1116,7 +1193,7 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
                         // Not a big deal if we fail. We will just let the identification section unchanged.
                         if (!failed) {
                             failed = true; // Log only once.
-                            Logging.recoverableException(LOGGER, AbstractGridCoverageReader.class, "getMetadata", e);
+                            Logging.recoverableException(LOGGER, ImageCoverageReader.class, "getMetadata", e);
                         }
                     }
                 }
@@ -1269,8 +1346,17 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
      * /!\ If {@link org.geotoolkit.coverage.io.GridCoverageReadParam#setDeferred(boolean)} parameter is set to true, the
      * returned coverage will rely on the current reader to cache it's data on the fly, so you CANNOT dispose of the current
      * reader while your using the resulting coverage.
+     *
+     * @param  param Optional parameters used to control the reading process, or {@code null}.
+     * @return The {@link GridCoverage} at the specified index.
+     * @throws IllegalStateException if the input source has not been set.
+     * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
+     *
+     * @see ImageReader#read(int)
      */
-    @Override
     public GridCoverage2D read(final GridCoverageReadParam param)
             throws DataStoreException, CancellationException
     {
@@ -1539,8 +1625,15 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
      * Cancels the read operation. The default implementation forward the call to the
      * {@linkplain #imageReader image reader}, if any. The content of the coverage
      * following the abort will be undefined.
+     *
+     * {@section Note for implementors}
+     * Subclasses should set the {@link #abortRequested} field to {@code false} at the beginning
+     * of each read or write operation, and poll the value regularly during the operation.
+     *
+     * @see #abortRequested
+     * @see javax.imageio.ImageReader#abort()
+     * @see javax.imageio.ImageWriter#abort()
      */
-    @Override
     public void abort() {
         super.abort();
         final ImageReader imageReader = this.imageReader; // Protect from changes.
@@ -1583,11 +1676,12 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
     }
 
     /**
-     * {@inheritDoc}
+     * Restores the {@code GridCoverageReader} to its initial state.
+     *
+     * @throws CoverageStoreException If an error occurs while restoring to the initial state.
      *
      * @see ImageReader#reset()
      */
-    @Override
     public void reset() throws DataStoreException {
         input = null;
         try {
@@ -1611,9 +1705,10 @@ public class ImageCoverageReader extends GridCoverageStore implements GridCovera
      * The default implementation closes the {@linkplain #imageReader image reader} input if
      * the later is a stream, then {@linkplain ImageReader#dispose() disposes} that reader.
      *
+     * @throws CoverageStoreException If an error occurs while disposing resources.
+     *
      * @see ImageReader#dispose()
      */
-    @Override
     public void dispose() throws DataStoreException {
         input = null;
         try {

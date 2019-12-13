@@ -177,7 +177,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         m.marshal(factory.createJTSPoint(point), sw);
 
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"           + '\n' +
                            "<gml:Point xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg::4326\" >" + '\n' +
@@ -260,7 +260,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         m.marshal(factory.createJTSCurve(curve), sw);
 
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"            + '\n' +
@@ -440,7 +440,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPoint(multiPoint), sw);
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                 + '\n' +
@@ -568,7 +568,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCompositeCurve(compositeCurve), sw);
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                     + '\n' +
@@ -655,7 +655,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiCurve(multiCurve), sw);
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
@@ -996,7 +996,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolyhedralSurface(polyHedralSurface), sw);
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
 
         String expResult =
@@ -1217,7 +1217,8 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         JTSCurve expCurve = (JTSCurve) expBoundary.getExterior().getElements().iterator().next();
         JTSCurve resCurve = (JTSCurve) resBoundary.getExterior().getElements().iterator().next();
 
-        assertEquals(((JTSLineString)expCurve.getSegments().get(0)).getControlPoints().positions().get(0), ((JTSLineString)resCurve.getSegments().get(0)).getControlPoints().positions().get(0));
+        assertEquals(((JTSLineString)expCurve.getSegments().get(0)).getControlPoints().get(0),
+                     ((JTSLineString)resCurve.getSegments().get(0)).getControlPoints().get(0));
         assertEquals(expCurve.getSegments().get(0), resCurve.getSegments().get(0));
         assertEquals(expCurve, resCurve);
 
@@ -1275,7 +1276,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(ring, sw);
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n'  +
@@ -1444,7 +1445,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolygon(polygon), sw);
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                             + '\n'  +
@@ -1657,7 +1658,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPolygon(multiPolygon), sw);
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n'  +
@@ -1849,7 +1850,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
         String result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
@@ -1928,7 +1929,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
         result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
@@ -2002,7 +2003,7 @@ public class JTSGeometryBindingTest extends org.geotoolkit.test.TestBase {
         sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
         result = sw.toString();
-        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        result = result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n' +

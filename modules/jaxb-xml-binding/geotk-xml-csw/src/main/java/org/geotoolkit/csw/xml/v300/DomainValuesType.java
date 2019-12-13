@@ -113,7 +113,6 @@ public class DomainValuesType implements DomainValues {
     /**
      * Build a new Domain values type with the specified list Of Values.
      * One of parameterName or valueReference must be null.
-     *
      */
     public DomainValuesType(final String parameterName, final String valueReference, final List<Object> listOfValues, final QName type) {
 
@@ -130,11 +129,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Obtient la valeur de la propriété valueReference.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getValueReference() {
         return valueReference;
@@ -147,11 +141,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Définit la valeur de la propriété valueReference.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setValueReference(String value) {
         this.valueReference = value;
@@ -159,11 +148,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Obtient la valeur de la propriété parameterName.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getParameterName() {
@@ -172,11 +156,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Définit la valeur de la propriété parameterName.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setParameterName(String value) {
         this.parameterName = value;
@@ -184,11 +163,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Obtient la valeur de la propriété listOfValues.
-     *
-     * @return
-     *     possible object is
-     *     {@link ListOfValuesType }
-     *
      */
     @Override
     public ListOfValuesType getListOfValues() {
@@ -197,11 +171,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Définit la valeur de la propriété listOfValues.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ListOfValuesType }
-     *
      */
     public void setListOfValues(ListOfValuesType value) {
         this.listOfValues = value;
@@ -221,13 +190,6 @@ public class DomainValuesType implements DomainValues {
      * <pre>
      *    getConceptualScheme().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ConceptualSchemeType }
-     *
-     *
      */
     public List<ConceptualSchemeType> getConceptualScheme() {
         if (conceptualScheme == null) {
@@ -238,11 +200,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Obtient la valeur de la propriété rangeOfValues.
-     *
-     * @return
-     *     possible object is
-     *     {@link RangeOfValuesType }
-     *
      */
     public RangeOfValuesType getRangeOfValues() {
         return rangeOfValues;
@@ -250,11 +207,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Définit la valeur de la propriété rangeOfValues.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link RangeOfValuesType }
-     *
      */
     public void setRangeOfValues(RangeOfValuesType value) {
         this.rangeOfValues = value;
@@ -262,11 +214,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Obtient la valeur de la propriété type.
-     *
-     * @return
-     *     possible object is
-     *     {@link QName }
-     *
      */
     @Override
     public QName getType() {
@@ -275,11 +222,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Définit la valeur de la propriété type.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link QName }
-     *
      */
     public void setType(QName value) {
         this.type = value;
@@ -287,11 +229,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Obtient la valeur de la propriété resultType.
-     *
-     * @return
-     *     possible object is
-     *     {@link ResultTypeType }
-     *
      */
     public ResultTypeType getResultType() {
         return resultType;
@@ -299,11 +236,6 @@ public class DomainValuesType implements DomainValues {
 
     /**
      * Définit la valeur de la propriété resultType.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ResultTypeType }
-     *
      */
     public void setResultType(ResultTypeType value) {
         this.resultType = value;

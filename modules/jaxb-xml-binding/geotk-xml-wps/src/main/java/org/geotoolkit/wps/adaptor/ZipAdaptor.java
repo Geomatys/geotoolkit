@@ -19,12 +19,12 @@ package org.geotoolkit.wps.adaptor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import net.iharder.Base64;
+import java.util.Base64;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.xml.v200.Format;
 import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.Format;
 
 /**
  *
@@ -70,7 +70,7 @@ public class ZipAdaptor extends ComplexAdaptor<Path> {
         } catch (IOException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(),ex);
         }
-        final String base64 = Base64.encodeBytes(bytes);
+        final String base64 = Base64.getEncoder().encodeToString(bytes);
         final DataInput dit = new DataInput();
         final Data data = new Data();
         data.setEncoding("base64");

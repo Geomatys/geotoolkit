@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.SpinnerValueFactory;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Displacement;
@@ -51,6 +52,8 @@ public class FXDisplacement extends FXStyleElementController<Displacement>{
             value.set(getStyleFactory().displacement(uiX.valueProperty().get(), uiY.valueProperty().get()));
         };
 
+        uiX.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Double.MAX_VALUE, Double.MAX_VALUE, 0, 0.1));
+        uiY.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Double.MAX_VALUE, Double.MAX_VALUE, 0, 0.1));
         uiX.valueProperty().addListener(changeListener);
         uiY.valueProperty().addListener(changeListener);
     }

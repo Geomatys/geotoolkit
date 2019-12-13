@@ -119,9 +119,6 @@ public final class WMSUtilities {
      *
      * @param server web map server
      * @param layername wms layer name
-     * @return
-     * @throws FactoryException
-     * @throws CapabilitiesException
      */
     public static CoordinateReferenceSystem findOriginalCRS(final WebMapClient server,
             final String layername) throws CapabilitiesException {
@@ -160,7 +157,6 @@ public final class WMSUtilities {
      *
      * @param server web map server
      * @param layername wms layer name
-     * @return
      */
     public static Long findClosestDate(final WebMapClient server, final String layername,
             final long date) throws CapabilitiesException {
@@ -207,8 +203,6 @@ public final class WMSUtilities {
      *
      * @param server web map server
      * @param layername wms layer name
-     * @return
-     * @throws CapabilitiesException
      */
     public static Envelope findEnvelope(final WebMapClient server,
             final String layername) throws CapabilitiesException {
@@ -324,7 +318,7 @@ public final class WMSUtilities {
                 }
             }
 
-            // build new envelope with all dimension CRSs and lower/upper ordinates.
+            // build new envelope with all dimension CRSs and lower/upper coordinates.
             if (!dimensionsCRS.isEmpty()) {
 
                 final CoordinateReferenceSystem outCRS;
@@ -340,11 +334,11 @@ public final class WMSUtilities {
                 final List<Double> ordinateList = new ArrayList<Double>(lower);
                 ordinateList.addAll(upper);
 
-                final double[] ordinates = new double[ordinateList.size()];
+                final double[] coordinates = new double[ordinateList.size()];
                 for (int i = 0; i < ordinateList.size(); i++) {
-                    ordinates[i] = ordinateList.get(i);
+                    coordinates[i] = ordinateList.get(i);
                 }
-                layerEnvelope.setEnvelope(ordinates);
+                layerEnvelope.setEnvelope(coordinates);
             }
         }
 
@@ -356,8 +350,6 @@ public final class WMSUtilities {
      *
      * @param server web map server
      * @param layername wms layer name
-     * @return
-     * @throws CapabilitiesException
      */
     public static List<? extends Style> findStyleCandidates(final WebMapClient server,
             final String layername) throws CapabilitiesException{

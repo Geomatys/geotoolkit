@@ -34,8 +34,6 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -43,6 +41,7 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.apache.sis.referencing.GeodeticCalculator;
+import org.apache.sis.storage.GridCoverageResource;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -61,7 +60,7 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * Process which compute volume from DEM (Digital Elevation Model) got
- * by {@link ComputeVolumeDescriptor#IN_GRIDCOVERAGE_READER GridCoverageReader}, on area defined by
+ * by {@link ComputeVolumeDescriptor#IN_GRIDCOVERAGE_READER GridCoverageResource}, on area defined by
  * a {@link ComputeVolumeDescriptor#IN_JTSGEOMETRY Geometry} and
  * between 2 elevation value define by {@link ComputeVolumeDescriptor#GEOMETRY_ALTITUDE geometry altitude}
  * and {@link ComputeVolumeDescriptor#IN_MAX_ALTITUDE_CEILING maximum ceiling}.<br/><br/>
@@ -96,12 +95,12 @@ public class ComputeVolumeProcess extends AbstractProcess {
      * @param zMinCeil coverage min ceiling
      * @param zMaxCeil coverage max ceiling
      */
-    public ComputeVolumeProcess(GridCoverageReader gcReader, Geometry jtsGeom,
+    public ComputeVolumeProcess(GridCoverageResource gcReader, Geometry jtsGeom,
             CoordinateReferenceSystem geomCRS, Integer bIndex, Double zMinCeil, double zMaxCeil){
         super(ComputeVolumeDescriptor.INSTANCE, asParameters(gcReader, jtsGeom, geomCRS, bIndex, zMinCeil, zMaxCeil));
     }
 
-    private static ParameterValueGroup asParameters(GridCoverageReader gcReader, Geometry jtsGeom,
+    private static ParameterValueGroup asParameters(GridCoverageResource gcReader, Geometry jtsGeom,
             CoordinateReferenceSystem geomCRS, Integer bIndex, Double zMinCeil, double zMaxCeil){
         final Parameters params = Parameters.castOrWrap(ComputeVolumeDescriptor.INPUT_DESC.createValue());
         params.getOrCreate(ComputeVolumeDescriptor.IN_GRIDCOVERAGE_READER).setValue(gcReader);
@@ -130,7 +129,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final GridCoverageReader gcReader = inputParameters.getValue(ComputeVolumeDescriptor.IN_GRIDCOVERAGE_READER);
+        final GridCoverageResource gcReader = inputParameters.getValue(ComputeVolumeDescriptor.IN_GRIDCOVERAGE_READER);
         final Geometry jtsGeom            = inputParameters.getValue(ComputeVolumeDescriptor.IN_JTSGEOMETRY        );
         CoordinateReferenceSystem geomCRS = inputParameters.getValue(ComputeVolumeDescriptor.IN_GEOMETRY_CRS       );
         final Integer bIndex              = inputParameters.getValue(ComputeVolumeDescriptor.IN_INDEX_BAND         );
@@ -169,11 +168,9 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final Envelope envGeom     = jtsGeom.getEnvelopeInternal();
             final Envelope2D envGeom2D = new Envelope2D(geomCRS, envGeom.getMinX(), envGeom.getMinY(), envGeom.getWidth(), envGeom.getHeight());
 
-            final GridCoverageReadParam gcrp = new GridCoverageReadParam();
-            gcrp.setEnvelope(envGeom2D, geomCRS);
             /*******************************************/
 
-            final GridCoverage dem      = gcReader.read(gcrp);
+            final GridCoverage dem      = gcReader.read(gcReader.getGridGeometry().derive().subgrid(envGeom2D).build());
             final SampleDimension gsd = dem.getSampleDimensions().get(bandIndex);
 
             final MathTransform1D zmt     = gsd.getTransferFunction().orElse(null);
@@ -424,8 +421,8 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
 
             // compute distance on grid x projected axis
-            geoCalc.setStartPoint(lowCRSPosition[1], lowCRSPosition[0]);
-            geoCalc.setEndPoint(upCRSPosition[1], upCRSPosition[0]);
+            geoCalc.setStartGeographicPoint(lowCRSPosition[1], lowCRSPosition[0]);
+            geoCalc.setEndGeographicPoint(upCRSPosition[1], upCRSPosition[0]);
             final double distX = ellConverter.convert(geoCalc.getGeodesicDistance());
 
             // compute on y grid axis
@@ -437,8 +434,8 @@ public class ComputeVolumeProcess extends AbstractProcess {
             gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
 
             // compute distance on grid y projected axis
-            geoCalc.setStartPoint(lowCRSPosition[1], lowCRSPosition[0]);
-            geoCalc.setEndPoint(upCRSPosition[1], upCRSPosition[0]);
+            geoCalc.setStartGeographicPoint(lowCRSPosition[1], lowCRSPosition[0]);
+            geoCalc.setEndGeographicPoint(upCRSPosition[1], upCRSPosition[0]);
             final double distY = ellConverter.convert(geoCalc.getGeodesicDistance());
             return distX * distY;
         }

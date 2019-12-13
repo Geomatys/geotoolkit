@@ -27,8 +27,8 @@ import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;

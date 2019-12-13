@@ -30,7 +30,6 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
@@ -43,14 +42,13 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.iso.Names;
-import org.geotoolkit.data.multires.AbstractTileGenerator;
-import org.geotoolkit.data.multires.DefaultPyramid;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.MultiResolutionModel;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.data.multires.Tile;
+import org.geotoolkit.storage.memory.InMemoryPyramidResource;
+import org.geotoolkit.storage.multires.AbstractTileGenerator;
+import org.geotoolkit.storage.multires.DefaultPyramid;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -64,11 +62,10 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
-import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageResource;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -321,22 +318,9 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     //modify context
                     final DefaultPyramid pm = new DefaultPyramid(pyramid.getCoordinateReferenceSystem());
                     pm.getMosaicsInternal().add(mosaic);
-                    final PyramidalCoverageResource r = new AbstractPyramidalCoverageResource(null, Names.createGenericName(null, null, "test")) {
-                        @Override
-                        public Collection<Pyramid> getModels() throws DataStoreException {
-                            return Arrays.asList(pm);
-                        }
+                    final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
+                    r.getModels().add(pm);
 
-                        @Override
-                        public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-                            throw new DataStoreException("Not supported.");
-                        }
-
-                        @Override
-                        public void removeModel(String identifier) throws DataStoreException {
-                            throw new DataStoreException("Not supported.");
-                        }
-                    };
                     final MapContext mc = MapBuilder.createContext();
                     mc.layers().add(MapBuilder.createCoverageLayer(r));
                     parent = mc;

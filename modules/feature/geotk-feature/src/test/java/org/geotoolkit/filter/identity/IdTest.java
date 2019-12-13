@@ -20,7 +20,7 @@ package org.geotoolkit.filter.identity;
 import org.junit.Test;
 import org.opengis.filter.identity.FeatureId;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
@@ -29,11 +29,6 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @module
  */
 public class IdTest extends org.geotoolkit.test.TestBase {
-
-
-    public IdTest() {
-    }
-
     @Test
     public void testFeatureId() {
         String strid = "testFeatureType.1";
@@ -45,5 +40,4 @@ public class IdTest extends org.geotoolkit.test.TestBase {
         assertEquals(strid, id1.getID());
         assertEquals(id1, id2);
     }
-
 }

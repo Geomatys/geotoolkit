@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.coverage.statistics;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -26,33 +25,24 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.multires.Mosaic;
+import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.metadata.ImageStatistics;
+import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Process to create a {@link org.geotoolkit.process.coverage.statistics.ImageStatistics}
- * from a {@link org.geotoolkit.coverage.grid.GridCoverage2D} or {@link org.geotoolkit.coverage.io.GridCoverageReader}.
+ * from a {@link org.geotoolkit.coverage.grid.GridCoverage} or {@link org.geotoolkit.coverage.io.GridCoverageResource.
  *
  * Can be directly use using analyse() static methods: <br/>
  * Eg. : <br/>
@@ -66,19 +56,15 @@ import org.opengis.referencing.operation.TransformException;
 public class Statistics extends AbstractProcess {
 
     public Statistics(final RenderedImage image, boolean excludeNoData){
-        this(toParameters(image, null, null, null, excludeNoData));
+        this(toParameters(image, null, null, excludeNoData));
     }
 
     public Statistics(final GridCoverage coverage, boolean excludeNoData){
-        this(toParameters(null, coverage, null, null, excludeNoData));
+        this(toParameters(null, coverage, null, excludeNoData));
     }
 
     public Statistics(final GridCoverageResource ref, boolean excludeNoData){
-        this(toParameters(null, null, ref, null, excludeNoData));
-    }
-
-    public Statistics(final GridCoverageReader reader, boolean excludeNoData){
-        this(toParameters(null, null, null, reader, excludeNoData));
+        this(toParameters(null, null, ref, excludeNoData));
     }
 
     public Statistics(final ParameterValueGroup input) {
@@ -86,12 +72,11 @@ public class Statistics extends AbstractProcess {
     }
 
     private static ParameterValueGroup toParameters(final RenderedImage image, final GridCoverage coverage, final GridCoverageResource ref,
-                                                    final GridCoverageReader reader, boolean excludeNoData) {
+                                                    boolean excludeNoData) {
         final Parameters params = Parameters.castOrWrap(StatisticsDescriptor.INSTANCE.getInputDescriptor().createValue());
         params.getOrCreate(IMAGE).setValue(image);
         params.getOrCreate(REF).setValue(ref);
         params.getOrCreate(COVERAGE).setValue(coverage);
-        params.getOrCreate(READER).setValue(reader);
         params.getOrCreate(EXCLUDE_NO_DATA).setValue(excludeNoData);
         return params;
     }
@@ -171,23 +156,6 @@ public class Statistics extends AbstractProcess {
         return out.getValue(OUTCOVERAGE);
     }
 
-
-    /**
-     * Run Statistics process with a GridCoverageReader and return ImageStatistics
-     *
-     * @param reader GridCoverageReader
-     * @param imageIdx image index to features
-     * @param excludeNoData exclude no-data flag
-     * @return ImageStatistics
-     * @throws ProcessException
-     */
-    public static ImageStatistics analyse(GridCoverageReader reader, boolean excludeNoData)
-            throws ProcessException {
-        org.geotoolkit.process.Process process = new Statistics(reader, excludeNoData);
-        Parameters out = Parameters.castOrWrap(process.call());
-        return out.getValue(OUTCOVERAGE);
-    }
-
     @Override
     protected void execute() throws ProcessException {
 
@@ -214,15 +182,9 @@ public class Statistics extends AbstractProcess {
             if (inCoverage != null) {
                 candidate = inCoverage;
             } else {
-                final GridCoverageReader reader = inputParameters.getValue(READER);
-
-                if (reader != null) {
-                    candidate = getCoverage(reader);
-                } else {
-                    final GridCoverageResource ref = inputParameters.getValue(REF);
-                    if (ref != null) {
-                        candidate = getCoverage(ref);
-                    }
+                final GridCoverageResource ref = inputParameters.getValue(REF);
+                if (ref != null) {
+                    candidate = getCoverage(ref);
                 }
             }
 
@@ -265,19 +227,19 @@ public class Statistics extends AbstractProcess {
             final Mosaic gridMosaic = mosaicImage.getGridMosaic();
             final Dimension gridSize = gridMosaic.getGridSize();
 
-            int startX = 0;
-            int startY = 0;
-            int endX = gridSize.width;
-            int endY = gridSize.height;
-            int totalTiles = gridSize.width * gridSize.height;
+            long startX = 0;
+            long startY = 0;
+            long endX = gridSize.width;
+            long endY = gridSize.height;
+            long totalTiles = gridSize.width * gridSize.height;
             Dimension tileSize = gridMosaic.getTileSize();
 
-            final Rectangle dataArea = gridMosaic.getDataExtent();
+            final GridExtent dataArea = gridMosaic.getDataExtent();
             if (dataArea != null) {
-                startX = dataArea.x / tileSize.width;
-                startY = dataArea.y / tileSize.height;
-                endX = (int) Math.ceil((dataArea.x + dataArea.width) / tileSize.width);
-                endY = (int) Math.ceil((dataArea.y + dataArea.height) / tileSize.height);
+                startX = dataArea.getLow(0) / tileSize.width;
+                startY = dataArea.getLow(1) / tileSize.height;
+                endX = (long) Math.ceil((dataArea.getHigh(0)+1) / tileSize.width);
+                endY = (long) Math.ceil((dataArea.getHigh(1)+1) / tileSize.height);
                 totalTiles = (endX - startX) * (endY - startY);
             }
 
@@ -285,10 +247,10 @@ public class Statistics extends AbstractProcess {
             Raster tile;
             PixelIterator pix;
             int step = 1;
-            for (int y = startY; y < endY; y++) {
-                for (int x = startX; x < endX; x++) {
+            for (long y = startY; y < endY; y++) {
+                for (long x = startX; x < endX; x++) {
                     if (!gridMosaic.isMissing(x,y)) {
-                        tile = mosaicImage.getTile(x, y);
+                        tile = mosaicImage.getTile(Math.toIntExact(x), Math.toIntExact(y));
                         pix = new PixelIterator.Builder().create(tile);
 
                         analyseRange(pix, stats, bands, excludeNoData);
@@ -512,43 +474,4 @@ public class Statistics extends AbstractProcess {
         }
     }
 
-    /**
-     * Read coverage from a GridCoverageReader.
-     * @param reader
-     * @param imageIdx
-     * @return
-     * @throws ProcessException
-     */
-    private GridCoverage getCoverage(GridCoverageReader reader) throws ProcessException {
-        try {
-            final GridGeometry gridGeometry = reader.getGridGeometry();
-            CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
-            final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
-            final GridExtent extent = gridGeometry.getExtent();
-            final int dim = extent.getDimension();
-
-            //TODO analyse CRS to find lat/lon dimension position in extent envelope.
-            final double[] low  = new double[dim];
-            final double[] high = new double[dim];
-            low[0]  = extent.getLow(0);
-            high[0] = extent.getHigh(0);
-            low[1]  = extent.getLow(1);
-            high[1] = extent.getHigh(1);
-
-            final GeneralEnvelope sliceExtent = new GeneralEnvelope(crs);
-            for (int i = 0; i < dim; i++) {
-                sliceExtent.setRange(i, low[i], high[i]);
-            }
-
-            final GridCoverageReadParam readParam = new GridCoverageReadParam();
-            readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
-            readParam.setDeferred(true);
-            readParam.setCoordinateReferenceSystem(crs);
-
-            final GridCoverage coverage = reader.read(readParam);
-            return  CoverageUtilities.firstSlice(coverage);
-        } catch (DataStoreException | TransformException e) {
-            throw new ProcessException(e.getMessage(), this, e);
-        }
-    }
 }

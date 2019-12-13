@@ -23,8 +23,8 @@ import org.opengis.filter.Filter;
 import org.junit.Test;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
-import static org.geotoolkit.test.Assert.*;
+
+import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**

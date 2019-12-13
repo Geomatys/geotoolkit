@@ -441,11 +441,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
                 final List<String> fields = getFieldsFromResult((DataArrayProperty) result);
                 final List<InternalPhenomenon> phenomenons = new ArrayList<>();
                 for (String field : fields) {
-                    phenomenons.add(new InternalPhenomenon(field));
+                    phenomenons.add(new InternalPhenomenon(null, field));
                 }
-                return new InternalCompositePhenomenon(observedProperty.getHref(), phenomenons);
+                return new InternalCompositePhenomenon(null, observedProperty.getHref(), phenomenons);
             }
-            return new InternalPhenomenon(observedProperty.getHref());
+            return new InternalPhenomenon(null, observedProperty.getHref());
         }
         return null;
     }
@@ -686,14 +686,23 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @XmlRootElement
     public static class InternalPhenomenon implements org.geotoolkit.swe.xml.Phenomenon {
 
+        private final String id;
+
         private final String name;
 
         public InternalPhenomenon() {
+            this.id = null;
             this.name = null;
         }
 
-        public InternalPhenomenon(final String name) {
+        public InternalPhenomenon(final String id, final String name) {
+            this.id = id;
             this.name = name;
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override
@@ -726,18 +735,27 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @XmlRootElement
     public static class InternalCompositePhenomenon implements org.geotoolkit.swe.xml.CompositePhenomenon {
 
+        private final String id;
+
         private final String name;
 
         private final List<InternalPhenomenon> phenomenons;
 
         public InternalCompositePhenomenon() {
+            this.id = null;
             this.name = null;
             this.phenomenons = new ArrayList<>();
         }
 
-        public InternalCompositePhenomenon(final String name, List<InternalPhenomenon> phenomenons) {
+        public InternalCompositePhenomenon(final String id, final String name, List<InternalPhenomenon> phenomenons) {
+            this.id = id;
             this.name = name;
             this.phenomenons = phenomenons;
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override

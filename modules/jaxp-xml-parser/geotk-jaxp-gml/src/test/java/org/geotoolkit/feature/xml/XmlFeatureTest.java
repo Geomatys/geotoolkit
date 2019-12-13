@@ -18,16 +18,22 @@
 package org.geotoolkit.feature.xml;
 
 import java.io.BufferedReader;
-
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
-import java.io.FileInputStream;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -39,29 +45,25 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.sis.referencing.NamedIdentifier;
-
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.logging.Logging;
+import static org.geotoolkit.feature.xml.XmlTestData.*;
+import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.xml.DomCompare;
-
-import org.junit.*;
-
-import org.opengis.filter.sort.SortOrder;
-
-import static org.junit.Assert.*;
-import static org.geotoolkit.feature.xml.XmlTestData.*;
-import org.geotoolkit.data.AbstractFeatureCollection;
-import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.xml.DomCompare;
+import org.junit.*;
+import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.sort.SortOrder;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -199,8 +201,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -216,8 +218,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature321.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         org.apache.sis.test.MetadataAssert.assertXmlEquals(expResult, result,
                 "http://www.w3.org/2000/xmlns:*",
                 "http://www.w3.org/2001/XMLSchema-instance:schemaLocation"
@@ -236,8 +238,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithAttribute.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -253,8 +255,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithObjectProperty.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -271,8 +273,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureEmpty.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         final Expression exp = new DefaultPropertyName("/identifier/_value");
         Object v = exp.evaluate(featureEmpty);
@@ -292,8 +294,8 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/FeatureWithNil.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
@@ -318,42 +320,45 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureDom.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
         DomCompare.compare(expResult, result);
     }
 
     @Test
-    public void testReadSimpleCollection() throws JAXBException, IOException, XMLStreamException{
+    public void testReadSimpleCollection() throws JAXBException, IOException, XMLStreamException, DataStoreException {
         final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeBasic);
         final Object obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof FeatureCollection);
+        assertTrue(obj instanceof FeatureSet);
 
-        FeatureCollection result = (FeatureCollection) obj;
+        FeatureSet result = (FeatureSet) obj;
+
+        assertEquals(FeatureStoreUtilities.getCount(collectionSimple), FeatureStoreUtilities.getCount(result));
+        assertEquals(collectionSimple.getIdentifier().get().toString(), result.getIdentifier().get().toString());
+        assertEquals(collectionSimple.getType(), result.getType());
+
         try {
-            NamedIdentifier id = result.getIdentifier();
-            result = result.subset(QueryBuilder.sorted(
-                    result.getType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
-            ((AbstractFeatureCollection)result).setIdentifier(id);
+            SimpleQuery query = new SimpleQuery();
+            query.setSortBy(FF.sort("attDouble", SortOrder.ASCENDING));
+            result = result.subset(query);
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
         }
 
-        FeatureIterator resultIte = result.iterator();
-        FeatureIterator expectedIte = collectionSimple.iterator();
+        try (Stream<Feature> resultS = result.features(false);
+            Stream<Feature> expectedS = collectionSimple.features(false)) {
 
-        assertEquals(collectionSimple.size(), result.size());
-        assertEquals(collectionSimple.getIdentifier(), result.getIdentifier());
-        assertEquals(collectionSimple.getType(), result.getType());
+            Iterator<Feature> resultIte = resultS.iterator();
+            Iterator<Feature> expectedIte = expectedS.iterator();
 
-        assertEquals(resultIte.next(), expectedIte.next());
-        assertEquals(resultIte.next(), expectedIte.next());
-        assertEquals(resultIte.next(), expectedIte.next());
-        resultIte.close();
-        expectedIte.close();
+
+            assertEquals(resultIte.next(), expectedIte.next());
+            assertEquals(resultIte.next(), expectedIte.next());
+            assertEquals(resultIte.next(), expectedIte.next());
+        }
     }
 
     @Ignore
@@ -376,7 +381,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof FeatureCollection);
+        assertTrue(obj instanceof FeatureSet);
 
         reader = new JAXPStreamFeatureReader();
         reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
@@ -385,15 +390,50 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT2.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof FeatureCollection);
+        assertTrue(obj instanceof FeatureSet);
 
         obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT3.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof FeatureCollection);
+        assertTrue(obj instanceof FeatureSet);
     }
 
+    @Test
+    public void testReadReferenceCollection() throws JAXBException, IOException, XMLStreamException, DataStoreException {
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(typeReference);
+        final Object obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionReference.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof FeatureSet);
+
+        FeatureSet result = (FeatureSet) obj;
+
+        List<Feature> features = result.features(false).collect(Collectors.toList());
+        assertEquals(4, features.size());
+
+        Feature f1 = features.get(0);
+        Feature f2 = features.get(1);
+        Feature f3 = features.get(2);
+        Feature f4 = features.get(3);
+        assertEquals("id1", f1.getPropertyValue("identifier"));
+        assertEquals("id2", f2.getPropertyValue("identifier"));
+        assertEquals("id3", f3.getPropertyValue("identifier"));
+        assertEquals("id4", f4.getPropertyValue("identifier"));
+        assertEquals("einstein", f1.getPropertyValue("username"));
+        assertEquals("sobel", f2.getPropertyValue("username"));
+        assertEquals("snow-white", f3.getPropertyValue("username"));
+        assertEquals("admin", f4.getPropertyValue("username"));
+
+        Object link = f4.getPropertyValue("link");
+        List linkedTo = new ArrayList( (Collection) f4.getPropertyValue("linkedTo"));
+        assertEquals(2, linkedTo.size());
+        assertEquals(f1, link);
+        assertEquals(f2, linkedTo.get(0));
+        assertEquals(f3, linkedTo.get(1));
+
+    }
 
     @Test
     public void testWriteSimpleCollection() throws JAXBException, IOException, XMLStreamException,
@@ -404,7 +444,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         writer.dispose();
 
         String s = temp.toString();
-        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"\" ");
+        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"2002-05-30T09:00:00\" ");
         DomCompare.compare(IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml")), s);
     }
 
@@ -434,6 +474,40 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
+    public void testWriteMixedCollectionElement() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
+        final StringWriter temp = new StringWriter();
+        final ElementFeatureWriter writer = new ElementFeatureWriter();
+        Element result = writer.write(Arrays.asList(collectionSimple, collectionSimple2), false);
+
+        Source source = new DOMSource(result.getOwnerDocument());
+
+        // Prepare the output file
+        Result resultxml = new StreamResult(temp);
+
+        // Write the DOM document to the file
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+        xformer.transform(source, resultxml);
+
+        String s = temp.toString();
+        s = s.replaceAll("timeStamp=\"[^\"]*\"", "timeStamp=\"\"");
+        DomCompare.compare(IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionMixedDom.xml")), s);
+    }
+
+    @Test
+    public void testWriteMixedCollection() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+        final StringWriter temp = new StringWriter();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
+        writer.write(Arrays.asList(collectionSimple, collectionSimple2), temp);
+        writer.dispose();
+
+        String s = temp.toString();
+        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"2002-05-30T09:00:00\" ");
+        DomCompare.compare(IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionMixed.xml")), s);
+    }
+
+    @Test
     public void testWriteComplexFeature() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException{
         final File temp = File.createTempFile("gml", ".xml");
@@ -446,8 +520,42 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         String result    = IOUtilities.toString(new FileInputStream(temp));
         String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
-        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\:", "epsg::");
+        expResult = expResult.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
+        DomCompare.compare(expResult, result);
+    }
+
+    @Test
+    public void testWriteReferenceCollection() throws JAXBException, IOException,
+            XMLStreamException, DataStoreException, ParserConfigurationException, SAXException {
+
+        final StringWriter temp = new StringWriter();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "1.1.0", null);
+
+        Feature f1 = typeReference.newInstance();
+        Feature f2 = typeReference.newInstance();
+        Feature f3 = typeReference.newInstance();
+        Feature f4 = typeReference.newInstance();
+
+        f1.setPropertyValue("identifier", "id1");
+        f2.setPropertyValue("identifier", "id2");
+        f3.setPropertyValue("identifier", "id3");
+        f4.setPropertyValue("identifier", "id4");
+        f1.setPropertyValue("username", "einstein");
+        f2.setPropertyValue("username", "sobel");
+        f3.setPropertyValue("username", "snow-white");
+        f4.setPropertyValue("username", "admin");
+        f4.setPropertyValue("link", f1);
+        f4.setPropertyValue("linkedTo", Arrays.asList(f2,f3));
+
+        final InMemoryFeatureSet fs = new InMemoryFeatureSet(NamesExt.create("one-of-a-kind-ID"), typeReference, Arrays.asList(f1, f2, f3, f4));
+
+        writer.write(fs, temp);
+
+        String result = temp.toString();
+        result = result.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"2002-05-30T09:00:00\" ");
+
+        String expResult = IOUtilities.toString(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionReference.xml"));
         DomCompare.compare(expResult, result);
     }
 

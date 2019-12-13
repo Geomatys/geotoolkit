@@ -1,49 +1,53 @@
 package org.geotoolkit.data.geojson.utils;
 
-import org.opengis.util.GenericName;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import org.locationtech.jts.geom.Geometry;
-
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.factory.HintsPending;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-import org.opengis.util.InternationalString;
-
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.iso.SimpleInternationalString;
-
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.lang.Static;
-
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import static java.nio.file.StandardOpenOption.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static java.nio.file.StandardOpenOption.*;
-import org.geotoolkit.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.feature.DefaultAssociationRole;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.feature.FeatureTypeExt;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.cql.CQL;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.FeatureTypeExt;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
 
 /**
  * An utility class to handle read/write of FeatureType into a JSON schema file.

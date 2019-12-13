@@ -80,11 +80,6 @@ public class ScrollingBuffer {
         original.position(original.position() + size);
     }
 
-    /**
-     *
-     * @param requiredSize
-     * @throws IOException
-     */
     void refillBuffer(final int requiredSize) throws IOException {
         // compute the actual position up to we have read something
         final long currentPosition = bufferStart + original.position();
@@ -110,9 +105,6 @@ public class ScrollingBuffer {
 
     /**
      * Jumps the buffer to the specified position in the file
-     *
-     * @param newPosition
-     * @throws IOException
      */
     public void goTo(final long newPosition) throws IOException {
         // if the new position is already in the buffer, just move the
@@ -127,11 +119,8 @@ public class ScrollingBuffer {
 
     /**
      * Returns the absolute position of the next byte that will be read
-     *
-     * @return
      */
     public long getPosition() {
         return bufferStart + original.position();
     }
-
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.data.shapefile.shp;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import org.apache.sis.storage.DataStoreException;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Decimation while reading
@@ -44,7 +45,7 @@ public class DecimateMultiPointHandler extends MultiPointHandler {
     }
 
     @Override
-    public Object read(final ByteBuffer buffer, final ShapeType type) {
+    public Geometry read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }

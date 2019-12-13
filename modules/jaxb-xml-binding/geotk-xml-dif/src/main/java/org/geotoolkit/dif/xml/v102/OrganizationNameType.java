@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.dif.xml.v102;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -23,19 +22,23 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  *
  *
- *               | DIF 9            | ECHO 10           | UMM                 | DIF 10            | Notes                                   |
- *               | ---------------- | ----------------- | ------------------- | ----------------- | --------------------------------------- |
- *               | Data_Center_Name |         -         | OrganizationName    | Organization_Name | Changed to match similar UMM field name |
+ * | DIF 9 | ECHO 10 | UMM | DIF 10 | Notes | | ---------------- |
+ * ----------------- | ------------------- | ----------------- |
+ * --------------------------------------- | | Data_Center_Name | - |
+ * OrganizationName | Organization_Name | Changed to match similar UMM field
+ * name |
  *
  *
  *
- * <p>Classe Java pour OrganizationNameType complex type.
+ * <p>
+ * Classe Java pour OrganizationNameType complex type.
  *
- * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
+ * <p>
+ * Le fragment de schéma suivant indique le contenu attendu figurant dans cette
+ * classe.
  *
  * <pre>
  * &lt;complexType name="OrganizationNameType">
@@ -67,12 +70,19 @@ public class OrganizationNameType {
     @XmlAttribute(name = "uuid")
     protected String uuid;
 
+    public OrganizationNameType() {
+
+    }
+
+    public OrganizationNameType(String shortName, String longName) {
+        this.shortName = shortName;
+        this.longName = longName;
+    }
+
     /**
      * Obtient la valeur de la propriété shortName.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getShortName() {
@@ -82,9 +92,7 @@ public class OrganizationNameType {
     /**
      * Définit la valeur de la propriété shortName.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setShortName(String value) {
@@ -94,9 +102,7 @@ public class OrganizationNameType {
     /**
      * Obtient la valeur de la propriété longName.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getLongName() {
@@ -106,9 +112,7 @@ public class OrganizationNameType {
     /**
      * Définit la valeur de la propriété longName.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setLongName(String value) {
@@ -118,9 +122,7 @@ public class OrganizationNameType {
     /**
      * Obtient la valeur de la propriété uuid.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getUuid() {
@@ -130,9 +132,7 @@ public class OrganizationNameType {
     /**
      * Définit la valeur de la propriété uuid.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setUuid(String value) {

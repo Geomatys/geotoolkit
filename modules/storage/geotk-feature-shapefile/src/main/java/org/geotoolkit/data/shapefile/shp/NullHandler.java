@@ -17,8 +17,8 @@
 package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
-
 import org.apache.sis.storage.DataStoreException;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Wrapper for a Shapefile Null geometry.
@@ -56,16 +56,16 @@ public class NullHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
+    public Geometry estimated(final double minX, final double maxX, final double minY, final double maxY) {
         return null;
     }
 
     @Override
-    public Object read(final ByteBuffer buffer, final ShapeType type) {
+    public Geometry read(final ByteBuffer buffer, final ShapeType type) {
         return createNull();
     }
 
-    private Object createNull() {
+    private Geometry createNull() {
         return null;
     }
 

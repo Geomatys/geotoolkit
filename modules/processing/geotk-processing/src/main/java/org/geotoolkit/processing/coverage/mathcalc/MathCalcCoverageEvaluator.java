@@ -112,12 +112,8 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
             }
 
             //find value at given coordinate
-            if (coverages[index] instanceof org.geotoolkit.coverage.grid.GridCoverage) {
-                ((org.geotoolkit.coverage.grid.GridCoverage) coverages[index]).evaluate(coverageCoord[index],sampleBuffer);
-                return sampleBuffer[0];
-            } else {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
+            coverages[index].evaluate(coverageCoord[index],sampleBuffer);
+            return sampleBuffer[0];
         }
 
         @Override

@@ -33,6 +33,8 @@ public class PGDataSource {
 
     private static DataSource ds = null;
 
+    public static boolean isPostgres = true;
+
     private final static String POSTGRES_DATABASE_KEY = "org.geotoolkit.index.tree.manager.SQLRtreeManager.database";
 
     public static boolean isSetPGDataSource() {
@@ -58,11 +60,13 @@ public class PGDataSource {
         ds = datasource;
     }
 
+    public static void setDataSource(DataSource datasource, boolean isPg) {
+        ds = datasource;
+        isPostgres = isPg;
+    }
+
     /**
      * postgres://cstl:admin@localhost:5432/cstl-test
-     *
-     * @param databaseURL
-     * @return
      */
     public static Map<String, String> extractDbInfo(String databaseURL) {
         Map<String, String> results = new HashMap<>();
@@ -87,5 +91,4 @@ public class PGDataSource {
         }
         return results;
     }
-
 }

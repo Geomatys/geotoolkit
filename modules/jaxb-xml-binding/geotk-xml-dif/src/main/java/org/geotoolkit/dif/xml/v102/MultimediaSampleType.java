@@ -78,6 +78,16 @@ public class MultimediaSampleType {
     @XmlElement(name = "Description")
     protected String description;
 
+    public MultimediaSampleType() {
+
+    }
+
+    public MultimediaSampleType(String file, String description, String format) {
+        this.description = description;
+        this.file = file;
+        this.format = format;
+    }
+
     /**
      * Obtient la valeur de la propriété file.
      *

@@ -56,11 +56,11 @@ public class SurfaceImplTest {
          double delta = 360.0 / (double) NUMBER;
          PointArray points = postitionFactory.createPointArray();
          for( double angle = 0.0; angle < 360.0; angle += delta ){
-             double ordinates[] = new double[]{
+             double coordinates[] = new double[] {
                      Math.sin( Math.toRadians(angle) ),
                      Math.cos( Math.toRadians(angle) )
              };
-             DirectPosition point = postitionFactory.createDirectPosition( ordinates );
+             DirectPosition point = postitionFactory.createDirectPosition( coordinates );
              points.add( point );
          }
          List<OrientableCurve> curves = new ArrayList<OrientableCurve>();
@@ -68,9 +68,9 @@ public class SurfaceImplTest {
          // - The curve will be set as parent curves for the Curve segments
          // - Start and end params for the CurveSegments will be set
          List<CurveSegment> segmentList = new ArrayList<CurveSegment>();
-         for( int i=0; i<points.length();i++){
+         for( int i=0; i<points.size();i++){
              int start = i;
-             int end = (i+1)%points.size();
+             int end = (i+1) % points.size();
              DirectPosition point1 = points.getDirectPosition( start, null );
              DirectPosition point2 = points.getDirectPosition( end, null );
              LineSegment segment = geometryFactory.createLineSegment( point1, point2 );

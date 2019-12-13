@@ -24,14 +24,14 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
-import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.test.TestData;
 import org.opengis.util.GenericName;
 

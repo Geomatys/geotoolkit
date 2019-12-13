@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
-import org.geotoolkit.coverage.PyramidalModelStoreNDTest;
+import org.geotoolkit.storage.coverage.PyramidalModelStoreNDTest;
 import org.geotoolkit.nio.IOUtilities;
 import org.junit.After;
 

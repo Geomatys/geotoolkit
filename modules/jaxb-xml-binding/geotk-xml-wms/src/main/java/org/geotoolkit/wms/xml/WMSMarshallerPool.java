@@ -17,13 +17,10 @@
 
 package org.geotoolkit.wms.xml;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.xml.XML;
 
 import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;
 
@@ -77,15 +74,13 @@ public final class WMSMarshallerPool {
     private static final MarshallerPool V_130;
     static {
         try {
-            final Map<String, String> properties = new HashMap<>();
-            properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
             V_130 = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
                     "org.geotoolkit.inspire.xml.vs:" +
                     "org.apache.sis.internal.jaxb.geometry",
-                    WMSMarshallerPool.class.getClassLoader()), properties);
+                    WMSMarshallerPool.class.getClassLoader()), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
@@ -94,14 +89,14 @@ public final class WMSMarshallerPool {
     private static final MarshallerPool DEFAULT;
     static {
         try {
-            DEFAULT = new MarshallerPool(createJAXBContext(
+            DEFAULT = createIgnoreDTD(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
                     "org.geotoolkit.wms.xml.v111:" +
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
                     "org.geotoolkit.inspire.xml.vs:" +
                     "org.apache.sis.internal.jaxb.geometry",
-                    WMSMarshallerPool.class.getClassLoader()), null);
+                    WMSMarshallerPool.class.getClassLoader()));
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
@@ -140,9 +135,7 @@ public final class WMSMarshallerPool {
      * @throws JAXBException If we cannot create the marshaller pool.
      */
     private static MarshallerPool createIgnoreDTD(JAXBContext context) throws JAXBException {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
-        return new MarshallerPool(context, properties) {
+        return new MarshallerPool(context, null) {
             @Override
             public Unmarshaller acquireUnmarshaller() throws JAXBException {
                 final Unmarshaller u = super.acquireUnmarshaller();

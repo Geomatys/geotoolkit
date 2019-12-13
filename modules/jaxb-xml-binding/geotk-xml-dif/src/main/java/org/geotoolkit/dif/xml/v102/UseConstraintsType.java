@@ -60,6 +60,14 @@ public class UseConstraintsType {
     @XmlAttribute(name = "mime_type")
     protected DisplayableTextEnum mimeType;
 
+    public UseConstraintsType() {
+
+    }
+
+    public UseConstraintsType(String value) {
+        this.value = value;
+    }
+
     /**
      * Obtient la valeur de la propriété value.
      *

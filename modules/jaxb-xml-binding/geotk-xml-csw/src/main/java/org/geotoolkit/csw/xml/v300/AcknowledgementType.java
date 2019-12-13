@@ -107,11 +107,6 @@ public class AcknowledgementType implements Acknowledgement {
 
     /**
      * Obtient la valeur de la propriété echoedRequest.
-     *
-     * @return
-     *     possible object is
-     *     {@link EchoedRequestType }
-     *
      */
     public EchoedRequestType getEchoedRequest() {
         return echoedRequest;
@@ -119,11 +114,6 @@ public class AcknowledgementType implements Acknowledgement {
 
     /**
      * Définit la valeur de la propriété echoedRequest.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link EchoedRequestType }
-     *
      */
     public void setEchoedRequest(EchoedRequestType value) {
         this.echoedRequest = value;
@@ -131,11 +121,6 @@ public class AcknowledgementType implements Acknowledgement {
 
     /**
      * Obtient la valeur de la propriété requestId.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getRequestId() {
         return requestId;
@@ -143,11 +128,6 @@ public class AcknowledgementType implements Acknowledgement {
 
     /**
      * Définit la valeur de la propriété requestId.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setRequestId(String value) {
         this.requestId = value;
@@ -155,11 +135,6 @@ public class AcknowledgementType implements Acknowledgement {
 
     /**
      * Obtient la valeur de la propriété timeStamp.
-     *
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *
      */
     public XMLGregorianCalendar getTimeStamp() {
         return timeStamp;
@@ -167,14 +142,8 @@ public class AcknowledgementType implements Acknowledgement {
 
     /**
      * Définit la valeur de la propriété timeStamp.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *
      */
     public void setTimeStamp(XMLGregorianCalendar value) {
         this.timeStamp = value;
     }
-
 }

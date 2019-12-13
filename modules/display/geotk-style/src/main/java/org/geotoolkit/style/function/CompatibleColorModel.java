@@ -22,7 +22,6 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.lang.reflect.Array;
 import org.opengis.filter.expression.Function;
 
 /**
@@ -40,7 +39,6 @@ public class CompatibleColorModel extends ColorModel{
     private final Function fct;
 
     /**
-     * @param nbbits
      * @param fct : Interpolate or Categorize function
      */
     public CompatibleColorModel(final int nbbits, final Function fct){

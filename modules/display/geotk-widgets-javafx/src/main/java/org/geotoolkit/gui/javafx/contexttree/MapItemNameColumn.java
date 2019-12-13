@@ -19,12 +19,14 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import java.awt.Color;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -39,19 +41,16 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
-import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.session.Session;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.StorageListener;
+import org.opengis.style.Description;
+import org.opengis.style.Style;
 
 /**
  * Context tree column with name and type icon.
@@ -77,6 +76,19 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
                     final Object value = item.getValue();
                     if (value instanceof MapItem) {
                         return FXUtilities.beanProperty(value, "name", String.class);
+                    } else if (value instanceof Style) {
+                        final Style style = (Style) value;
+                        Description description = style.getDescription();
+                        String name = style.getName();
+
+                        String text = null;
+                        if (description != null && description.getTitle() != null) {
+                            text = description.getTitle().toString();
+                        }
+                        if (name != null && (text == null || text.isEmpty())) {
+                            text = name;
+                        }
+                        return new SimpleObjectProperty<>(text);
                     } else {
                         throw new IllegalArgumentException("Expected a Map item object, but got "+value == null? "null" : value.getClass().getCanonicalName());
                     }
@@ -89,12 +101,13 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         setEditable(true);
         setPrefWidth(200);
         setMinWidth(120);
+        setMaxWidth(800);
+        setSortable(false);
     }
 
-    public static class Cell<T> extends TreeTableCell<T,String> implements ChangeListener<ChangeEvent>{
+    public static class Cell<T> extends TreeTableCell<T,String> implements StoreListener<StoreEvent>{
 
         private final TextField textField = new TextField();
-        private final StorageListener.Weak weakListener = new StorageListener.Weak(this);
 
         public Cell(){
             textField.setMaxWidth(Double.POSITIVE_INFINITY);
@@ -135,6 +148,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             super.updateItem(item, empty);
             setText(null);
             setGraphic(null);
+            setTooltip(null);
             setContentDisplay(ContentDisplay.LEFT);
             setAlignment(Pos.CENTER_LEFT);
             setTextAlignment(TextAlignment.LEFT);
@@ -149,41 +163,38 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             final TreeItem ti = row.getTreeItem();
             if(ti==null) return;
 
-            weakListener.unregisterAll();
-            if(ti instanceof StyleMapItem){
+            if (ti instanceof StyleMapItem) {
                 final BorderPane pane = new BorderPane(createIcon());
                 pane.setMaxSize(BorderPane.USE_COMPUTED_SIZE,Double.MAX_VALUE);
                 pane.setPrefSize(BorderPane.USE_COMPUTED_SIZE, BorderPane.USE_COMPUTED_SIZE);
                 setGraphic(pane);
-            }else if(ti instanceof TreeMapItem){
+            } else if (ti instanceof TreeMapItem) {
                 setGraphic(createIcon());
 
                 final Object object = ti.getValue();
-                if(object instanceof FeatureMapLayer){
-                    final FeatureMapLayer fml = (FeatureMapLayer) object;
-                    final FeatureSet resource = fml.getResource();
-                    if (resource instanceof FeatureCollection) {
-                        final Session session = ((FeatureCollection)resource).getSession();
-                        weakListener.registerSource(session);
-                        if(session.hasPendingChanges()){
-                            setText(getText()+" *");
+                if (object instanceof MapLayer) {
+                    Description description = ((MapLayer) object).getDescription();
+                    if (description != null && description.getAbstract() != null) {
+                        String abs = description.getAbstract().toString();
+                        if (abs != null && !abs.isEmpty()) {
+                            setTooltip(new Tooltip(abs));
                         }
                     }
                 }
             }
         }
 
-        private ImageView createIcon(){
+        private ImageView createIcon() {
             final TreeTableRow row = getTreeTableRow();
-            if(row==null) return null;
+            if (row == null) return null;
             final TreeItem ti = row.getTreeItem();
-            if(ti==null) return null;
+            if (ti == null) return null;
 
-            if(ti instanceof StyleMapItem){
+            if (ti instanceof StyleMapItem) {
                 final ImageView view = new ImageView();
                 view.imageProperty().bind(((StyleMapItem)ti).imageProperty());
                 return view;
-            }else if(ti instanceof TreeMapItem){
+            } else if (ti instanceof TreeMapItem) {
                 final MapItem mapItem = (MapItem) ((TreeMapItem)ti).getValue();
                 return new ImageView(getTypeIcon(mapItem));
             }
@@ -191,7 +202,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         }
 
         @Override
-        public void changeOccured(ChangeEvent event) {
+        public void eventOccured(StoreEvent event) {
             //change the edition asteriks
             if(!isEditing()){
                 Platform.runLater(()-> updateItem(getItem(), false));
@@ -216,11 +227,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         if (resource instanceof FeatureSet) {
             return ICON_VECTOR;
         } else if (resource instanceof GridCoverageResource) {
-            if (store instanceof ClientFactory) {
-                return ICON_SERVICE;
-            } else {
-                return ICON_RASTER;
-            }
+            return ICON_RASTER;
         }
         return ICON_FOLDER;
     }

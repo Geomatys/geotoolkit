@@ -30,13 +30,13 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.xml.AbstractConfigurable;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
@@ -69,10 +69,10 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
     private static final Import GML_IMPORT_311 = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
     private static final Import GML_IMPORT_321 = new Import("http://www.opengis.net/gml/3.2", "http://schemas.opengis.net/gml/3.2.1/gml.xsd");
 
-    private static final QName ABSTRACT_FEATURE_NAME_311 = new QName("http://www.opengis.net/gml", "_Feature");
-    private static final QName ABSTRACT_FEATURE_TYPE_311 = new QName("http://www.opengis.net/gml", "AbstractFeatureType");
-    private static final QName ABSTRACT_FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeature");
-    private static final QName ABSTRACT_FEATURE_TYPE_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeatureType");
+    private static final QName ABSTRACT_FEATURE_NAME_311 = new QName("http://www.opengis.net/gml", "_Feature", "gml");
+    private static final QName ABSTRACT_FEATURE_TYPE_311 = new QName("http://www.opengis.net/gml", "AbstractFeatureType", "gml");
+    private static final QName ABSTRACT_FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeature", "gml");
+    private static final QName ABSTRACT_FEATURE_TYPE_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeatureType", "gml");
 
     private final String gmlVersion;
 
@@ -122,10 +122,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
 
     /**
      * Write an XML representation of the specified featureType into an Element.
-     * @param feature
      * @return the xml element.
-     * @throws JAXBException
-     * @throws ParserConfigurationException
      */
     public Node writeToElement(FeatureType feature) throws JAXBException, ParserConfigurationException {
 
@@ -148,9 +145,6 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
 
     /**
      * Create an xsd schema from a list of feature type.
-     *
-     * @param featureTypes
-     * @return
      */
     public Schema getSchemaFromFeatureType(List<FeatureType> featureTypes) {
         final Schema schema = new Schema(FormChoice.QUALIFIED, null);
@@ -178,9 +172,6 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
 
     /**
      * Create a xsd schema from a feature type.
-     *
-     * @param featureType
-     * @return
      */
     public Schema getSchemaFromFeatureType(FeatureType featureType) {
         if (featureType != null) {
@@ -275,12 +266,14 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
     }
 
     private void writeProperty(final PropertyType pType, final ExplicitGroup sequence, final Schema schema, final List<Attribute> attributes, final Set<String> alreadyWritten) {
-        if(pType instanceof Operation){
+        if (pType instanceof Operation) {
             //operation types are not written in the xsd.
             return;
         }
 
-        if(pType instanceof AttributeType){
+        final boolean decorated = GMLConvention.isDecoratedProperty(pType);
+
+        if (pType instanceof AttributeType) {
             final AttributeType attType = (AttributeType) pType;
             final String name        = attType.getName().tip().toString();
             final QName type         = Utils.getQNameFromType(attType, gmlVersion);
@@ -304,39 +297,64 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable {
                 }
                 attributes.add(att);
             } else {
-                sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
+                if (decorated) {
+                    final QName decorationTypeName = GMLConvention.getDecorationTypeName(gmlVersion, pType);
+                    final String namespace = decorationTypeName.getNamespaceURI();
+                    if (!GMLConvention.isGmlNamespace(namespace)) {
+                        //create a new separate type, how ?
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+                    sequence.addElement(new LocalElement(name, decorationTypeName, minOccurs, maxOcc, nillable));
+                } else {
+                    sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
+                }
             }
 
         } else if (pType instanceof FeatureAssociationRole) {
-            // for a complexType we have to add 2 complexType (PropertyType and type)
+
             final FeatureAssociationRole role = (FeatureAssociationRole) pType;
             final FeatureType valueType = role.getValueType();
-            final String name        = role.getName().tip().toString();
-            final QName type         = Utils.getQNameFromType(role, gmlVersion);
-            final String typeName    = Utils.getNameWithoutTypeSuffix(valueType.getName().tip().toString());
-            final String propertyName = Utils.getNameWithPropertyTypeSuffix(typeName);
-            final QName proptype = new QName(schema.getTargetNamespace(), propertyName);
-
-            //property type
-            //<xsd:element name="Address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />
-            final ExplicitGroup exp = new ExplicitGroup();
-            final TopLevelComplexType tlcType = new TopLevelComplexType(propertyName, exp);
-            final LocalElement le = new LocalElement(typeName, type, 1, "1",Boolean.FALSE);
-            le.setType(Utils.getQNameFromType(valueType, gmlVersion));
-            exp.addElement(le);
-            schema.addComplexType(tlcType);
-
-            //attribute type
-            final int minOccurs      = role.getMinimumOccurs();
-            final int maxOccurs      = role.getMaximumOccurs();
-            final boolean nillable   = FeatureExt.getCharacteristicValue(role, GMLConvention.NILLABLE_PROPERTY.toString(), minOccurs==0);
+            final String name = role.getName().tip().toString();
+            final int minOccurs = role.getMinimumOccurs();
+            final int maxOccurs = role.getMaximumOccurs();
             final String maxOcc;
             if (maxOccurs == Integer.MAX_VALUE) {
                 maxOcc = "unbounded";
             } else {
                 maxOcc = Integer.toString(maxOccurs);
             }
-            sequence.addElement(new LocalElement(name, proptype, minOccurs, maxOcc, nillable));
+
+            if (decorated) {
+                // for a complexType we have to add 2 complexType (PropertyType and type)
+                final String typeName = Utils.getNameWithoutTypeSuffix(valueType.getName().tip().toString());
+                final String propertyName = Utils.getNameWithPropertyTypeSuffix(typeName);
+                final QName proptype = new QName(schema.getTargetNamespace(), propertyName);
+
+                final String nameWithSuffix = propertyName;
+                //search if this type has already been written
+                if (!alreadyWritten.contains(nameWithSuffix)) {
+                    alreadyWritten.add(nameWithSuffix);
+                    final QName type = Utils.getQNameFromType(role, gmlVersion);
+
+                    //property type
+                    //<xsd:element name="Address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />
+                    final ExplicitGroup exp = new ExplicitGroup();
+                    final TopLevelComplexType tlcType = new TopLevelComplexType(propertyName, exp);
+                    final LocalElement le = new LocalElement(typeName, type, 1, "1",Boolean.FALSE);
+                    le.setType(Utils.getQNameFromType(valueType, gmlVersion));
+                    exp.addElement(le);
+
+                    schema.addComplexType(tlcType);
+                }
+
+                //attribute type
+                final boolean nillable = FeatureExt.getCharacteristicValue(role, GMLConvention.NILLABLE_PROPERTY.toString(), minOccurs==0);
+                sequence.addElement(new LocalElement(name, proptype, minOccurs, maxOcc, nillable));
+            } else {
+                final QName type = Utils.getQNameFromType(valueType, gmlVersion);
+                final boolean nillable = FeatureExt.getCharacteristicValue(role, GMLConvention.NILLABLE_PROPERTY.toString(), false);
+                sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
+            }
 
             //real type
             writeComplexType(role.getValueType(), schema, alreadyWritten);

@@ -226,13 +226,6 @@ public class TransportationComplexType
      * <pre>
      *    getLod0Network().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link GeometricComplexPropertyType }
-     *
-     *
      */
     public List<GeometricComplexPropertyType> getLod0Network() {
         if (lod0Network == null) {
@@ -243,11 +236,6 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod1MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod1MultiSurface() {
         return lod1MultiSurface;
@@ -255,11 +243,6 @@ public class TransportationComplexType
 
     /**
      * Sets the value of the lod1MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod1MultiSurface(final MultiSurfacePropertyType value) {
         this.lod1MultiSurface = value;
@@ -267,11 +250,6 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod2MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod2MultiSurface() {
         return lod2MultiSurface;
@@ -279,11 +257,6 @@ public class TransportationComplexType
 
     /**
      * Sets the value of the lod2MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod2MultiSurface(final MultiSurfacePropertyType value) {
         this.lod2MultiSurface = value;
@@ -291,11 +264,6 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod3MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod3MultiSurface() {
         return lod3MultiSurface;
@@ -303,11 +271,6 @@ public class TransportationComplexType
 
     /**
      * Sets the value of the lod3MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
@@ -315,11 +278,6 @@ public class TransportationComplexType
 
     /**
      * Gets the value of the lod4MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod4MultiSurface() {
         return lod4MultiSurface;
@@ -327,11 +285,6 @@ public class TransportationComplexType
 
     /**
      * Sets the value of the lod4MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
@@ -351,13 +304,6 @@ public class TransportationComplexType
      * <pre>
      *    getGenericApplicationPropertyOfTransportationComplex().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Object }
-     *
-     *
      */
     public List<Object> getGenericApplicationPropertyOfTransportationComplex() {
         if (genericApplicationPropertyOfTransportationComplex == null) {
@@ -365,5 +311,4 @@ public class TransportationComplexType
         }
         return this.genericApplicationPropertyOfTransportationComplex;
     }
-
 }

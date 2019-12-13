@@ -101,6 +101,23 @@ public class OrganizationType {
     @XmlElement(name = "Personnel", required = true)
     protected List<OrgPersonnelType> personnel;
 
+    public OrganizationType() {
+
+    }
+
+    public OrganizationType(OrganizationTypeEnum organizationType, OrganizationNameType orgName, String organizationURL, OrgPersonnelType personnel) {
+        if (organizationType != null) {
+            this.organizationType = new ArrayList<>();
+            this.organizationType.add(organizationType);
+        }
+        this.organizationName = orgName;
+        this.organizationURL = organizationURL;
+        if (personnel != null) {
+            this.personnel = new ArrayList<>();
+            this.personnel.add(personnel);
+        }
+    }
+
     /**
      * Gets the value of the organizationType property.
      *
@@ -125,7 +142,7 @@ public class OrganizationType {
      */
     public List<OrganizationTypeEnum> getOrganizationType() {
         if (organizationType == null) {
-            organizationType = new ArrayList<OrganizationTypeEnum>();
+            organizationType = new ArrayList<>();
         }
         return this.organizationType;
     }

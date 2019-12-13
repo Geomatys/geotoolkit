@@ -16,30 +16,28 @@
  */
 package org.geotoolkit.processing.vector.nearest;
 
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.opengis.util.NoSuchIdentifierException;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.processing.vector.AbstractProcessTest;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.feature.AttributeConvention;
-
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.processing.GeotkProcessingRegistry;
-
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.FactoryException;
-
-import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.FactoryException;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of nearest process
@@ -75,10 +73,10 @@ public class NearestTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        final FeatureSet featureListOut = (FeatureSet) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection featureListResult = buildResultList();
+        final FeatureSet featureListResult = buildResultList();
 
         compare(featureListResult,featureListOut);
     }
@@ -147,7 +145,7 @@ public class NearestTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection featureList = FeatureStoreUtilities.collection("id", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("IntersectTest", type);
 
         final Feature feature4 = type.newInstance();
         feature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-4");

@@ -29,6 +29,7 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.internal.xml.LegacyNamespaces;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -85,9 +86,9 @@ public class CswNodeComparator {
         map.put("xlink", Namespaces.XLINK);
         map.put("xsi",   Namespaces.XSI);
         map.put("gml",   "http://www.opengis.net/gml");
-        map.put("gmd",   Namespaces.GMD);
-        map.put("gmx",   Namespaces.GMX);
-        map.put("gmi",   Namespaces.GMI);
+        map.put("gmd",   LegacyNamespaces.GMD);
+        map.put("gmx",   LegacyNamespaces.GMX);
+        map.put("gmi",   LegacyNamespaces.GMI);
         map.put("gco",   Namespaces.GCO);
     }
 

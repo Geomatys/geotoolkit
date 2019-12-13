@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema targetNamespace="http://www.geotoolkit.org/custom" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+  <xs:element type="TestSimpleBasicType" substitutionGroup="gml:_Feature" name="TestSimpleBasic" xmlns="http://www.geotoolkit.org/custom" xmlns:gml="http://www.opengis.net/gml"/>
+  <xs:complexType name="TestSimpleBasicType">
+    <xs:complexContent>
+      <xs:extension base="gml:AbstractFeatureType" xmlns:gml="http://www.opengis.net/gml">
+        <xs:sequence>
+          <xs:element type="xs:string" nillable="true" minOccurs="1" maxOccurs="1" name="attString"/>
+          <xs:element type="xs:double" nillable="true" minOccurs="1" maxOccurs="1" name="attDouble"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element type="TestSimpleBasic2Type" substitutionGroup="gml:_Feature" name="TestSimpleBasic2" xmlns="http://www.geotoolkit.org/custom" xmlns:gml="http://www.opengis.net/gml"/>
+  <xs:complexType name="TestSimpleBasic2Type">
+    <xs:complexContent>
+      <xs:extension base="gml:AbstractFeatureType" xmlns:gml="http://www.opengis.net/gml">
+        <xs:sequence>
+          <xs:element type="xs:string" nillable="true" minOccurs="1" maxOccurs="1" name="attString2"/>
+          <xs:element type="xs:double" nillable="true" minOccurs="1" maxOccurs="1" name="attDouble2"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

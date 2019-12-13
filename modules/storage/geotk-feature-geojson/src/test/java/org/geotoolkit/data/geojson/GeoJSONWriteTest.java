@@ -1,36 +1,38 @@
 package org.geotoolkit.data.geojson;
 
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureWriter;
+import org.geotoolkit.storage.feature.FeatureReader;
 import com.fasterxml.jackson.core.JsonEncoding;
-import org.locationtech.jts.geom.*;
-import org.locationtech.jts.io.WKTReader;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.data.*;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.apache.sis.referencing.CommonCRS;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.opengis.parameter.ParameterValueGroup;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import org.geotoolkit.feature.FeatureExt;
+import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-
-import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.PATH;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.data.*;
+import static org.geotoolkit.data.geojson.GeoJSONProvider.PARAMETERS_DESCRIPTOR;
+import static org.geotoolkit.data.geojson.GeoJSONProvider.PATH;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.session.Session;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.io.WKTReader;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -164,11 +166,12 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         assertTrue(Files.exists(geomsFile));
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(validFeatureType.getName()));
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(validFeatureType.getName()));
 
-        assertEquals(7, fcoll.size());
+        assertEquals(7, fcoll.features(false).count());
 
-        try (FeatureIterator ite = fcoll.iterator()) {
+        try (Stream<Feature> stream = fcoll.features(false)) {
+            Iterator<Feature> ite = stream.iterator();
             while (ite.hasNext()) {
                 Feature f = ite.next();
                 //System.out.println(f);
@@ -265,11 +268,12 @@ public class GeoJSONWriteTest extends org.geotoolkit.test.TestBase {
         assertTrue(Files.exists(complexFile));
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(complexFT.getName()));
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(complexFT.getName()));
 
-        assertEquals(1, fcoll.size());
+        assertEquals(1, fcoll.features(false).count());
 
-        try (FeatureIterator ite = fcoll.iterator()) {
+        try (Stream<Feature> stream = fcoll.features(false)) {
+            Iterator<Feature> ite = stream.iterator();
             while (ite.hasNext()) {
                 Feature candidate = ite.next();
                 assertEquals(expected, candidate);

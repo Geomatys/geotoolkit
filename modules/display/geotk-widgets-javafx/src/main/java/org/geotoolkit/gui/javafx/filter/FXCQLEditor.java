@@ -46,18 +46,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.sis.cql.CQLException;
+import org.apache.sis.internal.feature.FunctionRegister;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Resource;
 import org.fxmisc.richtext.CodeArea;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.cql.CQLLexer;
 import org.geotoolkit.cql.CQLParser;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -129,22 +130,24 @@ public class FXCQLEditor extends BorderPane {
         final TreeItem<Object> root = new TreeItem<>("root");
 
         //sort factory by name
-        final List<FunctionFactory> factories = new ArrayList<>(Functions.getFactories());
-        Collections.sort(factories, new Comparator<FunctionFactory>() {
+        final List<FunctionRegister> factories = new ArrayList<>(Functions.getFactories());
+        Collections.sort(factories, new Comparator<FunctionRegister>() {
             @Override
-            public int compare(FunctionFactory o1, FunctionFactory o2) {
+            public int compare(FunctionRegister o1, FunctionRegister o2) {
                 return o1.getIdentifier().compareTo(o2.getIdentifier());
             }
         });
 
-        for(FunctionFactory ff : factories){
+        for(FunctionRegister ff : factories){
             final TreeItem fnode = new TreeItem(ff.getIdentifier());
-            String[] names = ff.getNames();
+            String[] names = ff.getNames().toArray(new String[0]);
             Arrays.sort(names);
             for(String str : names){
-                final ParameterDescriptorGroup desc = ff.describeFunction(str);
-                final TreeItem enode = new TreeItem(desc);
-                fnode.getChildren().add(enode);
+                if (ff instanceof FunctionFactory) {
+                    final ParameterDescriptorGroup desc = ((FunctionFactory) ff).describeFunction(str);
+                    final TreeItem enode = new TreeItem(desc);
+                    fnode.getChildren().add(enode);
+                }
             }
             root.getChildren().add(fnode);
         }
@@ -162,12 +165,16 @@ public class FXCQLEditor extends BorderPane {
 
     public void setTarget(Object candidate) throws DataStoreException{
         FeatureType ft = null;
-        if(candidate instanceof FeatureType){
+        if (candidate instanceof FeatureType) {
             ft = (FeatureType) candidate;
-        }else if(candidate instanceof FeatureCollection) {
-            ft = ((FeatureCollection)candidate).getType();
-        }else if(candidate instanceof FeatureMapLayer){
-            ft = ((FeatureMapLayer)candidate).getResource().getType();
+        } else if (candidate instanceof FeatureSet) {
+            ft = ((FeatureSet) candidate).getType();
+        } else if (candidate instanceof MapLayer) {
+            MapLayer layer = (MapLayer) candidate;
+            Resource resource = layer.getResource();
+            if (resource instanceof FeatureSet) {
+                ft = ((FeatureSet) resource).getType();
+            }
         }
 
         final ObservableList properties = FXCollections.observableArrayList();

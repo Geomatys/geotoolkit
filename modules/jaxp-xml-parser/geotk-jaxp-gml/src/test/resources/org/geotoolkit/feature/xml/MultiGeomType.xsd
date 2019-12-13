@@ -3,7 +3,7 @@
     targetNamespace="http://www.opengis.net/gml"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
-    <xs:element xmlns:gml="http://www.opengis.net/gml" name="TestMultiGeom" type="gml:TestMultiGeomType" substitutionGroup="gml:_Feature"/>
+    <xs:element xmlns:gml="http://www.opengis.net/gml" xmlns="http://www.opengis.net/gml" name="TestMultiGeom" type="TestMultiGeomType" substitutionGroup="_Feature"/>
     <xs:complexType name="TestMultiGeomType">
         <xs:complexContent>
             <xs:extension xmlns:gml="http://www.opengis.net/gml" base="gml:AbstractFeatureType" >
@@ -18,13 +18,13 @@
                     <xs:element name="attDate"             maxOccurs="unbounded" minOccurs="1" nillable="true" type="xs:date"/>
                     <xs:element name="attDateTime"         maxOccurs="unbounded" minOccurs="1" nillable="true" type="xs:dateTime"/>
                     <xs:element name="attBoolean"          maxOccurs="unbounded" minOccurs="1" nillable="true" type="xs:boolean"/>
-                    <xs:element name="geomPoint"           maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:Point"/>
-                    <xs:element name="geomMultiPoint"      maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:MultiPoint"/>
-                    <xs:element name="geomLine"            maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:Curve"/>
-                    <xs:element name="geomMultiLine"       maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:CompositeCurve"/>
-                    <xs:element name="geomPolygon"         maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:Polygon"/>
-                    <xs:element name="geomMultiPolygon"    maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:MultiGeometry"/>
-                    <xs:element name="geomMultiGeometry"   maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:MultiGeometry"/>
+                    <xs:element name="geomPoint"           maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:PointPropertyType"/>
+                    <xs:element name="geomMultiPoint"      maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:MultiPointPropertyType"/>
+                    <xs:element name="geomLine"            maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:CurvePropertyType"/>
+                    <xs:element name="geomMultiLine"       maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:CompositeCurvePropertyType"/>
+                    <xs:element name="geomPolygon"         maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:PolygonPropertyType"/>
+                    <xs:element name="geomMultiPolygon"    maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:MultiGeometryPropertyType"/>
+                    <xs:element name="geomMultiGeometry"   maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:MultiGeometryPropertyType"/>
                     <xs:element name="geomAnyGeometry"     maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:GeometryPropertyType"/>
                 </xs:sequence>
             </xs:extension>

@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

@@ -21,7 +21,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.apache.sis.referencing.CRS;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.geometry.BoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.ReferencingUtilities;

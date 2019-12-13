@@ -17,7 +17,8 @@
 package org.geotoolkit.ncwms;
 
 import java.net.URL;
-
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.ncwms.v111.NcGetFeatureInfo111;
 import org.geotoolkit.ncwms.v111.NcGetLegend111;
 import org.geotoolkit.ncwms.v111.NcGetMap111;
@@ -27,13 +28,11 @@ import org.geotoolkit.ncwms.v130.NcGetLegend130;
 import org.geotoolkit.ncwms.v130.NcGetMap130;
 import org.geotoolkit.ncwms.v130.NcGetTimeseries130;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.wms.WebMapClient;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -104,7 +103,7 @@ public class NcWebMapClient extends WebMapClient{
 
     @Override
     protected GridCoverageResource createReference(GenericName name) throws DataStoreException{
-        return new NcWMSCoverageResource(this,name);
+        return new NcWMSResource(this,name);
     }
 
     /**
@@ -157,7 +156,6 @@ public class NcWebMapClient extends WebMapClient{
 
     /**
      * Returns the GetMetadata request object.
-     * @return
      */
     public NcGetMetadataRequest createGetMetadata() {
         return new NcGetMetadata(getURI().toString());
@@ -165,7 +163,6 @@ public class NcWebMapClient extends WebMapClient{
 
     /**
      * Returns the GetMetadata?item=menu request object.
-     * @return
      */
     public NcGetMetadataRequest createGetMetadataMenu()  {
         final NcGetMetadataRequest request = createGetMetadata();
@@ -175,7 +172,6 @@ public class NcWebMapClient extends WebMapClient{
 
     /**
      * Returns the GetMetadata request object.
-     * @return
      */
     public NcGetMetadataMinMaxRequest  createGetMetadataMinMax() {
         final NcGetMetadataMinMaxRequest request = new NcGetMetadataMinMax(getURI().toString());
@@ -185,7 +181,6 @@ public class NcWebMapClient extends WebMapClient{
 
     /**
      * Returns the GetTransect request object.
-     * @return
      */
     public NcGetTransectRequest createGetTransect() {
         return new NcGetTransect(getURI().toString());
@@ -193,7 +188,6 @@ public class NcWebMapClient extends WebMapClient{
 
     /**
      * Returns the GetVerticalProfile request object.
-     * @return
      */
     public NcGetVerticalProfileRequest createGetVerticalProfile() {
         return new NcGetVerticalProfile(getURI().toString());
@@ -201,7 +195,6 @@ public class NcWebMapClient extends WebMapClient{
 
     /**
      * Returns the GetTimeseries request object.
-     * @return
      */
     public NcGetTimeseriesRequest createGetTimeseries() {
 

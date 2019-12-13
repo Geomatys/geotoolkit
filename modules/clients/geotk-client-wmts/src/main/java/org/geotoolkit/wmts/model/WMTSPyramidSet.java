@@ -21,9 +21,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.wmts.GetTileRequest;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.v100.*;
@@ -101,7 +101,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
         final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
 
         if(hints == null) hints = new HashMap();

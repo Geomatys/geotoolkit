@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,9 +30,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.util.NamesExt;
@@ -105,7 +106,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
             try (OutputStream fos = Files.newOutputStream(dataFile, CREATE,  TRUNCATE_EXISTING, WRITE);
                  GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)){
-                 FeatureStoreUtilities.write(writer, source);
+                 FeatureStoreUtilities.write(writer, (Collection) source);
             } catch (DataStoreException e) {
                 throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
             } catch (IOException e) {

@@ -75,22 +75,18 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.lang.Static;
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
-import org.geotoolkit.metadata.dimap.DimapConstants.DataType;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
 import static org.geotoolkit.util.DomUtilities.firstElement;
 import static org.geotoolkit.util.DomUtilities.getListElements;
 import static org.geotoolkit.util.DomUtilities.textAttributeValueSafe;
 import static org.geotoolkit.util.DomUtilities.textValueSafe;
-import org.geotoolkit.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.Role;
@@ -305,7 +301,6 @@ public final class DimapAccessor extends Static {
         final String dataType = textValueSafe(nodeEncoding, TAG_DATA_TYPE, String.class);
         final Integer skip = textValueSafe(nodeEncoding, TAG_SKIP_BYTES, Integer.class);
         final String layout = textValueSafe(nodeEncoding, TAG_BANDS_LAYOUT, String.class);
-        final SampleDimensionType dimensionType = TypeMap.getSampleDimensionType(DataType.valueOf(dataType).getNumberSet(), nbits);
 
 
         // read special values -------------------------------------------------
@@ -468,7 +463,7 @@ public final class DimapAccessor extends Static {
         final List<Element> vertexs = getListElements(datasetFrame, TAG_VERTEX);
 
         final CoordinateReferenceSystem crs = readCRS(doc);
-        final GeometryFactory geometryFact = new JTSGeometryFactory(crs);
+        final JTSGeometryFactory geometryFact = new JTSGeometryFactory(crs);
 
         final int len = vertexs.size();
         final DirectPosition[] exteriorRing = new DirectPosition[len + 1];

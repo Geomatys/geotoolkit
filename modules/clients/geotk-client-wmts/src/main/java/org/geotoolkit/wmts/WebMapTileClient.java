@@ -28,14 +28,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
@@ -138,9 +138,9 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
      */
     public WebMapTileClient(final URL serverURL, final ClientSecurity security,
             final WMTSVersion version, final Capabilities capabilities, boolean cacheImage) {
-        super(create(WMTSClientFactory.PARAMETERS, serverURL, security));
-        parameters.getOrCreate(WMTSClientFactory.VERSION).setValue(version.getCode());
-        parameters.getOrCreate(WMTSClientFactory.IMAGE_CACHE).setValue(cacheImage);
+        super(create(WMTSProvider.PARAMETERS, serverURL, security));
+        parameters.getOrCreate(WMTSProvider.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(WMTSProvider.IMAGE_CACHE).setValue(cacheImage);
         this.capabilities = capabilities;
     }
 
@@ -149,13 +149,8 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     }
 
     @Override
-    public WMTSClientFactory getProvider() {
-        return (WMTSClientFactory) DataStores.getProviderById(WMTSClientFactory.NAME);
-    }
-
-    @Override
-    public GenericName getIdentifier() {
-        return null;
+    public WMTSProvider getProvider() {
+        return (WMTSProvider) DataStores.getProviderById(WMTSProvider.NAME);
     }
 
     /**
@@ -218,11 +213,11 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
      * Returns the request version.
      */
     public WMTSVersion getVersion() {
-        return WMTSVersion.getVersion(parameters.getValue(WMTSClientFactory.VERSION));
+        return WMTSVersion.getVersion(parameters.getValue(WMTSProvider.VERSION));
     }
 
     public boolean getImageCache(){
-        return parameters.getValue(AbstractClientFactory.IMAGE_CACHE);
+        return parameters.getValue(AbstractClientProvider.IMAGE_CACHE);
     }
 
     /**
@@ -274,7 +269,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
                 final GenericName nn = NamesExt.create(name);
-                final GridCoverageResource ref = new WMTSCoverageResource(this,nn,getImageCache());
+                final GridCoverageResource ref = new WMTSResource(this,nn,getImageCache());
                 resources.add(ref);
             }
 

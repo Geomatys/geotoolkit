@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
 import org.geotoolkit.feature.catalog.AssociationRoleImpl;
 import org.geotoolkit.feature.catalog.BoundFeatureAttributeImpl;
 import org.geotoolkit.feature.catalog.ConstraintImpl;
@@ -78,12 +77,7 @@ public class XMLBindingTest {
 
         MarshallerPool pool = FeatureCatalogMarshallerPool.getInstance();
         Marshaller marshaller = pool.acquireMarshaller();
-        try {
-            //unmarshaller.setProperty("com.sun.xml.bind.IDResolver", new DocumentIDResolver());
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        } catch (PropertyException e) {
-            System.out.println("prefix non trouv");
-        }
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         String name = "Digital Geographic information Exchange Standard (DIGEST) Feature and Attribute Coding Catalogue (FACC)";
         List<String> scopes = new ArrayList<>();
         scopes.add("Hydrography");scopes.add("Ports and Harbours");scopes.add("Transportation Networks");

@@ -23,9 +23,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.xml.v111.Capability;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
@@ -91,7 +91,7 @@ public class WMSCPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
         final GetMapRequest request = getServer().createGetMap();
         request.setLayers(layer);
         request.setEnvelope(Pyramids.computeTileEnvelope(mosaic, col, row));

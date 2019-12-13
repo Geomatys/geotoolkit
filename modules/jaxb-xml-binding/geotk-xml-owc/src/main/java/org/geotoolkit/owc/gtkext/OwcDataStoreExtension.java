@@ -25,15 +25,10 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.owc.xml.OwcExtension;
@@ -73,12 +68,12 @@ public class OwcDataStoreExtension extends OwcExtension {
         String factoryName = null;
         String typeName = null;
         final Map params = new HashMap();
-        for(Object o : fields){
-            if(o instanceof JAXBElement){
+        for (Object o : fields) {
+            if (o instanceof JAXBElement) {
                 o = ((JAXBElement)o).getValue();
             }
 
-            if(o instanceof ParameterType){
+            if (o instanceof ParameterType) {
                 final ParameterType param = (ParameterType) o;
                 final String key = param.getKey();
                 final Class valClass;
@@ -90,12 +85,12 @@ public class OwcDataStoreExtension extends OwcExtension {
                 Object value = param.getValue();
                 value = ObjectConverters.convert(value, valClass);
 
-                if(KEY_STOREFACTORY.equalsIgnoreCase(key)){
+                if (KEY_STOREFACTORY.equalsIgnoreCase(key)) {
                     factoryName = (String)value;
                     params.put(key, factoryName);
-                }else if(KEY_DATANAME.equalsIgnoreCase(key)){
+                } else if (KEY_DATANAME.equalsIgnoreCase(key)) {
                     typeName = (String)value;
-                }else{
+                } else {
                     params.put(key, value);
                 }
             }
@@ -104,15 +99,11 @@ public class OwcDataStoreExtension extends OwcExtension {
         final DataStoreProvider ff = DataStores.getProviderById(factoryName);
         if (ff != null) {
             final DataStore store = DataStores.open(ff,params);
-            if (store instanceof FeatureStore) {
-                final Session session = ((FeatureStore)store).createSession(true);
-                final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(NamesExt.valueOf(typeName)));
-                final MapLayer layer = MapBuilder.createFeatureLayer(col);
-                return layer;
-            } else {
-                final Resource covref = store.findResource(NamesExt.valueOf(typeName).toString());
-                final MapLayer layer = MapBuilder.createCoverageLayer(covref);
-                return layer;
+            Resource resource = store.findResource(NamesExt.valueOf(typeName).toString());
+            if (resource instanceof FeatureSet) {
+                return MapBuilder.createFeatureLayer((FeatureSet) resource);
+            } else if (resource instanceof GridCoverageResource) {
+                return MapBuilder.createCoverageLayer((GridCoverageResource) resource);
             }
         }
 
@@ -128,7 +119,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         //write the type name
         final List<Object> fieldList = offering.getOperationOrContentOrStyleSet();
         final String typeName = getTypeName(mapLayer);
-        if(typeName!=null){
+        if (typeName != null) {
             fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),typeName));
         }
 
@@ -136,10 +127,10 @@ public class OwcDataStoreExtension extends OwcExtension {
         final Parameters params = Parameters.castOrWrap(getParams(mapLayer));
 
         final ParameterDescriptorGroup desc = params.getDescriptor();
-        for(GeneralParameterDescriptor pdesc : desc.descriptors()){
+        for (GeneralParameterDescriptor pdesc : desc.descriptors()) {
             if (pdesc instanceof ParameterDescriptor) {
                 final Object value = params.getValue((ParameterDescriptor) pdesc);
-                if (value!=null) {
+                if (value != null) {
                     fieldList.add(new ParameterType(
                             pdesc.getName().getCode(),
                             ((ParameterDescriptor)pdesc).getValueClass().getName(),
@@ -152,72 +143,31 @@ public class OwcDataStoreExtension extends OwcExtension {
         return offering;
     }
 
-    private static String getStoreFactoryName(MapLayer layer){
-        if(layer instanceof FeatureMapLayer){
-            final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Session session = ((FeatureCollection)fml.getResource()).getSession();
-            if(session!=null){
-                final FeatureStore store = session.getFeatureStore();
-                if(store!=null){
-                    final DataStoreProvider factory = store.getProvider();
-                    return factory.getOpenParameters().getName().getCode();
-                }
-            }
-        }else if(layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource covref = cml.getResource();
-            if (covref instanceof StoreResource) {
-                final DataStore store = ((StoreResource) covref).getOriginator();
-                if (store != null) {
-                    final DataStoreProvider factory = store.getProvider();
-                    return factory.getOpenParameters().getName().getCode();
-                }
-            }
+    private static String getStoreFactoryName(MapLayer layer) {
+        final Resource resource = layer.getResource();
+        if (resource instanceof StoreResource) {
+            final DataStore store = ((StoreResource) resource).getOriginator();
+            return store.getProvider().getOpenParameters().getName().getCode();
         }
         return null;
     }
 
-    private static ParameterValueGroup getParams(MapLayer layer){
-        if(layer instanceof FeatureMapLayer){
-            final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final Session session = ((FeatureCollection)fml.getResource()).getSession();
-            if(session!=null){
-                final FeatureStore store = session.getFeatureStore();
-                if(store!=null){
-                    return store.getOpenParameters();
-                }
-            }
-        }else if(layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource covref = cml.getResource();
-            if (covref instanceof StoreResource) {
-                final DataStore store = ((StoreResource) covref).getOriginator();
-                if (store != null) {
-                    return store.getOpenParameters();
-                }
-            }
+    private static ParameterValueGroup getParams(MapLayer layer) {
+        final Resource resource = layer.getResource();
+        if (resource instanceof StoreResource) {
+            final DataStore store = ((StoreResource) resource).getOriginator();
+            return store.getOpenParameters().orElse(null);
         }
         return null;
     }
 
-    private static String getTypeName(MapLayer layer){
-        if(layer instanceof FeatureMapLayer){
-            final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            try {
-                return fml.getResource().getType().getName().toString();
-            } catch (DataStoreException ex) {
-                return null;
-            }
-        }else if(layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource covref = cml.getResource();
-            try {
-                return covref.getIdentifier().toString();
-            } catch (DataStoreException ex) {
-                return null;
-            }
+    private static String getTypeName(MapLayer layer) {
+        Resource resource = layer.getResource();
+        try {
+            return resource.getIdentifier().map(Object::toString).orElse(null);
+        } catch (DataStoreException ex) {
+            return null;
         }
-        return null;
     }
 
 }

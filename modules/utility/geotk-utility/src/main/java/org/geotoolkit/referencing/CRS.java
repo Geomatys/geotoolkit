@@ -31,12 +31,11 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Version;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.NameMeaning;
-import org.apache.sis.internal.metadata.VerticalDatumTypes;
+import org.apache.sis.internal.referencing.VerticalDatumTypes;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
@@ -358,45 +357,6 @@ compare:    for (final SingleCRS component : actualComponents) {
     ////          COORDINATE OPERATIONS          ////
     ////                                         ////
     /////////////////////////////////////////////////
-
-    /**
-     * Compares the specified objects for equality, ignoring metadata and slight differences
-     * in numerical values. If this method returns {@code true}, then:
-     *
-     * <ul>
-     *   <li><p>If the two given objects are {@link MathTransform} instances, then transforming a
-     *       set of coordinate values using one transform will produce <em>approximatively</em>
-     *       the same results than transforming the same coordinates with the other transform.</p></li>
-     *
-     *   <li><p>If the two given objects are {@link CoordinateReferenceSystem} instances,
-     *       then a call to <code>{@linkplain #findMathTransform(CoordinateReferenceSystem,
-     *       CoordinateReferenceSystem) findMathTransform}(crs1, crs2)</code> will return
-     *       a transform close to the identity transform.</p></li>
-     * </ul>
-     *
-     * {@section Implementation note}
-     * This is a convenience method for the following method call:
-     *
-     * {@preformat java
-     *     return Utilities.deepEquals(object1, object2, ComparisonMode.APPROXIMATIVE);
-     * }
-     *
-     * @param  object1 The first object to compare (may be null).
-     * @param  object2 The second object to compare (may be null).
-     * @return {@code true} if both objects are approximatively equal.
-     *
-     * @see Utilities#deepEquals(Object, Object, ComparisonMode)
-     * @see ComparisonMode#APPROXIMATIVE
-     *
-     * @category information
-     * @since 3.18
-     *
-     * @deprecated Moved to Apache SIS as {@link Utilities#equalsApproximatively(Object, Object)}.
-     */
-    @Deprecated
-    public static boolean equalsApproximatively(final Object object1, final Object object2) {
-        return Utilities.equalsApproximatively(object1, object2);
-    }
 
     /**
      * Transforms the given relative distance using the given transform. A relative distance

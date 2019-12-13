@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.db.postgres;
 
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -40,9 +43,12 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
+@StoreMetadata(
+        formatName = PostgresFeatureStoreFactory.NAME,
+        capabilities = {Capability.READ, Capability.WRITE},
+        resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
         resourceTypes = ResourceType.VECTOR,
-        canWrite = true,
         geometryTypes ={Geometry.class,
                         Point.class,
                         LineString.class,

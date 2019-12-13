@@ -88,10 +88,6 @@ public class PaletteReader {
     private final boolean categorize;
     private final Pattern valStart;
 
-    /**
-     *
-     * @param pattern
-     */
     public PaletteReader(String pattern) {
         final String[] parts = pattern.split("\n");
         ignorePatterns = new Pattern[parts.length-1];

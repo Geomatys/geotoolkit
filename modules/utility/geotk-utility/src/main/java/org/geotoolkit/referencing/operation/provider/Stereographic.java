@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.PlanarProjection;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
 
 
 /**
@@ -131,8 +132,8 @@ public class Stereographic extends MapProjection {
                 "Scale factor at natural origin",    // EPSG
                 "scale_factor_at_projection_origin", // NetCDF
                 "ScaleAtNatOrigin");                 // GeoTIFF
-        FALSE_EASTING  = Orthographic.FALSE_EASTING;
-        FALSE_NORTHING = Orthographic.FALSE_NORTHING;
+        FALSE_EASTING  = Mercator2SP.FALSE_EASTING;
+        FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
     }
 
     /**

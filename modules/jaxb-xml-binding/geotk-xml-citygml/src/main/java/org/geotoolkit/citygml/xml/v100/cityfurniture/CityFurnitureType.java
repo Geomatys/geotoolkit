@@ -105,11 +105,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the clazz property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getClazz() {
         return clazz;
@@ -117,11 +112,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the clazz property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setClazz(final String value) {
         this.clazz = value;
@@ -139,11 +129,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod1Geometry property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public GeometryPropertyType getLod1Geometry() {
         return lod1Geometry;
@@ -151,11 +136,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod1Geometry property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public void setLod1Geometry(final GeometryPropertyType value) {
         this.lod1Geometry = value;
@@ -163,11 +143,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod2Geometry property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public GeometryPropertyType getLod2Geometry() {
         return lod2Geometry;
@@ -175,11 +150,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod2Geometry property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public void setLod2Geometry(final GeometryPropertyType value) {
         this.lod2Geometry = value;
@@ -187,11 +157,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod3Geometry property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public GeometryPropertyType getLod3Geometry() {
         return lod3Geometry;
@@ -199,11 +164,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod3Geometry property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public void setLod3Geometry(final GeometryPropertyType value) {
         this.lod3Geometry = value;
@@ -211,11 +171,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4Geometry property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public GeometryPropertyType getLod4Geometry() {
         return lod4Geometry;
@@ -223,11 +178,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4Geometry property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;
@@ -235,11 +185,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod1TerrainIntersection property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiCurvePropertyType }
-     *
      */
     public MultiCurvePropertyType getLod1TerrainIntersection() {
         return lod1TerrainIntersection;
@@ -247,11 +192,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod1TerrainIntersection property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiCurvePropertyType }
-     *
      */
     public void setLod1TerrainIntersection(final MultiCurvePropertyType value) {
         this.lod1TerrainIntersection = value;
@@ -259,11 +199,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod2TerrainIntersection property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiCurvePropertyType }
-     *
      */
     public MultiCurvePropertyType getLod2TerrainIntersection() {
         return lod2TerrainIntersection;
@@ -271,11 +206,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod2TerrainIntersection property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiCurvePropertyType }
-     *
      */
     public void setLod2TerrainIntersection(final MultiCurvePropertyType value) {
         this.lod2TerrainIntersection = value;
@@ -283,11 +213,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod3TerrainIntersection property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiCurvePropertyType }
-     *
      */
     public MultiCurvePropertyType getLod3TerrainIntersection() {
         return lod3TerrainIntersection;
@@ -295,11 +220,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod3TerrainIntersection property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiCurvePropertyType }
-     *
      */
     public void setLod3TerrainIntersection(final MultiCurvePropertyType value) {
         this.lod3TerrainIntersection = value;
@@ -307,11 +227,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4TerrainIntersection property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiCurvePropertyType }
-     *
      */
     public MultiCurvePropertyType getLod4TerrainIntersection() {
         return lod4TerrainIntersection;
@@ -319,11 +234,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4TerrainIntersection property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiCurvePropertyType }
-     *
      */
     public void setLod4TerrainIntersection(final MultiCurvePropertyType value) {
         this.lod4TerrainIntersection = value;
@@ -331,11 +241,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod1ImplicitRepresentation property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public ImplicitRepresentationPropertyType getLod1ImplicitRepresentation() {
         return lod1ImplicitRepresentation;
@@ -343,11 +248,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod1ImplicitRepresentation property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public void setLod1ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod1ImplicitRepresentation = value;
@@ -355,11 +255,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod2ImplicitRepresentation property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public ImplicitRepresentationPropertyType getLod2ImplicitRepresentation() {
         return lod2ImplicitRepresentation;
@@ -367,11 +262,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod2ImplicitRepresentation property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public void setLod2ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod2ImplicitRepresentation = value;
@@ -379,11 +269,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod3ImplicitRepresentation property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public ImplicitRepresentationPropertyType getLod3ImplicitRepresentation() {
         return lod3ImplicitRepresentation;
@@ -391,11 +276,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod3ImplicitRepresentation property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public void setLod3ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod3ImplicitRepresentation = value;
@@ -403,11 +283,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4ImplicitRepresentation property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public ImplicitRepresentationPropertyType getLod4ImplicitRepresentation() {
         return lod4ImplicitRepresentation;
@@ -415,11 +290,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4ImplicitRepresentation property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public void setLod4ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod4ImplicitRepresentation = value;
@@ -427,7 +297,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfCityFurniture property.
-     *
      */
     public List<Object> getGenericApplicationPropertyOfCityFurniture() {
         if (genericApplicationPropertyOfCityFurniture == null) {
@@ -435,5 +304,4 @@ public class CityFurnitureType extends AbstractCityObjectType {
         }
         return this.genericApplicationPropertyOfCityFurniture;
     }
-
 }

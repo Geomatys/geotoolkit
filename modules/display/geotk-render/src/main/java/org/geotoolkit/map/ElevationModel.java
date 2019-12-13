@@ -83,7 +83,6 @@ public class ElevationModel {
      * @param azimuth Light angle in degree from  {@link CoordinateReferenceSystem} North {@link CoordinateSystemAxis} from {@link GridCoverage}.
      * @param altitude Light angle in degree of the light from the ground.
      * @param scale Coefficient (or factor) in per cent to controle shadow length spread in function of maximum DEM amplitude value.
-     * @param axisDirection
      * @throws IllegalArgumentException if axis direction is not instance of {@link AxisDirection#DOWN} or {@link AxisDirection#UP}.
      */
     public ElevationModel(final GridCoverageResource ref, final double azimuth, final double altitude,

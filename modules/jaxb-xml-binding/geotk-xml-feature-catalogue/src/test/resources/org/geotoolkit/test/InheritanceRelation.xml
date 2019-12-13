@@ -92,7 +92,7 @@
                                 </gmd:CI_Contact>
                             </gmd:contactInfo>
                             <gmd:role>
-                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact">Point of contact</gmd:CI_RoleCode>
+                                <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact">Point of contact</gmd:CI_RoleCode>
                             </gmd:role>
                         </gmd:CI_ResponsibleParty>
                     </gfc:producer>
@@ -224,7 +224,7 @@
                                                                                 <gco:Date>3894-02-01</gco:Date>
                                                                             </gmd:date>
                                                                             <gmd:dateType>
-                                                                                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
+                                                                                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
                                                                             </gmd:dateType>
                                                                         </gmd:CI_Date>
                                                                     </gmd:date>
@@ -237,7 +237,7 @@
                                                                                 <gco:CharacterString>International Hydrographic Bureau</gco:CharacterString>
                                                                             </gmd:organisationName>
                                                                             <gmd:role>
-                                                                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
+                                                                                <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
                                                                             </gmd:role>
                                                                         </gmd:CI_ResponsibleParty>
                                                                     </gmd:citedResponsibleParty>
@@ -278,7 +278,7 @@
                                                                                 <gco:Date>3894-02-01</gco:Date>
                                                                             </gmd:date>
                                                                             <gmd:dateType>
-                                                                                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
+                                                                                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
                                                                             </gmd:dateType>
                                                                         </gmd:CI_Date>
                                                                     </gmd:date>
@@ -291,7 +291,7 @@
                                                                                 <gco:CharacterString>International Hydrographic Bureau</gco:CharacterString>
                                                                             </gmd:organisationName>
                                                                             <gmd:role>
-                                                                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
+                                                                                <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
                                                                             </gmd:role>
                                                                         </gmd:CI_ResponsibleParty>
                                                                     </gmd:citedResponsibleParty>
@@ -332,7 +332,7 @@
                                                                                 <gco:Date>3894-02-01</gco:Date>
                                                                             </gmd:date>
                                                                             <gmd:dateType>
-                                                                                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
+                                                                                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
                                                                             </gmd:dateType>
                                                                         </gmd:CI_Date>
                                                                     </gmd:date>
@@ -345,7 +345,7 @@
                                                                                 <gco:CharacterString>International Hydrographic Bureau</gco:CharacterString>
                                                                             </gmd:organisationName>
                                                                             <gmd:role>
-                                                                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
+                                                                                <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
                                                                             </gmd:role>
                                                                         </gmd:CI_ResponsibleParty>
                                                                     </gmd:citedResponsibleParty>
@@ -423,7 +423,7 @@
                                                 <gco:Date>3894-02-01</gco:Date>
                                             </gmd:date>
                                             <gmd:dateType>
-                                                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
+                                                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">Publication</gmd:CI_DateTypeCode>
                                             </gmd:dateType>
                                         </gmd:CI_Date>
                                     </gmd:date>
@@ -436,7 +436,7 @@
                                                 <gco:CharacterString>International Hydrographic Bureau</gco:CharacterString>
                                             </gmd:organisationName>
                                             <gmd:role>
-                                                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
+                                                <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher">Publisher</gmd:CI_RoleCode>
                                             </gmd:role>
                                         </gmd:CI_ResponsibleParty>
                                     </gmd:citedResponsibleParty>

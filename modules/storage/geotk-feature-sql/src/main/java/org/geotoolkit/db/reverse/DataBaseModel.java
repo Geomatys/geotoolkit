@@ -43,10 +43,11 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
-import static org.geotoolkit.data.AbstractFeatureStore.*;
-import org.geotoolkit.internal.data.GenericNameIndex;
+import static org.geotoolkit.storage.feature.AbstractFeatureStore.*;
+import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DBRelationOperation;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -373,11 +374,11 @@ public final class DataBaseModel {
 
         try {
             Filter filter = FF.equals(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
-
-            if(store.getOpenParameters().getValue(AbstractJDBCFeatureStoreFactory.TABLE)!=null &&
-               !store.getOpenParameters().getValue(AbstractJDBCFeatureStoreFactory.TABLE).isEmpty()){
+            Parameters params = (Parameters) store.getOpenParameters().get();
+            if(params.getValue(AbstractJDBCFeatureStoreFactory.TABLE)!=null &&
+               !params.getValue(AbstractJDBCFeatureStoreFactory.TABLE).isEmpty()){
                 filter = FF.and(filter, FF.equals(FF.property(Table.TABLE_NAME),
-                        FF.literal(store.getOpenParameters().getValue(AbstractJDBCFeatureStoreFactory.TABLE))));
+                        FF.literal(params.getValue(AbstractJDBCFeatureStoreFactory.TABLE))));
             }
 
             final Iterator<Map> ite = cacheTables.filter(filter);

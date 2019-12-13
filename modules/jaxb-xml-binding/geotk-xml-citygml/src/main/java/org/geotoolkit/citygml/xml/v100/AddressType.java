@@ -70,11 +70,6 @@ public class AddressType extends AbstractFeatureType {
 
     /**
      * Gets the value of the xalAddress property.
-     *
-     * @return
-     *     possible object is
-     *     {@link XalAddressPropertyType }
-     *
      */
     public XalAddressPropertyType getXalAddress() {
         return xalAddress;
@@ -82,11 +77,6 @@ public class AddressType extends AbstractFeatureType {
 
     /**
      * Sets the value of the xalAddress property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link XalAddressPropertyType }
-     *
      */
     public void setXalAddress(final XalAddressPropertyType value) {
         this.xalAddress = value;
@@ -94,11 +84,6 @@ public class AddressType extends AbstractFeatureType {
 
     /**
      * Gets the value of the multiPoint property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiPointPropertyType }
-     *
      */
     public MultiPointPropertyType getMultiPoint() {
         return multiPoint;
@@ -106,11 +91,6 @@ public class AddressType extends AbstractFeatureType {
 
     /**
      * Sets the value of the multiPoint property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiPointPropertyType }
-     *
      */
     public void setMultiPoint(final MultiPointPropertyType value) {
         this.multiPoint = value;

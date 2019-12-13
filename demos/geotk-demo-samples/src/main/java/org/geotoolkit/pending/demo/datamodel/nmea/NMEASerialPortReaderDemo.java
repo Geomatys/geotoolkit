@@ -16,20 +16,21 @@
  */
 package org.geotoolkit.pending.demo.datamodel.nmea;
 
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import java.util.stream.Stream;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStoreContentEvent;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.nmea.NMEAStore;
+import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.data.nmea.NMEASerialPortReader;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.lang.Setup;
+import org.opengis.feature.Feature;
 
 /**
  * Connect and activate a GPS on COM/USB port first.
@@ -46,7 +47,7 @@ public class NMEASerialPortReaderDemo {
         Setup.initialize(null);
 
         final NMEASerialPortReader reader = new NMEASerialPortReader();
-        final MemoryFeatureStore store = reader.read();
+        final WritableFeatureSet store = reader.read();
 
         final TestListener listener = new TestListener(store);
 
@@ -57,24 +58,35 @@ public class NMEASerialPortReaderDemo {
         LOGGER.log(Level.INFO, "Port reading ended.");
     }
 
-    private static class TestListener implements ChangeListener<ChangeEvent> {
+    private static class TestListener implements StoreListener<StoreEvent> {
 
-        public final Session session;
+        public final WritableFeatureSet resource;
 
-        public TestListener(final MemoryFeatureStore store) {
-            store.addListener(this, ChangeEvent.class);
-            session = store.createSession(false);
+        public TestListener(final WritableFeatureSet resource) {
+            resource.addListener(StoreEvent.class, this);
+            this.resource = resource;
         }
 
         @Override
-        public void changeOccured(ChangeEvent event) {
+        public void eventOccured(StoreEvent event) {
             if (event instanceof FeatureStoreContentEvent) {
                 final FeatureStoreContentEvent tmp = (FeatureStoreContentEvent) event;
                 if (tmp.getType().equals(FeatureStoreContentEvent.Type.ADD)) {
-                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.filtered(NMEAStore.TYPE_NAME.toString(), tmp.getIds()));
-                    final FeatureIterator it = col.iterator();
-                    while (it.hasNext()) {
-                        LOGGER.log(Level.INFO, it.next().toString());
+                    try {
+                        SimpleQuery query = new SimpleQuery();
+                        query.setFilter(tmp.getIds());
+                        FeatureSet subres = resource.subset(query);
+
+                        try (Stream<Feature> stream = subres.features(false)){
+                            stream.forEach(new Consumer<Feature>() {
+                                @Override
+                                public void accept(Feature t) {
+                                    LOGGER.log(Level.INFO, t.toString());
+                                }
+                            });
+                        }
+                    } catch (DataStoreException ex) {
+                        ex.printStackTrace();
                     }
                 }
             } else {

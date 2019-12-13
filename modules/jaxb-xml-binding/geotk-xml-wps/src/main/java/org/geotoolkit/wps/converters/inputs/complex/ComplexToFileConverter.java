@@ -1,18 +1,17 @@
 package org.geotoolkit.wps.converters.inputs.complex;
 
-import net.iharder.Base64;
-import org.geotoolkit.nio.IOUtilities;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSEncoding;
-import org.geotoolkit.wps.xml.v200.Data;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.wps.io.WPSEncoding;
+import org.geotoolkit.wps.xml.v200.Data;
 
 /**
  * Save the content of a WPS complex input into local file.
@@ -58,7 +57,7 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
             String rawData = (String) data.get(0);
             if (params != null && params.get(ENCODING) != null && params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
 
-                final byte[] byteData = Base64.decode(rawData);
+                final byte[] byteData = Base64.getDecoder().decode(rawData);
                 if (byteData != null && byteData.length > 0) {
                     try (final ByteArrayInputStream is = new ByteArrayInputStream(byteData)) {
                         IOUtilities.writeStream(is, result);

@@ -34,16 +34,15 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.parameter.Parameters;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -104,13 +103,8 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(XMLCoverageStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(XMLCoverageStoreFactory.NAME);
     }
 
     @Override
@@ -175,9 +169,6 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
         if (!(resource instanceof GridCoverageResource)) {
             throw new DataStoreException("Unknown resource "+resource);
         }
-        final GridCoverageResource cr = (GridCoverageResource) resource;
-        final NamedIdentifier name = cr.getIdentifier();
-
         //TODO
         throw new DataStoreException("Remove operation not supported.");
     }

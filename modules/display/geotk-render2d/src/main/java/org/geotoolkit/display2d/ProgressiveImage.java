@@ -27,7 +27,6 @@ import java.util.EventListener;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
@@ -90,10 +89,6 @@ public class ProgressiveImage implements RenderedImage{
     /**
      *
      * @param canvasDef : canvas size will be ignored
-     * @param sceneDef
-     * @param viewDef
-     * @param gridSize
-     * @param tileSize
      */
     public ProgressiveImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
             final Dimension gridSize, final Dimension tileSize, final double scale, int nbPainter) throws PortrayalException{
@@ -168,7 +163,6 @@ public class ProgressiveImage implements RenderedImage{
     /**
      * A PortrayalRenderedImage does not have any properties
      *
-     * @param name
      * @return always Image.UndefinedProperty
      */
     @Override

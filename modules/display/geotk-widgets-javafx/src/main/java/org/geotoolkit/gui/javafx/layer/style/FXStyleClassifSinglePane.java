@@ -17,11 +17,6 @@
 
 package org.geotoolkit.gui.javafx.layer.style;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -62,18 +57,15 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.cql.CQLException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
@@ -83,7 +75,6 @@ import org.geotoolkit.gui.javafx.util.FXDeleteTableColumn;
 import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -95,8 +86,13 @@ import org.geotoolkit.style.interval.DefaultRandomPalette;
 import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.style.interval.RandomPalette;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
-import org.opengis.feature.FeatureAssociation;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
@@ -151,7 +147,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     @FXML private SplitMenuButton uiTemplate;
     @FXML private Button uiCombineFilter;
 
-    private FeatureMapLayer layer;
+    private MapLayer layer;
     private Symbolizer template;
     //this is the target style element where we must generate the rules
     //it can be a MutableStyle or a MutableFeatureTypeStyle
@@ -295,12 +291,12 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
 
     @Override
     public boolean init(MapLayer candidate, Object styleElement) {
-        if(!(candidate instanceof FeatureMapLayer)) return false;
+        if(!(candidate.getResource() instanceof FeatureSet)) return false;
 
         if(styleElement==null) styleElement = candidate.getStyle();
         this.targetStyleElement = styleElement;
 
-        this.layer = (FeatureMapLayer) candidate;
+        this.layer = candidate;
 
         uiOther.setSelected(false);
         uiProperty.setItems(listProperties(layer));
@@ -340,12 +336,12 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         return style;
     }
 
-    private ObservableList listProperties(FeatureMapLayer layer){
+    private ObservableList listProperties(MapLayer layer){
         final ObservableList properties = FXCollections.observableArrayList();
 
         if(layer != null){
             try {
-                final FeatureType schema = layer.getResource().getType();
+                final FeatureType schema = ((FeatureSet) layer.getResource()).getType();
                 listProperties(properties, "", schema);
             } catch (DataStoreException ex) {
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
@@ -381,12 +377,12 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     }
 
 
-    private Symbolizer generateTemplate(FeatureMapLayer layer){
+    private Symbolizer generateTemplate(MapLayer layer){
         Symbolizer template = null;
 
         if (layer != null) {
             try {
-                final FeatureType schema = layer.getResource().getType();
+                final FeatureType schema = ((FeatureSet) layer.getResource()).getType();
 
                 //find the geometry class for template
                 final AttributeType<?> geo = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(schema))
@@ -510,18 +506,9 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     private ObservableList<MutableRule> create(PropertyName property, boolean other){
         //search the different values
         final Set<Object> differentValues = new HashSet<>();
-        final FeatureSet resource = layer.getResource();
-        final QueryBuilder builder = new QueryBuilder();
-        try {
-            builder.setTypeName(resource.getType().getName());
-        } catch (DataStoreException ex) {
-            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
-            return FXCollections.observableArrayList();
-        }
-//        builder.setProperties(new String[]{property.getPropertyName()});
-        final Query query = builder.buildQuery();
+        final FeatureSet resource = ((FeatureSet) layer.getResource());
 
-        try (Stream<Feature> stream = resource.subset(query).features(false)) {
+        try (Stream<Feature> stream = resource.features(false)) {
             final Iterator<Feature> features = stream.iterator();
             while(features.hasNext()){
                 final Feature feature = features.next();

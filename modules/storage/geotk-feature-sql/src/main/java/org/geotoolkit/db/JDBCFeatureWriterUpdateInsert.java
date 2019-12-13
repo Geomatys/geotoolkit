@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;

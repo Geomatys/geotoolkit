@@ -32,23 +32,18 @@ public interface Jenks extends Function {
 
     /**
      * Get number of class.
-     *
-     * @return Expression
      */
     @XmlElement("ClassNumber")
     Literal getClassNumber();
 
     /**
      * Get palette name.
-     *
-     * @return Expression
      */
     @XmlElement("Palette")
     Literal getPalette();
 
     /**
      * Get no-data values
-     * @return
      */
     @XmlElement("noData")
     double[] getNoData();

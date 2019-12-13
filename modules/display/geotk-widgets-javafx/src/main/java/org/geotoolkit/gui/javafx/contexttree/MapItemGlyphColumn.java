@@ -75,6 +75,7 @@ public class MapItemGlyphColumn extends TreeTableColumn {
         setPrefWidth(34);
         setMinWidth(34);
         setMaxWidth(34);
+        setSortable(false);
     }
 
     protected Pane createEditor(MapLayer candidate) {

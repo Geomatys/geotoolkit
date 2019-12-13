@@ -37,7 +37,6 @@ public enum WPSVersion {
     /**
      * Get the version enum from the string code.
      *
-     * @param version
      * @return The enum which matches with the given string.
      * @throws IllegalArgumentException if the enum class does not contain any enum types for the given string
      *                                  value.

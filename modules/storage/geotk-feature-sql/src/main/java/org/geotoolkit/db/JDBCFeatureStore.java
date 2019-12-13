@@ -20,7 +20,7 @@ import java.awt.RenderingHints;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
-import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.storage.feature.AbstractFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.DataBaseModel;
 import org.geotoolkit.db.reverse.RelationMetaModel;

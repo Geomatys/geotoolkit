@@ -5,18 +5,20 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.*;
-import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.storage.feature.FeatureStore;
+import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeatureCollection;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
@@ -51,8 +53,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildGeometryFeatureType("point", Point.class), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(1, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(1, fcoll.features(false).count());
     }
 
     @Test
@@ -72,8 +74,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildGeometryFeatureType("multipoint", MultiPoint.class), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(1, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(1, fcoll.features(false).count());
     }
 
     @Test
@@ -93,8 +95,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildGeometryFeatureType("linestring", LineString.class), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(1, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(1, fcoll.features(false).count());
     }
 
     @Test
@@ -114,8 +116,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildGeometryFeatureType("multilinestring", MultiLineString.class), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(1, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(1, fcoll.features(false).count());
     }
 
     @Test
@@ -135,8 +137,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildGeometryFeatureType("polygon", Polygon.class), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(1, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(1, fcoll.features(false).count());
     }
 
     @Test
@@ -156,8 +158,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildGeometryFeatureType("multipolygon", MultiPolygon.class), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(1, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(1, fcoll.features(false).count());
     }
 
     @Test
@@ -177,8 +179,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildGeometryFeatureType("geometrycollection", GeometryCollection.class), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(1, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(1, fcoll.features(false).count());
 
     }
 
@@ -199,8 +201,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildSimpleFeatureType("feature"), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(1, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(1, fcoll.features(false).count());
     }
 
     @Test
@@ -220,8 +222,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildFCFeatureType("featurecollection"), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(7, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(7, fcoll.features(false).count());
     }
 
     /**
@@ -245,8 +247,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         testFeatureTypes(buildPropertyArrayFeatureType("f_prop_array", Geometry.class), ft);
 
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(2, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(2, fcoll.features(false).count());
 
         Double[][] array1 = new Double[5][5];
         Double[][] array2 = new Double[5][5];
@@ -257,7 +259,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
             }
         }
 
-        FeatureIterator ite = fcoll.iterator();
+        Iterator<Feature> ite = fcoll.features(false).iterator();
         Feature feat1 = ite.next();
         assertArrayEquals(array1, (Double[][]) feat1.getProperty("array").getValue());
 
@@ -284,8 +286,8 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
 
         FeatureType ft = store.getFeatureType(name.toString());
         Session session = store.createSession(false);
-        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
-        assertEquals(15, fcoll.size());
+        FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
+        assertEquals(15, fcoll.features(false).count());
     }
 
     /**

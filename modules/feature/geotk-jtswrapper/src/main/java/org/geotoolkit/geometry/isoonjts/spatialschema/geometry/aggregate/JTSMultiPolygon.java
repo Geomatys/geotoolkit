@@ -124,7 +124,7 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
                             line.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                             PointArray pa = line.getControlPoints();
                             List<Position> newPositions = new ArrayList<Position>();
-                            for (Position pos : pa.positions()) {
+                            for (Position pos : pa) {
                                 if (pos instanceof GeneralDirectPosition) {
                                     ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                                     newPositions.add(pos);
@@ -149,7 +149,7 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
                                     line.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                                     PointArray pa = line.getControlPoints();
                                     List<Position> newPositions = new ArrayList<Position>();
-                                    for (Position pos : pa.positions()) {
+                                    for (Position pos : pa) {
                                         if (pos instanceof GeneralDirectPosition) {
                                             ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                                             newPositions.add(pos);

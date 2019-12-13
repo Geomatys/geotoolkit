@@ -1,16 +1,17 @@
 package org.geotoolkit.processing.coverage.categorize;
 
-import org.geotoolkit.processing.image.sampleclassifier.*;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.geotoolkit.processing.image.sampleclassifier.*;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * A process whose aim is to classify a single banded image according to a given
@@ -54,7 +55,7 @@ public class CategorizeDescriptor extends AbstractProcessDescriptor {
     /**
      * Handle on output data source to write into.
      */
-    public static final ParameterDescriptor<GridCoverageResource> OUT_COVERAGE;
+    public static final ParameterDescriptor<WritableGridCoverageResource> OUT_COVERAGE;
 
     /**
      * An optional envelope region of interest to focus on for classification.
@@ -76,7 +77,7 @@ public class CategorizeDescriptor extends AbstractProcessDescriptor {
 
         OUT_COVERAGE = builder.addName("destination")
                 .setRemarks("Resource to send classified data into.")
-                .create(GridCoverageResource.class, null);
+                .create(WritableGridCoverageResource.class, null);
 
         ENVELOPE = builder.addName("envelope")
                 .setRemarks("An envelope representing a subset of the source grid coverage to work with.")

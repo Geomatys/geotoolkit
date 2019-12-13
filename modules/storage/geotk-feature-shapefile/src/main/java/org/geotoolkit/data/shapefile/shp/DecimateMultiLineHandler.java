@@ -17,10 +17,10 @@
 package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
-
-import org.locationtech.jts.geom.LineString;
 import java.nio.DoubleBuffer;
 import org.apache.sis.storage.DataStoreException;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
 
 
 /**
@@ -47,7 +47,7 @@ public class DecimateMultiLineHandler extends MultiLineHandler {
     }
 
     @Override
-    public Object read(final ByteBuffer buffer, final ShapeType type) {
+    public Geometry read(final ByteBuffer buffer, final ShapeType type) {
 
         if (type == ShapeType.NULL) {
             return createNull();

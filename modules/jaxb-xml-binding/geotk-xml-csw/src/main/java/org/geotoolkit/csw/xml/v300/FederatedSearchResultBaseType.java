@@ -65,11 +65,6 @@ public abstract class FederatedSearchResultBaseType implements FederatedSearchRe
 
     /**
      * Obtient la valeur de la propriété catalogueURL.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getCatalogueURL() {
         return catalogueURL;
@@ -77,14 +72,8 @@ public abstract class FederatedSearchResultBaseType implements FederatedSearchRe
 
     /**
      * Définit la valeur de la propriété catalogueURL.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setCatalogueURL(String value) {
         this.catalogueURL = value;
     }
-
 }

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.geometry.jts;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.PathIterator;
@@ -25,50 +26,45 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import javax.vecmath.Vector3d;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.display.shape.ShapeUtilities;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.factory.HintsPending;
 import org.apache.sis.util.ArgumentChecks;
-
-import org.opengis.geometry.BoundingBox;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.display.shape.ShapeUtilities;
+import org.geotoolkit.geometry.BoundingBox;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.resources.Errors;
+import org.locationtech.jts.algorithm.Orientation;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.algorithm.Orientation;
-import java.awt.Rectangle;
-import javax.vecmath.Vector3d;
-import org.apache.sis.util.Utilities;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -424,39 +420,39 @@ public final class JTS {
         final GeneralDirectPosition pos = POSITIONS[Math.min(POSITIONS.length - 1,
                 crs.getCoordinateSystem().getDimension())];
         pos.setCoordinateReferenceSystem(crs);
-        copy(p1, pos.ordinates);
+        copy(p1, pos.coordinates);
         gc.setStartPoint(pos);
-        copy(p2, pos.ordinates);
+        copy(p2, pos.coordinates);
         gc.setEndPoint(pos);
         return gc.getGeodesicDistance();
     }
 
     /**
-     * Copies the ordinates values from the specified JTS coordinates to the
+     * Copies the coordinates values from the specified JTS coordinates to the
      * specified array. The destination array can have any length. Only the
      * relevant field of the source coordinate will be copied. If the array
      * length is greater than 3, then all extra dimensions will be set to
      * {@link Double#NaN NaN}.
      *
      * @param point The source coordinate.
-     * @param ordinates The destination array.
+     * @param coordinates The destination array.
      */
-    public static void copy(final Coordinate point, final double[] ordinates) {
+    public static void copy(final Coordinate point, final double[] coordinates) {
         ensureNonNull("point", point);
-        ensureNonNull("ordinates", ordinates);
+        ensureNonNull("coordinates", coordinates);
 
-        switch (ordinates.length) {
+        switch (coordinates.length) {
             default:
-                Arrays.fill(ordinates, 3, ordinates.length, Double.NaN); // Fall through
+                Arrays.fill(coordinates, 3, coordinates.length, Double.NaN); // Fall through
 
             case 3:
-                ordinates[2] = point.z; // Fall through
+                coordinates[2] = point.z; // Fall through
 
             case 2:
-                ordinates[1] = point.y; // Fall through
+                coordinates[1] = point.y; // Fall through
 
             case 1:
-                ordinates[0] = point.x; // Fall through
+                coordinates[0] = point.x; // Fall through
 
             case 0:
                 break;
@@ -771,7 +767,7 @@ public final class JTS {
         } else {
             if (userData instanceof Map) {
                 Map values = (Map) userData;
-                values.put(HintsPending.JTS_GEOMETRY_CRS, crs);
+                values.put(org.apache.sis.internal.feature.jts.JTS.CRS_KEY, crs);
                 userData = values;
             }
         }
@@ -804,7 +800,7 @@ public final class JTS {
             crs = (CoordinateReferenceSystem) userData;
         } else if (userData instanceof Map) {
             final Map values = (Map) userData;
-            final Object candidate = values.get(HintsPending.JTS_GEOMETRY_CRS);
+            final Object candidate = values.get(org.apache.sis.internal.feature.jts.JTS.CRS_KEY);
             if (candidate instanceof CoordinateReferenceSystem) {
                 crs = (CoordinateReferenceSystem) candidate;
             }

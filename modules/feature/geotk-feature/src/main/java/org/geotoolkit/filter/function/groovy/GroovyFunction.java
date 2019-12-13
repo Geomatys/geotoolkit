@@ -24,12 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.util.logging.Logging;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Groovy function.

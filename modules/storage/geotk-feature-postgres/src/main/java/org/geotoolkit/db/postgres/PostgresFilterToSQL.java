@@ -16,30 +16,35 @@
  */
 package org.geotoolkit.db.postgres;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LinearRing;
 import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.iharder.Base64;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Version;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
-import org.apache.sis.util.ObjectConverters;
-import org.opengis.util.GenericName;
+import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.Filter;
@@ -95,12 +100,7 @@ import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.Envelope;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.Operation;
-import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.util.GenericName;
 
 /**
  * Convert filters and expressions in SQL.
@@ -200,7 +200,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
         }else if(candidate instanceof byte[]){
             //special case for byte array
             sb.append("decode('");
-            sb.append(Base64.encodeBytes((byte[])candidate));
+            sb.append(Base64.getEncoder().encodeToString((byte[])candidate));
             sb.append("','base64')");
         }else if(candidate instanceof Geometry){
             // evaluate the literal and store it for later

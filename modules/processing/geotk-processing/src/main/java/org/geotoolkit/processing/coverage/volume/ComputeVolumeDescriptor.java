@@ -18,8 +18,8 @@ package org.geotoolkit.processing.coverage.volume;
 
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -40,15 +40,15 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
 
                                     /*INPUTS*/
     /**************************************************************************/
-    public static final String INPUT_READER_NAME = "GridCoverageReader";
+    public static final String INPUT_RESOURCE_NAME = "GridCoverageResource";
     /**
-     * Input {@link GridCoverageReader} which will be studied.
+     * Input {@link GridCoverageResource} which will be studied.
      */
-    public static final ParameterDescriptor<GridCoverageReader> IN_GRIDCOVERAGE_READER = new ParameterBuilder()
-            .addName(INPUT_READER_NAME)
-            .setRemarks("GridCoverageReader which contain Digital Elevation model to compute bulk.")
+    public static final ParameterDescriptor<GridCoverageResource> IN_GRIDCOVERAGE_READER = new ParameterBuilder()
+            .addName(INPUT_RESOURCE_NAME)
+            .setRemarks("GridCoverageResource which contain Digital Elevation model to compute bulk.")
             .setRequired(true)
-            .create(GridCoverageReader.class, null);
+            .create(GridCoverageResource.class, null);
 
     public static final String INPUT_JTS_GEOMETRY_NAME = "Geometry";
     /**

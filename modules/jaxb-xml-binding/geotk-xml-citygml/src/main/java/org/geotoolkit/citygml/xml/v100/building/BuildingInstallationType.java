@@ -81,11 +81,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the clazz property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getClazz() {
         return clazz;
@@ -93,11 +88,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the clazz property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setClazz(final String value) {
         this.clazz = value;
@@ -117,13 +107,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
      * <pre>
      *    getFunction().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     public List<String> getFunction() {
         if (function == null) {
@@ -146,13 +129,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
      * <pre>
      *    getUsage().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     public List<String> getUsage() {
         if (usage == null) {
@@ -163,11 +139,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod2Geometry property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public GeometryPropertyType getLod2Geometry() {
         return lod2Geometry;
@@ -175,11 +146,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod2Geometry property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public void setLod2Geometry(final GeometryPropertyType value) {
         this.lod2Geometry = value;
@@ -187,11 +153,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod3Geometry property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public GeometryPropertyType getLod3Geometry() {
         return lod3Geometry;
@@ -199,11 +160,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod3Geometry property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public void setLod3Geometry(final GeometryPropertyType value) {
         this.lod3Geometry = value;
@@ -211,11 +167,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the lod4Geometry property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public GeometryPropertyType getLod4Geometry() {
         return lod4Geometry;
@@ -223,11 +174,6 @@ public class BuildingInstallationType extends AbstractCityObjectType {
 
     /**
      * Sets the value of the lod4Geometry property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;

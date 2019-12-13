@@ -2,31 +2,30 @@
 package org.geotoolkit.pending.demo.rendering.customgraphicbuilder;
 
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Point;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-import org.geotoolkit.feature.FeatureExt;
-
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.SearchArea;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.map.FeatureMapLayer;
+import java.util.stream.Stream;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
@@ -34,9 +33,9 @@ import org.opengis.geometry.Envelope;
 
 public class LinksGraphic extends GraphicJ2D{
 
-    private final FeatureMapLayer layer;
+    private final MapLayer layer;
 
-    public LinksGraphic(J2DCanvas canvas, FeatureMapLayer layer){
+    public LinksGraphic(J2DCanvas canvas, MapLayer layer){
         super(canvas);
         this.layer = layer;
     }
@@ -46,7 +45,7 @@ public class LinksGraphic extends GraphicJ2D{
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Graphics2D g2d = renderingContext.getGraphics();
 
-        FeatureCollection collection = (FeatureCollection) layer.getResource();
+        FeatureSet collection = (FeatureSet) layer.getResource();
         try {
             //we reproject our collection
             collection = collection.subset(QueryBuilder.reprojected(
@@ -66,8 +65,8 @@ public class LinksGraphic extends GraphicJ2D{
         final Color firstColor = Color.RED;
 
         boolean dataRendered = false;
-        final FeatureIterator mainIte = collection.iterator();
-        try{
+        try (Stream<Feature> stream = collection.features(false)) {
+            Iterator<Feature> mainIte = stream.iterator();
             while(mainIte.hasNext()){
                 final Feature feature = mainIte.next();
 
@@ -90,8 +89,8 @@ public class LinksGraphic extends GraphicJ2D{
                 g2d.setColor(Color.BLACK);
                 g2d.draw(cercle);
 
-                final FeatureIterator ite = collection.iterator();
-                try{
+                try (Stream<Feature> stream2 = collection.features(false)) {
+                    Iterator<Feature> ite = stream2.iterator();
                     while(ite.hasNext()){
                         final Feature target = ite.next();
                         if(Math.random() > 0.1d) continue;
@@ -111,13 +110,10 @@ public class LinksGraphic extends GraphicJ2D{
 
                         dataRendered = true;
                     }
-                }finally{
-                    ite.close();
                 }
-
             }
-        }finally{
-            mainIte.close();
+        } catch (DataStoreException ex) {
+            ex.printStackTrace();
         }
 
         return dataRendered;

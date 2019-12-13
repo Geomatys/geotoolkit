@@ -67,6 +67,14 @@ public class URLContentType {
     @XmlAttribute(name = "uuid")
     protected String uuid;
 
+    public URLContentType() {
+
+    }
+
+    public URLContentType(String type) {
+        this.type = type;
+    }
+
     /**
      * Obtient la valeur de la propriété type.
      *

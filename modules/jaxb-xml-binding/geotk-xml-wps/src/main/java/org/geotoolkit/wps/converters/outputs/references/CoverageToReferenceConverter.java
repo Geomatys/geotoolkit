@@ -20,9 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
-import net.iharder.Base64;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -95,7 +95,7 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
                     CoverageIO.write(source, formatName, baos);
                     baos.flush();
                     byte[] bytesOut = baos.toByteArray();
-                    IOUtilities.writeString(Base64.encodeBytes(bytesOut), imageFile);
+                    IOUtilities.writeString(Base64.getEncoder().encodeToString(bytesOut), imageFile);
                 }
 
             } else {

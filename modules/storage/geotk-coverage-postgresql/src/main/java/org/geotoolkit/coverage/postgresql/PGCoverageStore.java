@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
@@ -65,11 +64,6 @@ public class PGCoverageStore extends AbstractCoverageStore implements WritableAg
         ArgumentChecks.ensureNonNull("source", source);
         this.source = source;
 
-    }
-
-    @Override
-    public GenericName getIdentifier() {
-        return null;
     }
 
     public int getFetchSize() {
@@ -175,7 +169,7 @@ public class PGCoverageStore extends AbstractCoverageStore implements WritableAg
             throw new DataStoreException("Unknown resource "+resource);
         }
         final GridCoverageResource cr = (GridCoverageResource) resource;
-        final NamedIdentifier name = cr.getIdentifier();
+        final GenericName name = cr.getIdentifier().get();
 
         final StringBuilder query = new StringBuilder();
         query.append("DELETE FROM ");

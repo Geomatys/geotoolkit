@@ -81,8 +81,8 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     private transient double λ, φ;
 
     /**
-     * The ordinate values of the last "move to" operation, both as original ordinates
-     * (λ,φ) and projected ordinates (x,y).
+     * The ordinate values of the last "move to" operation, both as original coordinates
+     * (λ,φ) and projected coordinates (x,y).
      */
     private transient double λ0, φ0, x0, y0;
 
@@ -339,8 +339,8 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
      * <p>
      * <b>Notation:</b>
      * <ul>
-     *   <li>The (λ,φ) variable names are ordinates in the source space.</li>
-     *   <li>The (x,y) variable names are ordinates in the target space.</li>
+     *   <li>The (λ,φ) variable names are coordinates in the source space.</li>
+     *   <li>The (x,y) variable names are coordinates in the target space.</li>
      *   <li>The 1 and 2 suffixes denote the starting and ending points respectively.</li>
      *   <li>The Δ prefix denote the difference between the target and the source points.</li>
      * </ul>

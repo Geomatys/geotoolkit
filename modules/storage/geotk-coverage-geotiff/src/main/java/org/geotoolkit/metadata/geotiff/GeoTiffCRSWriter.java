@@ -54,7 +54,7 @@ import org.apache.sis.internal.referencing.ReferencingUtilities;
 
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.operation.provider.Orthographic;
+import org.apache.sis.internal.referencing.provider.Orthographic;
 import org.apache.sis.internal.referencing.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.resources.Errors;
@@ -516,14 +516,14 @@ public final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Orthographic
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(Orthographic.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(new Orthographic().getParameters(), desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Orthographic);
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjCenterLongGeoKey,    value(parameters,Orthographic.LONGITUDE_OF_CENTRE));
-            stack.addDouble(ProjCenterLatGeoKey,     value(parameters,Orthographic.LATITUDE_OF_CENTRE));
+            stack.addDouble(ProjCenterLongGeoKey,    value(parameters,Orthographic.LONGITUDE_OF_ORIGIN));
+            stack.addDouble(ProjCenterLatGeoKey,     value(parameters,Orthographic.LATITUDE_OF_ORIGIN));
             stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,Orthographic.FALSE_EASTING));
             stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,Orthographic.FALSE_NORTHING));
             return;

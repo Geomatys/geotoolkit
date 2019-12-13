@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.wfs;
 
-import org.geotoolkit.data.FeatureCollection;
+import org.apache.sis.storage.FeatureSet;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -43,8 +43,8 @@ public interface Insert extends TransactionElement {
 
     void setIdentifierGenerationOption(IdentifierGenerationOption type);
 
-    FeatureCollection getFeatures();
+    FeatureSet getFeatures();
 
-    void setFeatures(FeatureCollection fc);
+    void setFeatures(FeatureSet fc);
 
 }

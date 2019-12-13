@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 
@@ -88,6 +89,16 @@ abstract class LegacyTransformer {
     QName importName(final QName origin) {
         String newNS = importNS(origin.getNamespaceURI());
         final String newLocal = importLocalName(origin.getLocalPart());
+        if (XMLConstants.NULL_NS_URI.equals(newNS)) {
+            switch (newLocal) {
+                case "LiteralData":
+                case "ComplexData":
+                case "DefaultValue": {
+                    newNS = WPS_2_0_NAMESPACE;
+                    break;
+                }
+            }
+        }
         if (Objects.equals(newNS, origin.getNamespaceURI()) && Objects.equals(newLocal, origin.getLocalPart())) {
             return origin;
         }

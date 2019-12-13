@@ -54,14 +54,13 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -261,7 +260,7 @@ public class RenderingContext2D implements RenderingContext{
 
         //calculate the objective bbox with there temporal and elevation parameters ----
         this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
-        this.canvasObjectiveBBox2DB = new DefaultBoundingBox(canvasObjectiveBBox2D);
+        this.canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
 
         //calculate the resolution -----------------------------------------------
         this.dpi = dpi;
@@ -278,7 +277,7 @@ public class RenderingContext2D implements RenderingContext{
 
         final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
         this.paintingObjectiveBBox2D = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
-        this.paintingObjectiveBBox2DB = new DefaultBoundingBox(paintingObjectiveBBox2D);
+        this.paintingObjectiveBBox2DB = new BoundingBox(paintingObjectiveBBox2D);
         this.paintingObjectiveBBox = new GeneralEnvelope(canvasObjectiveBBox);
         ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(0, paintingObjectiveBounds.getMinX(), paintingObjectiveBounds.getMaxX());
         ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(1, paintingObjectiveBounds.getMinY(), paintingObjectiveBounds.getMaxY());
@@ -446,11 +445,11 @@ public class RenderingContext2D implements RenderingContext{
                 //fix the envelopes, normalize them using wrap infos
                 canvasObjectiveBBox = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox, wrapPoints);
                 canvasObjectiveBBox2D = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox2D, wrapPoints);
-                canvasObjectiveBBox2DB = new DefaultBoundingBox(canvasObjectiveBBox2D);
+                canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
 
                 paintingObjectiveBBox = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox, wrapPoints);
                 paintingObjectiveBBox2D = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox2D, wrapPoints);
-                paintingObjectiveBBox2DB = new DefaultBoundingBox(paintingObjectiveBBox2D);
+                paintingObjectiveBBox2DB = new BoundingBox(paintingObjectiveBBox2D);
             }
 
         } catch (TransformException ex) {
@@ -736,12 +735,10 @@ public class RenderingContext2D implements RenderingContext{
 
     /**
      * Find the coefficient between the given Unit and the Objective CRS.
-     * @param unit
-     * @return float
      */
     public float getUnitCoefficient(final Unit<Length> uom){
         Float f = coeffs.get(uom);
-        if(f==null){
+        if (f == null) {
             f = GO2Utilities.calculateScaleCoefficient(this,uom);
             coeffs.put(uom, f);
         }
@@ -769,7 +766,6 @@ public class RenderingContext2D implements RenderingContext{
      * given to gridCoverageReaders to extract the best resolution grid coverage.
      * This resolution is between the given CRS and Display CRS.
      *
-     * @param crs
      * @return double[] of 2 dimensions
      */
     public double[] getResolution(final CoordinateReferenceSystem crs) {
@@ -821,7 +817,6 @@ public class RenderingContext2D implements RenderingContext{
     /**
      * Returns the geographic scale, like we can see in scalebar legends '1 : 200 000'
      * This is mainly used in style rules to check the minimum and maximum scales.
-     * @return
      */
     public double getGeographicScale() {
         return geoScale;
@@ -833,7 +828,6 @@ public class RenderingContext2D implements RenderingContext{
      * This is not an accurate geographic scale.
      * This is a fake average scale unproper for correct rendering.
      * It is used only to filter SE rules.
-     * @return
      */
     public double getSEScale() {
         return seScale;

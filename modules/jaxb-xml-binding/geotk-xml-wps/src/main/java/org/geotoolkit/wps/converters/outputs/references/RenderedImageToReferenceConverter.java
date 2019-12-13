@@ -16,13 +16,6 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
-import net.iharder.Base64;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.wps.io.WPSEncoding;
-
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
@@ -31,13 +24,17 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Map;
-import java.util.UUID;
-
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import java.util.Base64;
+import java.util.Map;
+import java.util.UUID;
+import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v200.Reference;;
 
 /**
@@ -112,7 +109,7 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
                     ImageIO.write(source, formatName, baos);
                     baos.flush();
                     byte[] bytesOut = baos.toByteArray();
-                    IOUtilities.writeString(Base64.encodeBytes(bytesOut), imageFile);
+                    IOUtilities.writeString(Base64.getEncoder().encodeToString(bytesOut), imageFile);
                 }
 
             } else {

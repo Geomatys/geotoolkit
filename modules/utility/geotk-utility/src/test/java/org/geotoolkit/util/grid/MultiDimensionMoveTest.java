@@ -76,7 +76,7 @@ public class MultiDimensionMoveTest {
                 .flatMapToDouble(DoubleStream::of)
                 .toArray();
 
-        Assert.assertEquals("Number of ordinates", 10, result.length);
+        Assert.assertEquals("Number of coordinates", 10, result.length);
 
         double expectedXVal = 3.0;
         for (int i = 0 ; i < result.length - 2 ; i+=2) {
@@ -96,7 +96,7 @@ public class MultiDimensionMoveTest {
         result = StreamSupport.stream(move, parallel)
                 .flatMapToDouble(DoubleStream::of)
                 .toArray();
-        Assert.assertEquals("Number of ordinates", 30, result.length);
+        Assert.assertEquals("Number of coordinates", 30, result.length);
 
         double expectedYVal = 4.0;
         for (int i = 0 ; i < result.length - 2 ; i+=2) {

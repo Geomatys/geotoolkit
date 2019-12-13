@@ -81,7 +81,7 @@ import org.opengis.filter.temporal.OverlappedBy;
 import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
-import org.opengis.geometry.BoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 
 
 /**
@@ -125,9 +125,6 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
 
     /**
      * Null safe expression cloning
-     * @param expression
-     * @param extraData
-     * @return
      */
     public Expression visit(final Expression expression, final Object extraData) {
         if (expression == null) {

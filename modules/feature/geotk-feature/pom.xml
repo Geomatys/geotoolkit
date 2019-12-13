@@ -44,6 +44,11 @@
   <!-- =========================================================== -->
   <dependencies>
       <dependency>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-cql</artifactId>
+          <version>${sis.version}</version>
+      </dependency>
+      <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-temporal</artifactId>
           <version>${project.version}</version>
@@ -85,6 +90,12 @@
       <dependency>
           <groupId>jaxen</groupId>
           <artifactId>jaxen-limited</artifactId>
+      </dependency>
+
+      <dependency>
+          <groupId>org.luaj</groupId>
+          <artifactId>luaj-jse</artifactId>
+          <version>3.0.1</version>
       </dependency>
   </dependencies>
 

@@ -19,19 +19,12 @@ package org.geotoolkit.filter;
 
 import java.util.List;
 import java.util.Set;
-
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsEqualTo;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsGreaterThan;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsGreaterThanOrEqualTo;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsLessThan;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsLessThanOrEqualTo;
-import org.geotoolkit.filter.binarycomparison.DefaultPropertyIsNotEqualTo;
+import org.apache.sis.filter.DefaultFilterFactory;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.filter.binaryexpression.DefaultAdd;
 import org.geotoolkit.filter.binaryexpression.DefaultDivide;
 import org.geotoolkit.filter.binaryexpression.DefaultMultiply;
 import org.geotoolkit.filter.binaryexpression.DefaultSubtract;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.filter.identity.DefaultGmlObjectId;
 import org.geotoolkit.filter.binarylogic.DefaultAnd;
 import org.geotoolkit.filter.binarylogic.DefaultOr;
 import org.geotoolkit.filter.binaryspatial.DefaultBBox;
@@ -56,40 +49,17 @@ import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
-import org.geotoolkit.filter.sort.DefaultSortBy;
-import org.geotoolkit.filter.temporal.DefaultAfter;
-import org.geotoolkit.filter.temporal.DefaultAnyInteracts;
-import org.geotoolkit.filter.temporal.DefaultBefore;
-import org.geotoolkit.filter.temporal.DefaultBegins;
-import org.geotoolkit.filter.temporal.DefaultBegunBy;
-import org.geotoolkit.filter.temporal.DefaultDuring;
-import org.geotoolkit.filter.temporal.DefaultEndedBy;
-import org.geotoolkit.filter.temporal.DefaultEnds;
-import org.geotoolkit.filter.temporal.DefaultMeets;
-import org.geotoolkit.filter.temporal.DefaultMetBy;
-import org.geotoolkit.filter.temporal.DefaultOverlappedBy;
-import org.geotoolkit.filter.temporal.DefaultTContains;
-import org.geotoolkit.filter.temporal.DefaultTEquals;
-import org.geotoolkit.filter.temporal.DefaultTOverlaps;
-import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.apache.sis.referencing.CRS;
-
+import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.filter.identity.DefaultGmlObjectId;
+import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
-import org.opengis.filter.MatchAction;
 import org.opengis.filter.Not;
 import org.opengis.filter.Or;
 import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNil;
-import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.capability.ArithmeticOperators;
 import org.opengis.filter.capability.ComparisonOperators;
@@ -109,7 +79,6 @@ import org.opengis.filter.capability.TemporalOperators;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
@@ -117,8 +86,6 @@ import org.opengis.filter.expression.Subtract;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.GmlObjectId;
 import org.opengis.filter.identity.Identifier;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
 import org.opengis.filter.spatial.Contains;
@@ -130,26 +97,11 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.AnyInteracts;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.Meets;
-import org.opengis.filter.temporal.MetBy;
-import org.opengis.filter.temporal.OverlappedBy;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
-import org.opengis.filter.temporal.TOverlaps;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Default implementation of a Types filterFactory.
@@ -158,7 +110,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultFilterFactory2 implements FilterFactory2{
+public class DefaultFilterFactory2 extends DefaultFilterFactory {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -183,10 +135,10 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     public BBOX bbox(final Expression e, final double minx, final double miny,
             final double maxx, final double maxy, final String srs) {
 
-        final DefaultBoundingBox env;
+        final BoundingBox env;
 
         if (srs == null || srs.trim().isEmpty()) {
-            env = new DefaultBoundingBox(new double[]{minx, miny}, new double[]{maxx, maxy});
+            env = new BoundingBox(new double[]{minx, miny}, new double[]{maxx, maxy});
             return bbox(e, env);
         }
 
@@ -235,7 +187,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
                     "\n primary exception : "+firstException.getMessage(), firstException);
         }
 
-        env = new DefaultBoundingBox(crs);
+        env = new BoundingBox(crs);
         env.setRange(0, minx, maxx);
         env.setRange(1, miny, maxy);
 
@@ -250,7 +202,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         if(e != null && !(e instanceof PropertyName)){
             throw new IllegalArgumentException("Expression expected to be a PropertyName, instead found a " + e.getClass());
         }
-        return new DefaultBBox((PropertyName)e, new DefaultLiteral<BoundingBox>(DefaultBoundingBox.castOrCopy(bounds)));
+        return new DefaultBBox((PropertyName)e, new DefaultLiteral<>(BoundingBox.castOrCopy(bounds)));
     }
 
     /**
@@ -542,111 +494,6 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsEqualTo equals(final Expression expr1, final Expression expr2) {
-        return equal(expr1,expr2,true, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsEqualTo equal(final Expression expr1,
-            final Expression expr2, final boolean matchCase, MatchAction matchAction) {
-        return new DefaultPropertyIsEqualTo(expr1, expr2, matchCase, matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2) {
-        return notEqual(expr1, expr2,false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsNotEqualTo notEqual(final Expression expr1,
-            final Expression expr2, final boolean matchCase, final MatchAction matchAction) {
-        return new DefaultPropertyIsNotEqualTo(expr1, expr2, matchCase, matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsGreaterThan greater(final Expression expr1,
-            final Expression expr2) {
-        return greater(expr1,expr2,false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsGreaterThan greater(final Expression expr1,
-            final Expression expr2, final boolean matchCase, final MatchAction matchAction) {
-        return new DefaultPropertyIsGreaterThan(expr1, expr2, matchCase,matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(
-            final Expression expr1, final Expression expr2) {
-        return greaterOrEqual(expr1, expr2,false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(
-            final Expression expr1, final Expression expr2, final boolean matchCase, final MatchAction matchAction) {
-        return new DefaultPropertyIsGreaterThanOrEqualTo(expr1, expr2, matchCase,matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLessThan less(final Expression expr1, final Expression expr2) {
-        return less(expr1, expr2, false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLessThan less(final Expression expr1,
-            final Expression expr2, final boolean matchCase, MatchAction matchAction) {
-        return new DefaultPropertyIsLessThan(expr1, expr2, matchCase,matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLessThanOrEqualTo lessOrEqual(
-            final Expression expr1, final Expression expr2) {
-        return lessOrEqual(expr1, expr2, false, MatchAction.ANY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1,
-            final Expression expr2, final boolean matchCase, final MatchAction matchAction) {
-        return new DefaultPropertyIsLessThanOrEqualTo(expr1, expr2, matchCase,matchAction);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public PropertyIsLike like(final Expression expr, final String pattern) {
         return like(expr,pattern,"*","?","\\");
     }
@@ -685,125 +532,6 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     public PropertyIsNil isNil(Expression expr) {
         return new DefaultPropertyIsNil(expr);
     }
-
-////////////////////////////////////////////////////////////////////////////////
-//
-//  TEMPORAL FILTER
-//
-////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public After after(Expression expr1, Expression expr2) {
-        return new DefaultAfter(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public AnyInteracts anyInteracts(Expression expr1, Expression expr2) {
-        return new DefaultAnyInteracts(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Before before(Expression expr1, Expression expr2) {
-        return new DefaultBefore(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Begins begins(Expression expr1, Expression expr2) {
-        return new DefaultBegins(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public BegunBy begunBy(Expression expr1, Expression expr2) {
-        return new DefaultBegunBy(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public During during(Expression expr1, Expression expr2) {
-        return new DefaultDuring(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Ends ends(Expression expr1, Expression expr2) {
-        return new DefaultEnds(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public EndedBy endedBy(Expression expr1, Expression expr2) {
-        return new DefaultEndedBy(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Meets meets(Expression expr1, Expression expr2) {
-        return new DefaultMeets(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public MetBy metBy(Expression expr1, Expression expr2) {
-        return new DefaultMetBy(expr1,expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public OverlappedBy overlappedBy(Expression expr1, Expression expr2) {
-        return new DefaultOverlappedBy(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public TContains tcontains(Expression expr1, Expression expr2) {
-        return new DefaultTContains(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public TEquals tequals(Expression expr1, Expression expr2) {
-        return new DefaultTEquals(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public TOverlaps toverlaps(Expression expr1, Expression expr2) {
-        return new DefaultTOverlaps(expr1, expr2);
-    }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -847,20 +575,12 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Function function(final String name, final Expression ... parameters) {
-        return org.geotoolkit.filter.function.Functions.function(name, null, parameters);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Literal literal(final Object obj) {
         if(obj instanceof Envelope && !(obj instanceof BoundingBox) ){
             //special case for envelopes to change them in JTS geometries
             return new DefaultEnvelopeLiteral((Envelope) obj);
         }else{
-            return new DefaultLiteral<Object>(obj);
+            return new DefaultLiteral<>(obj);
         }
     }
 
@@ -869,7 +589,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final byte b) {
-        return new DefaultLiteral<Byte>(b);
+        return new DefaultLiteral<>(b);
     }
 
     /**
@@ -877,7 +597,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final short s) {
-        return new DefaultLiteral<Short>(s);
+        return new DefaultLiteral<>(s);
     }
 
     /**
@@ -885,7 +605,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final int i) {
-        return new DefaultLiteral<Integer>(i);
+        return new DefaultLiteral<>(i);
     }
 
     /**
@@ -893,7 +613,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final long l) {
-        return new DefaultLiteral<Long>(l);
+        return new DefaultLiteral<>(l);
     }
 
     /**
@@ -901,7 +621,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final float f) {
-        return new DefaultLiteral<Float>(f);
+        return new DefaultLiteral<>(f);
     }
 
     /**
@@ -909,7 +629,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final double d) {
-        return new DefaultLiteral<Double>(d);
+        return new DefaultLiteral<>(d);
     }
 
     /**
@@ -917,7 +637,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final char c) {
-        return new DefaultLiteral<Character>(c);
+        return new DefaultLiteral<>(c);
     }
 
     /**
@@ -925,22 +645,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final boolean b) {
-        return new DefaultLiteral<Boolean>(b);
-    }
-
-////////////////////////////////////////////////////////////////////////////////
-//
-//  SORT BY
-//
-////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SortBy sort(final String propertyName, final SortOrder order) {
-        final PropertyName name = property(propertyName);
-        return new DefaultSortBy(name,order);
+        return new DefaultLiteral<>(b);
     }
 
 ////////////////////////////////////////////////////////////////////////////////

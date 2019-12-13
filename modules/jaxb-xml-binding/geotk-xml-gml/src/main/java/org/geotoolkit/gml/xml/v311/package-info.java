@@ -14,7 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/gml", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "http://www.opengis.net/gml", elementFormDefault = XmlNsForm.QUALIFIED,
+           xmlns = {
+                @XmlNs(prefix = "gml", namespaceURI = "http://www.opengis.net/gml")
+           })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(RS_Identifier.class)
@@ -29,5 +32,4 @@ import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.internal.jaxb.referencing.RS_Identifier;
-import org.apache.sis.xml.Namespaces;
 

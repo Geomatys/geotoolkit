@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.observation.BaseUnit;
 
 
 /**
@@ -47,12 +48,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "BaseUnitType", propOrder = {
     "unitsSystem"
 })
-public class BaseUnitType
-    extends UnitDefinitionType
-{
+public class BaseUnitType extends UnitDefinitionType { // implements BaseUnit { probleme with getName()
 
     @XmlElement(required = true)
     private ReferenceType unitsSystem;
+
+    public String getUnitsSystem() {
+        if (unitsSystem != null) {
+            return unitsSystem.getHref();
+        }
+        return null;
+    }
 
     /**
      * Gets the value of the unitsSystem property.
@@ -62,7 +68,7 @@ public class BaseUnitType
      *     {@link ReferenceType }
      *
      */
-    public ReferenceType getUnitsSystem() {
+    public ReferenceType getUnitsSystemRef() {
         return unitsSystem;
     }
 

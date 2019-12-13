@@ -22,7 +22,7 @@ import java.awt.geom.Rectangle2D;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import java.util.Objects;
-import org.opengis.geometry.BoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -59,7 +59,7 @@ import org.apache.sis.util.Utilities;
  * @see org.apache.sis.geometry.GeneralEnvelope
  * @see org.opengis.metadata.extent.GeographicBoundingBox
  */
-public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Envelope,BoundingBox {
+public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Envelope {
 
     /** A ReferencedEnvelope containing "everything" */
     public static final JTSEnvelope2D EVERYTHING = new JTSEnvelope2D(
@@ -235,9 +235,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * Returns the specified bounding box as a JTS envelope.
      */
     private static Envelope getJTSEnvelope(final BoundingBox bbox) {
-        if (bbox instanceof Envelope) {
-            return (Envelope) bbox;
-        }
         return new JTSEnvelope2D(bbox);
     }
 
@@ -344,7 +341,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     }
 
     /**
-     * A coordinate position consisting of all the minimal ordinates for each
+     * A coordinate position consisting of all the minimal coordinates for each
      * dimension for all points within the {@code Envelope}.
      */
     @Override
@@ -353,7 +350,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     }
 
     /**
-     * A coordinate position consisting of all the maximal ordinates for each
+     * A coordinate position consisting of all the maximal coordinates for each
      * dimension for all points within the {@code Envelope}.
      */
     @Override
@@ -366,7 +363,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    @Override
     public boolean isEmpty() {
         return super.isNull();
     }
@@ -376,7 +372,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    @Override
     public boolean contains(final DirectPosition pos) {
         return super.contains(pos.getOrdinate(0), pos.getOrdinate(1));
     }
@@ -386,7 +381,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    @Override
     public boolean contains(final BoundingBox bbox) {
         ensureCompatibleReferenceSystem(bbox);
         return super.contains(getJTSEnvelope(bbox));
@@ -397,7 +391,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    @Override
     public boolean intersects(final BoundingBox bbox) {
         ensureCompatibleReferenceSystem(bbox);
         return super.intersects(getJTSEnvelope(bbox));
@@ -408,7 +401,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    @Override
     public void include(final BoundingBox bbox) {
         ensureCompatibleReferenceSystem(bbox);
         super.expandToInclude(getJTSEnvelope(bbox));
@@ -419,7 +411,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    @Override
     public void include(final double x, final double y) {
         super.expandToInclude(x, y);
     }
@@ -429,7 +420,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    @Override
     public void setBounds(final BoundingBox bbox) {
         ensureCompatibleReferenceSystem(bbox);
         super.init(getJTSEnvelope(bbox));
@@ -442,11 +432,10 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    @Override
     public BoundingBox toBounds(final CoordinateReferenceSystem targetCRS)
             throws TransformException {
         try {
-            return transform(targetCRS, true);
+            return new BoundingBox(transform(targetCRS, true));
         } catch (FactoryException e) {
             throw new TransformException(e.getLocalizedMessage(), e);
         }
@@ -609,11 +598,6 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
         if (e == null) {
             return null;
         }
-
-        if (e instanceof JTSEnvelope2D) {
-            return (JTSEnvelope2D) e;
-        }
-
         return new JTSEnvelope2D(e);
     }
 }

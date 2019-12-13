@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.metadata.Identifier;
 
-import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.referencing.ImmutableIdentifier;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 

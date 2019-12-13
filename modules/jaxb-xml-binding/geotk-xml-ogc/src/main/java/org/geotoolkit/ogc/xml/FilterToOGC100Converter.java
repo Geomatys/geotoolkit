@@ -18,7 +18,7 @@ package org.geotoolkit.ogc.xml;
 
 import java.awt.Color;
 import javax.xml.bind.JAXBElement;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -47,7 +47,6 @@ import org.geotoolkit.ogc.xml.v100.PropertyIsNotEqualToType;
 import org.geotoolkit.ogc.xml.v100.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
 import org.geotoolkit.ogc.xml.v100.SpatialOpsType;
-import org.geotoolkit.ogc.xml.v100.UnaryLogicOpType;
 import org.geotoolkit.ogc.xml.v100.UpperBoundaryType;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -407,7 +406,7 @@ public class FilterToOGC100Converter implements FilterToOGCConverter<FilterType>
             try {
                 srsName = IdentifiedObjects.lookupURN(boxCrs, null);
             } catch (FactoryException ex) {
-                srsName = IdentifiedObjects.getUnicodeIdentifier(boxCrs);
+                srsName = IdentifiedObjects.getSimpleNameOrIdentifier(boxCrs);
             }
             if (srsName != null) {
                 bType.setSrsName(srsName);

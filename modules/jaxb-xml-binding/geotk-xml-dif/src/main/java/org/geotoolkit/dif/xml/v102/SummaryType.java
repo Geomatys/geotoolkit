@@ -64,6 +64,15 @@ public class SummaryType {
     @XmlElement(name = "Purpose")
     protected DisplayableTextType purpose;
 
+    public SummaryType() {
+
+    }
+
+    public SummaryType(String _abstract, String purpose) {
+        this._abstract = new DisplayableTextType(_abstract);
+        this.purpose   = new DisplayableTextType(purpose);
+    }
+
     /**
      * Obtient la valeur de la propriété abstract.
      *

@@ -51,7 +51,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
 
     public static class Double extends PackedCSBuilder {
 
-        double[] ordinates;
+        double[] coordinates;
         PackedCoordinateSequenceFactory factory = new PackedCoordinateSequenceFactory(PackedCoordinateSequenceFactory.DOUBLE);
 
         /**
@@ -59,7 +59,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          */
         @Override
         public void start(final int size, final int dimensions) {
-            ordinates = new double[size * dimensions];
+            coordinates = new double[size * dimensions];
             this.size = size;
             this.dimensions = dimensions;
         }
@@ -69,8 +69,8 @@ public abstract class PackedCSBuilder implements CSBuilder {
          */
         @Override
         public CoordinateSequence end() {
-            CoordinateSequence cs = factory.create(ordinates, dimensions);
-            ordinates = null;
+            CoordinateSequence cs = factory.create(coordinates, dimensions);
+            coordinates = null;
             size = -1;
             dimensions = -1;
             return cs;
@@ -82,7 +82,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
         @Override
         public void setOrdinate(final double value, final int ordinateIndex,
                 final int coordinateIndex) {
-            ordinates[coordinateIndex * dimensions + ordinateIndex] = value;
+            coordinates[coordinateIndex * dimensions + ordinateIndex] = value;
         }
 
         /**
@@ -90,7 +90,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          */
         @Override
         public double getOrdinate(final int ordinateIndex, final int coordinateIndex) {
-            return ordinates[coordinateIndex * dimensions + ordinateIndex];
+            return coordinates[coordinateIndex * dimensions + ordinateIndex];
         }
 
         /**
@@ -105,7 +105,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
 
     public static class Float extends PackedCSBuilder {
 
-        float[] ordinates;
+        float[] coordinates;
         PackedCoordinateSequenceFactory factory = new PackedCoordinateSequenceFactory(PackedCoordinateSequenceFactory.FLOAT);
 
         /**
@@ -113,7 +113,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          */
         @Override
         public void start(final int size, final int dimensions) {
-            ordinates = new float[size * dimensions];
+            coordinates = new float[size * dimensions];
             this.size = size;
             this.dimensions = dimensions;
         }
@@ -123,8 +123,8 @@ public abstract class PackedCSBuilder implements CSBuilder {
          */
         @Override
         public CoordinateSequence end() {
-            CoordinateSequence cs = factory.create(ordinates, dimensions);
-            ordinates = null;
+            CoordinateSequence cs = factory.create(coordinates, dimensions);
+            coordinates = null;
             size = -1;
             dimensions = -1;
             return cs;
@@ -136,7 +136,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
         @Override
         public void setOrdinate(final double value, final int ordinateIndex,
                 final int coordinateIndex) {
-            ordinates[coordinateIndex * dimensions + ordinateIndex] = (float) value;
+            coordinates[coordinateIndex * dimensions + ordinateIndex] = (float) value;
         }
 
         /**
@@ -153,7 +153,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          */
         @Override
         public double getOrdinate(final int ordinateIndex, final int coordinateIndex) {
-            return ordinates[coordinateIndex * dimensions + ordinateIndex];
+            return coordinates[coordinateIndex * dimensions + ordinateIndex];
         }
     }
 }

@@ -17,13 +17,12 @@
 
 package org.geotoolkit.feature.xml.jaxp;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.File;
-import java.net.URL;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
@@ -31,47 +30,43 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import javax.xml.bind.JAXBElement;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.IllegalNameException;
+import org.apache.sis.storage.WritableFeatureSet;
+import org.apache.sis.util.Numbers;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.Namespaces;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.geotoolkit.feature.xml.ExceptionReport;
+import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBEventHandler;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
+import org.geotoolkit.feature.xml.jaxb.mapping.GeometryMapping;
+import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
-import org.geotoolkit.internal.jaxb.LineStringPosListType;
-import org.geotoolkit.internal.jaxb.PolygonType;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.xml.Namespaces;
-import org.geotoolkit.xml.StaxStreamReader;
-
-import org.opengis.util.GenericName;
-
-import static javax.xml.stream.events.XMLEvent.*;
-import net.iharder.Base64;
-import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.gml.GeometrytoJTS;
-import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
-import org.opengis.util.FactoryException;
-import org.apache.sis.util.Numbers;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.xml.ExceptionReport;
+import org.geotoolkit.storage.feature.GenericNameIndex;
+import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
+import org.geotoolkit.xml.StaxStreamReader;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -80,6 +75,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
+import org.opengis.util.GenericName;
 import org.w3c.dom.Document;
 
 
@@ -105,14 +101,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      * GML namespace for this class.
      */
     private static final String GML = "http://www.opengis.net/gml";
-    protected List<FeatureType> featureTypes;
+    protected GenericNameIndex<FeatureType> featureTypes;
     private URI base = null;
     //benchmarked 07/04/2015 : reduce by 10% reading time
     private final Map<QName,GenericName> nameCache = new HashMap<QName,GenericName>(){
         @Override
         public GenericName get(Object key) {
             GenericName n = super.get(key);
-            if(n==null){
+            if (n == null) {
                 n = Utils.getNameFromQname((QName) key);
                 put((QName)key, n);
             }
@@ -123,6 +119,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
     private final Map<String,String> schemaLocations = new HashMap<>();
 
+    //cleared after a read operation, used to resolve local href links
+    private final Map<String,Object> index = new HashMap<>();
+
     public JAXPStreamFeatureReader() {
         this(new ArrayList<FeatureType>());
     }
@@ -131,8 +130,15 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         this(Arrays.asList(featureType));
     }
 
-    public JAXPStreamFeatureReader(final List<FeatureType> featureTypes) {
-        this.featureTypes = featureTypes;
+    public JAXPStreamFeatureReader(final Collection<FeatureType> featureTypes) {
+        this.featureTypes = new GenericNameIndex<>();
+        for (FeatureType ft : featureTypes) {
+            try {
+                this.featureTypes.add(ft.getName(), ft);
+            } catch (IllegalNameException ex) {
+                throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+            }
+        }
         this.properties.put(READ_EMBEDDED_FEATURE_TYPE, false);
     }
 
@@ -149,7 +155,21 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      */
     @Override
     public void setFeatureType(final FeatureType featureType) {
-        this.featureTypes = Arrays.asList(featureType);
+        this.featureTypes = new GenericNameIndex<>();
+        try {
+            this.featureTypes.add(featureType.getName(), featureType);
+        } catch (IllegalNameException ex) {
+            throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * List all feature types declared.
+     * Should be called only after a reading operation started.
+     * @return list of FeatureType
+     */
+    public GenericNameIndex<FeatureType> getFeatureTypes() {
+        return featureTypes;
     }
 
     @Override
@@ -163,8 +183,166 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     @Override
     public Object read(final Object xml) throws IOException, XMLStreamException  {
         setInput(xml);
-        return read();
+        Object object = read();
+
+        try {
+            //rebuild index and references
+
+            //first pass find all features an object ids and store them in the index.
+            populateIndex(object);
+
+            //second pass, replace references by real values
+            resolveReferences(object);
+        } catch (DataStoreException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
+
+        return object;
     }
+
+    private void populateIndex(Object obj) throws DataStoreException {
+        final String gmlId = GMLConvention.getGmlId(obj);
+        if (gmlId != null) index.put(gmlId, obj);
+
+        if (obj instanceof Feature) {
+            final Feature feature = (Feature) obj;
+            for (PropertyType pt : feature.getType().getProperties(true)) {
+                if (pt instanceof AttributeType) {
+                    AttributeType atType = (AttributeType) pt;
+                    if (Geometry.class.isAssignableFrom(atType.getValueClass())) {
+                        Object value = feature.getPropertyValue(pt.getName().toString());
+                        populateIndex(value);
+                    }
+                } else if (pt instanceof FeatureAssociationRole) {
+                    Object value = feature.getPropertyValue(pt.getName().toString());
+                    populateIndex(value);
+                }
+            }
+        } else if (obj instanceof FeatureSet) {
+            final FeatureSet fs = (FeatureSet) obj;
+            try (Stream<Feature> stream = fs.features(false)) {
+                Iterator<Feature> iterator = stream.iterator();
+                while (iterator.hasNext()) {
+                    populateIndex(iterator.next());
+                }
+            }
+        } else if (obj instanceof Collection) {
+            final Collection col = (Collection) obj;
+            Iterator<Feature> iterator = col.iterator();
+            while (iterator.hasNext()) {
+                populateIndex(iterator.next());
+            }
+        }
+    }
+
+    /**
+     * Replace each feature xlink href characteristic by it's real value if it exist.
+     *
+     * @param obj
+     * @throws DataStoreException
+     */
+    private void resolveReferences(Object obj) throws DataStoreException {
+
+        if (obj instanceof Feature) {
+            final Feature feature = (Feature) obj;
+            final FeatureType type = feature.getType();
+            for (PropertyType pt : type.getProperties(true)) {
+                if (pt instanceof AttributeType) {
+                    AttributeType attType = (AttributeType) pt;
+                    if (attType.getMaximumOccurs() == 1) {
+                        Attribute att = (Attribute) feature.getProperty(pt.getName().toString());
+                        Object value = att.getValue();
+                        if (value == null) {
+                            Attribute charatt = (Attribute) att.characteristics().get(GMLConvention.XLINK_HREF.tip().toString());
+                            if (charatt != null) {
+                                String refGmlId = (String) charatt.getValue();
+                                Object target = index.get(refGmlId);
+                                if (target == null && refGmlId.startsWith("#")) {
+                                    //local references start with a #
+                                    target = index.get(refGmlId.substring(1));
+                                }
+                                if (target != null) att.setValue(target);
+                            }
+                        }
+                    }
+                } else if (pt instanceof FeatureAssociationRole) {
+
+                    final Object value = feature.getPropertyValue(pt.getName().toString());
+
+                    //if association is a gml:referenceType try to resolve the real feature
+                    FeatureType valueType = ((FeatureAssociationRole) pt).getValueType();
+                    if ("AbstractGMLType".equals(valueType.getName().tip().toString())) {
+
+                        if (value instanceof Feature) {
+                            Feature f = (Feature) value;
+                            try {
+                                Object fid = f.getPropertyValue(AttributeConvention.IDENTIFIER);
+                                if (String.valueOf(fid).startsWith("#")) {
+                                    //local references start with a #
+                                    Feature target = (Feature) index.get(fid.toString().substring(1));
+                                    if (target != null) {
+                                        feature.setPropertyValue(pt.getName().toString(), target);
+                                    }
+                                }
+                            } catch (IllegalArgumentException ex) {
+                                //do nothing
+                            }
+                        } else if (value instanceof Collection) {
+                            final List<Feature> newFeatures = new ArrayList<>();
+                            final Collection col = (Collection) value;
+                            Iterator<Feature> iterator = col.iterator();
+                            while (iterator.hasNext()) {
+                                Feature f = (Feature) iterator.next();
+                                try {
+                                    Object fid = f.getPropertyValue(AttributeConvention.IDENTIFIER);
+                                    if (String.valueOf(fid).startsWith("#")) {
+                                        //local references start with a #
+                                        Feature target = (Feature) index.get(fid.toString().substring(1));
+                                        if (target != null) {
+                                            f = target;
+                                        }
+                                    }
+                                } catch (IllegalArgumentException ex) {
+                                    //do nothing
+                                }
+                                newFeatures.add(f);
+                            }
+
+                            feature.setPropertyValue(pt.getName().toString(), newFeatures);
+                        }
+
+                    } else {
+                        //resolve sub children references
+                        resolveReferences(value);
+                    }
+
+                }
+            }
+        } else if (obj instanceof WritableFeatureSet) {
+            final WritableFeatureSet fs = (WritableFeatureSet) obj;
+            final List<Feature> newFeatures = new ArrayList<>();
+            try (Stream<Feature> stream = fs.features(false)) {
+                Iterator<Feature> iterator = stream.iterator();
+                while (iterator.hasNext()) {
+                    Feature f = iterator.next();
+                    resolveReferences(f);
+                    newFeatures.add(f);
+                }
+            }
+            fs.removeIf((Feature t) -> true);
+            fs.add(newFeatures.iterator());
+        } else if (obj instanceof FeatureSet) {
+            //can not update features, not writable
+
+        } else if (obj instanceof Collection) {
+            final Collection col = (Collection) obj;
+            Iterator<Feature> iterator = col.iterator();
+            while (iterator.hasNext()) {
+                resolveReferences(iterator.next());
+            }
+        }
+    }
+
 
     @Override
     public FeatureReader readAsStream(final Object xml) throws IOException, XMLStreamException {
@@ -226,10 +404,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                 final GenericName name  = nameCache.get(qName);
                 String id = "no-gml-id";
-                for(int i=0,n=reader.getAttributeCount();i<n;i++){
+                for (int i=0, n=reader.getAttributeCount(); i<n; i++) {
                     final QName attName = reader.getAttributeName(i);
                     //search and id property from any namespace
-                    if("id".equals(attName.getLocalPart()) && attName.getNamespaceURI().startsWith(GML)){
+                    if ("id".equals(attName.getLocalPart()) && attName.getNamespaceURI().startsWith(GML)) {
                         id = reader.getAttributeValue(i);
                     }
                 }
@@ -238,8 +416,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 if (name.tip().toString().equals("FeatureCollection")) {
                     final Object coll = readFeatureCollection(id);
                     if (coll == null) {
-                        if (featureTypes.size() == 1) {
-                            return FeatureStoreUtilities.collection(id, featureTypes.get(0));
+                        if (featureTypes.getNames().size() == 1) {
+                            return FeatureStoreUtilities.collection(id, featureTypes.getValues().iterator().next());
                         } else {
                             return FeatureStoreUtilities.collection(id, null);
                         }
@@ -250,11 +428,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     return extractFeatureFromTransaction();
 
                 } else {
-                    for (FeatureType ft : featureTypes) {
-                        if (ft.getName().equals(name)) {
-                            return readFeature(ft);
+                    try {
+                        FeatureType ft = featureTypes.get(name.toString());
+                        return readFeature(ft);
+                    } catch (IllegalNameException ex) {
+                        for (GenericName n : featureTypes.getNames()) {
+                            expectedFeatureType.append(n).append('\n');
                         }
-                        expectedFeatureType.append(ft.getName()).append('\n');
                     }
                 }
 
@@ -267,7 +447,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return null;
     }
 
-    private void readFeatureTypes(){
+    private void readFeatureTypes() {
         // we search an embedded featureType description
         String schemaLocation = reader.getAttributeValue(Namespaces.XSI, "schemaLocation");
         if (isReadEmbeddedFeatureType() && schemaLocation != null) {
@@ -281,28 +461,22 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     schemaLocations.put(namespace, fturl);
                     try {
                         final URI uri = Utils.resolveURI(base, fturl);
-                        List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(uri);
-                        for (FeatureType ft : fts) {
-                            if (!featureTypes.contains(ft)) {
-                                featureTypes.add(ft);
-                            }
-                        }
+                        featureTypes = featureTypeReader.read(uri);
                     } catch (IOException | JAXBException | URISyntaxException ex) {
                         LOGGER.log(Level.WARNING, null, ex); // TODO : should we not crash here ?
                     }
                     i = i + 2;
-                } else if(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) {
+                } else if (namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) {
                     i++;
                 }
             }
         }
     }
 
-    private Object readFeatureCollection(final String id) throws XMLStreamException {
-        FeatureCollection collection = null;
+    private WritableFeatureSet readFeatureCollection(final String id) throws XMLStreamException {
+        InMemoryFeatureSet collection = null;
         while (reader.hasNext()) {
             int event = reader.next();
-
 
             //we are looking for the root mark
             if (event == START_ELEMENT) {
@@ -344,15 +518,18 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                     boolean find = false;
                     StringBuilder expectedFeatureType = new StringBuilder();
-                    for (FeatureType ft : featureTypes) {
-                        if (ft.getName().equals(name)) {
-                            if (collection == null) {
-                                collection = FeatureStoreUtilities.collection(id, ft);
-                            }
-                            collection.add((Feature)readFeature(ft));
-                            find = true;
+
+                    try {
+                        FeatureType ft = featureTypes.get(name.toString());
+                        if (collection == null) {
+                            collection = new InMemoryFeatureSet(id, ft);
                         }
-                        expectedFeatureType.append(ft.getName()).append('\n');
+                        collection.add( Collections.singleton( (Feature) readFeature(ft)).iterator() );
+                        find = true;
+                    } catch (IllegalNameException ex) {
+                        for (GenericName n : featureTypes.getNames()) {
+                            expectedFeatureType.append(n).append('\n');
+                        }
                     }
 
                     if (!find) {
@@ -389,22 +566,35 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
         //read attributes
         final int nbAtts = reader.getAttributeCount();
-        for(int i=0;i<nbAtts;i++){
+        for (int i=0; i<nbAtts; i++) {
             final QName attName = reader.getAttributeName(i);
-            try {
-                final AttributeType pd = (AttributeType) featureType.getProperty("@"+attName.getLocalPart());
-                final String attVal = reader.getAttributeValue(i);
-                final Object val = ObjectConverters.convert(attVal, pd.getValueClass());
-                feature.setPropertyValue(pd.getName().toString(), val);
-            } catch(PropertyNotFoundException ex) {
-                //do nothing
+
+            if ("href".equals(attName.getLocalPart())) {
+                //store href as identifier, it will be replaced later
+                //or if can't be resolved we will still have the id
+                try {
+                    final String attVal = reader.getAttributeValue(i);
+                    feature.setPropertyValue(AttributeConvention.IDENTIFIER, attVal);
+                } catch (IllegalArgumentException ex) {
+                    //do nothing
+                }
+            } else {
+                try {
+                    final AttributeType pd = (AttributeType) featureType.getProperty("@"+attName.getLocalPart());
+                    final String attVal = reader.getAttributeValue(i);
+                    final Object val = ObjectConverters.convert(attVal, pd.getValueClass());
+                    feature.setPropertyValue(pd.getName().toString(), val);
+                } catch(PropertyNotFoundException ex) {
+                    //do nothing
+                }
             }
+
         }
 
         boolean doNext = true;
         //read a real complex type
         while (!doNext || reader.hasNext()) {
-            if(doNext){
+            if (doNext) {
                 reader.next();
             }
             doNext = true;
@@ -420,36 +610,74 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
 
                 final String nameAttribute = reader.getAttributeValue(null, "name");
-                PropertyType propertyType;
-                try {
-                    try {
-                        propertyType = featureType.getProperty(propName.toString());
-                    } catch (PropertyNotFoundException e) {
-                        propertyType = featureType.getProperty(propName.tip().toString());
-                        // If we can find the property with the local part only, we continue with it.
-                        propName = propName.tip();
-                    }
 
-                }catch(PropertyNotFoundException ex) {
-                    if (Boolean.TRUE.equals(this.properties.get(SKIP_UNEXPECTED_PROPERTY_TAGS))) {
-                        toTagEnd(propName.tip().toString());
-                        continue;
-                    } else {
-                        //convert the content as a dom node
+                //search property
+                PropertyType propertyType = null;
+                FeatureType associationSubType = null;
+
+                //search direct name
+                try {
+                    propertyType = featureType.getProperty(propName.toString());
+                } catch (PropertyNotFoundException e) { /*can happen*/ }
+
+                //search using only local part
+                if (propertyType == null) {
+                    try {
+                        propertyType = featureType.getProperty(propName.tip().toString());
+                    } catch (PropertyNotFoundException e) { /*can happen*/ }
+                }
+
+                //search if we are dealing with a subtype of a feature association role value type
+                if (propertyType == null) {
+                    try {
+                        final FeatureType candidate = featureTypes.get(propName.toString());
+                        if (candidate != null) {
+                            //search for a FeatureAssociationRole
+                            for (PropertyType pt : featureType.getProperties(true)) {
+                                if (pt instanceof FeatureAssociationRole) {
+                                    final FeatureAssociationRole far = (FeatureAssociationRole) pt;
+                                    final FeatureType vt = far.getValueType();
+                                    if (vt.isAssignableFrom(candidate)) {
+                                        propertyType = far;
+                                        associationSubType = candidate;
+                                        //change property name where data will be stored
+                                        propName = far.getName();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (IllegalNameException ex) {
+                        Logger.getLogger(JAXPStreamFeatureReader.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                //skip property if we couldn't find it and user requested it
+                if (propertyType == null && Boolean.TRUE.equals(this.properties.get(SKIP_UNEXPECTED_PROPERTY_TAGS))) {
+                    toTagEnd(propName.tip().toString());
+                    continue;
+                }
+
+                //search if we have an _any attribute available
+                if (propertyType == null) {
+                    try {
                         final AttributeType pd = (AttributeType) featureType.getProperty("_any");
+                        //convert the content as a dom node
                         final Document doc = readAsDom(propName.tip().toString());
                         feature.setPropertyValue(pd.getName().toString(), doc);
                         doNext = false;
                         continue;
+                    } catch (PropertyNotFoundException e) {
+                        throw new XMLStreamException("Could not find any property fitting named tag "+propName);
                     }
                 }
 
                 if (propertyType instanceof Operation) {
                     final Operation opType = (Operation) propertyType;
                     final PropertyType resultType = (PropertyType) opType.getResult();
-                    final Object value = readPropertyValue(resultType,false);
+                    final Object value = readPropertyValue(resultType, null, null);
                     ops.add(new AbstractMap.SimpleImmutableEntry<>((Operation)propertyType,value));
-                    if(resultType.getName().equals(propertyType.getName())){
+                    if (resultType.getName().equals(propertyType.getName())) {
                         //we are already on the next element here, jaxb ate one
                         doNext = false;
                     }
@@ -460,13 +688,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 if (propertyType instanceof AttributeType) {
                     final AttributeType<?> attType = (AttributeType) propertyType;
                     final int nbPropAtts = reader.getAttributeCount();
-                    if (nbPropAtts>0) {
+                    if (nbPropAtts > 0) {
                         final Attribute att = (Attribute) feature.getProperty(propName.toString());
-                        for(int i=0;i<nbPropAtts;i++){
+                        for (int i=0; i < nbPropAtts; i++) {
                             final QName qname = reader.getAttributeName(i);
                             final GenericName attName = nameCache.get(new QName(qname.getNamespaceURI(), "@"+qname.getLocalPart()));
                             final AttributeType<?> charType = attType.characteristics().get(attName.toString());
-                            if (charType!=null) {
+                            if (charType != null) {
                                 final String attVal = reader.getAttributeValue(i);
                                 final Object val = ObjectConverters.convert(attVal, charType.getValueClass());
                                 final Attribute chara = charType.newInstance();
@@ -477,64 +705,15 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                 }
 
-                //parse the value
-                final Object value = readPropertyValue(propertyType,true);
-
-                ////////////////////////////////////////////////////////////
-
-                final Object previousVal = feature.getPropertyValue(propName.toString());
-
-                if(propertyType instanceof FeatureAssociationRole){
-                    final FeatureAssociationRole role = (FeatureAssociationRole) propertyType;
-
-                    if (role.getMaximumOccurs() > 1) {
-                        final List vals = new ArrayList((Collection) previousVal);
-                        vals.add(value);
-                        feature.setPropertyValue(propName.toString(), vals);
-                    } else {
-                        if (previousVal!=null) {
-                            if (previousVal instanceof List) {
-                                ((List) previousVal).add(value);
-                            } else if (previousVal instanceof Map) {
-                                if (nameAttribute != null) {
-                                    ((Map) previousVal).put(nameAttribute, value);
-                                } else {
-                                    LOGGER.severe("unable to read a composite attribute : no name has been found");
-                                }
-                            }
-                        } else {
-                            feature.setPropertyValue(propName.toString(), value);
-                        }
-                    }
-                }else{
-
-                    if(previousVal!=null){
-                        if(previousVal instanceof Map){
-                            if(nameAttribute!=null){
-                                ((Map) previousVal).put(nameAttribute, value);
-                            }else{
-                                LOGGER.severe("unable to read a composite attribute : no name has been found");
-                            }
-                        }else if (previousVal instanceof Collection) {
-                            final List vals = new ArrayList((Collection) previousVal);
-                            vals.add(value);
-                            feature.setPropertyValue(propName.toString(), vals);
-                        }else{
-                            throw new XMLStreamException("Expected a multivalue property");
-                        }
-                    }else{
-                        //new property
-                        if(nameAttribute!=null){
-                            final Map<String, Object> map = new LinkedHashMap<>();
-                            map.put(nameAttribute, value);
-                            feature.setPropertyValue(propName.toString(), map);
-                        }else{
-                            feature.setPropertyValue(propName.toString(), value);
-                        }
-                    }
+                //check if attribute has it's own mapping
+                final XSDMapping mapping = GMLConvention.getMapping(propertyType);
+                if (mapping != null) {
+                    mapping.readValue(reader, propName, feature);
+                } else {
+                    //parse the value
+                    final Object value = readPropertyValue(propertyType, associationSubType, feature);
+                    setValue(feature, propertyType, propName, nameAttribute, value);
                 }
-                ////////////////////////////////////////////////////////////
-
 
             } else if (event == END_ELEMENT) {
                 final QName q = reader.getName();
@@ -543,7 +722,6 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
             }
         }
-
 
 //        //apply operations (alias/susbstitutionGroups)
 //        for(Entry<OperationDescriptor,Object> entry : ops){
@@ -554,86 +732,37 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return feature;
     }
 
-    private Object readPropertyValue(PropertyType propertyType, boolean skipCurrent) throws XMLStreamException{
+    private Object readPropertyValue(PropertyType propertyType, FeatureType associationSubType, Feature feature) throws XMLStreamException {
+        boolean skipCurrent = GMLConvention.isDecoratedProperty(propertyType);
         final GenericName propName = nameCache.get(reader.getName());
 
         Object value = null;
         if (AttributeConvention.isGeometryAttribute(propertyType)) {
-            int event;
-            if(skipCurrent){
-                event = reader.next();
-            }else{
-                event = reader.getEventType();
+            final boolean longitudeFirst;
+            if (getProperty(LONGITUDE_FIRST) != null) {
+                longitudeFirst = (boolean) getProperty(LONGITUDE_FIRST);
+            } else {
+                longitudeFirst = true;
             }
-            while (event != START_ELEMENT) {
-                if (event == END_ELEMENT) {
-                    return null;
-                }
-                event = reader.next();
-            }
-            try {
-                final boolean longitudeFirst;
-                if (getProperty(LONGITUDE_FIRST) != null) {
-                    longitudeFirst = (boolean) getProperty(LONGITUDE_FIRST);
-                } else {
-                    longitudeFirst = true;
-                }
-
-                final Geometry jtsGeom;
-                final Object geometry = ((JAXBElement) unmarshaller.unmarshal(reader)).getValue();
-                if (geometry instanceof JTSGeometry) {
-                    final JTSGeometry isoGeom = (JTSGeometry) geometry;
-                    if (isoGeom instanceof JTSMultiCurve) {
-                        ((JTSMultiCurve)isoGeom).applyCRSonChild();
-                    }
-                    jtsGeom = isoGeom.getJTSGeometry();
-                } else if (geometry instanceof PolygonType) {
-                    final PolygonType polygon = ((PolygonType)geometry);
-                    jtsGeom = polygon.getJTSPolygon().getJTSGeometry();
-                    if(polygon.getCoordinateReferenceSystem() != null) {
-                        JTS.setCRS(jtsGeom, polygon.getCoordinateReferenceSystem());
-                    }
-                } else if (geometry instanceof LineStringPosListType) {
-                    final JTSLineString line = ((LineStringPosListType)geometry).getJTSLineString();
-                    jtsGeom = line.getJTSGeometry();
-                    if(line.getCoordinateReferenceSystem() != null) {
-                        JTS.setCRS(jtsGeom, line.getCoordinateReferenceSystem());
-                    }
-                } else if (geometry instanceof AbstractGeometry) {
-                    try {
-                        jtsGeom = GeometrytoJTS.toJTS((AbstractGeometry) geometry, longitudeFirst);
-                    } catch (FactoryException ex) {
-                        throw new XMLStreamException("Factory Exception while transforming GML object to JTS", ex);
-                    }
-                } else {
-                    throw new IllegalArgumentException("unexpected geometry type:" + geometry);
-                }
-                value = jtsGeom;
-
-            } catch (JAXBException ex) {
-                String msg = ex.getMessage();
-                if (msg == null && ex.getLinkedException() != null) {
-                    msg = ex.getLinkedException().getMessage();
-                }
-                throw new IllegalArgumentException("JAXB exception while reading the feature geometry: " + msg, ex);
-            }
+            GeometryMapping mapping = new GeometryMapping(null, propertyType, getPool(), longitudeFirst, skipCurrent);
+            mapping.readValue(reader, propName, feature);
 
         } else if (propertyType instanceof FeatureAssociationRole) {
 
             final FeatureAssociationRole far = (FeatureAssociationRole) propertyType;
-            final FeatureType valueType = far.getValueType();
+            final FeatureType valueType = (associationSubType == null) ? far.getValueType() : associationSubType;
 
             //GML properties have one level of encapsulation (in properties which follow the ogc convention)
             final QName currentName = reader.getName();
-            if (currentName != null && valueType.getName().tip().toString().equals(currentName.getLocalPart())) {
+            if (!skipCurrent) {
                 //no encapsulation
-                value = readFeature(((FeatureAssociationRole) propertyType).getValueType(), nameCache.get(currentName));
+                value = readFeature(valueType, nameCache.get(currentName));
 
             } else {
 
                 boolean doNext = true;
                 while (!doNext || reader.hasNext()) {
-                    if(doNext){
+                    if (doNext) {
                         reader.next();
                     }
                     doNext = true;
@@ -655,9 +784,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             final String content = reader.getElementText();
             final Class typeBinding = ((AttributeType)propertyType).getValueClass();
 
-            if(List.class.equals(typeBinding) || Map.class.equals(typeBinding)){
+            if (List.class.equals(typeBinding) || Map.class.equals(typeBinding)) {
                 value = content;
-            }else{
+            } else {
                 value = readValue(content, (AttributeType)propertyType);
             }
         }
@@ -665,22 +794,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return value;
     }
 
-    public Object readValue(final String content, final AttributeType type){
-        Object value = content;
-        if(type.getValueClass()== byte[].class && content != null){
-            try {
-                value = Base64.decode(content);
-            } catch (IOException ex) {
-                LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
-            }
-        }else{
-            value = ObjectConverters.convert(value, Numbers.primitiveToWrapper(type.getValueClass()));
-        }
-        return value;
-    }
-
     private Object extractFeatureFromTransaction() throws XMLStreamException {
-        final List<Feature> features = new ArrayList<Feature>();
+        final List<Feature> features = new ArrayList<>();
         boolean insert = false;
         while (reader.hasNext()) {
             int event = reader.next();
@@ -707,12 +822,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                     boolean find = false;
                     StringBuilder expectedFeatureType = new StringBuilder();
-                    for (FeatureType ft : featureTypes) {
-                        if (ft.getName().equals(name)) {
-                            features.add((Feature)readFeature(ft));
-                            find = true;
+                    try {
+                        FeatureType ft = featureTypes.get(name.toString());
+                        find = true;
+                        features.add((Feature)readFeature(ft));
+                    } catch (IllegalNameException ex) {
+                        for (GenericName n : featureTypes.getNames()) {
+                            expectedFeatureType.append(n).append('\n');
                         }
-                        expectedFeatureType.append(ft.getName()).append('\n');
                     }
 
                     if (!find) {
@@ -805,7 +922,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         this.properties.put(READ_EMBEDDED_FEATURE_TYPE, readEmbeddedFeatureType);
     }
 
-    private final class JAXPStreamIterator implements FeatureReader{
+    private final class JAXPStreamIterator implements FeatureReader {
 
         private boolean singleFeature = false;
         private FeatureType type = null;
@@ -826,10 +943,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                     final GenericName name  = nameCache.get(markupName);
                     String id = "no-gml-id";
-                    for(int i=0,n=reader.getAttributeCount();i<n;i++){
+                    for (int i=0, n=reader.getAttributeCount(); i<n; i++) {
                         final QName attName = reader.getAttributeName(i);
                         //search and id property from any namespace
-                        if("id".equals(attName.getLocalPart()) && attName.getNamespaceURI().startsWith(GML)){
+                        if ("id".equals(attName.getLocalPart()) && attName.getNamespaceURI().startsWith(GML)) {
                             id = reader.getAttributeValue(i);
                         }
                     }
@@ -843,14 +960,17 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         throw new XMLStreamException("Transaction types are not supported as stream");
 
                     } else {
-                        for (FeatureType ft : featureTypes) {
-                            if (ft.getName().equals(name)) {
-                                singleFeature = true;
-                                next = (Feature) readFeature(ft);
-                                type = next.getType();
-                                return;
+
+                        try {
+                            FeatureType ft = featureTypes.get(name.toString());
+                            singleFeature = true;
+                            next = (Feature) readFeature(ft);
+                            type = next.getType();
+                            return;
+                        } catch (IllegalNameException ex) {
+                            for (GenericName n : featureTypes.getNames()) {
+                                expectedFeatureType.append(n).append('\n');
                             }
-                            expectedFeatureType.append(ft.getName()).append('\n');
                         }
                     }
 
@@ -865,11 +985,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         @Override
         public FeatureType getFeatureType() {
             findNext();
-            if(type==null){
+            if (type == null) {
                 //collection is empty
-                if(!featureTypes.isEmpty()){
+                if (!featureTypes.getValues().isEmpty()) {
                     //return the first feature type in the xsd
-                    return featureTypes.get(0);
+                    return featureTypes.getValues().iterator().next();
                 }
             }
             return type;
@@ -889,10 +1009,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             return t;
         }
 
-        private void findNext() throws FeatureStoreRuntimeException{
-            if(next!=null || singleFeature) return;
+        private void findNext() throws FeatureStoreRuntimeException {
+            if (next != null || singleFeature) return;
 
-            try{
+            try {
                 //read a feature in the collection
                 while (reader.hasNext()) {
                     int event = reader.next();
@@ -935,14 +1055,16 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                             boolean find = false;
                             StringBuilder expectedFeatureType = new StringBuilder();
-                            for (FeatureType ft : featureTypes) {
-                                if (ft.getName().equals(name)) {
-                                    next = (Feature) readFeature(ft);
-                                    find = true;
-                                    if(type==null) type = next.getType();
-                                    return;
+                            try {
+                                FeatureType ft = featureTypes.get(name.toString());
+                                next = (Feature) readFeature(ft);
+                                find = true;
+                                if (type == null) type = next.getType();
+                                return;
+                            } catch (IllegalNameException ex) {
+                                for (GenericName n : featureTypes.getNames()) {
+                                    expectedFeatureType.append(n).append('\n');
                                 }
-                                expectedFeatureType.append(ft.getName()).append('\n');
                             }
 
                             if (!find) {
@@ -953,7 +1075,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
                 }
-            }catch(XMLStreamException ex){
+            } catch (XMLStreamException ex) {
                 throw new FeatureStoreRuntimeException(ex);
             }
         }
@@ -966,6 +1088,102 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         @Override
         public void remove() {
             throw new UnsupportedOperationException("not supported");
+        }
+    }
+
+
+    public static Object readValue(final String content, final AttributeType type) {
+        Object value = content;
+        if (type.getValueClass() == byte[].class && content != null) {
+            value = Base64.getDecoder().decode(content);
+        } else {
+            value = ObjectConverters.convert(value, Numbers.primitiveToWrapper(type.getValueClass()));
+        }
+        return value;
+    }
+
+    public static void setValue(Feature feature, PropertyType propertyType, GenericName propName, String nameAttribute, Object value) throws XMLStreamException {
+
+        if (value == null) return;
+
+        final Object previousVal = feature.getPropertyValue(propName.toString());
+
+        if (propertyType instanceof FeatureAssociationRole) {
+            final FeatureAssociationRole role = (FeatureAssociationRole) propertyType;
+
+            if (role.getMaximumOccurs() > 1) {
+                final List vals = new ArrayList((Collection) previousVal);
+                vals.add(value);
+                feature.setPropertyValue(propName.toString(), vals);
+            } else {
+                if (previousVal != null) {
+                    if (previousVal instanceof List) {
+                        ((List) previousVal).add(value);
+                    } else if (previousVal instanceof Map) {
+                        if (nameAttribute != null) {
+                            ((Map) previousVal).put(nameAttribute, value);
+                        } else {
+                            LOGGER.severe("unable to read a composite attribute : no name has been found");
+                        }
+                    }
+                } else {
+                    feature.setPropertyValue(propName.toString(), value);
+                }
+            }
+        } else {
+
+            if (previousVal != null) {
+                if (previousVal instanceof Map) {
+                    if (nameAttribute != null) {
+                        ((Map) previousVal).put(nameAttribute, value);
+                    } else {
+                        LOGGER.severe("unable to read a composite attribute : no name has been found");
+                    }
+                } else if (previousVal instanceof Collection) {
+                    final List vals = new ArrayList((Collection) previousVal);
+                    vals.add(value);
+                    feature.setPropertyValue(propName.toString(), vals);
+                } else {
+                    throw new XMLStreamException("Expected a multivalue property");
+                }
+            } else {
+                //new property
+                if (nameAttribute != null) {
+                    final Map<String, Object> map = new LinkedHashMap<>();
+                    map.put(nameAttribute, value);
+                    feature.setPropertyValue(propName.toString(), map);
+                } else {
+                    feature.setPropertyValue(propName.toString(), value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Replace each feature xlink href characteristic by it's real value if it exist.
+     *
+     * @param index
+     * @param feature
+     */
+    public static void resolveLinks(Map<String,Object> index, Feature feature) {
+        final FeatureType type = feature.getType();
+        for (PropertyType pt : type.getProperties(true)) {
+            if (pt instanceof AttributeType) {
+                AttributeType attType = (AttributeType) pt;
+                if (attType.getMaximumOccurs() == 1) {
+                    Attribute att = (Attribute) feature.getProperty(pt.getName().toString());
+                    Object value = att.getValue();
+                    if (value == null) {
+                        Attribute charatt = (Attribute) att.characteristics().get(GMLConvention.XLINK_HREF.tip().toString());
+                        if (charatt != null) {
+                            Object target = index.get(charatt.getValue());
+                            if (target != null) att.setValue(target);
+                        }
+                    }
+                }
+            } else if (pt instanceof FeatureAssociationRole) {
+                //TODO
+            }
         }
     }
 }

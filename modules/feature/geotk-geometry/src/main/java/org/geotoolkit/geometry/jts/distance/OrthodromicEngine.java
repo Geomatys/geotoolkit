@@ -7,7 +7,6 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.GeodeticCalculator;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -45,12 +44,8 @@ class OrthodromicEngine implements ToDoubleBiFunction<Coordinate, Coordinate> {
      */
     @Override
     public double applyAsDouble(Coordinate start, Coordinate end) {
-        try {
-            engine.setStartPoint(new DirectPosition2D(start.x, start.y));
-            engine.setEndPoint(new DirectPosition2D(end.x, end.y));
-        } catch (TransformException e) {
-            throw new IllegalArgumentException(e);
-        }
+        engine.setStartPoint(new DirectPosition2D(start.x, start.y));
+        engine.setEndPoint(new DirectPosition2D(end.x, end.y));
         return toMeters.convert(engine.getGeodesicDistance());
     }
 }

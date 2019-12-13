@@ -19,12 +19,12 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -67,13 +67,12 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
     /**
      * Writable coverage where the expression result will be written.
      *
-     * TODO this must be writable
      */
-    public static final ParameterDescriptor<GridCoverageResource> IN_RESULT_COVERAGE = new ParameterBuilder()
+    public static final ParameterDescriptor<WritableGridCoverageResource> IN_RESULT_COVERAGE = new ParameterBuilder()
             .addName("inResultCoverage")
             .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inResultCoverage))
             .setRequired(true)
-            .create(GridCoverageResource.class, null);
+            .create(WritableGridCoverageResource.class, null);
 
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

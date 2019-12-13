@@ -47,9 +47,9 @@ import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Pyramid;
-import org.geotoolkit.data.multires.Pyramids;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.coverage.*;
@@ -118,9 +118,9 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         return server;
     }
 
-    public abstract Request getTileRequest(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException;
+    public abstract Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException;
 
-    public ImageTile getTile(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public ImageTile getTile(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
         final String formatmime = (hints==null) ? null : (String) hints.get(Pyramids.HINT_FORMAT);
         ImageReaderSpi spi = null;
         if(formatmime!=null){
@@ -132,13 +132,13 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }
 
         if (cacheImages) {
-            return new DefaultImageTile(spi, getTileImage(pyramid, mosaic, col, row, hints), 0, new Point(col, row));
+            return new DefaultImageTile(spi, getTileImage(pyramid, mosaic, col, row, hints), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         } else {
-            return new RequestImageTile(spi, getTileRequest(pyramid, mosaic, col, row, hints), 0, new Point(col, row));
+            return new RequestImageTile(spi, getTileRequest(pyramid, mosaic, col, row, hints), 0, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         }
     }
 
-    private static String toId(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) {
+    private static String toId(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) {
         final String pyramidId = pyramid.getIdentifier();
         final String mosaicId = mosaic.getIdentifier();
 
@@ -147,7 +147,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         return sb.toString();
     }
 
-    private RenderedImage getTileImage(Pyramid pyramid, Mosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    private RenderedImage getTileImage(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
 
         final String tileId = toId(pyramid, mosaic, col, row, hints);
 
@@ -581,8 +581,6 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         /**
          * Message completed, all chunk are aggregated into buffer attribute.
          * Create an InputStream from that buffer and update PackImage and add it tho queue.
-         *
-         * @param e
          */
         private void messageCompleted(final MessageEvent e) {
             final Integer channelID = e.getChannel().getId();

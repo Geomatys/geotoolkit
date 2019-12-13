@@ -24,13 +24,23 @@ package org.geotoolkit.image.interpolation;
  *  - lanczos  : compute biCubic pixel value from nearest n * n pixels values.<br/>
  * where n = 2 * {@link LanczosInterpolation#lanczosWindow} </p>
  *
+ * Note that a margin is defined for each value, specifying a radius in pixel unit. It's the maximal distance used by
+ * the interpolation to mix colors. This margin value can be < 0 when the radius is not fixed. Therefore, it's user
+ * responsability to define the right value. However, when the margin is negative, it's absolute value should be a clue
+ * about a default acceptable margin to apply for this interpolation.
+ *
  * @author Rémi Marechal (Geomatys).
  */
 public enum InterpolationCase {
-    NEIGHBOR,
-    BILINEAR,
-    BICUBIC,
-    BICUBIC2,
-    LANCZOS
+    NEIGHBOR(0),
+    BILINEAR(1),
+    BICUBIC(2),
+    BICUBIC2(2),
+    LANCZOS(-3);
 
+    public final int margin;
+
+    InterpolationCase(final int margin) {
+        this.margin = margin;
+    }
 }

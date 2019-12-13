@@ -29,7 +29,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
 
@@ -185,7 +185,7 @@ public class GeneralMatrix extends GMatrix implements Matrix {
          * Maps source axis to destination axis. If no axis is moved (for example if the user
          * want to transform (NORTH,EAST) to (SOUTH,EAST)), then source and destination index
          * will be equal.   If some axis are moved (for example if the user want to transform
-         * (NORTH,EAST) to (EAST,NORTH)), then ordinates at index {@code srcIndex} will have
+         * (NORTH,EAST) to (EAST,NORTH)), then coordinates at index {@code srcIndex} will have
          * to be moved at index {@code dstIndex}.
          */
         setZero();

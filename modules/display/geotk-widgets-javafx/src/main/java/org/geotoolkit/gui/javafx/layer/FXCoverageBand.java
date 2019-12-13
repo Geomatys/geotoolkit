@@ -27,7 +27,7 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.metadata.DefaultSampleDimensionExt;
+import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.content.SampleDimension;
 import org.opengis.util.MemberName;

@@ -121,13 +121,6 @@ public class TrafficAreaType
      * <pre>
      *    getFunction().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     public List<String> getFunction() {
         if (function == null) {
@@ -138,11 +131,6 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the surfaceMaterial property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getSurfaceMaterial() {
         return surfaceMaterial;
@@ -150,11 +138,6 @@ public class TrafficAreaType
 
     /**
      * Sets the value of the surfaceMaterial property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setSurfaceMaterial(final String value) {
         this.surfaceMaterial = value;
@@ -162,11 +145,6 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the lod2MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod2MultiSurface() {
         return lod2MultiSurface;
@@ -174,11 +152,6 @@ public class TrafficAreaType
 
     /**
      * Sets the value of the lod2MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod2MultiSurface(final MultiSurfacePropertyType value) {
         this.lod2MultiSurface = value;
@@ -186,11 +159,6 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the lod3MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod3MultiSurface() {
         return lod3MultiSurface;
@@ -198,11 +166,6 @@ public class TrafficAreaType
 
     /**
      * Sets the value of the lod3MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
@@ -210,11 +173,6 @@ public class TrafficAreaType
 
     /**
      * Gets the value of the lod4MultiSurface property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public MultiSurfacePropertyType getLod4MultiSurface() {
         return lod4MultiSurface;
@@ -222,11 +180,6 @@ public class TrafficAreaType
 
     /**
      * Sets the value of the lod4MultiSurface property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MultiSurfacePropertyType }
-     *
      */
     public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
@@ -246,13 +199,6 @@ public class TrafficAreaType
      * <pre>
      *    getGenericApplicationPropertyOfTrafficArea().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Object }
-     *
-     *
      */
     public List<Object> getGenericApplicationPropertyOfTrafficArea() {
         if (genericApplicationPropertyOfTrafficArea == null) {
@@ -260,5 +206,4 @@ public class TrafficAreaType
         }
         return this.genericApplicationPropertyOfTrafficArea;
     }
-
 }

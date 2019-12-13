@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -48,21 +49,22 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.DefaultFeatureResource;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureSet;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.storage.feature.AbstractFeatureStore;
+import org.geotoolkit.storage.feature.DefaultFeatureResource;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.cpg.CpgFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
@@ -78,7 +80,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
@@ -186,13 +187,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
-    }
-
-    @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
     }
 
     @Override
@@ -254,9 +250,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
      */
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException, FeatureStoreRuntimeException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         typeCheck(gquery.getTypeName());
 
         if (QueryUtilities.queryAll(gquery)) {
@@ -299,8 +295,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
     protected FeatureSet create(GenericName resourceName) throws DataStoreException {
         return new DefaultFeatureResource(this, resourceName) {
             @Override
-            public Envelope getEnvelope() throws DataStoreException {
-                return getHeaderEnvelope();
+            public Optional<Envelope> getEnvelope() throws DataStoreException {
+                return Optional.ofNullable(getHeaderEnvelope());
             }
         };
     }
@@ -310,9 +306,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
 
         final FeatureType   baseType = getFeatureType();
         final String        queryTypeName = gquery.getTypeName();
@@ -339,8 +335,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         qb.setHints(queryHints);
         qb.setCRS(gquery.getCoordinateSystemReproject());
         qb.setSortBy(gquery.getSortBy());
-        qb.setStartIndex(gquery.getOffset());
-        qb.setMaxFeatures(gquery.getLimit());
+        qb.setOffset(gquery.getOffset());
+        qb.setLimit(gquery.getLimit());
         return FeatureStreams.subset(reader, qb.buildQuery());
     }
 
@@ -349,9 +345,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
      */
     @Override
     public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
-        if (!(query instanceof org.geotoolkit.data.query.Query)) throw new UnsupportedQueryException();
+        if (!(query instanceof org.geotoolkit.storage.feature.query.Query)) throw new UnsupportedQueryException();
 
-        final org.geotoolkit.data.query.Query gquery = (org.geotoolkit.data.query.Query) query;
+        final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         FeatureType type = getFeatureType(gquery.getTypeName());
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);

@@ -35,22 +35,17 @@ import java.util.TreeMap;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
-
-import org.apache.sis.internal.raster.ColorModelFactory;
-
+import org.apache.sis.internal.coverage.ColorModelFactory;
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.style.StyleConstants;
-
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Literal;
-
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
+import org.opengis.filter.capability.FunctionName;
+import org.opengis.filter.expression.Expression;
 import static org.opengis.filter.expression.Expression.*;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.expression.Literal;
 
 /**
  * Implementation of "Categorize" as a normal function.
@@ -77,32 +72,33 @@ import static org.opengis.filter.expression.Expression.*;
  */
 public class DefaultCategorize extends AbstractExpression implements Categorize {
 
-    private static final Object NEG_INF = StyleConstants.CATEGORIZE_LESS_INFINITY.getValue();
+    // Note we do not use StyleConstants.CATEGORIZE_LESS_INFINITY.getValue() to avoid an initialisation loop
+    private static final Object NEG_INF = "CATEGORIZE_LESS_INFINITY";
     private static final Comparator<Expression> COMPARATOR = new Comparator<Expression>() {
 
         @Override
         public int compare(Expression exp1, Expression exp2) {
-            if(exp1 instanceof Literal && ((Literal)exp1).getValue().equals(NEG_INF)){
+            if (exp1 instanceof Literal && ((Literal)exp1).getValue().equals(NEG_INF)) {
                 //categorize less is always first
                 return -1;
-            }else if(exp2 instanceof Literal && ((Literal)exp2).getValue().equals(NEG_INF)){
+            } else if (exp2 instanceof Literal && ((Literal)exp2).getValue().equals(NEG_INF)) {
                 //categorize less is always first
                 return +1;
-            }else{
+            } else {
                 final double d1 = exp1.evaluate(null, Double.class);
                 final double d2 = exp2.evaluate(null, Double.class);
 
                 //put NaN at the end
-                if(Double.isNaN(d1)) return +1;
-                if(Double.isNaN(d2)) return -1;
+                if (Double.isNaN(d1)) return +1;
+                if (Double.isNaN(d2)) return -1;
 
                 final double diff = d1-d2;
 
-                if(diff < 0){
+                if (diff < 0) {
                     return -1;
-                }else if(diff > 0){
+                } else if (diff > 0) {
                     return +1;
-                }else{
+                } else {
                     return 0;
                 }
             }
@@ -149,19 +145,19 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         }
     };
 
-    public DefaultCategorize(final Expression ... expressions){
+    public DefaultCategorize(final Expression ... expressions) {
 
         lookup = expressions[0];
         this.values.put(CATEGORIZE_LESS_INFINITY, expressions[1]);
 
-        if(expressions.length%2 == 0){
-            for(int i=2;i<expressions.length;i+=2){
+        if (expressions.length%2 == 0) {
+            for (int i=2; i<expressions.length; i+=2) {
                 this.values.put(expressions[i], expressions[i+1]);
             }
             this.belongTo = ThreshholdsBelongTo.SUCCEEDING;
 
-        }else{
-            for(int i=2;i<expressions.length-1;i+=2){
+        } else {
+            for (int i=2;i<expressions.length-1;i+=2) {
                 this.values.put(expressions[i], expressions[i+1]);
             }
             final ThreshholdsBelongTo to = ThreshholdsBelongTo.parse(expressions[expressions.length-1].evaluate(null, String.class));
@@ -170,7 +166,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
         this.fallback = DEFAULT_FALLBACK;
 
-        if(this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY){
+        if (this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY) {
             throw new  IllegalArgumentException("Values must hold at least one key : CATEGORIZE_LESS_INFINITY");
         }
 
@@ -178,15 +174,12 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
     /**
      *
-     * @param LookUpValue
      * @param values map with threadholds keys.
-     * @param belongs
-     * @param fallback
      */
     public DefaultCategorize(final Expression LookUpValue, final Map<Expression,Expression> values,
             final ThreshholdsBelongTo belongs, final Literal fallback){
 
-        if(values == null || values.isEmpty()){
+        if (values == null || values.isEmpty()) {
             throw new IllegalArgumentException("Values can't be empty");
         }
 
@@ -195,7 +188,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         this.belongTo = (belongs == null) ? ThreshholdsBelongTo.SUCCEEDING :belongs;
         this.fallback = (fallback == null) ? DEFAULT_FALLBACK : fallback;
 
-        if(this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY){
+        if (this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY) {
             throw new  IllegalArgumentException("Values must hold at least one key : CATEGORIZE_LESS_INFINITY");
         }
 
@@ -205,7 +198,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * {@inheritDoc }
      */
     @Override
-    public Expression getLookupValue(){
+    public Expression getLookupValue() {
         return lookup;
     }
 
@@ -221,7 +214,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * {@inheritDoc }
      */
     @Override
-    public ThreshholdsBelongTo getBelongTo(){
+    public ThreshholdsBelongTo getBelongTo() {
         return belongTo;
     }
 
@@ -241,10 +234,10 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         final List<Expression> params = new ArrayList<Expression>();
         params.add(lookup);
         int i=0;
-        for(Entry<Expression,Expression> entry : values.entrySet()){
-            if(i==0){
+        for (Entry<Expression,Expression> entry : values.entrySet()) {
+            if (i==0) {
                 params.add(entry.getValue());
-            }else{
+            } else {
                 params.add(entry.getKey());
                 params.add(entry.getValue());
             }
@@ -275,7 +268,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
         final Object candidate;
         final Double value;
-        if(object instanceof Feature){
+        if (object instanceof Feature) {
 
             candidate = (Feature)object;
             value = lookup.evaluate(candidate,Double.class);
@@ -288,12 +281,12 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
         } else if (object instanceof RenderedImage) {
             return evaluateImage((RenderedImage) object);
-        }else if(object instanceof Number){
+        } else if(object instanceof Number) {
             candidate = null;
             value = ((Number)object).doubleValue();
-        }else if(fallback!=null){
+        } else if (fallback != null) {
             return fallback.evaluate(object,c);
-        }else{
+        } else {
             return null;
         }
 
@@ -307,7 +300,6 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
     /**
      * Recolor image
-     * @param image
      * @return recolored image
      */
     private RenderedImage evaluateImage(final RenderedImage image) {
@@ -366,16 +358,16 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
                 model = new CompatibleColorModel(nbbit, this);
             }
 
-        }else if(candidate instanceof DirectColorModel) {
+        } else if (candidate instanceof DirectColorModel) {
             final DirectColorModel colors = (DirectColorModel) candidate;
             final int nbbit = colors.getPixelSize();
             final int type = image.getSampleModel().getDataType();
 
-            if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
+            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
                 final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
 
-                for(int j=0; j<mapSize;j++){
+                for (int j=0; j<mapSize;j++) {
                     int v = j*255/mapSize;
                     int a = 255 << 24;
                     int r = v << 16;
@@ -420,11 +412,11 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         final Set<Map.Entry<Expression,Expression>> entries = categorizes.entrySet();
 
         int l=0;
-        for(Map.Entry<Expression,Expression> entry : entries){
-            if(l==0){
+        for (Map.Entry<Expression,Expression> entry : entries) {
+            if (l == 0) {
                 SE_VALUES[0] = Double.NEGATIVE_INFINITY;
                 SE_ARGB[0] = entry.getValue().evaluate(null, Color.class).getRGB();
-            }else{
+            } else {
                 // CATEGORIZE LESS INFINITY CASE
                 try {
                     SE_VALUES[l] = entry.getKey().evaluate(null, Double.class);
@@ -437,22 +429,22 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         }
 
         int step = 0;
-        for(int k=0;k<SE_VALUES.length-1;k++){
+        for (int k=0;k<SE_VALUES.length-1;k++) {
             final double geoValue = SE_VALUES[k+1];
             int color = SE_ARGB[k];
             int sampleValue = (int)(Double.isNaN(geoValue)?Integer.MAX_VALUE:geoValue);
 
-            for(int i=step ; (i<sampleValue && i<ARGB.length) ; i++){
+            for (int i=step ; (i<sampleValue && i<ARGB.length) ; i++) {
                 ARGB[i] = color;
             }
 
             step = (int) sampleValue;
-            if(step < 0) step = 0;
+            if (step < 0) step = 0;
 
             //we are on the last element, fill the remaining cell with the color
-            if(k == SE_VALUES.length-2){
+            if (k == SE_VALUES.length-2) {
                 color = SE_ARGB[k+1];
-                for(int i=step ; i<ARGB.length ; i++){
+                for (int i=step ; i<ARGB.length ; i++) {
                     ARGB[i] = color;
                 }
             }

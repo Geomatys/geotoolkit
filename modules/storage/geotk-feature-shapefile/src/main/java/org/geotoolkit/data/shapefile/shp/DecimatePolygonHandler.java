@@ -16,16 +16,15 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
-import org.locationtech.jts.algorithm.CGAlgorithms;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.LinearRing;
-
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.util.List;
-
-import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.geometry.jts.JTS;
+import org.locationtech.jts.algorithm.CGAlgorithms;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LinearRing;
 
 
 /**
@@ -52,7 +51,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
     }
 
     @Override
-    public Object read(final ByteBuffer buffer, final ShapeType type) {
+    public Geometry read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }

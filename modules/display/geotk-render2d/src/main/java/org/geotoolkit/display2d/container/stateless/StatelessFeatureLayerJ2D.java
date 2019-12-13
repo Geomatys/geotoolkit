@@ -34,6 +34,26 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Rule;
+import org.opengis.style.Symbolizer;
+import org.opengis.style.TextSymbolizer;
+import org.opengis.util.GenericName;
+
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -44,15 +64,10 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStreams;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
+
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
@@ -60,11 +75,9 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
-import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import static org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D.createBufferedImage;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -82,34 +95,24 @@ import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.storage.event.StorageListener;
+import org.geotoolkit.storage.feature.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleUtilities;
-import org.opengis.display.primitive.Graphic;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.MismatchedFeatureException;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.Rule;
-import org.opengis.style.Symbolizer;
-import org.opengis.style.TextSymbolizer;
-import org.opengis.util.GenericName;
+
+import static org.geotoolkit.display2d.GO2Utilities.ALPHA_COMPOSITE_1F;
+import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
+import static org.geotoolkit.display2d.GO2Utilities.STYLE_FACTORY;
+import static org.geotoolkit.display2d.GO2Utilities.getCached;
+import static org.geotoolkit.display2d.GO2Utilities.propertiesNames;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -118,7 +121,7 @@ import org.opengis.util.GenericName;
  * @author johann sorel (Geomatys)
  * @module
  */
-public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements ChangeListener<ChangeEvent> {
+public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements StoreListener<StoreEvent> {
 
     protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
@@ -134,14 +137,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         params = new StatelessContextParams(canvas,layer);
 
         final FeatureSet resource = layer.getResource();
-        if (resource instanceof FeatureCollection) {
-            final Session session = ((FeatureCollection)resource).getSession();
-            weakSessionListener.registerSource(session);
+        if (resource instanceof FeatureSet) {
+            weakSessionListener.registerSource(resource);
         }
     }
 
     @Override
-    public void changeOccured(ChangeEvent event) {
+    public void eventOccured(StoreEvent event) {
         if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             getCanvas().repaint();
@@ -236,8 +238,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * Render styled features.
-     *
-     * @param context
      */
     private boolean renderStyledFeature(final RenderingContext2D context){
 
@@ -293,23 +293,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
         currentQuery = prepareQuery(context, item, requieredAtts, rules, symbolsMargin);
         final Query query = currentQuery;
-        final FeatureSet col = item.getResource().subset(query);
-        if (col instanceof FeatureCollection) {
-            return FeatureStreams.cached((FeatureCollection)col, 1000);
-        } else {
-            return col;
-        }
+        return item.getResource().subset(query);
     }
 
     protected FeatureSet optimizeCollection(final RenderingContext2D context) throws Exception {
         currentQuery = prepareQuery(context, item, symbolsMargin);
         final Query query = currentQuery;
-        final FeatureSet col = item.getResource().subset(query);
-        if (col instanceof FeatureCollection) {
-            return FeatureStreams.cached((FeatureCollection)col, 1000);
-        } else {
-            return col;
-        }
+        return item.getResource().subset(query);
     }
 
     protected FeatureId id(Object candidate) {
@@ -318,29 +308,24 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     protected GraphicIterator getIterator(final FeatureSet features,
             final RenderingContext2D renderingContext, final StatelessContextParams params) throws DataStoreException {
-        final Hints iteHints = new Hints();
 
         final FeatureIterator iterator;
-        if (features instanceof FeatureCollection) {
-            iterator = ((FeatureCollection)features).iterator(iteHints);
-        } else {
-            final Stream<Feature> stream = features.features(false);
-            final Iterator<Feature> i = stream.iterator();
-            iterator = new FeatureIterator() {
-                @Override
-                public Feature next() throws FeatureStoreRuntimeException {
-                    return i.next();
-                }
-                @Override
-                public boolean hasNext() throws FeatureStoreRuntimeException {
-                    return i.hasNext();
-                }
-                @Override
-                public void close() {
-                    stream.close();
-                }
-            };
-        }
+        final Stream<Feature> stream = features.features(false);
+        final Iterator<Feature> i = stream.iterator();
+        iterator = new FeatureIterator() {
+            @Override
+            public Feature next() throws FeatureStoreRuntimeException {
+                return i.next();
+            }
+            @Override
+            public boolean hasNext() throws FeatureStoreRuntimeException {
+                return i.hasNext();
+            }
+            @Override
+            public void close() {
+                stream.close();
+            }
+        };
         final ProjectedFeature projectedFeature = new ProjectedFeature(params);
         return new GraphicIterator(iterator, projectedFeature);
     }
@@ -488,8 +473,8 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         }
         PropertyType geomDesc = null;
         try {
-            geomDesc = schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
-        } catch(PropertyNotFoundException ex){};
+            geomDesc = FeatureExt.getDefaultGeometry(schema);
+        } catch(PropertyNotFoundException | IllegalStateException ex){};
         final BoundingBox bbox                   = optimizeBBox(renderingContext, layer, symbolsMargin);
         final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
         final RenderingHints hints               = renderingContext.getRenderingHints();
@@ -521,7 +506,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //we better not do any call to the layer bounding box before since it can be
         //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
-        //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
+        //if( ((BoundingBox)bbox).contains(new BoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter
         //   filter = Filter.INCLUDE;
         //}else{
@@ -772,7 +757,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //we better not do any call to the layer bounding box before since it can be
         //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
-        //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
+        //if( ((BoundingBox)bbox).contains(new BoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter
         //   filter = Filter.INCLUDE;
         //}else{
@@ -876,7 +861,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             final GeneralEnvelope env = new GeneralEnvelope(bbox);
             env.setRange(0, env.getMinimum(0)-symbolsMargin, env.getMaximum(0)+symbolsMargin);
             env.setRange(1, env.getMinimum(1)-symbolsMargin, env.getMaximum(1)+symbolsMargin);
-            bbox = new DefaultBoundingBox(env);
+            bbox = new BoundingBox(env);
         }
 
         //layer crs may be null if it define an abstract collection
@@ -923,7 +908,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             env = new GeneralEnvelope(env);
             ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
 
-            bbox = new DefaultBoundingBox(env);
+            bbox = new BoundingBox(env);
         }
 
         return bbox;
@@ -1074,11 +1059,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * Render by object order.
-     * @param candidates
-     * @param renderers
-     * @param context
-     * @param params
-     * @throws PortrayalException
      */
     protected final boolean renderByObjectOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules,
@@ -1152,11 +1132,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     /**
      * render by symbol order.
-     * @param candidates
-     * @param context
-     * @param rules
-     * @param params
-     * @throws org.geotoolkit.display.PortrayalException
      */
     protected final boolean renderBySymbolOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)

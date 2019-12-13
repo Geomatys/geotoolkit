@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.dif.xml.v102;
 
 import java.util.ArrayList;
@@ -25,26 +24,27 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  *
- *                 * Email moved to the end of list
- *                 * Phone and Fax were merged into the new Phone field
+ *                 * Email moved to the end of list * Phone and Fax were merged into the new
+ * Phone field
  *
- *                 | DIF 9       | ECHO 10        | UMM           | DIF 10        | Notes                                        |
- *                 | ------------| -------------- | ------------- | ------------  | -------------------------------------------- |
- *                 | Personnel   | ContactPerson  | ContactPerson | Contact_Group | Added                                        |
- *                 |                                                                                                             |
- *                 | > Last_Name | > LastName     | > LastName    | > Name        | Just map to last name                        |
- *                 | > Address   | > Address      | > Address     | > Address     |                                              |
- *                 | > Phone     | > Phone        | > Phone       | > Phone       | Fax and Phon in DIF 9 merged with Phone type |
- *                 | > Email     | > Email        | > Email       | > Email       |                                              |
- *
+ * | DIF 9 | ECHO 10 | UMM | DIF 10 | Notes | | ------------| -------------- |
+ * ------------- | ------------ | -------------------------------------------- |
+ * | Personnel | ContactPerson | ContactPerson | Contact_Group | Added | | | | >
+ * Last_Name | > LastName | > LastName | > Name | Just map to last name | | >
+ * Address | > Address | > Address | > Address | | | > Phone | > Phone | > Phone
+ * | > Phone | Fax and Phon in DIF 9 merged with Phone type | | > Email | >
+ * Email | > Email | > Email | |
  *
  *
- * <p>Classe Java pour ContactGroupType complex type.
  *
- * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
+ * <p>
+ * Classe Java pour ContactGroupType complex type.
+ *
+ * <p>
+ * Le fragment de schéma suivant indique le contenu attendu figurant dans cette
+ * classe.
  *
  * <pre>
  * &lt;complexType name="ContactGroupType">
@@ -84,12 +84,23 @@ public class ContactGroupType {
     @XmlAttribute(name = "uuid")
     protected String uuid;
 
+    public ContactGroupType() {
+
+    }
+
+    public ContactGroupType(String name, AddressType address, PhoneType phone, String email) {
+        this.name = name;
+        this.address = address;
+        this.phone = new ArrayList<>();
+        this.phone.add(phone);
+        this.email = new ArrayList<>();
+        this.email.add(email);
+    }
+
     /**
      * Obtient la valeur de la propriété name.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getName() {
@@ -99,9 +110,7 @@ public class ContactGroupType {
     /**
      * Définit la valeur de la propriété name.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setName(String value) {
@@ -111,9 +120,7 @@ public class ContactGroupType {
     /**
      * Obtient la valeur de la propriété address.
      *
-     * @return
-     *     possible object is
-     *     {@link AddressType }
+     * @return possible object is {@link AddressType }
      *
      */
     public AddressType getAddress() {
@@ -123,9 +130,7 @@ public class ContactGroupType {
     /**
      * Définit la valeur de la propriété address.
      *
-     * @param value
-     *     allowed object is
-     *     {@link AddressType }
+     * @param value allowed object is {@link AddressType }
      *
      */
     public void setAddress(AddressType value) {
@@ -136,10 +141,10 @@ public class ContactGroupType {
      * Gets the value of the phone property.
      *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the phone property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the phone property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -165,10 +170,10 @@ public class ContactGroupType {
      * Gets the value of the email property.
      *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the email property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the email property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -178,8 +183,7 @@ public class ContactGroupType {
      *
      *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * Objects of the following type(s) are allowed in the list {@link String }
      *
      *
      */
@@ -193,9 +197,7 @@ public class ContactGroupType {
     /**
      * Obtient la valeur de la propriété uuid.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getUuid() {
@@ -205,9 +207,7 @@ public class ContactGroupType {
     /**
      * Définit la valeur de la propriété uuid.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setUuid(String value) {

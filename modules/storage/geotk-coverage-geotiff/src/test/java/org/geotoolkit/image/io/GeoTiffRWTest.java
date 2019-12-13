@@ -35,6 +35,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -855,7 +856,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
             final CoordinateReferenceSystem crs, final AffineTransform gridToCRS){
         //test coordinate reference system
         final CoordinateReferenceSystem coverageCRS = coverage.getCoordinateReferenceSystem();
-        if (!org.geotoolkit.referencing.CRS.equalsApproximatively(crs, coverageCRS)) {
+        if (!Utilities.equalsApproximately(crs, coverageCRS)) {
             final MathTransform mt;
             try {
                 mt = CRS.findOperation(crs, coverageCRS, null).getMathTransform();

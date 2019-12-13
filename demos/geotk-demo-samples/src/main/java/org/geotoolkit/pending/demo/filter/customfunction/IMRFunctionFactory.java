@@ -2,6 +2,8 @@
 
 package org.geotoolkit.pending.demo.filter.customfunction;
 
+import java.util.Collections;
+import java.util.Set;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.opengis.filter.expression.Expression;
@@ -23,8 +25,8 @@ public class IMRFunctionFactory implements FunctionFactory{
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{DENSITY};
+    public Set<String> getNames() {
+        return Collections.singleton(DENSITY);
     }
 
     @Override
@@ -36,6 +38,12 @@ public class IMRFunctionFactory implements FunctionFactory{
     @Override
     public ParameterDescriptorGroup describeFunction(String name) throws IllegalArgumentException {
         return DESC;
+    }
+
+    @Override
+    public Function create(String name, Expression... parameters) throws IllegalArgumentException {
+        if(DENSITY.equalsIgnoreCase(name)) return new DensityFunction(parameters, null);
+        else throw new IllegalArgumentException("Unknowned function : " + name);
     }
 
 }

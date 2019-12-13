@@ -34,7 +34,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
-import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
@@ -68,17 +67,12 @@ public class GeometryTestParser {
             throw new RuntimeException("", e);
         }
 
-        GeometryFactory geomFact = new JTSGeometryFactory(CommonCRS.WGS84.normalizedGeographic());
+        JTSGeometryFactory geomFact = new JTSGeometryFactory(CommonCRS.WGS84.normalizedGeographic());
         PrimitiveFactory primFact = new JTSPrimitiveFactory(CommonCRS.WGS84.normalizedGeographic());
         PositionFactory posFact = null;
         wktFactory = new GeometryParser(geomFact, primFact, posFact, null );
     }
 
-    /**
-     *
-     * @param inputSource
-     * @return
-     */
     public GeometryTestContainer parseTestDefinition(final InputSource inputSource) {
         Document doc = null;
         try {
@@ -108,9 +102,6 @@ public class GeometryTestParser {
 
     /**
      * Processes the root "run" node
-     * @param node
-     * @return
-     * @throws ParseException
      */
     public GeometryTestContainer processRootNode(final Node node) throws ParseException {
         if (!node.getNodeName().equalsIgnoreCase("run")) {
@@ -144,9 +135,6 @@ public class GeometryTestParser {
      * testbuilder program works, I think its safe to assume that
      * there will always be just one or two objects, named a and
      * b.
-     *
-     * @param testCaseNode
-     * @return
      */
     private GeometryTestCase readTestCase(final Node testCaseNode) throws ParseException {
         Node child = testCaseNode.getFirstChild();
@@ -181,7 +169,6 @@ public class GeometryTestParser {
      * and looks for arg1, arg2, and arg3. The value of the text subnode is
      * the value of the expected result
      * @param testNode a test node from the xml file
-     * @return
      */
     private GeometryTestOperation loadTestOperation(final Node testNode) {
 

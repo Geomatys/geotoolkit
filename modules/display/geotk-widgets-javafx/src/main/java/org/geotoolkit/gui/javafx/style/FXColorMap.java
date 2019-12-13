@@ -59,12 +59,10 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.DefaultLiteral;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
@@ -74,7 +72,6 @@ import org.geotoolkit.gui.javafx.util.FXTableCell;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.style.StyleConstants;
@@ -92,11 +89,11 @@ import org.geotoolkit.style.interval.Palette;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ColorMap;
 
 /**
@@ -238,10 +235,9 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
 
     @FXML
     private void fitToData(ActionEvent event) {
-        if(!(layer instanceof CoverageMapLayer)) return;
+        if(!(layer.getResource() instanceof GridCoverageResource)) return;
 
-        final CoverageMapLayer cml = (CoverageMapLayer)layer;
-        final GridCoverageResource cref = cml.getResource();
+        final GridCoverageResource cref = (GridCoverageResource) layer.getResource();
 
         final Double[] range = findMinMaxInMeta();
         if(range!=null && range[0]!=null && range[1]!=null){
@@ -295,11 +291,16 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
      * @return min,max array or null if metadatas do not contain the informations.
      */
     private Double[] findMinMaxInMeta(){
-        final CoverageMapLayer cml = (CoverageMapLayer)layer;
-        final GridCoverageResource cref = cml.getResource();
+        final GridCoverageResource cref = (GridCoverageResource) layer.getResource();
         CoverageDescription covdesc = null;
-        if (cref instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-            covdesc = ((org.geotoolkit.storage.coverage.GridCoverageResource) cref).getCoverageDescription();
+        try {
+            for (ContentInformation ci : cref.getMetadata().getContentInfo()) {
+                if (ci instanceof CoverageDescription) {
+                    covdesc = (CoverageDescription) ci;
+                }
+            }
+        } catch (DataStoreException ex) {
+            Loggers.JAVAFX.log(Level.FINE, ex.getMessage(),ex);
         }
         if (covdesc == null) return null;
         final Integer index = uiBand.valueProperty().get().intValue();
@@ -333,7 +334,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     @FXML
     private void generate(ActionEvent event) {
 
-        if(!(layer instanceof CoverageMapLayer)){
+        if(!(layer.getResource() instanceof GridCoverageResource)){
             return;
         }
 
@@ -404,15 +405,14 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             }
             steps = inverted;
         }
-        if(layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer)layer;
+        if (layer.getResource() instanceof GridCoverageResource) {
             try {
-                if(mustInterpolation){
+                if (mustInterpolation) {
                     double min = uiMinimum.valueProperty().get().doubleValue();
                     double max = uiMaximum.valueProperty().get().doubleValue();
                     lst.addAll(getInterpolationPoints(min, max, steps));
-                }else{
-                    for(int s=0,l=steps.size();s<l;s++){
+                } else {
+                    for (int s=0,l=steps.size();s<l;s++) {
                         final Entry<Double, Color> step = steps.get(s);
                         lst.add(new InterOrCategorize(step.getKey(), step.getValue()));
                     }
@@ -424,10 +424,10 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         }
 
         final String method = uiMethod.getSelectionModel().getSelectedItem();
-        if("Categorize".equals(method)){
-            if(!lst.isEmpty()){
+        if ("Categorize".equals(method)) {
+            if (!lst.isEmpty()) {
                 final InterOrCategorize ioc = lst.get(0);
-                if(!StyleConstants.CATEGORIZE_LESS_INFINITY.equals(ioc.value.getValue())){
+                if (!StyleConstants.CATEGORIZE_LESS_INFINITY.equals(ioc.value.getValue())) {
                     //first category must contains -inf
                     lst.add(new InterOrCategorize(StyleConstants.CATEGORIZE_LESS_INFINITY, TRS));
                 }
@@ -636,7 +636,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         //uiNoData.setVisible(function instanceof Jenks);
         //noDataContainer.setVisible(function instanceof Jenks);
 
-        final boolean da = !(layer instanceof CoverageMapLayer);
+        final boolean da = !(layer.getResource() instanceof GridCoverageResource);
         uiPalette.setDisable(da);
         uiPaletteLbl.setDisable(da);
         uiBand.setDisable(da);
@@ -653,8 +653,8 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     private void initBandSpinner() {
         //update nbBands spinner
         try {
-            if (layer instanceof CoverageMapLayer) {
-                final GridCoverageResource covRef = ((CoverageMapLayer) layer).getResource();
+            if (layer.getResource() instanceof GridCoverageResource) {
+                final GridCoverageResource covRef = (GridCoverageResource) layer.getResource();
                 final GridGeometry gridGeometry = covRef.getGridGeometry();
 
                 if (gridGeometry.isDefined(GridGeometry.GRID_TO_CRS)
@@ -675,11 +675,6 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                         res[i] = Double.MAX_VALUE;
                     }
 
-                    GridCoverageReadParam readParam = new GridCoverageReadParam();
-                    readParam.setEnvelope(Envelopes.transform(gridToCRS, sliceExtent));
-                    readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
-                    readParam.setResolution(res);
-
                     final List<SampleDimension> sd = covRef.getSampleDimensions();
                     int nbBands = 10;
                     if (sd != null && !sd.isEmpty()) {
@@ -693,8 +688,6 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         } catch (CoverageStoreException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         } catch (DataStoreException ex) {
-            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
-        } catch (TransformException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         }
     }

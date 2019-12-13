@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema
+    xmlns="http://www.iho.int/S-121"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    elementFormDefault="qualified"
+    targetNamespace="http://www.iho.int/S-121"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
+
+    <xs:complexType name="informationType">
+        <xs:complexContent>
+            <xs:extension base="gml:AbstractFeatureType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="Right" type="informationType"/>
+    <xs:element name="Source" type="informationType"/>
+
+    <xs:group name="InformationTypes">
+        <xs:choice>
+            <xs:element ref="Right"/>
+            <xs:element ref="Source"/>
+        </xs:choice>
+    </xs:group>
+
+   <xs:complexType name="DatasetType">
+        <xs:complexContent>
+            <xs:extension base="gml:AbstractFeatureType">
+                <xs:sequence>
+                    <xs:group ref="InformationTypes" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="dataset" type="DatasetType"/>
+
+</xs:schema>

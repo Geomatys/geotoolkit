@@ -204,14 +204,22 @@ public final class JTStoGeometry {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
+        final String srsName = getSRS(crs);
+        final int srsDimension = crs.getCoordinateSystem().getDimension();
 
         final List<org.geotoolkit.gml.xml.Point> pointList = new ArrayList<>();
         for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
-            pointList.add(toGML(gmlVersion, (Point) jtsGeom.getGeometryN(i), crs));
+            org.geotoolkit.gml.xml.Point point = toGML(gmlVersion, (Point) jtsGeom.getGeometryN(i), crs);
+            point.setSrsDimension(null);
+            point.setSrsName(null);
+            pointList.add(point);
         }
 
         final String srs = getSRS(crs);
-        return buildMultiPoint(gmlVersion, pointList, srs);
+        org.geotoolkit.gml.xml.MultiPoint mp = buildMultiPoint(gmlVersion, pointList, srs);
+        mp.setSrsName(srsName);
+        mp.setSrsDimension(srsDimension);
+        return mp;
     }
 
     /**
@@ -230,15 +238,22 @@ public final class JTStoGeometry {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
+        final String srsName = getSRS(crs);
+        final int srsDimension = crs.getCoordinateSystem().getDimension();
 
         final List<org.geotoolkit.gml.xml.LineString> lineList = new ArrayList<>();
         for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
-
-            lineList.add(toGML(gmlVersion, (LineString) jtsGeom.getGeometryN(i), crs));
+            org.geotoolkit.gml.xml.LineString line = toGML(gmlVersion, (LineString) jtsGeom.getGeometryN(i), crs);
+            line.setSrsDimension(null);
+            line.setSrsName(null);
+            lineList.add(line);
         }
 
         final String srs = getSRS(crs);
-        return buildMultiLineString(gmlVersion, lineList, srs);
+        AbstractGeometricAggregate geom = buildMultiLineString(gmlVersion, lineList, srs);
+        geom.setSrsDimension(srsDimension);
+        geom.setSrsName(srsName);
+        return geom;
     }
 
     /**
@@ -257,14 +272,22 @@ public final class JTStoGeometry {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
+        final String srsName = getSRS(crs);
+        final int srsDimension = crs.getCoordinateSystem().getDimension();
 
         final List<org.geotoolkit.gml.xml.Polygon> polyList = new ArrayList<>();
         for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
-            polyList.add(toGML(gmlVersion, (Polygon) jtsGeom.getGeometryN(i), crs));
+            org.geotoolkit.gml.xml.Polygon poly = toGML(gmlVersion, (Polygon) jtsGeom.getGeometryN(i), crs);
+            poly.setSrsDimension(null);
+            poly.setSrsName(null);
+            polyList.add(poly);
         }
 
         final String srs = getSRS(crs);
-        return buildMultiPolygon(gmlVersion, polyList, srs);
+        AbstractGeometricAggregate geom = buildMultiPolygon(gmlVersion, polyList, srs);
+        geom.setSrsDimension(srsDimension);
+        geom.setSrsName(srsName);
+        return geom;
     }
 
     /**
@@ -283,15 +306,23 @@ public final class JTStoGeometry {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
+        final String srsName = getSRS(crs);
+        final int srsDimension = crs.getCoordinateSystem().getDimension();
 
         //get exterior ring
         final AbstractRing gmlExterior = toGML(gmlVersion, (LinearRing) jtsGeom.getExteriorRing(), crs);
+        gmlExterior.setSrsName(null);
+        gmlExterior.setSrsDimension(null);
+
         //get interiors ring
         final List<AbstractRing> gmlInterior = new ArrayList<>();
         for (int i = 0; i < jtsGeom.getNumInteriorRing(); i++) {
-            gmlInterior.add(toGML(gmlVersion, (LinearRing) jtsGeom.getInteriorRingN(i), crs));
+            org.geotoolkit.gml.xml.LinearRing interior = toGML(gmlVersion, (LinearRing) jtsGeom.getInteriorRingN(i), crs);
+            interior.setSrsName(null);
+            interior.setSrsDimension(null);
+            gmlInterior.add(interior);
         }
-        return buildPolygon(gmlVersion, gmlExterior, gmlInterior, getSRS(crs));
+        return buildPolygon(gmlVersion, gmlExterior, gmlInterior, srsName, srsDimension);
     }
 
     /**
@@ -312,15 +343,14 @@ public final class JTStoGeometry {
         isValideGeometry(crs);
         final Coordinate[] jtsCoord = jtsGeom.getCoordinates();
 
-        final List<DirectPosition> dpList = new ArrayList<>();
-
+        final List<Double> coordList = new ArrayList<>();
         for (Coordinate c : jtsCoord) {
-            dpList.add(coordinateToDirectPosition(gmlVersion, c, crs));
+            coordList.add(c.x);
+            coordList.add(c.y);
         }
-        final String srsName = getSRS(crs);
-        final org.geotoolkit.gml.xml.LineString gmlString = buildLineString(gmlVersion, null, srsName, dpList);
-        gmlString.setSrsName(getSRS(crs));
 
+        final String srsName = getSRS(crs);
+        final org.geotoolkit.gml.xml.LineString gmlString = buildLineString(gmlVersion, coordList, srsName, crs.getCoordinateSystem().getDimension());
         return gmlString;
     }
 
@@ -349,7 +379,7 @@ public final class JTStoGeometry {
             coordList.add(c.y);
         }
 
-        return buildLinearRing(gmlVersion, coordList, getSRS(crs));
+        return buildLinearRing(gmlVersion, coordList, getSRS(crs), crs.getCoordinateSystem().getDimension());
     }
 
     /**

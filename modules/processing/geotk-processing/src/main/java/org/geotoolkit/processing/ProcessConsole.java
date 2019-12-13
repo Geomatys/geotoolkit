@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010-2011, Geomatys
+ *    (C) 2010-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,38 +21,36 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.measure.Unit;
 import org.apache.sis.internal.util.X364;
-
+import static org.apache.sis.internal.util.X364.*;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.collection.Containers;
+import org.geotoolkit.lang.Setup;
 import org.geotoolkit.process.*;
 import org.geotoolkit.processing.util.converter.StringToAffineTransformConverter;
 import org.geotoolkit.processing.util.converter.StringToFeatureCollectionConverter;
+import org.geotoolkit.processing.util.converter.StringToGeometryConverter;
 import org.geotoolkit.processing.util.converter.StringToMapConverter;
 import org.geotoolkit.processing.util.converter.StringToSortByConverter;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.lang.Setup;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.processing.util.converter.StringToGeometryConverter;
-import org.apache.sis.util.collection.Containers;
-import org.apache.sis.util.Classes;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.ObjectConverter;
-
-import static org.apache.sis.internal.util.X364.*;
-
+import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
-import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.metadata.Identifier;
 import org.opengis.util.NoSuchIdentifierException;
 
 
@@ -72,9 +70,14 @@ public final class ProcessConsole {
                 StringToSortByConverter.getInstance(),
                 StringToMapConverter.getInstance());
 
-    private static boolean failed = false;
 
-    private static final ProcessListener CONSOLE_ADAPTER = new ProcessListener() {
+    public static void main(String[] args) {
+        new ProcessConsole().execute(args);
+    }
+
+    private boolean failed = false;
+
+    private final ProcessListener consoleAdapter = new ProcessListener() {
 
         @Override
         public void started(final ProcessEvent event) {
@@ -149,29 +152,78 @@ public final class ProcessConsole {
 
     };
 
-    public static void main(String ... args) {
+    private final List<ProcessingRegistry> registries = new ArrayList<>();
+    private final List<String> examples = new ArrayList<>();
+    private String header = "    ____            _              _ _    _ _   \n" +
+                            "  / ___| ___  ___ | |_ ___   ___ | | | _(_) |_ \n" +
+                            " | |  _ / _ \\/ _ \\| __/ _ \\ / _ \\| | |/ / | __|\n" +
+                            " | |_| |  __/ (_) | || (_) | (_) | |   <| | |_ \n" +
+                            "  \\____|\\___|\\___/ \\__\\___/ \\___/|_|_|\\_\\_|\\__|\n" +
+                            "                                               \n" +
+                            "";
 
+    public ProcessConsole() {
         Setup.initialize(null);
+        //set default processing registries
+        Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
+        while (ite.hasNext()) {
+            registries.add(ite.next());
+        }
+        //set default examples
+        examples.add("-help math:add");
+        examples.add("-help geotoolkit.math:add");
+        examples.add("math:add -first 7 -second 5");
+    }
 
-        if(args.length < 1){
+    /**
+     * Modifiable list of ProcessingRegistry available.
+     * @return
+     */
+    public List<ProcessingRegistry> getRegistries() {
+        return registries;
+    }
+
+    /**
+     * Modifiable list of execution examples.
+     * @return
+     */
+    public List<String> getExamples() {
+        return examples;
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    /**
+     * Set header, printed at start of the help message.
+     * @param header
+     */
+    public void setHeader(String header) {
+        this.header = header;
+    }
+
+    public void execute(String[] args) {
+
+        if (args.length < 1) {
             globalHelp();
         }
 
         boolean displayHelp = false;
         boolean silent = false;
         String firstArg = args[0];
-        if("-list".equalsIgnoreCase(firstArg) || "-l".equalsIgnoreCase(firstArg)){
+        if ("-list".equalsIgnoreCase(firstArg) || "-l".equalsIgnoreCase(firstArg)) {
             printList();
             return;
-        }else if("-help".equalsIgnoreCase(firstArg) || "-h".equalsIgnoreCase(firstArg)){
+        } else if("-help".equalsIgnoreCase(firstArg) || "-h".equalsIgnoreCase(firstArg)) {
             displayHelp = true;
             args = Arrays.copyOfRange(args, 1, args.length);
-        }else if("-silent".equalsIgnoreCase(firstArg) || "-s".equalsIgnoreCase(firstArg)){
+        } else if("-silent".equalsIgnoreCase(firstArg) || "-s".equalsIgnoreCase(firstArg)) {
             silent = true;
             args = Arrays.copyOfRange(args, 1, args.length);
         }
 
-        if(args.length < 1){
+        if (args.length < 1) {
             globalHelp();
         }
 
@@ -181,23 +233,23 @@ public final class ProcessConsole {
         final String authorityCode;
         final String processCode;
         final int index = firstArg.indexOf('.');
-        if(index != -1){
+        if (index != -1) {
             authorityCode = firstArg.substring(0, index);
             processCode = firstArg.substring(index+1);
-        }else{
+        } else {
             authorityCode = null;
             processCode = firstArg;
         }
 
         final ProcessDescriptor desc;
-        try{
-            desc = ProcessFinder.getProcessDescriptor(authorityCode, processCode);
-        }catch(NoSuchIdentifierException ex){
+        try {
+            desc = getProcessDescriptor(authorityCode, processCode);
+        } catch(NoSuchIdentifierException ex) {
             print(FOREGROUND_RED,"Could not find tool for name : ",firstArg,FOREGROUND_DEFAULT,"\n");
             return;
         }
 
-        if(displayHelp) {
+        if (displayHelp) {
             printHelp(desc);
             return;
         }
@@ -221,7 +273,7 @@ public final class ProcessConsole {
 
         //execute process
         final org.geotoolkit.process.Process process = desc.createProcess(params);
-        process.addListener(CONSOLE_ADAPTER);
+        process.addListener(consoleAdapter);
         final ParameterValueGroup result;
         try {
             result = process.call();
@@ -232,29 +284,63 @@ public final class ProcessConsole {
         }
 
         //show result only if in non-silent mode and result have values
-        if(!silent && !desc.getOutputDescriptor().descriptors().isEmpty()){
+        if (!silent && !desc.getOutputDescriptor().descriptors().isEmpty()) {
             System.out.println(result);
         }
 
         Setup.shutdown();
 
-        if(failed){
+        if (failed) {
             System.exit(1);
         }
 
     }
 
     /**
+     * Search for a Process descriptor in the given authority and the given name.
+     *
+     * @param authority registry name
+     * @param processName process descriptor name
+     * @return ProcessDescriptor
+     * @throws IllegalArgumentException if description could not be found
+     */
+    private ProcessDescriptor getProcessDescriptor(String authority, final String processName) throws NoSuchIdentifierException {
+
+        if (authority != null && authority.trim().isEmpty()) {
+            authority = null;
+        }
+
+        if (authority != null) {
+            final ProcessingRegistry factory = ProcessFinder.getProcessFactory(registries.iterator(), authority);
+            if (factory != null) {
+                return factory.getDescriptor(processName);
+            } else {
+                throw new NoSuchIdentifierException("No processing registry for given code.", authority);
+            }
+        }
+
+        //try all factories
+        for (ProcessingRegistry factory : registries) {
+            try {
+                return factory.getDescriptor(processName);
+            } catch (NoSuchIdentifierException ex) {
+            }
+        }
+
+        throw new NoSuchIdentifierException("No process for given code.", processName);
+    }
+
+    /**
      * Print a list of all tools available.
      */
-    private static void printList() {
-        final Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
-        while (ite.hasNext()) {
-            final ProcessingRegistry registry = ite.next();
-            for(final Identifier id : registry.getIdentification().getCitation().getIdentifiers()){
+    private void printList() {
+        for (ProcessingRegistry registry : registries) {
+            for (final Identifier id : registry.getIdentification().getCitation().getIdentifiers()) {
                 print(BOLD,id.getCode()," ",RESET);
             }
-            print(StringUtilities.toStringTree(Arrays.asList(registry.getNames())));
+            List<String> names = new ArrayList<>(registry.getNames());
+            Collections.sort(names);
+            print(StringUtilities.toStringTree("",names));
             print("\n");
         }
     }
@@ -262,34 +348,41 @@ public final class ProcessConsole {
     /**
      * Print a detailed description of the tool description.
      */
-    private static void printHelp(final ProcessDescriptor desc){
+    private static void printHelp(final ProcessDescriptor desc) {
 
         final InternationalString abs = desc.getProcedureDescription();
-        if(abs != null){
+        if (abs != null) {
             print("\n",BOLD,"DESCRIPTION",RESET,"\n",abs,"\n");
         }
 
         printDescriptor(desc.getInputDescriptor(),true);
         printDescriptor(desc.getOutputDescriptor(),false);
+        print("\n");
     }
 
     /**
      * Print list of available parameters in the descriptor.
      */
-    private static void printDescriptor(final ParameterDescriptorGroup params, final boolean input){
-        if(params == null){
+    private static void printDescriptor(final ParameterDescriptorGroup params, final boolean input) {
+        if (params == null) {
             return;
         }
 
         print("\n");
 
-        if(input){
-            print(BOLD,FOREGROUND_GREEN,">>> INPUT",RESET,"\n");
-        }else{
-            print(BOLD,FOREGROUND_YELLOW,"<<< OUTPUT",RESET,"\n");
+        if (input) {
+            print(BOLD,FOREGROUND_GREEN,"=== INPUTS ===",RESET,"\n");
+        } else {
+            print(BOLD,FOREGROUND_YELLOW,"=== OUTPUTS ===",RESET,"\n");
         }
 
-        for(final GeneralParameterDescriptor pdesc : params.descriptors()){
+        if (params.descriptors().isEmpty()) {
+            print(FAINT," none ",RESET,"\n");
+            return;
+        }
+
+
+        for (final GeneralParameterDescriptor pdesc : params.descriptors()) {
             final Identifier id = pdesc.getName();
             final String code = id.getCode();
             final int minOcc = pdesc.getMinimumOccurs();
@@ -299,7 +392,7 @@ public final class ProcessConsole {
             print(BOLD,(input)?"-":"",code,RESET,"\t");
             print("(",minOcc,",",maxOcc,")\t");
 
-            if(pdesc instanceof ParameterDescriptor){
+            if (pdesc instanceof ParameterDescriptor) {
                 final ParameterDescriptor d = (ParameterDescriptor) pdesc;
                 final Class clazz = d.getValueClass();
                 final Set validValues = d.getValidValues();
@@ -308,26 +401,26 @@ public final class ProcessConsole {
                 final Comparable maxVal = d.getMaximumValue();
 
                 print(Classes.getShortName(clazz));
-                if(unit != null){
+                if (unit != null) {
                     print(" ",unit);
                 }
                 print("\t");
 
-                if(validValues != null){
+                if (validValues != null) {
                     print("{");
-                    for(final Object obj : validValues){
+                    for (final Object obj : validValues) {
                         print(obj," ");
                     }
                     print("}\t");
                 }
-                if(minVal != null || maxVal != null){
+                if (minVal != null || maxVal != null) {
                     String from = "";
                     String to = "";
 
-                    if(minVal != null){
+                    if (minVal != null) {
                         from = minVal.toString();
                     }
-                    if(maxVal != null){
+                    if (maxVal != null) {
                         to = maxVal.toString();
                     }
 
@@ -336,7 +429,7 @@ public final class ProcessConsole {
 
             }
 
-            if(remark!=null){
+            if (remark != null) {
                 print("\n\t",FAINT,remark,RESET);
             }
 
@@ -348,16 +441,16 @@ public final class ProcessConsole {
      * Parse, convert and set parameter values from the command line arguments.
      */
     private static ParameterValueGroup parseParameters(final String[] args, final ParameterDescriptorGroup desc)
-            throws UnconvertibleObjectException, IllegalArgumentException{
+            throws UnconvertibleObjectException, IllegalArgumentException {
         final ParameterValueGroup group = desc.createValue();
 
         //regroup value for each parameter
         final List<Entry<String,List<String>>> groups = new ArrayList<Entry<String,List<String>>>();
         Entry<String,List<String>> current = null;
-        for(String str : args){
+        for (String str : args) {
             if (str.startsWith("-")) {
                 //start a new parameter
-                if(current != null){
+                if (current != null) {
                     groups.add(current);
                 }
                 current = new SimpleEntry<String, List<String>>(str.substring(1), new ArrayList<String>());
@@ -365,18 +458,18 @@ public final class ProcessConsole {
             }
 
             //append to current parameter
-            if(current == null){
+            if (current == null) {
                 throw new IllegalArgumentException("value : "+str+" is not linked to any parameter.");
             }
             current.getValue().add(str);
         }
-        if(current != null){
+        if (current != null) {
             groups.add(current);
         }
 
 
         //set parameter values
-        for(final Entry<String,List<String>> entry : groups){
+        for (final Entry<String,List<String>> entry : groups) {
             final ParameterValue parameter = group.parameter(entry.getKey());
             final Class clazz = parameter.getDescriptor().getValueClass();
             final List<String> values = entry.getValue();
@@ -391,48 +484,49 @@ public final class ProcessConsole {
      * Convert a List of string values in the appropriate Class.
      * Possibly an Array or a single value.
      */
-    private static <T> Object toValue(final List<String> values, final Class<T> binding) throws UnconvertibleObjectException{
+    private static <T> Object toValue(final List<String> values, final Class<T> binding) throws UnconvertibleObjectException {
         final int size = values.size();
 
         Class baseBinding = binding;
-        if(binding.isArray()){
+        if (binding.isArray()) {
             baseBinding = binding.getComponentType();
         }
 
         ObjectConverter<? super String, ? extends T> converter = null;
-        try{
+        try {
             converter = ObjectConverters.find(String.class, baseBinding);
-        }catch(UnconvertibleObjectException ex){
-            for(ObjectConverter conv : (List<ObjectConverter>)LIST_CONVERTERS){
-                if(conv.getTargetClass().equals(baseBinding)){
+        } catch(UnconvertibleObjectException ex) {
+            for (ObjectConverter conv : (List<ObjectConverter>)LIST_CONVERTERS) {
+                if (conv.getTargetClass().equals(baseBinding)) {
                     converter = conv;
                 }
             }
 
-            if(converter == null){
+            if (converter == null) {
                 throw ex;
             }
         }
 
-        if(size == 0 && baseBinding == Boolean.class){
+        if (size == 0 && baseBinding == Boolean.class) {
             //if there is no values after this parameter, it means we set it to true
             return true;
-        }else if(size == 0){
+        } else if(size == 0) {
             return null;
-        }else if(size == 1){
+        } else if(size == 1) {
             //return a single value converted
             return converter.apply(values.get(0));
-        }else{
+        } else {
             //convert to array of binding class
             final T[] array = (T[])Array.newInstance(baseBinding,size);
-            for(int i=0;i<size;i++){
+            for (int i=0;i<size;i++) {
                 array[i] = converter.apply(values.get(i));
             }
             return array;
         }
     }
 
-    private static void globalHelp(){
+    private void globalHelp() {
+        if (header != null) print(header,"\n");
         print(BOLD,"This tool works using three configurations blocks.\n",RESET);
         print(BOLD,FOREGROUND_MAGENTA,"[global parameters]",RESET);
         print(BOLD,FOREGROUND_DEFAULT," [tool name] ",RESET);
@@ -442,6 +536,15 @@ public final class ProcessConsole {
         print(FOREGROUND_MAGENTA,"-silent -s ",RESET," : Silently execute tool (will not show the result).\n");
         print(FOREGROUND_DEFAULT,"Tool name ",RESET,"  : can be authority.name or name alone if unique.\n");
         print(FOREGROUND_GREEN,"Tool params ",RESET,": can be found using -help for a given tool.\n");
+        print("\n");
+
+        if (!examples.isEmpty()) {
+            print(BOLD,"Examples",RESET,"\n");
+            for (String str : examples) {
+                print(str,"\n");
+            }
+            print("\n");
+        }
 
         System.exit(0);
     }
@@ -450,18 +553,18 @@ public final class ProcessConsole {
      * Print in the console the given objects.
      * X364 object are automatically removed if the console does not handle them.
      */
-    private static void print(final Object ... texts){
+    private static void print(final Object ... texts) {
         final String text;
-        if(texts.length == 1){
+        if (texts.length == 1) {
             text = String.valueOf(texts[0]);
-        }else{
+        } else {
             final StringBuilder sb = new StringBuilder();
-            for(Object obj : texts){
-                if(obj instanceof X364){
-                    if(X364_SUPPORTED){
+            for (Object obj : texts) {
+                if (obj instanceof X364) {
+                    if (X364_SUPPORTED) {
                         sb.append( ((X364)obj).sequence() );
                     }
-                }else{
+                } else {
                     sb.append(obj);
                 }
             }

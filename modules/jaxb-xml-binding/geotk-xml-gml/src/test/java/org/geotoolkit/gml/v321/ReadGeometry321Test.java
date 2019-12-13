@@ -1,11 +1,16 @@
 package org.geotoolkit.gml.v321;
 
+import org.geotoolkit.gml.GeometryTransformer;
+import org.geotoolkit.gml.ReadGeometryTest;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.junit.Assert;
+import org.junit.Test;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
-import org.geotoolkit.gml.ReadGeometryTest;
-import org.junit.Test;
 
 /**
  *
@@ -42,11 +47,26 @@ public class ReadGeometry321Test extends ReadGeometryTest {
 
     @Test
     public void testCurve() throws Exception {
-        testCollection(ReadGeometry321Test.class.getResource("curve.gml"),
-                MultiLineString.class,
-                1,
-                new Envelope(12.98241111111111, 13.462391666666665, -87.81824444444445, -87.25221944444445)
+        final AbstractGeometry geom = read(ReadGeometry321Test.class.getResource("curve.gml"));
+        final GeometryTransformer tr = new GeometryTransformer(geom);
+        final Geometry result = tr.get();
+        Assert.assertNotNull("Read geometry is null", result);
+        Assert.assertTrue(
+                String.format(
+                        "Bad geometry type.%nExpected: %s%nBut was: %s",
+                        LineString.class, result.getClass()
+                ),
+                LineString.class.isAssignableFrom(result.getClass())
         );
+
+        final LineString col = (LineString) result;
+
+        Envelope expectedEnvelope = new Envelope(12.98241111111111, 13.462391666666665, -87.81824444444445, -87.25221944444445);
+        final Envelope actual = col.getEnvelopeInternal();
+        Assert.assertEquals(expectedEnvelope.getMinX(), actual.getMinX(), 0.01);
+        Assert.assertEquals(expectedEnvelope.getMinY(), actual.getMinY(), 0.01);
+        Assert.assertEquals(expectedEnvelope.getMaxX(), actual.getMaxX(), 0.01);
+        Assert.assertEquals(expectedEnvelope.getMaxY(), actual.getMaxY(), 0.01);
     }
 
     @Test

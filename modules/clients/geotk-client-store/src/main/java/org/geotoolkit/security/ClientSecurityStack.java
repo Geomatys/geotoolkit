@@ -70,9 +70,7 @@ public final class ClientSecurityStack implements ClientSecurity{
     }
 
     /**
-     *
      * @param securities : ClientSecurity objects to wrap together
-     * @return
      */
     public static ClientSecurity wrap(ClientSecurity ... securities){
         return new ClientSecurityStack(securities);

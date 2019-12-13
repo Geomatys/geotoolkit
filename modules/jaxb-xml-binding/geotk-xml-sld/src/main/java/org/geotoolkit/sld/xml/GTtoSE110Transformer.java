@@ -24,20 +24,21 @@ import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import javax.measure.quantity.Length;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import net.iharder.Base64;
+import org.apache.sis.measure.Units;
 import org.apache.sis.util.logging.Logging;
-
+import org.geotoolkit.ogc.xml.FilterToOGC110Converter;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
@@ -136,8 +137,6 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.GenericName;
-import org.apache.sis.measure.Units;
-import org.geotoolkit.ogc.xml.FilterToOGC110Converter;
 
 /**
  *
@@ -795,7 +794,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
                 try {
                     final ByteArrayOutputStream out = new ByteArrayOutputStream();
                     ImageIO.write((RenderedImage)image, "PNG", out);
-                    final String chars = Base64.encodeBytes(out.toByteArray());
+                    final String chars = Base64.getEncoder().encodeToString(out.toByteArray());
                     ict.getContent().add(chars);
                     mt.setInlineContent(ict);
                 } catch (IOException ex) {
@@ -846,7 +845,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
             try {
                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                 ImageIO.write((RenderedImage)image, "PNG", out);
-                final String chars = Base64.encodeBytes(out.toByteArray());
+                final String chars = Base64.getEncoder().encodeToString(out.toByteArray());
                 ict.getContent().add(chars);
                 egt.setInlineContent(ict);
             } catch (IOException ex) {

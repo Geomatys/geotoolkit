@@ -59,7 +59,7 @@ public class GridTraversal implements Spliterator<double[]> {
     /**
      * Create a new traversal analyzer for given polyline.
      *
-     * @param trajectory The polyline ordinates. We expect ordinates of each points are given in order. Example: for
+     * @param trajectory The polyline coordinates. We expect coordinates of each points are given in order. Example: for
      * a 3 dimension polyline composed of points a and b, we expect the array to be: [a0, a1, a2, b0, b1, b2].
      */
     private GridTraversal(PointList trajectory) {
@@ -206,29 +206,29 @@ public class GridTraversal implements Spliterator<double[]> {
 
         /**
          *
-         * @return Number of ordinates in a single point (length of a point vector).
+         * @return Number of coordinates in a single point (length of a point vector).
          */
         int getDimension();
     }
 
     private static class ContiguousArrayPoint implements PointList {
 
-        final double[] ordinates;
+        final double[] coordinates;
         final int dimension;
 
         final int size;
 
-        public ContiguousArrayPoint(int dimension, double... ordinates) {
+        public ContiguousArrayPoint(int dimension, double... coordinates) {
             ArgumentChecks.ensureStrictlyPositive("dimension", dimension);
-            if (ordinates.length % dimension != 0) {
+            if (coordinates.length % dimension != 0) {
                 throw new IllegalArgumentException(String.format(
                         "Given array size (%d) is not a multiple the number of dimensions (%d) specified",
-                        ordinates.length, dimension
+                        coordinates.length, dimension
                 ));
             }
-            this.ordinates = ordinates;
+            this.coordinates = coordinates;
             this.dimension = dimension;
-            size = ordinates.length / dimension;
+            size = coordinates.length / dimension;
         }
 
         @Override
@@ -238,13 +238,13 @@ public class GridTraversal implements Spliterator<double[]> {
 
         @Override
         public boolean isEmpty() {
-            return ordinates.length <= 0;
+            return coordinates.length <= 0;
         }
 
         @Override
         public double[] getPoint(int index) {
             index *= dimension;
-            return Arrays.copyOfRange(ordinates, index, index + dimension);
+            return Arrays.copyOfRange(coordinates, index, index + dimension);
         }
 
         @Override
@@ -287,7 +287,7 @@ public class GridTraversal implements Spliterator<double[]> {
      * Return a new polyline, populated with points intersecting a grid of reference - origin on (0, 0) and cell size
      * is 1.
      *
-     * @param trajectory The polyline ordinates. We expect ordinates of each points are given in order. Example: for
+     * @param trajectory The polyline coordinates. We expect coordinates of each points are given in order. Example: for
      * a 3 dimension polyline composed of points a and b, we expect the array to be: [a0, a1, a2, b0, b1, b2].
      * @param dimension Number of dimension of the polyline.
      * @param includeStart True if we want result stream to give back start point of given trajectory on first move.

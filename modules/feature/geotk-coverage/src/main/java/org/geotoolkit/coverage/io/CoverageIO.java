@@ -80,7 +80,7 @@ public final class CoverageIO extends Static {
      * @throws DataStoreException If the coverage can not be read.
      */
     public static GridCoverage read(final Object input) throws DataStoreException {
-        final GridCoverageReader reader = createSimpleReader(input);
+        final ImageCoverageReader reader = createSimpleReader(input);
         try {
             return reader.read(null);
         } finally {
@@ -133,7 +133,7 @@ public final class CoverageIO extends Static {
             param = new GridCoverageWriteParam();
             param.setFormatName(formatName);
         }
-        final GridCoverageWriter writer = new ImageCoverageWriter();
+        final ImageCoverageWriter writer = new ImageCoverageWriter();
         try {
             writer.setOutput(output);
             writer.write(coverages, param);
@@ -155,7 +155,7 @@ public final class CoverageIO extends Static {
      * @return A coverage reader for the given input.
      * @throws DataStoreException If the reader can not be created for the given file.
      */
-    public static GridCoverageReader createSimpleReader(final Object input) throws DataStoreException {
+    public static ImageCoverageReader createSimpleReader(final Object input) throws DataStoreException {
         ensureNonNull("input", input);
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(input);
@@ -177,7 +177,7 @@ public final class CoverageIO extends Static {
      *
      * @since 3.20
      */
-    public static GridCoverageWriter createSimpleWriter(final Object output) throws DataStoreException {
+    public static ImageCoverageWriter createSimpleWriter(final Object output) throws DataStoreException {
         ensureNonNull("output", output);
         final ImageCoverageWriter writer = new ImageCoverageWriter();
         writer.setOutput(output);
@@ -200,7 +200,7 @@ public final class CoverageIO extends Static {
      * @return A mosaic reader for the given tiles and CRS.
      * @throws DataStoreException If the reader can not be created for the given tiles.
      */
-    public static GridCoverageReader createMosaicReader(final Object input,
+    public static ImageCoverageReader createMosaicReader(final Object input,
             final CoordinateReferenceSystem crs) throws DataStoreException
     {
         ensureNonNull("input", input);
@@ -227,7 +227,7 @@ public final class CoverageIO extends Static {
      * @deprecated use {@link #writeOrReuseMosaic(Path)} instead
      */
     @Deprecated
-    public static GridCoverageReader writeOrReuseMosaic(final File input) throws DataStoreException {
+    public static ImageCoverageReader writeOrReuseMosaic(final File input) throws DataStoreException {
        return writeOrReuseMosaic(input.toPath());
     }
 
@@ -244,7 +244,7 @@ public final class CoverageIO extends Static {
      * @return A coverage reader for the given file.
      * @throws DataStoreException If the reader can not be created for the given file.
      */
-    public static GridCoverageReader writeOrReuseMosaic(final Path input) throws DataStoreException {
+    public static ImageCoverageReader writeOrReuseMosaic(final Path input) throws DataStoreException {
         ensureNonNull("input", input);
         return new MosaicCoverageReader(input, true);
     }

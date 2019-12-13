@@ -89,7 +89,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     /**
      * The coverage reader on which to delegate all {@code ImageReader} method invocations.
      */
-    protected final GridCoverageReader reader;
+    protected final ImageCoverageReader reader;
 
     /**
      * The number of images, or 0 if not yet computed.
@@ -115,7 +115,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * @param reader The coverage reader on which to delegate all
      *        {@code ImageReader} method invocations.
      */
-    public ImageReaderAdapter(final GridCoverageReader reader) {
+    public ImageReaderAdapter(final ImageCoverageReader reader) {
         super(null);
         if (reader == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "reader"));

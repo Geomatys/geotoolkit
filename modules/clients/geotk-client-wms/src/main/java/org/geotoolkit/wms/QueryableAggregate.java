@@ -17,29 +17,31 @@
 package org.geotoolkit.wms;
 
 import java.awt.Image;
+import java.util.List;
+import java.util.Optional;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.content.CoverageDescription;
 
 /**
  *
  * @author Alexis Manin (Geomatys)
  */
-public class QueryableAggregate extends WMSAggregate implements GridCoverageResource {
+public class QueryableAggregate extends WMSAggregate implements GridCoverageResource, StoreResource {
 
     final AbstractLayer layer;
-    final WMSCoverageResource queryableResource;
+    final WMSResource queryableResource;
 
     final NamedIdentifier name;
 
@@ -52,14 +54,8 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
         }
         this.layer = layer;
         name = new NamedIdentifier(Names.createScopedName(null, ":", layer.getName()));
-        queryableResource = new WMSCoverageResource(client, layer.getName());
+        queryableResource = new WMSResource(client, layer.getName());
     }
-
-    @Override
-    public NamedIdentifier getIdentifier() {
-        return name;
-    }
-
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
@@ -67,13 +63,8 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
     }
 
     @Override
-    public CoverageDescription getCoverageDescription() {
-        return queryableResource.getCoverageDescription();
-    }
-
-    @Override
-    public boolean isWritable() throws DataStoreException {
-        return queryableResource.isWritable();
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        return queryableResource.getSampleDimensions();
     }
 
     @Override
@@ -81,43 +72,27 @@ public class QueryableAggregate extends WMSAggregate implements GridCoverageReso
         return queryableResource.getOriginator();
     }
 
-    @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
-        return queryableResource.acquireReader();
-    }
-
-    @Override
-    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-        return queryableResource.acquireWriter();
-    }
-
-    @Override
-    public void recycle(GridCoverageReader reader) {
-        queryableResource.recycle(reader);
-    }
-
-    @Override
-    public void recycle(GridCoverageWriter writer) {
-        queryableResource.recycle(writer);
-    }
-
-    @Override
     public Image getLegend() throws DataStoreException {
         return queryableResource.getLegend();
     }
 
     @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        queryableResource.addListener(listener, eventType);
+    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
+        queryableResource.addListener(eventType, listener);
     }
 
     @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        queryableResource.removeListener(listener, eventType);
+    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+        queryableResource.removeListener(eventType, listener);
     }
 
     @Override
-    public Envelope getEnvelope() throws DataStoreException {
+    public Optional<Envelope> getEnvelope() throws DataStoreException {
         return queryableResource.getEnvelope();
+    }
+
+    @Override
+    public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+        return queryableResource.read(domain, range);
     }
 }

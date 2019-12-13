@@ -86,7 +86,6 @@ public interface FeatureMapLayer extends MapLayer {
 
     /**
      * Get all values of given extra dimension.
-     * @param def
      * @return collection never null, can be empty.
      */
     Collection<Range> getDimensionRange(DimensionDef def) throws DataStoreException;

@@ -16,17 +16,18 @@
  */
 package org.geotoolkit.cql;
 
+import java.text.ParseException;
+import org.apache.sis.cql.CQLException;
+import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-import java.text.ParseException;
-import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.temporal.object.TemporalUtilities;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 

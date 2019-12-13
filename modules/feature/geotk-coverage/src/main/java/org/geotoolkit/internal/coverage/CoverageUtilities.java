@@ -17,7 +17,8 @@
  */
 package org.geotoolkit.internal.coverage;
 
-import java.awt.RenderingHints;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
@@ -98,7 +99,7 @@ public final class CoverageUtilities extends Static {
         if (coverage instanceof GridCoverage) {
             final GridGeometry2D geometry =
                     GridGeometry2D.castOrCopy(((GridCoverage) coverage).getGridGeometry());
-            if (geometry.isDefined(GridGeometry2D.CRS)) {
+            if (geometry.isDefined(GridGeometry.CRS)) {
                 return geometry.getCoordinateReferenceSystem2D();
             } else try {
                 return geometry.reduce(coverage.getCoordinateReferenceSystem());
@@ -127,7 +128,7 @@ public final class CoverageUtilities extends Static {
         if (coverage instanceof GridCoverage) {
             final GridGeometry2D geometry =
                     GridGeometry2D.castOrCopy(((GridCoverage) coverage).getGridGeometry());
-            if (geometry.isDefined(GridGeometry2D.ENVELOPE)) {
+            if (geometry.isDefined(GridGeometry.ENVELOPE)) {
                 return geometry.getEnvelope2D();
             } else {
                 return geometry.reduce(coverage.getGridGeometry().getEnvelope());
@@ -573,5 +574,21 @@ public final class CoverageUtilities extends Static {
             return ((org.geotoolkit.coverage.grid.GridCoverage) coverage).getName();
         }
         return new SimpleInternationalString("");
+    }
+
+    /**
+     * return a part of given image corresponding to input extent.
+     * @param baseImage The image to extract a piece of.
+     * @param subgrid Rectangle corresponding to the piece of image to extract.
+     * @return Part of image corresponding to given extent.
+     * @throws java.awt.image.RasterFormatException if given extent does not represent a piece of input image.
+     */
+    public static BufferedImage subgrid(final BufferedImage baseImage, final GridExtent subgrid) {
+        final int[] imgAxes = subgrid.getSubspaceDimensions(2);
+        final int subX = Math.toIntExact(subgrid.getLow(imgAxes[0]));
+        final int subY = Math.toIntExact(subgrid.getLow(imgAxes[1]));
+        final int subWidth = Math.toIntExact(Math.round(subgrid.getSize(imgAxes[0])));
+        final int subHeight = Math.toIntExact(Math.round(subgrid.getSize(imgAxes[1])));
+        return baseImage.getSubimage(subX, subY, subWidth, subHeight);
     }
 }

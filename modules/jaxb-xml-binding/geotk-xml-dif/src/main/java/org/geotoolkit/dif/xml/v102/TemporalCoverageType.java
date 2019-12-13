@@ -120,6 +120,17 @@ public class TemporalCoverageType {
     @XmlElement(name = "Temporal_Info")
     protected TemporalInfoType temporalInfo;
 
+    public TemporalCoverageType() {
+
+    }
+
+    public TemporalCoverageType(RangeDateTimeType range) {
+        if (range != null) {
+            this.rangeDateTime = new ArrayList<>();
+            this.rangeDateTime.add(range);
+        }
+    }
+
     /**
      * Obtient la valeur de la propriété timeType.
      *

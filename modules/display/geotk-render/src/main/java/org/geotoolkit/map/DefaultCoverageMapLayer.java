@@ -24,10 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.multires.Pyramids;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.storage.coverage.PyramidalCoverageResource;
+import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
 
@@ -102,19 +99,23 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      */
     @Override
     public Envelope getBounds() {
-        if(ref != null && ref instanceof PyramidalCoverageResource){
-            try {
-                return Pyramids.getEnvelope((PyramidalCoverageResource) ref);
-            } catch (DataStoreException ex) {
-                Logging.getLogger("org.geotoolkit.map").log(Level.SEVERE, null, ex);
-            }
-        }
-
         final GridCoverageResource ref = getResource();
+        // Resource possibly contains the data envelope. We start here, because it's supposed to be the most economic
+        // way to get back the envelope.
+        // TODO: use an expansible list of strategies, and factorize possible cases in super-class.
+        Envelope env = null;
+        try {
+            env = ref.getEnvelope().orElse(null);
+        } catch (DataStoreException e) {
+            LOGGER.log(Level.WARNING, "Cannot access resource envelope.", e);
+        }
+        if (env != null) {
+            return env;
+        }
         try {
             final GridGeometry geom = ref.getGridGeometry();
             if (geom == null) {
-                LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getResource().getIdentifier());
+                LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getResource().getIdentifier().orElse(null));
                 return INFINITE;
             } else {
                 return geom.getEnvelope();
@@ -124,5 +125,4 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             return INFINITE;
         }
     }
-
 }

@@ -61,6 +61,7 @@ public class DTDIgnoreUnmarshaller implements Unmarshaller {
     static {
         SAX_FACTORY = SAXParserFactory.newInstance();
         try {
+            SAX_FACTORY.setNamespaceAware(true);
             SAX_FACTORY.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             SAX_FACTORY.setFeature("http://xml.org/sax/features/validation", false);
         } catch (Exception e) {

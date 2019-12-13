@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.processing.vector.intersect;
 
-import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.vector.VectorDescriptor;
-
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -57,11 +56,11 @@ public final class IntersectDescriptor extends VectorDescriptor {
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, GEOMETRY_IN);
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURESET_IN, GEOMETRY_IN);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURESET_OUT);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new IntersectDescriptor();

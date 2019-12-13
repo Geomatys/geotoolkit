@@ -104,6 +104,14 @@ public class SpatialCoverageType {
     @XmlElement(name = "Spatial_Info")
     protected SpatialInfo spatialInfo;
 
+    public SpatialCoverageType() {
+
+    }
+
+    public SpatialCoverageType(Geometry geometry) {
+        this.geometry = geometry;
+    }
+
     /**
      * Obtient la valeur de la propriété spatialCoverageType.
      *

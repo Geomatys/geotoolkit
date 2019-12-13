@@ -123,7 +123,7 @@ public abstract class SimpleBufferedImageOp implements BufferedImageOp, Serializ
 
     /**
      * Returns the location of the corresponding destination point given a point in the source image.
-     * The default implementation returns the same ordinates than the source point.
+     * The default implementation returns the same coordinates than the source point.
      */
     @Override
     public Point2D getPoint2D(final Point2D srcPt, final Point2D dstPt) {

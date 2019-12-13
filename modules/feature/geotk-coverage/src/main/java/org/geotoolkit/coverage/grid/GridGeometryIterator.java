@@ -4,15 +4,13 @@ import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
-import org.opengis.referencing.datum.PixelInCell;
 
 import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
 
@@ -171,9 +169,6 @@ public class GridGeometryIterator implements Iterator<GridGeometry> {
 
     /**
      * Note : logic copied from Rectangle class, long primitive type variant
-     * @param parent
-     * @param child
-     * @return
      */
     public static boolean isContained2D(GridExtent parent, GridExtent child) {
 

@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.*;
@@ -27,7 +31,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import net.iharder.Base64;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.io.wkt.*;
 import org.apache.sis.referencing.CRS;
@@ -36,8 +39,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.data.multires.Mosaic;
-import org.geotoolkit.data.multires.Pyramid;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -132,7 +135,8 @@ public class XMLPyramid implements Pyramid {
 
         if (serializedCrs != null) {
             try {
-                crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
+                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(serializedCrs)));
+                crsobj = (CoordinateReferenceSystem) in.readObject();
             } catch (Exception ex) {
                 final String msg = "Unable to read base64 serialized CRS, fallback to WKT : "+ex.getMessage();
                 Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, msg);
@@ -168,7 +172,11 @@ public class XMLPyramid implements Pyramid {
 
         if (crs instanceof Serializable) {
             try {
-                this.serializedCrs = Base64.encodeObject((Serializable)crs);
+                ByteArrayOutputStream bo = new ByteArrayOutputStream();
+                ObjectOutputStream out = new ObjectOutputStream(bo);
+                out.writeObject(crs);
+                out.close();
+                this.serializedCrs = Base64.getEncoder().encodeToString(bo.toByteArray());
             } catch (IOException serializedEx) {
                 Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, serializedEx.getMessage(), serializedEx);
             }
@@ -186,35 +194,6 @@ public class XMLPyramid implements Pyramid {
 //////            }
 //////        }
         assert (this.crs != null || serializedCrs != null);
-    }
-
-    @Override
-    public double[] getScales() {
-        final SortedSet<Double> scaleSet = new TreeSet<Double>();
-
-        for(Mosaic m : mosaics()){
-            scaleSet.add(m.getScale());
-        }
-
-        final double[] scales = new double[scaleSet.size()];
-        int i=0;
-        for(Double d : scaleSet){
-            scales[i] = d;
-            i++;
-        }
-        return scales;
-    }
-
-    @Override
-    public Collection<Mosaic> getMosaics(int index) {
-        final List<Mosaic> candidates = new ArrayList<>();
-        final double[] scales = getScales();
-        for(Mosaic m : mosaics()){
-            if(m.getScale() == scales[index]){
-                candidates.add(m);
-            }
-        }
-        return candidates;
     }
 
     @Override
@@ -268,8 +247,8 @@ public class XMLPyramid implements Pyramid {
         mosaic.tileWidth = template.getTileSize().width;
         mosaic.tileHeight = template.getTileSize().height;
         mosaic.upperLeft = template.getUpperLeftCorner().getCoordinate();
-        mosaic.dataPixelWidth = template.getDataExtent().width;
-        mosaic.dataPixelHeight = template.getDataExtent().height;
+        mosaic.dataPixelWidth = template.getDataExtent().getSize(0);
+        mosaic.dataPixelHeight = template.getDataExtent().getSize(1);
         mosaics.add(mosaic);
         mosaic.initialize(this);
         set.getRef().save();

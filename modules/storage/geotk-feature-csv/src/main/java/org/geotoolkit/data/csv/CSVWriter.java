@@ -31,7 +31,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import static org.geotoolkit.data.csv.CSVStore.UTF8_ENCODING;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.temporal.object.TemporalUtilities;

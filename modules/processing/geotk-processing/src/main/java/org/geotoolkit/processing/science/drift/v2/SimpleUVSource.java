@@ -3,7 +3,33 @@
  */
 package org.geotoolkit.processing.science.drift.v2;
 
-import java.awt.Point;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridDerivation;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.DirectPosition1D;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.opengis.coverage.PointOutsideCoverageException;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.*;
+import org.opengis.util.FactoryException;
+
+import javax.vecmath.Vector2d;
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -12,37 +38,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
-import javax.vecmath.Vector2d;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridDerivation;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.DirectPosition1D;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.metadata.AxisDirections;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.SingleCRS;
 
+import static org.apache.sis.coverage.grid.GridRoundingMode.ENCLOSING;
 import static org.geotoolkit.processing.science.drift.v2.Utilities.*;
-import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.crs.VerticalCRS;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * TODO : add logic to re-use previously queried Calibration2D and Snapshot objects when same slices are used multiple
@@ -75,7 +73,7 @@ class SimpleUVSource implements UVSource {
 
         final List<SampleDimension> sampleDims = source.getSampleDimensions();
         if (sampleDims == null) {
-            throw new DataStoreException("No sample dimension available for given coverage: "+source.getIdentifier());
+            throw new DataStoreException("No sample dimension available for given coverage: "+source.getIdentifier().orElse(null));
         }
         final int expectedNbBands = Math.max(uvIndices.x, uvIndices.y) + 1;
         final int actualNbBands = sampleDims.size();
@@ -83,7 +81,7 @@ class SimpleUVSource implements UVSource {
             throw new IllegalArgumentException(String.format(
                     "Given coverage should contain at least %d bands as U and V are located in bands %d and %d "
                             + "respectively, but only %d bands are available in input coverage %s.",
-                    expectedNbBands, uvIndices.x, uvIndices.y, actualNbBands, source.getIdentifier()
+                    expectedNbBands, uvIndices.x, uvIndices.y, actualNbBands, source.getIdentifier().orElse(null)
             ));
         }
         this.source = source;
@@ -175,7 +173,7 @@ class SimpleUVSource implements UVSource {
                         -> getSubCrs(userOrigin::getCoordinateReferenceSystem, VERTICAL_EXTRACTOR)
                         .map(component -> {
                             final DirectPosition1D elevation = new DirectPosition1D(component.crs);
-                            elevation.ordinate = userOrigin.getOrdinate(component.idx);
+                            elevation.coordinate = userOrigin.getOrdinate(component.idx);
                             return (DirectPosition) elevation;
                         })
                         .orElseGet(() -> {
@@ -198,7 +196,7 @@ class SimpleUVSource implements UVSource {
         @Override
         public Optional<UVSource.Calibration2D> setTime(Instant target) {
             final DirectPosition1D timePoint = new DirectPosition1D(DEFAULT_TEMPORAL_CRS);
-            timePoint.ordinate = target.getEpochSecond();
+            timePoint.coordinate = target.getEpochSecond();
             try {
                 final GridGeometry geom2d = atOrigin.derive()
                         .slice(timePoint)
@@ -254,6 +252,7 @@ class SimpleUVSource implements UVSource {
                 final RenderedImage snapshotImg;
                 try {
                     GridGeometry snapshotGeom = sliceGeom.derive()
+                            .rounding(ENCLOSING)
                             .subgrid(target)
                             .build()
                             .reduce(horizontalAxisIdx, horizontalAxisIdx+1);

@@ -18,13 +18,14 @@ package org.geotoolkit.wcs;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
@@ -53,20 +54,20 @@ public class WebCoverageClient extends AbstractClient {
     }
 
     public WebCoverageClient(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(WCSClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(WCSProvider.PARAMETERS, serverURL, security, null));
         if (version.equals("1.0.0")) {
-            parameters.getOrCreate(WCSClientFactory.VERSION).setValue(version);
+            parameters.getOrCreate(WCSProvider.VERSION).setValue(version);
         } else {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
     }
 
     public WebCoverageClient(final URL serverURL, final ClientSecurity security, final WCSVersion version) {
-        super(create(WCSClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(WCSProvider.PARAMETERS, serverURL, security, null));
         if(version == null){
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
-        parameters.getOrCreate(WCSClientFactory.VERSION).setValue(version.getCode());
+        parameters.getOrCreate(WCSProvider.VERSION).setValue(version.getCode());
     }
 
     public WebCoverageClient(final ParameterValueGroup params) {
@@ -74,20 +75,20 @@ public class WebCoverageClient extends AbstractClient {
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(WCSClientFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(WCSProvider.NAME);
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     /**
      * Returns the currently used version for this server
      */
     public WCSVersion getVersion() {
-        return WCSVersion.fromCode(parameters.getValue(WCSClientFactory.VERSION));
+        return WCSVersion.fromCode(parameters.getValue(WCSProvider.VERSION));
     }
 
     /**

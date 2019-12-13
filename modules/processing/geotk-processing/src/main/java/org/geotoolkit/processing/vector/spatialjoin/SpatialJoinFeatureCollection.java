@@ -16,9 +16,10 @@
  */
 package org.geotoolkit.processing.vector.spatialjoin;
 
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.WrapFeatureCollection;
-
+import java.util.stream.Stream;
+import org.apache.sis.internal.storage.AbstractFeatureSet;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -27,10 +28,11 @@ import org.opengis.feature.FeatureType;
  * @author Quentin Boileau
  * @module
  */
-public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
+public class SpatialJoinFeatureCollection extends AbstractFeatureSet {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection sourceFC;
+    private final FeatureSet targetFC;
+    private final FeatureSet sourceFC;
     private final boolean method;
 
     /**
@@ -39,10 +41,10 @@ public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
      * @param targetFC the target FeatureCollection
      * @param method boolean to set the used method
      */
-    public SpatialJoinFeatureCollection(final FeatureCollection sourceFC,
-            final FeatureCollection targetFC, final boolean method) {
-
-        super(targetFC);
+    public SpatialJoinFeatureCollection(final FeatureSet sourceFC,
+            final FeatureSet targetFC, final boolean method) throws DataStoreException {
+        super(null);
+        this.targetFC = targetFC;
         this.sourceFC = sourceFC;
         this.method = method;
         this.newFeatureType = SpatialJoinProcess.concatType(targetFC.getType(), sourceFC.getType());
@@ -60,8 +62,16 @@ public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
     /**
      *  {@inheritDoc }
      */
+    private Feature modify(final Feature original) {
+        try {
+            return SpatialJoinProcess.join(original, newFeatureType, sourceFC, method);
+        } catch (DataStoreException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
+    }
+
     @Override
-    protected Feature modify(final Feature original) {
-        return SpatialJoinProcess.join(original, newFeatureType, sourceFC, method);
+    public Stream<Feature> features(boolean parallel) throws DataStoreException {
+        return targetFC.features(parallel).map(this::modify);
     }
 }

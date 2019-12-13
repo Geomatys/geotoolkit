@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -70,4 +72,45 @@ public class GeoJSONObject implements Serializable {
     public void setCrs(GeoJSONCRS crs) {
         this.crs = crs;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[");
+        sb.append(this.getClass().getSimpleName()).append("]\n");
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (bbox != null) {
+            sb.append("bbox:").append(bbox).append('\n');
+        }
+        if (crs != null) {
+            sb.append("crs:").append(crs).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof GeoJSONObject) {
+            GeoJSONObject that = (GeoJSONObject) obj;
+            return Objects.equals(this.type, that.type) &&
+                   Objects.equals(this.bbox, that.bbox) &&
+                   Objects.equals(this.crs,  that.crs);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + Objects.hashCode(this.type);
+        hash = 59 * hash + Arrays.hashCode(this.bbox);
+        hash = 59 * hash + Objects.hashCode(this.crs);
+        return hash;
+    }
+
+
 }

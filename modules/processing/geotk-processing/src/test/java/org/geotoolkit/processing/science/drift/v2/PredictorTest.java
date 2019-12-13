@@ -14,10 +14,9 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.*;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -49,14 +48,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.apache.sis.storage.DataStore;
-import org.apache.sis.storage.DataStores;
-import org.apache.sis.storage.StorageConnector;
 
 import static org.opengis.metadata.spatial.DimensionNameType.*;
 
@@ -73,12 +70,17 @@ public class PredictorTest {
     );
 
     static final GridExtent DATA_GRID = new GridExtent(new DimensionNameType[]{COLUMN, ROW, TIME}, new long[3], new long[]{16, 16, 8}, false);
-    static final MathTransform DATA_GRID2CRS = MathTransforms.compound(
-            new AffineTransform2D(360d/DATA_GRID.getSize(0), 0, 0, -180d/DATA_GRID.getSize(1), -180, 90),
-            MathTransforms.linear(2, 0)
-    );
+    static final MathTransform DATA_GRID2CRS;
+    static {
+        final double scaleX = 360d / DATA_GRID.getSize(0);
+        final double scaleY = -180d / DATA_GRID.getSize(1);
+        DATA_GRID2CRS = MathTransforms.compound(
+                new AffineTransform2D(scaleX, 0, 0, scaleY, -180+scaleX/2d, 90+scaleY/2d),
+                MathTransforms.linear(2, 0)
+        );
+    }
 
-    static final GridGeometry DATA_GEOM = new GridGeometry(DATA_GRID, PixelInCell.CELL_CORNER, DATA_GRID2CRS, DATA_CRS);
+    static final GridGeometry DATA_GEOM = new GridGeometry(DATA_GRID, PixelInCell.CELL_CENTER, DATA_GRID2CRS, DATA_CRS);
 
     static final PredictorDescriptor DESCRIPTOR = new PredictorDescriptor(GeotkProcessingRegistry.IDENTIFICATION);
 
@@ -234,13 +236,13 @@ public class PredictorTest {
         }
 
         @Override
-        public Envelope getEnvelope() throws DataStoreException {
-            return DATA_GEOM.getEnvelope();
+        public Optional<Envelope> getEnvelope() throws DataStoreException {
+            return Optional.of(DATA_GEOM.getEnvelope());
         }
 
         @Override
-        public GenericName getIdentifier() throws DataStoreException {
-            return name;
+        public Optional<GenericName> getIdentifier() throws DataStoreException {
+            return Optional.of(name);
         }
 
         @Override
@@ -249,13 +251,11 @@ public class PredictorTest {
         }
 
         @Override
-        public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
         }
 
         @Override
-        public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
         }
     }
 }

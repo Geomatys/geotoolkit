@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.processing.coverage.volume;
 
+import org.apache.sis.storage.GridCoverageResource;
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * <p>
- * Helper class for compute volume from Digital Elevation Model (DEM) defined by {@link GridCoverageReader} and between
+ * Helper class for compute volume from Digital Elevation Model (DEM) defined by {@link GridCoverageResource} and between
  * area surface define by {@link Geometry} and maximal or minimal altitude define by a ceiling.
  * </p>
  * <p>
@@ -39,7 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *     <th>Obligatory Parameter</th>
  *   </tr><tr>
  *     <td>&nbsp;{@link #gcReader}&nbsp;</td>
- *     <td>&nbsp;{@linkplain #setAnotherReader(org.geotoolkit.coverage.io.GridCoverageReader) GridCoverageReader instance} or
+ *     <td>&nbsp;{@linkplain #setAnotherReader(org.geotoolkit.coverage.io.GridCoverageResource) GridCoverageResource instance} or
  *               by builder constructor &nbsp;</td>
  *     <td>&nbsp;&nbsp;</td>
  *      <td>&nbsp;{@code true}&nbsp;</td>
@@ -74,9 +74,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class ComputeVolumeBuilder {
 
     /**
-     * {@link GridCoverageReader} to get {@link GridCoverage} which contain Digital Elevation Model.
+     * {@link GridCoverageResource} to get {@link GridCoverage} which contain Digital Elevation Model.
      */
-    private GridCoverageReader gcReader;
+    private GridCoverageResource gcReader;
 
     /**
      * {@link Geometry geometry} which represente area where volume is computed.
@@ -105,7 +105,7 @@ public class ComputeVolumeBuilder {
     private CoordinateReferenceSystem geomCRS = null;
 
     /**
-     * Band index where we compute volume from {@link ComputeVolumeBuilder#gcReader GridCoverageReader}.<br/>
+     * Band index where we compute volume from {@link ComputeVolumeBuilder#gcReader GridCoverageResource}.<br/>
      * Default value is 0.
      */
     private int bandIndex = 0;
@@ -113,14 +113,14 @@ public class ComputeVolumeBuilder {
     /**
      * Create a builder to compute volume.
      *
-     * @param gcReader {@link GridCoverageReader} which permit to get DEM which contain elevation values to compute volume.
+     * @param gcReader {@link GridCoverageResource} which permit to get DEM which contain elevation values to compute volume.
      * @param jtsGeom {@link Geometry} which represente area on DEM where compute volume.
      * @param zCeiling Maximal altitude value.
      * @see ComputeVolumeBuilder#gcReader.
      * @see ComputeVolumeBuilder#jtsGeom.
      * @see ComputeVolumeBuilder#zCeiling
      */
-    public ComputeVolumeBuilder(final GridCoverageReader gcReader, final Geometry jtsGeom, final double zCeiling) {
+    public ComputeVolumeBuilder(final GridCoverageResource gcReader, final Geometry jtsGeom, final double zCeiling) {
         ArgumentChecks.ensureNonNull("geometry", jtsGeom);
         ArgumentChecks.ensureNonNull("GridcoverageReader", gcReader);
         this.gcReader = gcReader;
@@ -129,14 +129,14 @@ public class ComputeVolumeBuilder {
     }
 
     /**
-     * Set an another {@link GridCoverageReader} to avoid to create another {@link ComputeVolumeBuilder} object.
+     * Set an another {@link GridCoverageResource} to avoid to create another {@link ComputeVolumeBuilder} object.
      *
-     * @param reader {@link GridCoverageReader} which permit to get DEM which contain elevation values to compute volume.
+     * @param resource {@link GridCoverageResource} which permit to get DEM which contain elevation values to compute volume.
      * @see ComputeVolumeBuilder#gcReader.
      */
-    public void setAnotherReader(final GridCoverageReader reader) {
-        ArgumentChecks.ensureNonNull("GridcoverageReader", reader);
-        this.gcReader = reader;
+    public void setAnotherReader(final GridCoverageResource resource) {
+        ArgumentChecks.ensureNonNull("GridcoverageReader", resource);
+        this.gcReader = resource;
     }
 
     /**
@@ -202,7 +202,7 @@ public class ComputeVolumeBuilder {
     public double getVolume() throws ProcessException {
         final ProcessDescriptor volumeDescriptor = ComputeVolumeDescriptor.INSTANCE;
         final ParameterValueGroup volumeInput    = volumeDescriptor.getInputDescriptor().createValue();
-        volumeInput.parameter(ComputeVolumeDescriptor.INPUT_READER_NAME).setValue(gcReader);
+        volumeInput.parameter(ComputeVolumeDescriptor.INPUT_RESOURCE_NAME).setValue(gcReader);
         volumeInput.parameter(ComputeVolumeDescriptor.INPUT_JTS_GEOMETRY_NAME).setValue(jtsGeom);
         volumeInput.parameter(ComputeVolumeDescriptor.INPUT_GEOMETRY_ALTITUDE_NAME).setValue(groundAltitude);
         volumeInput.parameter(ComputeVolumeDescriptor.INPUT_MAX_CEILING_NAME).setValue(zCeiling);

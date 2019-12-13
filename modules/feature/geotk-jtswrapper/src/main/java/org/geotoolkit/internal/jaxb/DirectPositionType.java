@@ -170,11 +170,6 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Gets the value of the srsName property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getSrsName() {
         return srsName;
@@ -182,11 +177,6 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Sets the value of the srsName property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setSrsName(final String value) {
         this.srsName = value;
@@ -195,10 +185,6 @@ public class DirectPositionType implements DirectPosition {
     /**
      * Gets the value of the srsDimension property.
      *
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *
      */
     public Integer getSrsDimension() {
         return srsDimension;
@@ -206,11 +192,6 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Sets the value of the srsDimension property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *
      */
     public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
@@ -218,7 +199,6 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Gets the value of the axisLabels property.
-     *
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {

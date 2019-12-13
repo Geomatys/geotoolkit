@@ -16,18 +16,34 @@
  */
 package org.geotoolkit.processing.coverage.resample;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.util.Collections;
+import java.util.stream.IntStream;
+
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -35,12 +51,13 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.AbstractProcessTest;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.junit.*;
-import static org.junit.Assert.*;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -180,9 +197,113 @@ public class ResampleTest extends AbstractProcessTest {
         testPart(raster,  0, 60, 40, 60,NN);
     }
 
+    /**
+     * The aim of this test is to ensure resample is able to handle badly defined data where longitude is specified as a
+     * 0..360 value, but grid transform works in -180..+180. This is a corner-case where resample should analyze input
+     * grids and detect that wrap-around is not needed.
+     */
+    @Test
+    public void resampleFalse0_360() throws Exception {
+            /*
+            Create a grid geometry based on a 0-360 CRS but whose longitude coordinates cross the greenwich meridian
+            using negative values.
+            GridGeometry
+              ├─Grid extent
+              │   ├─Dimension 0: [0 … 200] (201 cells)
+              │   └─Dimension 1: [0 … 300] (301 cells)
+              ├─Geographic extent
+              │   ├─Upper bound:  53°01′30″N  12°03′01″E
+              │   └─Lower bound:  37°58′29″N  08°03′00″W
+              ├─Envelope
+              │   ├─Geodetic longitude:              -8.05 … 12.05   ∆Lon = 0.1°
+              │   └─Geodetic latitude:  37.974999999999994 … 53.025  ∆Lat = 0.05°
+              ├─Coordinate reference system
+              │   └─grib-lonlat-crs
+              └─Conversion (origin in a cell center)
+                  └─┌                  ┐
+                    │ 0.1   0     -8.0 │
+                    │ 0    -0.05  53.0 │
+                    │ 0     0      1   │
+                    └                  ┘
+            */
+            final GridGeometry source = new GridGeometry(
+                    new GridExtent(200, 300),
+                    PixelInCell.CELL_CENTER,
+                    new AffineTransform2D(0.1, 0, 0, -0.05, -8.0, 53.0),
+                    DefaultGeographicCRS
+                            .castOrCopy(CommonCRS.WGS84.normalizedGeographic())
+                            .forConvention(AxesConvention.POSITIVE_RANGE)
+            );
+
+        final GridGeometry target = new GridGeometry(
+                new GridExtent(17, 10),
+                PixelInCell.CELL_CENTER,
+                new AffineTransform2D(1, 0, 0, -1, -7, 50),
+                CommonCRS.WGS84.normalizedGeographic()
+        );
+
+        final OutputGridBuilder builder = new OutputGridBuilder(source, target);
+        final MathTransform trs = builder.forDefaultRendering();
+
+        //transform point should be in the left side of source image
+        double[] crd = new double[]{0,0};
+        trs.transform(crd, 0, crd, 0, 1);
+        assertTrue(crd[0] < 50);
+    }
+
+    /**
+     * Ensures that resample is capable of applying a wrap-around transform when processing from a 0..360 data to a
+     * -180..+180 one.
+     *
+     * @throws Exception If anything unexpected append.
+     */
+    @Test
+    public void testTrue0_360() throws Exception {
+        // Create a 0-360 source
+        final CoordinateReferenceSystem crs360 = DefaultGeographicCRS
+                .castOrCopy(CommonCRS.WGS84.normalizedGeographic())
+                .forConvention(AxesConvention.POSITIVE_RANGE);
+
+        final GridGeometry source = new GridGeometry(
+                new GridExtent(32, 32),
+                PixelInCell.CELL_CORNER,
+                new AffineTransform2D(1, 0, 0, -1, 164, 0),
+                crs360
+        );
+
+        final GridGeometry target = new GridGeometry(
+                new GridExtent(7, 4),
+            PixelInCell.CELL_CORNER,
+                    new AffineTransform2D(1, 0, 0, -1, -173, 0),
+            CommonCRS.WGS84.normalizedGeographic()
+        );
+
+        final BufferedImage sourceImage = BufferedImages.createImage(32, 32, 1, DataBuffer.TYPE_DOUBLE);
+        sourceImage.getRaster().setPixels(0, 0, 16, 32, IntStream.range(0, 16*32).map(idx -> -1).toArray());
+        sourceImage.getRaster().setPixels(16, 0, 16, 32, IntStream.range(0, 16*32).map(idx -> 1).toArray());
+        final ResampleProcess.NoConversionCoverage sourceCvg = new ResampleProcess.NoConversionCoverage(
+                source,
+                Collections.singleton(
+                        new SampleDimension.Builder()
+                                .addQuantitative("values", -1, 1, Units.UNITY)
+                                .build()
+                ),
+                sourceImage
+        );
+        final ResampleProcess process = new ResampleProcess(sourceCvg, null, target, InterpolationCase.NEIGHBOR, new double[]{Double.NaN});
+        final GridCoverage result = process.executeNow();
+
+        assertArrayEquals(
+                "Output image",
+                IntStream.range(0, 7*4).mapToDouble(idx -> 1).toArray(),
+                result.render(null).getData().getPixels(0, 0, 7, 4, (double[])null),
+                1e-9
+        );
+    }
+
     private static void testPart(Raster raster, int minx, int maxx, int miny, int maxy, double value){
-        for(int x=minx;x<maxx;x++){
-            for(int y=miny; y<maxy;y++){
+        for (int x=minx;x<maxx;x++) {
+            for (int y=miny; y<maxy;y++) {
                 assertEquals(value, raster.getPixel(x, y, (double[])null)[0], DELTA);
             }
         }

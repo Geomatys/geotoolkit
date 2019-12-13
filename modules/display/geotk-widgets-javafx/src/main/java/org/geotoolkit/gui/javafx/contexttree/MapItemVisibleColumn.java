@@ -47,6 +47,7 @@ public class MapItemVisibleColumn extends TreeTableColumn{
         setPrefWidth(26);
         setMinWidth(26);
         setMaxWidth(26);
+        setSortable(false);
 
         setCellValueFactory((Object param) -> {
             try {

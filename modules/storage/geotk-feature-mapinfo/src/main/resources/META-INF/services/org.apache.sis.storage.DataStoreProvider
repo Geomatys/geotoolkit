@@ -1,2 +1,1 @@
-org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory
-org.geotoolkit.data.mapinfo.mif.MIFFolderFeatureStoreFactory
+org.geotoolkit.data.mapinfo.mif.MIFProvider

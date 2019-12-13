@@ -18,6 +18,7 @@
 package org.geotoolkit.observation;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
@@ -41,7 +42,7 @@ public interface ObservationStore {
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getOpenParameters();
+    Optional<ParameterValueGroup> getOpenParameters();
 
     /**
      * Get the factory which created this source.
@@ -88,14 +89,6 @@ public interface ObservationStore {
      * @return An Observation Writer.
      */
     public abstract ObservationWriter getWriter();
-
-    /**
-     * Return an Observation Writer on the data.
-     *
-     * @param toClone
-     * @return An Observation Writer.
-     */
-    public abstract ObservationFilter cloneObservationFilter(ObservationFilter toClone);
 
     void close() throws DataStoreException;
 

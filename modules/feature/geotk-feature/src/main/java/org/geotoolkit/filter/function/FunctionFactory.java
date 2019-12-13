@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.filter.function;
 
+import java.util.Set;
+import org.apache.sis.internal.feature.FunctionRegister;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
@@ -29,7 +31,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface FunctionFactory {
+public interface FunctionFactory extends FunctionRegister {
 
     /**
      * Factory name.
@@ -40,7 +42,7 @@ public interface FunctionFactory {
     /**
      * @return Names of the created functions.
      */
-    String[] getNames();
+    Set<String> getNames();
 
     /**
      * Create a function with the given parameters.

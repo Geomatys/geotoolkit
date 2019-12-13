@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+Example extracted from GML 3.2.1 specification, section 9.9.1
+-->
+<xs:schema xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:rb="http://bretagne.fr/rb" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://geomatys.com/test">
+    <xs:import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+
+    <xs:element name="Road" type="RoadType"/>
+    <xs:element name="RoadSegment" type="RoadSegmentType"/>
+
+    <xs:complexType name="RoadType">
+        <xs:complexContent>
+            <xs:extension base="gml:AbstractFeatureType">
+                <xs:sequence>
+                    <xs:element name="segment" type="RoadMemberType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+                <xs:attributeGroup ref="gml:AggregationAttributeGroup"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RoadMemberType">
+        <xs:complexContent>
+            <xs:extension base="gml:AbstractFeatureMemberType">
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="RoadSegment"/>
+                </xs:sequence>
+                <xs:attributeGroup ref="gml:AssociationAttributeGroup"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RoadSegmentType">
+        <xs:complexContent>
+            <xs:extension base="gml:AbstractFeatureType">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+</xs:schema>

@@ -68,7 +68,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
 /**
      * An empty constructor used by JAXB.
      */
-    PointType() {}
+    public PointType() {}
 
     /**
      * Build a new Point with the specified identifier and DirectPositionType
@@ -120,6 +120,23 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, srsInfo);
         if (this.pos.getSrsName() == null) {
             this.pos.setSrsName(getSrsName());
+        }
+    }
+
+    /**
+     * Build a new Point with the specified DirectPositionType
+     *
+     * @param pos A direcPosition locating the point.
+     * @param posSrsInfo if true the srs information will be applied to the directPosition otherwise it will only be on the Point
+     */
+    public PointType(final String id, final DirectPosition pos, final boolean posSrsInfo) {
+        super(id, null);
+        this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
+        setSrsName(this.pos.getSrsName());
+        setSrsDimension(this.pos.getSrsDimension());
+        if (!posSrsInfo) {
+            this.pos.setSrsName(null);
+            this.pos.setSrsDimension(null);
         }
     }
 
@@ -190,11 +207,6 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
     @Override
     public void setDirectPosition(final DirectPosition position) throws UnmodifiableGeometryException {
         this.pos = new DirectPositionType(position, true);
-    }
-
-    @Override
-    public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
-        pos = new DirectPositionType(position, true);
     }
 
     @Override

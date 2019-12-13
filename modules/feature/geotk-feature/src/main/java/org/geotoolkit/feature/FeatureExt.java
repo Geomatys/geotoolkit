@@ -293,9 +293,6 @@ public final class FeatureExt extends Static {
 
     /**
      * Get AttributeType or FeatureAssociationRole of the given property.
-     *
-     * @param property
-     * @return
      */
     public static PropertyType getType(Property property){
         if(property instanceof Attribute){
@@ -367,9 +364,6 @@ public final class FeatureExt extends Static {
      * Create a copy of given feature.
      * This is not a deep copy, only the feature and associated feature are copied,
      * values are not copied.
-     *
-     * @param feature
-     * @return
      */
     public static Feature copy(Feature feature){
         return copy(feature, false);
@@ -386,10 +380,7 @@ public final class FeatureExt extends Static {
     }
 
     /**
-     *
-     * @param feature
      * @param deep true for a deep copy
-     * @return
      */
     private static Feature copy(Feature feature, boolean deep){
         final FeatureType type = feature.getType();

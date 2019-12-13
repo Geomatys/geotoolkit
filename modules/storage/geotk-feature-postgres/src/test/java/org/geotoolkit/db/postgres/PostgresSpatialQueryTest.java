@@ -26,7 +26,7 @@ import java.util.Properties;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.assertTrue;
@@ -35,12 +35,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
-import org.opengis.parameter.ParameterValueGroup;
 
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import org.opengis.feature.FeatureType;
@@ -129,7 +126,6 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         //test env reading no fields
         final QueryBuilder qb = new QueryBuilder(ft.getName().toString());
         qb.setProperties(new String[0]);
-        qb.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
         env = store.getEnvelope(qb.buildQuery());
         assertNull(env);
     }
@@ -155,7 +151,6 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         //test env reading no fields
         final QueryBuilder qb = new QueryBuilder(ft.getName().toString());
         qb.setProperties(new String[0]);
-        qb.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
         env = store.getEnvelope(qb.buildQuery());
         assertNull(env);
     }

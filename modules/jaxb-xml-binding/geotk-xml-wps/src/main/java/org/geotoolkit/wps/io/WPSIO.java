@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wps.io;
 
-import org.locationtech.jts.geom.Geometry;
-
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -34,11 +32,8 @@ import javax.imageio.ImageIO;
 import javax.measure.Unit;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.coverage.grid.GridCoverage;
-
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.ows.xml.v200.BoundingBoxType;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.ows.xml.v200.DomainMetadataType;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -46,6 +41,8 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
+import org.geotoolkit.ows.xml.v200.BoundingBoxType;
+import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
@@ -54,9 +51,9 @@ import org.geotoolkit.wps.converters.inputs.references.ReferenceToUrlConnectionC
 import org.geotoolkit.wps.converters.outputs.complex.JAXBToComplexConverter;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.Reference;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
@@ -101,22 +98,22 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.APP_GEOJSON.val(), WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.APP_GEOJSON.val(), WPSEncoding.UTF8.getValue(), null, true));
 
 
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), true));
 
         FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_GML_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_GML_3_1_1.getValue(), false));
@@ -945,16 +942,16 @@ public final class WPSIO {
      * propert URL.
      */
     public static XmlFeatureReader getFeatureReader(String schema) throws MalformedURLException {
-        final List<FeatureType> schemaTypes;
+        final Collection<FeatureType> schemaTypes;
 
         if (schema == null || (schema = schema.trim()).isEmpty()) {
             schemaTypes = Collections.EMPTY_LIST;
         } else {
-            List<FeatureType> types = null;
+            Collection<FeatureType> types = null;
             try {
                 final JAXBFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
                 final URL schemaURL = new URL(URLDecoder.decode(schema, StandardCharsets.UTF_8.name()));
-                types = xsdReader.read(schemaURL);
+                types = xsdReader.read(schemaURL).getValues();
             } catch (JAXBException|UnsupportedEncodingException ex) {
                 LOGGER.log(Level.FINE, "Cannot read schema at location "+schema, ex);
             }

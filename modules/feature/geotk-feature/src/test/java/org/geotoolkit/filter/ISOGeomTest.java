@@ -23,14 +23,13 @@ import org.locationtech.jts.geom.Point;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.filter.spatial.Equals;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
+
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
@@ -39,21 +38,8 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  */
 public class ISOGeomTest extends org.geotoolkit.test.TestBase {
-
-    public ISOGeomTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
     @Test
     public void hello() throws NoSuchAuthorityCodeException, FactoryException {
-
         GeometryFactory factory = new GeometryFactory();
         Point[] points = new Point[3];
         points[0] = factory.createPoint(new Coordinate(70.83, 29.86));
@@ -72,6 +58,5 @@ public class ISOGeomTest extends org.geotoolkit.test.TestBase {
         boolean match = filter.evaluate(null);
 
         assertTrue(match);
-
     }
 }

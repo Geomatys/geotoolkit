@@ -18,10 +18,10 @@ package org.geotoolkit.processing.util.converter;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.geotoolkit.storage.DataStores;
 

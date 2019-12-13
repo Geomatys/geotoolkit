@@ -19,10 +19,10 @@ package org.geotoolkit.processing.vector.merge;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.WrapFeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureIterator;
+import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;

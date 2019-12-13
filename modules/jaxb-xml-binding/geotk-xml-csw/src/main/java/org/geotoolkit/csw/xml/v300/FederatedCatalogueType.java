@@ -54,11 +54,6 @@ public class FederatedCatalogueType {
 
     /**
      * Obtient la valeur de la propriété catalogueURL.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getCatalogueURL() {
         return catalogueURL;
@@ -66,11 +61,6 @@ public class FederatedCatalogueType {
 
     /**
      * Définit la valeur de la propriété catalogueURL.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setCatalogueURL(String value) {
         this.catalogueURL = value;
@@ -78,11 +68,6 @@ public class FederatedCatalogueType {
 
     /**
      * Obtient la valeur de la propriété timeout.
-     *
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *
      */
     public Integer getTimeout() {
         return timeout;
@@ -90,14 +75,8 @@ public class FederatedCatalogueType {
 
     /**
      * Définit la valeur de la propriété timeout.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *
      */
     public void setTimeout(Integer value) {
         this.timeout = value;
     }
-
 }

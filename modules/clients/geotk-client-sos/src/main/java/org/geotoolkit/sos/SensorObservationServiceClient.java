@@ -17,11 +17,12 @@
 package org.geotoolkit.sos;
 
 import java.net.URL;
+import java.util.Optional;
+import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sos.v100.*;
 import org.geotoolkit.sos.xml.SOSVersion;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -40,16 +41,16 @@ public class SensorObservationServiceClient extends AbstractClient {
     }
 
     public SensorObservationServiceClient(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(SOSClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(SOSProvider.PARAMETERS, serverURL, security, null));
         if (version.equals("1.0.0")){
-            parameters.getOrCreate(SOSClientFactory.VERSION).setValue(version);
+            parameters.getOrCreate(SOSProvider.VERSION).setValue(version);
         } else {
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
     }
 
     public SensorObservationServiceClient(final URL serverURL, final ClientSecurity security, final SOSVersion version) {
-        super(create(SOSClientFactory.PARAMETERS, serverURL, security, null));
+        super(create(SOSProvider.PARAMETERS, serverURL, security, null));
         if(version == null){
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
@@ -60,20 +61,20 @@ public class SensorObservationServiceClient extends AbstractClient {
     }
 
     @Override
-    public DataStoreFactory getProvider() {
-        return (DataStoreFactory) DataStores.getProviderById(SOSClientFactory.NAME);
+    public DataStoreProvider getProvider() {
+        return DataStores.getProviderById(SOSProvider.NAME);
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     /**
      * Returns the currently used version for this server
      */
     public SOSVersion getVersion() {
-        return SOSVersion.fromCode(parameters.getValue(SOSClientFactory.VERSION));
+        return SOSVersion.fromCode(parameters.getValue(SOSProvider.VERSION));
     }
 
     /**

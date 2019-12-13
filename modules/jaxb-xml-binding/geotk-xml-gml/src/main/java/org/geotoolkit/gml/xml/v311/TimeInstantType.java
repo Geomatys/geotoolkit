@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.GmlInstant;
@@ -63,6 +64,7 @@ import org.opengis.util.InternationalString;
 @XmlType(propOrder = {
     "timePosition"
 })
+@XmlRootElement(name = "TimeInstant")
 public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements GmlInstant, Instant, Serializable, Literal {
 
     @XmlElement(required = true)

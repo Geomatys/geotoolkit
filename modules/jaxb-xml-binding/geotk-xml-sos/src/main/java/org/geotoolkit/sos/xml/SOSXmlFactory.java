@@ -33,6 +33,8 @@ import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.observation.xml.OMXmlFactory;
+import org.geotoolkit.observation.xml.v100.ProcessType;
+import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
@@ -72,6 +74,7 @@ import org.opengis.observation.CompositePhenomenon;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.observation.Process;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -778,7 +781,7 @@ public class SOSXmlFactory {
 
     public static Phenomenon buildPhenomenon(final String version, final String id, final String phenomenonName) {
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(phenomenonName);
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(id, phenomenonName);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v101.PhenomenonType(id, phenomenonName);
         } else {
@@ -795,7 +798,7 @@ public class SOSXmlFactory {
                 }
                 phens.add((org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon)phen);
             }
-            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalCompositePhenomenon(phenomenonName, phens);
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalCompositePhenomenon(id, phenomenonName, phens);
         } else if ("1.0.0".equals(version)) {
             final List<org.geotoolkit.swe.xml.v101.PhenomenonType> phens = new ArrayList<>();
             for (org.opengis.observation.Phenomenon phen : phenomenons) {
@@ -1010,6 +1013,16 @@ public class SOSXmlFactory {
             return GMLXmlFactory.buildPoint("3.2.1", id, pos);
         } else if ("1.0.0".equals(currentVersion)) {
             return GMLXmlFactory.buildPoint("3.1.1", id, pos);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static Process buildProcess(final String currentVersion, final String href) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new OMProcessPropertyType(href);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new ProcessType(href);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

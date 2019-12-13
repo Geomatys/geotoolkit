@@ -259,7 +259,7 @@ abstract class DbaseField {
 
     private static final class IntegerField extends DbaseField{
 
-        private static final Long ZERO = 0l;
+        private static final Integer ZERO = 0;
 
         public IntegerField(final String fieldName, final char fieldType, final int fieldDataAddress,
                         final int fieldLength, final int decimalCount, final Class clazz) {
@@ -273,12 +273,7 @@ abstract class DbaseField {
                 return XInteger.parseIntSigned(number, 0, number.length());
                 // else will fall through to the floating point number
             } catch (NumberFormatException e) {
-                // Lets try parsing a long instead...
-                try {
-                    return Long.valueOf(extractNumberString(charBuffer, 0).toString());
-                } catch (NumberFormatException e2) {
-                    return ZERO;
-                }
+                return ZERO;
             }
         }
 

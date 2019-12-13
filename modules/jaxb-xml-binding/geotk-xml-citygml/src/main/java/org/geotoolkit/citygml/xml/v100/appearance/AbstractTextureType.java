@@ -85,11 +85,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the imageURI property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getImageURI() {
         return imageURI;
@@ -97,11 +92,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Sets the value of the imageURI property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setImageURI(String value) {
         this.imageURI = value;
@@ -109,11 +99,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the mimeType property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getMimeType() {
         return mimeType;
@@ -121,11 +106,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Sets the value of the mimeType property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setMimeType(String value) {
         this.mimeType = value;
@@ -133,11 +113,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the textureType property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TextureTypeType }
-     *
      */
     public TextureTypeType getTextureType() {
         return textureType;
@@ -145,11 +120,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Sets the value of the textureType property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TextureTypeType }
-     *
      */
     public void setTextureType(TextureTypeType value) {
         this.textureType = value;
@@ -157,11 +127,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the wrapMode property.
-     *
-     * @return
-     *     possible object is
-     *     {@link WrapModeType }
-     *
      */
     public WrapModeType getWrapMode() {
         return wrapMode;
@@ -169,11 +134,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Sets the value of the wrapMode property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link WrapModeType }
-     *
      */
     public void setWrapMode(WrapModeType value) {
         this.wrapMode = value;
@@ -181,7 +141,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the borderColor property.
-     *
      */
     public List<Double> getBorderColor() {
         if (borderColor == null) {
@@ -192,7 +151,6 @@ public class AbstractTextureType extends AbstractSurfaceDataType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfTexture property.
-     *
      */
     public List<Object> getGenericApplicationPropertyOfTexture() {
         if (genericApplicationPropertyOfTexture == null) {

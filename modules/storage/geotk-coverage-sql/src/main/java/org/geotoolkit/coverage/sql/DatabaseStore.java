@@ -27,8 +27,6 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.factory.sql.EPSGFactory;
 import org.apache.sis.storage.*;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
@@ -53,6 +51,8 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.apache.sis.internal.storage.Capability;
+import org.apache.sis.internal.storage.StoreMetadata;
 
 import static org.geotoolkit.coverage.sql.UpgradableLock.Stamp;
 
@@ -79,7 +79,11 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      *
      * @see DatabaseStore#open(DataSource, Path, boolean)
      */
-    @StoreMetadataExt(resourceTypes = ResourceType.GRID, canWrite = true)
+    @StoreMetadata(
+        formatName = Provider.NAME,
+        capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
+        resourceTypes = {GridCoverageResource.class})
+    @StoreMetadataExt(resourceTypes = ResourceType.GRID)
     public static final class Provider extends DataStoreProvider {
         /**
          * Factory identification.
@@ -362,19 +366,19 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
      * @return parameters used for opening this {@code DataStore}.
      */
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        return Provider.parameters(database.source, database.root);
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        return Optional.of(Provider.parameters(database.source, database.root));
     }
 
     /**
-     * Returns an identifier for the root resource of this data store, or {@code null} if none.
+     * Returns an identifier for the root resource of this data store, or empty if none.
      *
-     * @return {@code null} in current implementation.
+     * @return empty in current implementation.
      * @throws DataStoreException if an error occurred while reading data.
      */
     @Override
-    public GenericName getIdentifier() throws DataStoreException {
-        return null;
+    public Optional<GenericName> getIdentifier() throws DataStoreException {
+        return Optional.empty();
     }
 
     /**
@@ -659,15 +663,6 @@ public final class DatabaseStore extends DataStore implements WritableAggregate 
         } catch (Exception exception) {
             throw new CatalogException(exception);
         }
-    }
-
-
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
     }
 
     /**

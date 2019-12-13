@@ -25,11 +25,6 @@ import org.geotoolkit.wms.AbstractGetCapabilities;
  */
 public class GetCapabilitiesAuto extends AbstractGetCapabilities{
 
-    /**
-     *
-     * @param serverURL
-     * @param security
-     */
     public GetCapabilitiesAuto(final String serverURL, final ClientSecurity security){
         super(serverURL, null, security);
     }

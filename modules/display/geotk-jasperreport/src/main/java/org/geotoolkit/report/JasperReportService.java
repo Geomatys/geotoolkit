@@ -17,21 +17,20 @@
 
 package org.geotoolkit.report;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.ServiceLoader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.ServiceLoader;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JRPropertiesMap;
@@ -47,15 +46,12 @@ import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOdtReportConfiguration;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.lang.Static;
-import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-
-
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 
@@ -89,9 +85,7 @@ public final class JasperReportService extends Static {
      * This feature type must be used to generate the featureCollection that will be used
      * by the generateReport method.
      *
-     * @param jrxml
      * @return Entry<JasperReport,FeatureType>
-     * @throws JRException
      */
     public static Entry<JasperReport,FeatureType> prepareTemplate(final Object jrxml) throws JRException{
 
@@ -127,7 +121,7 @@ public final class JasperReportService extends Static {
 
     /**
      * Generate a report from the given JasperReport. It we be filled with the features
-     * provided in the FeatureCollection.
+     * provided in the Collection.
      *
      * @param report : report to generate
      * @param col : if featureCollection, feature type must match the given one from the prepareTemplace method.
@@ -161,9 +155,7 @@ public final class JasperReportService extends Static {
 
     /**
      * Write the jasper print in the defined output.
-     * @param print
      * @param output : output definition
-     * @throws net.sf.jasperreports.engine.JRException
      */
     public static void generate(final JasperPrint print, final OutputDef output) throws JRException{
         final String mime = output.getMime();
@@ -210,9 +202,6 @@ public final class JasperReportService extends Static {
 
     /**
      * Explore the report design and generate a FeatureType that match the records definition.
-     *
-     * @param design
-     * @return FeatureType
      */
     private static FeatureType extractType(final JasperDesign design){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

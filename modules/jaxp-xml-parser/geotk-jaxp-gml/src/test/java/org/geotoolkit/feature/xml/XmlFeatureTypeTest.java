@@ -17,35 +17,37 @@
 
 package org.geotoolkit.feature.xml;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.BufferedReader;
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
-import org.geotoolkit.util.NamesExt;
+import org.apache.sis.storage.IllegalNameException;
+import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_311_NAMESPACE;
+import org.geotoolkit.storage.FeatureComparator;
+import static org.geotoolkit.feature.xml.GMLConvention.NILLABLE_CHARACTERISTIC;
+import static org.geotoolkit.feature.xml.XmlTestData.*;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
+import org.geotoolkit.storage.feature.GenericNameIndex;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.xml.DomCompare;
-
 import org.junit.*;
-
 import static org.junit.Assert.*;
-import static org.geotoolkit.feature.xml.XmlTestData.*;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.xml.sax.SAXException;
 
@@ -70,21 +72,37 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     public void testReadSimpleFeatureType() throws JAXBException {
 
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
 
-        // GML defines a lot more properties than what we strictly need. Nonetheless,
-        // we must ensure that required prpoerties are read from xsd.
-        assertEquals(simpleTypeFull, types.get(0));
+        FeatureComparator comparator = new FeatureComparator(simpleTypeFull, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
+    }
+
+    @Test
+    public void testReadSimpleGeomFeatureType() throws JAXBException {
+
+        final JAXBFeatureTypeReader reader = getReader(true);
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleGeomType.xsd")).getValues());
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+
+        FeatureComparator comparator = new FeatureComparator(simpleTypeGeom, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
     }
 
     @Test
     public void testReadSimpleFeatureTypeWithAny() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeWithAny.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeWithAny.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
 
@@ -100,8 +118,8 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReadSimpleFeatureTypeWithRestriction() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeWithRestriction.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeWithRestriction.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
 
@@ -118,18 +136,26 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReadMultiGeomFeatureType() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
-        assertEquals(multiGeomType, types.get(0));
+
+        Collection<? extends PropertyType> expProperties = multiGeomType.getProperties(false);
+        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
+        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
+
+        FeatureComparator comparator = new FeatureComparator(multiGeomType, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
     }
 
     @Test
     public void testReadWfsFeatureType() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/wfs1.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/wfs1.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
 
@@ -137,22 +163,39 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(ns,"quadrige");
         ftb.setSuperTypes(GMLConvention.ABSTRACTFEATURETYPE_31);
-        ftb.addAttribute(Geometry.class).setName(ns, "msGeometry").setMinimumOccurs(0).setMaximumOccurs(1);
+        AttributeTypeBuilder atb= ftb.addAttribute(Geometry.class).setName(ns, "msGeometry").setMinimumOccurs(0).setMaximumOccurs(1);
+        atb.addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(String.class).setName(ns, "C_SIEPT38").setMinimumOccurs(1).setMaximumOccurs(1);
         ftb.addAttribute(String.class).setName(ns, "L_SIEPT").setMinimumOccurs(1).setMaximumOccurs(1);
         final FeatureType wfsType = ftb.build();
 
-        assertEquals(wfsType, types.get(0));
+        FeatureComparator comparator = new FeatureComparator(wfsType, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("http://www.w3.org/2001/XMLSchema-instance:@nil");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
     }
 
     @Test
     public void testReadComplexFeatureType() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
-        assertEquals(complexType, types.get(0));
+        complexType.equals(types.get(0));
+
+        Collection<? extends PropertyType> expProperties = complexType.getProperties(false);
+        Collection<? extends PropertyType> resProperties = types.get(0).getProperties(false);
+        assertEquals(diffSizeProperties(expProperties, resProperties), expProperties.size(), resProperties.size());
+
+        FeatureComparator comparator = new FeatureComparator(complexType, types.get(0));
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("http://www.w3.org/2001/XMLSchema-instance:@nil");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.ignoreDescription = true;
+        comparator.compare();
     }
 
     @Test
@@ -160,23 +203,18 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     public void testReadVeryComplexFeatureType() throws Exception {
         final JAXBFeatureTypeReader reader = getReader(true);
         final URL url = new URL("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
-        final List<FeatureType> types = reader.read(url);
+        final List<FeatureType> types = new ArrayList<>(reader.read(url).getValues());
         removeGMLBaseTypes(types);
         System.out.println("RESULT:" + types);
     }
 
     @Test
-    public void testReadPropertyGroupFeatureType() throws JAXBException {
+    public void testReadPropertyGroupFeatureType() throws JAXBException, IllegalNameException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+        final GenericNameIndex<FeatureType> types = reader.read(XmlFeatureTypeTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/propertyGroupType.xsd"));
 
-        FeatureType type = null;
-        for(FeatureType ft : types){
-            if(ft.getName().tip().toString().equals("SF_SamplingFeature")){
-                type = ft;
-            }
-        }
+        FeatureType type = types.get("SF_SamplingFeature");
 
         assertNotNull(type);
         assertEquals(7, type.getProperties(true).size());
@@ -184,17 +222,12 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testReadInheritType() throws JAXBException {
+    public void testReadInheritType() throws JAXBException, IllegalNameException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+        final GenericNameIndex<FeatureType> types = reader.read(XmlFeatureTypeTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/inheritType.xsd"));
 
-        FeatureType type = null;
-        for(FeatureType ft : types){
-            if(ft.getName().tip().toString().equals("SF_SpatialSamplingFeature")){
-                type = ft;
-            }
-        }
+        FeatureType type = types.get("SF_SpatialSamplingFeature");
 
         assertNotNull(type);
         assertEquals(8, type.getProperties(true).size());
@@ -202,18 +235,12 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testAttributesType() throws JAXBException {
+    public void testAttributesType() throws JAXBException, IllegalNameException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+        final GenericNameIndex<FeatureType> types = reader.read(XmlFeatureTypeTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeWithAttribute.xsd"));
 
-        FeatureType type = null;
-        for(FeatureType ft : types){
-            if(ft.getName().tip().toString().equals("TestSimple")){
-                type = ft;
-            }
-        }
-
+        FeatureType type = types.get("TestSimple");
         assertNotNull(type);
         assertEquals(typeWithAtts, type);
     }
@@ -221,21 +248,24 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReadSimpleFeatureEmpty() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         final FeatureType readType = types.get(0);
 
-        assertEquals(typeEmpty.getName(), readType.getName());
-        checkProperties(typeEmpty.getProperties(true), readType);
+        FeatureComparator comparator = new FeatureComparator(typeEmpty, readType);
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.ignoreDescription = true;
+        comparator.compare();
     }
 
     @Test
     public void testReadSimpleFeatureEmpty2() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(false);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
 
@@ -254,60 +284,115 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReadTypeWithNil() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithNil.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithNil.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         final FeatureType readType = types.get(0);
 
-        assertEquals(typeEmpty.getName(), readType.getName());
-        checkProperties(typeEmpty.getProperties(true), readType);
+        FeatureComparator comparator = new FeatureComparator(typeWithNil, readType);
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.compare();
+    }
+
+    @Test
+    public void testReadGroupChoice() throws JAXBException, IllegalNameException {
+        final JAXBFeatureTypeReader reader = getReader(true);
+        final GenericNameIndex<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/GroupChoiceMinMaxType.xsd"));
+        assertEquals(5, types.getNames().size());
+        FeatureType dataset  = types.get("dataset");
+
+        assertEquals("http://www.iho.int/S-121:dataset", dataset.getName().toString());
+
+        //check we should have 4 properties, sis:id, gml:id, and the two group choices
+        final PropertyType[] properties = dataset.getProperties(true).toArray(new PropertyType[0]);
+        assertEquals("sis:identifier", properties[0].getName().toString());
+        assertEquals("http://www.opengis.net/gml/3.2:@id", properties[1].getName().toString());
+        assertEquals("http://www.iho.int/S-121:Right", properties[2].getName().toString());
+        assertEquals("http://www.iho.int/S-121:Source", properties[3].getName().toString());
+        assertTrue(properties[2] instanceof FeatureAssociationRole);
+        assertTrue(properties[3] instanceof FeatureAssociationRole);
+        FeatureAssociationRole far1 = (FeatureAssociationRole) properties[2];
+        FeatureAssociationRole far2 = (FeatureAssociationRole) properties[3];
+        assertEquals("http://www.iho.int/S-121:Right", far1.getValueType().getName().toString());
+        assertEquals("http://www.iho.int/S-121:Source", far2.getValueType().getName().toString());
+        //check min max occurs
+        assertEquals(0, far1.getMinimumOccurs());
+        assertEquals(Integer.MAX_VALUE, far1.getMaximumOccurs());
+        assertEquals(0, far2.getMinimumOccurs());
+        assertEquals(Integer.MAX_VALUE, far2.getMaximumOccurs());
     }
 
     @Test
     public void testReadTypeWithSubstitutions() throws JAXBException {
         final JAXBFeatureTypeReader reader = getReader(true);
-        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithSubstitution.xsd"));
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithSubstitution.xsd")).getValues());
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         final FeatureType type = types.get(0);
         assertEquals("TestSimple", type.getName().tip().toString());
         //we do not count the substitution groups
-        assertEquals(3, type.getProperties(true).size());
+        assertEquals(5, type.getProperties(true).size());
+    }
+
+    @Test
+    public void testReadReferenceType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final JAXBFeatureTypeReader reader = getReader(true);
+        final List<FeatureType> types = new ArrayList<>(reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ReferenceType.xsd")).getValues());
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+        final FeatureType readType = types.get(0);
+
+        FeatureComparator comparator = new FeatureComparator(typeReference, readType);
+        comparator.ignoredCharacteristics.add("http://www.w3.org/1999/xlink:href");
+        comparator.ignoredCharacteristics.add("mapping");
+        comparator.ignoreDescription = true;
+        comparator.compare();
     }
 
     @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
-        final File temp = File.createTempFile("gml", ".xml");
-        temp.deleteOnExit();
         final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
-        writer.write(simpleTypeFull, new FileOutputStream(temp));
+        StringWriter sw = new StringWriter();
+        writer.write(simpleTypeFull, sw);
 
         DomCompare.compare(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"), temp);
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"), sw.toString());
     }
 
     @Test
     public void testWriteMultiGeomFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
-        final File temp = File.createTempFile("gml", ".xml");
-        temp.deleteOnExit();
+        final StringWriter sw = new StringWriter();
         final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
-        writer.write(multiGeomType, new FileOutputStream(temp));
+        writer.write(multiGeomType, sw);
 
         DomCompare.compare(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"), temp);
+                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"), sw.toString());
     }
 
     @Test
-    public void testWriteComplexFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
-        final File temp = File.createTempFile("gml", ".xml");
-        temp.deleteOnExit();
+    public void testWriteSimpleGeomFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final StringWriter sw = new StringWriter();
         final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
-        writer.write(complexType, new FileOutputStream(temp));
+        writer.write(simpleTypeGeom, sw);
 
         DomCompare.compare(XmlFeatureTypeTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), temp);
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleGeomType.xsd"), sw.toString());
+    }
+
+
+    @Test
+    public void testWriteComplexFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final StringWriter sw = new StringWriter();
+        final JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
+        writer.write(complexType, sw);
+
+        DomCompare.compare(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), sw.toString());
     }
 
 //    @Ignore
@@ -397,19 +482,78 @@ public class XmlFeatureTypeTest extends org.geotoolkit.test.TestBase {
         Assert.assertTrue("Geometric attribute is not a JTS geometry", expectedValueClass.isAssignableFrom(attr.getValueClass()));
     }
 
-    /**
-     * Ensure that all given properties can be found in input feature type.
-     * @param wantedProperties The properties we need to find.
-     * @param toCheck The feature type to search into.
-     */
-    private static void checkProperties(Collection<? extends PropertyType> wantedProperties, final FeatureType toCheck) {
-        for (PropertyType searched : wantedProperties) {
-            try {
-                final PropertyType found = toCheck.getProperty(searched.getName().toString());
-                Assert.assertEquals(searched, found);
-            } catch (PropertyNotFoundException e) {
-                fail(e.getMessage());
+//    /**
+//     * Ensure that all given properties can be found in input feature type.
+//     * @param wantedProperties The properties we need to find.
+//     * @param toCheck The feature type to search into.
+//     */
+//    private static void checkProperties(Collection<? extends PropertyType> wantedProperties, final FeatureType toCheck) {
+//        for (PropertyType searched : wantedProperties) {
+//            try {
+//                final PropertyType found = toCheck.getProperty(searched.getName().toString());
+//                Assert.assertEquals(searched, found);
+//            } catch (PropertyNotFoundException e) {
+//                fail(e.getMessage());
+//            }
+//        }
+//    }
+
+    private static String diffSizeProperties(Collection<? extends PropertyType> expProperties, Collection<? extends PropertyType> resProperties) {
+        StringBuilder sb = new StringBuilder();
+        if (expProperties.size() > resProperties.size()) {
+            sb.append("Missing properties:\n");
+            for (PropertyType expProp : expProperties) {
+                boolean found = false;
+                for (PropertyType resProp : resProperties) {
+                    if (resProp.getName().equals(expProp.getName())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    sb.append(" - ").append(expProp.getName()).append('\n');
+                }
+            }
+        } else {
+            sb.append("Additional properties:\n");
+            for (PropertyType resProp : resProperties) {
+                boolean found = false;
+                for (PropertyType expProp : expProperties) {
+                    if (resProp.getName().equals(expProp.getName())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    sb.append(" - ").append(resProp.getName()).append('\n');
+                }
             }
         }
+        return sb.toString();
+    }
+    private static String diffProperties(Collection<? extends PropertyType> expProperties, Collection<? extends PropertyType> resProperties) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Different properties:\n");
+        for (PropertyType expProp : expProperties) {
+            for (PropertyType resProp : resProperties) {
+                if (resProp.getName().equals(expProp.getName())) {
+                    if (!resProp.equals(expProp)) {
+                        String resatt = "";
+                        String expatt = "";
+                        if (resProp instanceof AttributeType) {
+                            AttributeType att = (AttributeType)resProp;
+                            resatt = " characteristics:" + att.characteristics().toString();
+                        }
+                        if (expProp instanceof AttributeType) {
+                            AttributeType att = (AttributeType)expProp;
+                            expatt = " characteristics:" + att.characteristics().toString();
+                        }
+                        sb.append("expected:").append(expProp).append(expatt).append(" but was:").append(resProp).append(resatt).append("\n");
+                    }
+                }
+            }
+
+        }
+        return sb.toString();
     }
 }

@@ -37,8 +37,10 @@ import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
+import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
+import org.opengis.observation.Process;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalPrimitive;
@@ -86,6 +88,19 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet in netcdf implementation.");
+    }
+
+    @Override
+    public Phenomenon getPhenomenon(String identifier, String version) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet in netcdf implementation.");
+    }
+
+    @Override
+    public Process getProcess(String identifier, String version) throws DataStoreException {
+        if (existProcedure(identifier)) {
+            return SOSXmlFactory.buildProcess(version, identifier);
+        }
+        return null;
     }
 
     @Override

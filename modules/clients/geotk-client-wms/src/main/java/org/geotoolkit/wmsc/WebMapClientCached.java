@@ -17,14 +17,14 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 
 /**
  * WMS-C is a osgeo profile for WMS 1.1.1.
@@ -50,7 +50,6 @@ public class WebMapClientCached extends WebMapClient {
      * Builds a web map server with the given server url and cache flag.
      *
      * @param serverURL The server base url.
-     * @param cacheImage
      */
     public WebMapClientCached(final URL serverURL, boolean cacheImage) {
         super(serverURL,"1.1.1");
@@ -61,7 +60,6 @@ public class WebMapClientCached extends WebMapClient {
      * Builds a web map server with the given server url and security.
      *
      * @param serverURL The server base url.
-     * @param security
      */
     public WebMapClientCached(final URL serverURL, final ClientSecurity security) {
         this(serverURL, security, false);
@@ -71,8 +69,6 @@ public class WebMapClientCached extends WebMapClient {
      * Builds a web map server with the given server url, security and cache flag.
      *
      * @param serverURL The server base url.
-     * @param security
-     * @param cacheImage
      */
     public WebMapClientCached(final URL serverURL, final ClientSecurity security, boolean cacheImage) {
         super(serverURL, security, WMSVersion.v111, null);

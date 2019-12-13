@@ -30,13 +30,16 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.awt.image.WritableRenderedImage;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.ColorModelFactory;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
-import org.apache.sis.internal.raster.ColorModelFactory;
 
 /**
  *
@@ -54,6 +57,8 @@ public class BufferedImages extends Static {
      * @throws IllegalArgumentException
      */
     public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException{
+        ArgumentChecks.ensureStrictlyPositive("width", width);
+        ArgumentChecks.ensureStrictlyPositive("height", height);
         final WritableRaster raster = reference.getTile(0, 0).createCompatibleWritableRaster(width, height);
         final ColorModel cm = reference.getColorModel();
         final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
@@ -61,6 +66,8 @@ public class BufferedImages extends Static {
     }
 
     public static BufferedImage createImage(final int width, final int height, final int nbBand, final int dataType) throws IllegalArgumentException{
+        ArgumentChecks.ensureStrictlyPositive("width", width);
+        ArgumentChecks.ensureStrictlyPositive("height", height);
         final Point upperLeft = new Point(0,0);
         final WritableRaster raster = createRaster(width, height, nbBand, dataType, upperLeft);
 
@@ -75,6 +82,8 @@ public class BufferedImages extends Static {
     }
 
     public static WritableRaster createRaster(int width, int height, int nbBand, int dataType, Point upperLeft) throws IllegalArgumentException{
+        ArgumentChecks.ensureStrictlyPositive("width", width);
+        ArgumentChecks.ensureStrictlyPositive("height", height);
         final WritableRaster raster;
         if(nbBand == 1){
             if(dataType == DataBuffer.TYPE_BYTE || dataType == DataBuffer.TYPE_USHORT || dataType == DataBuffer.TYPE_INT){
@@ -177,5 +186,12 @@ public class BufferedImages extends Static {
             }
         }
         return true;
+    }
+
+    public static void setAll(WritableRenderedImage img, double[] pixel) {
+        final WritablePixelIterator ite = WritablePixelIterator.create(img);
+        while (ite.next()) {
+            ite.setPixel(pixel);
+        }
     }
 }

@@ -37,7 +37,7 @@ import org.opengis.filter.expression.Expression;
  * @version $Id$
  * @module
  */
-public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
+public class DefaultPropertyIsLike extends AbstractFilter implements PropertyIsLike,Serializable {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 

@@ -27,12 +27,12 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import net.iharder.Base64;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -681,7 +681,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         try{
             final WKBRasterWriter writer = new WKBRasterWriter();
             final byte[] wkbimg = writer.write(value);
-            final String base64 = Base64.encodeBytes(wkbimg);
+            final String base64 = Base64.getEncoder().encodeToString(wkbimg);
             sql.append("(encode(").append("decode('").append(base64).append("','base64')").append(",'hex')").append(")::raster");
         }catch(IOException | FactoryException ex){
             throw new DataStoreException(ex);
@@ -1232,7 +1232,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                     wkbReader.set(reader);
                 }
                 try {
-                    return (Geometry) reader.read(Base64.decode(rs.getBytes(column)));
+                    return (Geometry) reader.read(Base64.getDecoder().decode(rs.getBytes(column)));
                 } catch (ParseException ex) {
                     throw new IOException(ex.getMessage(),ex);
                 }
@@ -1268,7 +1268,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                 final byte[] encodedValue = rs.getBytes(column);
                 if (encodedValue != null) {
                     try {
-                        return (Geometry) reader.read(Base64.decode(encodedValue));
+                        return (Geometry) reader.read(Base64.getDecoder().decode(encodedValue));
                     } catch (ParseException ex) {
                         throw new IOException(ex.getMessage(),ex);
                     }
@@ -1283,7 +1283,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     public GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, String column) throws IOException, SQLException {
         byte[] data = rs.getBytes(column);
         try {
-            data = Base64.decode(data);
+            data = Base64.getDecoder().decode(data);
             final WKBRasterReader reader = new WKBRasterReader();
             return reader.readCoverage(data, null);
 
@@ -1296,7 +1296,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     public GridCoverage decodeCoverageValue(AttributeType descriptor, ResultSet rs, int column) throws IOException, SQLException {
         byte[] data = rs.getBytes(column);
         try {
-            data = Base64.decode(data);
+            data = Base64.getDecoder().decode(data);
             final WKBRasterReader reader = new WKBRasterReader();
             return reader.readCoverage(data, null);
 

@@ -63,12 +63,14 @@
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-metadata</artifactId>
+      <version>${sis.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -123,6 +125,7 @@
     <module>geotk-xml-mathml</module>
     <module>geotk-xml-providers</module>
     <module>geotk-xml-thw</module>
+    <module>geotk-xml-sts</module>
   </modules>
 
 </project>

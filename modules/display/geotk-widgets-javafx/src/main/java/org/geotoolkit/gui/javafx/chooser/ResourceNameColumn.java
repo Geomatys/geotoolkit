@@ -35,11 +35,11 @@ import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.metadata.MetadataUtilities;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
 import org.opengis.util.GenericName;
 
 /**
@@ -62,12 +62,15 @@ public class ResourceNameColumn extends TreeTableColumn<Resource,String>{
             public ObservableValue<String> call(CellDataFeatures<Resource, String> param) {
                 try {
                     final Resource r = param.getValue().getValue();
-                    String id = MetadataUtilities.getIdentifier(r.getMetadata());
-                    if (id == null || (id = id.trim()).isEmpty()) {
-                        final GenericName rId = r.getIdentifier();
-                        id = rId == null? "Unknown" : rId.toString();
+                    final GenericName id = r.getIdentifier().orElse(null);
+                    if (id != null) {
+                        return new SimpleObjectProperty<>(id.toString());
                     }
-                    return new SimpleObjectProperty<>(id);
+                    String metaIdd = MetadataUtilities.getIdentifier(r.getMetadata());
+                    if (metaIdd == null || (metaIdd = metaIdd.trim()).isEmpty()) {
+                        metaIdd = r.getIdentifier().map(GenericName::toString).orElse("Unknown");
+                    }
+                    return new SimpleObjectProperty<>(metaIdd);
                 } catch (DataStoreException ex) {
                    return new SimpleObjectProperty<>(ex.getMessage());
                 }

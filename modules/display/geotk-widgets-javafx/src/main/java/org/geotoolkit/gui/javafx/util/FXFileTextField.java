@@ -55,9 +55,6 @@ public class FXFileTextField extends AbstractPathTextField {
 
     /**
      * Update completor root path when {@link #rootPath} is updated.
-     * @param obs
-     * @param oldValue
-     * @param newValue
      */
     private void updateRoot(final ObservableValue<? extends String> obs, final String oldValue, final String newValue) {
         if (newValue == null || newValue.isEmpty()) {

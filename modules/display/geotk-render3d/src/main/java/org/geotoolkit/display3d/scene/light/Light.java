@@ -113,9 +113,6 @@ public class Light {
      * GL_POSITION params value
      *
      * normalize position before set to buffer.
-     *
-     * @param position
-     * @param directional
      */
     public void setPosition(Vector3f position, boolean directional) {
         final Vector3f pos = new Vector3f();

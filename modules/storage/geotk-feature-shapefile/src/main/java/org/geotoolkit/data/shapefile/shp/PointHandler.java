@@ -18,10 +18,10 @@
 package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
 import org.apache.sis.storage.DataStoreException;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 /**
  * Wrapper for a Shapefile point.
@@ -73,13 +73,13 @@ public class PointHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
+    public Geometry estimated(final double minX, final double maxX, final double minY, final double maxY) {
         final Coordinate coord = new Coordinate((minX + maxX) / 2, (minY + maxY) / 2);
         return GEOMETRY_FACTORY.createPoint(coord);
     }
 
     @Override
-    public Object read(final ByteBuffer buffer, final ShapeType type) {
+    public Geometry read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }
@@ -101,7 +101,7 @@ public class PointHandler extends AbstractShapeHandler {
         return GEOMETRY_FACTORY.createPoint(new Coordinate(x, y, z));
     }
 
-    private Object createNull() {
+    private Geometry createNull() {
         return GEOMETRY_FACTORY.createPoint(new Coordinate(Double.NaN,
                 Double.NaN, Double.NaN));
     }

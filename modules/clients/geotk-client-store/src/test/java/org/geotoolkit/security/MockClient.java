@@ -18,12 +18,13 @@ package org.geotoolkit.security;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.logging.Level;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
-import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.client.AbstractClientProvider;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -37,8 +38,7 @@ public class MockClient extends AbstractClient{
 
     private static final ParameterValueGroup PARAM;
     static {
-        final ParameterDescriptorGroup desc = new ParameterBuilder().addName("mock").createGroup(
-                AbstractClientFactory.URL,AbstractClientFactory.SECURITY);
+        final ParameterDescriptorGroup desc = new ParameterBuilder().addName("mock").createGroup(AbstractClientProvider.URL,AbstractClientProvider.SECURITY);
         PARAM = desc.createValue();
         try {
             PARAM.parameter("url").setValue(new URL("http://test.com"));
@@ -52,8 +52,8 @@ public class MockClient extends AbstractClient{
     }
 
     @Override
-    public GenericName getIdentifier() {
-        return null;
+    public Optional<GenericName> getIdentifier() {
+        return Optional.empty();
     }
 
     public MockRequest createRequest(){
@@ -61,13 +61,13 @@ public class MockClient extends AbstractClient{
     }
 
     @Override
-    public DataStoreFactory getProvider() {
+    public DataStoreProvider getProvider() {
         return null;
     }
 
     private static ParameterValueGroup appendSecurity(final ClientSecurity security){
         ParameterValueGroup param = PARAM.clone();
-        param.parameter(AbstractClientFactory.SECURITY.getName().getCode()).setValue(security);
+        param.parameter(AbstractClientProvider.SECURITY.getName().getCode()).setValue(security);
         return param;
     }
 

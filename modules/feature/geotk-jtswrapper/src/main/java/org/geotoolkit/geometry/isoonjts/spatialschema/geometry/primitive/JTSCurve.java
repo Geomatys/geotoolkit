@@ -25,10 +25,8 @@ import org.geotoolkit.internal.jaxb.CurveArrayType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeCurve;
-import org.opengis.geometry.coordinate.GenericCurve;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.ParamForPoint;
-import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
@@ -217,13 +215,13 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
             boolean allLineString = true;
             JTSLineString lsi = new JTSLineString();
             LineString ls = null;
-            List retList = lsi.getControlPoints().positions();
+            List retList = lsi.getControlPoints();
             Object lastPoint = null;
             List segList = null;
             for (int i = 0; i < count && allLineString; i++) {
                 Object segment = curveSegments.get(0);
                 if (segment instanceof LineString) {
-                    segList = ((LineString) segment).getControlPoints().positions();
+                    segList = ((LineString) segment).getControlPoints();
                     if (segList.get(0).equals(lastPoint)) {
                         retList.remove(retList.size() - 1);
                     }
@@ -294,22 +292,6 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      */
     @Override
     public OrientableCurve[] getProxy() {
-        return null;
-    }
-
-    /**
-     * Not implemented.  Returns null.
-     */
-    @Override
-    public GenericCurve reverse() {
-        return null;
-    }
-
-    /**
-     * Not implemented.  Returns null.
-     */
-    @Override
-    public PointArray getSamplePoints() {
         return null;
     }
 

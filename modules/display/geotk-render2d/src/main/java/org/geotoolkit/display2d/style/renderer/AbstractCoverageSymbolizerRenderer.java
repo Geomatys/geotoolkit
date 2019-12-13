@@ -25,12 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.apache.sis.coverage.grid.DisjointExtentException;
-import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.coverage.grid.IllegalGridGeometryException;
+import org.apache.sis.coverage.grid.*;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -50,8 +45,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.ReducedGridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -62,7 +56,6 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import static org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer.LOGGER;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
@@ -132,12 +125,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 return portray(pc);
             }else  if(obj instanceof GridCoverageResource){
                 final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
-                params.update(renderingContext);
-                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
-                return portray(pc);
-            }else  if(obj instanceof GridCoverageReader){
-                final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageReader)obj);
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
@@ -246,6 +233,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * Returns expected {@linkplain GridCoverage elevation coverage} or {@linkplain GridCoverage coverage}
      * from given {@link ProjectedCoverage}.
      *
+     * TODO: add a margin or interpolation parameter. To properly interpolate border on output canvas, we need extra
+     *  lines/columns on source image. Their number depends on applied interpolation (bilinear, bicubic, etc.).
+     *
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
      * @param canvasGrid Rendering canvas grid geometry
      * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for features coverage.
@@ -266,9 +256,10 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final MapLayer coverageLayer = projectedCoverage.getLayer();
         final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
 
-        final GridGeometry slice = extractSlice(ref.getGridGeometry(), canvasGrid, true);
+        final InterpolationCase interpolation = InterpolationCase.BILINEAR;
+        final GridGeometry slice = extractSlice(ref.getGridGeometry(), canvasGrid, computeMargin2D(interpolation), true);
 
-        GridCoverage coverage = ref.read(slice, sourceBands);
+        GridCoverage coverage = projectedCoverage.getCoverage(slice, sourceBands);
 
         //at this point, we want a single slice in 2D
         //we remove all other dimension to simplify any following operation
@@ -280,6 +271,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         if (Utilities.equalsIgnoreMetadata(crs2d, coverage.getCoordinateReferenceSystem())) {
             return coverage;
         } else {
+            coverage = prepareCoverageToResampling(coverage, symbol);
             //resample
             final double[] fill = new double[coverage.getSampleDimensions().size()];
             Arrays.fill(fill, Double.NaN);
@@ -313,7 +305,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             final MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
             if (isNonLinear(gridToCRS)) {
 
-                final GridGeometry slice2 = extractSlice(ref.getGridGeometry(), canvasGrid, false);
+                final GridGeometry slice2 = extractSlice(ref.getGridGeometry(), canvasGrid, computeMargin2D(interpolation), false);
 
                 coverage = ref.read(slice2, sourceBands);
 
@@ -325,17 +317,26 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
                 return forwardResample(coverage, resampleGrid);
             } else {
-                if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
-                    //interpolate in geophysic
-                    coverage = coverage.forConvertedValues(true);
-                }
-                ResampleProcess process = new ResampleProcess(coverage, crs2d, resampleGrid, InterpolationCase.BILINEAR, fill);
+                ResampleProcess process = new ResampleProcess(coverage, crs2d, resampleGrid, interpolation, fill);
                 //do not extrapolate values, can cause large areas of incorrect values
                 process.getInput().parameter(ResampleDescriptor.IN_BORDER_COMPORTEMENT_TYPE.getName().getCode()).setValue(ResampleBorderComportement.FILL_VALUE);
                 return process.executeNow();
             }
         }
+    }
 
+    private static int[] computeMargin2D(InterpolationCase interpolationCase) {
+        if (interpolationCase == null || InterpolationCase.NEIGHBOR.equals(interpolationCase))
+            return new int[2];
+        int margin;
+        switch (interpolationCase) {
+            case LANCZOS: margin = 4; break;
+            case BILINEAR: margin = 1; break;
+            case NEIGHBOR: margin = 0; break;
+            default: margin = 2;
+        }
+
+        return new int[]{margin, margin};
     }
 
     private boolean isNonLinear(MathTransform trs) {
@@ -430,11 +431,19 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         return gcb.getGridCoverage2D();
     }
 
-    private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, boolean applyResolution)
-            throws CoverageStoreException, TransformException, FactoryException, ProcessException {
+    private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
+            throws DataStoreException, TransformException, FactoryException, ProcessException {
+
+        CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
+
+        if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
+            //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
+            return areaOfInterest;
+        }
 
         // HACK : This method cannot manage incomplete grid geometries, so we have to skip
-        if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.RESOLUTION | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {
+        if (!fullArea.isDefined(GridGeometry.ENVELOPE | GridGeometry.GRID_TO_CRS | GridGeometry.EXTENT)) {
             return areaOfInterest;
         }
 
@@ -456,16 +465,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         /////// HACK FOR 0/360 /////////////////////////////////////////////
         GridGeometry slice = fullArea;
         try {
-            slice = fullArea.derive()
-                    .rounding(GridRoundingMode.ENCLOSING)
-                    .margin(3)
+            GridDerivation derivation = fullArea.derive()
+                    .rounding(GridRoundingMode.ENCLOSING);
+            if (margin != null && margin.length > 0)
+                derivation = derivation.margin(margin);
+            slice = derivation
                     .subgrid(canvasEnv, resolution)
                     .sliceByRatio(1, 0, 1)
                     .build();
         } catch (DisjointExtentException ex) {
-            //don't log, still continue
+            throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         } catch (IllegalGridGeometryException ex) {
-            LOGGER.log(Level.INFO, ex.getMessage(), ex);
+            throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         }
 
 //        // latest data slice
@@ -496,7 +507,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * Pragmatic approach trying to solve intersection of areas with
      * different meridian origin such as -180/+180 to +0/+360.
      *
-     * @param areaOfInterest
      * @param resolution, may be changed by this method.
      * @return update area of interest envelope, CRS may have changed and new resolution
      *         or null if unchanged.

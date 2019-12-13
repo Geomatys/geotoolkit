@@ -63,6 +63,15 @@ public class RangeDateTimeType {
     @XmlElement(name = "Ending_Date_Time")
     protected String endingDateTime;
 
+    public RangeDateTimeType() {
+
+    }
+
+    public RangeDateTimeType(String beginningDateTime, String endingDateTime) {
+        this.beginningDateTime = beginningDateTime;
+        this.endingDateTime = endingDateTime;
+    }
+
     /**
      * Obtient la valeur de la propriété beginningDateTime.
      *

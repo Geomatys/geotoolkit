@@ -22,10 +22,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -36,13 +35,12 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.event.ChangeEvent;
-import org.apache.sis.storage.event.ChangeListener;
+import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -63,12 +61,11 @@ public abstract class AbstractClient extends DataStore implements Client {
 
     private final Map<String,Object> userProperties = new HashMap<>();
     private String sessionId = null;
-    protected final Set<ChangeListener> listeners = new HashSet<>();
 
 
     public AbstractClient(final ParameterValueGroup params) {
         this.parameters = Parameters.castOrWrap(params);
-        this.serverURL = parameters.getValue(AbstractClientFactory.URL);
+        this.serverURL = parameters.getValue(AbstractClientProvider.URL);
         ArgumentChecks.ensureNonNull("server url", serverURL);
     }
 
@@ -83,17 +80,17 @@ public abstract class AbstractClient extends DataStore implements Client {
         citation.setIdentifiers(Collections.singleton(identifier));
         identification.setCitation(citation);
         metadata.setIdentificationInfo(Collections.singleton(identification));
-        metadata.freeze();
+        metadata.transitionTo(DefaultMetadata.State.FINAL);
         return metadata;
     }
 
     @Override
-    public ParameterValueGroup getOpenParameters() {
-        if(parameters != null){
+    public Optional<ParameterValueGroup> getOpenParameters() {
+        if (parameters != null) {
             //defensive copy
-            return parameters.clone();
+            return Optional.of(parameters.clone());
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -124,7 +121,7 @@ public abstract class AbstractClient extends DataStore implements Client {
     public ClientSecurity getClientSecurity() {
         ClientSecurity securityManager = null;
         try {
-            securityManager = parameters.getValue(AbstractClientFactory.SECURITY);
+            securityManager = parameters.getValue(AbstractClientProvider.SECURITY);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
@@ -135,11 +132,11 @@ public abstract class AbstractClient extends DataStore implements Client {
     public int getTimeOutValue() {
         Integer timeout = null;
         try {
-            timeout = parameters.getValue(AbstractClientFactory.TIMEOUT);
+            timeout = parameters.getValue(AbstractClientProvider.TIMEOUT);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
-        return (timeout == null) ?  AbstractClientFactory.TIMEOUT.getDefaultValue() : timeout;
+        return (timeout == null) ?  AbstractClientProvider.TIMEOUT.getDefaultValue() : timeout;
     }
 
     /**
@@ -196,12 +193,12 @@ public abstract class AbstractClient extends DataStore implements Client {
     protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
             final URL url, final ClientSecurity security, final Integer timeout){
         final Parameters param = Parameters.castOrWrap(desc.createValue());
-        param.getOrCreate(AbstractClientFactory.URL).setValue(url);
+        param.getOrCreate(AbstractClientProvider.URL).setValue(url);
         if (security != null) {
-            param.getOrCreate(AbstractClientFactory.SECURITY).setValue(security);
+            param.getOrCreate(AbstractClientProvider.SECURITY).setValue(security);
         }
         if (timeout != null) {
-            param.getOrCreate(AbstractClientFactory.TIMEOUT).setValue(timeout);
+            param.getOrCreate(AbstractClientProvider.TIMEOUT).setValue(timeout);
         }
         return param;
     }
@@ -211,38 +208,19 @@ public abstract class AbstractClient extends DataStore implements Client {
         //do nothing
     }
 
-    @Override
-    public <T extends ChangeEvent> void addListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    @Override
-    public <T extends ChangeEvent> void removeListener(ChangeListener<? super T> listener, Class<T> eventType) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
     /**
      * Forward a structure event to all listeners.
      * @param event , event to send to listeners.
+     *
+     * @todo should specify event type.
      */
-    protected void sendEvent(final StorageEvent event){
-        final ChangeListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new ChangeListener[listeners.size()]);
-        }
-        for(final ChangeListener listener : lst){
-            listener.changeOccured(event);
-        }
+    protected void sendEvent(final StorageEvent event) {
+        listeners.fire(event, StoreEvent.class);
     }
 
     /**
      * Forward given event, changing the source by this object.
      * For implementation use only.
-     * @param event
      */
     public void forwardEvent(StorageEvent event){
         sendEvent(event.copy(this));

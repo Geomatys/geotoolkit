@@ -41,12 +41,6 @@ public interface TransactionRequest extends Request {
      * operate upon the locked feature instances.
      *
      * No LockId element needs to be specified to operate upon unlocked features.
-     *
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     String getLockId();
 
@@ -61,12 +55,6 @@ public interface TransactionRequest extends Request {
      * operate upon the locked feature instances.
      *
      * No LockId element needs to be specified to operate upon unlocked features.
-     *
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     void setLockId(String value);
 

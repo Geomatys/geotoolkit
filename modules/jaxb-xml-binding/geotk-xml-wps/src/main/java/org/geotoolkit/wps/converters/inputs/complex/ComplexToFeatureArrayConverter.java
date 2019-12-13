@@ -19,8 +19,8 @@ package org.geotoolkit.wps.converters.inputs.complex;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.opengis.feature.Feature;
 
@@ -54,7 +54,7 @@ public final class ComplexToFeatureArrayConverter extends AbstractComplexInputCo
      */
     @Override
     public Feature[] convert(final Data source, final Map<String, Object> params) throws UnconvertibleObjectException {
-        try (final Stream<FeatureCollection> stream = AbstractComplexInputConverter.readFeatureArrays(source)) {
+        try (final Stream<FeatureSet> stream = AbstractComplexInputConverter.readFeatureArrays(source)) {
             return stream
                     .flatMap(fc -> {
                         try {

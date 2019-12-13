@@ -37,7 +37,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.internal.metadata.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.storage.*;
 
 
@@ -215,8 +215,8 @@ final class GridCoverageEntry extends Entry {
                             if (AxisDirections.opposite(AdditionalAxisTable.getDirection(requestComponent)) ==
                                                         AdditionalAxisTable.getDirection(dataComponent))
                             {
-                                lower = -lower;
-                                upper = -upper;
+                                lower = -upper;
+                                upper = -lower;
                             }
                             lower += startTime;             // Now an absolute time with same unit and epoch than data CRS.
                             upper += startTime;

@@ -62,7 +62,7 @@ public class PGGridMosaic extends AbstractMosaic{
     }
 
     @Override
-    public boolean isMissing(int col, int row) {
+    public boolean isMissing(long col, long row) {
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -99,8 +99,8 @@ public class PGGridMosaic extends AbstractMosaic{
     }
 
     @Override
-    public ImageTile getTile(int col, int row, Map hints) throws DataStoreException {
-        final PGTileReference tile = new PGTileReference(this, new Point(col, row));
+    public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
+        final PGTileReference tile = new PGTileReference(this, new Point(Math.toIntExact(col), Math.toIntExact(row)));
         return tile;
     }
 

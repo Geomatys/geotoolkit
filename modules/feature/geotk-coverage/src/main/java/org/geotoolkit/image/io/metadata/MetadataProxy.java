@@ -446,12 +446,12 @@ final class MetadataProxy<T> implements InvocationHandler {
              * instead than an element.
              */
             if (targetType.isAssignableFrom(GeneralDirectPosition.class)) {
-                final double[] ordinates = accessor.getAttributeAsDoubles(name, false);
-                return (ordinates != null) ? new GeneralDirectPosition(ordinates) : null;
+                final double[] coordinates = accessor.getAttributeAsDoubles(name, false);
+                return (coordinates != null) ? new GeneralDirectPosition(coordinates) : null;
             }
             if (targetType.isAssignableFrom(GeneralGridCoordinates.class)) {
-                final int[] ordinates = accessor.getAttributeAsIntegers(name, false);
-                return (ordinates != null) ? new GeneralGridCoordinates(ordinates) : null;
+                final int[] coordinates = accessor.getAttributeAsIntegers(name, false);
+                return (coordinates != null) ? new GeneralGridCoordinates(coordinates) : null;
             }
         }
         if (targetType.isAssignableFrom(List.class)) {

@@ -20,27 +20,28 @@ package org.geotoolkit.feature.xml.jaxp;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
-import org.geotoolkit.xml.StaxStreamWriter;
 import org.geotoolkit.gml.xml.v321.ObjectFactory;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -95,11 +96,11 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
     @Override
     public void write(final Object candidate, final Object output, final Integer nbMatched) throws IOException, XMLStreamException, DataStoreException {
         setOutput(output);
-        FeatureCollection collection;
+        FeatureSet collection;
         if (candidate instanceof Feature) {
            collection =  FeatureStoreUtilities.collection((Feature)candidate);
-        } else if (candidate instanceof FeatureCollection) {
-            collection = (FeatureCollection) candidate;
+        } else if (candidate instanceof FeatureSet) {
+            collection = (FeatureSet) candidate;
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureCollection: "+ candidate);
@@ -232,7 +233,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
      * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public void writeValueCollection(final FeatureCollection featureCollection, final Integer nbMatched) throws DataStoreException, XMLStreamException {
+    public void writeValueCollection(final FeatureSet featureCollection, final Integer nbMatched) throws DataStoreException, XMLStreamException {
 
         // the XML header
         writer.writeStartDocument("UTF-8", "1.0");
@@ -251,7 +252,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         /*
          * Other WFS value collection attribute
          */
-        writer.writeAttribute("numberReturned", Integer.toString(featureCollection.size()));
+        writer.writeAttribute("numberReturned", Long.toString(FeatureStoreUtilities.getCount(featureCollection)));
         if (nbMatched != null) {
             writer.writeAttribute("numberMatched", Integer.toString(nbMatched));
         }
@@ -267,16 +268,12 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         }
 
         // we write each feature member of the collection
-        FeatureIterator iterator = featureCollection.iterator();
-        try {
+        try (Stream<Feature> stream = featureCollection.features(false)) {
+            Iterator<Feature> iterator = stream.iterator();
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
                 writeFeature(f);
             }
-
-        } finally {
-            // we close the stream
-            iterator.close();
         }
 
         writer.writeEndElement();

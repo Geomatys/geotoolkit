@@ -80,11 +80,6 @@ public class BuildingFurnitureType
 
     /**
      * Gets the value of the clazz property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getClazz() {
         return clazz;
@@ -92,11 +87,6 @@ public class BuildingFurnitureType
 
     /**
      * Sets the value of the clazz property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setClazz(final String value) {
         this.clazz = value;
@@ -116,13 +106,6 @@ public class BuildingFurnitureType
      * <pre>
      *    getFunction().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     public List<String> getFunction() {
         if (function == null) {
@@ -145,13 +128,6 @@ public class BuildingFurnitureType
      * <pre>
      *    getUsage().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     public List<String> getUsage() {
         if (usage == null) {
@@ -162,11 +138,6 @@ public class BuildingFurnitureType
 
     /**
      * Gets the value of the lod4Geometry property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public GeometryPropertyType getLod4Geometry() {
         return lod4Geometry;
@@ -174,11 +145,6 @@ public class BuildingFurnitureType
 
     /**
      * Sets the value of the lod4Geometry property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryPropertyType }
-     *
      */
     public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;
@@ -187,10 +153,6 @@ public class BuildingFurnitureType
     /**
      * Gets the value of the lod4ImplicitRepresentation property.
      *
-     * @return
-     *     possible object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public ImplicitRepresentationPropertyType getLod4ImplicitRepresentation() {
         return lod4ImplicitRepresentation;
@@ -198,11 +160,6 @@ public class BuildingFurnitureType
 
     /**
      * Sets the value of the lod4ImplicitRepresentation property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ImplicitRepresentationPropertyType }
-     *
      */
     public void setLod4ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod4ImplicitRepresentation = value;

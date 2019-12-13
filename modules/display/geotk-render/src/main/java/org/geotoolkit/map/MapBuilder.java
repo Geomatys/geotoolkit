@@ -16,19 +16,25 @@
  */
 package org.geotoolkit.map;
 
+import java.util.Collection;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.storage.coverage.DefaultCoverageResource;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
+import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.style.Description;
 import org.opengis.style.StyleFactory;
 
 /**
@@ -88,15 +94,20 @@ public final class MapBuilder {
     public static FeatureMapLayer createFeatureLayer(final FeatureSet collection){
         MutableStyle style;
         String name = "";
+        Description description = null;
         try {
             final FeatureType type = collection.getType();
-            name = type.getName().toString();
+            name = type.getName().tip().toString();
+            description = new DefaultDescription(
+                    new SimpleInternationalString(name),
+                    new SimpleInternationalString(type.getName().toString()));
             style = RandomStyleBuilder.createDefaultVectorStyle(type);
         } catch (DataStoreException ex) {
             style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
         final DefaultFeatureMapLayer maplayer = new DefaultFeatureMapLayer(collection, style);
         maplayer.setName(name);
+        if (description != null) maplayer.setDescription(description);
         return maplayer;
     }
 
@@ -117,7 +128,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage grid, final MutableStyle style, final String name) {
-        final GridCoverageResource ref = new DefaultCoverageResource(grid, NamesExt.create(name));
+        final GridCoverageResource ref = new InMemoryGridCoverageResource(NamesExt.create(name), grid);
         return createCoverageLayer(ref, style);
     }
 
@@ -132,8 +143,20 @@ public final class MapBuilder {
         final GridCoverageResource resource;
         if (input instanceof GridCoverageResource) {
             resource = (GridCoverageResource) input;
+        } else if (input instanceof GridCoverage) {
+            resource = new InMemoryGridCoverageResource((GridCoverage) input);
         } else {
-            resource = new DefaultCoverageResource(input, NamesExt.create("image"));
+            try {
+                DataStore store = DataStores.open(input);
+                Collection<GridCoverageResource> lst = org.geotoolkit.storage.DataStores.flatten(store, true, GridCoverageResource.class);
+                if (!lst.isEmpty()) {
+                    resource = lst.iterator().next();
+                } else {
+                    throw new IllegalArgumentException("Given input could not be resolved as a coverage.");
+                }
+            } catch (DataStoreException ex) {
+                throw new IllegalArgumentException("Given input could not be resolved as a coverage."+ex.getMessage(), ex);
+            }
         }
         return createCoverageLayer(resource);
     }
@@ -166,13 +189,9 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final Object input, final MutableStyle style){
-        final GridCoverageResource resource;
-        if (input instanceof GridCoverageResource) {
-            resource = (GridCoverageResource)input;
-        } else {
-            resource = new DefaultCoverageResource(input, NamesExt.create("image"));
-        }
-        return createCoverageLayer(resource,style);
+        CoverageMapLayer layer = createCoverageLayer(input);
+        if (style != null) layer.setStyle(style);
+        return layer;
     }
     /**
      * Create a default elevation model based on a grid coverage reader.
@@ -193,6 +212,6 @@ public final class MapBuilder {
      * @return ElevationModel
      */
     public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws DataStoreException {
-        return new ElevationModel((org.geotoolkit.storage.coverage.GridCoverageResource) ref, azimuthAngle, altitudeAngle, altitudeScale);
+        return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
  }

@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
@@ -32,7 +35,6 @@ import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.storage.GridCoverageResource;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -49,7 +51,7 @@ import org.opengis.geometry.Envelope;
  */
 public class ProjectedCoverage implements ProjectedObject<MapLayer> {
 
-    private final Cache<GridGeometry, GridCoverage> cache = new Cache<>(1, 0, false);
+    private final Cache<ReadParam, GridCoverage> cache = new Cache<>(1, 0, false);
 
     private final StatelessContextParams params;
     private final MapLayer layer;
@@ -88,7 +90,11 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      * @throws DataStoreException if reading fails for specified geometry. The error can be a {@link org.apache.sis.coverage.grid.DisjointExtentException}
      * if queried area is completely outside this coverage extent.
      */
-    public GridCoverage getCoverage(final GridGeometry param) throws DataStoreException {
+    public GridCoverage getCoverage(final GridGeometry param, int... bands) throws DataStoreException {
+        return getCoverage(new ReadParam(param, bands));
+    }
+
+    private GridCoverage getCoverage(final ReadParam param) throws DataStoreException {
         GridCoverage value = cache.peek(param);
         if (value == null) {
             Cache.Handler<GridCoverage> handler = cache.lock(param);
@@ -97,7 +103,7 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
                 if (value == null) {
                     Resource resource = layer.getResource();
                     if (resource instanceof GridCoverageResource) {
-                        GridCoverage result = ((GridCoverageResource)resource).read(param);
+                        GridCoverage result = ((GridCoverageResource)resource).read(param.geometry, param.bands);
                         if (result instanceof GridCoverageStack) {
                             Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
                         }
@@ -106,6 +112,8 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
                             result = ((GridCoverageStack)result).coverageAtIndex(0);
                         }
                         value = result;
+                    } else {
+                        throw new DataStoreException("Resource is not a coverage" + resource);
                     }
                 }
             } finally {
@@ -188,4 +196,29 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    private static class ReadParam {
+        final GridGeometry geometry;
+        final int[] bands;
+
+        ReadParam(GridGeometry geometry, int... bands) {
+            this.geometry = geometry;
+            this.bands = (bands == null || bands.length < 1)? null : bands;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ReadParam)) return false;
+            ReadParam readParam = (ReadParam) o;
+            return Objects.equals(geometry, readParam.geometry) &&
+                    Arrays.equals(bands, readParam.bands);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(geometry);
+            result = 31 * result + Arrays.hashCode(bands);
+            return result;
+        }
+    }
 }

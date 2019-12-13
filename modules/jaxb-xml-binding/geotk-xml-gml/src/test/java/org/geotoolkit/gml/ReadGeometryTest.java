@@ -1,8 +1,5 @@
 package org.geotoolkit.gml;
 
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -14,6 +11,9 @@ import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.junit.Assert;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 
 /**
  *
@@ -48,7 +48,7 @@ public abstract class ReadGeometryTest {
         Assert.assertEquals(expectedEnvelope.getMaxY(), actual.getMaxY(), 0.01);
     }
 
-    final <T> T read(final URL source) throws Exception {
+    protected final <T> T read(final URL source) throws Exception {
         final MarshallerPool pool = GMLMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         unmarshaller.setEventHandler((ValidationEvent event) -> {

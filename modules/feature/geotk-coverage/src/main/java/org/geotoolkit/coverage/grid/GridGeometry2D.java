@@ -83,8 +83,8 @@ import org.opengis.util.FactoryException;
  *   <li>Only two dimensions in the grid envelope can have a
  *       {@linkplain GridExtent#getSize(int) span} larger than 1.</li>
  *   <li>If the grid geometry describes a {@link java.awt.image.BufferedImage}, then the
- *       {@linkplain GridExtent#getLow() lowest valid grid ordinates} shall be zero.
- *       For other kind of {@link java.awt.image.RenderedImage}, the lowest ordinates
+ *       {@linkplain GridExtent#getLow() lowest valid grid coordinates} shall be zero.
+ *       For other kind of {@link java.awt.image.RenderedImage}, the lowest coordinates
  *       may be non-zero.</li>
  * </ul>
  */
@@ -102,7 +102,7 @@ public class GridGeometry2D extends GridGeometry {
     private final CoordinateReferenceSystem crs2D;
 
     /**
-     * Index of column ({@link #gridDimensionX}) and row ({@link #gridDimensionY}) ordinates
+     * Index of column ({@link #gridDimensionX}) and row ({@link #gridDimensionY}) coordinates
      * in a grid point. They are the index of the first two dimensions with a {@linkplain
      * GridExtent#getSpan(int) span} greater than 1 in the {@linkplain #getExtent() grid extent}.
      * Their values are usually 0 and 1 respectively.
@@ -116,7 +116,7 @@ public class GridGeometry2D extends GridGeometry {
 
     /**
      * The ({@link #gridDimensionX}, {@link #gridDimensionY}) dimensions in the envelope space.
-     * They are index of (<var>x</var>, <var>y</var>) ordinates in a direct position after the
+     * They are index of (<var>x</var>, <var>y</var>) coordinates in a direct position after the
      * {@linkplain #gridToCRS grid to CRS} transform.
      *
      * <p>Notes:</p>

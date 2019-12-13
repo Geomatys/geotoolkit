@@ -5,12 +5,12 @@ import java.awt.image.RenderedImage;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.image.PixelIterator;
-import org.geotoolkit.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -41,13 +41,13 @@ public class CoverageReaderDemo {
         // Here is the parameter which tells the reader to perform lazy loading.
         readParam.setDeferred(true);
 
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(tempData);
-        final GridCoverage coverage = (GridCoverage) reader.read(readParam);
+        final ImageCoverageReader reader = CoverageIO.createSimpleReader(tempData);
+        final GridCoverage coverage = reader.read(readParam);
 
         // Ok, so how to use it now ?
 
         // You can get pixel values directly.
-        coverage.evaluate(new GeneralDirectPosition(-100, 10, 0));
+        coverage.evaluate(new GeneralDirectPosition(-100, 10, 0), null);
 
         // But in most cases ...
         // ... You will acquire iterator for fast and safe browsing.

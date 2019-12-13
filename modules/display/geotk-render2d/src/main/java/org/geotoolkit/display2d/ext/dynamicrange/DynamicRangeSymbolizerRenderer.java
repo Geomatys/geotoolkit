@@ -28,11 +28,13 @@ import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -40,12 +42,13 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.math.Histogram;
-import org.geotoolkit.metadata.DefaultSampleDimensionExt;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
-import org.geotoolkit.storage.coverage.GridCoverageResource;
+import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.referencing.datum.PixelInCell;
@@ -78,17 +81,37 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             //we can avoid loading metadata if all ranges are literals,
             //metadata can be expensive because of histogram informations
             boolean allLiteral = true;
-            for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
+            for (DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()) {
                 allLiteral &= channel.getLower().getValue() instanceof Literal;
                 allLiteral &= channel.getUpper().getValue() instanceof Literal;
             }
-            final CoverageDescription covdesc = allLiteral ? null : covref.getCoverageDescription();
 
-            for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
+            CoverageDescription covdesc = null;
+
+            if (!allLiteral) {
+                if (covdesc == null) {
+                    Metadata metadata = covref.getMetadata();
+                    if (metadata != null) {
+                        for (ContentInformation ci : metadata.getContentInfo()) {
+                            if (ci instanceof CoverageDescription) {
+                                covdesc = (CoverageDescription) ci;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (covdesc == null) {
+                    //create an empty description
+                    covdesc = new DefaultCoverageDescription();
+                }
+
+            }
+
+            for (DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()) {
                 final Integer bandIdx;
-                try{
+                try {
                     bandIdx = Integer.valueOf(channel.getBand());
-                }catch(NumberFormatException ex){
+                } catch(NumberFormatException ex) {
                     //not a number index
                     continue;
                 }
@@ -109,9 +132,9 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 stats.clear();
                 if (!allLiteral) {
                     search:
-                    for(AttributeGroup attg : covdesc.getAttributeGroups()){
-                        for(RangeDimension rd : attg.getAttributes()){
-                            if(!(rd instanceof org.opengis.metadata.content.SampleDimension)) continue;
+                    for (AttributeGroup attg : covdesc.getAttributeGroups()){
+                        for (RangeDimension rd : attg.getAttributes()){
+                            if (!(rd instanceof org.opengis.metadata.content.SampleDimension)) continue;
                             final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
                             if(i==bandIdx){
                                 final org.opengis.metadata.content.SampleDimension sd = (org.opengis.metadata.content.SampleDimension) rd;
@@ -139,11 +162,11 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             //read only requested coverage bands
             int[] toRead = new int[0];
             final int[] mapping = new int[4];
-            for(int i=0;i<4;i++){
+            for (int i=0;i<4;i++) {
                 if (bands[i]!=-1){
                     int index = 0;
                     boolean contained = false;
-                    for(int k=0;k<toRead.length;k++) {
+                    for (int k=0;k<toRead.length;k++) {
                         if(toRead[k]==bands[i]) {
                             index = k;
                             contained = true;
@@ -162,7 +185,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             try {
                 dataCoverage = getObjectiveCoverage(projectedCoverage,
                         renderingContext.getGridGeometry(), false, toRead);
-            } catch (DisjointCoverageDomainException ex) {
+            } catch (NoSuchDataException ex) {
                 return false;
             }
             if (dataCoverage == null) {
@@ -195,7 +218,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             renderCoverage(img, trs2D);
 
         } catch (CoverageStoreException e) {
-            if(e.getCause() instanceof ProjectionException) {
+            if (e.getCause() instanceof ProjectionException) {
                 //out of domain exception
                 monitor.exceptionOccured(e, Level.FINE);
             } else {
@@ -207,21 +230,21 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
         return true;
     }
 
-    private static double evaluate(DynamicRangeSymbolizer.DRBound bound, Map<String,Object> stats) throws PortrayalException{
+    private static double evaluate(DynamicRangeSymbolizer.DRBound bound, Map<String,Object> stats) throws PortrayalException {
         final String mode = bound.getMode();
-        if(DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION.equalsIgnoreCase(mode)){
+        if (DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION.equalsIgnoreCase(mode)) {
             final Expression exp = bound.getValue();
             final Number val = exp.evaluate(stats, Number.class);
             return (val==null) ? Double.NaN : val.doubleValue();
-        }else if(DynamicRangeSymbolizer.DRBound.MODE_PERCENT.equalsIgnoreCase(mode)){
+        } else if (DynamicRangeSymbolizer.DRBound.MODE_PERCENT.equalsIgnoreCase(mode)) {
             final long[] histo = (long[]) stats.get(DynamicRangeSymbolizer.PROPERTY_HISTO);
             final Double histoMin = (Double) stats.get(DynamicRangeSymbolizer.PROPERTY_HISTO_MIN);
             final Double histoMax = (Double) stats.get(DynamicRangeSymbolizer.PROPERTY_HISTO_MAX);
-            if(histo==null || histoMin==null || histoMax==null){
+            if (histo == null || histoMin == null || histoMax == null) {
                 //we don't have the informations
                 LOGGER.log(Level.INFO, "Missing histogram information for correct rendering.");
                 return Double.NaN;
-            }else{
+            } else {
                 final Expression exp = bound.getValue();
                 final Number val = exp.evaluate(stats, Number.class);
                 final Histogram h = new Histogram(histo, histoMin, histoMax);
@@ -229,13 +252,13 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             }
 
 
-        }else{
+        } else {
             throw new PortrayalException("Unknwoned mode "+mode);
         }
     }
 
 
-    private void renderCoverage(RenderedImage img, MathTransform trs2D) throws PortrayalException{
+    private void renderCoverage(RenderedImage img, MathTransform trs2D) throws PortrayalException {
         renderingContext.switchToObjectiveCRS();
         if (trs2D instanceof AffineTransform) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
@@ -245,13 +268,13 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 //plenty of errors can happen when painting an image
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
-        }else if (trs2D instanceof LinearTransform) {
+        } else if (trs2D instanceof LinearTransform) {
             final LinearTransform lt = (LinearTransform) trs2D;
             final int col = lt.getMatrix().getNumCol();
             final int row = lt.getMatrix().getNumRow();
             //TODO using only the first parameters of the linear transform
             throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
-        }else{
+        } else {
             throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
         }
 

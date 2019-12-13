@@ -20,7 +20,7 @@ package org.geotoolkit.feature.xml;
 import java.io.IOException;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureReader;
 import org.opengis.feature.FeatureType;
 
 /**

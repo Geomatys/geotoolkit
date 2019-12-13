@@ -236,7 +236,7 @@ public class J2DLegendUtilities {
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
                 BufferedImage image = null;
                 try {
-                    image = legendResults.get(covLayer.getResource().getIdentifier().tip().toString());
+                    image = legendResults.get(covLayer.getResource().getIdentifier().get().tip().toString());
                 } catch (DataStoreException ex) {
                     //do nothing
                 }
@@ -520,16 +520,13 @@ public class J2DLegendUtilities {
                 // try first to retrieve the legend directly from the coverage reference.
                 BufferedImage image = null;
                 try {
-                    if (covRef instanceof org.geotoolkit.storage.coverage.GridCoverageResource) {
-                        image = (BufferedImage) ((org.geotoolkit.storage.coverage.GridCoverageResource) covRef).getLegend();
-                    }
                     if (image != null) {
                         toSet.height += image.getHeight();
                         if (toSet.width < image.getWidth()) {
                             toSet.width = image.getWidth();
                         }
                         if (images != null) {
-                            images.put(covLayer.getResource().getIdentifier(), image);
+                            images.put(covLayer.getResource().getIdentifier().orElse(null), image);
                         }
                         continue;
                     }

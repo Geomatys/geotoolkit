@@ -39,7 +39,7 @@ public class SOSClientFactoryTest extends org.geotoolkit.test.TestBase {
         final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof SOSClientFactory){
+            if(ite.next() instanceof SOSProvider){
                 found = true;
             }
         }

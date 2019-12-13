@@ -117,7 +117,6 @@ public class ProcessedCollection extends AbstractCollection{
 
     /**
      * {@see ProcessedCollection.getLifespan}
-     * @param lifespan
      */
     public void setLifespan(long lifespan) {
         this.lifespan = lifespan;
