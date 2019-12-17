@@ -109,7 +109,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
      * security for every pyramid composed of non-regular / sparse level of details. In such cases, a user querying a
      * low resolution overview could accidentally trigger the extraction of many high resolution tiles, due to the
      * permissive grid loading system of coverage resources, and the lack of native tile subsampling system.
-     * 
+     *
      * TODO: find a better short-circuit strategy, or set the limit configurable.
      */
     public static final int TILE_AGGREGATION_LIMIT = 100;
