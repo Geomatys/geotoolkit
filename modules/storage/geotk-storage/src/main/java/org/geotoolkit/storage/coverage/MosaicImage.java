@@ -113,7 +113,6 @@ public class MosaicImage implements RenderedImage {
      * Try to find a valid tile and load sample and color models from it.
      */
     private synchronized void loadImageModel() {
-        try {
             //search the first non missing tile of the Mosaic
             final GridExtent dataArea = mosaic.getDataExtent();
             if (dataArea != null) {
@@ -126,28 +125,28 @@ public class MosaicImage implements RenderedImage {
                 search:
                 for (int y = Math.max(upperLeftPosition.y, 0); y < Math.min(lowerRightPosition.y + 1, this.getNumYTiles()); y++) {
                     for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
-                        if (!isTileMissing(x, y)) {
-                            final ImageTile tile = getTileReference(x, y);
-                            if (tile != null) {
-                                final ImageTile imgTile = (ImageTile) tile;
-                                final RenderedImage image = imgTile.getImage();
-                                sampleModel = image.getSampleModel();
-                                colorModel = image.getColorModel();
-                                rasterModel = image.getTile(0, 0);
-                                tileCache.put(new Point(x, y), rasterModel);
-                                break search;
+                        try {
+                            if (!isTileMissing(x, y)) {
+                                final ImageTile tile = getTileReference(x, y);
+                                    if (tile != null) {
+                                        final ImageTile imgTile = (ImageTile) tile;
+                                        final RenderedImage image = imgTile.getImage();
+                                        sampleModel = image.getSampleModel();
+                                        colorModel = image.getColorModel();
+                                        rasterModel = image.getTile(0, 0);
+                                        tileCache.put(new Point(x, y), rasterModel);
+                                        break search;
+                                    }
                             }
+                        } catch (IOException | DataStoreException e) {
+                            LOGGER.log(Level.FINE, e.getMessage(), e);
+                            break search;
                         }
                         break search;
                     }
                 }
 
             }
-        } catch (IOException e) {
-            throw new IllegalArgumentException("First tile can't be read.", e);
-        } catch (DataStoreException e) {
-            throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
-        }
 
         if (sampleModel == null) {
             //use a fake tile created from sample dimensions
@@ -338,50 +337,7 @@ public class MosaicImage implements RenderedImage {
      */
     @Override
     public Raster getTile(final int tileX, final int tileY) {
-        final int mosaictileX = gridRange.x + tileX;
-        final int mosaictileY = gridRange.y + tileY;
-
-        Raster raster;
-        try {
-            raster = this.tileCache.get(new Point(tileX, tileY));
-        } catch (IllegalArgumentException ex) {
-            raster = null;
-        }
-
-        if (raster == null) {
-            try {
-                DataBuffer buffer = null;
-
-                if (!mosaic.isMissing(mosaictileX,mosaictileY)) {
-                    final ImageTile tile = (ImageTile) mosaic.getTile(mosaictileX,mosaictileY);
-                    //can happen is tile is missing
-                    //the isMissing method is a good indicator, but not 100% reliable
-                    if (tile != null) {
-                        final RenderedImage image = tile.getImage();
-                        buffer = image.getData().getDataBuffer();
-                    }
-                }
-
-                if (buffer == null) {
-                    //create an empty buffer
-                    buffer = getSampleModel().createDataBuffer();
-                }
-
-                //create a raster from tile image with tile position offset.
-                LOGGER.log(Level.FINE, "Request tile {0}:{1} ", new Object[]{tileX,tileY});
-                final int rX = tileX * this.getTileWidth();
-                final int rY = tileY * this.getTileHeight();
-
-                raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
-
-                this.tileCache.put(new Point(tileX, tileY), raster);
-
-            } catch ( DataStoreException | IOException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-            }
-        }
-
-        return raster;
+        return getTile(tileX, tileY, false);
     }
 
     private Raster getTile(final int tileX, final int tileY, boolean nullable) {
@@ -464,25 +420,25 @@ public class MosaicImage implements RenderedImage {
             final int y = 0;
             final int width = in.getWidth();
             final int height = in.getHeight();
-            WritableRaster raster = rasterModel.createCompatibleWritableRaster(width, height);
-
+            final WritableRaster raster = rasterModel.createCompatibleWritableRaster(width, height);
+            final int nbSamples = width * height * inNumBands;
             switch (outDataType) {
                 case DataBuffer.TYPE_BYTE :
                 case DataBuffer.TYPE_SHORT :
                 case DataBuffer.TYPE_USHORT :
                 case DataBuffer.TYPE_INT :
-                    int[] arrayi = new int[width*height];
+                    int[] arrayi = new int[nbSamples];
                     in.getPixels(x, y, width, height, arrayi);
                     raster.setPixels(x, y, width, height, arrayi);
                     break;
                 case DataBuffer.TYPE_FLOAT :
-                    float[] arrayf = new float[width*height];
+                    float[] arrayf = new float[nbSamples];
                     in.getPixels(x, y, width, height, arrayf);
                     raster.setPixels(x, y, width, height, arrayf);
                     break;
                 case DataBuffer.TYPE_DOUBLE :
                 default :
-                    double[] arrayd = new double[width*height];
+                    double[] arrayd = new double[nbSamples];
                     in.getPixels(x, y, width, height, arrayd);
                     raster.setPixels(x, y, width, height, arrayd);
                     break;

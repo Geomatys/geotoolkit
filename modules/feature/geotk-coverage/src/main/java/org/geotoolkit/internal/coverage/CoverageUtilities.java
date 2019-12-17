@@ -39,6 +39,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -624,4 +625,30 @@ public final class CoverageUtilities extends Static {
         return res2;
     }
 
+    /**
+     * Render coverage and verify values are in the range of sample Dimensions.
+     * @param coverage
+     */
+    public static void validateCoverage(GridCoverage coverage) {
+        final SampleDimension[] sampleDimensions = coverage.getSampleDimensions().toArray(new SampleDimension[0]);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator ite = PixelIterator.create(image);
+        while (ite.next()) {
+            for (int i=0;i<sampleDimensions.length;i++) {
+                checkSample(ite.getSampleDouble(i), sampleDimensions[i]);
+            }
+        }
+    }
+
+    private static void checkSample(double value, SampleDimension sd) {
+        if (sd.getCategories().isEmpty()) return;
+
+        for (Category cat : sd.getCategories()) {
+            NumberRange range = cat.getSampleRange();
+            if (range.containsAny(value)) {
+                return;
+            }
+        }
+        throw new RuntimeException("Sample "+value+" not found.");
+    }
 }
