@@ -384,6 +384,19 @@ public class ProgressiveImage implements RenderedImage{
 
     private synchronized void renderTiles(int col, int row) {
 
+        /*
+         * clip generated size to grid limits otherwise this causes a large canvas
+         * which increases errors in resolution and envelope computations
+         */
+        int nbtileonwidth = this.nbtileonwidth;
+        int nbtileonheight = this.nbtileonheight;
+        if (col + nbtileonwidth > gridSize.width) {
+            nbtileonwidth = gridSize.width - col;
+        }
+        if (row + nbtileonheight > gridSize.height) {
+            nbtileonheight = gridSize.height - row;
+        }
+
         if (canvas == null) {
             final Dimension canvasSize = new Dimension(
                     nbtileonwidth*tileSize.width,

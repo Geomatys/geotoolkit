@@ -133,12 +133,16 @@ public class BufferedImages extends Static {
                 raster = WritableRaster.createInterleavedRaster(dataType, width, height, nbBand, upperLeft);
             }else{
                 //create it ourself
+                final long size = (long) width * height * nbBand;
+                final int isize = Math.toIntExact(size);
                 final DataBuffer buffer;
-                if(dataType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height*nbBand);
-                else if(dataType == DataBuffer.TYPE_INT) buffer = new DataBufferInt(width*height*nbBand);
-                else if(dataType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height*nbBand);
-                else if(dataType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height*nbBand);
-                else throw new IllegalArgumentException("Type not supported "+dataType);
+                switch (dataType) {
+                    case DataBuffer.TYPE_SHORT: buffer = new DataBufferShort(isize); break;
+                    case DataBuffer.TYPE_INT: buffer = new DataBufferInt(isize); break;
+                    case DataBuffer.TYPE_FLOAT: buffer = new DataBufferFloat(isize); break;
+                    case DataBuffer.TYPE_DOUBLE: buffer = new DataBufferDouble(isize); break;
+                    default: throw new IllegalArgumentException("Type not supported "+dataType);
+                }
                 final int[] bankIndices = new int[nbBand];
                 final int[] bandOffsets = new int[nbBand];
                 for(int i=1;i<nbBand;i++){

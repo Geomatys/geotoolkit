@@ -30,14 +30,17 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongConsumer;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -91,6 +94,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     private CanvasDef canvasDef;
     private SceneDef sceneDef;
     private final double[] empty;
+    private final List<SampleDimension> sampleDimensions = new ArrayList<>();
 
     public MapContextTileGenerator(MapContext context, Hints hints) {
         this(new SceneDef(context, hints), new CanvasDef());
@@ -130,6 +134,10 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
         final PixelIterator ite = PixelIterator.create(img);
         ite.moveTo(0, 0);
         empty = ite.getPixel((double[])null);
+
+        for (int i=0, n=img.getSampleModel().getNumBands(); i<n; i++) {
+            sampleDimensions.add(new SampleDimension.Builder().setName(i).build());
+        }
 
     }
 
@@ -331,6 +339,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     final DefaultPyramid pm = new DefaultPyramid(pyramid.getCoordinateReferenceSystem());
                     pm.getMosaicsInternal().add(mosaic);
                     final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
+                    r.setSampleDimensions(sampleDimensions);
                     r.getModels().add(pm);
 
                     final MapContext mc = MapBuilder.createContext();
