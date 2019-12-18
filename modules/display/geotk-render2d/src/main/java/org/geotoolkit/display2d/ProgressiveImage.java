@@ -50,14 +50,8 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ProgressiveImage implements RenderedImage{
 
-//    private static class TileSet{
-//        private final Map<String,Raster> tiles = new ConcurrentHashMap<String, Raster>();
-//    }
-
-
     /** store pregenerated tiles */
     private final Map<String,Raster> tiles = new ConcurrentHashMap<>();
-//    private final ArrayBlockingQueue<TileSet> tiles;
     private final ColorModel colorModel;
     private final SampleModel sampleModel;
     private final Dimension gridSize;
@@ -79,9 +73,6 @@ public class ProgressiveImage implements RenderedImage{
 
     /** listener support */
     private final EventListenerList listeners = new EventListenerList();
-
-    /** painter threads */
-//    private final ExecutorService executor;
 
     /**
      *
@@ -120,29 +111,11 @@ public class ProgressiveImage implements RenderedImage{
         }else{
             //we can generate more than one line
             nbtileonwidth = gridSize.width;
-            nbtileonheight = maxNbTile / gridSize.width;
+            nbtileonheight = Math.min(gridSize.height, maxNbTile / gridSize.width);
         }
 
         this.cdef = canvasDef;
         this.sdef = sceneDef;
-
-//        executor = Executors.newFixedThreadPool(nbPainter, new ThreadFactory() {
-//            private volatile int inc = 0;
-//            @Override
-//            public Thread newThread(Runnable r) {
-//                final Thread t = new Thread(r);
-//                t.setName("TilePainter " + inc++);
-//                return t;
-//            }
-//        });
-//
-//        tiles = new ArrayBlockingQueue<TileSet>(nbPainter);
-//
-//        for(int y=0;y<gridSize.height;y+=nbtileonheight){
-//            for(int x=0;x<gridSize.width;x+=nbtileonwidth){
-//                executor.execute(new TileGenerator(new Point(x, y)));
-//            }
-//        }
     }
 
     /**
@@ -333,38 +306,6 @@ public class ProgressiveImage implements RenderedImage{
         return tiles.remove(getTileIndex(col, row));
     }
 
-
-
-//    @Override
-//    public Raster getTile(int col, int row) {
-//        final String index = getTileIndex(col, row);
-//
-//        Raster raster = null;
-//        do{
-//            final TileSet[] generates = tiles.toArray(new TileSet[0]);
-//            for(TileSet ts : generates){
-//                raster = ts.tiles.remove(index);
-//                if(raster != null){
-//                    if(ts.tiles.isEmpty()){
-//                        tiles.remove(ts);
-//                    }
-//                    break;
-//                }
-//            }
-//
-//            if(raster == null){
-//                try {
-//                    Thread.sleep(100);
-//                } catch (InterruptedException ex) {
-//                    Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
-//                }
-//            }
-//
-//        }while(raster == null);
-//
-//        return raster;
-//    }
-
     @Override
     public Raster getData() {
         return getData(null);
@@ -441,20 +382,6 @@ public class ProgressiveImage implements RenderedImage{
         listeners.remove(ProgressListener.class, listener);
     }
 
-//    @Override
-//    protected void finalize() throws Throwable {
-//        if(!executor.isShutdown()){
-//            executor.shutdownNow();
-//        }
-//        super.finalize();
-//    }
-
-    public static interface ProgressListener extends EventListener{
-
-        void tileCreated(int x, int y);
-
-    }
-
     private synchronized void renderTiles(int col, int row) {
 
         if (canvas == null) {
@@ -508,83 +435,7 @@ public class ProgressiveImage implements RenderedImage{
         }
     }
 
-//    private class TileGenerator implements Runnable{
-//
-//        private final Point topleft;
-//
-//        public TileGenerator(final Point start) {
-//            topleft = start;
-//
-//        }
-//
-//        @Override
-//        public void run() {
-//
-//            final TileSet ts = new TileSet();
-//            try {
-//                tiles.put(ts);
-//            } catch (InterruptedException ex) {
-//                Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
-//            }
-//
-//            final Dimension canvasSize = new Dimension(
-//                nbtileonwidth*tileSize.width,
-//                nbtileonheight*tileSize.height);
-//
-//            final J2DCanvasBuffered canvas = new J2DCanvasBuffered(vdef.getEnvelope().getCoordinateReferenceSystem(), canvasSize);
-//            canvas.setRenderingHint(GO2Hints.KEY_COLOR_MODEL, colorModel);
-//            try {
-//                DefaultPortrayalService.prepareCanvas(canvas, cdef, sdef, vdef);
-//            } catch (PortrayalException ex) {
-//                ex.printStackTrace();
-//            }
-//
-//
-//            final int col = topleft.x;
-//            final int row = topleft.y;
-//
-//            final double tilespanX = scale*tileSize.width;
-//            final double tilespanY = scale*tileSize.height;
-//
-//            final GeneralEnvelope canvasEnv = new GeneralEnvelope(canvas.getObjectiveCRS());
-//            canvasEnv.setRange(0,
-//                    upperleft.getX() + (col)*tilespanX,
-//                    upperleft.getX() + (col+nbtileonwidth)*tilespanX
-//                    );
-//            canvasEnv.setRange(1,
-//                    upperleft.getY() - (row+nbtileonheight)*tilespanY,
-//                    upperleft.getY() - (row)*tilespanY
-//                    );
-//
-//            try {
-//                canvas.getController().setVisibleArea(canvasEnv);
-//            } catch (NoninvertibleTransformException ex) {
-//                Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
-//            } catch (TransformException ex) {
-//                Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
-//            }
-//
-//            //cut the canvas buffer in pieces
-//            canvas.repaint();
-//
-//
-//
-//            final BufferedImage canvasBuffer = canvas.getSnapShot();
-//            for(int x=0; x<nbtileonwidth && col+x<gridSize.width; x++){
-//                for(int y=0; y<nbtileonheight && row+y<gridSize.height; y++){
-//                    final String idx = getTileIndex(col+x, row+y);
-//                    final BufferedImage tile = canvasBuffer.getSubimage(
-//                            x*tileSize.width,
-//                            y*tileSize.height,
-//                            tileSize.width,
-//                            tileSize.height);
-//                    ts.tiles.put(idx, tile.getRaster());
-//                    fireTileCreated(col+x,row+y);
-//                }
-//            }
-//
-//        }
-//
-//    }
-
+    public static interface ProgressListener extends EventListener{
+        void tileCreated(int x, int y);
+    }
 }
