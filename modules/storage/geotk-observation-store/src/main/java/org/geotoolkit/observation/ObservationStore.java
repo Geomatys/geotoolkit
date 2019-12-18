@@ -81,7 +81,7 @@ public interface ObservationStore {
      *
      * @return An Observation Filter.
      */
-    public abstract ObservationFilter getFilter();
+    public abstract ObservationFilterReader getFilter();
 
     /**
      * Return an Observation Writer on the data.

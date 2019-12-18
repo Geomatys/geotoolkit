@@ -46,7 +46,7 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public ObservationFilter getFilter() {
+    public ObservationFilterReader getFilter() {
         throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
     }
 
