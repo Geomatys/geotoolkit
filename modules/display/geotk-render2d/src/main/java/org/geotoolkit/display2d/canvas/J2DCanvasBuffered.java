@@ -58,11 +58,11 @@ public class J2DCanvasBuffered extends J2DCanvas{
     private BufferedImage buffer;
 
 
-    public J2DCanvasBuffered(final CoordinateReferenceSystem crs, final Dimension dim){
+    public J2DCanvasBuffered(final CoordinateReferenceSystem crs, final Dimension dim) {
         this(crs,dim,null);
     }
 
-    public J2DCanvasBuffered(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
+    public J2DCanvasBuffered(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints) {
         super(crs,hints);
         if (dim != null) setSize(dim);
     }
@@ -71,7 +71,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         return getDisplayBounds().getBounds().getSize();
     }
 
-    public void setSize(final Dimension dim){
+    public void setSize(final Dimension dim) {
         setDisplayBounds(new Rectangle(dim));
     }
 

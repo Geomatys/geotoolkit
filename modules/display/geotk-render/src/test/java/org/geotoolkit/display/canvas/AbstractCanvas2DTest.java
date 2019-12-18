@@ -67,7 +67,7 @@ public class AbstractCanvas2DTest {
     }
 
     @Test
-    public void testCenterTransform() throws NoninvertibleTransformException, TransformException {
+    public void testCenterTransform() throws NoninvertibleTransformException, TransformException, FactoryException {
         final CoordinateReferenceSystem crs84 = CommonCRS.WGS84.normalizedGeographic();
         final AbstractCanvas2D canvas = new MockCanvas();
         canvas.setObjectiveCRS(crs84);

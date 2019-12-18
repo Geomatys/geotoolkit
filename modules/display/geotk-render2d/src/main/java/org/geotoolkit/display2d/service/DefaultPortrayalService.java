@@ -111,6 +111,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
+import org.opengis.util.FactoryException;
 
 /**
  * Default implementation of portrayal service.
@@ -259,11 +260,15 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         GridGeometry gridGeometry = canvasDef.getGridGeometry();
         if (gridGeometry != null) {
-            canvas.setGridGeometry(gridGeometry);
+            try {
+                canvas.setGridGeometry(gridGeometry);
+            } catch (FactoryException ex) {
+                throw new PortrayalException("Could not set objective crs",ex);
+            }
         } else {
             try {
                 canvas.setObjectiveCRS(crs);
-            } catch (TransformException ex) {
+            } catch (TransformException | FactoryException ex) {
                 throw new PortrayalException("Could not set objective crs",ex);
             }
 
@@ -669,7 +674,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         renderer.setContext(context);
         try {
             canvas.setObjectiveCRS(contextEnv.getCoordinateReferenceSystem());
-        } catch (TransformException ex) {
+        } catch (TransformException | FactoryException ex) {
             throw new PortrayalException("Could not set objective crs",ex);
         }
 

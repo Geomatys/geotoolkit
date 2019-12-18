@@ -214,6 +214,7 @@ public class RenderingContext2D implements RenderingContext{
     private BoundingBox        canvasObjectiveBBox2DB  = null;
 
     private GridGeometry gridGeometry;
+    private GridGeometry gridGeometry2d;
 
     /**
      * Constructs a new {@code RenderingContext} for the specified canvas.
@@ -224,10 +225,11 @@ public class RenderingContext2D implements RenderingContext{
         this.canvas = canvas;
     }
 
-    public void initParameters(GridGeometry gridGeometry, final AffineTransform2D objToDisp, final CanvasMonitor monitor,
+    public void initParameters(GridGeometry gridGeometry, GridGeometry gridGeometry2d, final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
             final Shape canvasDisplayShape, final Shape canvasObjectiveShape, final double dpi){
         this.gridGeometry = gridGeometry;
+        this.gridGeometry2d = gridGeometry2d;
         this.canvasObjectiveBBox= canvas.getVisibleEnvelope();
         this.objectiveCRS       = canvasObjectiveBBox.getCoordinateReferenceSystem();
         this.objectiveCRS2D     = canvas.getObjectiveCRS2D();
@@ -643,9 +645,10 @@ public class RenderingContext2D implements RenderingContext{
      * @param g2d Graphics2D
      * @return RenderingContext2D
      */
-    public RenderingContext2D create(final Graphics2D g2d){
+    public RenderingContext2D create(final Graphics2D g2d) {
         final RenderingContext2D context = new RenderingContext2D(canvas);
         context.initParameters(canvas.getGridGeometry(),
+                canvas.getGridGeometry2D(),
                 objectiveToDisplay, monitor,
                 paintingDisplayShape, paintingObjectiveShape,
                 canvasDisplayShape, canvasObjectiveShape, dpi);
@@ -689,6 +692,10 @@ public class RenderingContext2D implements RenderingContext{
 
     public GridGeometry getGridGeometry() {
         return gridGeometry;
+    }
+
+    public GridGeometry getGridGeometry2D() {
+        return gridGeometry2d;
     }
 
     // Informations related to scale datas -------------------------------------

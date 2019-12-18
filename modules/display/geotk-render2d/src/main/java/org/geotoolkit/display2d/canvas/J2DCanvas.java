@@ -46,7 +46,6 @@ import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  *
@@ -84,7 +83,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
      * operation.
      */
     public RenderingContext2D prepareContext(final RenderingContext2D context,
-            final Graphics2D output, Shape paintingDisplayShape){
+            final Graphics2D output, Shape paintingDisplayShape) {
 
         final Shape canvasDisplayShape = getDisplayBounds();
 
@@ -94,7 +93,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
         try {
             dispToObjCorner = (AffineTransform2D) getGridGeometry2D().getGridToCRS(PixelInCell.CELL_CORNER);
             objToDispCorner = dispToObjCorner.inverse();
-        } catch (org.opengis.referencing.operation.NoninvertibleTransformException | FactoryException ex) {
+        } catch (org.opengis.referencing.operation.NoninvertibleTransformException ex) {
             throw new IllegalStateException(ex.getMessage(), ex);
         }
 
@@ -122,6 +121,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 
         context.initParameters(
                 getGridGeometry(),
+                getGridGeometry2D(),
                 objToDispCorner,
                 monitor,
                 paintingDisplayShape,
@@ -129,7 +129,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
                 canvasDisplayShape,
                 canvasObjectShape,
                 dpi.doubleValue());
-        if(output != null) context.initGraphic(output);
+        if (output != null) context.initGraphic(output);
 
         return context;
     }
@@ -183,7 +183,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 
         final GraphicContainer container = getContainer();
 
-        if(container != null){
+        if (container != null) {
 
             final List<Graphic> candidates = new ArrayList<>();
 

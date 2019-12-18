@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class J2DCanvasSwing extends J2DCanvas{
+public class J2DCanvasSwing extends J2DCanvas {
 
     private final JComponent component = new J2DComponent();
     private Envelope wishedEnvelope = null;

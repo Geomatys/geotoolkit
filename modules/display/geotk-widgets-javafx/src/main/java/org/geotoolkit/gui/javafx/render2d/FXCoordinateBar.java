@@ -55,6 +55,7 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -196,7 +197,7 @@ public class FXCoordinateBar extends GridPane {
                 if(newValue!=null){
                     map.getCanvas().setObjectiveCRS(newValue);
                 }
-            } catch (TransformException ex) {
+            } catch (TransformException | FactoryException ex) {
                 Loggers.JAVAFX.log(Level.INFO, ex.getMessage(), ex);
             }
         });

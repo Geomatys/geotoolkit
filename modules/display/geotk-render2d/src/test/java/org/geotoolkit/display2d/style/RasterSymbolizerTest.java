@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
@@ -36,10 +37,12 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -51,6 +54,7 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 
@@ -212,4 +216,75 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
     }
 
 
+    /**
+     * Render a coverage with nearest and lanczos interpolation.
+     */
+    @Test
+    public void renderInterpolationCoverage() throws FactoryException, PortrayalException, IOException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final BufferedImage image = new BufferedImage(36, 18, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
+        g.setColor(Color.RED);
+        g.fillRect(0, 0, 18, 9);
+        g.setColor(Color.GREEN);
+        g.fillRect(18, 0, 18, 9);
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 9, 18, 9);
+        g.setColor(Color.YELLOW);
+        g.fillRect(18, 9, 18, 9);
+        g.dispose();
+
+        final GridExtent extent = new GridExtent(36, 18);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(10, 0, 0, -10, -180, 90);
+        final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+
+        final SampleDimension red = new SampleDimension.Builder().setName("1").build();
+        final SampleDimension green = new SampleDimension.Builder().setName("2").build();
+        final SampleDimension blue = new SampleDimension.Builder().setName("3").build();
+        final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(red,green,blue), image);
+
+        final GridExtent queryextent = new GridExtent(360, 180);
+        final GeneralEnvelope queryenv = new GeneralEnvelope(crs);
+        queryenv.setRange(0, -180, 180);
+        queryenv.setRange(1, -90, 90);
+        final GridGeometry querygrid = new GridGeometry(queryextent, queryenv);
+
+
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
+
+        final BufferedImage nearest;
+        final BufferedImage bicubic;
+        final BufferedImage lanczos;
+        {
+            final Hints hints = new Hints();
+            hints.put(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR);
+            final CanvasDef cdef = new CanvasDef(querygrid);
+            final SceneDef sdef = new SceneDef(context, hints);
+            nearest = DefaultPortrayalService.portray(cdef, sdef);
+        }
+        {
+            final Hints hints = new Hints();
+            hints.put(GO2Hints.KEY_INTERPOLATION, InterpolationCase.BICUBIC2);
+            final CanvasDef cdef = new CanvasDef(querygrid);
+            final SceneDef sdef = new SceneDef(context, hints);
+            bicubic = DefaultPortrayalService.portray(cdef, sdef);
+        }
+        {
+            final Hints hints = new Hints();
+            hints.put(GO2Hints.KEY_INTERPOLATION, InterpolationCase.LANCZOS);
+            final CanvasDef cdef = new CanvasDef(querygrid);
+            final SceneDef sdef = new SceneDef(context, hints);
+            lanczos = DefaultPortrayalService.portray(cdef, sdef);
+        }
+
+        int nearestRgb = nearest.getRGB(179, 0);
+        int bicubicRgb = bicubic.getRGB(179, 0);
+        int naczosRgb = lanczos.getRGB(179, 0);
+
+        assertTrue(nearestRgb != bicubicRgb);
+        assertTrue(bicubicRgb != naczosRgb);
+    }
 }

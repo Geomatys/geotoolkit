@@ -61,6 +61,7 @@ import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -130,6 +131,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     private final transient Map<CoordinateReferenceSystem,MathTransform> transforms = new HashMap<>();
 
     private GridGeometry gridGeometry = new GridGeometry(new GridExtent(360, 180), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()));
+    private GridGeometry2D gridGeometry2d = new GridGeometry2D(gridGeometry);
     private boolean proportion = true;
     private boolean autoRepaint = false;
 
@@ -172,47 +174,48 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Set global N dimension grid geometry.
      * @param gridGeometry new grid geometry
      */
-    public final void setGridGeometry(GridGeometry gridGeometry) {
+    public final void setGridGeometry(GridGeometry gridGeometry) throws FactoryException {
         ArgumentChecks.ensureNonNull("gridGeometry", gridGeometry);
         if (this.gridGeometry.equals(gridGeometry)) return;
         final GridGeometry old = this.gridGeometry;
         this.gridGeometry = gridGeometry;
         firePropertyChange(GRIDGEOMETRY_KEY, old, gridGeometry);
+
+        {
+            final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+            if (crs.getCoordinateSystem().getDimension() == 2) {
+                gridGeometry2d = new GridGeometry2D(gridGeometry);
+            } else {
+                final CoordinateReferenceSystem crs2d = getHorizontalComponent(crs);
+                final int idx = getHorizontalIndex(crs);
+                final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
+                final TransformSeparator sep = new TransformSeparator(gridToCRS);
+                sep.addTargetDimensions(idx, idx+1);
+                final MathTransform gridToCRS2D = sep.separate();
+
+                //we are expecting axis index to be preserved from grid to crs
+                final GridExtent extent = gridGeometry.getExtent().reduce(idx, idx+1);
+                gridGeometry2d = new GridGeometry2D(extent, PixelInCell.CELL_CENTER, gridToCRS2D, crs2d);
+            }
+        }
         repaintIfAuto();
     }
 
     /**
-     * NOTE : this is an incomplete gridGeometry, do not use it yet.
-     *
      * Get 2 dimension grid geometry.
      * This grid geometry only has the 2D CRS part of the global grid geometry.
      *
      * @return GridGeometry 2D, never null
      */
-    public final GridGeometry getGridGeometry2D() throws FactoryException {
-        final GridGeometry gridGeometry = getGridGeometry();
-        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
-        if (crs.getCoordinateSystem().getDimension() == 2) {
-            return gridGeometry;
-        }
-        final CoordinateReferenceSystem crs2d = getHorizontalComponent(crs);
-        final int idx = getHorizontalIndex(crs);
-        final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
-        final TransformSeparator sep = new TransformSeparator(gridToCRS);
-        sep.addTargetDimensions(idx, idx+1);
-        final MathTransform gridToCRS2D = sep.separate();
-
-        //we are expecting axis index to be preserved from grid to crs
-        final GridExtent extent = gridGeometry.getExtent().reduce(idx, idx+1);
-
-        return new GridGeometry2D(extent, PixelInCell.CELL_CENTER, gridToCRS2D, crs2d);
+    public final GridGeometry getGridGeometry2D() {
+        return gridGeometry2d;
     }
 
     public final CoordinateReferenceSystem getObjectiveCRS() {
         return gridGeometry.getCoordinateReferenceSystem();
     }
 
-    public final void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException{
+    public final void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException, FactoryException {
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
         if (Utilities.equalsIgnoreMetadata(gridGeometry.getCoordinateReferenceSystem(), crs)) {
             return;
@@ -297,18 +300,14 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         try {
             MathTransform gridToCRS = getGridGeometry2D().getGridToCRS(PixelInCell.CELL_CENTER);
             return (AffineTransform2D) gridToCRS.inverse();
-        } catch (org.opengis.referencing.operation.NoninvertibleTransformException | FactoryException ex) {
+        } catch (org.opengis.referencing.operation.NoninvertibleTransformException ex) {
             throw new IllegalStateException(ex.getMessage(), ex);
         }
     }
 
     public final AffineTransform2D getDisplayToObjective() throws NoninvertibleTransformException {
-        try {
-            MathTransform gridToCRS = getGridGeometry2D().getGridToCRS(PixelInCell.CELL_CENTER);
-            return (AffineTransform2D) gridToCRS;
-        } catch (FactoryException ex) {
-            throw new IllegalStateException(ex.getMessage(), ex);
-        }
+        MathTransform gridToCRS = getGridGeometry2D().getGridToCRS(PixelInCell.CELL_CENTER);
+        return (AffineTransform2D) gridToCRS;
     }
 
     public final Rectangle2D getDisplayBounds() {
@@ -328,7 +327,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         return bounds;
     }
 
-    public void setDisplayBounds(Rectangle2D bounds){
+    public void setDisplayBounds(Rectangle2D bounds) {
         ArgumentChecks.ensureNonNull("Display bounds", bounds);
 
         final GridGeometry gridGeometry = getGridGeometry();
@@ -344,7 +343,13 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final GridExtent newExt = new GridExtent(null, low, high, true);
 
         final GridGeometry newGrid = new GridGeometry(newExt, PixelInCell.CELL_CENTER, gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER), gridGeometry.getCoordinateReferenceSystem());
-        setGridGeometry(newGrid);
+        try {
+            setGridGeometry(newGrid);
+        } catch (FactoryException ex) {
+            //we are just changing the size, this should not cause the exception
+            //should not happen with current parameters
+            throw new BackingStoreException(ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -394,7 +399,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Change a range in the canvas envelope.
      * Can be used to temporal or elevation range of the map.
      */
-    private void setRange(final int ordinate, final double min, final double max){
+    private void setRange(final int ordinate, final double min, final double max) throws FactoryException{
         GeneralEnvelope envelope = new GeneralEnvelope(gridGeometry.getEnvelope());
         if (envelope.getMinimum(ordinate) == min && envelope.getMaximum(ordinate) == max) {
             //same values

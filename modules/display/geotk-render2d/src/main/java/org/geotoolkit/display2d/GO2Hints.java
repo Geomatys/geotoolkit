@@ -19,8 +19,8 @@ package org.geotoolkit.display2d;
 import java.awt.RenderingHints.Key;
 import java.awt.image.ColorModel;
 import org.geotoolkit.display.HintKey;
-import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.map.ElevationModel;
 
@@ -88,12 +88,6 @@ public final class GO2Hints extends Static {
     public static final Key KEY_MAX_TILES = new NamedKey(Integer.class, "GO2 - Max tiles per pyramid when rendering");
 
     /**
-     * Configure the go2 engine to use JTS or ISO geometries.
-     * Default is ISO.
-     */
-    public static final Key KEY_GEOMETRY_BINDING = new NamedKey(String.class, "GO2 - Geometry binding");
-
-    /**
      * Configure the go2 engine to render in order symbolizer then feature.
      * This hint usualy given much better rendered image but is more costly to
      * produce in stateless mode.
@@ -111,7 +105,7 @@ public final class GO2Hints extends Static {
      */
     public static final Key KEY_LABEL_RENDERER_CLASS = new NamedKey(Class.class, "GO2 - Label Renderer");
 
-     /**
+    /**
      * Configure the go2 engine use the given DPI.
      * Default dpi is 90.
      */
@@ -153,13 +147,10 @@ public final class GO2Hints extends Static {
     public static final Key KEY_ELEVATION_MODEL = new NamedKey(ElevationModel.class, "GO2 - Default Elevation Model");
 
     /**
-     * Configure the PyramidalCoverageReference view, false by default in stateless mode,
-     * true in statefull mode.
-     * If true the graphic rendering is tile by tile else all the view is filled.
-     *
-     * @see StatelessMapItemJ2D#parseChild(org.geotoolkit.map.MapItem)
+     * Coverage rendering interpolation.
+     * Default value is null.
      */
-    public static final Key KEY_VIEW_TILE = new NamedKey(Boolean.class, "GO2 - View Tiles");
+    public static final Key KEY_INTERPOLATION = new NamedKey(InterpolationCase.class, "GO2 - colored image interpolation");
 
     /**
      * Used only by J2DCanvasVolatile.

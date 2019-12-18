@@ -1216,8 +1216,8 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                 }
             }
 
-            if(len > images.size()){
-                for(int k=images.size();k<len;k++){
+            if (len > images.size()) {
+                for (int k=images.size();k<len;k++){
                     final BufferedImage layer = createBufferedImage(cm, sm);
                     images.add(k, layer);
                     ctxs.add(k, context.create( ((Graphics2D)layer.getGraphics()) ));

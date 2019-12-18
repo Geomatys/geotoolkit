@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -46,7 +47,67 @@ import javax.media.jai.LookupTableJAI;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
-
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.Resource;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.interpolation.Interpolation;
+import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.image.interpolation.Rescaler;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.metadata.MetadataUtilities;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.reformat.ReformatProcess;
+import org.geotoolkit.processing.coverage.resample.ResampleProcess;
+import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
+import org.geotoolkit.processing.coverage.statistics.StatisticOp;
+import org.geotoolkit.processing.coverage.statistics.Statistics;
+import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
+import org.geotoolkit.storage.coverage.ImageStatistics;
+import org.geotoolkit.storage.feature.query.Query;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
+import org.geotoolkit.style.function.CompatibleColorModel;
+import org.geotoolkit.style.function.DefaultInterpolationPoint;
+import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Method;
+import org.geotoolkit.style.function.Mode;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.filter.Filter;
@@ -75,69 +136,6 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
 import org.opengis.util.LocalName;
-
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.image.PixelIterator;
-import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.NoSuchDataException;
-import org.apache.sis.storage.Resource;
-import org.apache.sis.util.iso.Names;
-
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.service.DefaultPortrayalService;
-import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.interpolation.Interpolation;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Rescaler;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.DefaultCoverageMapLayer;
-import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.metadata.MetadataUtilities;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.reformat.ReformatProcess;
-import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
-import org.geotoolkit.processing.coverage.statistics.StatisticOp;
-import org.geotoolkit.processing.coverage.statistics.Statistics;
-import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
-import org.geotoolkit.storage.coverage.ImageStatistics;
-import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.style.function.CompatibleColorModel;
-import org.geotoolkit.style.function.DefaultInterpolationPoint;
-import org.geotoolkit.style.function.InterpolationPoint;
-import org.geotoolkit.style.function.Method;
-import org.geotoolkit.style.function.Mode;
-
-import org.locationtech.jts.geom.Geometry;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -225,7 +223,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
 
-            RenderedImage dataImage = applyStyle(ref, dataCoverage, elevationCoverage, sourceSymbol);
+            org.apache.sis.internal.coverage.GridCoverage2D dataImage = applyStyle(ref, dataCoverage, elevationCoverage, sourceSymbol);
             final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
 
             ////////////////////////////////////////////////////////////////////
@@ -379,7 +377,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
      * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)
      */
-    public static RenderedImage applyStyle(GridCoverageResource ref, GridCoverage coverage,
+    public static org.apache.sis.internal.coverage.GridCoverage2D applyStyle(GridCoverageResource ref, GridCoverage coverage,
             GridCoverage elevationCoverage,
             final RasterSymbolizer styleElement)
             throws ProcessException, FactoryException, TransformException, PortrayalException, IOException
@@ -388,7 +386,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         RenderedImage image = applyColorMapStyle(ref, coverage, styleElement);
         image = applyShadedRelief(image, coverage, elevationCoverage, styleElement);
         image = applyContrastEnhancement(image, styleElement);
-        return image;
+
+        //generate a new coverage with colored sample dimensions
+        final int numBands = image.getSampleModel().getNumBands();
+        final List<SampleDimension> sampleDimensions = new ArrayList<>(numBands);
+        for (int i=0;i<numBands;i++) sampleDimensions.add(new SampleDimension.Builder().setName(i).build());
+        return new org.apache.sis.internal.coverage.GridCoverage2D(coverage.getGridGeometry(), sampleDimensions, image);
     }
 
     /**
@@ -642,8 +645,35 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         throw new PortrayalException("Band for name/indice "+name+" not found");
     }
 
-    private boolean renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform trs2D) throws PortrayalException{
+    private boolean renderCoverage(final ProjectedCoverage projectedCoverage, org.apache.sis.internal.coverage.GridCoverage2D coverage, MathTransform trs2D) throws PortrayalException{
         boolean dataRendered = false;
+
+        RenderedImage img = coverage.render(null);
+
+        final InterpolationCase interpolationCase = (InterpolationCase) hints.get(GO2Hints.KEY_INTERPOLATION);
+        if (interpolationCase != null) {
+            switch (interpolationCase) {
+                case NEIGHBOR :
+                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                    break;
+                case BILINEAR :
+                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    break;
+                case BICUBIC :
+                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    break;
+                default :
+                    //resample image ourself
+                    try {
+                        GridCoverage cov = new ResampleProcess(coverage, renderingContext.getGridGeometry().getCoordinateReferenceSystem(), renderingContext.getGridGeometry2D(), interpolationCase, null).executeNow();
+                        trs2D = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+                        img = cov.render(null);
+                    } catch (ProcessException ex) {
+                        throw new PortrayalException(ex);
+                    }
+                    break;
+            }
+        }
 
         if (trs2D instanceof AffineTransform) {
             g2d.setComposite(symbol.getJ2DComposite());

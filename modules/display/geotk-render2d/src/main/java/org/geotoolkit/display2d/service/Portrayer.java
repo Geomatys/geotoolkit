@@ -33,6 +33,7 @@ import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Portrayal data, caches the Java2D canvas for further reuse.
@@ -75,8 +76,8 @@ public final class Portrayer {
         container.setContext(context);
         try {
             canvas.setObjectiveCRS(crs);
-        } catch (TransformException ex) {
-            throw new PortrayalException("Could not set objective crs",ex);
+        } catch (TransformException | FactoryException ex) {
+            throw new PortrayalException("Could not set objective crs", ex);
         }
 
         //we specifically say to not repect X/Y proportions

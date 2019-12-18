@@ -58,6 +58,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.PointSymbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -233,7 +234,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
 
     }
 
-    private static ProjectedGeometry createProjectedGeometry(Geometry geometry, Dimension canvasBounds, AffineTransform objToDisp) throws NoninvertibleTransformException, TransformException {
+    private static ProjectedGeometry createProjectedGeometry(Geometry geometry, Dimension canvasBounds, AffineTransform objToDisp) throws NoninvertibleTransformException, TransformException, FactoryException {
 
         final int canvasWidth = canvasBounds.width;
         final int canvasHeight = canvasBounds.height;

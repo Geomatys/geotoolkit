@@ -56,6 +56,7 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -348,6 +349,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     hints = new Hints(hints);
                     hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
                     hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+                    hints.put(GO2Hints.KEY_INTERPOLATION, InterpolationCase.BICUBIC2);
                 }
             }
         } else {
