@@ -545,7 +545,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
             final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, new AffineTransform2D(gridToCRS), resultCrs);
             return new GridCoverage2D(grid, sampleDimensions, image);
 
-        } catch (IOException | TransformException | FactoryException ex) {
+        } catch (IOException | TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
 

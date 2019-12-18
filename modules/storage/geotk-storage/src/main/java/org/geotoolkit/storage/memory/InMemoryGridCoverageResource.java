@@ -34,7 +34,6 @@ import org.apache.sis.storage.WritableGridCoverageResource;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
@@ -112,12 +111,7 @@ public class InMemoryGridCoverageResource extends AbstractGridResource implement
             for (int i = 0; i < range.length; i++) {
                 sds.add(sampleDimensions.get(i));
             }
-
-            try {
-                return new GridCoverage2D(grid, sds, newImage);
-            } catch (FactoryException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
-            }
+            return new GridCoverage2D(grid, sds, newImage);
         }
         return coverage;
     }

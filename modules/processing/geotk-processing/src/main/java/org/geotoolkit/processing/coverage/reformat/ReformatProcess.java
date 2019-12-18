@@ -34,7 +34,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.reformat.ReformatDescriptor.*;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.FactoryException;
 
 /**
  *
@@ -112,11 +111,7 @@ public class ReformatProcess extends AbstractProcess {
 
         // REBUILD COVERAGE ////////////////////////////////////////////////////
         final GridCoverage resultCoverage;
-        try {
-            resultCoverage = new GridCoverage2D(inputCoverage.getGridGeometry(), inputCoverage.getSampleDimensions(), resultImage);
-        } catch (FactoryException ex) {
-            throw new ProcessException(ex.getMessage(), this, ex);
-        }
+        resultCoverage = new GridCoverage2D(inputCoverage.getGridGeometry(), inputCoverage.getSampleDimensions(), resultImage);
 
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);
     }

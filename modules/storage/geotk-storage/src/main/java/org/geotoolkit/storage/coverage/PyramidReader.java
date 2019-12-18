@@ -45,16 +45,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -70,9 +60,7 @@ import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridIterator;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -84,7 +72,6 @@ import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
-import org.geotoolkit.storage.multires.Tile;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -462,12 +449,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
                 new Point(tileMinCol,tileMinRow),wantedCRS.getCoordinateSystem().getDimension(),
                 PixelInCell.CELL_CENTER);
         final GridGeometry gridgeo = new GridGeometry(ge, PixelInCell.CELL_CENTER, gtc, wantedCRS);
-
-        try {
-            return new GridCoverage2D(gridgeo, sampleDimensions, image);
-        } catch (FactoryException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
-        }
+        return new GridCoverage2D(gridgeo, sampleDimensions, image);
     }
 
      /**

@@ -667,12 +667,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 }
             }
         }
-
-        try {
-            return new GridCoverage2D(canvas, sampleDimensions, result);
-        } catch (FactoryException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
-        }
+        return new GridCoverage2D(canvas, sampleDimensions, result);
     }
 
     private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex) throws DataStoreException {
