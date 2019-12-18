@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,11 @@ import java.awt.Rectangle;
 import java.awt.image.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -35,6 +35,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Tile;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -113,40 +114,18 @@ public class MosaicImage implements RenderedImage {
      * Try to find a valid tile and load sample and color models from it.
      */
     private synchronized void loadImageModel() {
-            //search the first non missing tile of the Mosaic
-            final GridExtent dataArea = mosaic.getDataExtent();
-            if (dataArea != null) {
-                int rectx = (int) dataArea.getLow(0);
-                int recty = (int) dataArea.getLow(1);
-                int rectwidth = (int) dataArea.getSize(0);
-                int rectheight = (int) dataArea.getSize(1);
-                final Point upperLeftPosition = this.getPositionOf(rectx, recty);
-                final Point lowerRightPosition = this.getPositionOf(rectx + rectwidth - 1, recty + rectheight - 1);
-                search:
-                for (int y = Math.max(upperLeftPosition.y, 0); y < Math.min(lowerRightPosition.y + 1, this.getNumYTiles()); y++) {
-                    for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
-                        try {
-                            if (!isTileMissing(x, y)) {
-                                final ImageTile tile = getTileReference(x, y);
-                                    if (tile != null) {
-                                        final ImageTile imgTile = (ImageTile) tile;
-                                        final RenderedImage image = imgTile.getImage();
-                                        sampleModel = image.getSampleModel();
-                                        colorModel = image.getColorModel();
-                                        rasterModel = image.getTile(0, 0);
-                                        tileCache.put(new Point(x, y), rasterModel);
-                                        break search;
-                                    }
-                            }
-                        } catch (IOException | DataStoreException e) {
-                            LOGGER.log(Level.FINE, e.getMessage(), e);
-                            break search;
-                        }
-                        break search;
-                    }
-                }
-
+        try {
+            final Optional<Tile> anyTile = mosaic.anyTile();
+            if (anyTile.isPresent()) {
+                final ImageTile imgTile = (ImageTile) anyTile.get();
+                final RenderedImage image = imgTile.getImage();
+                sampleModel = image.getSampleModel();
+                colorModel = image.getColorModel();
+                rasterModel = image.getTile(0, 0);
             }
+        } catch (DataStoreException | IOException e) {
+            LOGGER.log(Level.FINE, e.getMessage(), e);
+        }
 
         if (sampleModel == null) {
             //use a fake tile created from sample dimensions

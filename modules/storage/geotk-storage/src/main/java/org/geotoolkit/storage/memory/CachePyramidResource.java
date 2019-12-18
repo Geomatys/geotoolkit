@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -371,6 +372,16 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         public void deleteTile(int tileX, int tileY) throws DataStoreException {
             parent.deleteTile(tileX, tileY);
             tiles.remove(tileId(tileX, tileY));
+        }
+
+        @Override
+        public Optional<Tile> anyTile() throws DataStoreException {
+            Iterator<Map.Entry<String, CacheTile>> ite = tiles.entrySet().iterator();
+            if (ite.hasNext()) {
+                CacheTile value = ite.next().getValue();
+                return Optional.of(value);
+            }
+            return parent.anyTile();
         }
 
     }

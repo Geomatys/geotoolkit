@@ -19,17 +19,18 @@ package org.geotoolkit.wmsc.model;
 import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.process.Monitor;
+import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Tile;
-import org.geotoolkit.process.Monitor;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.geometry.DirectPosition;
@@ -146,5 +147,10 @@ public class WMSCMosaic implements Mosaic {
     @Override
     public void deleteTile(int tileX, int tileY) throws DataStoreException {
         throw new DataStoreException("WMS-C is not writable");
+    }
+
+    @Override
+    public Optional<Tile> anyTile() throws DataStoreException {
+        return Optional.of(getTile(0, 0, null));
     }
 }

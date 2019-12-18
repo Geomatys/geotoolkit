@@ -239,6 +239,15 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
         public void deleteTile(int tileX, int tileY) throws DataStoreException {
             setTile(tileX,tileY,null);
         }
+
+        @Override
+        public Optional<Tile> anyTile() throws DataStoreException {
+            final Iterator<InMemoryTile> iterator = mpTileReference.values().iterator();
+            if (iterator.hasNext()) {
+                return Optional.of(iterator.next());
+            }
+            return Optional.empty();
+        }
     }
 
     private final class InMemoryTile extends DefaultImageTile {

@@ -273,7 +273,15 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
             base.deleteTile(tileX, tileY);
         }
 
-    }
+        @Override
+        public Optional<Tile> anyTile() throws DataStoreException {
+            final Optional<Tile> anyTile = base.anyTile();
+            if (anyTile.isPresent()) {
+                return anyTile;
+            }
+            return Optional.ofNullable(getTile(0, 0, null));
+        }
 
+    }
 
 }

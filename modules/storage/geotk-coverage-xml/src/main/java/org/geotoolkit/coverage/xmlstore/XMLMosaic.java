@@ -39,6 +39,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -69,8 +70,6 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
@@ -79,6 +78,8 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Tile;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -814,6 +815,12 @@ public class XMLMosaic implements Mosaic {
             }
         }
         return true;
+    }
+
+    @Override
+    public Optional<Tile> anyTile() throws DataStoreException {
+        //it will create a valid tile with correct sample model
+        return Optional.ofNullable(getTile(0, 0, null));
     }
 
     private class TileWriter implements Runnable{

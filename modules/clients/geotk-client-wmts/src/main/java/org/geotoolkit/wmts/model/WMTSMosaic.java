@@ -20,6 +20,7 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
@@ -28,11 +29,11 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.process.Monitor;
+import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
-import org.geotoolkit.process.Monitor;
-import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.wmts.WMTSUtilities;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
@@ -174,5 +175,14 @@ public class WMTSMosaic implements Mosaic{
     @Override
     public void deleteTile(int tileX, int tileY) throws DataStoreException {
         throw new DataStoreException("WMTS is not writable");
+    }
+
+    @Override
+    public Optional<Tile> anyTile() throws DataStoreException {
+        if (limit == null) {
+            return Optional.ofNullable(getTile(0, 0, null));
+        } else {
+            return Optional.ofNullable(getTile(limit.getMinTileCol(), limit.getMinTileRow(), null));
+        }
     }
 }
