@@ -16,8 +16,11 @@
  */
 package org.geotoolkit.sts;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.sis.util.Version;
 
 /**
@@ -43,7 +46,10 @@ public abstract class AbstractSTSRequestById implements STSRequest {
      */
     protected List<String> select;
 
-     protected String resultFormat;
+    protected String resultFormat;
+
+    @JsonIgnore
+    protected Map<String, String> extraFlag = new HashMap<>();
 
     public AbstractSTSRequestById() {
 
@@ -126,5 +132,16 @@ public abstract class AbstractSTSRequestById implements STSRequest {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Map<String, String> getExtraFlag() {
+        if (extraFlag == null)  {
+            extraFlag = new HashMap<>();
+        }
+        return extraFlag;
+    }
+
+    public void setExtraFlag(Map<String, String> extraFlag) {
+        this.extraFlag = extraFlag;
     }
 }
