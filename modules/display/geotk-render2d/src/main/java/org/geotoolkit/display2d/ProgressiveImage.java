@@ -48,7 +48,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ProgressiveImage implements RenderedImage{
+final class ProgressiveImage implements RenderedImage{
 
     /** store pregenerated tiles */
     private final Map<String,Raster> tiles = new ConcurrentHashMap<>();
@@ -100,18 +100,18 @@ public class ProgressiveImage implements RenderedImage{
                 envelope.getMaximum(1));
 
         //prepare a J2DCanvas to render several tiles in the same tile
-        //we consider a 2000*2000 size to be the maximum, which is 16Mb in memory
-        //we expect the user to access tile lines by lines.
-        final int maxNbTile = (2000*2000) / (tileSize.width*tileSize.height);
+        int maxNbTile = (1024*1024) / (tileSize.width*tileSize.height);
+        maxNbTile = Math.max(1, maxNbTile);
 
-        if(maxNbTile < gridSize.width){
+        if (maxNbTile < gridSize.width) {
             //we can not generate a full line
             nbtileonwidth = maxNbTile;
             nbtileonheight = 1;
-        }else{
-            //we can generate more than one line
+        } else {
+            //we could generate more than one line
+            //but this class is used in MapContextTileGenerator which makes a Stream foreach line
             nbtileonwidth = gridSize.width;
-            nbtileonheight = Math.min(gridSize.height, maxNbTile / gridSize.width);
+            nbtileonheight = 1;
         }
 
         this.cdef = canvasDef;
