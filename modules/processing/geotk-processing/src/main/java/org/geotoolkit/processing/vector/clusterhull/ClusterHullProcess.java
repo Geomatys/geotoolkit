@@ -15,8 +15,8 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.memory.InMemoryStore;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.geotoolkit.processing.AbstractProcess;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
+import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -99,7 +99,8 @@ public class ClusterHullProcess extends AbstractProcess {
             current.add(geometries.iterator().next());
             Set<Geometry> clusterHullSet = applyClusterHull(geometries, new HashSet<Geometry>(), current, new HashSet<Geometry>(), toMeter);
             // Extract the initial CRS
-            CoordinateReferenceSystem crs = getCRSFromFeatureSet(inputFeatureSet);
+            final FeatureType type = inputFeatureSet.getType();
+            CoordinateReferenceSystem crs = FeatureExt.getCRS(type);
             // Build the feature set
             FeatureSet clusterHull = createFeatureSetFromGeometrySet(clusterHullSet, crs);
             return clusterHull;
@@ -110,7 +111,8 @@ public class ClusterHullProcess extends AbstractProcess {
 
     private void initTransformation(final FeatureSet inputFeatureSet) throws FactoryException, DataStoreException {
         Double[] median = getMedianPoint(inputFeatureSet);
-        CoordinateReferenceSystem crs1 = getCRSFromFeatureSet(inputFeatureSet);
+        final FeatureType type = inputFeatureSet.getType();
+        CoordinateReferenceSystem crs1 = FeatureExt.getCRS(type);
         if (crs1 == null) crs1 = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem crs2 = getLocalLambertCRS(median[0], median[1]);
         final MathTransform mt = CRS.findOperation(crs1, crs2, null).getMathTransform();
@@ -119,21 +121,13 @@ public class ClusterHullProcess extends AbstractProcess {
     }
 
     private Set<Geometry> extractGeometrySet(final FeatureSet fs) throws DataStoreException {
+        String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
         Set<Geometry> geometries = fs.features(false)
-                .map(f -> f.getProperty("geometry"))
-                .map(p -> p.getValue())
+                .map(f -> f.getPropertyValue(geomName))
                 .filter(value -> value instanceof Geometry)
                 .map(value -> (Geometry) value)
                 .collect(Collectors.toSet());
         return geometries;
-    }
-
-    private CoordinateReferenceSystem getCRSFromFeatureSet(FeatureSet fs) throws DataStoreException {
-        final FeatureType type = fs.getType();
-        final PropertyType geometryType = type.getProperty("geometry");
-        final CoordinateReferenceSystem crs = FeatureExt.getCRS(geometryType);
-
-        return crs;
     }
 
     private Double customDistance(final Geometry geom1, final Geometry geom2) throws TransformException {
@@ -145,22 +139,9 @@ public class ClusterHullProcess extends AbstractProcess {
 
     private Double[] getMedianPoint(final FeatureSet fs) throws DataStoreException {
         Double[] median = {0.0, 0.0};
-        Optional<Envelope> envelope;
-
-        envelope = fs.features(false)
-                .map(f -> f.getProperty("geometry"))
-                .map(p -> p.getValue())
-                .filter(value -> value instanceof Geometry)
-                .map(value -> (Geometry)value)
-                .map(Geometry::getEnvelopeInternal)
-                .reduce((e1, e2) -> {
-                    e1.expandToInclude(e2);
-                    return e1;
-                });
-        if(envelope.isPresent()){
-            median[0] = (envelope.get().getMinX() + envelope.get().getMaxX()) / 2;
-            median[1] = (envelope.get().getMinY() + envelope.get().getMaxY()) / 2;
-        }
+        Envelope envelope = FeatureStoreUtilities.getEnvelope(fs,true);
+        median[0] = (envelope.getMinimum(0) + envelope.getMaximum(0)) / 2;
+        median[1] = (envelope.getMinimum(1) + envelope.getMaximum(1)) / 2;
         return median;
     }
 
