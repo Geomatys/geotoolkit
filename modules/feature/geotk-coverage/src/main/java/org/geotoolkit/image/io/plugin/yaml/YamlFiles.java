@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.image.io.plugin.yaml;
 
-import org.geotoolkit.image.io.plugin.yaml.internal.YamlCategory;
-import org.geotoolkit.image.io.plugin.yaml.internal.YamlSampleDimension;
-import org.geotoolkit.image.io.plugin.yaml.internal.YamlImageInfo;
-import org.geotoolkit.image.io.plugin.yaml.internal.YamlWriterBuilder;
 import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.FileReader;
@@ -32,10 +28,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlBuilder;
+import org.geotoolkit.image.io.plugin.yaml.internal.YamlCategory;
+import org.geotoolkit.image.io.plugin.yaml.internal.YamlImageInfo;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlSampleCategory;
-import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.image.io.plugin.yaml.internal.YamlSampleDimension;
+import org.geotoolkit.image.io.plugin.yaml.internal.YamlWriterBuilder;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
@@ -250,10 +250,10 @@ public final class YamlFiles {
      * @throws IOException if problem during Yaml file writing.
      */
     public static void write(final File path, final YamlWriterBuilder imageInfoBuilder) throws IOException {
-        final FileWriter fileW = new FileWriter(path);
-        fileW.write(dump(imageInfoBuilder));
-        fileW.flush();
-        fileW.close();
+        try (final FileWriter fileW = new FileWriter(path)) {
+            fileW.write(dump(imageInfoBuilder));
+            fileW.flush();
+        }
     }
 
     /**
