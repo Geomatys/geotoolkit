@@ -18,10 +18,12 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Point;
 import java.awt.image.RenderedImage;
+import java.io.Closeable;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.AbstractResource;
 
 /**
@@ -72,12 +74,17 @@ public class DefaultImageTile extends AbstractResource implements ImageTile{
         }
 
         Object in = XImageIO.toSupportedInput(spi, input);
+        try {
+            if (reader == null) {
+                reader = spi.createReaderInstance();
+            }
 
-        if(reader == null) {
-            reader = spi.createReaderInstance();
+            reader.setInput(in, true, true);
+        } catch (IOException | RuntimeException e) {
+            try (Closeable closeInputOnError = () ->IOUtilities.close(in)) {
+                throw e;
+            }
         }
-
-        reader.setInput(in, true, true);
         return reader;
     }
 
