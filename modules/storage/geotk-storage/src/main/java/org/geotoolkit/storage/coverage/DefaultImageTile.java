@@ -18,7 +18,6 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Point;
 import java.awt.image.RenderedImage;
-import java.io.Closeable;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -59,7 +58,6 @@ public class DefaultImageTile extends AbstractResource implements ImageTile{
 
     @Override
     public ImageReader getImageReader() throws IOException {
-
         ImageReaderSpi spi = this.spi;
         ImageReader reader = null;
 
@@ -73,15 +71,25 @@ public class DefaultImageTile extends AbstractResource implements ImageTile{
             throw new IOException("Could not find image reader spi for input : "+input);
         }
 
-        Object in = XImageIO.toSupportedInput(spi, input);
-        try {
-            if (reader == null) {
+        if (reader == null) {
+            Object in = null;
+            try {
+                in = XImageIO.toSupportedInput(spi, input);
                 reader = spi.createReaderInstance();
-            }
-
-            reader.setInput(in, true, true);
-        } catch (IOException | RuntimeException e) {
-            try (Closeable closeInputOnError = () ->IOUtilities.close(in)) {
+                reader.setInput(in, true, true);
+            } catch (IOException | RuntimeException e) {
+                try {
+                    IOUtilities.close(in);
+                } catch (IOException ex) {
+                    e.addSuppressed(ex);
+                }
+                if (reader != null) {
+                    try {
+                        XImageIO.dispose(reader);
+                    } catch (Exception ex) {
+                        e.addSuppressed(ex);
+                    }
+                }
                 throw e;
             }
         }
