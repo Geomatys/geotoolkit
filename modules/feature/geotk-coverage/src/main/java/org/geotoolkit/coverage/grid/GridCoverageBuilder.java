@@ -2029,7 +2029,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         }
         final RenderedImage image = this.image;
         if (image != null) {
-            return ImageUtilities.getBounds(image);
+            return org.apache.sis.internal.coverage.ImageUtilities.getBounds(image);
         }
         throw new IncompleteGridGeometryException(Errors.format(Errors.Keys.UnspecifiedImageSize));
     }

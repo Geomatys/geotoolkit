@@ -223,7 +223,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
 
-            org.apache.sis.internal.coverage.GridCoverage2D dataImage = applyStyle(ref, dataCoverage, elevationCoverage, sourceSymbol);
+            org.apache.sis.coverage.grid.GridCoverage2D dataImage = applyStyle(ref, dataCoverage, elevationCoverage, sourceSymbol);
             final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
 
             ////////////////////////////////////////////////////////////////////
@@ -377,7 +377,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
      * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)
      */
-    public static org.apache.sis.internal.coverage.GridCoverage2D applyStyle(GridCoverageResource ref, GridCoverage coverage,
+    public static org.apache.sis.coverage.grid.GridCoverage2D applyStyle(GridCoverageResource ref, GridCoverage coverage,
             GridCoverage elevationCoverage,
             final RasterSymbolizer styleElement)
             throws ProcessException, FactoryException, TransformException, PortrayalException, IOException
@@ -391,7 +391,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final int numBands = image.getSampleModel().getNumBands();
         final List<SampleDimension> sampleDimensions = new ArrayList<>(numBands);
         for (int i=0;i<numBands;i++) sampleDimensions.add(new SampleDimension.Builder().setName(i).build());
-        return new org.apache.sis.internal.coverage.GridCoverage2D(coverage.getGridGeometry(), sampleDimensions, image);
+        return new org.apache.sis.coverage.grid.GridCoverage2D(coverage.getGridGeometry(), sampleDimensions, image);
     }
 
     /**
@@ -645,7 +645,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         throw new PortrayalException("Band for name/indice "+name+" not found");
     }
 
-    private boolean renderCoverage(final ProjectedCoverage projectedCoverage, org.apache.sis.internal.coverage.GridCoverage2D coverage, MathTransform trs2D) throws PortrayalException{
+    private boolean renderCoverage(final ProjectedCoverage projectedCoverage, org.apache.sis.coverage.grid.GridCoverage2D coverage, MathTransform trs2D) throws PortrayalException{
         boolean dataRendered = false;
 
         RenderedImage img = coverage.render(null);

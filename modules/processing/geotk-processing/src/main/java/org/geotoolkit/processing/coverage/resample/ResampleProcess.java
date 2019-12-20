@@ -34,7 +34,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.coverage.BufferedGridCoverage;
+import org.apache.sis.internal.coverage.ConvertedGridCoverage;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -536,7 +536,7 @@ public class ResampleProcess extends AbstractProcess {
             if (converted) {
                 synchronized (this) {
                     if (this.converted == null) {
-                        this.converted = BufferedGridCoverage.convert(this);
+                        this.converted = ConvertedGridCoverage.createFromPacked(this);
                     }
                     return this.converted;
                 }

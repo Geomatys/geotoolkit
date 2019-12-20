@@ -23,7 +23,7 @@ import java.awt.image.SampleModel;
 import java.util.Hashtable;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.internal.coverage.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;

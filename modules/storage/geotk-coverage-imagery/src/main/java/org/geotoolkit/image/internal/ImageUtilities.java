@@ -27,7 +27,6 @@ import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 
 import javax.media.jai.JAI;
-import javax.media.jai.PlanarImage;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
@@ -104,21 +103,6 @@ public final class ImageUtilities extends Static {
      * Do not allow creation of instances of this class.
      */
     private ImageUtilities() {
-    }
-
-    /**
-     * Returns the bounds of the given image as a new rectangle. Note that if the image is actually
-     * and instance of {@link PlanarImage} and the caller will not modify the rectangle values,
-     * then {@link PlanarImage#getBounds()} can be used instead.
-     *
-     * @param  image The image for which to get the bounds.
-     * @return The bounds of the given image.
-     *
-     * @see Raster#getBounds()
-     * @see PlanarImage#getBounds()
-     */
-    public static Rectangle getBounds(final RenderedImage image) {
-        return new Rectangle(image.getMinX(), image.getMinY(), image.getWidth(), image.getHeight());
     }
 
     /**

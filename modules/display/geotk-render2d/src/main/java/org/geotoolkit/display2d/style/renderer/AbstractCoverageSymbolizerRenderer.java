@@ -25,14 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.stream.IntStream;
 
 import org.apache.sis.coverage.grid.*;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.coverage.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;

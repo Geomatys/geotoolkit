@@ -19,7 +19,7 @@ package org.geotoolkit.coverage;
 import java.awt.image.RenderedImage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.internal.coverage.BufferedGridCoverage;
+import org.apache.sis.internal.coverage.ConvertedGridCoverage;
 import org.opengis.coverage.CannotEvaluateException;
 
 /**
@@ -39,7 +39,7 @@ public class ReducedGridCoverage extends GridCoverage {
 
     @Override
     public GridCoverage forConvertedValues(boolean converted) {
-        if (converted) return BufferedGridCoverage.convert(this);
+        if (converted) return ConvertedGridCoverage.createFromPacked(this);
         return this;
     }
 

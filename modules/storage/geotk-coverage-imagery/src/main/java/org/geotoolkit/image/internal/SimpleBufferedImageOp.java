@@ -118,7 +118,7 @@ public abstract class SimpleBufferedImageOp implements BufferedImageOp, Serializ
      */
     @Override
     public Rectangle2D getBounds2D(final BufferedImage src) {
-        return ImageUtilities.getBounds(src);
+        return org.apache.sis.internal.coverage.ImageUtilities.getBounds(src);
     }
 
     /**
