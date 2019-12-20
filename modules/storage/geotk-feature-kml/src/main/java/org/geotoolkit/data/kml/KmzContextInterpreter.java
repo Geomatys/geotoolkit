@@ -55,8 +55,6 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.ZipUtilities;
@@ -116,10 +114,10 @@ public class KmzContextInterpreter {
         final List<Feature> fs = new ArrayList<>();
         for (final MapLayer layer : context.layers()) {
             this.writeStyle(layer.getStyle(), folder);
-            if (layer instanceof CoverageMapLayer) {
-                fs.add(writeCoverageMapLayer((CoverageMapLayer) layer));
-            } else if (layer instanceof FeatureMapLayer) {
-                fs.add(writeFeatureMapLayer((FeatureMapLayer) layer));
+            if (layer.getResource() instanceof GridCoverageResource) {
+                fs.add(writeCoverageMapLayer(layer));
+            } else if (layer.getResource() instanceof FeatureSet) {
+                fs.add(writeFeatureMapLayer(layer));
             }
         }
         folder.setPropertyValue(KmlConstants.TAG_FEATURES, fs);
@@ -283,8 +281,8 @@ public class KmzContextInterpreter {
     /**
      * Transforms a FeatureMapLAyer in KML Folder.
      */
-    private Feature writeFeatureMapLayer(final FeatureMapLayer featureMapLayer) throws URISyntaxException, DataStoreException {
-        final FeatureSet resource = featureMapLayer.getResource();
+    private Feature writeFeatureMapLayer(final MapLayer featureMapLayer) throws URISyntaxException, DataStoreException {
+        final FeatureSet resource = (FeatureSet) featureMapLayer.getResource();
         final Feature folder = KML_FACTORY.createFolder();
         final List<Feature> fs;
         try (Stream<Feature> stream = resource.features(false)) {

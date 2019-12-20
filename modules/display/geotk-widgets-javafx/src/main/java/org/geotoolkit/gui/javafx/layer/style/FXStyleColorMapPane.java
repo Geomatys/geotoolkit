@@ -21,11 +21,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import org.apache.sis.measure.Units;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXColorMap;
 import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -43,7 +44,6 @@ import org.opengis.style.OverlapBehavior;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
-import org.apache.sis.measure.Units;
 
 /**
  *
@@ -56,7 +56,7 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
     @FXML
     private Button uiApply;
 
-    private CoverageMapLayer layer;
+    private MapLayer layer;
     //keep track of where the symbolizer was to avoid rewriting the complete style
     private MutableRule parentRule = null;
     private int parentIndex = 0;
@@ -115,9 +115,9 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
 
     @Override
     public boolean init(MapLayer candidate, Object StyleElement) {
-        if(!(candidate instanceof CoverageMapLayer)) return false;
+        if(!(candidate.getResource() instanceof GridCoverageResource)) return false;
 
-        layer = (CoverageMapLayer)candidate;
+        layer = candidate;
 
         RasterSymbolizer rs = null;
         parentRule = null;
