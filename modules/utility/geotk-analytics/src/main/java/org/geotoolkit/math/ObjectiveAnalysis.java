@@ -34,7 +34,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.apache.sis.math.Plane;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.coverage.grid.PixelTranslation;
-import org.apache.sis.internal.coverage.ColorModelFactory;
+import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 
 import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 

@@ -34,7 +34,7 @@ import java.awt.image.SampleModel;
 
 import javax.imageio.ImageTypeSpecifier;
 
-import org.apache.sis.internal.coverage.ColorModelFactory;
+import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.lang.Static;
 

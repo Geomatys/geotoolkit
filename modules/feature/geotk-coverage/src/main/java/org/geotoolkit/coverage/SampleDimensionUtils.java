@@ -225,7 +225,7 @@ public final strictfp class SampleDimensionUtils {
             }
             ranges.put(range, colors);
         }
-        return org.apache.sis.internal.coverage.ColorModelFactory.createColorModel(ranges, visibleBand, numBands, type);
+        return org.apache.sis.internal.coverage.j2d.ColorModelFactory.createColorModel(ranges, visibleBand, numBands, type);
     }
 
     public static boolean hasQualitative(final SampleDimension band) {

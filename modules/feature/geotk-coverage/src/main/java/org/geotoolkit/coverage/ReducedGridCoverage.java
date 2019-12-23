@@ -19,7 +19,7 @@ package org.geotoolkit.coverage;
 import java.awt.image.RenderedImage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.internal.coverage.ConvertedGridCoverage;
+import org.apache.sis.internal.coverage.j2d.ConvertedGridCoverage;
 import org.opengis.coverage.CannotEvaluateException;
 
 /**
