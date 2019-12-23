@@ -19,7 +19,6 @@ package org.geotoolkit.coverage;
 import java.awt.Color;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +30,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.collection.Containers;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
 
 
@@ -42,7 +39,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Remi Marechal (Geomatys).
  */
-public final strictfp class SampleDimensionUtils {
+public final class SampleDimensionUtils {
     private SampleDimensionUtils() {
     }
 
@@ -52,43 +49,6 @@ public final strictfp class SampleDimensionUtils {
      */
     public static InternationalString NODATA_CATEGORY_NAME = Vocabulary.formatInternational(Vocabulary.Keys.Nodata);
 
-    /**
-     * Returns a sequence of category names for the values contained in the sample dimension.
-     * This allows for names to be assigned to numerical values. The first entry in the sequence
-     * relates to a cell value of zero. For example:
-     *
-     * {@preformat text
-     *    [0] Background
-     *    [1] Water
-     *    [2] Forest
-     *    [3] Urban
-     * }
-     *
-     * @return The sequence of category names for the values contained in this sample dimension,
-     *         or {@code null} if there is no category in this sample dimension.
-     */
-    public static InternationalString[] getCategoryNames(final SampleDimension band) {
-        final List<Category> categories = band.getCategories();
-        InternationalString[] names = null;
-        for (int i=categories.size(); --i>=0;) {
-            final Category category = categories.get(i);
-            final NumberRange<?> range = category.getSampleRange();
-            final Number minimum = range.getMinValue();
-            final Number maximum = range.getMaxValue();
-            final int lower = minimum.intValue();
-            final int upper = maximum.intValue();
-            if (lower != minimum.doubleValue() || lower < 0 ||
-                upper != maximum.doubleValue() || upper < 0)
-            {
-                throw new IllegalStateException(Errors.format(Errors.Keys.NonIntegerCategory));
-            }
-            if (names == null) {
-                names = new InternationalString[upper+1];
-            }
-            Arrays.fill(names, lower, upper+1, category.getName());
-        }
-        return names;
-    }
 
     public static double[] getNoDataValues(final SampleDimension band) {
         final Set<Number> noDataValues = band.getNoDataValues();
@@ -226,18 +186,6 @@ public final strictfp class SampleDimensionUtils {
             ranges.put(range, colors);
         }
         return org.apache.sis.internal.coverage.j2d.ColorModelFactory.createColorModel(ranges, visibleBand, numBands, type);
-    }
-
-    public static boolean hasQualitative(final SampleDimension band) {
-        for (final Category c : band.getCategories()) {
-            if (!c.isQuantitative()) return true;
-        }
-        return false;
-    }
-
-    public static boolean isGeophysics(final SampleDimension dimension) {
-        Optional<MathTransform1D> f = dimension.getTransferFunction();
-        return f.isPresent() && f.get().isIdentity();
     }
 
     /**

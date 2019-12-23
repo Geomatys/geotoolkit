@@ -26,6 +26,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRenderedImage;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.BufferedImages;
@@ -167,7 +168,7 @@ public class BandCombineProcess extends AbstractProcess {
     private void combineUsingLargeimage() {
 
         //-- try to reuse a java color model for better performances
-        final ColorModel cm  = BufferedImages.createGrayScaleColorModel(sampleType,nbtotalbands, 0, 0, 10);
+        final ColorModel cm  = ColorModelFactory.createGrayScale(sampleType,nbtotalbands, 0, 0, 10);
         final SampleModel sm = ImageUtils.createSampleModel(PlanarConfiguration.INTERLEAVED, SampleType.valueOf(sampleType), width, height, nbtotalbands);
 
 

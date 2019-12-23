@@ -17,11 +17,8 @@
 package org.geotoolkit.image;
 
 import java.awt.Point;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;
@@ -102,9 +99,7 @@ public class BufferedImages extends Static {
         //TODO try to reuse java colormodel if possible
         //create a temporary fallback colormodel which will always work
         //extract grayscale min/max from sample dimension
-        final ColorModel graycm = createGrayScaleColorModel(dataType,nbBand,0,0,1);
-
-
+        final ColorModel graycm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
         final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<>());
         return resultImage;
     }
@@ -153,12 +148,6 @@ public class BufferedImages extends Static {
             }
         }
         return raster;
-    }
-
-    public static ColorModel createGrayScaleColorModel(int dataType, int nbBand, int visibleBand, double min, double max){
-        final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, visibleBand, min, max);
-        final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
-        return cm;
     }
 
     /**

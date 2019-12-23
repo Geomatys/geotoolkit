@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.image.color;
 
-import java.util.Arrays;
-import java.util.Locale;
 import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.IndexColorModel;
@@ -57,23 +55,6 @@ public final class ColorUtilities extends Static {
     }
 
     /**
-     * Creates an sRGB color with the specified red, green, blue, and alpha
-     * values in the range (0 - 255).
-     *
-     * @param  r the red component.
-     * @param  g the green component.
-     * @param  b the blue component.
-     * @param  a the alpha component.
-     * @return The RGB color from the given components.
-     */
-    public static int getIntFromColor(int r, int g, int b, int a) {
-        return ((a & 0xFF) << 24) |
-               ((r & 0xFF) << 16) |
-               ((g & 0xFF) <<  8) |
-                (b & 0xFF);
-    }
-
-    /**
      * Returns the color components in an array of {@code double} values.
      * This is mostly for usage with JAI operators which require sample values
      * as {@code double} no matter the actual image data type.
@@ -97,64 +78,6 @@ public final class ColorUtilities extends Static {
     }
 
     /**
-     * Returns a string representation of the given color.
-     * This method omits the alpha component if the color is opaque.
-     *
-     * @param color The color.
-     * @return A string representation of the given color.
-     *
-     * @since 3.14
-     */
-    public static String toString(final Color color) {
-        int ARGB = color.getRGB();
-        final boolean isOpaque = (ARGB & 0xFF000000) == 0xFF000000;
-        int size;
-        if (isOpaque) {
-            ARGB &= 0xFFFFFF;
-            size = 6;
-        } else {
-            size = 8;
-        }
-        final String code = Integer.toHexString(ARGB).toUpperCase(Locale.US);
-        size -= code.length();
-        final StringBuilder buffer = new StringBuilder();
-        buffer.append('#');
-        while (--size >= 0) {
-            buffer.append('0');
-        }
-        return buffer.append(code).toString();
-    }
-
-    /**
-     * Returns a subarray of the specified color array. The {@code lower} and {@code upper} index
-     * will be clamb into the {@code palette} range. If they are completely out of range, or if
-     * they would result in an empty array, then {@code null} is returned.
-     * <p>
-     * This method is used by {@link org.geotoolkit.coverage.SampleDimension} as an
-     * heuristic approach for distributing palette colors into a list of categories.
-     *
-     * @param  palette The color array (may be {@code null}).
-     * @param  lower  The lower index, inclusive.
-     * @param  upper  The upper index, inclusive.
-     * @return The subarray (may be {@code palette} if the original array already fit),
-     *         or {@code null} if the {@code lower} and {@code upper} index
-     *         are out of {@code palette} bounds.
-     */
-    public static Color[] subarray(final Color[] palette, int lower, int upper) {
-        if (palette != null) {
-            lower = Math.max(lower, 0);
-            upper = Math.min(upper, palette.length);
-            if (lower >= upper) {
-                return null;
-            }
-            if (lower != 0 || upper != palette.length) {
-                return Arrays.copyOfRange(palette, lower, upper);
-            }
-        }
-        return palette;
-    }
-
-    /**
      * Copies {@code colors} into array {@code ARGB} from index {@code lower}
      * inclusive to index {@code upper} exclusive. If {@code upper-lower} is not
      * equal to the length of {@code colors} array, then colors will be interpolated.
@@ -170,16 +93,6 @@ public final class ColorUtilities extends Static {
             codes[i] = colors[i].getRGB();      // Note: getRGB() is really getARGB().
         }
         ColorModelFactory.expand(codes, ARGB, lower, upper);
-    }
-
-    /**
-     * Rounds a float value and clamp the result between 0 and 255 inclusive.
-     *
-     * @param value The value to round.
-     * @return The rounded and clamped value.
-     */
-    public static int roundByte(final double value) {
-        return (int) Math.min(Math.max(Math.round(value), 0), 255);
     }
 
     /**
@@ -206,7 +119,7 @@ public final class ColorUtilities extends Static {
      * @param  color The XYZ color to convert.
      * @return The LAB color.
      */
-    public static float[] XYZtoLAB(final float[] color) {
+    private static float[] XYZtoLAB(final float[] color) {
         color[0] /= 0.9642;   // Other refeference: 0.95047;
         color[1] /= 1.0000;   //                    1.00000;
         color[2] /= 0.8249;   //                    1.08883;
@@ -233,7 +146,7 @@ public final class ColorUtilities extends Static {
      * @param  lab2 The second LAB color.
      * @return The CIE94 distance between the two supplied colors.
      */
-    public static float colorDistance(final float[] lab1, final float[] lab2) {
+    private static float colorDistance(final float[] lab1, final float[] lab2) {
         double sum;
         if (false) {
             // Computes distance using CIE94 formula.
