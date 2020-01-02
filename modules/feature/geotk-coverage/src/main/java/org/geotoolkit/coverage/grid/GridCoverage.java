@@ -78,7 +78,6 @@ import org.apache.sis.util.iso.Types;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
@@ -730,7 +729,8 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
             /*
              * Computes some properties of the image to be created.
              */
-            final Dimension tileSize = ImageUtilities.toTileSize(gridBounds.getSize());
+            final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(
+                    gridBounds.width, gridBounds.height, true);
             SampleDimension band = getSampleDimensions().get(VISIBLE_BAND);
             if (band == null)
                 throw new IllegalStateException("Sample dimensions are undetermined.");

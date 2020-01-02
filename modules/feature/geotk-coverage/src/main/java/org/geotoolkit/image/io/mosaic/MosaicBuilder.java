@@ -36,11 +36,12 @@ import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Fraction;
 import org.apache.sis.math.MathFunctions;
+
 import static org.apache.sis.util.ArgumentChecks.ensureBetween;
+
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.PerformanceLevel;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.internal.image.io.Formats;
@@ -667,7 +668,8 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
         }
         tileSize = getTileSize(); // Forces computation
         if (tileSize == null) {
-            tileSize = ImageUtilities.toTileSize(untiledBounds.getSize());
+            tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(
+                    untiledBounds.width, untiledBounds.height, true);
         }
         formatter.initialize(tileReaderSpi);
         final TileManager output;

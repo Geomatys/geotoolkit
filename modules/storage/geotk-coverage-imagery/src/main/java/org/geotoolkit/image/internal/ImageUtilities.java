@@ -50,7 +50,6 @@ import static java.awt.image.DataBuffer.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.20
  *
  * @since 1.2
  * @module
@@ -140,19 +139,16 @@ public final class ImageUtilities extends Static {
             if (layout != null) {
                 layout = layout.unsetTileLayout();
             }
-            Dimension defaultSize = JAI.getDefaultTileSize();
-            if (defaultSize == null) {
-                defaultSize = DEFAULT_TILE_SIZE;
-            }
+            final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(image);
             int s;
-            if ((s=toTileSize(image.getWidth(), defaultSize.width)) != 0) {
+            if ((s=tileSize.width) != image.getTileWidth()) {
                 if (layout == null) {
                     layout = new ImageLayout();
                 }
                 layout = layout.setTileWidth(s);
                 layout.setTileGridXOffset(image.getMinX());
             }
-            if ((s=toTileSize(image.getHeight(), defaultSize.height)) != 0) {
+            if ((s=tileSize.height) != image.getTileHeight()) {
                 if (layout == null) {
                     layout = new ImageLayout();
                 }
@@ -192,118 +188,6 @@ public final class ImageUtilities extends Static {
     public static boolean isTiled(final RenderedImage image) {
         return (image.getTileWidth()  < image.getWidth()) ||
                (image.getTileHeight() < image.getHeight());
-    }
-
-    /**
-     * Suggests a tile size for the specified image size. On input, {@code size} is the image
-     * size. On output, it is the tile size. This method write the result directly in the supplied
-     * object and returns {@code size} for convenience.
-     * <p>
-     * This method it aimed to computing a tile size such that the tile grid would have overlapped
-     * the image bound in order to avoid having tiles crossing the image bounds and being therefore
-     * partially empty. This method will never returns a tile size smaller than
-     * {@value #MIN_TILE_SIZE}. If this method can't suggest a size, then it left the
-     * corresponding {@code size} field ({@link Dimension#width width} or
-     * {@link Dimension#height height}) unchanged.
-     * <p>
-     * The {@link Dimension#width width} and {@link Dimension#height height} fields are processed
-     * independently in the same way. The following discussion use the {@code width} field as an
-     * example.
-     * <p>
-     * This method inspects different tile sizes close to the {@linkplain JAI#getDefaultTileSize()
-     * default tile size}. Let {@code width} be the default tile width. Values are tried in the
-     * following order: {@code width}, {@code width+1}, {@code width-1}, {@code width+2},
-     * {@code width-2}, {@code width+3}, {@code width-3}, <i>etc.</i> until one of the
-     * following happen:
-     * <p>
-     * <ul>
-     *   <li>A suitable tile size is found. More specifically, a size is found which is a divisor
-     *       of the specified image size, and is the closest one of the default tile size. The
-     *       {@link Dimension} field ({@code width} or {@code height}) is set to this value.</li>
-     *
-     *   <li>An arbitrary limit (both a minimum and a maximum tile size) is reached. In this case,
-     *       this method <strong>may</strong> set the {@link Dimension} field to a value that
-     *       maximize the remainder of <var>image size</var> / <var>tile size</var> (in other
-     *       words, the size that left as few empty pixels as possible).</li>
-     * </ul>
-     *
-     * @param size The image size.
-     * @return Suggested tile size for the given image size.
-     */
-    public static Dimension toTileSize(final Dimension size) {
-        Dimension defaultSize = JAI.getDefaultTileSize();
-        if (defaultSize == null) {
-            defaultSize = DEFAULT_TILE_SIZE;
-        }
-        int s;
-        if ((s=toTileSize(size.width,  defaultSize.width )) != 0) size.width  = s;
-        if ((s=toTileSize(size.height, defaultSize.height)) != 0) size.height = s;
-        return size;
-    }
-
-    /**
-     * Suggests a tile size close to {@code tileSize} for the specified {@code imageSize}.
-     * This method it aimed to computing a tile size such that the tile grid would have
-     * overlapped the image bound in order to avoid having tiles crossing the image bounds
-     * and being therefore partially empty. This method will never returns a tile size smaller
-     * than {@value #MIN_TILE_SIZE}. If this method can't suggest a size, then it returns 0.
-     *
-     * @param imageSize The image size.
-     * @param tileSize  The preferred tile size, which is often {@value #DEFAULT_TILE_SIZE}.
-     */
-    private static int toTileSize(final int imageSize, final int tileSize) {
-        final int MAX_TILE_SIZE = Math.min(tileSize*2, imageSize);
-        final int stop = Math.max(tileSize-MIN_TILE_SIZE, MAX_TILE_SIZE-tileSize);
-        int sopt = 0;  // An "optimal" tile size, to be used if no exact dividor is found.
-        int rmax = 0;  // The remainder of 'imageSize / sopt'. We will try to maximize this value.
-        /*
-         * Inspects all tile sizes in the range [GEOTOOLKIT_MIN_TILE_SIZE .. MAX_TIME_SIZE]. We will begin
-         * with a tile size equal to the specified 'tileSize'. Next we will try tile sizes of
-         * 'tileSize+1', 'tileSize-1', 'tileSize+2', 'tileSize-2', 'tileSize+3', 'tileSize-3',
-         * etc. until a tile size if found suitable.
-         *
-         * More generally, the loop below tests the 'tileSize+i' and 'tileSize-i' values. The
-         * 'stop' constant was computed assuming that MIN_TIME_SIZE < tileSize < MAX_TILE_SIZE.
-         * If a tile size is found which is a dividor of the image size, than that tile size (the
-         * closest one to 'tileSize') is returned. Otherwise, the loop continue until all values
-         * in the range [GEOTOOLKIT_MIN_TILE_SIZE .. MAX_TIME_SIZE] were tested. In this process, we
-         * remind the tile size that gave the greatest reminder (rmax). In other words, this is the
-         * tile size with the smallest amount of empty pixels.
-         */
-        for (int i=0; i<=stop; i++) {
-            int s;
-            if ((s = tileSize+i) <= MAX_TILE_SIZE) {
-                final int r = imageSize % s;
-                if (r == 0) {
-                    // Found a size >= to 'tileSize' which is a dividor of image size.
-                    return s;
-                }
-                if (r > rmax) {
-                    rmax = r;
-                    sopt = s;
-                }
-            }
-            if ((s = tileSize-i) >= MIN_TILE_SIZE) {
-                final int r = imageSize % s;
-                if (r == 0) {
-                    // Found a size <= to 'tileSize' which is a dividor of image size.
-                    return s;
-                }
-                if (r > rmax) {
-                    rmax = r;
-                    sopt = s;
-                }
-            }
-        }
-        /*
-         * No dividor were found in the range [GEOTOOLKIT_MIN_TILE_SIZE .. MAX_TIME_SIZE]. At this point
-         * 'sopt' is an "optimal" tile size (the one that left as few empty pixel as possible),
-         * and 'rmax' is the amount of non-empty pixels using this tile size. We will use this
-         * "optimal" tile size only if it fill at least 75% of the tile. Otherwise, we arbitrarily
-         * consider that it doesn't worth to use a "non-standard" tile size. The purpose of this
-         * arbitrary test is again to avoid too many small tiles (assuming that
-         */
-        return (rmax >= tileSize - tileSize/4) ? sopt : 0;
     }
 
     /**
@@ -359,16 +243,17 @@ public final class ImageUtilities extends Static {
             // If the bounds changed, adjust the tile size.
             if (result != layout) {
                 source = sources.get(0);
+                final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(source);
                 if (result.isValid(ImageLayout.TILE_WIDTH_MASK)) {
                     final int oldSize = result.getTileWidth(source);
-                    final int newSize = toTileSize(result.getWidth(source), oldSize);
+                    final int newSize = tileSize.width;
                     if (oldSize != newSize) {
                         result.setTileWidth(newSize);
                     }
                 }
                 if (result.isValid(ImageLayout.TILE_HEIGHT_MASK)) {
                     final int oldSize = result.getTileHeight(source);
-                    final int newSize = toTileSize(result.getHeight(source), oldSize);
+                    final int newSize = tileSize.height;
                     if (oldSize != newSize) {
                         result.setTileHeight(newSize);
                     }
