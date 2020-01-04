@@ -24,10 +24,8 @@ import java.awt.image.*;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.color.ColorSpace;
 
 import javax.media.jai.JAI;
-import javax.media.jai.NullOpImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
 import com.sun.media.jai.util.ImageUtil;
@@ -55,17 +53,6 @@ import static java.awt.image.DataBuffer.*;
  * @module
  */
 public final class ImageUtilities extends Static {
-    /**
-     * The default tile size. This default tile size can be
-     * overridden with a call to {@link JAI#setDefaultTileSize}.
-     */
-    private static final Dimension DEFAULT_TILE_SIZE = new Dimension(512, 512);
-
-    /**
-     * The minimum tile size.
-     */
-    public static final int MIN_TILE_SIZE = 256;
-
     /**
      * Maximum tile width or height before to consider a tile as a stripe. It tile width or height
      * are smaller or equals than this size, then the image will be re-tiled. That is done because
@@ -320,96 +307,6 @@ public final class ImageUtilities extends Static {
     }
 
     /**
-     * Returns a data type capable to hold the values of the two given data types.
-     *
-     * @param  t1 The first data type.
-     * @param  t2 The second data type.
-     * @return A data type capable to hold the values of the two given data types.
-     */
-    public static int typeForBoth(final int t1, final int t2) {
-        final int min = Math.min(t1, t2);
-        final int max = Math.max(t1, t2);
-        if (min == max) {
-            return max;
-        }
-        if (min >= TYPE_BYTE && max <= TYPE_DOUBLE) {
-            return (min == TYPE_USHORT && max == TYPE_SHORT) ? TYPE_INT : max;
-        }
-        return TYPE_UNDEFINED;
-    }
-
-    /**
-     * Suggests the smallest type capable to hold the given range of values.
-     *
-     * @param  minimum The minimal value to hold, inclusive.
-     * @param  maximum The maximal value to hold, <strong>inclusive</strong>.
-     * @return The data type, or {@link DataBuffer#TYPE_UNDEFINED} if the given
-     *         range is invalid, contains NaN or infinity values.
-     */
-    public static int typeForRange(final double minimum, final double maximum) {
-        if (maximum >= minimum) {
-            for (int type=TYPE_BYTE; type<=TYPE_DOUBLE; type++) {
-                if (minimum >= minimum(type) && maximum <= maximum(type)) {
-                    return type;
-                }
-            }
-        }
-        return TYPE_UNDEFINED;
-    }
-
-    /**
-     * Returns the minimum allowed value for a certain data type. This method does not returns
-     * negative infinity for float and double values, despite that they are valid values.
-     *
-     * {@section Note on floating point types}
-     * If the given type is {@link DataBuffer#TYPE_FLOAT TYPE_FLOAT} or {@link DataBuffer#TYPE_DOUBLE
-     * TYPE_DOUBLE} (you can use {@link #isFloatType} for checking that), then there is some chances
-     * that what you really want is the minimal <cite>normalized value</cite>. In such case, you
-     * should invoke {@link ColorSpace#getMinValue} instead. This doesn't apply to the alpha channel,
-     * where the minimal value is always 0 (fully transparent).
-     *
-     * @param  dataType The data type to suggest a minimum value for.
-     * @return The minimum value for the given data type.
-     */
-    public static double minimum(final int dataType) {
-        switch (dataType) {
-            case TYPE_BYTE:   // Fall through
-            case TYPE_USHORT: return  0;
-            case TYPE_SHORT:  return  Short  .MIN_VALUE;
-            case TYPE_INT:    return  Integer.MIN_VALUE;
-            case TYPE_FLOAT:  return -Float  .MAX_VALUE;
-            case TYPE_DOUBLE: return -Double .MAX_VALUE;
-            default: throw new IllegalArgumentException(String.valueOf(dataType));
-        }
-    }
-
-    /**
-     * Returns the maximum allowed value for a certain data type. This method does not returns
-     * positive infinity for float and double values, despite that they are valid values.
-     *
-     * {@section Note on floating point types}
-     * If the given type is {@link DataBuffer#TYPE_FLOAT TYPE_FLOAT} or {@link DataBuffer#TYPE_DOUBLE
-     * TYPE_DOUBLE} (you can use {@link #isFloatType} for checking that), then there is some chances
-     * that what you really want is the maximal <cite>normalized value</cite>. In such case, you
-     * should invoke {@link ColorSpace#getMaxValue} instead. This doesn't apply to the alpha channel,
-     * where the maximal value is always 1 (fully opaque).
-     *
-     * @param  dataType The data type to suggest a maximum value for.
-     * @return The maximum value for the given data type.
-     */
-    public static double maximum(final int dataType) {
-        switch (dataType) {
-            case TYPE_BYTE:   return 0xFF;
-            case TYPE_USHORT: return 0xFFFF;
-            case TYPE_SHORT:  return Short  .MAX_VALUE;
-            case TYPE_INT:    return Integer.MAX_VALUE;
-            case TYPE_FLOAT:  return Float  .MAX_VALUE;
-            case TYPE_DOUBLE: return Double .MAX_VALUE;
-            default: throw new IllegalArgumentException(String.valueOf(dataType));
-        }
-    }
-
-    /**
      * Sets every samples in the given image to the given value. This method is typically used
      * for clearing an image content.
      *
@@ -511,27 +408,5 @@ public final class ImageUtilities extends Static {
         } else {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.UnsupportedDataType));
         }
-    }
-
-    /**
-     * Replaces the color model in the given image by the given one.
-     * The sample values are transfered with no change. This method
-     * is <strong>not</strong> suitable for anything that change the
-     * pixel layout, the number of bands, etc.
-     *
-     * @param  image The image in which to change the color model.
-     * @param  cm The new color model.
-     * @return An image with the new color model.
-     */
-    public static RenderedImage replaceColorModel(RenderedImage image, final ColorModel cm) {
-        if (image instanceof BufferedImage) {
-            final BufferedImage b = (BufferedImage) image;
-            image = new BufferedImage(cm, b.getRaster(), b.isAlphaPremultiplied(), null);
-        } else {
-            final ImageLayout layout = new ImageLayout();
-            layout.setColorModel(cm);
-            image = new NullOpImage(image, layout, null, NullOpImage.OP_COMPUTE_BOUND);
-        }
-        return image;
     }
 }
