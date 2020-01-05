@@ -227,11 +227,6 @@ public class PredictorTest {
                 public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
                     return MOCK_IMAGE; // TODO: band selection
                 }
-
-                @Override
-                public GridCoverage forConvertedValues(boolean converted) {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
             };
         }
 
