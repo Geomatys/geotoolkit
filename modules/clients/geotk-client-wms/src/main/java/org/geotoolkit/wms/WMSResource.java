@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -44,7 +45,6 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.AbstractGridResource;
@@ -523,6 +523,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
             //the envelope CRS may have been changed by prepareQuery method
             final CoordinateReferenceSystem resultCrs = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
             final Envelope env2D = Envelopes.transform(env, resultCrs);
+            //grid to crs returned is in corner
             final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
 
             //we must honor the number of sample dimensions we declared
@@ -542,7 +543,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
             }
 
             final GridExtent extent = new GridExtent(image.getWidth(), image.getHeight());
-            final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, new AffineTransform2D(gridToCRS), resultCrs);
+            final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CORNER, new AffineTransform2D(gridToCRS), resultCrs);
             return new GridCoverage2D(grid, sampleDimensions, image);
 
         } catch (IOException | TransformException ex) {
