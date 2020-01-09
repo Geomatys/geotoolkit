@@ -19,6 +19,7 @@ package org.geotoolkit.wms;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,8 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.measure.Units;
@@ -39,6 +42,7 @@ import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -47,7 +51,6 @@ import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -199,12 +202,15 @@ public final class WMSUtilities {
     }
 
     /**
-     * Find layer envelope
+     * Find layer grid geometry.
+     * This geometry only contains the envelope but may
+     * also contain an approximated resolution.
+     * Extra dimensions are included in the grid geometry.
      *
      * @param server web map server
      * @param layername wms layer name
      */
-    public static Envelope findEnvelope(final WebMapClient server,
+    public static GridGeometry getGridGeometry(final WebMapClient server,
             final String layername) throws CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
@@ -216,20 +222,21 @@ public final class WMSUtilities {
             return null;
         }
 
-        GeneralEnvelope layerEnvelope = (GeneralEnvelope) layer.getEnvelope();
+        GridGeometry layerGrid = layer.getGridGeometry2D();
 
         final List<AbstractDimension> dimensions = (List<AbstractDimension>) layer.getDimension();
         if (!dimensions.isEmpty()) {
-            final CoordinateReferenceSystem envCRS = layerEnvelope.getCoordinateReferenceSystem();
+            final CoordinateReferenceSystem envCRS = layerGrid.getCoordinateReferenceSystem();
             final List<CoordinateReferenceSystem> dimensionsCRS = new ArrayList<CoordinateReferenceSystem>();
             dimensionsCRS.add(envCRS);
 
-            final List<Double> lower = new ArrayList<Double>();
-            final List<Double> upper = new ArrayList<Double>();
-            lower.add(layerEnvelope.getLower(0));
-            lower.add(layerEnvelope.getLower(1));
-            upper.add(layerEnvelope.getUpper(0));
-            upper.add(layerEnvelope.getUpper(1));
+            final List<Double> lower = new ArrayList<>();
+            final List<Double> upper = new ArrayList<>();
+            GeneralEnvelope layerEnvelope = new GeneralEnvelope(layerGrid.getEnvelope());
+            lower.add(layerEnvelope.getMinimum(0));
+            lower.add(layerEnvelope.getMinimum(1));
+            upper.add(layerEnvelope.getMaximum(0));
+            upper.add(layerEnvelope.getMaximum(1));
 
             for (final AbstractDimension dim : dimensions) {
 
@@ -339,10 +346,26 @@ public final class WMSUtilities {
                     coordinates[i] = ordinateList.get(i);
                 }
                 layerEnvelope.setEnvelope(coordinates);
+
+                //add additional resolution informations
+                try {
+                    double[] resolution = layerGrid.getResolution(true);
+                    double[] resnd = new double[layerEnvelope.getDimension()];
+                    //todo : time and elevation values are not on a regular axis
+                    //how can we map those to a correct resolution ?
+                    Arrays.fill(resnd, Double.MAX_VALUE);
+                    resnd[0] = resolution[0];
+                    resnd[1] = resolution[1];
+
+                    layerGrid = new EstimatedGridGeometry(layerEnvelope, resnd);
+
+                } catch (IncompleteGridGeometryException ex) {
+                    layerGrid = new GridGeometry(null, layerEnvelope);
+                }
             }
         }
 
-        return layerEnvelope;
+        return layerGrid;
     }
 
     /**

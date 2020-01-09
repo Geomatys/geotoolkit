@@ -51,11 +51,17 @@ public interface AbstractBoundingBox {
 
     /**
      * Gets the value of the resx property.
+     * This value is always null in WMS 1.0.0.
+     *
+     * @return value is optional, can be null.
      */
     Double getResx();
 
     /**
      * Gets the value of the resy property.
+     * This value is always null in WMS 1.0.0.
+     *
+     * @return value is optional, can be null.
      */
     Double getResy();
 

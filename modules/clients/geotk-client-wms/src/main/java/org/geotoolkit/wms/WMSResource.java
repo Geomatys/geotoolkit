@@ -416,7 +416,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
     public Envelope getBounds() {
         if(env == null){
             try {
-                env = findEnvelope();
+                env = WMSUtilities.getGridGeometry(server, getLayerNames()[0]).getEnvelope();
             } catch (CapabilitiesException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
@@ -429,8 +429,12 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        //we only know the envelope,
-        return new GridGeometry(PixelInCell.CELL_CENTER, null, getBounds(), GridRoundingMode.ENCLOSING);
+        try {
+            //we only know the envelope,
+            return WMSUtilities.getGridGeometry(server, getLayerNames()[0]);
+        } catch (CapabilitiesException ex) {
+            return new GridGeometry(PixelInCell.CELL_CENTER, null, getBounds(), GridRoundingMode.ENCLOSING);
+        }
     }
 
     @Override
@@ -559,10 +563,6 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
 
     protected boolean supportCRS(CoordinateReferenceSystem crs2D) throws FactoryException, CapabilitiesException {
         return WMSUtilities.supportCRS(server,getLayerNames()[0],crs2D);
-    }
-
-    protected Envelope findEnvelope() throws CapabilitiesException {
-        return WMSUtilities.findEnvelope(server,getLayerNames()[0]);
     }
 
     protected Long findClosestDate(long l) throws CapabilitiesException {
