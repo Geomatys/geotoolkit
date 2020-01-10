@@ -31,7 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.imageio.ImageReader;
@@ -48,6 +52,7 @@ import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.AbstractResource;
@@ -77,6 +82,13 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 public class CachePyramidResource <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridResource implements MultiResolutionResource, GridCoverageResource {
+
+    private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors()*50);
+    private static final ThreadPoolExecutor EXEC = new ThreadPoolExecutor(
+            0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, IMAGEQUEUE,
+            Threads.createThreadFactory("Cached pyramid tile loader thread "),
+            new ThreadPoolExecutor.CallerRunsPolicy());
+
 
     private final T parent;
     private final Map<String,CachePyramid> cacheMap = new HashMap<>();
@@ -340,7 +352,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                     if (tilesInProcess.add(key)) {
                         //TODO replace by a thread poll or an executor
                         loadUpperTile(col, row);
-                        new Thread() {
+                        EXEC.submit(new Runnable() {
                             @Override
                             public void run() {
                                 try {
@@ -349,8 +361,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                                     Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
                                 }
                             }
-
-                        }.start();
+                        });
                     }
                 } else {
                     value = loadTile(col, row, hints);
