@@ -667,4 +667,19 @@ public final class Pyramids extends Static {
         }
         return depth;
     }
+
+    public static GridGeometry getTileGridGeometry2D(Mosaic mosaic, Point location, CoordinateReferenceSystem crs) {
+        final Dimension tileSize = mosaic.getTileSize();
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(mosaic, location, PixelInCell.CELL_CENTER);
+        final GridExtent tileExtent = new GridExtent(tileSize.width, tileSize.height);
+        return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs);
+    }
+
+    public static GridGeometry getTileGridGeometry2D(Mosaic mosaic, Rectangle rectangle, CoordinateReferenceSystem crs) {
+        final Dimension tileSize = mosaic.getTileSize();
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(mosaic, rectangle.getLocation(), PixelInCell.CELL_CENTER);
+        final GridExtent tileExtent = new GridExtent((long) tileSize.width * rectangle.width, (long) tileSize.height * rectangle.height);
+        return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs);
+    }
+
 }

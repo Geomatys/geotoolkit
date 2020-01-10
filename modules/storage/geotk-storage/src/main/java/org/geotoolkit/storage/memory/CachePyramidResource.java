@@ -18,6 +18,8 @@ package org.geotoolkit.storage.memory;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.Collection;
@@ -32,8 +34,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Stream;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.AbstractGridResource;
@@ -41,18 +46,26 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.Monitor;
-import org.geotoolkit.storage.coverage.DefaultImageTile;
+import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.coverage.PyramidReader;
+import org.geotoolkit.storage.coverage.mosaic.MosaicedCoverageResource;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
@@ -207,7 +220,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             final Set<String> keys = new HashSet<>();
             for (Mosaic m : parentMosaics) {
                 if (!cacheMap.containsKey(m.getIdentifier())) {
-                    cacheMap.put(m.getIdentifier(), new CacheMosaic(parent.getIdentifier(), m));
+                    cacheMap.put(m.getIdentifier(), new CacheMosaic(this, parent.getIdentifier(), m));
                 }
                 keys.add(m.getIdentifier());
             }
@@ -222,7 +235,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         @Override
         public Mosaic createMosaic(Mosaic template) throws DataStoreException {
             final Mosaic newParentMosaic = parent.createMosaic(template);
-            final CacheMosaic cached = new CacheMosaic(parent.getIdentifier(), newParentMosaic);
+            final CacheMosaic cached = new CacheMosaic(this, parent.getIdentifier(), newParentMosaic);
             cacheMap.put(cached.getIdentifier(), cached);
             return cached;
         }
@@ -257,10 +270,12 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
     private class CacheMosaic implements Mosaic {
 
+        private final CachePyramid pyramid;
         private final String baseid;
         private final Mosaic parent;
 
-        public CacheMosaic(String pyramidId,Mosaic parent) {
+        public CacheMosaic(CachePyramid pyramid, String pyramidId, Mosaic parent) {
+            this.pyramid = pyramid;
             this.parent = parent;
             this.baseid = pyramidId + "¤" + parent.getIdentifier() +"¤";
         }
@@ -311,6 +326,10 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             return parent.isMissing(col, row);
         }
 
+        private boolean isInCache(long col, long row) {
+            return tiles.peek(tileId(col, row)) != null;
+        }
+
         @Override
         public CacheTile getTile(final long col, final long row, final Map hints) throws DataStoreException {
             final String key = tileId(col, row);
@@ -320,6 +339,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                 if (noblocking) {
                     if (tilesInProcess.add(key)) {
                         //TODO replace by a thread poll or an executor
+                        loadUpperTile(col, row);
                         new Thread() {
                             @Override
                             public void run() {
@@ -345,7 +365,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             final Cache.Handler<CacheTile> handler = tiles.lock(key);
             try {
                 value = handler.peek();
-                if (value == null) {
+                if (value == null || !value.finalResult) {
                     final Tile parentTile = parent.getTile(col, row, hints);
                     if (parentTile instanceof ImageTile) {
                         final ImageTile pt = (ImageTile) parentTile;
@@ -355,8 +375,12 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                         } catch (IOException ex) {
                             throw new DataStoreException(ex.getMessage(), ex);
                         }
-                        final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
-                        value = new CacheTile(image, 0, coord);
+                        if (value != null) {
+                            value.setImage(image, true);
+                        } else {
+                            final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
+                            value = new CacheTile(image, coord, true);
+                        }
                     } else {
                         throw new DataStoreException("Unsuppported tile instance "+ parentTile);
                     }
@@ -366,6 +390,66 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                 tilesInProcess.remove(key);
             }
             return value;
+        }
+
+        private void loadUpperTile(long col, long row) throws DataStoreException {
+
+            //find closest mosaic with a lower resolution
+            CacheMosaic candidate = null;
+            for (CacheMosaic m : (Collection<CacheMosaic>) pyramid.getMosaics()) {
+                if (m.getScale() > parent.getScale()) {
+                    if (candidate == null) {
+                        candidate = m;
+                    } else if (m.getScale() < candidate.getScale()) {
+                        candidate = m;
+                    }
+                }
+            }
+
+            if (candidate == null) return;
+
+            //compute wanted tile grid geometry
+            final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
+            final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
+            final List<SampleDimension> sds = getSampleDimensions();
+            final GridGeometry tileGridGeometry = Pyramids.getTileGridGeometry2D(this, coord, crs);
+
+            //check parent tiles are available in the cache
+            final Rectangle rectangle = Pyramids.getTilesInEnvelope(candidate, tileGridGeometry.getEnvelope());
+            for (int x=0;x<rectangle.width;x++) {
+                for (int y=0;y<rectangle.height;y++) {
+                    if (!candidate.isInCache(rectangle.x+x, rectangle.y+y)) {
+                        return;
+                    }
+                }
+            }
+
+            //compute candidate mosaic
+            final MosaicImage image = new MosaicImage(candidate, rectangle, sds);
+            final GridGeometry aboveGridGeometry = Pyramids.getTileGridGeometry2D(candidate, rectangle, crs);
+            final GridCoverage coverage = new GridCoverage2D(aboveGridGeometry, sds, image);
+
+            //resample tile
+            CacheTile tile;
+            try {
+                BufferedImage img = BufferedImages.createImage(image, null, null, null, null);
+                MosaicedCoverageResource.resample(coverage, image, tileGridGeometry, img);
+                tile = new CacheTile(img, coord, false);
+            } catch (TransformException | FactoryException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+
+            final String key = tileId(col, row);
+            CacheTile value = null;
+            final Cache.Handler<CacheTile> handler = tiles.lock(key);
+            try {
+                value = handler.peek();
+                if (value == null) {
+                    value = tile;
+                }
+            } finally {
+                handler.putAndUnlock(value);
+            }
         }
 
         @Override
@@ -386,15 +470,70 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
     }
 
-    private final class CacheTile extends DefaultImageTile {
+    private final class CacheTile extends AbstractResource implements ImageTile{
 
-        public CacheTile(RenderedImage input, int imageIndex, Point position) {
-            super(IImageReader.IISpi.INSTANCE, input, imageIndex, position);
+        private RenderedImage input;
+        private Point position;
+        private boolean finalResult;
+
+        public CacheTile(RenderedImage image, Point position, boolean finalResult) {
+            this.input = image;
+            this.position = position;
+            this.finalResult = finalResult;
+        }
+
+        private synchronized void setImage(RenderedImage image, boolean finalResult) {
+            if (this.finalResult) return;
+            input = image;
+            this.finalResult = finalResult;
+        }
+
+        @Override
+        public ImageReader getImageReader() throws IOException {
+            ImageReaderSpi spi = IImageReader.IISpi.INSTANCE;
+            ImageReader reader = null;
+
+            Object in = null;
+            try {
+                in = XImageIO.toSupportedInput(spi, input);
+                reader = spi.createReaderInstance();
+                reader.setInput(in, true, true);
+            } catch (IOException | RuntimeException e) {
+                try {
+                    IOUtilities.close(in);
+                } catch (IOException ex) {
+                    e.addSuppressed(ex);
+                }
+                if (reader != null) {
+                    try {
+                        XImageIO.dispose(reader);
+                    } catch (Exception ex) {
+                        e.addSuppressed(ex);
+                    }
+                }
+                throw e;
+            }
+            return reader;
+        }
+
+        @Override
+        public ImageReaderSpi getImageReaderSpi() {
+            return IImageReader.IISpi.INSTANCE;
         }
 
         @Override
         public RenderedImage getInput() {
-            return (RenderedImage) super.getInput();
+            return input;
+        }
+
+        @Override
+        public int getImageIndex() {
+            return 0;
+        }
+
+        @Override
+        public Point getPosition() {
+            return position;
         }
     }
 
