@@ -36,6 +36,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.Function;
+import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -43,7 +44,6 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Numbers;
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
 import static org.geotoolkit.data.geojson.utils.GeoJSONTypes.*;
-import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -336,7 +336,7 @@ public final class GeoJSONUtils extends Static {
      */
     public static Optional<Class> getIdentifierType(final FeatureType toSearchIn) throws PropertyNotFoundException {
         final PropertyType idProperty = toSearchIn.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
-        return FeatureExt.castOrUnwrap(idProperty)
+        return Features.toAttribute(idProperty)
                 .map(AttributeType::getValueClass);
     }
 

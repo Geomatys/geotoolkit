@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.geotoolkit.feature.FeatureExt;
@@ -98,7 +99,7 @@ public class GeoJSONStreamWriter implements FeatureWriter {
         }
 
         for (final Operation op : geometries) {
-            FeatureExt.castOrUnwrap(op).ifPresent(ftb::addAttribute);
+            Features.toAttribute(op).ifPresent(ftb::addAttribute);
         }
 
         this.featureType = ftb.build();

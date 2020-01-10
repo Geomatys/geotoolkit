@@ -73,6 +73,7 @@ import org.opengis.style.*;
 import org.opengis.util.GenericName;
 
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.feature.Features;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
@@ -1147,7 +1148,7 @@ public final class GO2Utilities {
                 if(!semantics.isEmpty()){
                     Class ctype;
                     try {
-                        ctype = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(type))
+                        ctype = Features.toAttribute(FeatureExt.getDefaultGeometry(type))
                                 .map(AttributeType::getValueClass)
                                 .orElse(null);
                     } catch (PropertyNotFoundException e) {
@@ -1221,7 +1222,7 @@ public final class GO2Utilities {
                 if(!semantics.isEmpty()){
                     Class ctype;
                     try {
-                        ctype = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(type))
+                        ctype = Features.toAttribute(FeatureExt.getDefaultGeometry(type))
                                 .map(AttributeType::getValueClass)
                                 .orElse(null);
                     } catch (PropertyNotFoundException e) {

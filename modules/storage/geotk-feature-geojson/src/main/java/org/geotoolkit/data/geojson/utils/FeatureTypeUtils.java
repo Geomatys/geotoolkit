@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.cql.CQLException;
 import org.apache.sis.feature.DefaultAssociationRole;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -110,8 +111,7 @@ public final class FeatureTypeUtils extends Static {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
         ArgumentChecks.ensureNonNull("outputFile", output);
 
-        final AttributeType<?> geom = FeatureExt
-                .castOrUnwrap(FeatureExt.getDefaultGeometry(ft))
+        final AttributeType<?> geom = Features.toAttribute(FeatureExt.getDefaultGeometry(ft))
                 .orElseThrow(() -> new DataStoreException("No default Geometry in given FeatureType : " + ft));
 
         try (OutputStream outStream = Files.newOutputStream(output, CREATE, WRITE, TRUNCATE_EXISTING);
@@ -185,7 +185,7 @@ public final class FeatureTypeUtils extends Static {
             writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
         }
 
-        final Optional<AttributeType<?>> geom = FeatureExt.castOrUnwrap(
+        final Optional<AttributeType<?>> geom = Features.toAttribute(
                 FeatureExt.getDefaultGeometry(ft)
         );
         if (geom.isPresent()) {

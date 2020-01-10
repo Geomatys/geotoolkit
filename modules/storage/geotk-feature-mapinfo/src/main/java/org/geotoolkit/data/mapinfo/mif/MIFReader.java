@@ -38,6 +38,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.sis.feature.Features;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.CharSequences;
@@ -117,7 +118,7 @@ public class MIFReader implements Iterator<Feature>, AutoCloseable {
         for (final PropertyType pt : properties) {
             final String pName = pt.getName().toString();
             try {
-                converters[i] = FeatureExt.castOrUnwrap(readType.getProperty(pName))
+                converters[i] = Features.toAttribute(readType.getProperty(pName))
                         .map(AttributeType::getValueClass)
                         .map(MIFReader::findConverter)
                         .orElse(Function.identity());

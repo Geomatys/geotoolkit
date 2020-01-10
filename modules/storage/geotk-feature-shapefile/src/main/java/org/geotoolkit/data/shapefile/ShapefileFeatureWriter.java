@@ -41,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -197,7 +198,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         if ((records <= 0) && (shapeType == null)) {
             try {
                 final PropertyType geom = FeatureExt.getDefaultGeometry(featureType);
-                final Optional<Class> geomClass = FeatureExt.castOrUnwrap(geom)
+                final Optional<Class> geomClass = Features.toAttribute(geom)
                         .map(AttributeType::getValueClass);
                 shapeType = geomClass
                         .map(ShapeType::findBestGeometryType)

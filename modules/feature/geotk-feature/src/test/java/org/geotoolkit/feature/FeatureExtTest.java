@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -199,7 +200,7 @@ public class FeatureExtTest {
         assertNotNull("We should find one geometry attribute", defaultGeom);
         assertEquals("We should have found the attribute attached to SIS convention.", AttributeConvention.GEOMETRY_PROPERTY, defaultGeom.getName());
         // Check we've got a definition matching reprojection
-        final Optional<AttributeType<?>> geomAttr = FeatureExt.castOrUnwrap(defaultGeom);
+        final Optional<AttributeType<?>> geomAttr = Features.toAttribute(defaultGeom);
         assertTrue(geomAttr.isPresent());
 
         AttributeType<?> crsCharacteristic = geomAttr.get().characteristics().get(AttributeConvention.CRS_CHARACTERISTIC.toString());

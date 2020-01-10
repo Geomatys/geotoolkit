@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -413,7 +414,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
         AttributeType desc;
         try {
-            desc = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(featureType))
+            desc = Features.toAttribute(FeatureExt.getDefaultGeometry(featureType))
                 .orElse(null);
         } catch (PropertyNotFoundException e) {
             getLogger().log(Level.FINE, e, () -> String.format("No geometry can be found in given datatype%n%s", featureType));
@@ -642,7 +643,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         } else {
             getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
             descs = new AttributeType[]{
-                FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(schema))
+                Features.toAttribute(FeatureExt.getDefaultGeometry(schema))
                 .orElseThrow(() -> new DataStoreException("No geometry to read."))
             };
         }

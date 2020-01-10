@@ -554,26 +554,6 @@ public final class FeatureExt extends Static {
     }
 
     /**
-     * Test if given data type is an attribute as defined by {@link AttributeType},
-     * or if it depends on an attribute, and return it (the attribute) if possible.
-     * @param input the data type to unravel the attribute from.
-     * @return The found attribute or an empty shell if we cannot find any.
-     */
-    public static Optional<AttributeType<?>> castOrUnwrap(IdentifiedType input) {
-        // In case an operation also implements attribute type, we check it first.
-        // TODO : cycle detection ?
-        while (!(input instanceof AttributeType) && input instanceof Operation) {
-            input = ((Operation)input).getResult();
-        }
-
-        if (input instanceof AttributeType) {
-            return Optional.of((AttributeType)input);
-        }
-
-        return Optional.empty();
-    }
-
-    /**
      * Get main geometry property value. The ways this method determines default
      * geometry property are the same as {@link #getDefaultGeometry(org.opengis.feature.FeatureType) }.
      *

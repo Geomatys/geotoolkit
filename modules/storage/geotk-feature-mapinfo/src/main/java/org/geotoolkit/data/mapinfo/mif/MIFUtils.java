@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
+import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -328,7 +329,7 @@ public final class MIFUtils {
             if (AttributeConvention.isGeometryAttribute(desc)) {
                 continue;
             }
-            Class<?> valueType = FeatureExt.castOrUnwrap(desc)
+            Class<?> valueType = Features.toAttribute(desc)
                     .map(org.opengis.feature.AttributeType::getValueClass)
                     .orElseThrow(() -> new DataStoreException("Cannot use attribute "+desc.getName()+" because we cannot find its value type."));
 

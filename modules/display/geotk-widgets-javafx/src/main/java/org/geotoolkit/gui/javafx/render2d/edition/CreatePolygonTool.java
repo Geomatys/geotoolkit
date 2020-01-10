@@ -27,6 +27,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
+import org.apache.sis.feature.Features;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
@@ -61,7 +62,7 @@ public class CreatePolygonTool extends AbstractEditionTool{
                 if(!isWritable(fml)) return false;
 
                 try {
-                    final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(fml.getResource().getType()))
+                    final Class geomClass = Features.toAttribute(FeatureExt.getDefaultGeometry(fml.getResource().getType()))
                             .map(AttributeType::getValueClass)
                             .orElse(null);
 

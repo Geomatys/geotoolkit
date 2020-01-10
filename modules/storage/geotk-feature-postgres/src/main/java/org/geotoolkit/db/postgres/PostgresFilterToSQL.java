@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.Features;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ObjectConverters;
@@ -855,7 +856,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
                 final Object propObj = property.evaluate(featureType);
                 if (propObj instanceof Operation) {
                     final Operation op = (Operation) propObj;
-                    descriptor = FeatureExt.castOrUnwrap(op).orElse(null);
+                    descriptor = Features.toAttribute(op).orElse(null);
                     if (descriptor != null) {
                         try {
                             featureType.getProperty(descriptor.getName().tip().toString());// throw exception if not found

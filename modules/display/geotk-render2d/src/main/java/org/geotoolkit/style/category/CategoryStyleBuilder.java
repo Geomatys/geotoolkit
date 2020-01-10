@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.sis.feature.Features;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.Query;
@@ -139,7 +140,7 @@ public class CategoryStyleBuilder {
             Class<?> geoClass = null;
             try{
                 PropertyType geo = FeatureExt.getDefaultGeometry(schema);
-                geoClass = FeatureExt.castOrUnwrap(geo)
+                geoClass = Features.toAttribute(geo)
                         .map(AttributeType::getValueClass)
                         .orElse(null);
             }catch(PropertyNotFoundException ex){
