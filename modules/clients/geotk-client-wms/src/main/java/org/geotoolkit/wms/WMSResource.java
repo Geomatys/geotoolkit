@@ -802,7 +802,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
      * @return A {@linkplain GetLegendRequest GetLegendGraphic request}.
      * @throws MalformedURLException if the generated url is invalid.
      */
-    public Request queryLegend(final Dimension rect, final String format,
+    public GetLegendRequest queryLegend(final Dimension rect, final String format,
             final String rule, final Double scale) throws MalformedURLException {
         final GetLegendRequest request = server.createGetLegend();
         prepareGetLegendRequest(request, rect, format, rule, scale);
@@ -845,7 +845,6 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
      * {@code image/png} if the {@link #setFormat(java.lang.String)} has not
      * been called.
      *
-     * @param request      the GetFeatureInfo request
      * @param env          the current envelope of the map
      * @param rect         the dimension of the map
      * @param x            X coordinate of the point
@@ -858,7 +857,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
      * @throws FactoryException
      * @throws MalformedURLException if the generated url is invalid.
      */
-    public Request queryFeatureInfo(final Envelope env, final Dimension rect, int x,
+    public GetFeatureInfoRequest queryFeatureInfo(final Envelope env, final Dimension rect, int x,
             int y, final String[] queryLayers, final String infoFormat,
             final int featureCount) throws TransformException, FactoryException {
         final GetFeatureInfoRequest request = server.createGetFeatureInfo();
