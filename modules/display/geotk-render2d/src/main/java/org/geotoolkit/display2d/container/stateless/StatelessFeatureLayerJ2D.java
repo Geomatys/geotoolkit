@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
@@ -698,9 +699,20 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                 final CachedSymbolizer[] css = rule.symbolizers();
                 for(int k=0; k<css.length; k++){
                     if(renderers[i][k].getService().isGroupSymbolizer()){
+                        FeatureSet cdts = candidates;
+                        final Filter ruleFilter = rule.getFilter();
+                        if (ruleFilter != null && !Filter.INCLUDE.equals(ruleFilter)) {
+                            final SimpleQuery sq = new SimpleQuery();
+                            sq.setFilter(ruleFilter);
+                            try {
+                                cdts = cdts.subset(sq);
+                            } catch (DataStoreException ex) {
+                                throw new PortrayalException(ex.getMessage(), ex);
+                            }
+                        }
                         final GraphicIterator ite;
                         try {
-                            ite = RenderingRoutines.getIterator(candidates, context);
+                            ite = RenderingRoutines.getIterator(cdts, context);
                         } catch (DataStoreException ex) {
                             throw new PortrayalException(ex.getMessage(), ex);
                         }
