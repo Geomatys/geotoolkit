@@ -710,15 +710,12 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                                 throw new PortrayalException(ex.getMessage(), ex);
                             }
                         }
-                        final GraphicIterator ite;
-                        try {
-                            ite = RenderingRoutines.getIterator(cdts, context);
-                        } catch (DataStoreException ex) {
+                        try (GraphicIterator ite = RenderingRoutines.getIterator(cdts, context)){
+                            dataRendered |= renderers[i][k].portray(ite);
+                        } catch (DataStoreException | IOException ex) {
                             throw new PortrayalException(ex.getMessage(), ex);
                         }
-                        dataRendered |= renderers[i][k].portray(ite);
                     }
-
                 }
             }
 
