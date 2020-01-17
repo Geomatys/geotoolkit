@@ -29,7 +29,7 @@ public class ComplexAdaptorTest {
     @Test
     public void count() throws FactoryException {
 
-        assertEquals(11, ComplexAdaptor.getAdaptorCount());
+        assertEquals(12, ComplexAdaptor.getAdaptorCount());
 
 
     }

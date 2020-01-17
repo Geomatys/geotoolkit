@@ -17,26 +17,30 @@
 package org.geotoolkit.wps.converters.inputs.complex;
 
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.gml.GeometrytoJTS;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -79,12 +83,14 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
         try {
             final List<Object> data = source.getContent();
 
+            final String mimeType = source.getMimeType();
+
             if (data.size() != 1)
                 throw new UnconvertibleObjectException("Invalid data input : Only one geometry expected.");
 
-            if (WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType()) ||
-                WPSMimeType.TEXT_XML.val().equalsIgnoreCase(source.getMimeType()) ||
-                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType()) ) {
+            if (WPSMimeType.APP_GML.val().equalsIgnoreCase(mimeType) ||
+                WPSMimeType.TEXT_XML.val().equalsIgnoreCase(mimeType) ||
+                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(mimeType) ) {
                 dataMimeTypeIdentifier = "GML";
                 Object value = data.get(0);
                 if (value instanceof JAXBElement) {
@@ -92,7 +98,7 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 }
                 AbstractGeometry abstractGeo = (AbstractGeometry) value;
                 return GeometrytoJTS.toJTS(abstractGeo);
-            } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
+            } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(mimeType)) {
                 dataMimeTypeIdentifier = "GeoJSON";
                 final String content = WPSConvertersUtils.geojsonContentAsString(source);
                 final GeoJSONObject jsonObject = WPSConvertersUtils.readGeoJSONObjectsFromString(content);
@@ -115,6 +121,36 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 }
 
                 return geom;
+            } else if (WPSMimeType.APP_WKT.val().equalsIgnoreCase(mimeType)) {
+                Object value = data.get(0);
+                if (value instanceof String) {
+                    String wkt = (String) value;
+                    int idx = wkt.indexOf(';');
+                    CoordinateReferenceSystem crs = null;
+                    if (idx > 0) {
+                        try {
+                            int srid = Integer.valueOf(wkt.substring(5, idx));
+                            if (srid > 0) {
+                                crs = CRS.forCode("EPSG:"+srid);
+                                crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED);
+                            }
+                        } catch (IllegalArgumentException ex) {
+                            throw new UnconvertibleObjectException("Incorrect SRID definition " + wkt);
+                        }
+                        wkt = wkt.substring(idx+1);
+                    }
+                    final WKTReader reader = new WKTReader();
+                    final Geometry geom;
+                    try {
+                        geom = reader.read(wkt);
+                    } catch (ParseException ex) {
+                            throw new UnconvertibleObjectException("Incorrect WKT definition " + wkt);
+                    }
+                    geom.setUserData(crs);
+                    return geom;
+                } else {
+                    throw new UnconvertibleObjectException("Expected a WKT String and found a " + value.getClass().getName());
+                }
             } else {
                 throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + source.getMimeType());
             }
