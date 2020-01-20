@@ -43,7 +43,7 @@ public class WKTAdaptor extends ComplexAdaptor {
     private static final String ENC_UTF8 = "UTF-8";
     private static final String ENC_BASE64 = "base64";
 
-    private static final String MIME_TYPE = "application/wkt";
+    private static final String MIME_TYPE = "application/ewkt";
 
     private final String mimeType;
     private final String encoding;

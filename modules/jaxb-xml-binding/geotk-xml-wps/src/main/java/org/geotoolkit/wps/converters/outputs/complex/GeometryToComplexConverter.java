@@ -137,7 +137,7 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
             } catch (FactoryException ex) {
                 throw new UnconvertibleObjectException("Couldn't decode a CRS.", ex);
             }
-        } else if (WPSMimeType.APP_WKT.val().equalsIgnoreCase(mimeType)) {
+        } else if (WPSMimeType.APP_EWKT.val().equalsIgnoreCase(mimeType)) {
 
             Geometry geom = source;
             int srid = 0;

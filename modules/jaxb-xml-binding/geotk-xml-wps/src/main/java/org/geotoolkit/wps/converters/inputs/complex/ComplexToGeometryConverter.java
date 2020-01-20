@@ -121,7 +121,7 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 }
 
                 return geom;
-            } else if (WPSMimeType.APP_WKT.val().equalsIgnoreCase(mimeType)) {
+            } else if (WPSMimeType.APP_EWKT.val().equalsIgnoreCase(mimeType)) {
                 Object value = data.get(0);
                 if (value instanceof String) {
                     String wkt = (String) value;
