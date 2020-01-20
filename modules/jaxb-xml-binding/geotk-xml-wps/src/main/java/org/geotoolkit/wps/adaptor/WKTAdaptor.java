@@ -84,7 +84,7 @@ public class WKTAdaptor extends ComplexAdaptor {
 
         int srid = 0;
         try {
-            CoordinateReferenceSystem crs = Geometries.getCoordinateReferenceSystem(geom);
+            CoordinateReferenceSystem crs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
             if (crs != null) {
                 final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
                 finder.setIgnoringAxes(true);

@@ -52,6 +52,7 @@ import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
+import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
@@ -63,8 +64,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import static org.geotoolkit.coverage.sql.GridGeometryEntry.AFFINE_DIMENSION;
 
 
 /**
@@ -325,7 +324,7 @@ final class GridGeometryTable extends CachedTable<Integer,GridGeometryEntry> {
             merged.intersect(GEOGRAPHIC_AREA);
             area = merged;
         }
-        return Geometries.formatWKT(area, ANGULAR_PRECISION);
+        return Geometries.wrap(area).get().formatWKT(ANGULAR_PRECISION);
     }
 
     /**
