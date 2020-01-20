@@ -102,7 +102,6 @@ public class JTSPointGrid implements PointGrid {
      * @return The {@code dest} argument, or a new object if {@code dest} was null.
      * @throws IndexOutOfBoundsException if an index is out of bounds.
      */
-    @Override
     public DirectPosition get(final int row, final int column, final DirectPosition dest) throws IndexOutOfBoundsException {
         DirectPosition target = new GeneralDirectPosition(getInternal( row, column ));
 
@@ -141,7 +140,6 @@ public class JTSPointGrid implements PointGrid {
      * @throws IndexOutOfBoundsException if an index is out of bounds.
      * @throws UnsupportedOperationException if this grid is immutable.
      */
-    @Override
     public void set(final int row, final int column, final DirectPosition position) throws IndexOutOfBoundsException,
                                                                          UnsupportedOperationException {
         DirectPosition target = new GeneralDirectPosition(getInternal(row, column));
@@ -159,7 +157,6 @@ public class JTSPointGrid implements PointGrid {
      * @return The row at the given index.
      * @throws IndexOutOfBoundsException if the index is out of bounds.
      */
-    @Override
     public PointArray getRow(final int row) throws IndexOutOfBoundsException {
         return pointGrid[row];
     }

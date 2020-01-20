@@ -33,7 +33,6 @@ import org.opengis.geometry.*;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -280,12 +279,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     }
 
     @Override
-    public Geometry transform(final CoordinateReferenceSystem newCRS, final MathTransform transform) throws TransformException {
-        // TODO calculate this for each subtype of geometry
-        return null;
-    }
-
-    @Override
     public Envelope getEnvelope() {
         // TODO calculate this for each subtype of geometry
         return null;
@@ -306,20 +299,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     @Override
     public Geometry getBuffer(final double distance) {
         // TODO calculate this for each subtype of geometry
-        return null;
-    }
-
-    @Override
-    public boolean isMutable() {
-        return true;
-    }
-
-    /**
-     * cant return immutable version of the object fir this module.
-     * @return
-     */
-    @Override
-    public Geometry toImmutable() {
         return null;
     }
 

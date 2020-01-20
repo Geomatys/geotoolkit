@@ -34,7 +34,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.UnmodifiableGeometryException;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Bearing;
 import org.opengis.geometry.primitive.OrientablePrimitive;
@@ -104,10 +103,9 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * point is not in the same coordinate reference system as this primitive,
      * then we attempt to convert it.
      */
-    @Override
     @XmlElement(name="pos", namespace="http://www.opengis.net/gml")
     @XmlJavaTypeAdapter(DirectPositionAdapter.class)
-    public void setDirectPosition(final DirectPosition position) throws UnmodifiableGeometryException {
+    public void setDirectPosition(final DirectPosition position) throws UnsupportedOperationException {
         if (isMutable()) {
             CoordinateReferenceSystem myCRS    = getCoordinateReferenceSystem();
             CoordinateReferenceSystem pointCRS = position.getCoordinateReferenceSystem();
@@ -140,7 +138,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
             invalidateCachedJTSPeer();
         }
         else {
-            throw new UnmodifiableGeometryException();
+            throw new UnsupportedOperationException();
         }
     }
 
