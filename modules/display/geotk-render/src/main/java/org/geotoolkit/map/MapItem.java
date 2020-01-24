@@ -20,7 +20,10 @@ package org.geotoolkit.map;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.style.DefaultDescription;
 import org.opengis.style.Description;
+import org.opengis.util.InternationalString;
 
 /**
  * Super interface for map elements. MapContext and MapLayer objects are
@@ -36,26 +39,92 @@ public interface MapItem {
     public static final String VISIBILITY_PROPERTY = "visible";
 
     /**
+     * Placeholder for Apache SIS new MapItem API.
+     */
+    default String getIdentifier() {
+        return getName();
+    }
+
+    /**
+     * Placeholder for Apache SIS new MapItem API.
+     */
+    default void setIdentifier(String identifier) {
+        setName(identifier);
+    }
+
+    /**
+     * Placeholder for Apache SIS new MapItem API.
+     */
+    default CharSequence getTitle() {
+        return getName();
+    }
+
+    /**
+     * Placeholder for Apache SIS new MapItem API.
+     */
+    default void setTitle(CharSequence title) {
+        InternationalString titl = (title instanceof InternationalString || title == null) ? (InternationalString)title : new SimpleInternationalString(title.toString());
+        Description description = getDescription();
+        InternationalString abst = null;
+        if (description != null) {
+            abst = description.getAbstract();
+        }
+        setDescription(new DefaultDescription(titl, abst));
+    }
+
+    /**
+     * Placeholder for Apache SIS new MapItem API.
+     */
+    default CharSequence getAbstract() {
+        return getName();
+    }
+
+    /**
+     * Placeholder for Apache SIS new MapItem API.
+     */
+    default void setAbstract(CharSequence abs) {
+        InternationalString abst = (abs instanceof InternationalString || abs == null) ? (InternationalString)abs : new SimpleInternationalString(abs.toString());
+        Description description = getDescription();
+        InternationalString title = null;
+        if (description != null) {
+            title = description.getTitle();
+        }
+        setDescription(new DefaultDescription(title, abst));
+    }
+
+    /**
      * Set the item name, this should be used as an
      * identifier. Use getdescription for UI needs.
+     *
+     * @deprecated to be remove, migration to apache SIS API, use identifier property instead
      */
+    @Deprecated
     void setName(String name);
 
     /**
      * Get the layer name. Use getDescription for UI needs.
+     *
+     * @deprecated to be remove, migration to apache SIS API, use identifier property instead
      */
+    @Deprecated
     String getName();
 
     /**
      * Set the item description. this holds a title and an abstract summary
      * used for user interfaces.
+     *
+     * @deprecated to be remove, migration to apache SIS API, use title and abstract properties instead
      */
+    @Deprecated
     void setDescription(Description desc);
 
     /**
      * Returns the description of the item. This holds a title and an abstract summary
      * used for user interfaces.
+     *
+     * @deprecated to be remove, migration to apache SIS API, use title and abstract properties instead
      */
+    @Deprecated
     Description getDescription();
 
     /**
@@ -83,17 +152,6 @@ public interface MapItem {
      * @return the live list
      */
     List<MapItem> items();
-
-    /**
-     * Store a value for this maplayer in a hashmap using the given key.
-     */
-    void setUserProperty(String key,Object value);
-
-    /**
-     * Get a stored value knowing the key.
-     * @return user property object , can be null
-     */
-    Object getUserProperty(String key);
 
     /**
      * @return map of all user properties.

@@ -34,26 +34,6 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
-import org.opengis.display.primitive.Graphic;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.MismatchedFeatureException;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.Rule;
-import org.opengis.style.Symbolizer;
-import org.opengis.style.TextSymbolizer;
-import org.opengis.util.GenericName;
-
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -67,7 +47,6 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.Utilities;
-
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
@@ -75,6 +54,11 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.ALPHA_COMPOSITE_1F;
+import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
+import static org.geotoolkit.display2d.GO2Utilities.STYLE_FACTORY;
+import static org.geotoolkit.display2d.GO2Utilities.getCached;
+import static org.geotoolkit.display2d.GO2Utilities.propertiesNames;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
@@ -107,12 +91,24 @@ import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleUtilities;
-
-import static org.geotoolkit.display2d.GO2Utilities.ALPHA_COMPOSITE_1F;
-import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
-import static org.geotoolkit.display2d.GO2Utilities.STYLE_FACTORY;
-import static org.geotoolkit.display2d.GO2Utilities.getCached;
-import static org.geotoolkit.display2d.GO2Utilities.propertiesNames;
+import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Rule;
+import org.opengis.style.Symbolizer;
+import org.opengis.style.TextSymbolizer;
+import org.opengis.util.GenericName;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -173,7 +169,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             return super.paintLayer(renderingContext);
         }
 
-        if(Boolean.TRUE.equals(item.getUserProperty(MapLayer.USERKEY_STYLED_FEATURE))){
+        if(Boolean.TRUE.equals(item.getUserProperties().get(MapLayer.USERKEY_STYLED_FEATURE))){
             //feature have self defined styles.
             return renderStyledFeature(renderingContext);
         }

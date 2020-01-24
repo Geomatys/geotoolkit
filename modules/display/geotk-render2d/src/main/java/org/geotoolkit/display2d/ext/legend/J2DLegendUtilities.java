@@ -183,15 +183,12 @@ public class J2DLegendUtilities {
                     moveY += gapSize;
                 }
                 String title = "";
-                final Description description = currentItem.getDescription();
-                if (description != null) {
-                    final InternationalString titleTmp = description.getTitle();
-                    if (titleTmp != null) {
-                        title = titleTmp.toString().replace("{}", "");
-                    }
+                final CharSequence titleTmp = currentItem.getTitle();
+                if (titleTmp != null) {
+                    title = titleTmp.toString().replace("{}", "");
                 }
                 if (title.isEmpty()) {
-                    title = currentItem.getName();
+                    title = currentItem.getIdentifier();
                 }
 
                 if (title != null && !title.isEmpty()) {
@@ -631,15 +628,12 @@ public class J2DLegendUtilities {
     private static Dimension estimateTitle(final MapItem source, final FontMetrics fontRules) {
         final Dimension dim = new Dimension(0, 0);
         String title = "";
-        final Description description = source.getDescription();
-        if (description != null) {
-            final InternationalString titleTmp = description.getTitle();
-            if (titleTmp != null) {
-                title = titleTmp.toString().replace("{}", "");
-            }
-            if (title.isEmpty() && source.getName() != null) {
-                title = source.getName();
-            }
+        final CharSequence titleTmp = source.getTitle();
+        if (titleTmp != null) {
+            title = titleTmp.toString().replace("{}", "");
+        }
+        if (title.isEmpty() && source.getIdentifier()!= null) {
+            title = source.getIdentifier();
         }
 
         if (!title.isEmpty()) {

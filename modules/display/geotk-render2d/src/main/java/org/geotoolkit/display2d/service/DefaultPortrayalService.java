@@ -93,7 +93,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
@@ -101,7 +100,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -951,17 +949,6 @@ public final class DefaultPortrayalService implements PortrayalService{
             XImageIO.dispose(writer);
         }
     }
-
-    private static MapContext convertCoverage(final GridCoverage coverage){
-        final MutableStyle style = STYLE_FACTORY.style(STYLE_FACTORY.rasterSymbolizer());
-        final MapLayer layer = MapBuilder.createCoverageLayer(coverage, style,"coveragename");
-
-        final MapContext context = MapBuilder.createContext(layer.getBounds().getCoordinateReferenceSystem());
-        context.layers().add(layer);
-
-        return context;
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // COLOR MODEL VERIFICATION ////////////////////////////////////////////////

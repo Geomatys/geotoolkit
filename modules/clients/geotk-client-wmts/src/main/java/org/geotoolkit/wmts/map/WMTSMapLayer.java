@@ -19,9 +19,9 @@ package org.geotoolkit.wmts.map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.wmts.WebMapTileClient;
@@ -63,7 +63,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
     public WMTSMapLayer(final WebMapTileClient server, String layerName) {
         super(getReference(server, layerName),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
-        setUserProperty(Pyramids.HINT_FORMAT, DEFAULT_FORMAT);
+        getUserProperties().put(Pyramids.HINT_FORMAT, DEFAULT_FORMAT);
         this.server = server;
     }
 
@@ -72,14 +72,14 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
-        setUserProperty(Pyramids.HINT_FORMAT, format);
+        getUserProperties().put(Pyramids.HINT_FORMAT, format);
     }
 
     /**
      * Gets the extension for the output response. By default {@code image/png}.
      */
     public String getFormat() {
-        Object val = getUserProperty(Pyramids.HINT_FORMAT);
+        Object val = getUserProperties().get(Pyramids.HINT_FORMAT);
         if(val != null){
             return val.toString();
         }
@@ -90,7 +90,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      * @return named style use on server.
      */
     public String getTileSetStyle() {
-        Object val = getUserProperty(WMTSPyramidSet.HINT_STYLE);
+        Object val = getUserProperties().get(WMTSPyramidSet.HINT_STYLE);
         if(val != null){
             return val.toString();
         }
@@ -99,7 +99,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     public void setTileSetStyle(String tileSetStyle) {
         ArgumentChecks.ensureNonNull("tileSetStyle", tileSetStyle);
-        setUserProperty(WMTSPyramidSet.HINT_STYLE, tileSetStyle);
+        getUserProperties().put(WMTSPyramidSet.HINT_STYLE, tileSetStyle);
     }
 
     /**

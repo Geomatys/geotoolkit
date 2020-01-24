@@ -19,12 +19,12 @@ package org.geotoolkit.tms.map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
-import org.geotoolkit.tms.TileMapClient;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.tms.TileMapClient;
 
 
 /**
@@ -51,7 +51,7 @@ public class TMSMapLayer extends DefaultCoverageMapLayer {
     public TMSMapLayer(final TileMapClient server) {
         super(getReference(server),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
-        setUserProperty(Pyramids.HINT_FORMAT, DEFAULT_FORMAT);
+        getUserProperties().put(Pyramids.HINT_FORMAT, DEFAULT_FORMAT);
     }
 
     /**
@@ -59,14 +59,14 @@ public class TMSMapLayer extends DefaultCoverageMapLayer {
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
-        setUserProperty(Pyramids.HINT_FORMAT, format);
+        getUserProperties().put(Pyramids.HINT_FORMAT, format);
     }
 
     /**
      * Gets the extension for the output response. By default {@code .png}.
      */
     public String getFormat() {
-        Object val = getUserProperty(Pyramids.HINT_FORMAT);
+        Object val = getUserProperties().get(Pyramids.HINT_FORMAT);
         if(val != null){
             return val.toString();
         }

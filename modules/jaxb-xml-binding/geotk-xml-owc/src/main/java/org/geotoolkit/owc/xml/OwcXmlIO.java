@@ -38,7 +38,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -51,14 +50,9 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.owc.gtkext.ObjectFactory;
+import static org.geotoolkit.owc.xml.OwcMarshallerPool.*;
 import org.geotoolkit.owc.xml.v10.ContentType;
 import org.geotoolkit.owc.xml.v10.OfferingType;
-import org.opengis.util.FactoryException;
-import org.w3._2005.atom.EntryType;
-import org.w3._2005.atom.FeedType;
-import org.w3._2005.atom.LinkType;
-import org.w3._2005.atom.TextType;
-import static org.geotoolkit.owc.xml.OwcMarshallerPool.*;
 import org.geotoolkit.owc.xml.v10.StyleSetType;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
@@ -66,8 +60,12 @@ import org.geotoolkit.sld.xml.v110.UserStyle;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
-import org.opengis.style.Description;
+import org.opengis.util.FactoryException;
+import org.w3._2005.atom.EntryType;
+import org.w3._2005.atom.FeedType;
 import org.w3._2005.atom.IdType;
+import org.w3._2005.atom.LinkType;
+import org.w3._2005.atom.TextType;
 import org.w3._2005.atom.TextTypeType;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
@@ -159,26 +157,27 @@ public class OwcXmlIO {
         entries.add(ATOM_FACTORY.createFeedTypeEntry(entry));
 
         //store other informations
-        final String name = ((parentPath!=null)?parentPath:"") + item.getName();
-        final Description description = item.getDescription();
+        final String name = ((parentPath!=null)?parentPath:"") + item.getIdentifier();
+        final CharSequence title = item.getTitle();
+        final CharSequence abstrat = item.getAbstract();
 
-        if(name!=null){
+        if (name != null) {
             final IdType atom = new IdType();
             atom.setValue(name);
             entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeId(atom));
         }
 
-        if(description!=null && description.getTitle()!=null){
+        if (title != null) {
             final TextType atom = new TextType();
             atom.setType(TextTypeType.TEXT);
-            atom.getContent().add(description.getTitle().toString());
+            atom.getContent().add(title.toString());
             entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeTitle(atom));
         }
 
-        if(description!=null && description.getAbstract()!=null){
+        if (abstrat != null) {
             final TextType atom = new TextType();
             atom.setType(TextTypeType.TEXT);
-            atom.getContent().add(description.getAbstract().toString());
+            atom.getContent().add(abstrat.toString());
             entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeSummary(atom));
         }
 

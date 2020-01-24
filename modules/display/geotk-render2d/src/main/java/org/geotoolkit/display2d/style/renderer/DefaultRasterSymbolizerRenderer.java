@@ -51,6 +51,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -169,7 +170,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             final GridCoverageResource ref = (GridCoverageResource) resource;
-            if (!isInView(projectedCoverage)) return false;
+            if (!isInView(ref)) return false;
+            if (monitor.stopRequested()) return false;
 
             final RasterSymbolizer sourceSymbol = symbol.getSource();
 
@@ -198,11 +200,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 channelSelection = null;
             }
 
+            if (monitor.stopRequested()) return false;
             final GridCoverage dataCoverage = getObjectiveCoverage(projectedCoverage, renderingContext.getGridGeometry(), false, channelSelection);
             if (dataCoverage == null) {
                 //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
                 return false;
             }
+            if (monitor.stopRequested()) return false;
 
             /*
              * If we haven't got any reprojection we delegate affine transformation to java2D
@@ -214,8 +218,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
 
-            org.apache.sis.coverage.grid.GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
+            final GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
             final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+            if (monitor.stopRequested()) return false;
 
             ////////////////////////////////////////////////////////////////////
             // 5 - Correct cross meridian problems / render                   //
@@ -571,9 +576,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     }
 
     private boolean renderCoverage(final ProjectedCoverage projectedCoverage, org.apache.sis.coverage.grid.GridCoverage2D coverage, MathTransform trs2D) throws PortrayalException{
+        if (monitor.stopRequested()) return false;
         boolean dataRendered = false;
 
         RenderedImage img = coverage.render(null);
+        if (monitor.stopRequested()) return false;
 
         final InterpolationCase interpolationCase = (InterpolationCase) hints.get(GO2Hints.KEY_INTERPOLATION);
         if (interpolationCase != null) {
@@ -592,6 +599,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     try {
                         GridCoverage cov = new ResampleProcess(coverage, renderingContext.getGridGeometry().getCoordinateReferenceSystem(), renderingContext.getGridGeometry2D(), interpolationCase, null).executeNow();
                         trs2D = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+                        if (monitor.stopRequested()) return false;
                         img = cov.render(null);
                     } catch (ProcessException ex) {
                         throw new PortrayalException(ex);
@@ -670,6 +678,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //draw the border if there is one---------------------------------------
         CachedSymbolizer outline = symbol.getOutLine();
         if(outline != null){
+            if (monitor.stopRequested()) return false;
             dataRendered |= GO2Utilities.portray(projectedCoverage, outline, renderingContext);
         }
         return dataRendered;
@@ -1005,23 +1014,26 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     }
 
 
-    private boolean isInView(final ProjectedCoverage candidate) {
-        try {
-            Envelope bounds = candidate.getLayer().getBounds();
-            GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
-                    Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
-            if (boundary.isEmpty()) {
-                //we may have NaN values with envelopes which cross poles
-                //normalizing envelope before transform often solve this issue
-                bounds = new GeneralEnvelope(bounds);
-                ((GeneralEnvelope) bounds).normalize();
-                boundary = GeneralEnvelope.castOrCopy(
-                    Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
-            }
+    private boolean isInView(final GridCoverageResource candidate) throws DataStoreException {
+        final GridGeometry gridGeometry = candidate.getGridGeometry();
+        if (gridGeometry.isDefined(GridGeometry.ENVELOPE)) {
+            try {
+                Envelope bounds = gridGeometry.getEnvelope();
+                GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
+                        Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
+                if (boundary.isEmpty()) {
+                    //we may have NaN values with envelopes which cross poles
+                    //normalizing envelope before transform often solve this issue
+                    bounds = new GeneralEnvelope(bounds);
+                    ((GeneralEnvelope) bounds).normalize();
+                    boundary = GeneralEnvelope.castOrCopy(
+                        Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
+                }
 
-            return boundary.intersects(renderingContext.getCanvasObjectiveBounds2D());
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Cannot compare layer bbox with rendering context", e);
+                return boundary.intersects(renderingContext.getCanvasObjectiveBounds2D());
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Cannot compare layer bbox with rendering context", e);
+            }
         }
 
         // Cannot determine intersection. Display object.
