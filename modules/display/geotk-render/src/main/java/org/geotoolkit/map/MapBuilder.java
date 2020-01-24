@@ -64,7 +64,7 @@ public final class MapBuilder {
      * @return MapContext
      */
     public static MapContext createContext(final CoordinateReferenceSystem crs){
-        return new DefaultMapContext(crs);
+        return new MapContext(crs);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class MapBuilder {
      * @return MapItem
      */
     public static MapItem createItem(){
-        return new DefaultMapItem();
+        return new MapContext(CommonCRS.WGS84.normalizedGeographic());
     }
 
     /**

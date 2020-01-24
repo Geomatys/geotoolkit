@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.map;
 
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
 
@@ -32,8 +32,18 @@ import org.opengis.geometry.Envelope;
  */
 public class EmptyMapLayer extends AbstractMapLayer{
 
+    private final Envelope bounds;
+
     EmptyMapLayer(final MutableStyle style){
+        this(style, null);
+    }
+
+    EmptyMapLayer(final MutableStyle style, Envelope bounds){
         super(style);
+        if (bounds == null) {
+            bounds = new Envelope2D(CommonCRS.WGS84.normalizedGeographic(), XRectangle2D.INFINITY);
+        }
+        this.bounds = bounds;
     }
 
     @Override
@@ -43,7 +53,7 @@ public class EmptyMapLayer extends AbstractMapLayer{
 
     @Override
     public Envelope getBounds() {
-        return new Envelope2D(CommonCRS.WGS84.normalizedGeographic(), XRectangle2D.INFINITY);
+        return bounds;
     }
 
 }
