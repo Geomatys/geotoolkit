@@ -25,7 +25,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
@@ -40,17 +39,11 @@ import org.opengis.geometry.Envelope;
 
 /**
  * Convenient representation of a coverage for rendering.
- * Caches coverage based on given parameters.
- *
- * Not thread safe.
- * Use it knowing you make clear cache operation in a synchronize way.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class ProjectedCoverage implements ProjectedObject<MapLayer> {
-
-    private final Cache<ReadParam, GridCoverage> cache = new Cache<>(1, 0, false);
 
     private final StatelessContextParams params;
     private final MapLayer layer;
@@ -94,32 +87,20 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
     }
 
     private GridCoverage getCoverage(final ReadParam param) throws DataStoreException {
-        GridCoverage value = cache.peek(param);
-        if (value == null) {
-            Cache.Handler<GridCoverage> handler = cache.lock(param);
-            try {
-                value = handler.peek();
-                if (value == null) {
-                    Resource resource = layer.getResource();
-                    if (resource instanceof GridCoverageResource) {
-                        GridCoverage result = ((GridCoverageResource)resource).read(param.geometry, param.bands);
-                        if (result instanceof GridCoverageStack) {
-                            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
-                        }
-                        while (result instanceof GridCoverageStack) {
-                            //pick the first slice
-                            result = ((GridCoverageStack)result).coverageAtIndex(0);
-                        }
-                        value = result;
-                    } else {
-                        throw new DataStoreException("Resource is not a coverage" + resource);
-                    }
-                }
-            } finally {
-                 handler.putAndUnlock(value);
+        Resource resource = layer.getResource();
+        if (resource instanceof GridCoverageResource) {
+            GridCoverage result = ((GridCoverageResource)resource).read(param.geometry, param.bands);
+            if (result instanceof GridCoverageStack) {
+                Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
             }
+            while (result instanceof GridCoverageStack) {
+                //pick the first slice
+                result = ((GridCoverageStack)result).coverageAtIndex(0);
+            }
+            return result;
+        } else {
+            throw new DataStoreException("Resource is not a coverage" + resource);
         }
-        return value;
     }
 
     /**
@@ -134,7 +115,6 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
         border.setDataGeometry(jtsBounds,CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
         return border;
     }
-
 
     /**
      * Get a coverage reference for the elevation model.
@@ -177,7 +157,6 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      */
     @Override
     public void dispose() {
-        cache.clear();
     }
 
     @Override

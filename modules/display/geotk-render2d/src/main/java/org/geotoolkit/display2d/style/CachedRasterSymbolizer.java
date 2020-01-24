@@ -32,7 +32,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
+public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer> {
 
     //cached values
     private Composite j2dComposite = null;
@@ -40,19 +40,19 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
 
 
     public CachedRasterSymbolizer(final RasterSymbolizer symbol,
-            final SymbolizerRendererService<RasterSymbolizer,? extends CachedSymbolizer<RasterSymbolizer>> renderer){
+            final SymbolizerRendererService<RasterSymbolizer,? extends CachedSymbolizer<RasterSymbolizer>> renderer) {
         super(symbol,renderer);
 
         Symbolizer outline = styleElement.getImageOutline();
-        if(outline != null){
-            if(outline instanceof LineSymbolizer){
+        if (outline != null) {
+            if (outline instanceof LineSymbolizer) {
                 cachedoutLine = GO2Utilities.getCached((LineSymbolizer)outline,null);
-            }else if(outline instanceof PolygonSymbolizer){
+            } else if(outline instanceof PolygonSymbolizer) {
                 cachedoutLine = GO2Utilities.getCached((PolygonSymbolizer)outline,null);
-            }else{
+            } else {
                 cachedoutLine = null;
             }
-        }else{
+        } else {
             cachedoutLine = null;
         }
 
@@ -63,9 +63,9 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
      */
     @Override
     public void evaluate() {
-        if(!isNotEvaluated) return;
+        if (!isNotEvaluated) return;
 
-        if(!evaluateComposite()){
+        if (!evaluateComposite()) {
             requieredAttributs = EMPTY_ATTRIBUTS;
             isStatic = false;
         }
@@ -73,22 +73,22 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
         isNotEvaluated = false;
     }
 
-    private boolean evaluateComposite(){
+    private boolean evaluateComposite() {
         final Expression opacity = styleElement.getOpacity();
-        if(GO2Utilities.isStatic(opacity)){
+        if (GO2Utilities.isStatic(opacity)) {
             Float j2dOpacity = GO2Utilities.evaluate(opacity, null, 1f,0f,1f);
-            if(j2dOpacity <= 0) return false; //-------------------------------------------------OUT NO NEED TO PAINT
+            if (j2dOpacity <= 0) return false; //-------------------------------------------------OUT NO NEED TO PAINT
             j2dComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity.floatValue());
         }
 
         return true;
     }
 
-    public Composite getJ2DComposite(){
+    public Composite getJ2DComposite() {
         evaluate();
 
         //if composite is null it means it is dynamic
-        if(j2dComposite == null){
+        if (j2dComposite == null) {
             final Expression opacity = styleElement.getOpacity();
             Float j2dOpacity = GO2Utilities.evaluate(opacity, null, 1f,0f,1f);
             return AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity.floatValue());

@@ -49,23 +49,19 @@ import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
@@ -91,10 +87,8 @@ import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.reformat.ReformatProcess;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
-import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableStyle;
@@ -119,13 +113,10 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -133,7 +124,6 @@ import org.opengis.style.ContrastEnhancement;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
-import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
 import org.opengis.util.LocalName;
 
@@ -164,9 +154,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
+        if (monitor.stopRequested()) return false;
+
         boolean dataRendered = false;
         try {
-            GridCoverage elevationCoverage = null;//getObjectiveElevationCoverage(projectedCoverage);
             final MapLayer coverageLayer = projectedCoverage.getLayer();
             final Resource resource = coverageLayer.getResource();
             if (!(resource instanceof GridCoverageResource)) {
@@ -223,7 +214,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
 
-            org.apache.sis.coverage.grid.GridCoverage2D dataImage = applyStyle(ref, dataCoverage, elevationCoverage, sourceSymbol);
+            org.apache.sis.coverage.grid.GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
             final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
 
             ////////////////////////////////////////////////////////////////////
@@ -365,7 +356,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      *
      * @param ref needed to compute statistics from internal metadata in case where missing informations.
      * @param coverage current styled coverage.
-     * @param elevationCoverage needed object to generate shaded relief, {àcode null} if none.
      * @param styleElement the {@link RasterSymbolizer} which contain styles properties.
      * @return styled coverage representation.
      * @throws ProcessException if problem during apply Color map or shaded relief styles.
@@ -374,24 +364,21 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @throws PortrayalException if problem during apply contrast enhancement style.
      * @throws java.io.IOException if problem during style application
      * @see #applyColorMapStyle(CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
-     * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
      * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)
      */
-    public static org.apache.sis.coverage.grid.GridCoverage2D applyStyle(GridCoverageResource ref, GridCoverage coverage,
-            GridCoverage elevationCoverage,
+    public static GridCoverage2D applyStyle(GridCoverageResource ref, GridCoverage coverage,
             final RasterSymbolizer styleElement)
             throws ProcessException, FactoryException, TransformException, PortrayalException, IOException
              {
 
         RenderedImage image = applyColorMapStyle(ref, coverage, styleElement);
-        image = applyShadedRelief(image, coverage, elevationCoverage, styleElement);
         image = applyContrastEnhancement(image, styleElement);
 
         //generate a new coverage with colored sample dimensions
         final int numBands = image.getSampleModel().getNumBands();
         final List<SampleDimension> sampleDimensions = new ArrayList<>(numBands);
         for (int i=0;i<numBands;i++) sampleDimensions.add(new SampleDimension.Builder().setName(i).build());
-        return new org.apache.sis.coverage.grid.GridCoverage2D(coverage.getGridGeometry(), sampleDimensions, image);
+        return new GridCoverage2D(coverage.getGridGeometry(), sampleDimensions, image);
     }
 
     /**
@@ -428,68 +415,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
         }
         return image;
-    }
-
-    /**
-     * Apply shaded relief on the image parameter from coverage geographic properties and elevation coverage properties.
-     *
-     * @param colorMappedImage image result issue from {@link #applyColorMapStyle(CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) }
-     * @param coverage base coverage
-     * @param elevationCoverage elevation coverage if exist, should be {@code null},
-     * if {@code null} image is just transformed into {@link BufferedImage#TYPE_INT_ARGB}.
-     * @param styleElement the {@link RasterSymbolizer} which contain shaded relief properties.
-     * @return image with shadow.
-     * @throws FactoryException if problem during DEM generation.
-     * @throws TransformException if problem during DEM generation.
-     * @see #getDEMCoverage(org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D)
-     */
-    private static RenderedImage applyShadedRelief(RenderedImage colorMappedImage, final GridCoverage coverage,
-            final GridCoverage elevationCoverage, final RasterSymbolizer styleElement)
-            throws FactoryException, TransformException, ProcessException {
-        ensureNonNull("colorMappedImage", colorMappedImage);
-        ensureNonNull("coverage", coverage);
-        ensureNonNull("styleElement", styleElement);
-
-        //-- shaded relief---------------------------------------------------------
-        final ShadedRelief shadedRel = styleElement.getShadedRelief();
-        shadingCase:
-        if (shadedRel != null && shadedRel.getReliefFactor() != null) {
-            final double factor = shadedRel.getReliefFactor().evaluate(null, Double.class);
-            if (factor== 0.0) break shadingCase;
-
-            //BUG ? When using the grid coverage builder the color model is changed
-            if (colorMappedImage.getColorModel() instanceof CompatibleColorModel) {
-                final BufferedImage bi = new BufferedImage(colorMappedImage.getWidth(), colorMappedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                bi.createGraphics().drawRenderedImage(colorMappedImage, new AffineTransform());
-                colorMappedImage = bi;
-            }
-
-            //-- ReliefShadow creating --------------------
-            final GridCoverage mntCoverage;
-            if (elevationCoverage != null) {
-                //TODO replace by a simple sobel effect for relief shading
-                mntCoverage = null;
-            } else {
-                break shadingCase;
-                //does not have a nice result, still better then nothing
-                //but is really slow to calculate, disabled for now.
-                //mntCoverage = getGeoideCoverage(coverage);
-            }
-
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setGridGeometry(coverage.getGridGeometry());
-            gcb.setRenderedImage(colorMappedImage);
-            gcb.setName("tempimg");
-            final GridCoverage ti = gcb.getGridCoverage2D();
-
-            final MathTransform1D trs = (MathTransform1D) MathTransforms.linear(factor, 0);
-            final org.geotoolkit.processing.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.processing.coverage.shadedrelief.ShadedRelief(
-                    ti, mntCoverage, trs);
-            final ParameterValueGroup res = proc.call();
-            final GridCoverage shaded = (GridCoverage) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
-            colorMappedImage = shaded.render(null);
-        }
-        return colorMappedImage;
     }
 
     /**
@@ -835,39 +760,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
         return values;
     }
-
-    /**
-     * Create a geoide coverage to mimic an elevation model.
-     */
-    public static GridCoverage2D getGeoideCoverage(final GridCoverage2D coverage) throws IllegalArgumentException, FactoryException, TransformException{
-
-        final RenderedImage base = coverage.getRenderedImage();
-        final float[][] matrix = new float[base.getHeight()][base.getWidth()];
-
-        final EarthGravitationalModel trs = EarthGravitationalModel.create(CommonCRS.WGS84.datum(), 180);
-        final MathTransform dataToLongLat = CRS.findOperation(coverage.getCoordinateReferenceSystem2D(), CommonCRS.WGS84.normalizedGeographic(), null).getMathTransform();
-        final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
-        final MathTransform gridToLonLat = MathTransforms.concatenate(gridToCRS, dataToLongLat);
-
-        final float[] buffer = new float[6];
-
-        for(int y=0;y<matrix.length;y++){
-            for(int x=0;x<matrix[0].length;x++){
-                buffer[0]=x;buffer[1]=y;buffer[2]=0;
-                gridToLonLat.transform(buffer, 0, buffer, 0, 1);
-                trs.transform(buffer, 0, buffer, 0, 1);
-                matrix[y][x] = buffer[2];
-            }
-        }
-
-        GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("geoide");
-        gcb.setRenderedImage(matrix);
-        gcb.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem2D());
-        gcb.setGridToCRS(gridToCRS);
-        return gcb.getGridCoverage2D();
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // RenderedImage JAI image operations ///////////////////////////////////////

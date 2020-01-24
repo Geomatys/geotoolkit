@@ -111,7 +111,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
      */
     @Override
     public boolean paintLayer(final RenderingContext2D renderingContext) {
-
+        if (renderingContext.getMonitor().stopRequested()) return false;
         GenericName coverageName = null;
         try {
             coverageName = item.getResource().getIdentifier().orElse(null);
@@ -120,6 +120,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
         }
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
+        if (renderingContext.getMonitor().stopRequested()) return false;
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
@@ -133,15 +134,16 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     private boolean paintRaster(final MapLayer item, final CachedRule[] rules,
             final RenderingContext2D context) {
         updateCache(context);
+        if (context.getMonitor().stopRequested()) return false;
 
         //search for a special graphic renderer
-        if(!ignoreBuilders){
+        if (!ignoreBuilders) {
             final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
-            if(builder != null){
+            if (builder != null) {
                 //this layer has a special graphic rendering, use it instead of normal rendering
                 final Collection<GraphicJ2D> graphics = builder.createGraphics(item, getCanvas());
                 boolean dataRendered = false;
-                for(GraphicJ2D gra : graphics){
+                for (GraphicJ2D gra : graphics) {
                     dataRendered |= gra.paint(context);
                 }
                 return dataRendered;
@@ -155,8 +157,8 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
         //}
 
         boolean dataRendered = false;
-        for(final CachedRule rule : rules){
-            for(final CachedSymbolizer symbol : rule.symbolizers()){
+        for (final CachedRule rule : rules) {
+            for (final CachedSymbolizer symbol : rule.symbolizers()) {
                 try {
                     dataRendered |= GO2Utilities.portray(projectedCoverage, symbol, context);
                 } catch (PortrayalException ex) {
