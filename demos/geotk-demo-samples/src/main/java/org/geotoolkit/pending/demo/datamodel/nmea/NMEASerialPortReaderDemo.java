@@ -16,26 +16,20 @@
  */
 package org.geotoolkit.pending.demo.datamodel.nmea;
 
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
-import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.WritableFeatureSet;
-import org.apache.sis.storage.event.StoreEvent;
-import org.apache.sis.storage.event.StoreListener;
+
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.event.FeatureStoreContentEvent;
-import org.geotoolkit.data.nmea.NMEASerialPortReader;
-import org.geotoolkit.lang.Setup;
-import org.opengis.feature.Feature;
+
+import org.geotoolkit.data.nmea.Discovery;
+
+import reactor.core.Disposable;
 
 /**
  * Connect and activate a GPS on COM/USB port first.
  * Ensure you have the proper rights to read such external device.
- * On linux, user must be in group dialout.
+ * On linux, user must be in group dialout. For more information about permission problems, see README file in NMEA
+ * module (modules/storage/geotk-feature-nmea).
  *
  * @author Alexis Manin (Geomatys)
  */
@@ -44,55 +38,21 @@ public class NMEASerialPortReaderDemo {
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.pending.demo.datamodel.nmea");
 
     public static void main(String[] args) throws Exception {
-        Setup.initialize(null);
+        // This component allows for serial port scan
+        final Discovery serial = Discovery.serial();
 
-        final NMEASerialPortReader reader = new NMEASerialPortReader();
-        final WritableFeatureSet store = reader.read();
+        // On trigger, a scan of serial ports will be started. A dataset can be returned for each found port emiting nmea messages.
+        final Disposable subscriber = serial.discover()
+                .subscribe(
+                        // On port acquisition, we can define what to do with received messages. Here, just log them.
+                        dataset -> dataset.flux()
+                                .map(f -> String.format("Next message:%n%s", f))
+                                .subscribe(LOGGER::info, error -> LOGGER.log(Level.WARNING, "Error in message flux", error)),
 
-        final TestListener listener = new TestListener(store);
+                        error -> LOGGER.log(Level.WARNING, "A problem has occurred while scanning port", error)
+                );
 
-        while (reader.isReading()) {
-            Thread.sleep(100);
-        }
-
+        subscriber.dispose();
         LOGGER.log(Level.INFO, "Port reading ended.");
-    }
-
-    private static class TestListener implements StoreListener<StoreEvent> {
-
-        public final WritableFeatureSet resource;
-
-        public TestListener(final WritableFeatureSet resource) {
-            resource.addListener(StoreEvent.class, this);
-            this.resource = resource;
-        }
-
-        @Override
-        public void eventOccured(StoreEvent event) {
-            if (event instanceof FeatureStoreContentEvent) {
-                final FeatureStoreContentEvent tmp = (FeatureStoreContentEvent) event;
-                if (tmp.getType().equals(FeatureStoreContentEvent.Type.ADD)) {
-                    try {
-                        SimpleQuery query = new SimpleQuery();
-                        query.setFilter(tmp.getIds());
-                        FeatureSet subres = resource.subset(query);
-
-                        try (Stream<Feature> stream = subres.features(false)){
-                            stream.forEach(new Consumer<Feature>() {
-                                @Override
-                                public void accept(Feature t) {
-                                    LOGGER.log(Level.INFO, t.toString());
-                                }
-                            });
-                        }
-                    } catch (DataStoreException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            } else {
-                LOGGER.log(Level.WARNING, "Should never happend...");
-            }
-        }
-
     }
 }
