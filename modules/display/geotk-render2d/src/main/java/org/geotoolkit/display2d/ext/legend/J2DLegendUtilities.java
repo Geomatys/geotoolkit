@@ -40,7 +40,7 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
@@ -228,8 +228,8 @@ public class J2DLegendUtilities {
             // we can use the result of a GetLegendGraphic request instead. It should presents the
             // default style defined on the WMS service for this layer
             wmscase:
-            if (layer instanceof DefaultCoverageMapLayer) {
-                final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
+            if (layer instanceof CoverageMapLayer) {
+                final CoverageMapLayer covLayer = (CoverageMapLayer)layer;
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
                 BufferedImage image = null;
                 try {
@@ -507,8 +507,8 @@ public class J2DLegendUtilities {
 
             // Launch a get legend request and take the dimensions from the result
             testwms:
-            if (layer instanceof DefaultCoverageMapLayer) {
-                final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
+            if (layer instanceof CoverageMapLayer) {
+                final CoverageMapLayer covLayer = (CoverageMapLayer)layer;
                 final GridCoverageResource covRef = covLayer.getResource();
 
                 if (covRef == null) {

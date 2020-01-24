@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2013, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,15 +16,37 @@
  */
 package org.geotoolkit.map;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
+import static org.geotoolkit.map.MapLayer.SELECTION_FILTER_PROPERTY;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.collection.NotifiedCheckedList;
+import org.opengis.feature.Feature;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -34,36 +56,88 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-@Deprecated
-public interface FeatureMapLayer extends MapLayer {
+public final class FeatureMapLayer extends AbstractMapLayer {
 
     public static final String PROP_EXTRA_DIMENSIONS = "extra_dims";
 
+    private final FeatureSet collection;
+    protected Id selectionFilter = null;
+    private Query query = null;
+
+    private final List<DimensionDef> extraDims = new NotifiedCheckedList<DimensionDef>(DimensionDef.class) {
+
+        @Override
+        protected void notifyAdd(DimensionDef item, int index) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+
+        @Override
+        protected void notifyAdd(Collection<? extends DimensionDef> items, NumberRange<Integer> range) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+
+        @Override
+        protected void notifyChange(DimensionDef oldItem, DimensionDef newItem, int index) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+
+        @Override
+        protected void notifyRemove(DimensionDef item, int index) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+
+        @Override
+        protected void notifyRemove(Collection<? extends DimensionDef> items, NumberRange<Integer> range) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+    };
+
     /**
-     * The feature collection of this layer.
+     * Creates a new instance of DefaultFeatureMapLayer
      *
-     * @return The features for this layer, can not be null.
+     * @param collection : the data source for this layer
+     * @param style : the style used to represent this layer
      */
-    @Override
-    FeatureSet getResource();
+    FeatureMapLayer(final FeatureSet collection, final MutableStyle style) {
+        super(style);
+        ArgumentChecks.ensureNonNull("FeatureSet", collection);
+        this.collection = collection;
+
+        trySetName(collection);
+    }
 
     /**
      * A separate filter for datas that are selected on this layer.
      * @return Filter, can be null or empty.
      */
-    Id getSelectionFilter();
+    public Id getSelectionFilter(){
+        return selectionFilter;
+    }
 
     /**
      * Set the selection filter.
      * @param filter Id
      */
-    void setSelectionFilter(Id filter);
+    public void setSelectionFilter(final Id filter){
+
+        final Filter oldfilter;
+        synchronized (this) {
+            oldfilter = this.selectionFilter;
+            if(Objects.equals(oldfilter, filter)){
+                return;
+            }
+            this.selectionFilter = filter;
+        }
+        firePropertyChange(SELECTION_FILTER_PROPERTY, oldfilter, this.selectionFilter);
+    }
 
     /**
      * Returns the definition query (filter) for this layer. If no definition
      * query has  been defined {@link Query#ALL} is returned.
      */
-    Query getQuery();
+    public Query getQuery() {
+        return query;
+    }
 
     /**
      * Sets a filter query for this layer.
@@ -75,20 +149,107 @@ public interface FeatureMapLayer extends MapLayer {
      *
      * @param query the full filter for this layer. can not be null.
      */
-    void setQuery(Query query);
+    public void setQuery(final Query query) {
+
+        final Query oldQuery;
+        synchronized (this) {
+            oldQuery = getQuery();
+            if (Objects.equals(oldQuery, query)){
+                return;
+            }
+            this.query = query;
+        }
+        firePropertyChange(QUERY_PROPERTY, oldQuery, this.query);
+    }
+
+    /**
+     * The feature collection of this layer.
+     *
+     * @return The features for this layer, can not be null.
+     */
+    @Override
+    public FeatureSet getResource() {
+        return collection;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Envelope getBounds() {
+        final FeatureSet featureSet = getResource();
+        CoordinateReferenceSystem sourceCrs = null;
+        Envelope env = null;
+        try {
+            sourceCrs = FeatureExt.getCRS(featureSet.getType());
+            env = FeatureStoreUtilities.getEnvelope(featureSet);
+        } catch (DataStoreException e) {
+            LOGGER.log(Level.WARNING, "Could not create referecenced envelope.",e);
+        }
+
+        if(env == null){
+            //no data
+            //never return a null envelope, we better return an infinite envelope
+            env = new Envelope2D(sourceCrs,Double.NaN,Double.NaN,Double.NaN,Double.NaN);
+
+//            Envelope crsEnv = CRS.getEnvelope(sourceCrs);
+//            if(crsEnv != null){
+//                //we couldn't estime the features envelope, return the crs envelope if possible
+//                //we assume the features are not out of the crs valide envelope
+//                env = new GeneralEnvelope(crsEnv);
+//            }else{
+//                //never return a null envelope, we better return an infinite envelope
+//                env = new Envelope2D(sourceCrs,Double.NaN,Double.NaN,Double.NaN,Double.NaN);
+//            }
+        }
+
+        return env;
+    }
 
     /**
      * Manage extra dimensions.
      *
      * @return live list of dimensiondef, never null.
      */
-    List<DimensionDef> getExtraDimensions();
+    public List<DimensionDef> getExtraDimensions() {
+        return extraDims;
+    }
 
     /**
      * Get all values of given extra dimension.
      * @return collection never null, can be empty.
      */
-    Collection<Range> getDimensionRange(DimensionDef def) throws DataStoreException;
+    public Collection<Range> getDimensionRange(final DimensionDef def) throws DataStoreException {
+        final Expression lower = def.getLower();
+        final Expression upper = def.getUpper();
+
+        final Set<String> properties = new HashSet<>();
+        lower.accept(ListingPropertyVisitor.VISITOR, properties);
+        upper.accept(ListingPropertyVisitor.VISITOR, properties);
+
+        final SimpleQuery qb = new SimpleQuery();
+        final List<SimpleQuery.Column> columns = new ArrayList<>();
+        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        for (String property : properties) {
+            columns.add(new SimpleQuery.Column(ff.property(property)));
+        }
+        qb.setColumns(columns.toArray(new SimpleQuery.Column[0]));
+        final FeatureSet col = getResource().subset(qb);
+
+        try (Stream<Feature> stream = col.features(false)) {
+            return stream
+                    .map(f -> {
+                        return new Range(
+                                Comparable.class,
+                                lower.evaluate(f, Comparable.class),
+                                true,
+                                upper.evaluate(f, Comparable.class),
+                                true
+                        );
+                    })
+                    .collect(Collectors.toList());
+        }
+    }
 
     public static final class DimensionDef {
         private final CoordinateReferenceSystem crs;
@@ -143,5 +304,4 @@ public interface FeatureMapLayer extends MapLayer {
             return true;
         }
     }
-
 }

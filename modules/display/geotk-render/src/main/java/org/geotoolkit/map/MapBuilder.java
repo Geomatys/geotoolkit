@@ -105,7 +105,7 @@ public final class MapBuilder {
         } catch (DataStoreException ex) {
             style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
-        final DefaultFeatureMapLayer maplayer = new DefaultFeatureMapLayer(collection, style);
+        final FeatureMapLayer maplayer = new FeatureMapLayer(collection, style);
         maplayer.setName(name);
         if (description != null) maplayer.setDescription(description);
         return maplayer;
@@ -118,7 +118,7 @@ public final class MapBuilder {
      * @return FeatureMapLayer
      */
     public static FeatureMapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style) {
-        return new DefaultFeatureMapLayer(collection, style);
+        return new FeatureMapLayer(collection, style);
     }
 
     /**
@@ -169,7 +169,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref){
-        return new DefaultCoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
+        return new CoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
     }
 
     /**
@@ -179,7 +179,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref, final MutableStyle style){
-        return new DefaultCoverageMapLayer(ref, style);
+        return new CoverageMapLayer(ref, style);
     }
 
     /**

@@ -80,7 +80,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Rescaler;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -745,8 +745,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     public static Map<String, Double> extractQuery(final MapLayer coverageMapLayer) {
 
         Map<String,Double> values = null;
-        if (coverageMapLayer instanceof DefaultCoverageMapLayer) {
-            final DefaultCoverageMapLayer covMapLayer = (DefaultCoverageMapLayer) coverageMapLayer;
+        if (coverageMapLayer instanceof CoverageMapLayer) {
+            final CoverageMapLayer covMapLayer = (CoverageMapLayer) coverageMapLayer;
             final Query query = covMapLayer.getQuery();
             if (query != null) {
                 // visit the filter to extract all values
