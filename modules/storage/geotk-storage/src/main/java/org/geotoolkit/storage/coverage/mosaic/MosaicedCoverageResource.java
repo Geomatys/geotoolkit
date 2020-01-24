@@ -268,15 +268,28 @@ public class MosaicedCoverageResource extends AbstractGridResource {
     public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
     }
 
+    /**
+     * Try to create mosaics of the different provided coverages.
+     *
+     * @param resources
+     * @return
+     * @throws DataStoreException
+     */
     public static List<GridCoverageResource> create(GridCoverageResource ... resources) throws DataStoreException {
 
         final RegionCalculator calculator = new RegionCalculator();
+        final List<GridCoverageResource> mosaics = new ArrayList<>();
 
         for (GridCoverageResource resource : resources) {
-            append(resource, calculator);
+            try {
+                append(resource, calculator);
+            } catch (DataStoreException ex) {
+                //an error at this place mean the resource doesn't have an affine grid to crs
+                //we use the resource as is it defined.
+                mosaics.add(resource);
+            }
         }
 
-        final List<GridCoverageResource> mosaics = new ArrayList<>();
         for (Entry<GridGeometry,Tile[]> entry : calculator.tiles().entrySet()) {
 
             final Tile[] tiles = entry.getValue();

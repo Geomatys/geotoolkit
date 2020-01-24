@@ -46,6 +46,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 
 
 /**
@@ -312,7 +313,15 @@ class Tile {
      * @deprecated use {@link #Tile(ImageReaderSpi, Path, int)} instead
      */
     public Tile(GridCoverageResource resource) throws DataStoreException {
-        this(resource, null, (AffineTransform) resource.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER));
+        this(resource, null, toAffine(resource.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER)));
+    }
+
+    private static AffineTransform toAffine(MathTransform trs) throws DataStoreException {
+        if (trs instanceof AffineTransform) {
+            return (AffineTransform) trs;
+        } else {
+            throw new DataStoreException("Coverage Grid to CRS is not affine");
+        }
     }
 
     public GridCoverageResource getResource() {
