@@ -193,25 +193,4 @@ public final class MapBuilder {
         if (style != null) layer.setStyle(style);
         return layer;
     }
-    /**
-     * Create a default elevation model based on a grid coverage reader.
-     *
-     * @param grid : Coverage reader holding elevation values
-     * @return ElevationModel
-     */
-    public static ElevationModel createElevationModel(final GridCoverageResource ref) throws DataStoreException {
-        return createElevationModel(ref, 130, 2, 55);
-    }
-
-    /**
-     * Create a default elevation model based on a grid coverage reader.
-     *
-     * @param grid : Coverage reader holding elevation values
-     * @param offset : expression used to modified on the fly the elevation value
-     * @param scale : a multiplication factor to use on the coverage values
-     * @return ElevationModel
-     */
-    public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws DataStoreException {
-        return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
-    }
  }

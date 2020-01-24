@@ -28,10 +28,8 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapLayer;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.expression.Expression;
@@ -114,27 +112,6 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
         border = new ProjectedGeometry(params);
         border.setDataGeometry(jtsBounds,CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
         return border;
-    }
-
-    /**
-     * Get a coverage reference for the elevation model.
-     *
-     * @param param : expected coverage parameters
-     * @return GridCoverage2D or null if the requested parameters are out of the coverage area.
-     *
-     * @throws DataStoreException
-     */
-    public GridCoverage getElevationCoverage(final GridGeometry param) throws DataStoreException {
-        ElevationModel elevationModel = layer.getElevationModel();
-        if(elevationModel == null){
-             elevationModel = (ElevationModel) params.context.getRenderingHints().get(GO2Hints.KEY_ELEVATION_MODEL);
-        }
-
-        if(elevationModel != null){
-            return elevationModel.getCoverageReader().read(param);
-        }else{
-            return null;
-        }
     }
 
     /**

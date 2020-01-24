@@ -22,7 +22,6 @@ import org.geotoolkit.display.HintKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.map.ElevationModel;
 
 /**
  * Set of hints used by the Go2 Renderer
@@ -136,15 +135,6 @@ public final class GO2Hints extends Static {
      * Default value is false.
      */
     public static final Key KEY_PARALLAL_BUFFER = new NamedKey(Boolean.class, "GO2 - Parallal Buffer");
-
-    /**
-     * When the raster symbolizer requieres an elevation model and the MapLayer
-     * does not define any then a rendering engine search for a default one in the
-     * Hints.
-     *
-     * Default value is null.
-     */
-    public static final Key KEY_ELEVATION_MODEL = new NamedKey(ElevationModel.class, "GO2 - Default Elevation Model");
 
     /**
      * Coverage rendering interpolation.

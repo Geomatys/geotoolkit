@@ -17,12 +17,10 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
-import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -649,37 +647,6 @@ public class Styles {
         final RasterSymbolizer symbol = SF.rasterSymbolizer(
                 name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
         return SF.style(symbol);
-    }
-
-    /**
-     * Relief shading requieres a secondary data for the elevation model.
-     */
-    public static MapLayer ShadedReliefRaster() throws DataStoreException {
-
-        final RasterSymbolizer shadedSymbolizer = SF.rasterSymbolizer(
-                null,
-                FF.literal(1),
-                null,
-                null,
-                null,
-                null,
-                SF.shadedRelief(FF.literal(1), true),
-                null);
-
-
-        //create your maplayer with your datas
-        final GridCoverageResource elevationData = null;
-
-        final MapLayer layer = MapBuilder.createCoverageLayer(null, SF.style(shadedSymbolizer));
-        final ElevationModel elevationModel = MapBuilder.createElevationModel(elevationData);
-        //associate this elevation model to the layer.
-        layer.setElevationModel(elevationModel);
-
-        //TIP : a default ElevationModel can be set in the Hints passed to the
-        // protrayal service, or set in the default Hint values
-        //Hints.putSystemDefault(GO2Hints.KEY_ELEVATION_MODEL, elevationModel);
-
-        return layer;
     }
 
     //////////////////////////////////////////////////////////////////////
