@@ -38,7 +38,9 @@ import org.geotoolkit.processing.chain.model.Chain;
 import org.geotoolkit.processing.chain.model.Parameter;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.processing.chain.model.ParameterFormat;
+import org.geotoolkit.processing.chain.model.StringList;
 import org.geotoolkit.processing.chain.model.StringMap;
+import org.geotoolkit.processing.chain.model.StringMapList;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -178,6 +180,13 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             for (Entry<String, Object> entry : param.getUserMap().entrySet()) {
                 if (entry.getValue() instanceof StringMap) {
                     userMap.put(entry.getKey(), ((StringMap)entry.getValue()).getMap());
+                } else if (entry.getValue() instanceof StringMapList) {
+                    StringMapList sml = (StringMapList) entry.getValue();
+                    Map<String, Collection<String>> map = new HashMap<>();
+                    for (Entry<String, StringList> ent : sml.getMap().entrySet()) {
+                        map.put(ent.getKey(), ent.getValue().getList());
+                    }
+                    userMap.put(entry.getKey(), map);
                 } else {
                     userMap.put(entry.getKey(), entry.getValue());
                 }
