@@ -27,15 +27,14 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -162,12 +161,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         gridEnv.setRange(1, 0, 90);
 
         //create the coverage
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(gridEnv);
-        gcb.setName("myCoverage");
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
-
+        final GridCoverage coverage = new GridCoverage2D(gridEnv, null, img);
 
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");

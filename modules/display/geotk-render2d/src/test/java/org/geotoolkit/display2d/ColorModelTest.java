@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -44,7 +45,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.painter.GradiantColorPainter;
@@ -99,7 +99,6 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     public ColorModelTest() throws Exception {
 
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
 
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
@@ -175,10 +174,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         Graphics2D g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        gcb.reset();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        GridCoverage coverage = gcb.getGridCoverage2D();
+        GridCoverage coverage = new GridCoverage2D(env, null, img);
         coverages.add(coverage);
 
         env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -188,10 +184,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        gcb.reset();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        coverage = gcb.getGridCoverage2D();
+        coverage = new GridCoverage2D(env, null, img);
         coverages.add(coverage);
 
     }
@@ -412,10 +405,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = new GridCoverage2D(env, null, img);
 
         //display it
         final MapContext context = MapBuilder.createContext();
@@ -462,10 +452,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = new GridCoverage2D(env, null, img);
 
         //display it
         final MapContext context = MapBuilder.createContext();
