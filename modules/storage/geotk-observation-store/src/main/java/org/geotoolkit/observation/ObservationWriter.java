@@ -135,7 +135,7 @@ public interface ObservationWriter {
      * @param parent The parent procedure identifier @{code null}
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void writeProcedure(final String procedureID, final AbstractGeometry position, final String parent, final String type) throws DataStoreException;
+    void writeProcedure(final String procedureID, final AbstractGeometry position, final String parent, final String type, final String omType) throws DataStoreException;
 
     /**
      * Record the location of a sensor.

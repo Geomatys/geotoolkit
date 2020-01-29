@@ -53,7 +53,15 @@ public class ExtractionResult {
 
         public final String id;
 
+        /**
+         * The SML type of the process (System, Component, ...)
+         */
         public final String type;
+
+        /**
+         * The observation type of the process (timeseries, trajectory, profile...)
+         */
+        public final String omType;
 
         public final List<ProcedureTree> children = new ArrayList<>();
 
@@ -61,14 +69,16 @@ public class ExtractionResult {
 
         public final List<String> fields = new ArrayList<>();
 
-        public ProcedureTree(final String id, final String type) {
-            this.id   = id;
-            this.type = type;
+        public ProcedureTree(final String id, final String type, final String omType) {
+            this.id     = id;
+            this.type   = type;
+            this.omType = omType;
         }
 
-        public ProcedureTree(final String id, final String type, final Collection<String> fields) {
+        public ProcedureTree(final String id, final String type, final String omType, final Collection<String> fields) {
             this.id   = id;
             this.type = type;
+            this.omType = omType;
             this.fields.addAll(fields);
         }
 
@@ -81,6 +91,7 @@ public class ExtractionResult {
                 final ProcedureTree that = (ProcedureTree) obj;
                 return Objects.equals(this.id,       that.id)   &&
                        Objects.equals(this.type,     that.type) &&
+                       Objects.equals(this.omType,   that.omType) &&
                        Objects.equals(this.children, that.children);
             }
             return false;
@@ -91,6 +102,7 @@ public class ExtractionResult {
             int hash = 3;
             hash = 79 * hash + Objects.hashCode(this.id);
             hash = 79 * hash + Objects.hashCode(this.type);
+            hash = 79 * hash + Objects.hashCode(this.omType);
             hash = 79 * hash + Objects.hashCode(this.children);
             return hash;
         }

@@ -351,7 +351,7 @@ public class NetCDFExtractor {
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
-                    final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                    final ProcedureTree compo = new ProcedureTree(procedureID, "Component", "timeseries");
                     results.procedures.add(compo);
 
                     final MeasureStringBuilder sb = new MeasureStringBuilder();
@@ -402,7 +402,7 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                final ProcedureTree system = new ProcedureTree(procedureID, "System", "timeseries");
                 results.procedures.add(system);
                 for (int j = 0; j < separators.size(); j++) {
 
@@ -411,7 +411,7 @@ public class NetCDFExtractor {
                     final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
-                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component");
+                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", "timeseries");
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -502,7 +502,7 @@ public class NetCDFExtractor {
 
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
-                    final ProcedureTree compo = new ProcedureTree(procedureID, "Component", fields);
+                    final ProcedureTree compo = new ProcedureTree(procedureID, "Component", "timeseries", fields);
                     results.add(compo);
 
                     final int count               = timeVar.getDimension(0).getLength();
@@ -528,7 +528,7 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System", fields);
+                final ProcedureTree system = new ProcedureTree(procedureID, "System", "timeseries", fields);
                 results.add(system);
                 for (int j = 0; j < separators.size(); j++) {
 
@@ -536,7 +536,7 @@ public class NetCDFExtractor {
                     final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
-                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", fields);
+                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", "timeseries", fields);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -611,7 +611,7 @@ public class NetCDFExtractor {
             results.phenomenons.add(phenomenon);
 
             if (single) {
-                final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                final ProcedureTree compo = new ProcedureTree(procedureID, "profile", "Component");
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     results.procedures.add(compo);
 
@@ -668,7 +668,7 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                final ProcedureTree system = new ProcedureTree(procedureID, "profile", "System");
                 results.procedures.add(system);
 
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
@@ -677,7 +677,7 @@ public class NetCDFExtractor {
                     final int count            = zVar.getDimension(0).getLength();
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
-                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component");
+                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "profile", "Component");
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         //read geometry (assume point)
@@ -770,7 +770,7 @@ public class NetCDFExtractor {
             final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
 
             if (single) {
-                final ProcedureTree compo = new ProcedureTree(procedureID, "Component", fields);
+                final ProcedureTree compo = new ProcedureTree(procedureID, "Component", "profile", fields);
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     results.add(compo);
 
@@ -794,7 +794,7 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System", fields);
+                final ProcedureTree system = new ProcedureTree(procedureID, "System", "profile", fields);
                 results.add(system);
 
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
@@ -802,7 +802,7 @@ public class NetCDFExtractor {
                     final String identifier    = separators.get(profileIndex);
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
-                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component", fields);
+                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component", "profile", fields);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         if (analyze.hasSpatial()) {
@@ -868,7 +868,7 @@ public class NetCDFExtractor {
             results.phenomenons.add(phenomenon);
 
             if (single) {
-                final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                final ProcedureTree compo = new ProcedureTree(procedureID, "trajectory", "Component");
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     results.procedures.add(compo);
 
@@ -929,7 +929,7 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                final ProcedureTree system = new ProcedureTree(procedureID, "trajectory", "System");
                 results.procedures.add(system);
 
                 for (int j = 0; j < separators.size(); j++) {
@@ -939,7 +939,7 @@ public class NetCDFExtractor {
                     int count                     = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
-                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component");
+                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "trajectory", "Component");
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         final List<DirectPosition> positions = new ArrayList<>();
@@ -1035,7 +1035,7 @@ public class NetCDFExtractor {
             final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
 
             if (single) {
-                final ProcedureTree compo = new ProcedureTree(procedureID, "Component", fields);
+                final ProcedureTree compo = new ProcedureTree(procedureID, "Component", "trajectory", fields);
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     results.add(compo);
 
@@ -1062,7 +1062,7 @@ public class NetCDFExtractor {
                 }
 
             } else {
-                final ProcedureTree system = new ProcedureTree(procedureID, "System", fields);
+                final ProcedureTree system = new ProcedureTree(procedureID, "System", "trajectory", fields);
                 results.add(system);
 
                 for (int j = 0; j < separators.size(); j++) {
@@ -1071,7 +1071,7 @@ public class NetCDFExtractor {
                     int count                     = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
-                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", fields);
+                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", "trajectory", fields);
 
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
@@ -1107,7 +1107,7 @@ public class NetCDFExtractor {
 
     private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID, Set<org.opengis.observation.Phenomenon> phenomenons) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
-        final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+        final ProcedureTree compo = new ProcedureTree(procedureID, "grid", "Component");
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
             results.procedures.add(compo);
 
@@ -1200,7 +1200,7 @@ public class NetCDFExtractor {
 
     private static List<ProcedureTree> getProcedureGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final List<ProcedureTree> results = new ArrayList<>();
-        final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+        final ProcedureTree compo = new ProcedureTree(procedureID, "grid", "Component");
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
             results.add(compo);
 
