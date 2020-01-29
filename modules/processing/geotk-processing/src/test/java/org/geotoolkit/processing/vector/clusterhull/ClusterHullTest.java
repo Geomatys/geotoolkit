@@ -150,21 +150,16 @@ public class ClusterHullTest extends AbstractProcessTest {
         assertEquals(FeatureExt.getCRS(type1), FeatureExt.getCRS(type2));
     }
 
-    private GeometryCollection extractGeometryCollectionFromFeatureSet(final FeatureSet fs) {
+    private GeometryCollection extractGeometryCollectionFromFeatureSet(final FeatureSet fs) throws DataStoreException {
         List<Geometry> geometries = new ArrayList<>();
 
-        try {
-            fs.features(false).collect(Collectors.toList());
-
-            geometries = fs.features(false)
-                    .map(f -> f.getProperty("geometry"))
-                    .map(p -> p.getValue())
-                    .filter(value -> value instanceof Geometry)
-                    .map(value -> (Geometry) value)
-                    .collect(Collectors.toList());
-        } catch(DataStoreException e) {
-            e.printStackTrace();
-        }
+        fs.features(false).collect(Collectors.toList());
+        geometries = fs.features(false)
+                .map(f -> f.getProperty("geometry"))
+                .map(p -> p.getValue())
+                .filter(value -> value instanceof Geometry)
+                .map(value -> (Geometry) value)
+                .collect(Collectors.toList());
         int size = geometries.size();
         Geometry[] geometries1 = geometries.toArray(new Geometry[size]);
         return geometryFactory.createGeometryCollection(geometries1);

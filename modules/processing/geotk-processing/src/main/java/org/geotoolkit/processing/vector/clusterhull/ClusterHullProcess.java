@@ -6,6 +6,7 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.storage.*;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -32,9 +33,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
 import javax.measure.Unit;
@@ -45,6 +44,15 @@ import javax.measure.quantity.Length;
  * Compute the cluster hull from a FeatureSet. The result is
  * a feature set of polygons that represent the footprints of the set of elements
  * according to tolerance distance.
+ * The algorithm takes as input a geometry set and a tolerance parameter. It's about gradually building a clustered geometry set.
+ * At the start we consider a current geometry and the result of the process is the empty set.
+ * During each iteration, we found the neighbors geometry and we add them in a separate package.
+ * Then we find the neighboring geometries of the previous neighboring geometries.
+ * The update takes place as follows:
+ *      - the current geometry become the neighbors found.
+ *      - the current geometry is store in a separate package and removed from the starting package
+ * When no more neighbors are found, we apply the clusterhull process in all geometry found, and store the result in a output package
+ * we continue until the original package is empty.
  *
  * @author Maxime Gavens - décembre 2019
  */
@@ -113,7 +121,10 @@ public class ClusterHullProcess extends AbstractProcess {
         Double[] median = getMedianPoint(inputFeatureSet);
         final FeatureType type = inputFeatureSet.getType();
         CoordinateReferenceSystem crs1 = FeatureExt.getCRS(type);
-        if (crs1 == null) crs1 = CommonCRS.WGS84.normalizedGeographic();
+        if (crs1 == null) {
+            fireWarningOccurred("No CRS referenced in the input data. WGS84 CRS is provided by default.", 0, null);
+            crs1 = CommonCRS.WGS84.normalizedGeographic();
+        }
         final CoordinateReferenceSystem crs2 = getLocalLambertCRS(median[0], median[1]);
         final MathTransform mt = CRS.findOperation(crs1, crs2, null).getMathTransform();
         final CoordinateSequenceTransformer cst = new CoordinateSequenceMathTransformer(mt);
@@ -145,6 +156,27 @@ public class ClusterHullProcess extends AbstractProcess {
         return median;
     }
 
+    /**
+     * On each recurrence:
+     *      - we are looking for the neighbors of "CURRENT" in "IN" (if "IN" is empty stop the process)
+     *      - If neighbors is not empty:
+     *          - Remove geometries found from "IN"
+     *          - Put the contain of "CURRENT" in "STORE"
+     *          - "CURRENT" become the geometries found
+     *      - If neighbors is empty:
+     *          - Remove geometries found from "IN"
+     *          - Put the contain of "STORE" in "CURRENT" and apply the convexhull process on it
+     *          - Put the result in "OUT"
+     *          - Empty the "STORE", get a new random geometry from "IN" in "CURRENT"
+     *
+     * @param in        Initial bundle of geometry, while this is not empty, the algorithm continue to process.
+     * @param out       Contains the process result.
+     * @param current   Contains geometries used to find neighboring geometries
+     * @param store     Contains geometries belonging to the same cluster
+     * @param tolerance Define the distance which will determine if the geometries are in the same cluster.
+     * @return
+     * @throws TransformException
+     */
     private Set<Geometry> applyClusterHull(Set<Geometry> in, Set<Geometry> out, Set<Geometry> current, Set<Geometry> store, final Double tolerance) throws TransformException {
         if (in.isEmpty()) {
             current.addAll(store);
@@ -227,23 +259,22 @@ public class ClusterHullProcess extends AbstractProcess {
         return ftb.build();
     }
 
-    private static ProjectedCRS getLocalLambertCRS(final double central_meridian, final double latitude_of_origin) {
-        try {
-            MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);;
-            ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
-            parameters.parameter("central_meridian").setValue(central_meridian);
-            parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
-            String scentralMeridian = ((Integer) ((int) (Math.floor(central_meridian)))).toString();
-            String slatitudeOfOrigin = ((Integer) ((int) (Math.floor(latitude_of_origin)))).toString();
-            DefiningConversion conversion = new DefiningConversion("My conversion", parameters);
-            CRSFactory crsFactory = DefaultFactories.forBuildin(CRSFactory.class);
-            final Map<String, Object> properties = new HashMap<>();
-            properties.put(ProjectedCRS.NAME_KEY, "LambertCC_" + slatitudeOfOrigin + "_" + scentralMeridian);
-            ProjectedCRS targetCRS = crsFactory.createProjectedCRS(properties, CommonCRS.WGS84.normalizedGeographic(), conversion, PredefinedCS.PROJECTED);
-            return targetCRS;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    private static ProjectedCRS getLocalLambertCRS(final double central_meridian, final double latitude_of_origin) throws FactoryException {
+        final MathTransformFactory mtFactory = DefaultFactories.forBuildin(MathTransformFactory.class);;
+        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
+        parameters.parameter("central_meridian").setValue(central_meridian);
+        parameters.parameter("latitude_of_origin").setValue(latitude_of_origin);
+
+        final CoordinateOperationFactory coFactory = DefaultFactories.forClass(CoordinateOperationFactory.class);
+        final OperationMethod operationMethod = coFactory.getOperationMethod("Lambert_Conformal_Conic_1SP");
+        final Map<String,?> nameConversion = Collections.singletonMap("name", "My conversion");
+        final Conversion conversion = coFactory.createDefiningConversion(nameConversion, operationMethod, parameters);
+
+        final CRSFactory crsFactory = DefaultFactories.forBuildin(CRSFactory.class);
+        final Map<String, Object> properties = new HashMap<>();
+        final String name = String.format("LambertCC_%d_%d", (int) latitude_of_origin, (int) central_meridian);
+        properties.put(ProjectedCRS.NAME_KEY, name);
+        final ProjectedCRS targetCRS = crsFactory.createProjectedCRS(properties, CommonCRS.WGS84.normalizedGeographic(), conversion, PredefinedCS.PROJECTED);
+        return targetCRS;
     }
 }
