@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.coverage.Category;
-import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.opengis.referencing.operation.MathTransform1D;
 
 /**
@@ -152,6 +152,8 @@ public class YamlBuilder implements YamlReaderBuilder, YamlWriterBuilder {
                 if (catName.equalsIgnoreCase(SampleDimensionUtils.NODATA_CATEGORY_NAME.toString(Locale.ENGLISH))) {
                     cats.addQualitative(null, new NumberRange(dataType, minSampleValue, isMinInclusive,
                                                                         maxSampleValue, isMaxInclusive));
+                } else if (Double.isNaN(minSampleValue) && Double.isNaN(maxSampleValue)) {
+                    cats.setBackground(catName, minSampleValue);
                 } else {
                     final double scale  = (double) yCat.get("scale");
                     final double offset = (double) yCat.get("offset");
