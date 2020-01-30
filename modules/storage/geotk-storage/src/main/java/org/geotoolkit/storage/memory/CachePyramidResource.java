@@ -91,6 +91,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
 
     private final T parent;
+    private GenericName identifier;
     private final Map<String,CachePyramid> cacheMap = new HashMap<>();
     private final Cache<String,CacheTile> tiles;
     private final Set<String> tilesInProcess = ConcurrentHashMap.newKeySet();
@@ -140,8 +141,15 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         this.noblocking = noblocking;
     }
 
+    public void setIdentifier(GenericName identifier) {
+        this.identifier = identifier;
+    }
+
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
+        if (identifier != null) {
+            return Optional.ofNullable(identifier);
+        }
         return parent.getIdentifier();
     }
 

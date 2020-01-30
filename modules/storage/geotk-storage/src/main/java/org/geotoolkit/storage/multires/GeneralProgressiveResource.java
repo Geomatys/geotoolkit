@@ -49,6 +49,7 @@ import org.opengis.util.GenericName;
 public class GeneralProgressiveResource extends AbstractResource implements ProgressiveResource {
 
     protected final MultiResolutionResource base;
+    private GenericName identifier;
     private final Map<String,ProgressivePyramid> cacheMap = new HashMap<>();
     protected TileGenerator generator;
 
@@ -58,8 +59,15 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         this.generator = generator;
     }
 
+    public void setIdentifier(GenericName identifier) {
+        this.identifier = identifier;
+    }
+
     @Override
     public Optional<GenericName> getIdentifier() throws DataStoreException {
+        if (identifier != null) {
+            return Optional.ofNullable(identifier);
+        }
         return base.getIdentifier();
     }
 
