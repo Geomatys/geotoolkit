@@ -20,8 +20,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
@@ -46,6 +47,12 @@ public interface SymbolizerRenderer {
      * @return SymbolizerRendererService
      */
     SymbolizerRendererService getService();
+
+    /**
+     * Get Rendering context this renderer is associated to.
+     * @return RenderingContext2D, not null
+     */
+    RenderingContext2D getRenderingContext();
 
     /**
      * Paint the graphic object using the cached symbolizer and the rendering parameters.
