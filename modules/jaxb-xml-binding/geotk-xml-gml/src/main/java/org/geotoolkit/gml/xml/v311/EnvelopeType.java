@@ -83,7 +83,7 @@ import static org.geotoolkit.util.Utilities.listNullEquals;
     EnvelopeWithTimePeriodType.class
 })
 @XmlRootElement(name="Envelope")
-public class EnvelopeType implements Envelope, Expression {
+public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolkit.gml.xml.Envelope, Expression {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml.v311");
 
@@ -189,6 +189,7 @@ public class EnvelopeType implements Envelope, Expression {
                            srsName = "urn:ogc:def:crs:EPSG::unknow";
                         }
                     }
+                    srsDimension = crs.getCoordinateSystem().getDimension();
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.SEVERE, "Factory exception xhile creating GML envelope from opengis one", ex);
                 }
@@ -267,6 +268,7 @@ public class EnvelopeType implements Envelope, Expression {
      *     {@link String }
      *
      */
+    @Override
     public void setSrsName(final String value) {
         this.srsName = value;
     }
@@ -488,6 +490,13 @@ public class EnvelopeType implements Envelope, Expression {
 
     @Override
     public int getDimension() {
+        if (srsDimension == null && srsName != null) {
+            // try to compute the dimension
+            CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+            if (crs != null) {
+                srsDimension = crs.getCoordinateSystem().getDimension();
+            }
+        }
         return srsDimension;
     }
 
