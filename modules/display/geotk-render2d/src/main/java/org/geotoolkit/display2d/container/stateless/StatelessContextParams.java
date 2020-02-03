@@ -43,7 +43,6 @@ public class StatelessContextParams<T extends MapLayer> {
 
     public RenderingContext2D context;
     public final AbstractCanvas2D canvas;
-    public final T layer;
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
     public final GeometryCSTransformer objToDisplayTransformer =
             new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
@@ -58,9 +57,8 @@ public class StatelessContextParams<T extends MapLayer> {
     public Rectangle2D displayClipRect;
     public Polygon displayClip;
 
-    public StatelessContextParams(final AbstractCanvas2D canvas, final T layer){
+    public StatelessContextParams(final AbstractCanvas2D canvas){
         this.canvas = canvas;
-        this.layer = layer;
     }
 
     @Override

@@ -25,13 +25,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.apache.sis.coverage.grid.*;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -119,13 +117,13 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 CharSequence name = null;
                 if (name == null) name = "unnamed";
                 final MapLayer ml = MapBuilder.createCoverageLayer(cov, GO2Utilities.STYLE_FACTORY.style(), name.toString());
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
+                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas());
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return portray(pc);
             }else  if(obj instanceof GridCoverageResource){
                 final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
+                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas());
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return portray(pc);
@@ -142,7 +140,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     symbol.getSource().getGeometryPropertyName()), pf.getCandidate(), null, null);
             if (obj instanceof GridCoverage) {
                 final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverage) obj, GO2Utilities.STYLE_FACTORY.style(), "");
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
+                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas());
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return hit(pc,mask,filter);

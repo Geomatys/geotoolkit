@@ -103,7 +103,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         //paint all dynamicly generated features -------------------------------
         final AbstractCanvas2D canvas = renderingContext.getCanvas();
         final CoordinateReferenceSystem dataCRS = dataCoverage.getCoordinateReferenceSystem();
-        final StatelessContextParams params = new StatelessContextParams(canvas,null);
+        final StatelessContextParams params = new StatelessContextParams(canvas);
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
 
 

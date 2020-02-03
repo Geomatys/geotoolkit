@@ -130,7 +130,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     public StatelessFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer, false);
-        params = new StatelessContextParams(canvas,layer);
+        params = new StatelessContextParams(canvas);
 
         final FeatureSet resource = layer.getResource();
         if (resource instanceof FeatureSet) {

@@ -41,6 +41,7 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     protected final Map<Expression,ProjectedGeometry> geometries =
             new LinkedHashMap<>(); //linked hashmap is faster than hashmap on iteration.
     protected T candidate;
+    protected MapLayer layer;
 
 
     public DefaultProjectedObject(final StatelessContextParams params){
@@ -106,7 +107,11 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
 
     @Override
     public MapLayer getLayer() {
-        return params.layer;
+        return layer;
+    }
+
+    public void setLayer(MapLayer layer) {
+        this.layer = layer;
     }
 
     @Override

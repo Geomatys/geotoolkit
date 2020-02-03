@@ -742,7 +742,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             //prepare the renderers
             final DefaultCachedRule renderers = new DefaultCachedRule(cachedRules, renderContext);
 
-            final StatelessContextParams params = new StatelessContextParams(canvas,layer);
+            final StatelessContextParams params = new StatelessContextParams(canvas);
             params.update(renderContext);
             final ProjectedFeature projectedFeature = new ProjectedFeature(params,null);
 

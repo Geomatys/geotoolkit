@@ -68,7 +68,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer, false);
         this.ignoreBuilders = ignoreBuilders;
-        this.params = new StatelessContextParams(canvas,null);
+        this.params = new StatelessContextParams(canvas);
         this.projectedCoverage = new ProjectedCoverage(params, layer);
         this.weakStoreListener.registerSource(layer.getResource());
     }
