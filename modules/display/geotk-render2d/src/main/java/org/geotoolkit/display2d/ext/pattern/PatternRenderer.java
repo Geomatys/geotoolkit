@@ -28,7 +28,6 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -93,7 +92,6 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
 
         //paint all dynamicly generated features -------------------------------
         final CoordinateReferenceSystem dataCRS = dataCoverage.getCoordinateReferenceSystem();
-        final StatelessContextParams params = new StatelessContextParams();
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
 
         //data to objective
@@ -105,7 +103,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         }
         GeometryTransformer trs = new GeometryCSTransformer(cstrs);
 
-        final ProjectedFeature projectedFeature = new ProjectedFeature(params);
+        final ProjectedFeature projectedFeature = new ProjectedFeature(renderingContext);
         boolean dataRendered = false;
         try {
             for(final Map.Entry<Feature,List<CachedSymbolizer>> entry : features.entrySet()){

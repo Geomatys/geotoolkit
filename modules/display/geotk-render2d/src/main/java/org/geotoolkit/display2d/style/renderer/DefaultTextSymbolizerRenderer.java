@@ -20,8 +20,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -68,7 +68,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         //portray the border of the coverage
-        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
+        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry(renderingContext);
 
         //could not find the border geometry
         if(projectedGeometry == null) return false;

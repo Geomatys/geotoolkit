@@ -121,8 +121,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
-    protected final StatelessContextParams params;
-
     protected Query currentQuery = null;
     // symbols margins, in objective CRS units, used to expand query and intersection enveloppes.
     private double symbolsMargin = 0.0;
@@ -130,7 +128,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     public StatelessFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer, false);
-        params = new StatelessContextParams();
 
         final FeatureSet resource = layer.getResource();
         if (resource instanceof FeatureSet) {
@@ -144,16 +141,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             //TODO should call a repaint only on this graphic
             getCanvas().repaint();
         }
-    }
-
-    protected StatelessContextParams getStatefullParameters(final RenderingContext2D context){
-        params.update(context);
-        //expand the search area by the maximum symbol size
-        if(symbolsMargin>0 && params.objectiveJTSEnvelope!=null){
-            params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(params.objectiveJTSEnvelope);
-            params.objectiveJTSEnvelope.expandBy(symbolsMargin);
-        }
-        return params;
     }
 
     /**
@@ -241,7 +228,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         final GraphicIterator statefullIterator;
         try {
             final FeatureSet candidates = optimizeCollection(context);
-            statefullIterator = getIterator(candidates, context, getStatefullParameters(context));
+            statefullIterator = getIterator(candidates, context);
         } catch (Exception ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             return false;
@@ -303,7 +290,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     }
 
     protected GraphicIterator getIterator(final FeatureSet features,
-            final RenderingContext2D renderingContext, final StatelessContextParams params) throws DataStoreException {
+            final RenderingContext2D renderingContext) throws DataStoreException {
 
         final FeatureIterator iterator;
         final Stream<Feature> stream = features.features(false);
@@ -322,7 +309,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                 stream.close();
             }
         };
-        final ProjectedFeature projectedFeature = new ProjectedFeature(params);
+        final ProjectedFeature projectedFeature = new ProjectedFeature(renderingContext);
         return new GraphicIterator(iterator, projectedFeature);
     }
 
@@ -395,8 +382,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        final StatelessContextParams params = getStatefullParameters(renderingContext);
-
 
         // iterate and find the first graphic that hit the given point
         final Iterator<Feature> iterator;
@@ -406,7 +391,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             //prepare the renderers
             final DefaultCachedRule preparedRenderers = new DefaultCachedRule(rules, renderingContext);
 
-            final ProjectedFeature projectedFeature = new ProjectedFeature(params);
+            final ProjectedFeature projectedFeature = new ProjectedFeature(renderingContext);
             while (iterator.hasNext()) {
                 Feature feature = iterator.next();
                 projectedFeature.setCandidate(feature);
@@ -1022,14 +1007,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //it can be a very expensive operation
 
         //prepare the rendering parameters
-        final StatelessContextParams params = getStatefullParameters(context);
-        if(monitor.stopRequested()) return false;
+        if (monitor.stopRequested()) return false;
 
         //check if we have group symbolizers, if it's the case we must render by symbol order.
         boolean symbolOrder = false;
-        for(CachedRule rule : rules){
-            for(CachedSymbolizer symbolizer : rule.symbolizers()){
-                if(symbolizer.getRenderer().isGroupSymbolizer()){
+        for (CachedRule rule : rules) {
+            for (CachedSymbolizer symbolizer : rule.symbolizers()) {
+                if (symbolizer.getRenderer().isGroupSymbolizer()) {
                     symbolOrder = true;
                     break;
                 }
@@ -1037,15 +1021,15 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         }
 
         symbolOrder = symbolOrder || Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
-        if(symbolOrder){
+        if (symbolOrder) {
             try{
-                return renderBySymbolOrder(candidates, context, rules, params);
+                return renderBySymbolOrder(candidates, context, rules);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }else{
             try{
-                return renderByObjectOrder(candidates, context, rules, params);
+                return renderByObjectOrder(candidates, context, rules);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
@@ -1057,11 +1041,10 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * Render by object order.
      */
     protected final boolean renderByObjectOrder(final FeatureSet candidates,
-            final RenderingContext2D context, final CachedRule[] rules,
-            final StatelessContextParams params) throws PortrayalException{
+            final RenderingContext2D context, final CachedRule[] rules) throws PortrayalException{
         final GraphicIterator statefullIterator;
         try {
-            statefullIterator = getIterator(candidates, context, params);
+            statefullIterator = getIterator(candidates, context);
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
@@ -1130,7 +1113,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * render by symbol order.
      */
     protected final boolean renderBySymbolOrder(final FeatureSet candidates,
-            final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)
+            final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
 
         //performance routine, only one symbol to render
@@ -1139,7 +1122,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
            && rules[0].symbolizers().length == 1){
             final GraphicIterator statefullIterator;
             try {
-                statefullIterator = getIterator(candidates, context, params);
+                statefullIterator = getIterator(candidates, context);
             } catch (DataStoreException ex) {
                 throw new PortrayalException(ex.getMessage(), ex);
             }
@@ -1154,7 +1137,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             return dataRendered;
         }
 
-        return renderBySymbolIndexInRule(candidates,context,rules,params);
+        return renderBySymbolIndexInRule(candidates,context,rules);
     }
 
     /**
@@ -1162,11 +1145,11 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
     private boolean renderBySymbolIndexInRule(final FeatureSet candidates,
-            final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)
+            final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
         final GraphicIterator statefullIterator;
         try {
-            statefullIterator = getIterator(candidates, context, params);
+            statefullIterator = getIterator(candidates, context);
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
@@ -1276,7 +1259,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                     if(renderers[i][k].getService().isGroupSymbolizer()){
                         final GraphicIterator ite;
                         try {
-                            ite = getIterator(candidates, context, params);
+                            ite = getIterator(candidates, context);
                         } catch (DataStoreException ex) {
                             throw new PortrayalException(ex.getMessage(), ex);
                         }

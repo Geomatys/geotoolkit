@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.locationtech.jts.geom.Geometry;
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -26,9 +24,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
 import javax.measure.Unit;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -43,6 +40,7 @@ import org.geotoolkit.display2d.style.CachedStrokeGraphic;
 import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -86,7 +84,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         //portray the border of the coverage
-        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
+        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry(renderingContext);
 
         //could not find the border geometry
         if(projectedGeometry == null) return false;

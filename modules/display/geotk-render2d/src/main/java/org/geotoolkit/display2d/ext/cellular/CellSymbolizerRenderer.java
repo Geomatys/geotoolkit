@@ -37,7 +37,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -206,19 +205,13 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final Object[] values = new Object[2+7*numericProperties.length];
         final Feature feature = cellType.newInstance();
         feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
-        final StatelessContextParams params = new StatelessContextParams();
-        params.update(renderingContext);
-        final ProjectedFeature pf = new ProjectedFeature(params,feature);
+        final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
 
         final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
 
         //expand the search area by the maximum symbol size
         float symbolsMargin = renderers.getMargin(null, renderingContext);
         if(symbolsMargin==0) symbolsMargin = 300f;
-        if(symbolsMargin>0 && params.objectiveJTSEnvelope!=null){
-            params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(params.objectiveJTSEnvelope);
-            params.objectiveJTSEnvelope.expandBy(symbolsMargin);
-        }
 
         for(int r=0;r<nbRow;r++){
             for(int c=0;c<nbCol;c++){
@@ -324,13 +317,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //prepare the cell feature type
         final FeatureType cellType = CellSymbolizer.buildCellType(coverage);
         final Feature feature = cellType.newInstance();
-        final StatelessContextParams params = new StatelessContextParams();
-        params.update(renderingContext);
-        params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(
-                env.getMinimum(0), env.getMaximum(0),
-                env.getMinimum(1), env.getMaximum(1));
 
-        final ProjectedFeature pf = new ProjectedFeature(params,feature);
+        final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
         final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
 
         //force image interpolation here

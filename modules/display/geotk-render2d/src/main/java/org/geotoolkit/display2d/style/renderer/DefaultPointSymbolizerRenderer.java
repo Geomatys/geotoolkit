@@ -65,7 +65,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
         //portray the border of the coverage
-        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
+        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry(renderingContext);
 
         //could not find the border geometry
         if (projectedGeometry == null) return false;

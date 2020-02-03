@@ -33,7 +33,6 @@ import org.geotoolkit.display.axis.TickIterator;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
@@ -166,9 +165,7 @@ public class J2DGridUtilities {
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
                 if(geom == null) continue;
 
-                final StatelessContextParams params = new StatelessContextParams();
-                final ProjectedGeometry pg = new ProjectedGeometry(params);
-                params.update(context);
+                final ProjectedGeometry pg = new ProjectedGeometry(context);
                 pg.setDataGeometry(geom, gridCRS);
 
                 //draw line
@@ -233,9 +230,7 @@ public class J2DGridUtilities {
                 lineCoords.add(new Coordinate(Math.nextAfter(maxX,Double.NEGATIVE_INFINITY), d));
 
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
-                final StatelessContextParams params = new StatelessContextParams();
-                final ProjectedGeometry pg = new ProjectedGeometry(params);
-                params.update(context);
+                final ProjectedGeometry pg = new ProjectedGeometry(context);
                 pg.setDataGeometry(geom, gridCRS);
 
                 //draw line

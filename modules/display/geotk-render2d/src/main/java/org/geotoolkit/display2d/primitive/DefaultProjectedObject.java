@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.primitive;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -36,23 +36,23 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
 
     protected static final Expression DEFAULT_GEOM = null;
 
-    protected final StatelessContextParams params;
+    protected final RenderingContext2D params;
     protected final Map<Expression,ProjectedGeometry> geometries =
             new LinkedHashMap<>(); //linked hashmap is faster than hashmap on iteration.
     protected T candidate;
     protected MapLayer layer;
 
 
-    public DefaultProjectedObject(final StatelessContextParams params){
+    public DefaultProjectedObject(final RenderingContext2D params){
         this(params,null);
     }
 
-    public DefaultProjectedObject(final StatelessContextParams params, final T candidate){
+    public DefaultProjectedObject(final RenderingContext2D params, final T candidate){
         this.params = params;
         this.candidate = candidate;
     }
 
-    public StatelessContextParams getParameters() {
+    public RenderingContext2D getParameters() {
         return params;
     }
 

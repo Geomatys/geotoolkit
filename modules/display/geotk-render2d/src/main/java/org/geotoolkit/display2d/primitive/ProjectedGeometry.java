@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
@@ -49,7 +48,6 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ProjectedGeometry  {
 
-    private final StatelessContextParams params;
     private final RenderingContext2D context;
     private MathTransform2D dataToObjective;
     private MathTransform2D dataToDisplay;
@@ -73,13 +71,11 @@ public class ProjectedGeometry  {
 
     private CoordinateReferenceSystem dataCRS = null;
 
-    public ProjectedGeometry(final StatelessContextParams params){
-        this.params = params;
-        this.context = params.context;
+    public ProjectedGeometry(final RenderingContext2D context){
+        this.context = context;
     }
 
     public ProjectedGeometry(final ProjectedGeometry copy){
-        this.params                 = copy.params;
         this.context                = copy.context;
         this.dataToObjective        = copy.dataToObjective;
         this.dataToDisplay          = copy.dataToDisplay;
@@ -189,11 +185,11 @@ public class ProjectedGeometry  {
             }
 
 
-            if(params.context.wraps != null){
+            if(context.wraps != null){
 
                 org.locationtech.jts.geom.Envelope objBounds = objBase.getEnvelopeInternal();
-                final double dx = params.context.wraps.wrapPoints[1].getOrdinate(0) - context.wraps.wrapPoints[0].getOrdinate(0);
-                final double dy = params.context.wraps.wrapPoints[1].getOrdinate(1) - context.wraps.wrapPoints[0].getOrdinate(1);
+                final double dx = context.wraps.wrapPoints[1].getOrdinate(0) - context.wraps.wrapPoints[0].getOrdinate(0);
+                final double dy = context.wraps.wrapPoints[1].getOrdinate(1) - context.wraps.wrapPoints[0].getOrdinate(1);
 
                 // fix the geometry if some points wrap around the meridian
                 // we expect the warp points to be axis aligned, TODO handle other cases
@@ -234,17 +230,17 @@ public class ProjectedGeometry  {
                 for(int i=0;i<nbIncRep;i++){
                     //check that the futur geometry will intersect the visible area
                     final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapIncObj[i]);
-                    if(candidate.intersects(params.objectiveJTSEnvelope)){
+                    if(candidate.intersects(context.objectiveJTSEnvelope)){
                         objectiveGeometryJTS[n++] = JTS.transform(objBase, context.wraps.wrapIncObj[i]);
                     }
                 }
-                if(objBounds.intersects(params.objectiveJTSEnvelope)){
+                if(objBounds.intersects(context.objectiveJTSEnvelope)){
                     objectiveGeometryJTS[n++] = objBase;
                 }
                 for(int i=0;i<nbDecRep;i++){
                     //check that the futur geometry will intersect the visible area
                     final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapDecObj[i]);
-                    if(candidate.intersects(params.objectiveJTSEnvelope)){
+                    if(candidate.intersects(context.objectiveJTSEnvelope)){
                         objectiveGeometryJTS[n++] = JTS.transform(objBase, context.wraps.wrapDecObj[i]);
                     }
                 }

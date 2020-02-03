@@ -35,7 +35,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
@@ -262,13 +261,11 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
         final J2DCanvasBuffered canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(canvasWidth, canvasHeight));
         canvas.applyTransform(objToDisp);
 
-        final StatelessContextParams params = new StatelessContextParams();
         final RenderingContext2D context = new RenderingContext2D(canvas);
         canvas.prepareContext(context, new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB).createGraphics(),
                 new Rectangle(0, 0, canvasWidth, canvasHeight));
-        params.update(context);
 
-        final ProjectedGeometry pg = new ProjectedGeometry(params);
+        final ProjectedGeometry pg = new ProjectedGeometry(context);
         pg.setDataGeometry(geometry, CommonCRS.WGS84.normalizedGeographic());
 
         Envelope env = canvas.getVisibleEnvelope();

@@ -26,7 +26,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -54,20 +53,17 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
     private final boolean fullFeature;
 
     public ProjectedFeature(final J2DCanvas canvas, final FeatureMapLayer layer, final Feature feature){
-        super(new StatelessContextParams(),feature);
+        super(new RenderingContext2D(canvas),feature);
         this.layer = layer;
-        final RenderingContext2D context = new RenderingContext2D(canvas);
-        canvas.prepareContext(context, null, null);
-        params.update(context);
+        canvas.prepareContext(getParameters(), null, null);
         fullFeature = true;
     }
 
-    public ProjectedFeature(final StatelessContextParams<FeatureMapLayer> params) {
+    public ProjectedFeature(RenderingContext2D params) {
         this(params,null);
     }
 
-    public ProjectedFeature(final StatelessContextParams<FeatureMapLayer> params,
-            final Feature feature) {
+    public ProjectedFeature(RenderingContext2D params, final Feature feature) {
         super(params,feature);
         fullFeature = false;
         layer = null;

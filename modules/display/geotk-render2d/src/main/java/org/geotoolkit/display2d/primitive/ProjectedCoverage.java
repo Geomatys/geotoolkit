@@ -27,7 +27,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.map.MapLayer;
 import org.locationtech.jts.geom.Geometry;
@@ -42,12 +42,10 @@ import org.opengis.geometry.Envelope;
  */
 public class ProjectedCoverage implements ProjectedObject<MapLayer> {
 
-    private final StatelessContextParams params;
     private final MapLayer layer;
     private ProjectedGeometry border;
 
-    public ProjectedCoverage(final StatelessContextParams params, final MapLayer layer) {
-        this.params = params;
+    public ProjectedCoverage(final MapLayer layer) {
         this.layer = layer;
     }
 
@@ -105,10 +103,10 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      *
      * @return ProjectedGeometry
      */
-    public ProjectedGeometry getEnvelopeGeometry() {
+    public ProjectedGeometry getEnvelopeGeometry(RenderingContext2D context) {
         final Envelope env = layer.getBounds();
         final Geometry jtsBounds = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
-        border = new ProjectedGeometry(params);
+        border = new ProjectedGeometry(context);
         border.setDataGeometry(jtsBounds,CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
         return border;
     }

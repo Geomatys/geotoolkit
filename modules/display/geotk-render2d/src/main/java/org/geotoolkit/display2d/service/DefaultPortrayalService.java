@@ -82,7 +82,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -742,9 +741,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             //prepare the renderers
             final DefaultCachedRule renderers = new DefaultCachedRule(cachedRules, renderContext);
 
-            final StatelessContextParams params = new StatelessContextParams();
-            params.update(renderContext);
-            final ProjectedFeature projectedFeature = new ProjectedFeature(params,null);
+            final ProjectedFeature projectedFeature = new ProjectedFeature(renderContext,null);
 
             try (final Stream<Feature> stream = resource.features(false)) {
 

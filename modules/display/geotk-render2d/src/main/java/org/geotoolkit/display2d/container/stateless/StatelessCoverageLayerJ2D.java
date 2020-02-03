@@ -56,7 +56,6 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     private final boolean ignoreBuilders;
 
     //compare values to update caches if necessary
-    private final StatelessContextParams params;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
@@ -66,13 +65,11 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer, false);
         this.ignoreBuilders = ignoreBuilders;
-        this.params = new StatelessContextParams();
-        this.projectedCoverage = new ProjectedCoverage(params, layer);
+        this.projectedCoverage = new ProjectedCoverage(layer);
         this.weakStoreListener.registerSource(layer.getResource());
     }
 
     private synchronized void updateCache(final RenderingContext2D context){
-        params.update(context);
 
         //clear objective cache is objective crs changed -----------------------
         //todo use only the 2D CRS, the transform parameters are only used for the border

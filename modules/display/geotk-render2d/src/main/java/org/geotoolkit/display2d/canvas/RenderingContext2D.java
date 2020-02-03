@@ -231,6 +231,11 @@ public class RenderingContext2D implements RenderingContext{
 
     private final GeometryCSTransformer objToDisplayTransformer =
             new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
+    /**
+     * This envelope should be the painted area in ojective CRS,
+     * but symbolizer may need to enlarge it because of symbols size.
+     */
+    public org.locationtech.jts.geom.Envelope objectiveJTSEnvelope = null;
 
     /**
      * Constructs a new {@code RenderingContext} for the specified canvas.
@@ -478,6 +483,13 @@ public class RenderingContext2D implements RenderingContext{
 
         } catch (TransformException ex) {
             LOGGER.log(Level.INFO, ex.getLocalizedMessage(), ex);
+        }
+
+        //TODO add a extra margin for large symbols
+        //this dhould depend on symbol size, API is updating, for now hardcode this value
+        if (wraps != null && wraps.objectiveJTSEnvelope != null) {
+            this.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(wraps.objectiveJTSEnvelope);
+            this.objectiveJTSEnvelope.expandBy(50);
         }
 
     }
