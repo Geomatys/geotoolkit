@@ -275,7 +275,7 @@ public class ProjectedGeometry  {
             getObjectiveGeometryJTS();
             displayGeometryJTS = new org.locationtech.jts.geom.Geometry[objectiveGeometryJTS.length];
             for(int i=0;i<displayGeometryJTS.length;i++){
-                displayGeometryJTS[i] = params.objToDisplayTransformer.transform(objectiveGeometryJTS[i]);
+                displayGeometryJTS[i] = context.getObjectiveToDisplayGeometryTransformer().transform(objectiveGeometryJTS[i]);
             }
         }
         return displayGeometryJTS;

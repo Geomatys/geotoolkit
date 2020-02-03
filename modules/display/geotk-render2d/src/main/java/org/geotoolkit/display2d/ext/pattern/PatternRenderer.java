@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
@@ -96,13 +95,6 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         final CoordinateReferenceSystem dataCRS = dataCoverage.getCoordinateReferenceSystem();
         final StatelessContextParams params = new StatelessContextParams();
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
-
-
-        final AffineTransform2D objtoDisp = renderingContext.getObjectiveToDisplay();
-        params.objectiveToDisplay.setTransform(objtoDisp);
-        ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
-                .setTransform(objtoDisp);
-
 
         //data to objective
         final CoordinateSequenceMathTransformer cstrs;

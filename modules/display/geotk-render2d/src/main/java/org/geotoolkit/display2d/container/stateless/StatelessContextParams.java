@@ -16,11 +16,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import java.awt.geom.AffineTransform;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.map.MapLayer;
 
 /**
@@ -31,9 +27,6 @@ import org.geotoolkit.map.MapLayer;
 public class StatelessContextParams<T extends MapLayer> {
 
     public RenderingContext2D context;
-    public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
-    public final GeometryCSTransformer objToDisplayTransformer =
-            new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
 
     /**
      * This envelope should be the painted are in ojective CRS,
@@ -49,14 +42,6 @@ public class StatelessContextParams<T extends MapLayer> {
         if (context.wraps != null) {
             this.objectiveJTSEnvelope = context.wraps.objectiveJTSEnvelope;
         }
-
-        final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
-        if (!objtoDisp.equals(objectiveToDisplay)) {
-            objectiveToDisplay.setTransform(objtoDisp);
-            ((CoordinateSequenceMathTransformer)objToDisplayTransformer.getCSTransformer())
-                    .setTransform(objtoDisp);
-        }
-
     }
 
 }

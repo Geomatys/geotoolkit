@@ -52,6 +52,8 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
@@ -227,6 +229,9 @@ public class RenderingContext2D implements RenderingContext{
     private Rectangle2D displayClipRect;
     private Polygon displayClip;
 
+    private final GeometryCSTransformer objToDisplayTransformer =
+            new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
+
     /**
      * Constructs a new {@code RenderingContext} for the specified canvas.
      *
@@ -252,6 +257,8 @@ public class RenderingContext2D implements RenderingContext{
             LOGGER.log(Level.WARNING, null, ex);
         }
         this.monitor = monitor;
+        ((CoordinateSequenceMathTransformer)this.objToDisplayTransformer.getCSTransformer())
+                .setTransform(objectiveToDisplay);
 
         this.labelRenderer = null;
 
@@ -894,6 +901,10 @@ public class RenderingContext2D implements RenderingContext{
      */
     public Envelope getPaintingObjectiveBounds(){
         return paintingObjectiveBBox;
+    }
+
+    public GeometryCSTransformer getObjectiveToDisplayGeometryTransformer() {
+        return objToDisplayTransformer;
     }
 
     // Informations about the complete canvas area -----------------------------

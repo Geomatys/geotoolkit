@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
@@ -37,7 +36,6 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.event.StorageListener;
@@ -75,33 +73,18 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
 
     private synchronized void updateCache(final RenderingContext2D context){
         params.update(context);
-        boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
         //todo use only the 2D CRS, the transform parameters are only used for the border
         //geometry if needed, the gridcoverageReader will handle itself the transform
         final CoordinateReferenceSystem objectiveCRS2D = context.getObjectiveCRS2D();
         if (objectiveCRS2D != lastObjectiveCRS) {
-            params.objectiveToDisplay.setToIdentity();
             lastObjectiveCRS = objectiveCRS2D;
-            objectiveCleared = true;
             projectedCoverage.clearObjectiveCache();
         }
 
-        //clear display cache if needed ----------------------------------------
-        final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
-
-        if (!objtoDisp.equals(params.objectiveToDisplay)) {
-            params.objectiveToDisplay.setTransform(objtoDisp);
-            ((CoordinateSequenceMathTransformer) params.objToDisplayTransformer.getCSTransformer())
-                    .setTransform(objtoDisp);
-
-            if (!objectiveCleared) {
-                //no need to clear the display cache if the objective clear has already been called
-                projectedCoverage.clearDisplayCache();
-            }
-
-        }
+        //no need to clear the display cache if the objective clear has already been called
+        projectedCoverage.clearDisplayCache();
     }
 
     /**
