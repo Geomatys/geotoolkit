@@ -968,12 +968,12 @@ public class ImageUtils extends Static {
                 hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, dataBufferType);
     }
 
-    static class ComponentScaledColorModel extends ComponentColorModel {
+    private static class ComponentScaledColorModel extends ComponentColorModel {
 
         private final int numbands;
         private final int[] bits;
 
-        public ComponentScaledColorModel(ColorSpace colorSpace, int[] bits, boolean hasAlpha,
+        ComponentScaledColorModel(ColorSpace colorSpace, int[] bits, boolean hasAlpha,
                 boolean isAlphaPremultiplied, int transparency, int transferType) {
             super(colorSpace, bits, hasAlpha, isAlphaPremultiplied, transparency, transferType);
             numbands = bits.length;
