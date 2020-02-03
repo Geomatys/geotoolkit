@@ -166,7 +166,7 @@ public class J2DGridUtilities {
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
                 if(geom == null) continue;
 
-                final StatelessContextParams params = new StatelessContextParams(null);
+                final StatelessContextParams params = new StatelessContextParams();
                 final ProjectedGeometry pg = new ProjectedGeometry(params);
                 params.update(context);
                 pg.setDataGeometry(geom, gridCRS);
@@ -233,7 +233,7 @@ public class J2DGridUtilities {
                 lineCoords.add(new Coordinate(Math.nextAfter(maxX,Double.NEGATIVE_INFINITY), d));
 
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
-                final StatelessContextParams params = new StatelessContextParams(null);
+                final StatelessContextParams params = new StatelessContextParams();
                 final ProjectedGeometry pg = new ProjectedGeometry(params);
                 params.update(context);
                 pg.setDataGeometry(geom, gridCRS);

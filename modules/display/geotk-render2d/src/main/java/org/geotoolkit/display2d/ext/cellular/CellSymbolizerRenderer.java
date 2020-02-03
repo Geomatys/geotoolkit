@@ -206,7 +206,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final Object[] values = new Object[2+7*numericProperties.length];
         final Feature feature = cellType.newInstance();
         feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
-        final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas());
+        final StatelessContextParams params = new StatelessContextParams();
         params.update(renderingContext);
         final ProjectedFeature pf = new ProjectedFeature(params,feature);
 
@@ -324,7 +324,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //prepare the cell feature type
         final FeatureType cellType = CellSymbolizer.buildCellType(coverage);
         final Feature feature = cellType.newInstance();
-        final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas());
+        final StatelessContextParams params = new StatelessContextParams();
         params.update(renderingContext);
         params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(
                 env.getMinimum(0), env.getMaximum(0),

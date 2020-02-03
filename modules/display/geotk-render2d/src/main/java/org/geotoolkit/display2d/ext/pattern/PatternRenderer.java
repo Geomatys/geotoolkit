@@ -27,7 +27,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
@@ -58,12 +57,6 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
     public PatternRenderer(final SymbolizerRendererService service,final CachedPatternSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
     }
-
-    /**
-     * minimum size of the blocks to use.
-     * Values between 1 and 3 give fair result.
-     */
-    private static final float MINIMUM_BLOCK_SIZE = 1.5f;
 
     /**
      * {@inheritDoc }
@@ -99,11 +92,9 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
             throw new PortrayalException(ex);
         }
 
-
         //paint all dynamicly generated features -------------------------------
-        final AbstractCanvas2D canvas = renderingContext.getCanvas();
         final CoordinateReferenceSystem dataCRS = dataCoverage.getCoordinateReferenceSystem();
-        final StatelessContextParams params = new StatelessContextParams(canvas);
+        final StatelessContextParams params = new StatelessContextParams();
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
 
 

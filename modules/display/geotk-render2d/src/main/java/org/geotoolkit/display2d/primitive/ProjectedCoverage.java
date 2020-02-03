@@ -27,7 +27,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.map.MapLayer;
@@ -134,11 +133,6 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      */
     @Override
     public void dispose() {
-    }
-
-    @Override
-    public AbstractCanvas2D getCanvas() {
-        return params.canvas;
     }
 
     @Override

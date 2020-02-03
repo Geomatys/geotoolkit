@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.filter.expression.Expression;
@@ -53,10 +52,5 @@ public interface ProjectedObject<T> extends Graphic {
      * @return ProjectedGeometry or null if the named geometry attribute doesn't exist
      */
     ProjectedGeometry getGeometry(Expression expression);
-
-    /**
-     * @return original canvas of this graphic
-     */
-    AbstractCanvas2D getCanvas();
 
 }

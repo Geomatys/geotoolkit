@@ -117,13 +117,13 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 CharSequence name = null;
                 if (name == null) name = "unnamed";
                 final MapLayer ml = MapBuilder.createCoverageLayer(cov, GO2Utilities.STYLE_FACTORY.style(), name.toString());
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas());
+                final StatelessContextParams params = new StatelessContextParams();
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return portray(pc);
             }else  if(obj instanceof GridCoverageResource){
                 final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas());
+                final StatelessContextParams params = new StatelessContextParams();
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return portray(pc);
@@ -140,7 +140,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     symbol.getSource().getGeometryPropertyName()), pf.getCandidate(), null, null);
             if (obj instanceof GridCoverage) {
                 final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverage) obj, GO2Utilities.STYLE_FACTORY.style(), "");
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas());
+                final StatelessContextParams params = new StatelessContextParams();
                 params.update(renderingContext);
                 final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return hit(pc,mask,filter);

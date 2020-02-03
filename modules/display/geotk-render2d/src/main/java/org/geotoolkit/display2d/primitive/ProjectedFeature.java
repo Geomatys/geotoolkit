@@ -54,7 +54,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
     private final boolean fullFeature;
 
     public ProjectedFeature(final J2DCanvas canvas, final FeatureMapLayer layer, final Feature feature){
-        super(new StatelessContextParams(canvas),feature);
+        super(new StatelessContextParams(),feature);
         this.layer = layer;
         final RenderingContext2D context = new RenderingContext2D(canvas);
         canvas.prepareContext(context, null, null);

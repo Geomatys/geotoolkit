@@ -1037,7 +1037,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                     //                    return;
                     //                }
 
-                    final StatelessContextParams params = new StatelessContextParams(null);
+                    final StatelessContextParams params = new StatelessContextParams();
                     params.update(context2d);
                     final ProjectedGeometry projectedGeometry = new ProjectedGeometry(params);
                     projectedGeometry.setDataGeometry(geom, null);

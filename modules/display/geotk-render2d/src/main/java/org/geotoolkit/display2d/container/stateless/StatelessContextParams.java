@@ -20,7 +20,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -42,7 +41,6 @@ public class StatelessContextParams<T extends MapLayer> {
     public static final int CLIP_PIXEL_MARGIN = 50;
 
     public RenderingContext2D context;
-    public final AbstractCanvas2D canvas;
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
     public final GeometryCSTransformer objToDisplayTransformer =
             new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
@@ -57,8 +55,7 @@ public class StatelessContextParams<T extends MapLayer> {
     public Rectangle2D displayClipRect;
     public Polygon displayClip;
 
-    public StatelessContextParams(final AbstractCanvas2D canvas){
-        this.canvas = canvas;
+    public StatelessContextParams(){
     }
 
     @Override

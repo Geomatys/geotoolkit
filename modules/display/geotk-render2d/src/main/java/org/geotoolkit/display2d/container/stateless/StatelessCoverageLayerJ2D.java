@@ -68,7 +68,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer, false);
         this.ignoreBuilders = ignoreBuilders;
-        this.params = new StatelessContextParams(canvas);
+        this.params = new StatelessContextParams();
         this.projectedCoverage = new ProjectedCoverage(params, layer);
         this.weakStoreListener.registerSource(layer.getResource());
     }
@@ -81,7 +81,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
         //todo use only the 2D CRS, the transform parameters are only used for the border
         //geometry if needed, the gridcoverageReader will handle itself the transform
         final CoordinateReferenceSystem objectiveCRS2D = context.getObjectiveCRS2D();
-        if(objectiveCRS2D != lastObjectiveCRS){
+        if (objectiveCRS2D != lastObjectiveCRS) {
             params.objectiveToDisplay.setToIdentity();
             lastObjectiveCRS = objectiveCRS2D;
             objectiveCleared = true;
@@ -91,12 +91,12 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
         //clear display cache if needed ----------------------------------------
         final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
 
-        if(!objtoDisp.equals(params.objectiveToDisplay)){
+        if (!objtoDisp.equals(params.objectiveToDisplay)) {
             params.objectiveToDisplay.setTransform(objtoDisp);
-            ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
+            ((CoordinateSequenceMathTransformer) params.objToDisplayTransformer.getCSTransformer())
                     .setTransform(objtoDisp);
 
-            if(!objectiveCleared){
+            if (!objectiveCleared) {
                 //no need to clear the display cache if the objective clear has already been called
                 projectedCoverage.clearDisplayCache();
             }
