@@ -155,7 +155,8 @@ public class NetCDFExtractor {
                 if (name != null) {
                     final int dimension = variable.getDimensions().size();
                     final String dimensionLabel = getDimensionString(variable);
-                    final Field currentField = new Field(name, dimension, dimensionLabel);
+                    final String description = variable.getDescription();
+                    final Field currentField = new Field(name, dimension, dimensionLabel, description);
                     all.add(currentField);
                     analyze.vars.put(name, variable);
 
