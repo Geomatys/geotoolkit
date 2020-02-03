@@ -16,18 +16,17 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.locationtech.jts.geom.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
-import org.geotoolkit.map.MapLayer;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.jts.JTS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.map.MapLayer;
+import org.locationtech.jts.geom.Polygon;
 
 /**
  *
@@ -48,8 +47,6 @@ public class StatelessContextParams<T extends MapLayer> {
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
     public final GeometryCSTransformer objToDisplayTransformer =
             new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
-    public CoordinateReferenceSystem objectiveCRS;
-    public CoordinateReferenceSystem displayCRS;
 
     /**
      * This envelope should be the painted are in ojective CRS,
@@ -77,8 +74,6 @@ public class StatelessContextParams<T extends MapLayer> {
 
     public void update(final RenderingContext2D context){
         this.context = context;
-        this.objectiveCRS = context.getObjectiveCRS2D();
-        this.displayCRS = context.getDisplayCRS();
         if(context.wraps!=null){
             this.objectiveJTSEnvelope = context.wraps.objectiveJTSEnvelope;
         }

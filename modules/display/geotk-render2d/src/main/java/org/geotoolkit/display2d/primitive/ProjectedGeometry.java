@@ -17,24 +17,24 @@
 package org.geotoolkit.display2d.primitive;
 
 import com.bric.geom.Clipper;
-import org.locationtech.jts.geom.Envelope;
 import java.awt.Shape;
 import java.util.Arrays;
 import java.util.logging.Level;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceWrapTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.referencing.CRS;
+import org.locationtech.jts.geom.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * convenient class to manipulate geometry in the 2d engine.
@@ -105,7 +105,7 @@ public class ProjectedGeometry  {
                 this.dataCRS = dataCRS;
                 dataCRS = CRSUtilities.getCRS2D(dataCRS);
                 dataToObjective = (MathTransform2D) CRS.findOperation(dataCRS, params.context.getObjectiveCRS2D(), null).getMathTransform();
-                dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, params.displayCRS, null).getMathTransform();
+                dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, params.context.getDisplayCRS(), null).getMathTransform();
             }
         } catch (Exception ex) {
             Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);
@@ -333,7 +333,7 @@ public class ProjectedGeometry  {
             getObjectiveGeometryJTS();
             objectiveGeometryISO = new Geometry[objectiveGeometryJTS.length];
             for(int i=0;i<objectiveGeometryISO.length;i++){
-                objectiveGeometryISO[i] = JTSUtils.toISO(objectiveGeometryJTS[i], params.objectiveCRS);
+                objectiveGeometryISO[i] = JTSUtils.toISO(objectiveGeometryJTS[i], params.context.getObjectiveCRS2D());
             }
         }
         return objectiveGeometryISO;
@@ -350,7 +350,7 @@ public class ProjectedGeometry  {
             getDataGeometryJTS();
             displayGeometryISO = new Geometry[displayGeometryJTS.length];
             for(int i=0;i<displayGeometryISO.length;i++){
-                displayGeometryISO[i] = JTSUtils.toISO(displayGeometryJTS[i], params.displayCRS);
+                displayGeometryISO[i] = JTSUtils.toISO(displayGeometryJTS[i], params.context.getDisplayCRS());
             }
         }
         return displayGeometryISO;

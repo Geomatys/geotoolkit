@@ -75,8 +75,6 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
 
     private synchronized void updateCache(final RenderingContext2D context){
         params.update(context);
-        params.objectiveCRS = context.getObjectiveCRS();
-        params.displayCRS = context.getDisplayCRS();
         boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
