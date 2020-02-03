@@ -329,8 +329,6 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         params.objectiveJTSEnvelope = new org.locationtech.jts.geom.Envelope(
                 env.getMinimum(0), env.getMaximum(0),
                 env.getMinimum(1), env.getMaximum(1));
-        params.displayClipRect = null;
-        params.displayClip = null;
 
         final ProjectedFeature pf = new ProjectedFeature(params,feature);
         final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);

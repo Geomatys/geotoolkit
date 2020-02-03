@@ -57,6 +57,7 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -73,6 +74,12 @@ import org.opengis.util.FactoryException;
  * @module
  */
 public class RenderingContext2D implements RenderingContext{
+
+    /**
+     * 50pixels ensure large strokes of graphics won't show on the map.
+     * TODO : need to find a better way to reduce the geometry preserving length
+     */
+    private static final int CLIP_PIXEL_MARGIN = 50;
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.canvas");
     private static final int MAX_WRAP = 3;
@@ -216,6 +223,10 @@ public class RenderingContext2D implements RenderingContext{
     private GridGeometry gridGeometry;
     private GridGeometry gridGeometry2d;
 
+    //clipping geometries
+    private Rectangle2D displayClipRect;
+    private Polygon displayClip;
+
     /**
      * Constructs a new {@code RenderingContext} for the specified canvas.
      *
@@ -254,6 +265,13 @@ public class RenderingContext2D implements RenderingContext{
         final Rectangle2D canvasDisplayBounds = canvasDisplayShape.getBounds2D();
         this.canvasDisplaybounds = canvasDisplayBounds.getBounds();
         this.canvasObjectiveShape = canvasObjectiveShape;
+        this.displayClipRect = (Rectangle2D) canvasDisplaybounds.clone();
+        this.displayClipRect.setRect(
+                displayClipRect.getX()-CLIP_PIXEL_MARGIN,
+                displayClipRect.getY()-CLIP_PIXEL_MARGIN,
+                displayClipRect.getWidth()+2*CLIP_PIXEL_MARGIN,
+                displayClipRect.getHeight()+2*CLIP_PIXEL_MARGIN);
+        this.displayClip = JTS.toGeometry(canvasDisplaybounds);
 
         final Rectangle2D canvasObjectiveBounds = canvasObjectiveShape.getBounds2D();
 
@@ -922,6 +940,14 @@ public class RenderingContext2D implements RenderingContext{
      */
     public RenderingHints getRenderingHints() {
         return renderingHints;
+    }
+
+    public Rectangle2D getDisplayClipRectangle() {
+        return displayClipRect;
+    }
+
+    public Polygon getDisplayClipPolygon() {
+        return displayClip;
     }
 
     @Override
