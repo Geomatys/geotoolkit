@@ -86,7 +86,7 @@ import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedRule;
-import org.geotoolkit.display2d.style.renderer.Presentation;
+import org.geotoolkit.display2d.presentation.Presentation;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
