@@ -20,6 +20,7 @@ package org.geotoolkit.observation;
 // J2SE dependencies
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -285,11 +286,11 @@ public interface ObservationReader {
     List<ResponseModeType> getResponseModes() throws DataStoreException;
 
     /**
-     * Return the list of supported response Mode
+     * Return the list of supported response formats for each version
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    List<String> getResponseFormats() throws DataStoreException;
+    Map<String, List<String>> getResponseFormats() throws DataStoreException;
 
     /**
      * Extract the geometry for a procedure.
