@@ -1,0 +1,313 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.6,
+          47.7
+        ]
+      },
+      "properties": {
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5,
+          49
+        ]
+      },
+      "properties": {
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -10.1,
+          45.5
+        ]
+      },
+      "properties": {
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.9,
+          45.7
+        ]
+      },
+      "properties": {
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -4.5,
+              46.7
+            ],
+            [
+              -4.9,
+              47
+            ],
+            [
+              -4.9,
+              47.5
+            ],
+            [
+              -4.5,
+              46.7
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -7.8,
+              48.5
+            ],
+            [
+              -7.8,
+              49
+            ],
+            [
+              -7.1,
+              48.9
+            ],
+            [
+              -7.8,
+              48.5
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -4,
+              48.5
+            ],
+            [
+              -4.1,
+              49
+            ],
+            [
+              -3.3,
+              48.5
+            ],
+            [
+              -4,
+              48.5
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -6.2,
+            46.5
+          ],
+          [
+            -6,
+            46
+          ]
+        ]
+      },
+      "properties": {
+        "type": "LineString"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -6.6,
+              47.3
+            ],
+            [
+              -6.4,
+              48
+            ],
+            [
+              -6,
+              47.6
+            ],
+            [
+              -6.6,
+              47.3
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -4.7,
+            45
+          ],
+          [
+            -4.2,
+            44.8
+          ]
+        ]
+      },
+      "properties": {
+        "type": "LineString"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -3.2,
+            44.8
+          ],
+          [
+            -3,
+            45.3
+          ]
+        ]
+      },
+      "properties": {
+        "type": "LineString"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9,
+          44.3
+        ]
+      },
+      "properties": {
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.7,
+          46.6
+        ]
+      },
+      "properties": {
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -10.7,
+              47.4
+            ],
+            [
+              -10.1,
+              48
+            ],
+            [
+              -10.2,
+              47.6
+            ],
+            [
+              -10.7,
+              47.4
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.8,
+          45.4
+        ]
+      },
+      "properties": {
+        "type": "Point"
+      }
+    }
+  ]
+}

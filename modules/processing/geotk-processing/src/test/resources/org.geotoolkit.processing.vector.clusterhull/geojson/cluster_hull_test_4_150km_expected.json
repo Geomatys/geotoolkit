@@ -1,0 +1,129 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -7.8,
+              45.4
+            ],
+            [
+              -10.1,
+              45.5
+            ],
+            [
+              -7.8,
+              49
+            ],
+            [
+              -4.1,
+              49
+            ],
+            [
+              -3.3,
+              48.5
+            ],
+            [
+              -4.5,
+              46.7
+            ],
+            [
+              -6,
+              46
+            ],
+            [
+              -7.8,
+              45.4
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9,
+          44.3
+        ]
+      },
+      "properties": {
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -4.2,
+              44.8
+            ],
+            [
+              -4.7,
+              45
+            ],
+            [
+              -3,
+              45.3
+            ],
+            [
+              -3.2,
+              44.8
+            ],
+            [
+              -4.2,
+              44.8
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -10.7,
+              47.4
+            ],
+            [
+              -10.1,
+              48
+            ],
+            [
+              -10.2,
+              47.6
+            ],
+            [
+              -10.7,
+              47.4
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    }
+  ]
+}
