@@ -135,7 +135,7 @@ import org.opengis.util.LocalName;
  * @author Cédric Briançon (Geomatys)
  * @author Marechal remi   (Geomatys)
  */
-public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
+public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
     /**
      * Style factory object use to generate in some case to interpret raster with no associated style.
@@ -146,7 +146,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     public static final LocalName ALPHA_SAMPLE_DIM = Names.createLocalName("GO2", ":", "alpha");
 
 
-    public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
+    public RasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
     }
 

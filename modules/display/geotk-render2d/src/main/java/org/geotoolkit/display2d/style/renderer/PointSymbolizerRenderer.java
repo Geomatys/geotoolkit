@@ -48,14 +48,14 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPointSymbolizer> {
+public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPointSymbolizer> {
 
     /**
      * Defines the absolute radian value below which rotation is ignored.
      */
     private static final double ROTATION_TOLERANCE = 5e-2;
 
-    public DefaultPointSymbolizerRenderer(final SymbolizerRendererService service,final CachedPointSymbolizer symbol, final RenderingContext2D context) {
+    public PointSymbolizerRenderer(final SymbolizerRendererService service,final CachedPointSymbolizer symbol, final RenderingContext2D context) {
         super(service,symbol,context);
     }
 

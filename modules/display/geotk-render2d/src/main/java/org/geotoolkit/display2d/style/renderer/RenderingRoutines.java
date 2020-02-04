@@ -41,7 +41,9 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
+import static org.geotoolkit.display2d.GO2Utilities.STYLE_FACTORY;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -58,7 +60,9 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -72,6 +76,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 
@@ -82,6 +87,74 @@ import org.opengis.style.Symbolizer;
 public final class RenderingRoutines {
 
     private RenderingRoutines(){}
+
+    /**
+     * Merge a layer style with a selection style.
+     * The selection style fts elements will be placed after those of the default style.
+     *
+     * @param style
+     * @param selectionFilter
+     * @param selectionStyle
+     * @return
+     */
+    public static MutableStyle mergeStyles(MutableStyle style, Filter selectionFilter, MutableStyle selectionStyle) {
+
+        if (selectionFilter == null || Filter.EXCLUDE.equals(selectionFilter) || selectionStyle == null) {
+            //unmodified
+            return style;
+        }
+
+        final Filter exclusionFilter = FILTER_FACTORY.not(selectionFilter);
+
+        final MutableStyle result = GO2Utilities.STYLE_FACTORY.style();
+
+        for (FeatureTypeStyle fts : style.featureTypeStyles()) {
+
+            final MutableFeatureTypeStyle resultfts = GO2Utilities.STYLE_FACTORY.featureTypeStyle();
+            resultfts.setDescription(fts.getDescription());
+            resultfts.setFeatureInstanceIDs(fts.getFeatureInstanceIDs());
+            resultfts.setName(fts.getName());
+            resultfts.setOnlineResource(fts.getOnlineResource());
+            result.featureTypeStyles().add(resultfts);
+
+            for (Rule rule : fts.rules()) {
+                final MutableRule modifiedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
+                Filter f = rule.getFilter();
+                if (f == null) {
+                    f = exclusionFilter;
+                } else {
+                    f = FILTER_FACTORY.and(f, exclusionFilter);
+                }
+                modifiedRule.setFilter(f);
+                resultfts.rules().add(modifiedRule);
+            }
+        }
+
+        if (selectionStyle != null) {
+            for (FeatureTypeStyle fts : selectionStyle.featureTypeStyles()) {
+                final MutableFeatureTypeStyle resultfts = GO2Utilities.STYLE_FACTORY.featureTypeStyle();
+                resultfts.setDescription(fts.getDescription());
+                resultfts.setFeatureInstanceIDs(fts.getFeatureInstanceIDs());
+                resultfts.setName(fts.getName());
+                resultfts.setOnlineResource(fts.getOnlineResource());
+                result.featureTypeStyles().add(resultfts);
+
+                for (Rule rule : fts.rules()) {
+                    final MutableRule modifiedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
+                    Filter f = rule.getFilter();
+                    if (f == null) {
+                        f = selectionFilter;
+                    } else {
+                        f = FILTER_FACTORY.and(f, selectionFilter);
+                    }
+                    modifiedRule.setFilter(f);
+                    resultfts.rules().add(modifiedRule);
+                }
+            }
+        }
+
+        return result;
+    }
 
     /**
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
@@ -310,10 +383,10 @@ public final class RenderingRoutines {
         qb.setProperties(atts);
 
         //resampling and ignore flag only works when we know the layer crs
-        if(layerCRS != null){
+        if (layerCRS != null) {
             //add resampling -------------------------------------------------------
             Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
-            if(!Boolean.FALSE.equals(resample)){
+            if (!Boolean.FALSE.equals(resample)) {
                 //we only disable resampling if it is explictly specified
                 final double[] res = renderingContext.getResolution(layerCRS);
 

@@ -29,7 +29,7 @@ import org.opengis.style.PointSymbolizer;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRendererService<PointSymbolizer, CachedPointSymbolizer>{
+public class PointSymbolizerRendererService extends AbstractSymbolizerRendererService<PointSymbolizer, CachedPointSymbolizer>{
 
 
     @Override
@@ -66,7 +66,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedPointSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultPointSymbolizerRenderer(this,symbol, context);
+        return new PointSymbolizerRenderer(this,symbol, context);
     }
 
     /**

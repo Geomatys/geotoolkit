@@ -48,11 +48,11 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPolygonSymbolizer>{
+public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPolygonSymbolizer>{
 
     private final boolean mosaic;
 
-    public DefaultPolygonSymbolizerRenderer(final SymbolizerRendererService service,final CachedPolygonSymbolizer symbol, final RenderingContext2D context){
+    public PolygonSymbolizerRenderer(final SymbolizerRendererService service,final CachedPolygonSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
         mosaic = symbol.isMosaic();
     }

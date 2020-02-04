@@ -132,7 +132,8 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             return renderStyledFeature(renderingContext, 0.0);
         }
 
-        final MutableStyle style = item.getStyle();
+        //merge base style and selection style
+        final MutableStyle baseStyle = item.getStyle();
         final Id selectionFilter = item.getSelectionFilter();
         final MutableStyle selectionStyle = item.getSelectionStyle();
         final FeatureType type;
@@ -142,13 +143,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return false;
         }
+        final MutableStyle style = RenderingRoutines.mergeStyles(baseStyle, selectionFilter, selectionStyle);
 
         boolean rendered = false;
-
         for (FeatureTypeStyle fts : style.featureTypeStyles()) {
             if (monitor.stopRequested()) return false;
             //first extract the valid rules at this scale
-            final List<Rule> validRules = getValidRules(renderingContext, fts, selectionFilter, type);
+            final List<Rule> validRules = GO2Utilities.getValidRules(fts, renderingContext.getSEScale(), type);
 
             //we perform a first check on the style to see if there is at least
             //one valid rule at this scale, if not we just continue.
@@ -196,62 +197,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             final CachedRule[] rules = toCachedRules(validRules, expected);
 
             rendered |= paintVectorLayer(rules, candidates, renderingContext);
-        }
-
-        //render the selection
-        if (selectionStyle != null && selectionFilter != null && Filter.EXCLUDE.equals(selectionFilter)) {
-            for (FeatureTypeStyle fts : selectionStyle.featureTypeStyles()) {
-                if (monitor.stopRequested()) return false;
-                //first extract the valid rules at this scale
-                final List<Rule> validRules = getValidRules(renderingContext, fts, GO2Utilities.FILTER_FACTORY.not(selectionFilter), type);
-
-                //we perform a first check on the style to see if there is at least
-                //one valid rule at this scale, if not we just continue.
-                if (validRules.isEmpty()) {
-                    continue;
-                }
-
-                //extract the used names
-                Set<String> names = propertiesNames(validRules);
-                if (names.contains("*")) {
-                    //we need all properties
-                    names = null;
-                }
-
-                //calculate max symbol size, to expand search envelope.
-                double symbolsMargin = 0.0;
-                for (Rule rule : validRules) {
-                    for (Symbolizer s : rule.symbolizers()) {
-                        final CachedSymbolizer cs = GO2Utilities.getCached(s, null);
-                        symbolsMargin = Math.max(symbolsMargin, cs.getMargin(null, renderingContext));
-                    }
-                }
-                if (Double.isNaN(symbolsMargin) || Double.isInfinite(symbolsMargin)) {
-                    //symbol margin can not be pre calculated, expect a max of 300pixels
-                    symbolsMargin = 300f;
-                }
-                if (symbolsMargin > 0) {
-                    final double scale = XAffineTransform.getScale(renderingContext.getDisplayToObjective());
-                    symbolsMargin = scale * symbolsMargin;
-                }
-
-                final FeatureSet candidates;
-                final FeatureType expected;
-                try {
-                    //optimize
-                    candidates = RenderingRoutines.optimizeFeatureSet(renderingContext, item, names, validRules, symbolsMargin);
-                    //get the expected result type
-                    expected = candidates.getType();
-                } catch (Exception ex) {
-                    renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
-                    continue;
-                }
-
-                //calculate optimized rules and included filter + expressions
-                final CachedRule[] rules = toCachedRules(validRules, expected);
-
-                rendered |= paintVectorLayer(rules, candidates, renderingContext);
-            }
         }
 
         return rendered;
@@ -494,36 +439,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             }
 
             return mixedRules;
-        }
-
-        return normalRules;
-    }
-
-    /**
-     * @return the valid rules at this scale, selection rules will be mixed in.
-     */
-    public static List<Rule> getValidRules(final RenderingContext2D renderingContext,
-            final FeatureTypeStyle fts, final Filter toExcludeFilter, final FeatureType type) {
-
-        final List<Rule> normalRules = GO2Utilities.getValidRules(
-                   fts, renderingContext.getSEScale(), type);
-
-        if (toExcludeFilter != null && !Filter.EXCLUDE.equals(toExcludeFilter)) {
-
-            final Filter exclusionFilter = FILTER_FACTORY.not(toExcludeFilter);
-
-            for (int i=0; i<normalRules.size();i++) {
-                final Rule rule = normalRules.get(i);
-                final MutableRule modifiedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
-                Filter f = rule.getFilter();
-                if (f == null) {
-                    f = exclusionFilter;
-                } else {
-                    f = FILTER_FACTORY.and(f, exclusionFilter);
-                }
-                modifiedRule.setFilter(f);
-                normalRules.set(i, modifiedRule);
-            }
         }
 
         return normalRules;

@@ -44,12 +44,12 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTextSymbolizer>{
+public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTextSymbolizer>{
 
 
     private LabelLayer labelLayer;
 
-    public DefaultTextSymbolizerRenderer(final SymbolizerRendererService service, final CachedTextSymbolizer symbol, final RenderingContext2D context){
+    public TextSymbolizerRenderer(final SymbolizerRendererService service, final CachedTextSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
     }
 

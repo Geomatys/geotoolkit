@@ -55,11 +55,11 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLineSymbolizer>{
+public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLineSymbolizer>{
 
     private final CachedStroke cachedStroke;
 
-    public DefaultLineSymbolizerRenderer(final SymbolizerRendererService service,final CachedLineSymbolizer symbol, final RenderingContext2D context){
+    public LineSymbolizerRenderer(final SymbolizerRendererService service,final CachedLineSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
         cachedStroke = symbol.getCachedStroke();
     }

@@ -36,7 +36,7 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRendererService<TextSymbolizer, CachedTextSymbolizer>{
+public class TextSymbolizerRendererService extends AbstractSymbolizerRendererService<TextSymbolizer, CachedTextSymbolizer>{
 
     private static final String GLYPH_CANDIDATE = "T";
 
@@ -74,7 +74,7 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedTextSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultTextSymbolizerRenderer(this, symbol, context);
+        return new TextSymbolizerRenderer(this, symbol, context);
     }
 
     /**

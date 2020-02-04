@@ -22,15 +22,17 @@ import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.CachedLineSymbolizer;
+import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.map.MapLayer;
-import org.opengis.style.LineSymbolizer;
+import org.opengis.style.Fill;
+import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.Stroke;
 
 /**
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRendererService<LineSymbolizer, CachedLineSymbolizer>{
+public class PolygonSymbolizerRendererService extends AbstractSymbolizerRendererService<PolygonSymbolizer, CachedPolygonSymbolizer>{
 
 
     @Override
@@ -42,48 +44,55 @@ public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public Class<LineSymbolizer> getSymbolizerClass() {
-        return LineSymbolizer.class;
+    public Class<PolygonSymbolizer> getSymbolizerClass() {
+        return PolygonSymbolizer.class;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Class<CachedLineSymbolizer> getCachedSymbolizerClass() {
-        return CachedLineSymbolizer.class;
+    public Class<CachedPolygonSymbolizer> getCachedSymbolizerClass() {
+        return CachedPolygonSymbolizer.class;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public CachedLineSymbolizer createCachedSymbolizer(final LineSymbolizer symbol) {
-        return new CachedLineSymbolizer(symbol,this);
+    public CachedPolygonSymbolizer createCachedSymbolizer(final PolygonSymbolizer symbol) {
+        return new CachedPolygonSymbolizer(symbol,this);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public SymbolizerRenderer createRenderer(final CachedLineSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultLineSymbolizerRenderer(this,symbol, context);
+    public SymbolizerRenderer createRenderer(final CachedPolygonSymbolizer symbol, final RenderingContext2D context) {
+        return new PolygonSymbolizerRenderer(this, symbol, context);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void glyph(final Graphics2D g, final Rectangle2D rectangle, final CachedLineSymbolizer symbol, final MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rectangle, final CachedPolygonSymbolizer symbol, final MapLayer layer) {
         final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
                 rectangle.getHeight(), rectangle.getX(), rectangle.getY());
 
         g.setClip(rectangle);
         final TransformedShape shape = new TransformedShape();
-        shape.setOriginalShape(GO2Utilities.GLYPH_LINE);
+        shape.setOriginalShape(GO2Utilities.GLYPH_POLYGON);
         shape.setTransform(affine);
 
-        GO2Utilities.renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
+        final Fill fill = symbol.getSource().getFill();
+        final Stroke stroke = symbol.getSource().getStroke();
+        if(fill != null){
+            GO2Utilities.renderFill(shape, symbol.getSource().getFill(), g);
+        }
+        if(stroke != null){
+            GO2Utilities.renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
+        }
     }
 
 }
