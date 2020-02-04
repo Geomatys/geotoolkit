@@ -18,7 +18,6 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -41,12 +40,12 @@ public class PortrayalDemo {
         final MapContext context = createContext();
 
         //prepare the rendering context
-        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), Color.WHITE);
+        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), context.getBounds());
+        canvasdef.setBackground(Color.WHITE);
         final SceneDef scenedef = new SceneDef(context);
-        final ViewDef viewdef = new ViewDef(context.getBounds());
 
         //generate the image
-        final BufferedImage img = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
+        final BufferedImage img = DefaultPortrayalService.portray(canvasdef, scenedef);
 
         //show the image
         final JFrame frm = new JFrame();

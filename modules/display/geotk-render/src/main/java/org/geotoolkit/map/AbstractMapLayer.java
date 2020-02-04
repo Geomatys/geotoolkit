@@ -45,8 +45,6 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
 
     protected MutableStyle selectionStyle;
 
-    protected ElevationModel elevation = null;
-
     protected boolean selectable = false;
 
     private double opacity = 1d;
@@ -169,30 +167,6 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
             this.selectable = selectable;
         }
         firePropertyChange(SELECTABLE_PROPERTY, oldSelectable, this.selectable);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ElevationModel getElevationModel(){
-        return elevation;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setElevationModel(final ElevationModel model){
-        final ElevationModel oldElevation;
-        synchronized (this) {
-            oldElevation = this.elevation;
-            if(oldElevation != null && oldElevation.equals(model)){
-                return;
-            }
-            this.elevation = model;
-        }
-        firePropertyChange(ELEVATION_PROPERTY, oldElevation, this.elevation);
     }
 
     /**

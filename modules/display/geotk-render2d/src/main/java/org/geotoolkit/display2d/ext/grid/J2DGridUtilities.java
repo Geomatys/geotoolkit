@@ -17,11 +17,6 @@
 
 package org.geotoolkit.display2d.ext.grid;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -29,26 +24,30 @@ import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.TickIterator;
+import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.display.shape.TransformedShape;
-import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
-import org.apache.sis.referencing.CRS;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.apache.sis.geometry.Envelopes;
 
 /**
  * Utility class to render grid on J2DCanvas.
@@ -166,9 +165,7 @@ public class J2DGridUtilities {
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
                 if(geom == null) continue;
 
-                final StatelessContextParams params = new StatelessContextParams(null, null);
-                final ProjectedGeometry pg = new ProjectedGeometry(params);
-                params.update(context);
+                final ProjectedGeometry pg = new ProjectedGeometry(context);
                 pg.setDataGeometry(geom, gridCRS);
 
                 //draw line
@@ -233,9 +230,7 @@ public class J2DGridUtilities {
                 lineCoords.add(new Coordinate(Math.nextAfter(maxX,Double.NEGATIVE_INFINITY), d));
 
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
-                final StatelessContextParams params = new StatelessContextParams(null, null);
-                final ProjectedGeometry pg = new ProjectedGeometry(params);
-                params.update(context);
+                final ProjectedGeometry pg = new ProjectedGeometry(context);
                 pg.setDataGeometry(geom, gridCRS);
 
                 //draw line

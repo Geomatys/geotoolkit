@@ -17,11 +17,8 @@
 package org.geotoolkit.image;
 
 import java.awt.Point;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;
@@ -37,7 +34,7 @@ import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.coverage.ColorModelFactory;
+import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 
@@ -48,6 +45,39 @@ import org.apache.sis.util.Static;
 public class BufferedImages extends Static {
 
     /**
+     * Create a new image, trying to preserve raster, sample model and color model
+     * when possible.
+     *
+     * @param reference not null
+     * @param width if null reference image width is copied
+     * @param height if null reference image height is copied
+     * @param nbBand if null reference image number of bands is copied
+     * @param dataType if null reference image data type is copied
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static BufferedImage createImage(RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType) throws IllegalArgumentException{
+        if (width == null) width = reference.getWidth();
+        if (height == null) height = reference.getHeight();
+        if (nbBand == null) nbBand = reference.getSampleModel().getNumBands();
+        if (dataType == null) dataType = reference.getSampleModel().getDataType();
+        ArgumentChecks.ensureStrictlyPositive("width", width);
+        ArgumentChecks.ensureStrictlyPositive("height", height);
+        ArgumentChecks.ensureStrictlyPositive("nbBand", nbBand);
+
+        if (nbBand == reference.getSampleModel().getNumBands() && dataType == reference.getSampleModel().getDataType()) {
+            //we can preserver color model and raster configuration
+            final WritableRaster raster = reference.getTile(0, 0).createCompatibleWritableRaster(width, height);
+            final ColorModel cm = reference.getColorModel();
+            final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
+            return resultImage;
+        } else {
+            //we need to create a new image
+            return createImage(width, height, nbBand, dataType);
+        }
+    }
+
+    /**
      * Create a new image of the same type with a different size.
      *
      * @param width
@@ -56,13 +86,8 @@ public class BufferedImages extends Static {
      * @return
      * @throws IllegalArgumentException
      */
-    public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException{
-        ArgumentChecks.ensureStrictlyPositive("width", width);
-        ArgumentChecks.ensureStrictlyPositive("height", height);
-        final WritableRaster raster = reference.getTile(0, 0).createCompatibleWritableRaster(width, height);
-        final ColorModel cm = reference.getColorModel();
-        final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
-        return resultImage;
+    public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException {
+        return createImage(reference, width, height, null, null);
     }
 
     public static BufferedImage createImage(final int width, final int height, final int nbBand, final int dataType) throws IllegalArgumentException{
@@ -74,9 +99,7 @@ public class BufferedImages extends Static {
         //TODO try to reuse java colormodel if possible
         //create a temporary fallback colormodel which will always work
         //extract grayscale min/max from sample dimension
-        final ColorModel graycm = createGrayScaleColorModel(dataType,nbBand,0,0,1);
-
-
+        final ColorModel graycm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
         final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<>());
         return resultImage;
     }
@@ -105,12 +128,16 @@ public class BufferedImages extends Static {
                 raster = WritableRaster.createInterleavedRaster(dataType, width, height, nbBand, upperLeft);
             }else{
                 //create it ourself
+                final long size = (long) width * height * nbBand;
+                final int isize = Math.toIntExact(size);
                 final DataBuffer buffer;
-                if(dataType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height*nbBand);
-                else if(dataType == DataBuffer.TYPE_INT) buffer = new DataBufferInt(width*height*nbBand);
-                else if(dataType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height*nbBand);
-                else if(dataType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height*nbBand);
-                else throw new IllegalArgumentException("Type not supported "+dataType);
+                switch (dataType) {
+                    case DataBuffer.TYPE_SHORT: buffer = new DataBufferShort(isize); break;
+                    case DataBuffer.TYPE_INT: buffer = new DataBufferInt(isize); break;
+                    case DataBuffer.TYPE_FLOAT: buffer = new DataBufferFloat(isize); break;
+                    case DataBuffer.TYPE_DOUBLE: buffer = new DataBufferDouble(isize); break;
+                    default: throw new IllegalArgumentException("Type not supported "+dataType);
+                }
                 final int[] bankIndices = new int[nbBand];
                 final int[] bandOffsets = new int[nbBand];
                 for(int i=1;i<nbBand;i++){
@@ -121,12 +148,6 @@ public class BufferedImages extends Static {
             }
         }
         return raster;
-    }
-
-    public static ColorModel createGrayScaleColorModel(int dataType, int nbBand, int visibleBand, double min, double max){
-        final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, visibleBand, min, max);
-        final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
-        return cm;
     }
 
     /**

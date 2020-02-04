@@ -22,14 +22,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.math.XMath;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -569,11 +565,9 @@ public class Resample {
                                 destIterator.setPixel(fillValue);
                             }
                         } else {
-                            for (int band=0; band<numBands; band++) {
-                                double sample = interpol.interpolate(srcX, srcY, band);
-                                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                                destIterator.setSample(band, sample);
-                            }
+                            double[] pixel = interpol.interpolate(srcX, srcY);
+                            if (clamp != null) XMath.applyClamp(pixel, clamp[0], clamp[1]);
+                            destIterator.setPixel(pixel);
                         }
                         px++;
                     }
@@ -606,11 +600,9 @@ public class Resample {
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
                 if (fillValue != null) destIterator.setPixel(fillValue);
             } else {
-                for (int band = 0; band < numBands; band++) {
-                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
-                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                    destIterator.setSample(band, sample);
-                }
+                double[] pixel = interpol.interpolate(srcCoords[0], srcCoords[1]);
+                if (clamp != null) XMath.applyClamp(pixel, clamp[0], clamp[1]);
+                destIterator.setPixel(pixel);
             }
         }
     }
@@ -638,11 +630,9 @@ public class Resample {
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
                 if (fillValue != null) destIterator.setPixel(fillValue);
             } else {
-                for (int band = 0; band < numBands; band++) {
-                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
-                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                    destIterator.setSample(band, sample);
-                }
+                double[] pixel = interpol.interpolate(srcCoords[0], srcCoords[1]);
+                if (clamp != null) XMath.applyClamp(pixel, clamp[0], clamp[1]);
+                destIterator.setPixel(pixel);
             }
         }
     }
@@ -694,11 +684,9 @@ public class Resample {
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
                 if (fillValue != null) destIterator.setPixel(fillValue);
             } else {
-                for (int band = 0; band < numBands; band++) {
-                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
-                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                    destIterator.setSample(band, sample);
-                }
+                double[] pixel = interpol.interpolate(srcCoords[0], srcCoords[1]);
+                if (clamp != null) XMath.applyClamp(pixel, clamp[0], clamp[1]);
+                destIterator.setPixel(pixel);
             }
         }
     }

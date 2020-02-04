@@ -31,10 +31,8 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
-import org.apache.sis.measure.Units;
 import javax.swing.SwingConstants;
-import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.internal.Loggers;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.ext.DecorationXMLParser;
@@ -51,12 +49,13 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
+import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.internal.Loggers;
 
 /**
  *
@@ -162,11 +161,12 @@ public class FXQuickPrintContextAction extends FXMapAction {
             final String mimetype = fileChooser.getSelectedExtensionFilter()==filterPng ? "image/png" : "image/svg+xml";
 
             final CanvasDef cdef = new CanvasDef(new Dimension((int)dispSize.getWidth(),(int)dispSize.getHeight()),
-                    "image/svg+xml".equals(mimetype) ? new Color(1, 1, 1, 1) : new Color(0, 0, 0, 0));
+                    null);
+            cdef.setBackground("image/svg+xml".equals(mimetype) ? new Color(1, 1, 1, 1) : new Color(0, 0, 0, 0));
             final SceneDef sdef = new SceneDef(map.getContainer().getContext(),hints,ext);
-            final ViewDef vdef = new ViewDef(map.getCanvas().getVisibleEnvelope());
+            cdef.setEnvelope(map.getCanvas().getVisibleEnvelope());
             final OutputDef odef = new OutputDef(mimetype, docFile);
-            DefaultPortrayalService.portray(cdef, sdef, vdef, odef);
+            DefaultPortrayalService.portray(cdef, sdef, odef);
 
 
         } catch (PortrayalException ex) {

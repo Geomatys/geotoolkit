@@ -30,6 +30,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import org.apache.sis.feature.Features;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
@@ -64,7 +65,7 @@ public class CreateLineTool extends AbstractEditionTool{
                 if(!isWritable(fml)) return false;
 
                 try {
-                    final Class geomClass = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(fml.getResource().getType()))
+                    final Class geomClass = Features.toAttribute(FeatureExt.getDefaultGeometry(fml.getResource().getType()))
                             .map(AttributeType::getValueClass)
                             .orElse(null);
 

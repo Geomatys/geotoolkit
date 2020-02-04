@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2016, Geomatys
+ *    (C) 2016-2020, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.wps.client.process;
 
-import org.geotoolkit.wps.client.GetStatusRequest;
-import org.geotoolkit.wps.client.GetResultRequest;
-import org.geotoolkit.wps.client.DismissRequest;
-import org.geotoolkit.wps.client.ExecuteRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -45,6 +41,10 @@ import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.wps.adaptor.ComplexAdaptor;
 import org.geotoolkit.wps.adaptor.DataAdaptor;
 import org.geotoolkit.wps.adaptor.LiteralAdaptor;
+import org.geotoolkit.wps.client.DismissRequest;
+import org.geotoolkit.wps.client.ExecuteRequest;
+import org.geotoolkit.wps.client.GetResultRequest;
+import org.geotoolkit.wps.client.GetStatusRequest;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.WPSUtilities;
 import org.geotoolkit.wps.xml.v100.LegacyStatus;
@@ -81,7 +81,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-class WPS2Process extends AbstractProcess {
+final class WPS2Process extends AbstractProcess implements WPSProcess {
 
     private final WPSProcessingRegistry registry;
 
@@ -158,24 +158,21 @@ class WPS2Process extends AbstractProcess {
         this.rawLiteralData = rawLiteralData;
     }
 
-    @Deprecated
-    public void setAsync(boolean async) {
-        setExecutionMode(async? Execute.Mode.async : Execute.Mode.sync);
-    }
-
+    @Override
     public void setExecutionMode(final Execute.Mode executionMode) {
         final ProcessOffering offering = desc.getOffering();
         boolean isCompatible = WPSUtilities.testCompatibility(offering, executionMode);
         if (isCompatible) {
             this.executionMode = executionMode;
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "%s mode is not compatible with available job control options: %s",
+                    executionMode, Arrays.toString(offering.getJobControlOptions().toArray())
+            ));
         }
-
-        throw new IllegalArgumentException(String.format(
-                "%s mode is not compatible with available job control options: %s",
-                executionMode, Arrays.toString(offering.getJobControlOptions().toArray())
-        ));
     }
 
+    @Override
     public Execute.Mode getExecutionMode() {
         return executionMode;
     }
@@ -206,6 +203,7 @@ class WPS2Process extends AbstractProcess {
      *
      * @return job identifier, null before execution
      */
+    @Override
     public String getJobId() {
         return jobId;
     }

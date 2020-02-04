@@ -23,6 +23,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.referencing.operation.matrix.Matrices;
@@ -57,7 +58,9 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
         final int[] subsampling;
         try {
             if (domain != null) {
-                GridDerivation derived = gg.derive().subgrid(domain);
+                GridDerivation derived = gg.derive()
+                        .rounding(GridRoundingMode.ENCLOSING)
+                        .subgrid(domain);
                 extent = derived.getIntersection();
                 subsampling = derived.getSubsamplings();
             } else {
@@ -92,21 +95,6 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
      */
     protected GridCoverage readInGridCRS(int[] areaLower, int[] areaUpper, int[] subsampling, int ... range)
             throws DataStoreException, TransformException {
-
-        //ensure we readInGridCRS at least 3x3 pixels otherwise the gridgeometry won't be
-        //able to identify the 2D composant of the grid to crs transform.
-        for (int i=0; i<2; i++) {
-            int width = (areaUpper[i] - areaLower[i] + subsampling[i] - 1) / subsampling[i];
-            if (width < 2) {
-                subsampling[i] = 1;
-                if (areaLower[i] == 0) {
-                    areaUpper[i] = 3;
-                } else {
-                    areaLower[i]--;
-                    areaUpper[i]++;
-                }
-            }
-        }
 
         // find if we need to readInGridCRS more then one slice
         int cubeDim = -1;

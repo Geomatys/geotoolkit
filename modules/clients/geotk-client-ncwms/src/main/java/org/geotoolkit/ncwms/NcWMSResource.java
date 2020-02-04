@@ -20,14 +20,15 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.geotoolkit.client.Request;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.wms.GetFeatureInfoRequest;
+import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WMSResource;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * Extend WMS Coverage Reference with additional ncWMS parameters.
@@ -196,7 +197,7 @@ public class NcWMSResource extends WMSResource{
      * {@inheritDoc }
      */
     @Override
-    public Request queryFeatureInfo(final Envelope env, final Dimension rect, int x,
+    public GetFeatureInfoRequest queryFeatureInfo(final Envelope env, final Dimension rect, int x,
             int y, final String[] queryLayers, final String infoFormat,
             final int featureCount) throws TransformException, FactoryException {
         final NcGetFeatureInfoRequest request = ((NcWebMapClient) getOriginator()).createGetFeatureInfo();
@@ -208,7 +209,7 @@ public class NcWMSResource extends WMSResource{
      * {@inheritDoc }
      */
     @Override
-    public Request queryLegend(final Dimension rect, final String format, final String rule,
+    public GetLegendRequest queryLegend(final Dimension rect, final String format, final String rule,
             final Double scale) throws MalformedURLException {
 
         final NcGetLegendRequest request = ((NcWebMapClient) getOriginator()).createGetLegend();

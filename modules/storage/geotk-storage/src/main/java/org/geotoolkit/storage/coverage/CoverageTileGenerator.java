@@ -101,7 +101,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     private static double getEmptyValue(SampleDimension dim){
-        dim = dim.forConvertedValues(true);
+        //dim = dim.forConvertedValues(true);
         double fillValue = Double.NaN;
         final double[] nodata = SampleDimensionUtils.getNoDataValues(dim);
         if (nodata!=null && nodata.length>0) {
@@ -167,7 +167,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
-        coverage = coverage.forConvertedValues(true);
         final RenderedImage image = coverage.render(null);
         return new DefaultImageTile(image, tileCoord);
     }

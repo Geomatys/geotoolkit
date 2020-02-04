@@ -1,17 +1,18 @@
 package org.geotoolkit.processing.image.sampleclassifier;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import org.apache.sis.image.PlanarImage;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.io.large.AbstractLargeRenderedImage;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.test.Assert;
 import org.junit.Test;
@@ -144,7 +145,7 @@ public class SampleClassifierTest {
             tile10, tile11, tile12,
             tile20, tile21, tile22
         };
-        final RenderedImage source = new AbstractLargeRenderedImage(0, 0, 9, 9, new Dimension(3, 3), 0, 0, tile00.getSampleModel(), tile00.getColorModel()) {
+        final RenderedImage source = new PlanarImage() {
             @Override
             public Raster getTile(int tileX, int tileY) {
                 final int idx = tileY*getNumXTiles() + tileX;
@@ -169,6 +170,26 @@ public class SampleClassifierTest {
             @Override
             public int getNumXTiles() {
                 return 3;
+            }
+
+            @Override
+            public int getWidth() {
+                return 9;
+            }
+
+            @Override
+            public int getHeight() {
+                return 9;
+            }
+
+            @Override
+            public ColorModel getColorModel() {
+                return tile00.getColorModel();
+            }
+
+            @Override
+            public SampleModel getSampleModel() {
+                return tile00.getSampleModel();
             }
         };
 

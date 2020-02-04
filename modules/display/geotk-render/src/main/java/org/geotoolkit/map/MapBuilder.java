@@ -64,7 +64,7 @@ public final class MapBuilder {
      * @return MapContext
      */
     public static MapContext createContext(final CoordinateReferenceSystem crs){
-        return new DefaultMapContext(crs);
+        return new MapContext(crs);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class MapBuilder {
      * @return MapItem
      */
     public static MapItem createItem(){
-        return new DefaultMapItem();
+        return new MapContext(CommonCRS.WGS84.normalizedGeographic());
     }
 
     /**
@@ -105,7 +105,7 @@ public final class MapBuilder {
         } catch (DataStoreException ex) {
             style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
-        final DefaultFeatureMapLayer maplayer = new DefaultFeatureMapLayer(collection, style);
+        final FeatureMapLayer maplayer = new FeatureMapLayer(collection, style);
         maplayer.setName(name);
         if (description != null) maplayer.setDescription(description);
         return maplayer;
@@ -118,7 +118,7 @@ public final class MapBuilder {
      * @return FeatureMapLayer
      */
     public static FeatureMapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style) {
-        return new DefaultFeatureMapLayer(collection, style);
+        return new FeatureMapLayer(collection, style);
     }
 
     /**
@@ -169,7 +169,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref){
-        return new DefaultCoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
+        return new CoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
     }
 
     /**
@@ -179,7 +179,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref, final MutableStyle style){
-        return new DefaultCoverageMapLayer(ref, style);
+        return new CoverageMapLayer(ref, style);
     }
 
     /**
@@ -192,26 +192,5 @@ public final class MapBuilder {
         CoverageMapLayer layer = createCoverageLayer(input);
         if (style != null) layer.setStyle(style);
         return layer;
-    }
-    /**
-     * Create a default elevation model based on a grid coverage reader.
-     *
-     * @param grid : Coverage reader holding elevation values
-     * @return ElevationModel
-     */
-    public static ElevationModel createElevationModel(final GridCoverageResource ref) throws DataStoreException {
-        return createElevationModel(ref, 130, 2, 55);
-    }
-
-    /**
-     * Create a default elevation model based on a grid coverage reader.
-     *
-     * @param grid : Coverage reader holding elevation values
-     * @param offset : expression used to modified on the fly the elevation value
-     * @param scale : a multiplication factor to use on the coverage values
-     * @return ElevationModel
-     */
-    public static ElevationModel createElevationModel(final GridCoverageResource ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws DataStoreException {
-        return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
  }

@@ -20,9 +20,11 @@ package org.geotoolkit.processing;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -212,7 +214,22 @@ public final class ProcessConsole {
         boolean displayHelp = false;
         boolean silent = false;
         String firstArg = args[0];
-        if ("-list".equalsIgnoreCase(firstArg) || "-l".equalsIgnoreCase(firstArg)) {
+        if (args.length == 1 && "-ui".equalsIgnoreCase(firstArg)) {
+            try {
+
+
+                Class<?> clazzfx = Class.forName("javafx.embed.swing.JFXPanel");
+                clazzfx.newInstance();
+                Class<?> clazz = Class.forName("org.geotoolkit.gui.javafx.process.FXExecutionPane");
+                Method fct = clazz.getMethod("show", Collection.class);
+                fct.invoke(null, registries);
+                System.exit(0);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                System.exit(1);
+            }
+            return;
+        } else if ("-list".equalsIgnoreCase(firstArg) || "-l".equalsIgnoreCase(firstArg)) {
             printList();
             return;
         } else if("-help".equalsIgnoreCase(firstArg) || "-h".equalsIgnoreCase(firstArg)) {
@@ -531,6 +548,7 @@ public final class ProcessConsole {
         print(BOLD,FOREGROUND_MAGENTA,"[global parameters]",RESET);
         print(BOLD,FOREGROUND_DEFAULT," [tool name] ",RESET);
         print(BOLD,FOREGROUND_GREEN,"[tool parameters]",RESET,"\n");
+        print(FOREGROUND_MAGENTA,"-ui ",RESET,"        : Display graphical interface (if Geotoolkit JavaFX module is available).\n");
         print(FOREGROUND_MAGENTA,"-list -l ",RESET,"   : Display list of available tools.\n");
         print(FOREGROUND_MAGENTA,"-help -h ",RESET,"   : Display help for a tool, must be followed by the tool name.\n");
         print(FOREGROUND_MAGENTA,"-silent -s ",RESET," : Silently execute tool (will not show the result).\n");

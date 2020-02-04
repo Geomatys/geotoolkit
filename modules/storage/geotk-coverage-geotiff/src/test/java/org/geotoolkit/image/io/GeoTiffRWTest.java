@@ -29,6 +29,7 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
@@ -36,9 +37,7 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
@@ -49,9 +48,9 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 
@@ -805,13 +804,13 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
 
         try{
             //first test
-            GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
+            GridCoverage coverage = reader.read(null);
 
             final File tempFile = File.createTempFile("coverage", ".tiff", tempDir);
             tempFile.deleteOnExit();
             final FileOutputStream stream = new FileOutputStream(tempFile);
 
-            final IIOImage iioimage = new IIOImage(coverage.getRenderedImage(), null, reader.getCoverageMetadata());
+            final IIOImage iioimage = new IIOImage(coverage.render(null), null, reader.getCoverageMetadata());
             final ImageWriter writer = ImageIO.getImageWritersByFormatName("geotiff").next();
             writer.setOutput(ImageIO.createImageOutputStream(stream));
             writer.write(null, iioimage, null);
@@ -833,7 +832,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
 
         try{
             //first test
-            GridCoverage2D coverage = reader.read(null);
+            GridCoverage coverage = reader.read(null);
             compare(coverage, crs, gridToCRS);
 
             //write it and test again
@@ -852,7 +851,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
         }
     }
 
-    private static void compare(final GridCoverage2D coverage,
+    private static void compare(final GridCoverage coverage,
             final CoordinateReferenceSystem crs, final AffineTransform gridToCRS){
         //test coordinate reference system
         final CoordinateReferenceSystem coverageCRS = coverage.getCoordinateReferenceSystem();
@@ -870,7 +869,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
         }
 
         //test transform
-        final AffineTransform2D rasterTrs = (AffineTransform2D) coverage.getGridGeometry().getGridToCRS(PixelOrientation.UPPER_LEFT);
+        final AffineTransform2D rasterTrs = (AffineTransform2D) coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
         final double[] matrixRaster = new double[6];
         rasterTrs.getMatrix(matrixRaster);
         final double[] matrixReference = new double[6];
@@ -882,11 +881,11 @@ final CoordinateReferenceSystem sourceCRS = CRS.fromWKT("PROJCS[\"NAD83 / Califo
     /**
      * Copy coverage, in new file and retest it later.
      */
-    private File write(final GridCoverage2D coverage, final SpatialMetadata metadata) throws IOException, CoverageStoreException{
+    private File write(final GridCoverage coverage, final SpatialMetadata metadata) throws IOException, DataStoreException{
         final File tempFile = File.createTempFile("coverage", ".tiff", tempDir);
         tempFile.deleteOnExit();
 
-        final IIOImage iioimage = new IIOImage(coverage.getRenderedImage(), null, metadata);
+        final IIOImage iioimage = new IIOImage(coverage.render(null), null, metadata);
         final ImageWriter writer = ImageIO.getImageWritersByFormatName("geotiff").next();
 //        final ImageWriter writer = new GeoTiffImageWriter(new GeoTiffImageWriter.Spi("TIFF"));
         writer.setOutput(tempFile);

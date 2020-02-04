@@ -19,7 +19,6 @@ package org.geotoolkit.storage.event;
 import java.awt.Point;
 import java.util.List;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.util.GenericName;
 
 /**

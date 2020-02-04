@@ -23,8 +23,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 
-import org.opengis.geometry.UnmodifiableGeometryException;
-
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
@@ -284,7 +282,7 @@ final class InfiniteRectangle2D extends Rectangle2D implements Serializable {
      */
     @Override
     public void setRect(double x, double y, double w, double h) {
-        throw new UnmodifiableGeometryException();
+        throw new UnsupportedOperationException();
     }
 
     /**

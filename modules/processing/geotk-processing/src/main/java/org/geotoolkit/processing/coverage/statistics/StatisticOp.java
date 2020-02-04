@@ -19,10 +19,10 @@ package org.geotoolkit.processing.coverage.statistics;
 import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.storage.coverage.ImageStatistics;
 
 /**
  *
@@ -43,12 +43,12 @@ public class StatisticOp extends Static {
      * Each Entry have a name ("min", "max") and values are an double[] for each bands.
      * @deprecated use {@link Statistics#analyse(java.awt.image.RenderedImage, boolean)}
      */
-    public static Map<String,Object> analyze(RenderedImage image) throws CoverageStoreException {
+    public static Map<String,Object> analyze(RenderedImage image) throws DataStoreException {
         try {
             final ImageStatistics analyse = Statistics.analyse(image, true);
             return toMap(analyse);
         } catch (ProcessException e) {
-            throw new CoverageStoreException(e.getMessage(), e);
+            throw new DataStoreException(e.getMessage(), e);
         }
     }
 

@@ -120,7 +120,11 @@ public class OwcDataStoreExtension extends OwcExtension {
         final List<Object> fieldList = offering.getOperationOrContentOrStyleSet();
         final String typeName = getTypeName(mapLayer);
         if (typeName != null) {
-            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),typeName));
+            fieldList.add(new ParameterType(KEY_DATANAME, String.class.getName(), typeName));
+        }
+        final String factoryName = getStoreFactoryName(mapLayer);
+        if (factoryName != null) {
+            fieldList.add(new ParameterType(KEY_STOREFACTORY, String.class.getName(), factoryName));
         }
 
         //write store creation parameters
@@ -138,7 +142,6 @@ public class OwcDataStoreExtension extends OwcExtension {
                 }
             }
         }
-
 
         return offering;
     }

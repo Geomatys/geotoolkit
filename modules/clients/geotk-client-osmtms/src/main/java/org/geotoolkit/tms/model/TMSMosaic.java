@@ -20,12 +20,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.multires.AbstractMosaic;
 import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.multires.Tile;
 import org.opengis.geometry.DirectPosition;
 
 /**
@@ -33,7 +34,7 @@ import org.opengis.geometry.DirectPosition;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class TMSMosaic extends AbstractMosaic{
+public class TMSMosaic extends AbstractMosaic {
 
     private final TMSPyramidSet set;
     private final int scaleLevel;
@@ -50,7 +51,7 @@ public class TMSMosaic extends AbstractMosaic{
     }
 
     @Override
-    protected boolean isWritable() throws CoverageStoreException {
+    protected boolean isWritable() throws DataStoreException {
         return false;
     }
 
@@ -62,6 +63,11 @@ public class TMSMosaic extends AbstractMosaic{
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         return set.getTiles(getPyramid(), this, positions, hints);
+    }
+
+    @Override
+    public Optional<Tile> anyTile() throws DataStoreException {
+        return Optional.ofNullable(getTile(0, 0, null));
     }
 
 }

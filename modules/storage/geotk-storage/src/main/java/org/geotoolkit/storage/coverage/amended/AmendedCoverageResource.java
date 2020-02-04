@@ -45,12 +45,11 @@ import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.storage.event.CoverageStoreManagementEvent;
+import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -399,7 +398,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
                 try {
                     queryEnv = Envelopes.transform(overrideGridGeometry.getEnvelope(),queryCrs);
                 } catch (TransformException ex) {
-                    throw new CoverageStoreException(ex.getMessage(), ex);
+                    throw new DataStoreException(ex.getMessage(), ex);
                 }
             }
 
@@ -410,7 +409,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
                     coverageRes = ReferencingUtilities.convertResolution(queryEnv, queryRes,
                             overrideGridGeometry.getCoordinateReferenceSystem());
                 } catch (TransformException ex) {
-                    throw new CoverageStoreException(ex.getMessage(), ex);
+                    throw new DataStoreException(ex.getMessage(), ex);
                 }
             }
 
@@ -423,7 +422,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
                 try {
                     coverageEnv = Envelopes.transform(queryEnv, overrideGridGeometry.getCoordinateReferenceSystem());
                 } catch (TransformException ex) {
-                    throw new CoverageStoreException(ex.getMessage(), ex);
+                    throw new DataStoreException(ex.getMessage(), ex);
                 }
             }
 
@@ -447,7 +446,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
                     ((GeneralEnvelope) coverageEnv).setCoordinateReferenceSystem(
                             originalGridGeometry.getCoordinateReferenceSystem());
                 } catch (TransformException ex) {
-                    throw new CoverageStoreException(ex);
+                    throw new DataStoreException(ex);
                 }
             }
 

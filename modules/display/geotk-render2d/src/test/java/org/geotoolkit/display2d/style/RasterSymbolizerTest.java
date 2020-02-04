@@ -22,22 +22,30 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -45,6 +53,9 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.util.FactoryException;
 
 /**
  * Test that raster symbolizer are properly rendered.
@@ -56,6 +67,81 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+
+    /**
+     * Render a coverage with :
+     * - 3 sample dimensions R,G,B
+     * - 1 byte per sample
+     * - Component color model
+     * - 1 raster, not tiled
+     */
+    @Test
+    public void renderRGB8BitsCoverage() throws FactoryException, PortrayalException {
+
+        final BufferedImage image = new BufferedImage(360, 180, BufferedImage.TYPE_INT_RGB);
+        image.setRGB(0, 0, Color.RED.getRGB());
+        image.setRGB(359, 0, Color.GREEN.getRGB());
+        image.setRGB(0, 179, Color.BLUE.getRGB());
+
+        final GridExtent extent = new GridExtent(360, 180);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, 1, 0, 0);
+        final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
+
+        /*
+         * We volontarely name samples 1,2,3 to avoid use of names as a hint.
+         */
+        final SampleDimension red = new SampleDimension.Builder().setName("1").build();
+        final SampleDimension green = new SampleDimension.Builder().setName("2").build();
+        final SampleDimension blue = new SampleDimension.Builder().setName("3").build();
+
+        final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(red,green,blue), image);
+
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
+
+        final CanvasDef cdef = new CanvasDef(grid);
+        final SceneDef sdef = new SceneDef(context);
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
+        assertEquals(Color.GREEN.getRGB(), result.getRGB(359, 0));
+        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 179));
+    }
+
+    /**
+     * Render a coverage with :
+     * - 3 sample dimensions R,G,B
+     * - 1 byte indexed color model
+     * - 1 raster, not tiled
+     */
+    @Test
+    public void renderRGBIndexedCoverage() throws FactoryException, PortrayalException {
+
+        final BufferedImage image = new BufferedImage(360, 180, BufferedImage.TYPE_BYTE_INDEXED);
+        image.setRGB(0, 0, Color.RED.getRGB());
+        image.setRGB(359, 0, Color.GREEN.getRGB());
+        image.setRGB(0, 179, Color.BLUE.getRGB());
+
+        final GridExtent extent = new GridExtent(360, 180);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, 1, 0, 0);
+        final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
+
+        /*
+         * We volontarely name samples 1 to avoid use of names as a hint.
+         */
+        final SampleDimension rgb = new SampleDimension.Builder().setName("1").build();
+
+        final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(rgb), image);
+
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
+
+        final CanvasDef cdef = new CanvasDef(grid);
+        final SceneDef sdef = new SceneDef(context);
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
+        assertEquals(Color.GREEN.getRGB(), result.getRGB(359, 0));
+        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 179));
+    }
 
     /**
      * Check proper image reprojection in UTM
@@ -75,12 +161,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         gridEnv.setRange(1, 0, 90);
 
         //create the coverage
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(gridEnv);
-        gcb.setName("myCoverage");
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
-
+        final GridCoverage coverage = new GridCoverage2D(gridEnv, null, img);
 
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
@@ -92,10 +173,10 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final Hints hints = new Hints();
         final SceneDef scenedef = new SceneDef(context,hints);
-        final ViewDef viewdef = new ViewDef(env);
-        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 800), Color.WHITE);
+        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 800), env);
+        canvasdef.setBackground(Color.WHITE);
 
-        final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
+        final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef);
         ImageIO.write(buffer, "PNG", new File("test.png"));
 
         //We should obtain a green triangle crossing the image looking like this :
@@ -129,4 +210,75 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
     }
 
 
+    /**
+     * Render a coverage with nearest and lanczos interpolation.
+     */
+    @Test
+    public void renderInterpolationCoverage() throws FactoryException, PortrayalException, IOException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final BufferedImage image = new BufferedImage(36, 18, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
+        g.setColor(Color.RED);
+        g.fillRect(0, 0, 18, 9);
+        g.setColor(Color.GREEN);
+        g.fillRect(18, 0, 18, 9);
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 9, 18, 9);
+        g.setColor(Color.YELLOW);
+        g.fillRect(18, 9, 18, 9);
+        g.dispose();
+
+        final GridExtent extent = new GridExtent(36, 18);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(10, 0, 0, -10, -180, 90);
+        final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
+
+        final SampleDimension red = new SampleDimension.Builder().setName("1").build();
+        final SampleDimension green = new SampleDimension.Builder().setName("2").build();
+        final SampleDimension blue = new SampleDimension.Builder().setName("3").build();
+        final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(red,green,blue), image);
+
+        final GridExtent queryextent = new GridExtent(360, 180);
+        final GeneralEnvelope queryenv = new GeneralEnvelope(crs);
+        queryenv.setRange(0, -180, 180);
+        queryenv.setRange(1, -90, 90);
+        final GridGeometry querygrid = new GridGeometry(queryextent, queryenv);
+
+
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
+
+        final BufferedImage nearest;
+        final BufferedImage bicubic;
+        final BufferedImage lanczos;
+        {
+            final Hints hints = new Hints();
+            hints.put(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR);
+            final CanvasDef cdef = new CanvasDef(querygrid);
+            final SceneDef sdef = new SceneDef(context, hints);
+            nearest = DefaultPortrayalService.portray(cdef, sdef);
+        }
+        {
+            final Hints hints = new Hints();
+            hints.put(GO2Hints.KEY_INTERPOLATION, InterpolationCase.BICUBIC2);
+            final CanvasDef cdef = new CanvasDef(querygrid);
+            final SceneDef sdef = new SceneDef(context, hints);
+            bicubic = DefaultPortrayalService.portray(cdef, sdef);
+        }
+        {
+            final Hints hints = new Hints();
+            hints.put(GO2Hints.KEY_INTERPOLATION, InterpolationCase.LANCZOS);
+            final CanvasDef cdef = new CanvasDef(querygrid);
+            final SceneDef sdef = new SceneDef(context, hints);
+            lanczos = DefaultPortrayalService.portray(cdef, sdef);
+        }
+
+        int nearestRgb = nearest.getRGB(179, 0);
+        int bicubicRgb = bicubic.getRGB(179, 0);
+        int naczosRgb = lanczos.getRGB(179, 0);
+
+        assertTrue(nearestRgb != bicubicRgb);
+        assertTrue(bicubicRgb != naczosRgb);
+    }
 }

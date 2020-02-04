@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import org.apache.commons.lang.StringEscapeUtils;
-
 import static org.geotoolkit.wps.xml.WPSUtilities.CDATA_START_TAG;
 
 /**
@@ -45,7 +44,9 @@ public class NoCharacterEscapeHandler implements CharacterEscapeHandler {
             }
         }
 
-        String escapedString = StringEscapeUtils.escapeXml(new String(Arrays.copyOfRange(buf, start, len)));
+        String string = new String(Arrays.copyOfRange(buf, start, len));
+
+        String escapedString = StringEscapeUtils.escapeXml(string);
         out.write(escapedString);
 
     }

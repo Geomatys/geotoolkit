@@ -38,7 +38,6 @@ public interface MapLayer extends MapItem {
     public static final String SELECTABLE_PROPERTY = "selectable";
     public static final String QUERY_PROPERTY = "query";
     public static final String BOUNDS_PROPERTY = "bounds";
-    public static final String ELEVATION_PROPERTY = "elevation";
     public static final String SELECTION_FILTER_PROPERTY = "selection_filter";
     public static final String SELECTION_STYLE_PROPERTY = "selection_style";
 
@@ -127,21 +126,6 @@ public interface MapLayer extends MapItem {
      * @return - the layer's bounds
      */
     Envelope getBounds();
-
-    /**
-     * Returns the Elevation model to use for this layer.
-     * If no elevation model is set, then we should use the data elevation values
-     * if they exists.
-     *
-     * @return ElevationModel or null if none
-     */
-    ElevationModel getElevationModel();
-
-    /**
-     * set the elevation model of this layer.
-     * @param model , can be null
-     */
-    void setElevationModel(ElevationModel model);
 
     /**
      * Returns the living list of all graphic builders linked to this

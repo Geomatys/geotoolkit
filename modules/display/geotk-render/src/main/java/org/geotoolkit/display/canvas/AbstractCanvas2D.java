@@ -36,10 +36,39 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
-import javax.measure.quantity.Length;
 import javax.measure.Unit;
-
+import javax.measure.quantity.Length;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.PixelTranslation;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.referencing.provider.Affine;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultDerivedCRS;
+import org.apache.sis.referencing.operation.DefaultConversion;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Loggings;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -49,33 +78,11 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Classes;
-import org.apache.sis.referencing.crs.DefaultDerivedCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.referencing.provider.Affine;
-import org.apache.sis.referencing.operation.DefaultConversion;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Loggings;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
-import org.apache.sis.measure.Units;
 
 /**
  *
@@ -110,27 +117,9 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * {@linkplain AbstractCanvas2D#getObjectiveCRS canvas crs} changed.
+     * {@linkplain AbstractCanvas2D#getGridGeometry geometry} changed.
      */
-    public static final String OBJECTIVE_CRS_KEY = "ObjectiveCRS";
-
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * {@linkplain AbstractCanvas2D#getEnvelope } changed.
-     */
-    public static final String ENVELOPE_KEY = "Envelope";
-
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * {@linkplain AbstractCanvas2D#getObjectiveToDisplay transform} changed.
-     */
-    public static final String TRANSFORM_KEY = "Transform";
-
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * {@linkplain AbstractCanvas2D#getDisplayBounds rectangle} changed.
-     */
-    public static final String BOUNDS_KEY = "Bounds";
+    public static final String GRIDGEOMETRY_KEY = "GridGeometry";
 
     /**
      * A set of {@link MathTransform}s from various source CRS. The target CRS must be the
@@ -141,21 +130,10 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      */
     private final transient Map<CoordinateReferenceSystem,MathTransform> transforms = new HashMap<>();
 
-    /**
-     * Contains the canvas bounds.
-     */
-    private final Rectangle2D displayBounds = new Rectangle2D.Double(0,0,1,1);
-    private final AffineTransform objToDisp = new AffineTransform();
-    private CoordinateReferenceSystem objectiveCRS;
-    private CoordinateReferenceSystem objectiveCRS2D;
-    private double proportion = 1;
+    private GridGeometry gridGeometry = new GridGeometry(new GridExtent(360, 180), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()));
+    private GridGeometry2D gridGeometry2d = new GridGeometry2D(gridGeometry);
+    private boolean proportion = true;
     private boolean autoRepaint = false;
-
-    private GeneralEnvelope envelope;
-
-    //navigation constraint
-    private double minscale = Double.NaN;
-    private double maxscale = Double.NaN;
 
     public AbstractCanvas2D() {
         this(new Hints());
@@ -168,91 +146,136 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     public AbstractCanvas2D(CoordinateReferenceSystem crs, Hints hints) {
         super(hints);
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
-        objectiveCRS = crs;
-        try {
-            objectiveCRS2D = CRSUtilities.getCRS2D(objectiveCRS);
-        } catch (TransformException ex) {
-            getLogger().log(Level.WARNING, null, ex);
+
+        final int idx = getHorizontalIndex(crs);
+        final int dim = crs.getCoordinateSystem().getDimension();
+        final long[] low = new long[dim];
+        final long[] high = new long[dim];
+        high[idx] = 100;
+        high[idx+1] = 100;
+        final GridExtent extent = new GridExtent(null, low, high, true);
+        final MatrixSIS matrix = Matrices.createDiagonal(dim+1, dim+1);
+        final LinearTransform gridToCrs = MathTransforms.linear(matrix);
+        gridGeometry = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, crs);
+    }
+
+    /**
+     * NOTE : this is an incomplete gridGeometry, do not use it yet.
+     *
+     * Get global N dimension grid geometry.
+     * @return GridGeometry, never null
+     */
+    public final GridGeometry getGridGeometry() {
+        return gridGeometry;
+    }
+
+    /**
+     *
+     * Set global N dimension grid geometry.
+     * @param gridGeometry new grid geometry
+     */
+    public final void setGridGeometry(GridGeometry gridGeometry) throws FactoryException {
+        ArgumentChecks.ensureNonNull("gridGeometry", gridGeometry);
+        if (this.gridGeometry.equals(gridGeometry)) return;
+        final GridGeometry old = this.gridGeometry;
+        this.gridGeometry = gridGeometry;
+        firePropertyChange(GRIDGEOMETRY_KEY, old, gridGeometry);
+
+        {
+            final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+            if (crs.getCoordinateSystem().getDimension() == 2) {
+                gridGeometry2d = new GridGeometry2D(gridGeometry);
+            } else {
+                final CoordinateReferenceSystem crs2d = getHorizontalComponent(crs);
+                final int idx = getHorizontalIndex(crs);
+                final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
+                final TransformSeparator sep = new TransformSeparator(gridToCRS);
+                sep.addTargetDimensions(idx, idx+1);
+                final MathTransform gridToCRS2D = sep.separate();
+
+                //we are expecting axis index to be preserved from grid to crs
+                final GridExtent extent = gridGeometry.getExtent().reduce(idx, idx+1);
+                gridGeometry2d = new GridGeometry2D(extent, PixelInCell.CELL_CENTER, gridToCRS2D, crs2d);
+            }
         }
-        envelope = new GeneralEnvelope(objectiveCRS);
+        repaintIfAuto();
     }
 
-    public CoordinateReferenceSystem getObjectiveCRS() {
-        return objectiveCRS;
+    /**
+     * Get 2 dimension grid geometry.
+     * This grid geometry only has the 2D CRS part of the global grid geometry.
+     *
+     * @return GridGeometry 2D, never null
+     */
+    public final GridGeometry getGridGeometry2D() {
+        return gridGeometry2d;
     }
 
-    public void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException{
+    public final CoordinateReferenceSystem getObjectiveCRS() {
+        return gridGeometry.getCoordinateReferenceSystem();
+    }
+
+    public final void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException, FactoryException {
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
-        if(Utilities.equalsIgnoreMetadata(objectiveCRS, crs)){
+        if (Utilities.equalsIgnoreMetadata(gridGeometry.getCoordinateReferenceSystem(), crs)) {
             return;
         }
 
         //store the visible area to restore it later
-        GeneralEnvelope preserve = null;
-        if(!displayBounds.isEmpty()){
-            preserve = new GeneralEnvelope(envelope);
-        }
+        final GeneralEnvelope preserve = new GeneralEnvelope(gridGeometry.getEnvelope());
 
-        try {
-            resetTransform();
-        } catch (NoninvertibleTransformException ex) {
-            throw new TransformException("Fail to change objective CRS", ex);
-        }
+        final int newDim = crs.getCoordinateSystem().getDimension();
+        final Envelope env = ReferencingUtilities.transform(preserve, crs);
+        final int oldidx = getHorizontalIndex(gridGeometry.getCoordinateReferenceSystem());
+        final int idx = getHorizontalIndex(crs);
+        final GridExtent oldExtent = gridGeometry.getExtent();
+        final long[] oldlow = oldExtent.getLow().getCoordinateValues();
+        final long[] oldhigh = oldExtent.getHigh().getCoordinateValues();
+        final long[] low = new long[newDim];
+        final long[] high = new long[newDim];
+        low[idx] = oldlow[oldidx];
+        low[idx+1] = oldlow[oldidx+1];
+        high[idx] = oldhigh[oldidx];
+        high[idx+1] = oldhigh[oldidx+1];
+        final GridExtent extent = new GridExtent(null, low, high, true);
 
-        final CoordinateReferenceSystem oldCRS = objectiveCRS;
-        objectiveCRS = crs;
-        envelope = new GeneralEnvelope(objectiveCRS);
-        objectiveCRS2D = CRSUtilities.getCRS2D(objectiveCRS);
-        firePropertyChange(OBJECTIVE_CRS_KEY, oldCRS, crs);
-
-        if(preserve != null){
-            //restore previous visible area
-            GeneralEnvelope env = new GeneralEnvelope(Envelopes.transform(preserve, objectiveCRS2D));
-            if(!isValid(env)) env = null;
-
-            //try to normalize before reproject
-            if(env == null && preserve.normalize()){
-                env = new GeneralEnvelope(Envelopes.transform(preserve, objectiveCRS2D));
-            }
-            if(!isValid(env)) env = null;
-
-            //try to reduce to domain before reproject
-            if(env == null){
-                final Envelope domain = CRS.getDomainOfValidity(preserve.getCoordinateReferenceSystem());
-                if(domain != null){
-                    preserve.intersect(domain);
-                    env = new GeneralEnvelope(Envelopes.transform(preserve, objectiveCRS2D));
-                }
-            }
-            if(!isValid(env)) env = null;
-
-            //fall back on crs domain
-            if(env == null){
-                final Envelope domain = CRS.getDomainOfValidity(objectiveCRS2D);
-                if(domain!=null){
-                    env = new GeneralEnvelope(domain);
-                }
-            }
-
-            try {
-                if(env != null){
-                    setVisibleArea(env);
-                }else{
-                    //what can we do ?
-                }
-
-            } catch (NoninvertibleTransformException ex) {
-                throw new TransformException("Fail to change objective CRS", ex);
-            }
-        }
-
+        GridGeometry gridGeometry = new GridGeometry(extent, env);
+        gridGeometry = preserverRatio(gridGeometry);
+        setGridGeometry(gridGeometry);
     }
 
-    public CoordinateReferenceSystem getObjectiveCRS2D() {
-        return objectiveCRS2D;
+    private GridGeometry preserverRatio(GridGeometry gridGeometry) {
+        if (proportion) {
+            final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+            final GridExtent extent = gridGeometry.getExtent();
+            final Envelope envelope = gridGeometry.getEnvelope();
+            final int idx = getHorizontalIndex(crs);
+            final long width = extent.getSize(idx);
+            final long height = extent.getSize(idx+1);
+            final double sx = envelope.getSpan(idx) / width;
+            final double sy = envelope.getSpan(idx+1) / height;
+            if (sx != sy) {
+                final GeneralEnvelope env = new GeneralEnvelope(envelope);
+                if (sx < sy) {
+                    double halfSpan = (sy * width / 2.0);
+                    double median = env.getMedian(idx);
+                    env.setRange(idx, median - halfSpan, median + halfSpan);
+                } else {
+                    double halfSpan = (sx * height / 2.0);
+                    double median = env.getMedian(idx+1);
+                    env.setRange(idx+1, median - halfSpan, median + halfSpan);
+                }
+                gridGeometry = new GridGeometry(extent, env);
+            }
+        }
+        return gridGeometry;
     }
 
-    public CoordinateReferenceSystem getDisplayCRS() {
+    public final CoordinateReferenceSystem getObjectiveCRS2D() {
+        return getHorizontalComponent(getObjectiveCRS());
+    }
+
+    public final CoordinateReferenceSystem getDisplayCRS() {
         /*
          * TODO: will need a way to avoid the cast below. In my understanding, DerivedCRS may not be the appropriate
          *       CRS to create after all, because in ISO 19111 a DerivedCRS is more than just a base CRS with a math
@@ -271,38 +294,70 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     /**
-     * @return a snapshot objective To display transform.
+     * @return a snapshot objective To display transform, in Pixel CENTER
      */
-    public AffineTransform2D getObjectiveToDisplay() {
-        return new AffineTransform2D(objToDisp);
+    public final AffineTransform2D getObjectiveToDisplay() {
+        try {
+            MathTransform gridToCRS = getGridGeometry2D().getGridToCRS(PixelInCell.CELL_CENTER);
+            return (AffineTransform2D) gridToCRS.inverse();
+        } catch (org.opengis.referencing.operation.NoninvertibleTransformException ex) {
+            throw new IllegalStateException(ex.getMessage(), ex);
+        }
     }
 
-    public AffineTransform2D getDisplayToObjective() throws NoninvertibleTransformException {
-        return new AffineTransform2D(objToDisp.createInverse());
+    public final AffineTransform2D getDisplayToObjective() throws NoninvertibleTransformException {
+        MathTransform gridToCRS = getGridGeometry2D().getGridToCRS(PixelInCell.CELL_CENTER);
+        return (AffineTransform2D) gridToCRS;
     }
 
-    public Rectangle2D getDisplayBounds() {
-        return displayBounds.getBounds2D();
+    public final Rectangle2D getDisplayBounds() {
+
+        final GridGeometry gridGeometry = getGridGeometry();
+        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+        final int idx = getHorizontalIndex(crs);
+
+        //we are expecting axis index to be preserved from grid to crs
+        final GridExtent extent = gridGeometry.getExtent().reduce(idx, idx+1);
+
+        final Rectangle2D.Double bounds = new Rectangle2D.Double();
+        bounds.x = extent.getLow(0);
+        bounds.y = extent.getLow(1);
+        bounds.width = extent.getSize(0);
+        bounds.height = extent.getSize(1);
+        return bounds;
     }
 
-    public void setDisplayBounds(Rectangle2D bounds){
+    public void setDisplayBounds(Rectangle2D bounds) {
         ArgumentChecks.ensureNonNull("Display bounds", bounds);
-        if(bounds.equals(displayBounds)) return;
 
-        final Rectangle2D oldRec = displayBounds.getBounds2D();
-        this.displayBounds.setRect(bounds);
+        final GridGeometry gridGeometry = getGridGeometry();
+        final GridExtent extent = gridGeometry.getExtent();
+        final int idx = getHorizontalIndex(gridGeometry.getCoordinateReferenceSystem());
 
-        //fire event
-        firePropertyChange(BOUNDS_KEY, oldRec, bounds.getBounds2D());
+        final long[] low = extent.getLow().getCoordinateValues();
+        low[idx] = (long) bounds.getMinX();
+        low[idx+1] = ((long) bounds.getMinY());
+        final long[] high = extent.getHigh().getCoordinateValues();
+        high[idx] = ((long) bounds.getMaxX()) - 1;
+        high[idx+1] = ((long) bounds.getMaxY()) - 1;
+        final GridExtent newExt = new GridExtent(null, low, high, true);
+
+        final GridGeometry newGrid = new GridGeometry(newExt, PixelInCell.CELL_CENTER, gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER), gridGeometry.getCoordinateReferenceSystem());
+        try {
+            setGridGeometry(newGrid);
+        } catch (FactoryException ex) {
+            //we are just changing the size, this should not cause the exception
+            //should not happen with current parameters
+            throw new BackingStoreException(ex.getMessage(), ex);
+        }
     }
 
     /**
      * Set the proportions support between X and Y axis.
-     * if prop = Double.NaN then no correction will be applied
-     * if prop = 1 then one unit in X will be equal to one unit in Y
-     * else value will mean that prop*Y will be used
+     * if false then no correction will be applied
+     * if true then one unit in X will be equal to one unit in Y
      */
-    public void setAxisProportions(final double prop) {
+    public final void setAxisProportions(final boolean prop) {
         this.proportion = prop;
     }
 
@@ -310,15 +365,15 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      *
      * @return the X/Y proportion
      */
-    public double getAxisProportions() {
+    public final boolean getAxisProportions() {
         return proportion;
     }
 
-    public void setAutoRepaint(final boolean autoRepaint) {
+    public final void setAutoRepaint(final boolean autoRepaint) {
         this.autoRepaint = autoRepaint;
     }
 
-    public boolean isAutoRepaint() {
+    public final boolean isAutoRepaint() {
         return autoRepaint;
     }
 
@@ -331,84 +386,30 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      *         {@code change} is the identity transform, then this method does nothing and
      *         listeners are not notified.
      */
-    public void applyTransform(AffineTransform change){
+    public final void applyTransform(AffineTransform change){
         if(change.isIdentity()) return;
+        AffineTransform objToDisp = new AffineTransform(getObjectiveToDisplay());
         objToDisp.concatenate(change);
         XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
 
-        fixScale:
-        if(!Double.isNaN(minscale) || !Double.isNaN(maxscale)){
-            double scale = CanvasUtilities.computeSEScale(envelope, objToDisp, getDisplayBounds().getBounds());
-
-            final Point2D center = getDisplayCenter();
-            if(center== null) break fixScale;
-            final double centerX = center.getX();
-            final double centerY = center.getY();
-
-            try {
-                change = objToDisp.createInverse();
-            } catch (NoninvertibleTransformException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-                break fixScale;
-            }
-
-            double correction = Double.NaN;
-            if(!Double.isNaN(maxscale) && scale>maxscale){
-                correction = scale/maxscale;
-
-            }
-            if(!Double.isNaN(minscale) && scale<minscale){
-                correction = scale/minscale;
-            }
-
-            if(!Double.isNaN(correction)){
-                change.translate(+centerX, +centerY);
-                change.scale(correction, correction);
-                change.translate(-centerX, -centerY);
-                change.concatenate(objToDisp);
-
-                objToDisp.concatenate(change);
-                XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
-            }
-
-        }
-
-        firePropertyChange(TRANSFORM_KEY, null, change);
-        updateEnvelope();
-        repaintIfAuto();
-    }
-
-    private void updateEnvelope() {
-        final Rectangle2D canvasDisplayBounds = getDisplayBounds();
-        final Rectangle2D canvasObjectiveBounds;
-        try {
-            canvasObjectiveBounds = objToDisp.createInverse().createTransformedShape(canvasDisplayBounds).getBounds2D();
-        } catch (NoninvertibleTransformException ex) {
-            getLogger().log(Level.SEVERE, "Failed to calculate canvas objective bounds", ex);
-            return;
-        }
-        final Envelope old = new GeneralEnvelope(envelope);
-        envelope.setRange(0, canvasObjectiveBounds.getMinX(), canvasObjectiveBounds.getMaxX());
-        envelope.setRange(1, canvasObjectiveBounds.getMinY(), canvasObjectiveBounds.getMaxY());
-
-        firePropertyChange(ENVELOPE_KEY, old, envelope.clone());
+        setTransform(objToDisp);
     }
 
     /**
      * Change a range in the canvas envelope.
      * Can be used to temporal or elevation range of the map.
      */
-    private void setRange(final int ordinate, final double min, final double max){
-        if(envelope.getMinimum(ordinate) == min && envelope.getMaximum(ordinate) == max){
+    private void setRange(final int ordinate, final double min, final double max) throws FactoryException{
+        GeneralEnvelope envelope = new GeneralEnvelope(gridGeometry.getEnvelope());
+        if (envelope.getMinimum(ordinate) == min && envelope.getMaximum(ordinate) == max) {
             //same values
             return;
         }
-
-        final GeneralEnvelope old = new GeneralEnvelope(envelope);
         envelope.setRange(ordinate, min, max);
-        final GeneralEnvelope nw = new GeneralEnvelope(envelope);
-        repaintIfAuto();
-        firePropertyChange(ENVELOPE_KEY, old, nw);
+
+        final GridExtent extent = gridGeometry.getExtent();
+        final GridGeometry newgrid = new GridGeometry(extent, envelope);
+        setGridGeometry(newgrid);
     }
 
     /**
@@ -419,7 +420,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @return true if a data has been painted
      */
     public final boolean repaint(){
-        return repaint(displayBounds);
+        return repaint(getDisplayBounds());
     }
 
     /**
@@ -432,63 +433,50 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     public abstract boolean repaint(Shape area);
 
     private void repaintIfAuto(){
-        if(autoRepaint){
+        if (autoRepaint) {
             repaint();
         }
     }
 
     public abstract Image getSnapShot();
 
-    /**
-     * Set minimum scale do display.
-     * Scale is in SE scale.
-     */
-    public void setMinscale(double minscale) {
-        this.minscale = minscale;
-    }
-
-    /**
-     * Get minimum scale do display.
-     * Scale is in SE scale.
-     * @return min scale
-     */
-    public double getMinscale() {
-        return minscale;
-    }
-
-    /**
-     * Set maximum scale do display.
-     * Scale is in SE scale.
-     */
-    public void setMaxscale(double maxscale) {
-        this.maxscale = maxscale;
-    }
-
-    /**
-     * Get maximum scale do display.
-     * Scale is in SE scale.
-     * @return max scale
-     */
-    public double getMaxscale() {
-        return maxscale;
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // Next methods are convinient methods which always end up by calling applyTransform(trs)
     ////////////////////////////////////////////////////////////////////////////
 
-    private void setTransform(final AffineTransform transform){
+    private void setTransform(final AffineTransform objToDisp) {
         final AffineTransform2D old = getObjectiveToDisplay();
 
-        if(!old.equals(transform)){
-            objToDisp.setTransform(transform);
-            updateEnvelope();
-            repaintIfAuto();
-        }
-    }
+        if (!old.equals(objToDisp)) {
+            try {
+                final GridGeometry gridGeometry = getGridGeometry();
+                final GridExtent extent = gridGeometry.getExtent();
+                final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+                final int idx = getHorizontalIndex(crs);
+                final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
 
-    private void resetTransform() throws NoninvertibleTransformException{
-        resetTransform(new Rectangle(1, 1), true, false);
+                final List<MathTransform> components = new ArrayList<>();
+                if (idx > 0) {
+                    final TransformSeparator sep = new TransformSeparator(gridToCRS);
+                    sep.addSourceDimensionRange(0, idx);
+                    sep.addTargetDimensionRange(0, idx);
+                    components.add(sep.separate());
+                }
+                components.add(new AffineTransform2D(objToDisp).inverse());
+                if (idx+2 < extent.getDimension()) {
+                    final TransformSeparator sep = new TransformSeparator(gridToCRS);
+                    sep.addSourceDimensionRange(idx+2, extent.getDimension());
+                    sep.addTargetDimensionRange(idx+2, extent.getDimension());
+                    components.add(sep.separate());
+                }
+
+                final MathTransform newGridToCrs = MathTransforms.compound(components.toArray(new MathTransform[components.size()]));
+                final GridGeometry newGrid = new GridGeometry(extent, PixelInCell.CELL_CENTER, newGridToCrs, crs);
+                setGridGeometry(newGrid);
+            } catch (FactoryException | org.opengis.referencing.operation.NoninvertibleTransformException ex) {
+                throw new RuntimeException(ex.getMessage(), ex);
+            }
+        }
     }
 
     /**
@@ -497,9 +485,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * point upwards.  The value {@code false} lets it point downwards. This method is offered
      * for convenience sake for derived classes which want to redefine {@link #reset()}.
      *
-     * @param canvasBounds Coordinates, in pixels, of the screen space in which to draw.
-     *        This argument will usually be
-     *        <code>{@link #getZoomableBounds(Rectangle) getZoomableBounds}(null)</code>.
      * @param yAxisUpward {@code true} if the <var>y</var> axis should point upwards rather than
      *        downwards.
      */
@@ -507,24 +492,26 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
                          final boolean preserveRotation) throws NoninvertibleTransformException{
 
         final Rectangle canvasBounds = getDisplayBounds().getBounds();
-        if(canvasBounds.isEmpty()) return;
-        if(!isValid(preferredArea)) return;
+        if (canvasBounds.isEmpty()) return;
+        if (!isValid(preferredArea)) return;
 
         canvasBounds.x = 0;
         canvasBounds.y = 0;
 
+        AffineTransform objToDisp = new AffineTransform();
         final double rotation = -AffineTransforms2D.getRotation(objToDisp);
 
         if (yAxisUpward) {
             objToDisp.setToScale(+1, -1);
-        }else {
+        } else {
             objToDisp.setToIdentity();
         }
 
-        final AffineTransform transform = setVisibleArea(preferredArea, canvasBounds);
+        final AffineTransform transform = setVisibleArea(objToDisp, preferredArea, canvasBounds);
         objToDisp.concatenate(transform);
 
-        if(preserveRotation){
+        if (preserveRotation) {
+            final Rectangle2D displayBounds = getDisplayBounds();
             final double centerX = displayBounds.getCenterX();
             final double centerY = displayBounds.getCenterY();
             final AffineTransform change = objToDisp.createInverse();
@@ -537,24 +524,16 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             XAffineTransform.roundIfAlmostInteger(change, EPS);
             objToDisp.concatenate(change);
         }
-        updateEnvelope();
-        firePropertyChange(TRANSFORM_KEY, null, null);
-        repaintIfAuto();
+
+        //transform is in corner at this point, conver it to pixel center
+        final AffineTransform dispToObj = new AffineTransform(objToDisp);
+        dispToObj.invert();
+        AffineTransform translate = new AffineTransform( (AffineTransform) PixelTranslation.translate(new AffineTransform2D(dispToObj), PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER));
+        translate.invert();
+        setTransform(translate);
     }
 
     //convinient method -----------------------------------------
-
-    private static boolean isValid(GeneralEnvelope env){
-        if(env == null) return false;
-
-        if(env.isAllNaN() || env.isEmpty()) return false;
-
-        if(Double.isInfinite(env.getMinimum(0)) || Double.isInfinite(env.getMinimum(1)) ||
-           Double.isInfinite(env.getMaximum(0)) || Double.isInfinite(env.getMaximum(1)) ){
-            return false;
-        }
-        return true;
-    }
 
     /**
      * Checks whether the rectangle {@code rect} is valid.  The rectangle
@@ -588,7 +567,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @return Change to apply to the affine transform {@link #zoom}.
      * @throws IllegalArgumentException if {@code source} is empty.
      */
-    private AffineTransform setVisibleArea(final Rectangle2D source, Rectangle2D dest)
+    private AffineTransform setVisibleArea(AffineTransform objToDisp, final Rectangle2D source, Rectangle2D dest)
                                            throws IllegalArgumentException,NoninvertibleTransformException{
         /*
          * Verifies the validity of the source rectangle. An invalid rectangle will be rejected.
@@ -617,9 +596,9 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
 
         //switch among the Axis proportions requested
-        if( Double.isNaN(proportion) ){
+        if (!proportion) {
             //we dont respect X/Y proportions
-        }else if( proportion == 1){
+        } else {
             /*
              * Standardizes the horizontal and vertical scales,
              * if such a standardization has been requested.
@@ -629,8 +608,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             } else if (sx * sourceHeight < destHeight) {
                 sy = sx;
             }
-        }else{
-            sy = proportion*sx;
         }
 
         final AffineTransform change = AffineTransform.getTranslateInstance(dest.getCenterX(),dest.getCenterY());
@@ -763,7 +740,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         translateObjective(diffX, diffY);
     }
 
-    public Point2D getDisplayCenter() {
+    public final Point2D getDisplayCenter() {
         final Rectangle2D rect = getDisplayBounds();
         return new Point2D.Double(rect.getCenterX(), rect.getCenterY());
     }
@@ -771,24 +748,24 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     /**
      * @return visible envelope of the canvas, in Objective CRS
      */
-    public Envelope getVisibleEnvelope() {
-        return new GeneralEnvelope(envelope);
+    public final Envelope getVisibleEnvelope() {
+        return gridGeometry.getEnvelope();
     }
 
     /**
      * @return visible envelope of the canvas, in Objective CRS 2D
      * @throws org.opengis.referencing.operation.TransformException
      */
-    public Envelope getVisibleEnvelope2D() throws TransformException {
+    public final Envelope getVisibleEnvelope2D() throws TransformException {
         final CoordinateReferenceSystem objectiveCRS2D = getObjectiveCRS2D();
         return Envelopes.transform(getVisibleEnvelope(), objectiveCRS2D);
     }
 
-    public void rotate(final double r) throws NoninvertibleTransformException {
+    public final void rotate(final double r) throws NoninvertibleTransformException {
         rotate(r, getDisplayCenter());
     }
 
-    public void rotate(final double r, final Point2D center) throws NoninvertibleTransformException {
+    public final void rotate(final double r, final Point2D center) throws NoninvertibleTransformException {
         final AffineTransform2D objToDisp = getObjectiveToDisplay();
         final AffineTransform change = objToDisp.createInverse();
 
@@ -811,14 +788,14 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @param s : multiplication scale factor
      * @throws java.awt.geom.NoninvertibleTransformException
      */
-    public void scale(final double s) throws NoninvertibleTransformException {
+    public final void scale(final double s) throws NoninvertibleTransformException {
         scale(s, getDisplayCenter());
     }
 
     /**
      * @param center in Display CRS
      */
-    public void scale(final double s, final Point2D center) throws NoninvertibleTransformException {
+    public final void scale(final double s, final Point2D center) throws NoninvertibleTransformException {
         final AffineTransform2D objToDisp = getObjectiveToDisplay();
         final AffineTransform change = objToDisp.createInverse();
 
@@ -842,7 +819,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @param y : translation against the Y axy
      * @throws java.awt.geom.NoninvertibleTransformException
      */
-    public void translateDisplay(final double x, final double y) throws NoninvertibleTransformException {
+    public final void translateDisplay(final double x, final double y) throws NoninvertibleTransformException {
         final AffineTransform2D objToDisp = getObjectiveToDisplay();
         final AffineTransform change = objToDisp.createInverse();
         change.translate(x, y);
@@ -851,7 +828,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         applyTransform(change);
     }
 
-    public void translateObjective(final double x, final double y) throws NoninvertibleTransformException, TransformException {
+    public final void translateObjective(final double x, final double y) throws NoninvertibleTransformException, TransformException {
         final Point2D dispCenter = getDisplayCenter();
         final DirectPosition center = getObjectiveCenter();
         Point2D objCenter = new Point2D.Double(center.getOrdinate(0) + x, center.getOrdinate(1) + y);
@@ -869,7 +846,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      *
      * @since 2.1
      */
-    public void transformPixels(final AffineTransform change) {
+    public final void transformPixels(final AffineTransform change) {
         if (!change.isIdentity()) {
             final AffineTransform2D objToDisp = getObjectiveToDisplay();
             final AffineTransform logical;
@@ -885,16 +862,16 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
     }
 
-    public void setRotation(final double r) throws NoninvertibleTransformException {
+    public final void setRotation(final double r) throws NoninvertibleTransformException {
         double rotation = getRotation();
         rotate(rotation - r);
     }
 
-    public double getRotation() {
+    public final double getRotation() {
         return -AffineTransforms2D.getRotation(getObjectiveToDisplay());
     }
 
-    public void setScale(final double newScale) throws NoninvertibleTransformException {
+    public final void setScale(final double newScale) throws NoninvertibleTransformException {
         final double oldScale = XAffineTransform.getScale(getObjectiveToDisplay());
         scale(newScale / oldScale);
     }
@@ -912,7 +889,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      *
      * @return scale
      */
-    public double getScale() {
+    public final double getScale() {
         return XAffineTransform.getScale(getObjectiveToDisplay());
     }
 
@@ -920,11 +897,11 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Get objective to display transform at canvas center.
      * @return AffineTransform
      */
-    public AffineTransform getCenterTransform(){
+    public final AffineTransform getCenterTransform(){
         final Rectangle2D rect = getDisplayBounds();
         final double centerX = rect.getCenterX();
         final double centerY = rect.getCenterY();
-        final AffineTransform trs = new AffineTransform(1, 0, 0, 1, -centerX, -centerY);
+        final AffineTransform trs = new AffineTransform(1, 0, 0, 1, -centerX + 0.5, -centerY + 0.5);
         final AffineTransform objToDisp = getObjectiveToDisplay().clone();
         trs.concatenate(objToDisp);
         return trs;
@@ -933,18 +910,17 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     /**
      * Set objective to display transform at canvas center.
      */
-    public void setCenterTransform(AffineTransform trs) {
+    public final void setCenterTransform(AffineTransform trs) {
 
         final Rectangle2D rect = getDisplayBounds();
         final double centerX = rect.getCenterX();
         final double centerY = rect.getCenterY();
-        final AffineTransform centerTrs = new AffineTransform(1, 0, 0, 1, centerX, centerY);
+        final AffineTransform centerTrs = new AffineTransform(1, 0, 0, 1, centerX - 0.5, centerY - 0.5);
         centerTrs.concatenate(trs);
-
         setTransform(centerTrs);
     }
 
-    public void setDisplayVisibleArea(final Rectangle2D dipsEnv) {
+    public final void setDisplayVisibleArea(final Rectangle2D dipsEnv) {
         try {
             Shape shp = getObjectiveToDisplay().createInverse().createTransformedShape(dipsEnv);
             setVisibleArea(shp.getBounds2D());
@@ -954,15 +930,15 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public void setVisibleArea(final Envelope env) throws NoninvertibleTransformException, TransformException {
-        if(env == null) return;
+        if (env == null) return;
         final CoordinateReferenceSystem envCRS = env.getCoordinateReferenceSystem();
-        if(envCRS == null) return;
+        if (envCRS == null) return;
         final CoordinateReferenceSystem envCRS2D = CRSUtilities.getCRS2D(envCRS);
         Envelope env2D = Envelopes.transform(env, envCRS2D);
 
         //check that the provided envelope is in the canvas crs
         final CoordinateReferenceSystem canvasCRS2D = getObjectiveCRS2D();
-        if(!Utilities.equalsIgnoreMetadata(canvasCRS2D,envCRS2D)){
+        if (!Utilities.equalsIgnoreMetadata(canvasCRS2D,envCRS2D)) {
             env2D = Envelopes.transform(env2D, canvasCRS2D);
         }
 
@@ -970,16 +946,13 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         Rectangle2D rect2D = new Rectangle2D.Double(env2D.getMinimum(0), env2D.getMinimum(1), env2D.getSpan(0), env2D.getSpan(1));
         resetTransform(rect2D, true,false);
 
-
-        final CoordinateSystem cs = envCRS.getCoordinateSystem();
-
         //set the extra xis if some exist
         int index=0;
         List<SingleCRS> dcrss = CRS.getSingleComponents(envCRS);
 
         // Following loop is a temporary hack for decomposing Geographic3D into Geographic2D + ellipsoidal height.
         // This is a wrong thing to do according international standards; we will revisit in a future version.
-        for (int i=dcrss.size(); --i >= 0;) {
+        for (int i = dcrss.size(); --i >= 0;) {
             SingleCRS crs = dcrss.get(i);
             SingleCRS hcrs = CRS.getHorizontalComponent(crs);
             if (hcrs != null && hcrs != crs) {
@@ -994,34 +967,17 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
                 }
             }
         }
-        for(CoordinateReferenceSystem dcrs : dcrss){
-            if(dcrs.getCoordinateSystem().getDimension()==1){
+        for (CoordinateReferenceSystem dcrs : dcrss) {
+            if (dcrs.getCoordinateSystem().getDimension() == 1) {
                 final CoordinateSystemAxis axis = dcrs.getCoordinateSystem().getAxis(0);
                 final AxisFinder finder = new AxisFinder(axis);
                 final int cindex = getAxisIndex(finder);
-                if(cindex>=0){
+                if (cindex >= 0) {
                     setAxisRange(env.getMinimum(index), env.getMaximum(index), finder, dcrs);
                 }
             }
             index += dcrs.getCoordinateSystem().getDimension();
         }
-
-//        for(int i=0, n= cs.getDimension(); i<n;i++){
-//            final CoordinateSystemAxis axis = cs.getAxis(i);
-//            final AxisDirection ad = axis.getDirection();
-//            if(ad.equals(AxisDirection.FUTURE) || ad.equals(AxisDirection.PAST)){
-//                //found a temporal axis
-//                final double minT = env.getMinimum(i);
-//                final double maxT = env.getMaximum(i);
-//                setTemporalRange(toDate(minT), toDate(maxT));
-//            } else if(ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)){
-//                //found a vertical axis
-//                final double minT = env.getMinimum(i);
-//                final double maxT = env.getMaximum(i);
-//                //todo should use the axis unit
-//                setElevationRange(minT, maxT, Units.METRE);
-//            }
-//        }
     }
 
     /**
@@ -1033,7 +989,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @throws IllegalArgumentException if {@code source} is empty.
      * @throws java.awt.geom.NoninvertibleTransformException
      */
-    public void setVisibleArea(final Rectangle2D logicalBounds) throws IllegalArgumentException, NoninvertibleTransformException {
+    public final void setVisibleArea(final Rectangle2D logicalBounds) throws IllegalArgumentException, NoninvertibleTransformException {
         resetTransform(logicalBounds, true,true);
     }
 
@@ -1041,7 +997,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Set the scale, in a ground unit manner, relation between map display size
      * and real ground unit meters;
      */
-    public void setGeographicScale(final double scale) throws TransformException {
+    public final void setGeographicScale(final double scale) throws TransformException {
         double currentScale = getGeographicScale();
         double factor = currentScale / scale;
         try {
@@ -1059,11 +1015,11 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @throws IllegalStateException If the affine transform used for conversion is in
      *                               illegal state.
      */
-    public double getGeographicScale() throws TransformException {
+    public final double getGeographicScale() throws TransformException {
         return CanvasUtilities.getGeographicScale(getDisplayCenter(), getObjectiveToDisplay(), getObjectiveCRS2D());
     }
 
-    public void setTemporalRange(final Date startDate, final Date endDate) throws TransformException {
+    public final void setTemporalRange(final Date startDate, final Date endDate) throws TransformException {
         try {
             int index = getTemporalAxisIndex();
             if (index < 0 && (startDate != null || endDate != null)) {
@@ -1095,7 +1051,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
     }
 
-    public Date[] getTemporalRange() {
+    public final Date[] getTemporalRange() {
         final int index = getTemporalAxisIndex();
         if (index >= 0) {
             final Envelope envelope = getVisibleEnvelope();
@@ -1109,7 +1065,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         return null;
     }
 
-    public void setElevationRange(final Double min, final Double max, final Unit<Length> unit) throws TransformException {
+    public final void setElevationRange(final Double min, final Double max, final Unit<Length> unit) throws TransformException {
         try {
             int index = getElevationAxisIndex();
             if(index < 0 && (min!=null || max!=null)){
@@ -1137,7 +1093,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
     }
 
-    public Double[] getElevationRange() {
+    public final Double[] getElevationRange() {
         final int index = getElevationAxisIndex();
         if (index >= 0) {
             final Envelope envelope = getVisibleEnvelope();
@@ -1146,7 +1102,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         return null;
     }
 
-    public Unit<Length> getElevationUnit() {
+    public final Unit<Length> getElevationUnit() {
         final int index = getElevationAxisIndex();
         if (index >= 0) {
             return (Unit<Length>) getObjectiveCRS().getCoordinateSystem().getAxis(index).getUnit();
@@ -1188,7 +1144,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
 
-    public Double[] getAxisRange(final Comparator<CoordinateSystemAxis> comparator) {
+    public final Double[] getAxisRange(final Comparator<CoordinateSystemAxis> comparator) {
         final int index = getAxisIndex(comparator);
         if (index >= 0) {
             final Envelope envelope = getVisibleEnvelope();
@@ -1197,7 +1153,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         return null;
     }
 
-    public void setAxisRange(final Double min, final Double max,
+    public final void setAxisRange(final Double min, final Double max,
             final Comparator<CoordinateSystemAxis> comparator, CoordinateReferenceSystem axisCrs) throws TransformException {
         try {
             int index = getAxisIndex(comparator);
@@ -1232,7 +1188,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      *
      * @return -1 if not found
      */
-    public int getAxisIndex(final Comparator<CoordinateSystemAxis> comparator) {
+    public final int getAxisIndex(final Comparator<CoordinateSystemAxis> comparator) {
         final CoordinateReferenceSystem objCrs = getObjectiveCRS();
         final CoordinateSystem cs = objCrs.getCoordinateSystem();
         for (int i = 0, n = cs.getDimension(); i < n; i++) {
@@ -1269,6 +1225,51 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }else{
             return crs;
         }
+    }
 
+    private static CoordinateReferenceSystem getHorizontalComponent(CoordinateReferenceSystem envCRS) {
+        //set the extra xis if some exist
+        final List<SingleCRS> dcrss = CRS.getSingleComponents(envCRS);
+
+        // Following loop is a temporary hack for decomposing Geographic3D into Geographic2D + ellipsoidal height.
+        // This is a wrong thing to do according international standards; we will revisit in a future version.
+        for (SingleCRS crs : dcrss) {
+            SingleCRS hcrs = CRS.getHorizontalComponent(crs);
+            if (hcrs != null) {
+                if (hcrs != crs) {
+
+                }
+                return hcrs;
+            }
+//            if (hcrs != null && hcrs != crs) {
+//                SingleCRS vcrs = CRS.getVerticalComponent(envCRS, true);
+//                if (vcrs != null && hcrs.getCoordinateSystem().getDimension()
+//                                  + vcrs.getCoordinateSystem().getDimension()
+//                                  == crs.getCoordinateSystem().getDimension())
+//                {
+//                    dcrss = new ArrayList<>(dcrss);
+//                    dcrss.set(i, hcrs);
+//                    dcrss.add(i+1, vcrs);
+//                }
+//            }
+        }
+        throw new RuntimeException("Coordinate system has no horizontal component");
+    }
+
+    private static int getHorizontalIndex(CoordinateReferenceSystem envCRS) {
+        //set the extra xis if some exist
+        int index=0;
+        final List<SingleCRS> dcrss = CRS.getSingleComponents(envCRS);
+
+        // Following loop is a temporary hack for decomposing Geographic3D into Geographic2D + ellipsoidal height.
+        // This is a wrong thing to do according international standards; we will revisit in a future version.
+        for (SingleCRS crs : dcrss) {
+            SingleCRS hcrs = CRS.getHorizontalComponent(crs);
+            if (hcrs != null) {
+                return index;
+            }
+            index += crs.getCoordinateSystem().getDimension();
+        }
+        throw new RuntimeException("Coordinate system has no horizontal component");
     }
 }

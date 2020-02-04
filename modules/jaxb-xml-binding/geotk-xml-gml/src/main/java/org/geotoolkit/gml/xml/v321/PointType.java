@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.UnmodifiableGeometryException;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Bearing;
 import org.opengis.geometry.primitive.OrientablePrimitive;
@@ -204,8 +203,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
         return pos;
     }
 
-    @Override
-    public void setDirectPosition(final DirectPosition position) throws UnmodifiableGeometryException {
+    public void setDirectPosition(final DirectPosition position) throws UnsupportedOperationException {
         this.pos = new DirectPositionType(position, true);
     }
 

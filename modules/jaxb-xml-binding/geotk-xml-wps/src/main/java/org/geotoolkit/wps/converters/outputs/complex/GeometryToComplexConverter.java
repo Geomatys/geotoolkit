@@ -17,21 +17,30 @@
 package org.geotoolkit.wps.converters.outputs.complex;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import org.locationtech.jts.geom.Geometry;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import org.geotoolkit.gml.JTStoGeometry;
-import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.apache.sis.internal.feature.Geometries;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.utils.GeometryUtils;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.gml.JTStoGeometry;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -101,11 +110,11 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
             gmlVersion = "3.2.1";
         }
 
-        if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())||
-            WPSMimeType.TEXT_XML.val().equalsIgnoreCase(complex.getMimeType()) ||
-            WPSMimeType.TEXT_GML.val().equalsIgnoreCase(complex.getMimeType())) {
+        final String mimeType = complex.getMimeType();
+        if (WPSMimeType.APP_GML.val().equalsIgnoreCase(mimeType)||
+            WPSMimeType.TEXT_XML.val().equalsIgnoreCase(mimeType) ||
+            WPSMimeType.TEXT_GML.val().equalsIgnoreCase(mimeType)) {
             try {
-
                 final AbstractGeometry gmlGeom = JTStoGeometry.toGML(gmlVersion, source);
                 complex.getContent().add(gmlGeom);
 
@@ -114,8 +123,7 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
             } catch (FactoryException ex) {
                 throw new UnconvertibleObjectException(ex);
             }
-        }
-        else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {
+        } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(mimeType)) {
             GeoJSONGeometry jsonGeometry = GeometryUtils.toGeoJSONGeometry(source);
 
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -129,9 +137,39 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
             } catch (FactoryException ex) {
                 throw new UnconvertibleObjectException("Couldn't decode a CRS.", ex);
             }
-        }
-        else
+        } else if (WPSMimeType.APP_EWKT.val().equalsIgnoreCase(mimeType)) {
+
+            Geometry geom = source;
+            int srid = 0;
+            try {
+                CoordinateReferenceSystem crs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
+                if (crs != null) {
+                    final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
+                    finder.setIgnoringAxes(true);
+                    final CoordinateReferenceSystem epsgcrs = (CoordinateReferenceSystem) finder.findSingleton(crs);
+                    if (epsgcrs != null) {
+                        srid = IdentifiedObjects.lookupEPSG(epsgcrs);
+
+                        //force geometry in longitude first
+                        final CoordinateReferenceSystem crs2 = ((AbstractCRS)crs).forConvention(AxesConvention.RIGHT_HANDED);
+                        if (crs2 != crs) {
+                            geom = JTS.transform(geom, crs2);
+                        }
+                    }
+                }
+            } catch (FactoryException | MismatchedDimensionException | TransformException ex) {
+                throw new UnconvertibleObjectException(ex.getMessage(), ex);
+            }
+
+            String wkt = geom.toText();
+            if (srid > 0) {
+                wkt = "SRID="+srid+";"+wkt;
+            }
+            complex.getContent().add(wkt);
+
+        } else {
             throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + complex.getMimeType());
+        }
 
         return complex;
     }

@@ -52,7 +52,7 @@ public class FXMapContainerPane extends Pane implements FXMapDecoration{
             map.getCanvas().addPropertyChangeListener(new PropertyChangeListener() {
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
-                    if(J2DCanvas.TRANSFORM_KEY.equals(evt.getPropertyName())){
+                    if(J2DCanvas.GRIDGEOMETRY_KEY.equals(evt.getPropertyName())){
                         context.objToDisp.set(map.getCanvas().getObjectiveToDisplay());
                     }
                 }

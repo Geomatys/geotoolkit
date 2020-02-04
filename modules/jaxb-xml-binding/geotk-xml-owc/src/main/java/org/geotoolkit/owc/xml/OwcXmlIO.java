@@ -38,7 +38,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -51,14 +50,9 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.owc.gtkext.ObjectFactory;
+import static org.geotoolkit.owc.xml.OwcMarshallerPool.*;
 import org.geotoolkit.owc.xml.v10.ContentType;
 import org.geotoolkit.owc.xml.v10.OfferingType;
-import org.opengis.util.FactoryException;
-import org.w3._2005.atom.EntryType;
-import org.w3._2005.atom.FeedType;
-import org.w3._2005.atom.LinkType;
-import org.w3._2005.atom.TextType;
-import static org.geotoolkit.owc.xml.OwcMarshallerPool.*;
 import org.geotoolkit.owc.xml.v10.StyleSetType;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
@@ -66,8 +60,12 @@ import org.geotoolkit.sld.xml.v110.UserStyle;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
-import org.opengis.style.Description;
+import org.opengis.util.FactoryException;
+import org.w3._2005.atom.EntryType;
+import org.w3._2005.atom.FeedType;
 import org.w3._2005.atom.IdType;
+import org.w3._2005.atom.LinkType;
+import org.w3._2005.atom.TextType;
 import org.w3._2005.atom.TextTypeType;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
@@ -136,7 +134,7 @@ public class OwcXmlIO {
         feed.getAuthorOrCategoryOrContributor().add(ATOM_FACTORY.createFeedTypeTitle(title));
 
         final Envelope aoi = context.getAreaOfInterest();
-        if(aoi!=null){
+        if (aoi != null) {
             final String ogc = IdentifiedObjects.lookupURN(aoi.getCoordinateReferenceSystem(), null);
             final WhereType where = GEORSS_FACTORY.createWhereType();
             final DirectPositionType lowerCorner = new DirectPositionType(aoi.getLowerCorner());
@@ -148,42 +146,43 @@ public class OwcXmlIO {
             feed.getAuthorOrCategoryOrContributor().add(GEORSS_FACTORY.createWhere(where));
         }
 
-        for(final MapItem mapItem : context.items()){
+        for (final MapItem mapItem : context.items()) {
             toEntry(null, mapItem, feed.getAuthorOrCategoryOrContributor());
         }
         return feed;
     }
 
-    private static void toEntry(String parentPath, final MapItem item, List entries){
+    private static void toEntry(String parentPath, final MapItem item, List entries) {
         final EntryType entry = ATOM_FACTORY.createEntryType();
         entries.add(ATOM_FACTORY.createFeedTypeEntry(entry));
 
         //store other informations
-        final String name = ((parentPath!=null)?parentPath:"") + item.getName();
-        final Description description = item.getDescription();
+        final String name = ((parentPath!=null)?parentPath:"") + item.getIdentifier();
+        final CharSequence title = item.getTitle();
+        final CharSequence abstrat = item.getAbstract();
 
-        if(name!=null){
+        if (name != null) {
             final IdType atom = new IdType();
             atom.setValue(name);
             entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeId(atom));
         }
 
-        if(description!=null && description.getTitle()!=null){
+        if (title != null) {
             final TextType atom = new TextType();
             atom.setType(TextTypeType.TEXT);
-            atom.getContent().add(description.getTitle().toString());
+            atom.getContent().add(title.toString());
             entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeTitle(atom));
         }
 
-        if(description!=null && description.getAbstract()!=null){
+        if (abstrat != null) {
             final TextType atom = new TextType();
             atom.setType(TextTypeType.TEXT);
-            atom.getContent().add(description.getAbstract().toString());
+            atom.getContent().add(abstrat.toString());
             entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeSummary(atom));
         }
 
 
-        if(item instanceof MapLayer){
+        if (item instanceof MapLayer) {
             final MapLayer layer = (MapLayer) item;
 
             entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createVisible(layer.isVisible()));
@@ -191,8 +190,8 @@ public class OwcXmlIO {
             entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createOpacity(layer.getOpacity()));
 
             OfferingType offering = null;
-            for(OwcExtension ext : getExtensions()){
-                if(ext.canHandle(layer)){
+            for (OwcExtension ext : getExtensions()) {
+                if (ext.canHandle(layer)) {
                     offering = ext.createOffering(layer);
                     entry.getAuthorOrCategoryOrContent().add(OWC_FACTORY.createOffering(offering));
                     break;
@@ -200,22 +199,22 @@ public class OwcXmlIO {
             }
 
             //store styles
-            if(offering!=null){
-                if(layer.getStyle()!=null){
+            if (offering != null) {
+                if (layer.getStyle() != null) {
                     final StyleSetType styleBase = toStyleSet(layer.getStyle(), true);
                     offering.getOperationOrContentOrStyleSet().add(OWC_FACTORY.createOfferingTypeStyleSet(styleBase));
                 }
-                if(layer.getSelectionStyle()!=null){
+                if (layer.getSelectionStyle() != null) {
                     final StyleSetType styleSelection = toStyleSet(layer.getSelectionStyle(), false);
                     offering.getOperationOrContentOrStyleSet().add(OWC_FACTORY.createOfferingTypeStyleSet(styleSelection));
                 }
             }
 
-        }else{
+        } else {
             final ContentType content = OWC_FACTORY.createContentType();
             content.setType(item.getName());
             //encode children
-            for(MapItem child : item.items()){
+            for (MapItem child : item.items()) {
                 toEntry(name+"/", child, entries);
             }
             entry.getAuthorOrCategoryOrContent().add(OWC_FACTORY.createOfferingTypeContent(content));
@@ -242,22 +241,22 @@ public class OwcXmlIO {
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
 
         final FeedType feed;
-        try{
+        try {
             final Object jax;
-            if(input instanceof File) jax = unmarshaller.unmarshal((File)input);
-            else if(input instanceof Node) jax = unmarshaller.unmarshal((Node)input);
-            else if(input instanceof InputSource) jax = unmarshaller.unmarshal((InputSource)input);
-            else if(input instanceof InputStream) jax = unmarshaller.unmarshal((InputStream)input);
-            else if(input instanceof Source) jax = unmarshaller.unmarshal((Source)input);
-            else if(input instanceof Reader) jax = unmarshaller.unmarshal((Reader)input);
-            else if(input instanceof XMLEventReader) jax = unmarshaller.unmarshal((XMLEventReader)input);
-            else if(input instanceof XMLStreamReader) jax = unmarshaller.unmarshal((XMLStreamReader)input);
-            else{
+            if (input instanceof File) jax = unmarshaller.unmarshal((File)input);
+            else if (input instanceof Node) jax = unmarshaller.unmarshal((Node)input);
+            else if (input instanceof InputSource) jax = unmarshaller.unmarshal((InputSource)input);
+            else if (input instanceof InputStream) jax = unmarshaller.unmarshal((InputStream)input);
+            else if (input instanceof Source) jax = unmarshaller.unmarshal((Source)input);
+            else if (input instanceof Reader) jax = unmarshaller.unmarshal((Reader)input);
+            else if (input instanceof XMLEventReader) jax = unmarshaller.unmarshal((XMLEventReader)input);
+            else if (input instanceof XMLStreamReader) jax = unmarshaller.unmarshal((XMLStreamReader)input);
+            else {
                 throw new JAXBException("Unsupported input type : "+input);
             }
 
             feed = (FeedType) ((JAXBElement)jax).getValue();
-        }finally{
+        } finally {
             pool.recycle(unmarshaller);
         }
         return read(feed);
@@ -266,25 +265,25 @@ public class OwcXmlIO {
     private static MapContext read(final FeedType feed) throws JAXBException, FactoryException, DataStoreException{
         final MapContext context = MapBuilder.createContext();
 
-        for(Object o : feed.getAuthorOrCategoryOrContributor()){
-            if(o instanceof JAXBElement){
+        for (Object o : feed.getAuthorOrCategoryOrContributor()) {
+            if (o instanceof JAXBElement) {
                 o = ((JAXBElement)o).getValue();
             }
 
-            if(o instanceof TextType){
+            if (o instanceof TextType) {
                 final TextType title = (TextType) o;
                 title.getContent();
-            }else if(o instanceof WhereType){
+            } else if(o instanceof WhereType) {
                 final WhereType where = (WhereType) o;
                 final EnvelopeType envelopeType = where.getEnvelope();
                 context.setAreaOfInterest(envelopeType);
-            }else if(o instanceof EntryType){
+            } else if(o instanceof EntryType) {
                 final EntryType entry = (EntryType) o;
                 final MapItem item = readEntry(entry);
                 //find insert parent
                 final String[] path = item.getName().split("/");
                 MapItem parent = context;
-                for(int i=0;i<path.length-1;i++){
+                for (int i=0;i<path.length-1;i++) {
                     parent = findItem(parent, path[i]);
                 }
                 item.setName(path[path.length-1]);
@@ -295,9 +294,9 @@ public class OwcXmlIO {
         return context;
     }
 
-    private static MapItem findItem(MapItem parent, String name){
-        for(MapItem mi : parent.items()){
-            if(mi.getName().equals(name)){
+    private static MapItem findItem(MapItem parent, String name) {
+        for (MapItem mi : parent.items()) {
+            if (mi.getName().equals(name)) {
                 return mi;
             }
         }
@@ -307,7 +306,7 @@ public class OwcXmlIO {
         return np;
     }
 
-    private static MapItem readEntry(final EntryType entry) throws JAXBException, FactoryException, DataStoreException{
+    private static MapItem readEntry(final EntryType entry) throws JAXBException, FactoryException, DataStoreException {
         final List<Object> entryContent = entry.getAuthorOrCategoryOrContent();
 
         String layerName = "";
@@ -321,26 +320,26 @@ public class OwcXmlIO {
         MutableStyle selectionStyle = null;
         final List<MapItem> children = new ArrayList<>();
 
-        for(Object o : entryContent){
+        for (Object o : entryContent) {
             QName name = null;
-            if(o instanceof JAXBElement){
+            if (o instanceof JAXBElement) {
                 final JAXBElement jax = (JAXBElement) o;
                 name = jax.getName();
                 o = jax.getValue();
 
-                if(GEOTK_FACTORY._Visible_QNAME.equals(name)){
+                if (GEOTK_FACTORY._Visible_QNAME.equals(name)) {
                     visible = (Boolean)o;
-                }else if(GEOTK_FACTORY._Selectable_QNAME.equals(name)){
+                } else if (GEOTK_FACTORY._Selectable_QNAME.equals(name)) {
                     selectable = (Boolean)o;
-                }else if(GEOTK_FACTORY._Opacity_QNAME.equals(name)){
+                } else if (GEOTK_FACTORY._Opacity_QNAME.equals(name)) {
                     layerOpacity = (Double)o;
                 }
             }
 
-            if(o instanceof OfferingType){
+            if (o instanceof OfferingType) {
                 final OfferingType offering = (OfferingType) o;
-                for(OwcExtension ext : getExtensions()){
-                    if(ext.getCode().equals(offering.getCode())){
+                for (OwcExtension ext : getExtensions()) {
+                    if (ext.getCode().equals(offering.getCode())) {
                         mapItem = ext.createLayer(offering);
                         break;
                     }
@@ -350,30 +349,30 @@ public class OwcXmlIO {
                 baseStyle = readStyle(offering,true);
                 selectionStyle = readStyle(offering,false);
 
-            }else if(o instanceof ContentType){
+            } else if (o instanceof ContentType) {
                 //decode children
                 final ContentType content = (ContentType) o;
                 final List<Object> contentContent = content.getContent();
-                for(Object co : contentContent){
-                    if(co instanceof JAXBElement){
+                for (Object co : contentContent) {
+                    if (co instanceof JAXBElement) {
                         co = ((JAXBElement)o).getValue();
                     }
-                    if(co instanceof EntryType){
+                    if (co instanceof EntryType) {
                         children.add(readEntry((EntryType)co));
                     }
                 }
-            }else if(o instanceof IdType){
+            } else if (o instanceof IdType) {
                 final IdType idType = (IdType) o;
                 final String value = idType.getValue();
                 layerName = value;
-            }else if(o instanceof TextType){
+            } else if (o instanceof TextType) {
                 final TextType tt = (TextType) o;
-                if(ATOM_FACTORY._EntryTypeTitle_QNAME.equals(name)){
-                    if(!tt.getContent().isEmpty()){
+                if (ATOM_FACTORY._EntryTypeTitle_QNAME.equals(name)) {
+                    if (!tt.getContent().isEmpty()) {
                         layerTitle = (String) tt.getContent().get(0);
                     }
-                }else if(ATOM_FACTORY._EntryTypeSummary_QNAME.equals(name)){
-                    if(!tt.getContent().isEmpty()){
+                } else if (ATOM_FACTORY._EntryTypeSummary_QNAME.equals(name)) {
+                    if (!tt.getContent().isEmpty()) {
                         layerAbstract = (String) tt.getContent().get(0);
                     }
                 }
@@ -381,13 +380,13 @@ public class OwcXmlIO {
 
         }
 
-        if(mapItem==null){
+        if (mapItem == null) {
             mapItem = MapBuilder.createItem();
-        }else if(mapItem instanceof MapLayer){
-            if(baseStyle!=null){
+        } else if (mapItem instanceof MapLayer) {
+            if (baseStyle != null) {
                 ((MapLayer)mapItem).setStyle(baseStyle);
             }
-            if(selectionStyle!=null){
+            if (selectionStyle != null) {
                 ((MapLayer)mapItem).setSelectionStyle(selectionStyle);
             }
             ((MapLayer)mapItem).setSelectable(selectable);
@@ -405,26 +404,26 @@ public class OwcXmlIO {
         return mapItem;
     }
 
-    private static MutableStyle readStyle(OfferingType offering, boolean def) throws JAXBException, FactoryException{
+    private static MutableStyle readStyle(OfferingType offering, boolean def) throws JAXBException, FactoryException {
         final List<Object> content = offering.getOperationOrContentOrStyleSet();
-        for(Object co : content){
-            if(co instanceof JAXBElement) co = ((JAXBElement)co).getValue();
-            if(!(co instanceof StyleSetType)) continue;
+        for (Object co : content) {
+            if (co instanceof JAXBElement) co = ((JAXBElement) co).getValue();
+            if (!(co instanceof StyleSetType)) continue;
 
             final StyleSetType sst = (StyleSetType)co;
-            if(sst.isDefault() != def) continue;
+            if (sst.isDefault() != def) continue;
 
             final List<Object> ssc = sst.getNameOrTitleOrAbstract();
 
-            for(Object ss : ssc){
-                if(ss instanceof JAXBElement) ss = ((JAXBElement)ss).getValue();
-                if(!(ss instanceof ContentType)) continue;
+            for (Object ss : ssc) {
+                if (ss instanceof JAXBElement) ss = ((JAXBElement) ss).getValue();
+                if (!(ss instanceof ContentType)) continue;
 
                 final ContentType ct = (ContentType) ss;
                 final List<Object> subcs = ct.getContent();
-                for(Object subc : subcs){
-                    if(subc instanceof JAXBElement) subc = ((JAXBElement)subc).getValue();
-                    if(!(subc instanceof UserStyle)) continue;
+                for (Object subc : subcs) {
+                    if (subc instanceof JAXBElement) subc = ((JAXBElement) subc).getValue();
+                    if (!(subc instanceof UserStyle)) continue;
 
                     final StyleXmlIO io = new StyleXmlIO();
                     return io.readStyle(subc, Specification.SymbologyEncoding.V_1_1_0);

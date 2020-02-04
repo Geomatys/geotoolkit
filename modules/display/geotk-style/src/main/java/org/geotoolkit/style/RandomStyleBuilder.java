@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import javax.measure.Unit;
+import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.feature.FeatureExt;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
@@ -160,7 +160,7 @@ public class RandomStyleBuilder {
         }catch(PropertyNotFoundException ex){
             return SF.style();
         }
-        final AttributeType type = FeatureExt.castOrUnwrap(defAtt)
+        final AttributeType type = Features.toAttribute(defAtt)
                 .orElse(null);
         if (type == null) return SF.style();
         final Class cla = type.getValueClass();

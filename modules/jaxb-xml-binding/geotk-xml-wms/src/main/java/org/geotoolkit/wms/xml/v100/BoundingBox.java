@@ -174,12 +174,12 @@ public class BoundingBox implements AbstractBoundingBox {
 
     @Override
     public Double getResx() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public Double getResy() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
 }

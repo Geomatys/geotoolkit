@@ -31,12 +31,14 @@ import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
+
 import static org.geotoolkit.processing.image.reformat.ReformatDescriptor.*;
+
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.BufferedImages;
 
 /**
  *
@@ -77,7 +79,7 @@ public class ReformatProcess extends AbstractProcess {
         //TODO try to reuse java colormodel if possible
         //create a temporary fallback colormodel which will always work
         //extract grayscale min/max from sample dimension
-        final ColorModel graycm = BufferedImages.createGrayScaleColorModel(inputType,nbBand,0,0,10);
+        final ColorModel graycm = ColorModelFactory.createGrayScale(inputType,nbBand,0,0,10);
 
 
         final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<Object, Object>());

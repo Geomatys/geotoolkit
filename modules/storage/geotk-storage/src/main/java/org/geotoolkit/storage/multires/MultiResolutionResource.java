@@ -43,6 +43,8 @@ public interface MultiResolutionResource extends Resource {
     /**
      * Create a new {@linkplain  MultiResolutionModel} based on given model.
      * The created model may have differences.
+     * Model identifier may be preserved or not, behavior is implementation specific.
+     * If the id is already used a new one will be generated instead.
      *
      * @param template a template model which structure will be used as reference.
      * @return created {@linkplain  MultiResolutionModel}

@@ -17,20 +17,17 @@
 package org.geotoolkit.display2d.service;
 
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.*;
 import java.util.Deque;
 import java.util.EventListener;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Level;
-import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PlanarImage;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
@@ -47,7 +44,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @see org.geotoolkit.display2d.process.pyramid.MapcontextPyramidProcess
  */
-public class PortrayalRenderedImage implements RenderedImage{
+public class PortrayalRenderedImage extends PlanarImage {
 
     /** store pregenerated tiles */
 //    private final Map<Integer,Raster> tileCache = new HashMap<Integer, Raster>();
@@ -96,10 +93,6 @@ public class PortrayalRenderedImage implements RenderedImage{
      */
     private final SceneDef sceneDef;
 
-    /**
-     * Portrayal ViewDef with requested envelope.
-     */
-    private final ViewDef viewDef;
 
     /** listener support */
     private final EventListenerList listeners = new EventListenerList();
@@ -110,7 +103,7 @@ public class PortrayalRenderedImage implements RenderedImage{
      *
      * @param canvasDef : canvas size will be ignored.
      */
-    public PortrayalRenderedImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
+    public PortrayalRenderedImage(final CanvasDef canvasDef, final SceneDef sceneDef,
             final Dimension gridSize, final Dimension tileSize, final double scale) throws PortrayalException{
         this.gridSize = gridSize;
         this.tileSize = tileSize;
@@ -119,10 +112,8 @@ public class PortrayalRenderedImage implements RenderedImage{
         this.sampleModel = colorModel.createCompatibleSampleModel(1, 1);
         this.canvasDef = canvasDef;
         this.sceneDef = sceneDef;
-        this.viewDef = viewDef;
 
-
-        this.viewEnvelope = viewDef.getEnvelope();
+        this.viewEnvelope = canvasDef.getEnvelope();
         crs = viewEnvelope.getCoordinateReferenceSystem();
         this.upperleft = new Point2D.Double(
                 viewEnvelope.getMinimum(0),
@@ -133,37 +124,6 @@ public class PortrayalRenderedImage implements RenderedImage{
 
         nbtileonheight = 1;
         nbtileonwidth = 1;
-    }
-
-    /**
-     * Tiles are generated on the fly, so we have information on their generation
-     * process but we don't have the tiles themselves.
-     *
-     * @return empty vector
-     */
-    @Override
-    public Vector<RenderedImage> getSources() {
-        return new Vector<RenderedImage>();
-    }
-
-    /**
-     * A PortrayalRenderedImage does not have any properties
-     *
-     * @return always Image.UndefinedProperty
-     */
-    @Override
-    public Object getProperty(String name) {
-        return Image.UndefinedProperty;
-    }
-
-    /**
-     * A PortrayalRenderedImage does not have any properties
-     *
-     * @return always null
-     */
-    @Override
-    public String[] getPropertyNames() {
-        return null;
     }
 
     /**
@@ -341,7 +301,7 @@ public class PortrayalRenderedImage implements RenderedImage{
                 cvs = new J2DCanvasBuffered(
                     crs, new Dimension(tileSize.width,tileSize.height));
                 cvs.setRenderingHint(GO2Hints.KEY_COLOR_MODEL, colorModel);
-                DefaultPortrayalService.prepareCanvas(cvs, canvasDef, sceneDef, viewDef);
+                DefaultPortrayalService.prepareCanvas(cvs, canvasDef, sceneDef);
             }
 
             cvs.setVisibleArea(canvasEnv);
@@ -360,68 +320,6 @@ public class PortrayalRenderedImage implements RenderedImage{
     @Override
     public Raster getTile(int col, int row) {
         return getTileImage(col, row).getData(); // make a copy since we will reuse canvas
-    }
-
-    @Override
-    public Raster getData() {
-        return getData(null);
-    }
-
-    @Override
-    public WritableRaster getData(Rectangle region) {
-        return copyData(region, null);
-    }
-
-    @Override
-    public WritableRaster copyData(WritableRaster raster) {
-        final Rectangle bounds = (raster!=null) ? raster.getBounds() : null;
-        return copyData(bounds, raster);
-    }
-
-    public WritableRaster copyData(Rectangle region, WritableRaster dstRaster) {
-        final Rectangle bounds = getBounds();   // image's bounds
-
-        if (region == null) {
-            region = bounds;
-        } else if (!region.intersects(bounds)) {
-            throw new IllegalArgumentException("Rectangle does not intersect datas.");
-        }
-
-        // Get the intersection of the region and the image bounds.
-        final Rectangle xsect = (region == bounds) ? region : region.intersection(bounds);
-
-        //create a raster of this size
-        if(dstRaster == null){
-            SampleModel sampleModel = getSampleModel();
-            sampleModel = sampleModel.createCompatibleSampleModel(xsect.width, xsect.height);
-            dstRaster = RasterFactory.createWritableRaster(sampleModel, new Point(0, 0));
-        }
-
-        //calculate the first and last tiles index we will need
-        final int startTileX = xsect.x / getTileWidth();
-        final int startTileY = xsect.y / getTileHeight();
-        final int endTileX = (xsect.x+xsect.width) / getTileWidth();
-        final int endTileY = (xsect.y+xsect.height) / getTileHeight();
-
-        //loop on each tile
-        for (int j = startTileY; j <= endTileY; j++) {
-            for (int i = startTileX; i <= endTileX; i++) {
-                final Raster tile = getTile(i, j);
-                dstRaster.setRect(
-                        i*getTileWidth(),
-                        j*getTileHeight(),
-                        tile);
-            }
-        }
-
-        return dstRaster;
-    }
-
-    /**
-     * @return unique index for this tile coordinate
-     */
-    private int getTileIndex(int col, int row){
-        return row*getNumXTiles() + col;
     }
 
     protected void fireTileCreated(int x, int y){

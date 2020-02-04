@@ -31,7 +31,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
@@ -44,13 +43,11 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.ReducedGridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -65,12 +62,12 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.coverage.resample.OutputGridBuilder;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.SingleCRS;
@@ -101,17 +98,17 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
     @Override
     public boolean portray(final ProjectedObject graphic) throws PortrayalException {
-        if(graphic instanceof ProjectedFeature){
+        if (graphic instanceof ProjectedFeature) {
             final ProjectedFeature pf = (ProjectedFeature) graphic;
             final String geomName = symbol.getSource().getGeometryPropertyName();
             Object obj;
-            if(geomName == null || geomName.isEmpty()){
-                try{
+            if (geomName == null || geomName.isEmpty()) {
+                try {
                     obj = pf.getCandidate().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-                }catch(PropertyNotFoundException ex){
+                } catch(PropertyNotFoundException ex) {
                     obj = null;
                 }
-            }else{
+            } else {
                 obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(geomName), pf.getCandidate(), null, null);
             }
             if (obj instanceof GridCoverage) {
@@ -119,15 +116,11 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 CharSequence name = null;
                 if (name == null) name = "unnamed";
                 final MapLayer ml = MapBuilder.createCoverageLayer(cov, GO2Utilities.STYLE_FACTORY.style(), name.toString());
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
-                params.update(renderingContext);
-                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
+                final ProjectedCoverage pc = new ProjectedCoverage(ml);
                 return portray(pc);
-            }else  if(obj instanceof GridCoverageResource){
+            } else if (obj instanceof GridCoverageResource) {
                 final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
-                params.update(renderingContext);
-                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
+                final ProjectedCoverage pc = new ProjectedCoverage(ml);
                 return portray(pc);
             }
         }
@@ -142,9 +135,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     symbol.getSource().getGeometryPropertyName()), pf.getCandidate(), null, null);
             if (obj instanceof GridCoverage) {
                 final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverage) obj, GO2Utilities.STYLE_FACTORY.style(), "");
-                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
-                params.update(renderingContext);
-                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
+                final ProjectedCoverage pc = new ProjectedCoverage(ml);
                 return hit(pc,mask,filter);
             }
         }
@@ -355,12 +346,10 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         return false;
     }
 
-    private GridCoverage forwardResample(GridCoverage coverage, GridGeometry canvasGrid) throws FactoryException, NoninvertibleTransformException, TransformException {
+    private static GridCoverage forwardResample(GridCoverage coverage, GridGeometry canvasGrid) throws FactoryException, NoninvertibleTransformException, TransformException {
 
-        if (coverage.getSampleDimensions() != null && !coverage.getSampleDimensions().isEmpty()) {
-            //interpolate in geophysic
-            coverage = coverage.forConvertedValues(true);
-        }
+        //interpolate in geophysic
+        coverage = coverage.forConvertedValues(true);
 
         //reduce the canvas grid to 2D
         if (canvasGrid.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
@@ -368,13 +357,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
         //compute forward transform
-        final Envelope geoEnv = Envelopes.transform(canvasGrid.getEnvelope(), CommonCRS.WGS84.normalizedGeographic());
-        final GeographicBoundingBox bbox = new DefaultGeographicBoundingBox(geoEnv.getMinimum(0), geoEnv.getMaximum(0), geoEnv.getMinimum(1), geoEnv.getMaximum(1));
         final GridGeometry coverageGridGeom = coverage.getGridGeometry();
-        final MathTransform gridToCov = coverageGridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
-        final MathTransform covToCanvas = CRS.findOperation(coverage.getCoordinateReferenceSystem(), canvasGrid.getCoordinateReferenceSystem(), bbox).getMathTransform();
-        final MathTransform canvasToGrid = canvasGrid.getGridToCRS(PixelInCell.CELL_CENTER).inverse();
-        final MathTransform transform = MathTransforms.concatenate(gridToCov, covToCanvas, canvasToGrid);
+        final OutputGridBuilder ogb = new OutputGridBuilder(canvasGrid, coverageGridGeom);
+        final MathTransform transform = ogb.forDefaultRendering();
 
         //create result image
         final RenderedImage img = coverage.render(null);
@@ -387,9 +372,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //fill out image with NaN
         final double[] pixel = new double[img.getSampleModel().getNumBands()];
         Arrays.fill(pixel, Double.NaN);
-        while (output.next()) {
-            output.setPixel(pixel);
-        }
+        BufferedImages.setAll(result, pixel);
 
         //resample
         final Rasterizer canvas = new Rasterizer();
@@ -423,23 +406,37 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             canvas.drawTriangle(v1, v3, v4);
         }
 
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("forwadResampled");
-        gcb.setSampleDimensions(coverage.getSampleDimensions());
-        gcb.setGridGeometry(canvasGrid);
-        gcb.setRenderedImage(result);
-        return gcb.getGridCoverage2D();
+        return new GridCoverage2D(canvasGrid, coverage.getSampleDimensions(), result);
     }
 
-    private GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
-            throws DataStoreException, TransformException, FactoryException, ProcessException {
+    private static GridGeometry extractSlice(GridGeometry fullArea, GridGeometry areaOfInterest, final int[] margin, boolean applyResolution)
+            throws DataStoreException, TransformException, FactoryException {
 
-        CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
-        CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
-
-        if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
-            //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
-            return areaOfInterest;
+        double[] resolution = areaOfInterest.getResolution(true);
+        if (fullArea.isDefined(GridGeometry.RESOLUTION)) {
+            CoordinateReferenceSystem crsarea = areaOfInterest.getCoordinateReferenceSystem();
+            CoordinateReferenceSystem crsdata = fullArea.getCoordinateReferenceSystem();
+            if (CRS.isHorizontalCRS(crsarea) && CRS.isHorizontalCRS(crsdata)) {
+                //we are dealing with simple 2D rendering, preserve the canvas grid geometry.
+                if (margin[0] > 0) {
+                    //try to adjust margin
+                    //TODO : we should use a GridCoverageResource.subset with a margin value but this isn't implemented yet
+                    Envelope env = fullArea.getEnvelope();
+                    double[] est = CoverageUtilities.estimateResolution(env, fullArea.getResolution(true), areaOfInterest.getCoordinateReferenceSystem());
+                    margin[0] = (int) Math.ceil(margin[0] * (est[0] / resolution[0]));
+                    margin[1] = (int) Math.ceil(margin[1] * (est[1] / resolution[1]));
+                }
+                areaOfInterest = areaOfInterest.derive().margin(margin).resize(null).build();
+                areaOfInterest = new GridGeometry(
+                        areaOfInterest.getExtent(),
+                        PixelInCell.CELL_CENTER,
+                        areaOfInterest.getGridToCRS(PixelInCell.CELL_CENTER),
+                        areaOfInterest.getCoordinateReferenceSystem());
+                return areaOfInterest;
+            }
+        } else {
+            //we have no way to apply margin
+            //must wait for GridCoverageResource.subset with a margin
         }
 
         // HACK : This method cannot manage incomplete grid geometries, so we have to skip
@@ -449,7 +446,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         // on displayed area
         Envelope canvasEnv = areaOfInterest.getEnvelope();
-        double[] resolution = applyResolution ? areaOfInterest.getResolution(true) : null;
+        if (!applyResolution) resolution = null;
         /////// HACK FOR 0/360 /////////////////////////////////////////////
         try {
             Map.Entry<Envelope, double[]> entry = solveWrapAround(fullArea, canvasEnv, resolution);
@@ -511,7 +508,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @return update area of interest envelope, CRS may have changed and new resolution
      *         or null if unchanged.
      */
-    private Map.Entry<Envelope, double[]> solveWrapAround(final GridGeometry grid, Envelope areaOfInterest, double[] resolution) throws TransformException, FactoryException {
+    private static Map.Entry<Envelope, double[]> solveWrapAround(final GridGeometry grid, Envelope areaOfInterest, double[] resolution) throws TransformException, FactoryException {
 
         // unchanged
         if (areaOfInterest == null) return null;

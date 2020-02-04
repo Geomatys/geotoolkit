@@ -38,7 +38,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.PyramidReader;
@@ -210,7 +209,7 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
         }
 
         @Override
-        protected boolean isWritable() throws CoverageStoreException {
+        protected boolean isWritable() throws DataStoreException {
             return true;
         }
 
@@ -239,6 +238,15 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
         @Override
         public void deleteTile(int tileX, int tileY) throws DataStoreException {
             setTile(tileX,tileY,null);
+        }
+
+        @Override
+        public Optional<Tile> anyTile() throws DataStoreException {
+            final Iterator<InMemoryTile> iterator = mpTileReference.values().iterator();
+            if (iterator.hasNext()) {
+                return Optional.of(iterator.next());
+            }
+            return Optional.empty();
         }
     }
 

@@ -20,13 +20,20 @@ import java.awt.Dimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -74,5 +81,39 @@ public class PyramidsTest {
 
 
     }
+
+    /**
+     * Create a pyramid template from a grid geometry with only an envelope and resolution
+     */
+    @Test
+    public void testCreateTemplateFromResolution() throws FactoryException, DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem baseCrs = CommonCRS.WGS84.normalizedGeographic();
+        final GeneralEnvelope baseEnv = new GeneralEnvelope(baseCrs);
+        baseEnv.setRange(0, 10, 20);
+        baseEnv.setRange(1, 20, 30);
+        final EstimatedGridGeometry gridGeom = new EstimatedGridGeometry(baseEnv, new double[]{0.01, 0.01});
+
+        {// Wgs84 TEMPLATE /////////////////////////////////////////////////////
+            final CoordinateReferenceSystem tempCrs = CRS.forCode("CRS:84");
+            final DefiningPyramid template = Pyramids.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
+            final Envelope tempEnv = template.getEnvelope();
+            Assert.assertEquals(tempCrs, template.getCoordinateReferenceSystem());
+            Assert.assertEquals(tempCrs, tempEnv.getCoordinateReferenceSystem());
+            Assert.assertTrue(new GeneralEnvelope(Envelopes.transform(tempEnv, baseCrs)).contains(baseEnv));
+            Assert.assertEquals(3, template.getMosaics().size());
+        }
+
+        {// Mercator TEMPLATE /////////////////////////////////////////////////////
+            final CoordinateReferenceSystem tempCrs = CRS.forCode("EPSG:3395");
+            final DefiningPyramid template = Pyramids.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
+            final Envelope tempEnv = template.getEnvelope();
+            Assert.assertEquals(tempCrs, template.getCoordinateReferenceSystem());
+            Assert.assertEquals(tempCrs, tempEnv.getCoordinateReferenceSystem());
+            Assert.assertTrue(new GeneralEnvelope(Envelopes.transform(tempEnv, baseCrs)).contains(baseEnv));
+            Assert.assertEquals(4, template.getMosaics().size());
+        }
+    }
+
 
 }

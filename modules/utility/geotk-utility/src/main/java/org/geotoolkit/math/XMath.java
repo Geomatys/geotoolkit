@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.math;
 
-import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Numbers;
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 
 
@@ -221,5 +221,30 @@ public final class XMath extends Static {
             ret[i] = clamp(val[i], min, max);
         }
         return ret;
+    }
+
+    /**
+     * Clamps each value of an array between min value and max value.
+     *
+     * @param val the array of values to clamp, values are modified
+     * @param min the minimum value
+     * @param max the maximum value
+     */
+    public static void applyClamp(double[] val, double min, double max) {
+        switch (val.length) {
+            case 4 :
+                val[3] = clamp(val[3], min, max);
+            case 3 :
+                val[2] = clamp(val[2], min, max);
+            case 2 :
+                val[1] = clamp(val[1], min, max);
+            case 1 :
+                val[0] = clamp(val[0], min, max);
+                break;
+            default :
+                for (int i=0; i<val.length; i++) {
+                    val[i] = clamp(val[i], min, max);
+                }
+        }
     }
 }

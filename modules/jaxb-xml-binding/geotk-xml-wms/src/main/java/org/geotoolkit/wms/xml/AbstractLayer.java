@@ -17,6 +17,7 @@
 package org.geotoolkit.wms.xml;
 
 import java.util.List;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -84,9 +85,17 @@ public interface AbstractLayer {
     void setTitle(String title);
 
     /**
-     * Get the layer envelope
+     * Get the layer envelope.
+     * This is a 2D envelope, it does not contain the other dimension values.
      */
     Envelope getEnvelope();
+
+    /**
+     * Get the layer grid geometry.
+     * This geometry only contains the envelope but may
+     * also contain an approximated resolution.
+     */
+    GridGeometry getGridGeometry2D();
 
     /**
      * Get layer styles

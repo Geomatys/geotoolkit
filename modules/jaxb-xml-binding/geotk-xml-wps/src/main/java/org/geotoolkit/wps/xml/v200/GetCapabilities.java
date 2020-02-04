@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang.StringUtils;
 import org.geotoolkit.ows.xml.v200.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v200.AcceptVersionsType;
 import org.geotoolkit.ows.xml.v200.GetCapabilitiesType;
@@ -73,7 +73,9 @@ public class GetCapabilities extends org.geotoolkit.ows.xml.v200.GetCapabilities
         final Map<String,String> params = new HashMap<>();
         params.put("SERVICE",    "WPS");
         params.put("REQUEST",    "GetCapabilities");
-        params.put("ACCEPTVERSIONS",    StringUtils.join(getAcceptVersions().getVersion(), ','));
+        final StringJoiner joiner = new StringJoiner(",");
+        getAcceptVersions().getVersion().forEach(joiner::add);
+        params.put("ACCEPTVERSIONS", joiner.toString());
         return params;
     }
 

@@ -28,6 +28,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.util.WeakPropertyChangeListener;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Synchronize map canvas.
@@ -66,7 +67,7 @@ public class Canvas2DSynchronizer implements PropertyChangeListener{
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(!J2DCanvas.TRANSFORM_KEY.equals(evt.getPropertyName())){
+        if(!J2DCanvas.GRIDGEOMETRY_KEY.equals(evt.getPropertyName())){
             return;
         }
 
@@ -82,7 +83,7 @@ public class Canvas2DSynchronizer implements PropertyChangeListener{
             try {
                 state.canvas.setObjectiveCRS(crs);
                 state.canvas.setCenterTransform(centerTransform);
-            } catch (TransformException ex) {
+            } catch (TransformException | FactoryException ex) {
                 Logging.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(),ex);
             }
         }

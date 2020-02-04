@@ -79,7 +79,6 @@ import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
@@ -1037,9 +1036,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                     //                    return;
                     //                }
 
-                    final StatelessContextParams params = new StatelessContextParams(null, null);
-                    params.update(context2d);
-                    final ProjectedGeometry projectedGeometry = new ProjectedGeometry(params);
+                    final ProjectedGeometry projectedGeometry = new ProjectedGeometry(context2d);
                     projectedGeometry.setDataGeometry(geom, null);
 
                     final LabelLayer labelLayer = new DefaultLabelLayer(false, false);

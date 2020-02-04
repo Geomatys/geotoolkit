@@ -22,18 +22,18 @@ import java.util.Arrays;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.After;
@@ -61,13 +61,14 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
 
 
     private final MapContext context;
-    private final GeneralEnvelope env;
+    private final ImmutableEnvelope env;
 
     public MokSymbolizerTest() throws Exception {
 
-        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
+        this.env = ImmutableEnvelope.castOrCopy(env);
 
         context = MapBuilder.createContext();
 
@@ -120,63 +121,23 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testSymbolizer() throws PortrayalException {
+        final CanvasDef cdef = new CanvasDef(new Dimension(500, 500), env);
 
         //test normal pass
         Hints hints = new Hints();
         hints.put(GO2Hints.KEY_MULTI_THREAD, Boolean.FALSE);
-        hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_SECOND);
-
         MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(500, 500),Color.WHITE),
-                new SceneDef(context,hints),
-                new ViewDef(env));
-
+        cdef.setBackground(Color.WHITE);
+        DefaultPortrayalService.portray(cdef, new SceneDef(context,hints));
         assertEquals(5, MokSymbolizerRenderer.called);
 
 
         //test multithread
         hints = new Hints();
         hints.put(GO2Hints.KEY_MULTI_THREAD, Boolean.TRUE);
-        hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_SECOND);
-
         MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(500, 500),Color.WHITE),
-                new SceneDef(context,hints),
-                new ViewDef(env));
-
+        DefaultPortrayalService.portray(cdef, new SceneDef(context, hints));
         assertEquals(5, MokSymbolizerRenderer.called);
-
-
-        //test symbol rendering order
-        hints = new Hints();
-        hints.put(GO2Hints.KEY_MULTI_THREAD, Boolean.FALSE);
-        hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_PRIME);
-
-        MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(500, 500),Color.WHITE),
-                new SceneDef(context,hints),
-                new ViewDef(env));
-
-        assertEquals(5, MokSymbolizerRenderer.called);
-
-
-        //test symbol rendering order + multithread
-        hints = new Hints();
-        hints.put(GO2Hints.KEY_MULTI_THREAD, Boolean.TRUE);
-        hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_PRIME);
-
-        MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(500, 500),Color.WHITE),
-                new SceneDef(context,hints),
-                new ViewDef(env));
-
-        assertEquals(5, MokSymbolizerRenderer.called);
-
-
 
     }
 

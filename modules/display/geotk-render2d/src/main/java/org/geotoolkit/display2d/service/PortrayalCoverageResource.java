@@ -33,7 +33,6 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
@@ -73,19 +72,19 @@ final class PortrayalCoverageResource extends AbstractGridResource {
     }
 
     @Override
-    public GridGeometry getGridGeometry() throws CoverageStoreException, CancellationException {
+    public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
         //we only know the envelope
         final GridGeometry gridGeom;
         try {
             gridGeom = new GridGeometry(null, null, scene.getContext().getBounds(), GridRoundingMode.ENCLOSING);
         } catch (IOException ex) {
-            throw new CoverageStoreException(ex.getMessage(),ex);
+            throw new DataStoreException(ex.getMessage(),ex);
         }
         return gridGeom;
     }
 
     @Override
-    public List<SampleDimension> getSampleDimensions() throws CoverageStoreException, CancellationException {
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException, CancellationException {
         return null;
     }
 
@@ -97,7 +96,7 @@ final class PortrayalCoverageResource extends AbstractGridResource {
         }
 
         if (range != null && range.length != 0) {
-            throw new CoverageStoreException("Source or destination bands can not be used on portrayal images.");
+            throw new DataStoreException("Source or destination bands can not be used on portrayal images.");
         }
 
         CoordinateReferenceSystem crs = domain.getCoordinateReferenceSystem();
@@ -112,7 +111,7 @@ final class PortrayalCoverageResource extends AbstractGridResource {
         } else if (crs != null && paramEnv != null) {
             //check the envelope crs matches given crs
             if (!Utilities.equalsIgnoreMetadata(paramEnv.getCoordinateReferenceSystem(),crs)) {
-                throw new CoverageStoreException("Invalid parameters : envelope crs do not match given crs.");
+                throw new DataStoreException("Invalid parameters : envelope crs do not match given crs.");
             }
         } else if (paramEnv != null) {
             //use the envelope crs
@@ -123,7 +122,7 @@ final class PortrayalCoverageResource extends AbstractGridResource {
             try {
                 paramEnv = Envelopes.transform(paramEnv, crs);
             } catch (TransformException ex) {
-                throw new CoverageStoreException("Could not transform coverage envelope to given crs.");
+                throw new DataStoreException("Could not transform coverage envelope to given crs.");
             }
         }
 
@@ -147,13 +146,13 @@ final class PortrayalCoverageResource extends AbstractGridResource {
 
 
         final CanvasDef canvas = new CanvasDef(dim, null);
-        final ViewDef view = new ViewDef(paramEnv);
+        canvas.setEnvelope(paramEnv);
 
         final RenderedImage image;
         try {
-            image = DefaultPortrayalService.portray(canvas, scene, view);
+            image = DefaultPortrayalService.portray(canvas, scene);
         } catch (PortrayalException ex) {
-            throw new CoverageStoreException(ex.getMessage(),ex);
+            throw new DataStoreException(ex.getMessage(),ex);
         }
 
         //build the coverage ---------------------------------------------------

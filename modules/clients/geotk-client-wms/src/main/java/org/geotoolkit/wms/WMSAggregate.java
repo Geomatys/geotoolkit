@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.storage.AbstractResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.wms.xml.AbstractLayer;
@@ -36,7 +35,7 @@ public class WMSAggregate extends AbstractResource implements Aggregate {
 
     private final List<Resource> children;
 
-    public WMSAggregate(final WebMapClient client, final AbstractLayer layer) throws CoverageStoreException {
+    public WMSAggregate(final WebMapClient client, final AbstractLayer layer) throws DataStoreException {
         super(Names.createLocalName(null, ":", layer.getName() == null? "anonymous" : layer.getName()));
 
         final ArrayList tmp = new ArrayList<>();

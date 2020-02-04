@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
@@ -810,7 +811,7 @@ public class DbaseFileHeader {
                 continue;
             }
 
-            Optional<AttributeType<?>> attribute = FeatureExt.castOrUnwrap(type);
+            Optional<AttributeType<?>> attribute = Features.toAttribute(type);
             if (attribute.isPresent()) {
                 header.addColumn(attribute.get());
             }

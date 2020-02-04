@@ -78,7 +78,11 @@ public class FXParameterEditor extends BorderPane {
 
     public void setParameter(ParameterValueGroup parameter) {
         this.parameter = parameter;
-        treetable.setRoot(toTree(null, parameter.getDescriptor(), parameter));
+        if (parameter == null) {
+            treetable.setRoot(null);
+        } else {
+            treetable.setRoot(toTree(null, parameter.getDescriptor(), parameter));
+        }
         treetable.setShowRoot(false);
     }
 

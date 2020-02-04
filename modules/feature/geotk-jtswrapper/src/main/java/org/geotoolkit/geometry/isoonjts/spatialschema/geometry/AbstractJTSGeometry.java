@@ -385,7 +385,6 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * Creates a new Geometry out of this one by invoking the given transform
      * on each control point of this geometry.
      */
-    @Override
     public final Geometry transform(final CoordinateReferenceSystem newCRS,
             final MathTransform transform) throws TransformException {
         // Get the JTS geometry
@@ -451,7 +450,6 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     /**
      * Returns true if this geometry can be changed.
      */
-    @Override
     public final boolean isMutable() {
         return mutable;
     }
@@ -460,7 +458,6 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * Creates an immutable copy of this object or just returns this object if
      * it's already immutable.
      */
-    @Override
     public final Geometry toImmutable() {
         if (isMutable()) {
             AbstractJTSGeometry result = clone();

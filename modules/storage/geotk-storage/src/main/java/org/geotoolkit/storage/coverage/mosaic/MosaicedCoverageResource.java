@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRenderedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -226,10 +227,10 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         return gcb.build();
     }
 
-    static void resample(GridCoverage coverage, RenderedImage coverageImage, GridGeometry canvasGridGeometry, BufferedImage canvasImage) throws TransformException, FactoryException {
+    public static void resample(GridCoverage coverage, RenderedImage coverageImage, GridGeometry canvasGridGeometry, WritableRenderedImage canvasImage) throws TransformException, FactoryException {
 
         final GridGeometry coverageGridGeometry = coverage.getGridGeometry();
-        GridExtent sourceRendering = coverageGridGeometry.getExtent();
+        final GridExtent sourceRendering = coverageGridGeometry.getExtent();
 
         final AffineTransform2D source = new AffineTransform2D(
                 1, 0, 0, 1,
@@ -237,15 +238,13 @@ public class MosaicedCoverageResource extends AbstractGridResource {
                 sourceRendering.getLow(1)
         );
 
+        final MathTransform tileToTileCrs = MathTransforms.concatenate(source, coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER)).inverse();
 
-        //MathTransform tileToTileCrs = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
-        MathTransform tileToTileCrs = MathTransforms.concatenate(source, coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER)).inverse();
-
-        MathTransform crsToCrs = CRS.findOperation(
+        final MathTransform crsToCrs = CRS.findOperation(
                 canvasGridGeometry.getCoordinateReferenceSystem(),
                 coverage.getGridGeometry().getCoordinateReferenceSystem(),
                 null).getMathTransform();
-        MathTransform canvasToCrs = canvasGridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
+        final MathTransform canvasToCrs = canvasGridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
 
         final MathTransform targetToSource = MathTransforms.concatenate(canvasToCrs, crsToCrs, tileToTileCrs);
 
@@ -269,15 +268,28 @@ public class MosaicedCoverageResource extends AbstractGridResource {
     public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
     }
 
+    /**
+     * Try to create mosaics of the different provided coverages.
+     *
+     * @param resources
+     * @return
+     * @throws DataStoreException
+     */
     public static List<GridCoverageResource> create(GridCoverageResource ... resources) throws DataStoreException {
 
         final RegionCalculator calculator = new RegionCalculator();
+        final List<GridCoverageResource> mosaics = new ArrayList<>();
 
         for (GridCoverageResource resource : resources) {
-            append(resource, calculator);
+            try {
+                append(resource, calculator);
+            } catch (DataStoreException ex) {
+                //an error at this place mean the resource doesn't have an affine grid to crs
+                //we use the resource as is it defined.
+                mosaics.add(resource);
+            }
         }
 
-        final List<GridCoverageResource> mosaics = new ArrayList<>();
         for (Entry<GridGeometry,Tile[]> entry : calculator.tiles().entrySet()) {
 
             final Tile[] tiles = entry.getValue();

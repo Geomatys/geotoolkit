@@ -41,7 +41,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
@@ -100,18 +99,14 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         final FeatureAssociationRole role = (FeatureAssociationRole) type.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final Feature feature = type.newInstance();
 
-        try {
-            final GridGeometry gridGeom = gcr.getGridGeometry();
-            Envelope envelope = gridGeom.getEnvelope();
-            if (envelope != null) {
-                Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
-                if (geom != null) {
-                    JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
-                    feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
-                }
+        final GridGeometry gridGeom = gcr.getGridGeometry();
+        Envelope envelope = gridGeom.getEnvelope();
+        if (envelope != null) {
+            Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
+            if (geom != null) {
+                JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
+                feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
             }
-        } catch (CoverageStoreException ex) {
-            throw ex;
         }
         feature.setProperty(coverageRecords(gcr, role));
         return Stream.of(feature);

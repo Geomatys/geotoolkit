@@ -60,6 +60,11 @@
   <!-- =========================================================== -->
     <dependencies>
         <dependency>
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-shapefile</artifactId>
+            <version>${sis.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-dbf</artifactId>
             <version>${project.version}</version>

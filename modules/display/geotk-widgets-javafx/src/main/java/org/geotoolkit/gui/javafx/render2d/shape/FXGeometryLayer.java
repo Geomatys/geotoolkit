@@ -40,7 +40,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import org.apache.sis.util.Utilities;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -66,7 +65,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             final String propName = evt.getPropertyName();
-            if(J2DCanvas.ENVELOPE_KEY.equals(propName) || J2DCanvas.OBJECTIVE_CRS_KEY.equals(propName) || J2DCanvas.TRANSFORM_KEY.equals(propName)){
+            if(J2DCanvas.GRIDGEOMETRY_KEY.equals(propName)){
                 updateGraphics();
             }
         }

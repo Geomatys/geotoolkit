@@ -81,7 +81,7 @@ public class FXContextChooser extends BorderPane {
 
         final File file = chooser.showSaveDialog(null);
 
-        if(file!=null){
+        if (file != null) {
             context.setAreaOfInterest(map.getCanvas().getVisibleEnvelope2D());
             setPreviousPath(file.getParentFile().getAbsolutePath());
             OwcXmlIO.write(file,context);

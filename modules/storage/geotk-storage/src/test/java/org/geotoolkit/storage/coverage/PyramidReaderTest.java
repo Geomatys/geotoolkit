@@ -1,4 +1,19 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2019, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
@@ -7,7 +22,9 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.util.Collections;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -19,15 +36,14 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.storage.multires.DefiningMosaic;
 import org.geotoolkit.storage.multires.DefiningPyramid;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.storage.coverage.DefaultImageTile;
-import org.geotoolkit.storage.coverage.DefiningPyramidResource;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,7 +79,8 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final int width = 28;
         final int height = 13;
 
-        final GridCoverageResource ref1 = (GridCoverageResource) store.add(new DefiningPyramidResource(NamesExt.create("test1")));
+        final InMemoryPyramidResource ref1 = (InMemoryPyramidResource) store.add(new DefiningPyramidResource(NamesExt.create("test1")));
+        ref1.setSampleDimensions(Collections.singletonList(new SampleDimension.Builder().setName(0).build()));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
             {-5, 0,  -7},
@@ -74,19 +91,19 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         });
 
 
-        final GridGeometry gridGeomReader = ref1.getGridGeometry();
-        final GridExtent gridEnvReader = gridGeomReader.getExtent();
-        final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS(PixelInCell.CELL_CENTER);
+        final GridGeometry gridGeomRef = ref1.getGridGeometry();
+        final GridExtent gridEnvRef = gridGeomRef.getExtent();
+        final MathTransform gridToCrsRef = gridGeomRef.getGridToCRS(PixelInCell.CELL_CENTER);
 
         final GridCoverage result = ref1.read(null);
         Assert.assertEquals(crs,result.getCoordinateReferenceSystem());
 
-        final GridGeometry gridGeom   = result.getGridGeometry();
-        final GridExtent gridEnv    = gridGeom.getExtent();
+        final GridGeometry gridGeom = result.getGridGeometry();
+        final GridExtent gridEnv = gridGeom.getExtent();
         final MathTransform gridToCrs = gridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
         //-- we must have the same grid grometry definition between the reader and the coverage
-        Assert.assertEquals(gridEnvReader, gridEnv);
+        Assert.assertEquals(gridEnvRef, gridEnv);
 
         final long[] lowerCorner = GridGeometryIterator.getLow(gridEnv);
         final long[] highCorner  = GridGeometryIterator.getHigh(gridEnv);
@@ -102,35 +119,20 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         Assert.assertEquals(2,  highCorner[3]); // 3 slices
 
         //check transform
+        Assert.assertEquals(gridToCrsRef, gridToCrs);
         final double[] buffer = new double[4];
         gridToCrs.transform(new double[]{0, 0, 0, 0} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, -4.5}, buffer, DELTA);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.0, -5}, buffer, DELTA);
         gridToCrs.transform(new double[]{0, 0, 0, 1} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, 10.5}, buffer, DELTA);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.0, 10}, buffer, DELTA);
         gridToCrs.transform(new double[]{0, 0, 0, 2} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, 21}, buffer, DELTA);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.0, 20.5}, buffer, DELTA);
         gridToCrs.transform(new double[]{0, 0, 1, 0} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, -4.5}, buffer, DELTA);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 61.5, -5}, buffer, DELTA);
         gridToCrs.transform(new double[]{0, 0, 1, 1} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 10.5}, buffer, DELTA);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 61.5, 10}, buffer, DELTA);
         gridToCrs.transform(new double[]{0, 0, 1, 2} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 21}, buffer, DELTA);
-
-        //we must obtain the same results with the gridToCrs from the reader
-        gridToCrsReader.transform(new double[]{0, 0, 0, 0} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, -4.5},buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0, 0, 0, 1} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, 10.5}, buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0, 0, 0, 2} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, 21}, buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0, 0, 1, 0} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, -4.5},buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0, 0, 1, 1} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 10.5}, buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0, 0, 1, 2} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 21},   buffer, DELTA);
-
-
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 61.5, 20.5}, buffer, DELTA);
 
         //check each block range
         Assert.assertTrue(result instanceof GridCoverageStack);

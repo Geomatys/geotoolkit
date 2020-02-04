@@ -41,6 +41,7 @@ import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.util.GenericName;
 
 /**
@@ -67,31 +68,30 @@ public class ExportCoverageItem extends TreeMenuItem {
     @Override
     public MenuItem init(List<? extends TreeItem> selection) {
         boolean valid = uniqueAndType(selection,CoverageMapLayer.class);
-        if(valid && selection.get(0).getParent()!=null){
+        if (valid && selection.get(0).getParent()!=null) {
             itemRef = new WeakReference<>(selection.get(0));
             return menuItem;
         }
         return null;
     }
 
-    private class ExportSub extends MenuItem{
+    private class ExportSub extends MenuItem {
 
         public ExportSub() {
             super("Geotiff");
 
-
             setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent event) {
-                    if(itemRef == null) return;
+                    if (itemRef == null) return;
                     final TreeItem ti = itemRef.get();
-                    if(ti == null) return;
-                    final CoverageMapLayer layer = (CoverageMapLayer) ti.getValue();
+                    if (ti == null) return;
+                    final MapLayer layer = (MapLayer) ti.getValue();
 
                     final DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle(GeotkFX.getString(ExportFeatureSetItem.class, "folder"));
                     final File folder = chooser.showDialog(null);
-                    final GridCoverageResource base = layer.getResource();
+                    final GridCoverageResource base = (GridCoverageResource) layer.getResource();
 
                     if (folder != null) {
 

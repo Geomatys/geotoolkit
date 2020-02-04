@@ -33,7 +33,7 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.event.ManagementEvent;
+import org.geotoolkit.storage.event.AggregationEvent;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.storage.coverage.DefiningPyramidResource;
 import org.opengis.feature.Feature;
@@ -115,7 +115,7 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
         }
 
         resources.add(newr);
-        listeners.fire(new ManagementEvent(this, ManagementEvent.TYPE_ADD, newr), ManagementEvent.class);
+        listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_ADD, newr), AggregationEvent.class);
         return newr;
     }
 
@@ -124,7 +124,7 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
         if (!resources.remove(resource)) {
             throw new DataStoreException("Resource not found");
         }
-        listeners.fire(new ManagementEvent(this, ManagementEvent.TYPE_REMOVE, resource), ManagementEvent.class);
+        listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource), AggregationEvent.class);
     }
 
     @Override

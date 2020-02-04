@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import org.geotoolkit.display2d.presentation.Presentation;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import org.geotoolkit.display.VisitFilter;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
@@ -46,6 +49,12 @@ public interface SymbolizerRenderer {
      * @return SymbolizerRendererService
      */
     SymbolizerRendererService getService();
+
+    /**
+     * Get Rendering context this renderer is associated to.
+     * @return RenderingContext2D, not null
+     */
+    RenderingContext2D getRenderingContext();
 
     /**
      * Paint the graphic object using the cached symbolizer and the rendering parameters.
@@ -93,6 +102,17 @@ public interface SymbolizerRenderer {
      * @return true if the searcharea hit this graphic object, false otherwise.
      */
     boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter);
+
+    /**
+     * Obtain the presentation for given graphic.
+     *
+     * @param resource : cached graphic object
+     * @return Spliterator never null
+     * @throws PortrayalException
+     */
+    default Spliterator<Presentation> presentation(Resource resource) throws PortrayalException {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Obtain the presentation for given graphic.

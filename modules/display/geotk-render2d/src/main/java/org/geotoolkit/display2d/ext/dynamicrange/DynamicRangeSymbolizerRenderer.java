@@ -31,10 +31,10 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -217,7 +217,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
 
             renderCoverage(img, trs2D);
 
-        } catch (CoverageStoreException e) {
+        } catch (DataStoreException e) {
             if (e.getCause() instanceof ProjectionException) {
                 //out of domain exception
                 monitor.exceptionOccured(e, Level.FINE);

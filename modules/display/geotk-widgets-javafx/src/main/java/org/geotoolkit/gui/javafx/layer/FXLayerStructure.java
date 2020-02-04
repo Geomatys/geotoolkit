@@ -107,7 +107,7 @@ public class FXLayerStructure extends FXPropertyPane {
         sb.append("</head><body>");
         final Resource resource = layer.getResource();
         if (resource instanceof FeatureSet) {
-            final FeatureSet fml = (FeatureSet) layer;
+            final FeatureSet fml = (FeatureSet) resource;
             final FeatureType type;
             try {
                 type = fml.getType();

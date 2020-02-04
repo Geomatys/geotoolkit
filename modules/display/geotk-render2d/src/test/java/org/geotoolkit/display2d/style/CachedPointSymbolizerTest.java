@@ -41,6 +41,7 @@ import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.StyleFactory;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -54,7 +55,7 @@ public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
     private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     @Test
-    public void testMargin(){
+    public void testMargin() throws FactoryException{
 
         final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(1, 1));
         final RenderingContext2D ctx = new RenderingContext2D(canvas);

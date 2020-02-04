@@ -28,10 +28,9 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.storage.feature.FeatureCollection;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -140,7 +139,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      * @param resource
      * @param gridGeom
      * @return the cell Feature
-     * @throws CoverageStoreException
+     * @throws DataStoreException
      * @throws TransformException
      */
     static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage2D coverage, GridCoverageResource resource,

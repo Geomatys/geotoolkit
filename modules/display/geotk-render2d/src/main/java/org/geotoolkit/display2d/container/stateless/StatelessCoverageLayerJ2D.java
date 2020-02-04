@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
@@ -37,7 +36,6 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.event.StorageListener;
@@ -58,7 +56,6 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     private final boolean ignoreBuilders;
 
     //compare values to update caches if necessary
-    private final StatelessContextParams params;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
@@ -68,42 +65,23 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer, false);
         this.ignoreBuilders = ignoreBuilders;
-        this.params = new StatelessContextParams(canvas,null);
-        this.projectedCoverage = new ProjectedCoverage(params, layer);
+        this.projectedCoverage = new ProjectedCoverage(layer);
         this.weakStoreListener.registerSource(layer.getResource());
     }
 
     private synchronized void updateCache(final RenderingContext2D context){
-        params.update(context);
-        params.objectiveCRS = context.getObjectiveCRS();
-        params.displayCRS = context.getDisplayCRS();
-        boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
         //todo use only the 2D CRS, the transform parameters are only used for the border
         //geometry if needed, the gridcoverageReader will handle itself the transform
         final CoordinateReferenceSystem objectiveCRS2D = context.getObjectiveCRS2D();
-        if(objectiveCRS2D != lastObjectiveCRS){
-            params.objectiveToDisplay.setToIdentity();
+        if (objectiveCRS2D != lastObjectiveCRS) {
             lastObjectiveCRS = objectiveCRS2D;
-            objectiveCleared = true;
             projectedCoverage.clearObjectiveCache();
         }
 
-        //clear display cache if needed ----------------------------------------
-        final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
-
-        if(!objtoDisp.equals(params.objectiveToDisplay)){
-            params.objectiveToDisplay.setTransform(objtoDisp);
-            ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
-                    .setTransform(objtoDisp);
-
-            if(!objectiveCleared){
-                //no need to clear the display cache if the objective clear has already been called
-                projectedCoverage.clearDisplayCache();
-            }
-
-        }
+        //no need to clear the display cache if the objective clear has already been called
+        projectedCoverage.clearDisplayCache();
     }
 
     /**
@@ -111,7 +89,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
      */
     @Override
     public boolean paintLayer(final RenderingContext2D renderingContext) {
-
+        if (renderingContext.getMonitor().stopRequested()) return false;
         GenericName coverageName = null;
         try {
             coverageName = item.getResource().getIdentifier().orElse(null);
@@ -120,6 +98,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
         }
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
+        if (renderingContext.getMonitor().stopRequested()) return false;
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
@@ -133,15 +112,16 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     private boolean paintRaster(final MapLayer item, final CachedRule[] rules,
             final RenderingContext2D context) {
         updateCache(context);
+        if (context.getMonitor().stopRequested()) return false;
 
         //search for a special graphic renderer
-        if(!ignoreBuilders){
+        if (!ignoreBuilders) {
             final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
-            if(builder != null){
+            if (builder != null) {
                 //this layer has a special graphic rendering, use it instead of normal rendering
                 final Collection<GraphicJ2D> graphics = builder.createGraphics(item, getCanvas());
                 boolean dataRendered = false;
-                for(GraphicJ2D gra : graphics){
+                for (GraphicJ2D gra : graphics) {
                     dataRendered |= gra.paint(context);
                 }
                 return dataRendered;
@@ -155,8 +135,8 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
         //}
 
         boolean dataRendered = false;
-        for(final CachedRule rule : rules){
-            for(final CachedSymbolizer symbol : rule.symbolizers()){
+        for (final CachedRule rule : rules) {
+            for (final CachedSymbolizer symbol : rule.symbolizers()) {
                 try {
                     dataRendered |= GO2Utilities.portray(projectedCoverage, symbol, context);
                 } catch (PortrayalException ex) {

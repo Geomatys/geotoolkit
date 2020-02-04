@@ -17,24 +17,24 @@
 package org.geotoolkit.display2d.primitive;
 
 import com.bric.geom.Clipper;
-import org.locationtech.jts.geom.Envelope;
 import java.awt.Shape;
 import java.util.Arrays;
 import java.util.logging.Level;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceWrapTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.referencing.CRS;
+import org.locationtech.jts.geom.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * convenient class to manipulate geometry in the 2d engine.
@@ -48,7 +48,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class ProjectedGeometry  {
 
-    private final StatelessContextParams params;
+    private final RenderingContext2D context;
     private MathTransform2D dataToObjective;
     private MathTransform2D dataToDisplay;
 
@@ -71,12 +71,12 @@ public class ProjectedGeometry  {
 
     private CoordinateReferenceSystem dataCRS = null;
 
-    public ProjectedGeometry(final StatelessContextParams params){
-        this.params = params;
+    public ProjectedGeometry(final RenderingContext2D context){
+        this.context = context;
     }
 
     public ProjectedGeometry(final ProjectedGeometry copy){
-        this.params                 = copy.params;
+        this.context                = copy.context;
         this.dataToObjective        = copy.dataToObjective;
         this.dataToDisplay          = copy.dataToDisplay;
         this.dataGeometryJTS        = copy.dataGeometryJTS;
@@ -104,8 +104,8 @@ public class ProjectedGeometry  {
             if(dataCRS != null && this.dataCRS!=dataCRS){
                 this.dataCRS = dataCRS;
                 dataCRS = CRSUtilities.getCRS2D(dataCRS);
-                dataToObjective = (MathTransform2D) CRS.findOperation(dataCRS, params.context.getObjectiveCRS2D(), null).getMathTransform();
-                dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, params.displayCRS, null).getMathTransform();
+                dataToObjective = (MathTransform2D) CRS.findOperation(dataCRS, context.getObjectiveCRS2D(), null).getMathTransform();
+                dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, context.getDisplayCRS(), null).getMathTransform();
             }
         } catch (Exception ex) {
             Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);
@@ -185,11 +185,11 @@ public class ProjectedGeometry  {
             }
 
 
-            if(params.context.wraps != null){
+            if(context.wraps != null){
 
                 org.locationtech.jts.geom.Envelope objBounds = objBase.getEnvelopeInternal();
-                final double dx = params.context.wraps.wrapPoints[1].getOrdinate(0) - params.context.wraps.wrapPoints[0].getOrdinate(0);
-                final double dy = params.context.wraps.wrapPoints[1].getOrdinate(1) - params.context.wraps.wrapPoints[0].getOrdinate(1);
+                final double dx = context.wraps.wrapPoints[1].getOrdinate(0) - context.wraps.wrapPoints[0].getOrdinate(0);
+                final double dy = context.wraps.wrapPoints[1].getOrdinate(1) - context.wraps.wrapPoints[0].getOrdinate(1);
 
                 // fix the geometry if some points wrap around the meridian
                 // we expect the warp points to be axis aligned, TODO handle other cases
@@ -208,19 +208,19 @@ public class ProjectedGeometry  {
                 }
 
                 //check if the geometry overlaps the meridian
-                int nbIncRep = params.context.wraps.wrapIncNb;
-                int nbDecRep = params.context.wraps.wrapDecNb;
+                int nbIncRep = context.wraps.wrapIncNb;
+                int nbDecRep = context.wraps.wrapDecNb;
                 org.locationtech.jts.geom.Geometry objBoundsGeom = JTS.toGeometry(objBounds);
 
                 // geometry cross the far east meridian, geometry is like :
                 // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
-                if(objBoundsGeom.intersects(params.context.wraps.wrapIncLine)){
+                if(objBoundsGeom.intersects(context.wraps.wrapIncLine)){
                     //duplicate geometry on the other warp line
                     nbDecRep++;
                 }
                 // geometry cross the far west meridian, geometry is like :
                 // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
-                else if(objBoundsGeom.intersects(params.context.wraps.wrapDecLine)){
+                else if(objBoundsGeom.intersects(context.wraps.wrapDecLine)){
                     //duplicate geometry on the other warp line
                     nbIncRep++;
                 }
@@ -229,19 +229,19 @@ public class ProjectedGeometry  {
                 int n=0;
                 for(int i=0;i<nbIncRep;i++){
                     //check that the futur geometry will intersect the visible area
-                    final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapIncObj[i]);
-                    if(candidate.intersects(params.objectiveJTSEnvelope)){
-                        objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapIncObj[i]);
+                    final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapIncObj[i]);
+                    if(candidate.intersects(context.objectiveJTSEnvelope)){
+                        objectiveGeometryJTS[n++] = JTS.transform(objBase, context.wraps.wrapIncObj[i]);
                     }
                 }
-                if(objBounds.intersects(params.objectiveJTSEnvelope)){
+                if(objBounds.intersects(context.objectiveJTSEnvelope)){
                     objectiveGeometryJTS[n++] = objBase;
                 }
                 for(int i=0;i<nbDecRep;i++){
                     //check that the futur geometry will intersect the visible area
-                    final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapDecObj[i]);
-                    if(candidate.intersects(params.objectiveJTSEnvelope)){
-                        objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapDecObj[i]);
+                    final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapDecObj[i]);
+                    if(candidate.intersects(context.objectiveJTSEnvelope)){
+                        objectiveGeometryJTS[n++] = JTS.transform(objBase, context.wraps.wrapDecObj[i]);
                     }
                 }
                 if(n!=objectiveGeometryJTS.length){
@@ -271,7 +271,7 @@ public class ProjectedGeometry  {
             getObjectiveGeometryJTS();
             displayGeometryJTS = new org.locationtech.jts.geom.Geometry[objectiveGeometryJTS.length];
             for(int i=0;i<displayGeometryJTS.length;i++){
-                displayGeometryJTS[i] = params.objToDisplayTransformer.transform(objectiveGeometryJTS[i]);
+                displayGeometryJTS[i] = context.getObjectiveToDisplayGeometryTransformer().transform(objectiveGeometryJTS[i]);
             }
         }
         return displayGeometryJTS;
@@ -306,12 +306,12 @@ public class ProjectedGeometry  {
             displayShape = new Shape[displayGeometryJTS.length];
             for(int i=0;i<displayShape.length;i++){
                 displayShape[i] = new JTSGeometryJ2D(displayGeometryJTS[i]);
-                if(params.displayClipRect!=null){
+                if (context.getDisplayClipRectangle() != null) {
                     //check envelopes
                     final Envelope env = displayGeometryJTS[i].getEnvelopeInternal();
-                    if(!env.isNull() && !params.displayClip.getEnvelopeInternal().contains(env)){
+                    if (!env.isNull() && !context.getDisplayClipPolygon().getEnvelopeInternal().contains(env)) {
                         //clip to display bounds
-                        displayShape[i] = Clipper.clipToRect(displayShape[i], params.displayClipRect);
+                        displayShape[i] = Clipper.clipToRect(displayShape[i], context.getDisplayClipRectangle());
                     }
 
                 }
@@ -333,7 +333,7 @@ public class ProjectedGeometry  {
             getObjectiveGeometryJTS();
             objectiveGeometryISO = new Geometry[objectiveGeometryJTS.length];
             for(int i=0;i<objectiveGeometryISO.length;i++){
-                objectiveGeometryISO[i] = JTSUtils.toISO(objectiveGeometryJTS[i], params.objectiveCRS);
+                objectiveGeometryISO[i] = JTSUtils.toISO(objectiveGeometryJTS[i], context.getObjectiveCRS2D());
             }
         }
         return objectiveGeometryISO;
@@ -350,7 +350,7 @@ public class ProjectedGeometry  {
             getDataGeometryJTS();
             displayGeometryISO = new Geometry[displayGeometryJTS.length];
             for(int i=0;i<displayGeometryISO.length;i++){
-                displayGeometryISO[i] = JTSUtils.toISO(displayGeometryJTS[i], params.displayCRS);
+                displayGeometryISO[i] = JTSUtils.toISO(displayGeometryJTS[i], context.getDisplayCRS());
             }
         }
         return displayGeometryISO;

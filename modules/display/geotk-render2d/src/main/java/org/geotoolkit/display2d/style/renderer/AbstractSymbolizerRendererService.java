@@ -18,11 +18,10 @@ package org.geotoolkit.display2d.style.renderer;
 
 
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -55,13 +54,6 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
             final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         return renderer.portray(graphic);
-    }
-
-    @Override
-    public boolean portray(final Iterator<? extends ProjectedObject> graphics,
-            final C symbol, final RenderingContext2D context) throws PortrayalException {
-        final SymbolizerRenderer renderer = createRenderer(symbol, context);
-        return renderer.portray(graphics);
     }
 
     @Override

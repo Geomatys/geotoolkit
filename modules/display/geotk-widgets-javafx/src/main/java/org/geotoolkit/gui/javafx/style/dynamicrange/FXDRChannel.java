@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.geometry.Envelope;
 
@@ -114,9 +113,8 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
         uiUpper.setLayer(layer);
 
 
-        if(layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageResource ref = cml.getResource();
+        if (layer.getResource() instanceof GridCoverageResource) {
+            final GridCoverageResource ref = (GridCoverageResource) layer.getResource();
             try {
                 final List<SampleDimension> dims = ref.getSampleDimensions();
 
@@ -159,8 +157,8 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
      */
     public void fitToData(){
         final MapLayer cml = getLayer();
-        if(cml instanceof CoverageMapLayer){
-            final GridCoverageResource ref = ((CoverageMapLayer)cml).getResource();
+        if (cml.getResource() instanceof GridCoverageResource) {
+            final GridCoverageResource ref = (GridCoverageResource) cml.getResource();
             try {
                 List<SampleDimension> dims = ref.getSampleDimensions();
                 final int nbdim = dims == null ? 1 : dims.size();
@@ -174,14 +172,14 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                     case DynamicRangeSymbolizer.DRChannel.BAND_ALPHA: index = 3; break;
                 }
 
-                if(index>=nbdim) index = 0;
+                if (index >= nbdim) index = 0;
 
                 uiBands.setValue(""+index);
 
                 //extract band min/max
                 double min = 0;
                 double max = 255;
-                if (dims!=null) {
+                if (dims != null) {
                     final SampleDimension sd = dims.get(index);
                     min = SampleDimensionUtils.getMinimumValue(sd);
                     max = SampleDimensionUtils.getMaximumValue(sd);

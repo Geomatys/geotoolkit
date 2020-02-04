@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -45,6 +46,7 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
@@ -56,8 +58,6 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.NamesExt;
@@ -416,7 +416,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
     public Envelope getBounds() {
         if(env == null){
             try {
-                env = findEnvelope();
+                env = WMSUtilities.getGridGeometry(server, getLayerNames()[0]).getEnvelope();
             } catch (CapabilitiesException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
@@ -429,8 +429,12 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        //we only know the envelope,
-        return new GridGeometry(PixelInCell.CELL_CENTER, null, getBounds(), GridRoundingMode.ENCLOSING);
+        try {
+            //we only know the envelope,
+            return WMSUtilities.getGridGeometry(server, getLayerNames()[0]);
+        } catch (CapabilitiesException ex) {
+            return new GridGeometry(PixelInCell.CELL_CENTER, null, getBounds(), GridRoundingMode.ENCLOSING);
+        }
     }
 
     @Override
@@ -456,13 +460,12 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-
         if (domain == null) {
             domain = getGridGeometry();
         }
 
         if (range != null && range.length != 0) {
-            throw new CoverageStoreException("Source or destination bands can not be used on WMS coverages.");
+            throw new DataStoreException("Source or destination bands can not be used on WMS coverages.");
         }
 
         GeneralEnvelope env;
@@ -478,7 +481,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
         try {
             crs2d = CRSUtilities.getCRS2D(crs);
         } catch (TransformException ex) {
-            throw new CoverageStoreException("WMS reading expect a CRS whose first component is 2D.", ex);
+            throw new DataStoreException("WMS reading expect a CRS whose first component is 2D.", ex);
         }
 
         final CoordinateReferenceSystem candidateCRS = env.getDimension() > 2? crs : crs2d;
@@ -488,7 +491,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
             try {
                 env = GeneralEnvelope.castOrCopy(Envelopes.transform(env, candidateCRS));
             } catch (TransformException ex) {
-                throw new CoverageStoreException("Could not transform coverage envelope to given crs.", ex);
+                throw new DataStoreException("Could not transform coverage envelope to given crs.", ex);
             }
         }
 
@@ -514,28 +517,41 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
             prepareQuery(request, env, dim, null);
             LOGGER.fine(request.getURL().toExternalForm());
         } catch (Exception ex) {
-            throw new CoverageStoreException(ex.getMessage(), ex);
+            throw new DataStoreException(ex.getMessage(), ex);
         }
 
         //read image
         try (final InputStream stream = request.getResponseStream()) {
-            final BufferedImage image = ImageIO.read(stream);
+            BufferedImage image = ImageIO.read(stream);
 
             //the envelope CRS may have been changed by prepareQuery method
             final CoordinateReferenceSystem resultCrs = CRS.getHorizontalComponent(env.getCoordinateReferenceSystem());
             final Envelope env2D = Envelopes.transform(env, resultCrs);
+            //grid to crs returned is in corner
             final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName(getCombinedLayerNames());
-            gcb.setRenderedImage(image);
-            gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-            gcb.setGridToCRS(gridToCRS);
-            gcb.setCoordinateReferenceSystem(resultCrs);
-            return gcb.build();
+            //we must honor the number of sample dimensions we declared
+            //some WMS services returned mixed sample and color model for better compression
+            final List<SampleDimension> sampleDimensions = getSampleDimensions();
+            if (sampleDimensions.size() != image.getSampleModel().getNumBands()) {
+                BufferedImage cp;
+                if (sampleDimensions.size() == 3) {
+                    cp = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+                } else if (sampleDimensions.size() == 4) {
+                    cp = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                } else {
+                    throw new DataStoreException();
+                }
+                cp.createGraphics().drawRenderedImage(image, new AffineTransform());
+                image = cp;
+            }
 
-        } catch (IOException|TransformException ex) {
-            throw new CoverageStoreException(ex.getMessage(), ex);
+            final GridExtent extent = new GridExtent(image.getWidth(), image.getHeight());
+            final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CORNER, new AffineTransform2D(gridToCRS), resultCrs);
+            return new GridCoverage2D(grid, sampleDimensions, image);
+
+        } catch (IOException | TransformException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
         }
 
     }
@@ -547,10 +563,6 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
 
     protected boolean supportCRS(CoordinateReferenceSystem crs2D) throws FactoryException, CapabilitiesException {
         return WMSUtilities.supportCRS(server,getLayerNames()[0],crs2D);
-    }
-
-    protected Envelope findEnvelope() throws CapabilitiesException {
-        return WMSUtilities.findEnvelope(server,getLayerNames()[0]);
     }
 
     protected Long findClosestDate(long l) throws CapabilitiesException {
@@ -790,7 +802,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
      * @return A {@linkplain GetLegendRequest GetLegendGraphic request}.
      * @throws MalformedURLException if the generated url is invalid.
      */
-    public Request queryLegend(final Dimension rect, final String format,
+    public GetLegendRequest queryLegend(final Dimension rect, final String format,
             final String rule, final Double scale) throws MalformedURLException {
         final GetLegendRequest request = server.createGetLegend();
         prepareGetLegendRequest(request, rect, format, rule, scale);
@@ -833,7 +845,6 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
      * {@code image/png} if the {@link #setFormat(java.lang.String)} has not
      * been called.
      *
-     * @param request      the GetFeatureInfo request
      * @param env          the current envelope of the map
      * @param rect         the dimension of the map
      * @param x            X coordinate of the point
@@ -846,7 +857,7 @@ public class WMSResource extends AbstractGridResource implements StoreResource {
      * @throws FactoryException
      * @throws MalformedURLException if the generated url is invalid.
      */
-    public Request queryFeatureInfo(final Envelope env, final Dimension rect, int x,
+    public GetFeatureInfoRequest queryFeatureInfo(final Envelope env, final Dimension rect, int x,
             int y, final String[] queryLayers, final String infoFormat,
             final int featureCount) throws TransformException, FactoryException {
         final GetFeatureInfoRequest request = server.createGetFeatureInfo();

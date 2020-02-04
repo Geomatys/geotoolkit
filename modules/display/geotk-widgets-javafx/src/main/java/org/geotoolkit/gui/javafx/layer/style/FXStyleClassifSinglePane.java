@@ -58,6 +58,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import org.apache.sis.cql.CQLException;
+import org.apache.sis.feature.Features;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -385,7 +386,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
                 final FeatureType schema = ((FeatureSet) layer.getResource()).getType();
 
                 //find the geometry class for template
-                final AttributeType<?> geo = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(schema))
+                final AttributeType<?> geo = Features.toAttribute(FeatureExt.getDefaultGeometry(schema))
                         .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer "+layer.getName()));
                 final Class<?> geoClass = geo.getValueClass();
 

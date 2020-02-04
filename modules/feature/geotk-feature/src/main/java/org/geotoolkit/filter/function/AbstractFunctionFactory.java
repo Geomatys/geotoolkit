@@ -63,7 +63,7 @@ public class AbstractFunctionFactory implements FunctionFactory{
 
         final Constructor construct = clazz.getConstructors()[0];
         final Object[] cstParams = new Object[construct.getParameterTypes().length];
-        for(int i=0;i<cstParams.length;i++){
+        for(int i=0;i<cstParams.length && i<parameters.length;i++){
             cstParams[i] = parameters[i];
         }
 

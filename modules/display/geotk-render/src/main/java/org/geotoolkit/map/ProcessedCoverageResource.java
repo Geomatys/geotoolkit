@@ -16,15 +16,17 @@
  */
 package org.geotoolkit.map;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -42,12 +44,22 @@ public class ProcessedCoverageResource extends InMemoryGridCoverageResource {
     private ParameterValueGroup inputParam;
     private String resultParam;
     private long lifespan = 0;
+    private List<SampleDimension> sampleDimensions;
 
     private ParameterValueGroup result;
     private long lastCall = 0;
 
     public ProcessedCoverageResource(){
         super(NamesExt.create("Processed"));
+    }
+
+    /**
+     * Define coverage sample dimension when coverage isn't available.
+     *
+     * @param sampleDimensions
+     */
+    public void setSampleDimensions(List<SampleDimension> sampleDimensions) {
+        this.sampleDimensions = sampleDimensions;
     }
 
     /**
@@ -120,51 +132,64 @@ public class ProcessedCoverageResource extends InMemoryGridCoverageResource {
         this.lifespan = lifespan;
     }
 
-    private GridCoverage getResult(){
-        if(processDescriptor == null || inputParam == null || resultParam == null){
+    private GridCoverage getResult() throws DataStoreException {
+        if (processDescriptor == null || inputParam == null || resultParam == null){
             LOGGER.log(Level.WARNING, "ProcessedCollection not configured.");
             return null;
         }
 
         //check lifespan
-        if(result != null && lifespan>=0 && (System.currentTimeMillis()-lastCall)>lifespan ){
+        if (result != null && lifespan >= 0 && (System.currentTimeMillis()-lastCall) > lifespan ) {
             result = null;
         }
 
         //execute process if requiered
-        if(result == null){
+        if (result == null) {
             lastCall = System.currentTimeMillis();
-            try{
+            try {
                 final Process process = processDescriptor.createProcess(inputParam);
                 result = process.call();
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 //we should not catch exception, but we don't want to break the stack because of a
                 //uncorrect process script (groovy, javascript,...)
                 LOGGER.log(Level.WARNING, "Processing failed : "+ex.getMessage(), ex);
             }
         }
 
-        if(result == null){
+        if (result == null) {
             return null;
-        }else{
+        } else {
             Object cov = null;
-            try{
+            try {
                 cov = result.parameter(resultParam).getValue();
-            }catch(ParameterNotFoundException ex){
+            } catch(ParameterNotFoundException ex) {
                 LOGGER.log(Level.WARNING, "Parameter "+resultParam+" is not in the result parameters.");
             }
 
-            if(cov instanceof GridCoverage){
+            if (cov instanceof GridCoverage) {
                 //do nothing
-            }else{
+            } else {
                 //unsupported type
                 LOGGER.log(Level.WARNING, "Parameter "+resultParam+" is not a coverage type : "+cov);
                 cov = null;
             }
 
-            return (GridCoverage)cov;
+            return (GridCoverage) cov;
         }
 
+    }
+
+    @Override
+    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        try {
+            //if coverage exist
+            return super.getSampleDimensions();
+        } catch (DataStoreException ex) {
+            if (sampleDimensions != null) {
+                return sampleDimensions;
+            }
+            throw ex;
+        }
     }
 
     @Override

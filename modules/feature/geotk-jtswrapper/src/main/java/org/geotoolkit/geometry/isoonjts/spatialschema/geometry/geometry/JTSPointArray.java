@@ -167,7 +167,6 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      *
      * @see List#set
      */
-    @Override
     public void setDirectPosition(final int column, final DirectPosition position) throws IndexOutOfBoundsException {
         DirectPosition thisPosition = (DirectPosition) get(column);
         DirectPosition otherPosition = position.getDirectPosition();

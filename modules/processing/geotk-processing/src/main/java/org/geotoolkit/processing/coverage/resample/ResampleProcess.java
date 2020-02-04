@@ -34,7 +34,6 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.coverage.BufferedGridCoverage;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -46,7 +45,9 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
+
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -357,9 +358,7 @@ public class ResampleProcess extends AbstractProcess {
             resample.fillImage(builder.isSameCrs());
         }
 
-        return geophysicRequired?
-                new NoConversionCoverage(builder.target, outputSampleDims, targetImage) :
-                new PackedCoverage(builder.target, outputSampleDims, targetImage);
+        return new NoConversionCoverage(builder.target, outputSampleDims, targetImage, !geophysicRequired);
     }
 
     private static double[] getFillValue(GridCoverage source) {
@@ -380,11 +379,6 @@ public class ResampleProcess extends AbstractProcess {
 
     /**
      * Check if conditions are met to use java affine interpolation.
-     *
-     * @param sourceImage
-     * @param trs
-     * @param interpolation
-     * @return
      */
     private static boolean canUseJavaInterpolation(RenderedImage sourceImage,
             MathTransform trs, InterpolationCase interpolation){
@@ -484,19 +478,23 @@ public class ResampleProcess extends AbstractProcess {
     static class NoConversionCoverage extends GridCoverage {
 
         final RenderedImage buffer;
+
+        private final boolean allowConversion;
+
         /**
          * Constructs a grid coverage using the specified grid geometry and sample dimensions.
          *  @param grid  the grid extent, CRS and conversion from cell indices to CRS.
          * @param bands sample dimensions for each image band.
-         * @param buffer
          */
-        protected NoConversionCoverage(GridGeometry grid, Collection<? extends SampleDimension> bands, RenderedImage buffer) {
+        NoConversionCoverage(GridGeometry grid, Collection<? extends SampleDimension> bands, RenderedImage buffer, boolean allowConversion) {
             super(grid, bands);
             this.buffer = buffer;
+            this.allowConversion = allowConversion;
         }
 
         @Override
         public synchronized  GridCoverage forConvertedValues(boolean converted) {
+            if (allowConversion) return super.forConvertedValues(converted);
             return this;
         }
 
@@ -510,38 +508,6 @@ public class ResampleProcess extends AbstractProcess {
             } else {
                 throw new UnsupportedOperationException("TODO: generic case for cropped view.");
             }
-        }
-    }
-
-    private static class PackedCoverage extends NoConversionCoverage {
-
-        /**
-         * Result of the call to {@link #forConvertedValues(boolean)}, created when first needed.
-         */
-        private GridCoverage converted;
-
-        /**
-         * Constructs a grid coverage using the specified grid geometry and sample dimensions.
-         *
-         * @param grid   the grid extent, CRS and conversion from cell indices to CRS.
-         * @param bands  sample dimensions for each image band.
-         * @param buffer
-         */
-        protected PackedCoverage(GridGeometry grid, Collection<? extends SampleDimension> bands, RenderedImage buffer) {
-            super(grid, bands, buffer);
-        }
-
-        @Override
-        public synchronized  GridCoverage forConvertedValues(boolean converted) {
-            if (converted) {
-                synchronized (this) {
-                    if (this.converted == null) {
-                        this.converted = BufferedGridCoverage.convert(this);
-                    }
-                    return this.converted;
-                }
-            }
-            return this;
         }
     }
 }

@@ -22,10 +22,10 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Locale;
 
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Errors;
 
 
@@ -35,7 +35,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Eve (Geomatys)
  */
-public class CatalogException extends CoverageStoreException {
+public class CatalogException extends DataStoreException {
     /**
      * For cross-version compatibility.
      */

@@ -40,21 +40,19 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel
  * @module
  */
-public class DBFReadingTest extends AbstractReadingTests{
+public class DBFReadingTest extends AbstractReadingTests {
 
-    private final DbaseFileFeatureStore store;
+    private final DbaseFileStore store;
     private final Set<GenericName> names = new HashSet<>();
     private final List<ExpectedResult> expecteds = new ArrayList<>();
 
     public DBFReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException{
 
         final File file = new File("src/test/resources/org/geotoolkit/data/dbf/sample.dbf");
-        store = new DbaseFileFeatureStore(file.toPath());
+        store = new DbaseFileStore(file.toPath());
 
-        for(GenericName n : store.getNames()){
-            FeatureType ft = store.getFeatureType(n.toString());
-            assertNotNull(ft);
-        }
+        FeatureType ft = store.getType();
+        assertNotNull(ft);
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 

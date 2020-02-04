@@ -62,7 +62,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.DefaultLiteral;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
@@ -277,8 +276,6 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                 uiMinimum.valueProperty().setValue(minArray[index]);
                 uiMaximum.valueProperty().setValue(maxArray[index]);
             }
-        } catch (CoverageStoreException ex) {
-            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
         } catch (DataStoreException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
         }
@@ -310,10 +307,15 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         for (AttributeGroup attg : covdesc.getAttributeGroups()) {
             for (RangeDimension rd : attg.getAttributes()) {
                 if (!(rd instanceof org.opengis.metadata.content.SampleDimension)) continue;
-                final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
-                if (i == index) {
-                    final org.opengis.metadata.content.SampleDimension sd = (org.opengis.metadata.content.SampleDimension) rd;
-                    return new Double[]{sd.getMinValue(),sd.getMaxValue()};
+                final String str = rd.getSequenceIdentifier().tip().toString();
+                try {
+                    final int i = Integer.parseInt(str);
+                    if (i == index) {
+                        final org.opengis.metadata.content.SampleDimension sd = (org.opengis.metadata.content.SampleDimension) rd;
+                        return new Double[]{sd.getMinValue(),sd.getMaxValue()};
+                    }
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
                 }
             }
         }
@@ -418,7 +420,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     }
                 }
 
-            } catch (CoverageStoreException ex) {
+            } catch (DataStoreException ex) {
                 Loggers.JAVAFX.log(Level.INFO, ex.getMessage(),ex);
             }
         }
@@ -488,7 +490,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     }
 
     private List<InterOrCategorize> getInterpolationPoints(final double min, final double max,
-            List<Entry<Double, Color>> steps) throws CoverageStoreException {
+            List<Entry<Double, Color>> steps) throws DataStoreException {
         final List<InterOrCategorize> lsts = new ArrayList<>();
         for(int s=0,l=steps.size();s<l;s++){
             final Entry<Double, Color> step = steps.get(s);
@@ -685,8 +687,6 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     uiBand.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, nbBands, 0, 1));
                 }
             }
-        } catch (CoverageStoreException ex) {
-            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         } catch (DataStoreException ex) {
             Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         }

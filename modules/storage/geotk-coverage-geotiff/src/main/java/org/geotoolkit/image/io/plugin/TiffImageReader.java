@@ -3733,6 +3733,10 @@ public class TiffImageReader extends SpatialImageReader {
      */
     public static class Spi extends SpatialImageReader.Spi implements SystemOverride {
         /**
+         * Default list of names.
+         */
+        private static final String[] NAMES = new String[] {"geotiff", "geotif", "tiff", "tif"};
+        /**
          * Default list of file extensions.
          */
         private static final String[] SUFFIXES = new String[] {"tiff", "tif", "geotiff", "geotif"};
@@ -3759,7 +3763,7 @@ public class TiffImageReader extends SpatialImageReader {
          */
         public Spi() {
             super();
-            names           = SUFFIXES;
+            names           = NAMES;
             suffixes        = SUFFIXES;
             inputTypes      = INPUT_TYPES;
             MIMETypes       = MIME_TYPES;

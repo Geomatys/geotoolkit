@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
@@ -150,17 +149,17 @@ public abstract class AbstractTileGenerator implements TileGenerator {
 
     }
 
-    protected long countTiles(Pyramid pyramid, Envelope env, NumberRange resolutions) throws CoverageStoreException {
+    protected long countTiles(Pyramid pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
 
         long count = 0;
         for (Mosaic mosaic : pyramid.getMosaics()) {
             final Mosaic m = mosaic;
             if (resolutions == null || resolutions.contains(mosaic.getScale())) {
                 if (env == null) {
-                    count += ((long)m.getGridSize().width) * ((long)m.getGridSize().height);
+                    count += ((long) m.getGridSize().width) * ((long) m.getGridSize().height);
                 } else {
                     final Rectangle rect = Pyramids.getTilesInEnvelope(m, env);
-                    count += ((long)rect.width) * ((long)rect.height);
+                    count += ((long) rect.width) * ((long) rect.height);
                 }
             }
         }

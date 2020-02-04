@@ -59,6 +59,7 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
     public static final String PARSE_LONG = "parseLong";
     public static final String PROPERTY_EXISTS  = "PropertyExists";
     public static final String ROUND_DOUBLE = "roundDouble";
+    public static final String LIST = "list";
 
     private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
@@ -88,6 +89,7 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
         FUNCTIONS.put(PARSE_LONG,               ParseLongFunction.class);
         FUNCTIONS.put(PROPERTY_EXISTS,          PropertyExistsFunction.class);
         FUNCTIONS.put(ROUND_DOUBLE,             RoundDoubleFunction.class);
+        FUNCTIONS.put(LIST,                     ListFunction.class);
 
     }
 

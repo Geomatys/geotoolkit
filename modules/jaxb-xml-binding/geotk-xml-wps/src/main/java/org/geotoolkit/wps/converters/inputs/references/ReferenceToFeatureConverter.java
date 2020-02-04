@@ -17,12 +17,11 @@
 package org.geotoolkit.wps.converters.inputs.references;
 
 import java.util.Map;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
-import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v200.Reference;
-;
-import org.opengis.feature.Feature;import org.opengis.feature.Feature;
+import org.opengis.feature.Feature;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a Feature.

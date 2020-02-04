@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage.mosaic;
 
-import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
@@ -29,14 +28,19 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.coverage.BufferedGridCoverage;
+import org.apache.sis.internal.coverage.j2d.BufferedGridCoverage;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
+import org.apache.sis.storage.event.StoreEvent;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.storage.StorageCountListener;
+import org.geotoolkit.storage.event.AggregationEvent;
+import org.geotoolkit.storage.event.ContentEvent;
+import org.geotoolkit.storage.event.ModelEvent;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -113,10 +117,14 @@ public class AggregatedCoverageResourceTest {
         | 1 | 2 | 3 |
         +---+---+---+
         */
-        final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
-                null, AggregatedCoverageResource.Mode.ORDER,
-                resource1, resource2, resource3);
-        ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);;
+        aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.add(resource1);
+        aggregate.add(resource2);
+        aggregate.add(resource3);
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
@@ -216,10 +224,15 @@ public class AggregatedCoverageResourceTest {
         |NaN|NaN| 2 | 2 | 1 | 1 |
         +---+---+---+---+---+---+
         */
-        final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
-                null, AggregatedCoverageResource.Mode.SCALE,
-                resource1, resource2, resource3);
-        ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+        aggregate.setMode(AggregatedCoverageResource.Mode.SCALE);
+        aggregate.add(resource1);
+        aggregate.add(resource2);
+        aggregate.add(resource3);
+        //we must obtain the lowest resolution
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{0.5,0.5}, resolution, 0.0);
 
         final GridCoverage coverage = aggregate.read(grid2);
         final RenderedImage image = coverage.render(null);
@@ -317,6 +330,9 @@ public class AggregatedCoverageResourceTest {
     @Test
     public void testModifyAggregation() throws DataStoreException, TransformException {
 
+        //event counters
+        StorageCountListener listener = new StorageCountListener();
+
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final GeneralEnvelope expected = new GeneralEnvelope(crs);
 
@@ -335,21 +351,31 @@ public class AggregatedCoverageResourceTest {
         final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
 
         final AggregatedCoverageResource agg = new AggregatedCoverageResource();
+        agg.addListener(StoreEvent.class, listener);
         Assert.assertNull(agg.getEnvelope().orElse(null));
 
         agg.add(resource1);
+        Assert.assertEquals(1, listener.count(ContentEvent.class));
+        Assert.assertEquals(1, listener.count(ModelEvent.class));
+        Assert.assertEquals(1, listener.count(AggregationEvent.class));
         Envelope envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 3);
         expected.setRange(1, 0, 1);
         Assert.assertEquals(expected, new GeneralEnvelope(envelope));
 
         agg.add(resource2);
+        Assert.assertEquals(2, listener.count(ContentEvent.class));
+        Assert.assertEquals(2, listener.count(ModelEvent.class));
+        Assert.assertEquals(2, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 4);
         expected.setRange(1, 0, 1);
         Assert.assertEquals(expected, new GeneralEnvelope(envelope));
 
         agg.add(resource3);
+        Assert.assertEquals(3, listener.count(ContentEvent.class));
+        Assert.assertEquals(3, listener.count(ModelEvent.class));
+        Assert.assertEquals(3, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 5);
         expected.setRange(1, 0, 1);
@@ -357,6 +383,9 @@ public class AggregatedCoverageResourceTest {
 
         agg.remove(resource1);
         agg.remove(resource2);
+        Assert.assertEquals(5, listener.count(ContentEvent.class));
+        Assert.assertEquals(5, listener.count(ModelEvent.class));
+        Assert.assertEquals(5, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 2, 5);
         expected.setRange(1, 0, 1);
@@ -424,6 +453,92 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(1, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
         reader.moveTo(2, 0); Assert.assertEquals(2, reader.getSampleDouble(0), 0.0);
 
+    }
+
+    /**
+     * Test aggregating coverages with a single band to separate output bands.
+     */
+    @Test
+    public void testAggregateOnSeparateBands() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        |NaN| 2 | 3 |
+        +---+---+---+
+
+        Coverage 2
+        +---+---+---+
+        | 4 |NaN| 6 |
+        +---+---+---+
+
+        Coverage 3
+        +---+---+---+
+        | 7 | 8 |NaN|
+        +---+---+---+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setPixel(new double[]{Double.NaN});
+        write1.moveTo(1, 0); write1.setPixel(new double[]{2.0});
+        write1.moveTo(2, 0); write1.setPixel(new double[]{3.0});
+        write2.moveTo(0, 0); write2.setPixel(new double[]{4.0});
+        write2.moveTo(1, 0); write2.setPixel(new double[]{Double.NaN});
+        write2.moveTo(2, 0); write2.setPixel(new double[]{6.0});
+        write3.moveTo(0, 0); write3.setPixel(new double[]{7.0});
+        write3.moveTo(1, 0); write3.setPixel(new double[]{8.0});
+        write3.moveTo(2, 0); write3.setPixel(new double[]{Double.NaN});
+
+
+        /*
+        We expect a final coverage with values on a single row
+        +-------+-------+-------+
+        |NaN:4:7|2:NaN:8|3:6:NaN|
+        +-------+-------+-------+
+        */
+
+        final AggregatedCoverageResource.VirtualBand band0 = new AggregatedCoverageResource.VirtualBand();
+        band0.setSources(new AggregatedCoverageResource.Source(resource1, 0));
+        final AggregatedCoverageResource.VirtualBand band1 = new AggregatedCoverageResource.VirtualBand();
+        band1.setSources(new AggregatedCoverageResource.Source(resource2, 0));
+        final AggregatedCoverageResource.VirtualBand band2 = new AggregatedCoverageResource.VirtualBand();
+        band2.setSources(new AggregatedCoverageResource.Source(resource3, 0));
+
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource(Arrays.asList(band0,band1,band2), AggregatedCoverageResource.Mode.ORDER, crs);
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0);
+        Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        Assert.assertEquals(4, reader.getSampleDouble(1), 0.0);
+        Assert.assertEquals(7, reader.getSampleDouble(2), 0.0);
+        reader.moveTo(1, 0);
+        Assert.assertEquals(2, reader.getSampleDouble(0), 0.0);
+        Assert.assertEquals(Double.NaN, reader.getSampleDouble(1), 0.0);
+        Assert.assertEquals(8, reader.getSampleDouble(2), 0.0);
+        reader.moveTo(2, 0);
+        Assert.assertEquals(3, reader.getSampleDouble(0), 0.0);
+        Assert.assertEquals(6, reader.getSampleDouble(1), 0.0);
+        Assert.assertEquals(Double.NaN, reader.getSampleDouble(2), 0.0);
     }
 
 }

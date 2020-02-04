@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.DefiningPyramid;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
@@ -50,9 +51,17 @@ public class DefiningPyramidResource extends DefiningCoverageResource implements
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
         if (template instanceof Pyramid) {
             Pyramid p = (Pyramid) template;
-            DefiningPyramid cp = new DefiningPyramid(p.getIdentifier(), p.getFormat(), p.getCoordinateReferenceSystem(), new ArrayList<>());
+            String id = p.getIdentifier();
+            if (id == null) {
+                //create a unique id
+                id = UUID.randomUUID().toString();
+            } else if (models.containsKey(id)) {
+                //change id to avoid overriding an existing pyramid
+                id = UUID.randomUUID().toString();
+            }
+            DefiningPyramid cp = new DefiningPyramid(id, p.getFormat(), p.getCoordinateReferenceSystem(), new ArrayList<>());
             Pyramids.copyStructure(p, cp);
-            models.put(cp.getIdentifier(), cp);
+            models.put(id, cp);
             return cp;
         } else {
             throw new DataStoreException("Unsupported model "+ template);

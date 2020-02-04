@@ -34,7 +34,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Client;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
@@ -379,7 +378,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
         return rootNode;
     }
 
-    Optional<Resource> asResource(final AbstractLayer layer) throws CoverageStoreException {
+    Optional<Resource> asResource(final AbstractLayer layer) throws DataStoreException {
         if (layer == null) {
             return Optional.empty();
         }

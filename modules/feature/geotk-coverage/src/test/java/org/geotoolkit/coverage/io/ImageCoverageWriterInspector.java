@@ -34,6 +34,7 @@ import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.storage.DataStoreException;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
@@ -109,7 +110,7 @@ final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
     protected MathTransform2D geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
             final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam,
             final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
-            throws CoverageStoreException
+            throws DataStoreException
     {
         final MathTransform2D tr = super.geodeticToPixelCoordinates(gridGeometry, geodeticParam, pixelParam, isNetcdfHack);
         differenceTransform = tr;

@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.Features;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -53,19 +54,9 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
-import org.geotoolkit.storage.feature.AbstractFeatureStore;
-import org.geotoolkit.storage.feature.DefaultFeatureResource;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureStreams;
-import org.geotoolkit.storage.feature.FeatureWriter;
+import org.apache.sis.storage.shapefile.cpg.CpgFiles;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
-import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryUtilities;
-import org.geotoolkit.data.shapefile.cpg.CpgFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
@@ -81,6 +72,16 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.AbstractFeatureStore;
+import org.geotoolkit.storage.feature.DefaultFeatureResource;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.FeatureWriter;
+import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.query.QueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -413,7 +414,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
         AttributeType desc;
         try {
-            desc = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(featureType))
+            desc = Features.toAttribute(FeatureExt.getDefaultGeometry(featureType))
                 .orElse(null);
         } catch (PropertyNotFoundException e) {
             getLogger().log(Level.FINE, e, () -> String.format("No geometry can be found in given datatype%n%s", featureType));
@@ -642,7 +643,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         } else {
             getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
             descs = new AttributeType[]{
-                FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(schema))
+                Features.toAttribute(FeatureExt.getDefaultGeometry(schema))
                 .orElseThrow(() -> new DataStoreException("No geometry to read."))
             };
         }

@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -44,8 +45,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.painter.GradiantColorPainter;
@@ -54,11 +53,11 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
@@ -100,7 +99,6 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     public ColorModelTest() throws Exception {
 
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
 
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
@@ -176,10 +174,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         Graphics2D g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        gcb.reset();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        GridCoverage coverage = gcb.getGridCoverage2D();
+        GridCoverage coverage = new GridCoverage2D(env, null, img);
         coverages.add(coverage);
 
         env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -189,10 +184,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        gcb.reset();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        coverage = gcb.getGridCoverage2D();
+        coverage = new GridCoverage2D(env, null, img);
         coverages.add(coverage);
 
     }
@@ -213,9 +205,8 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, -90, 90);
 
         final BufferedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), null),
-                new SceneDef(context),
-                new ViewDef(env));
+                new CanvasDef(new Dimension(800, 600), env),
+                new SceneDef(context));
 
         assertTrue( img.getColorModel() instanceof IndexColorModel);
 
@@ -234,10 +225,9 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final BufferedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), Color.GREEN),
-                new SceneDef(context),
-                new ViewDef(env));
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
+        cdef.setBackground(Color.GREEN);
+        final BufferedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         assertTrue( img.getColorModel() instanceof IndexColorModel);
 
@@ -255,10 +245,10 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final BufferedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), Color.GREEN),
-                new SceneDef(context, new Hints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)),
-                new ViewDef(env));
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
+        cdef.setBackground(Color.GREEN);
+        final BufferedImage img = DefaultPortrayalService.portray(cdef,
+                new SceneDef(context, new Hints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)));
 
         //background is single color opaque we should obtain an RGB color model because of active
         //anti-aliasing
@@ -275,10 +265,9 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final BufferedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), new Color(0.5f, 0.1f, 0.7f, 0.6f)),
-                new SceneDef(context),
-                new ViewDef(env));
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
+        cdef.setBackground(new Color(0.5f, 0.1f, 0.7f, 0.6f));
+        final BufferedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         //background is not opaque we should obtain an RGBA color model
         assertTrue(!(img.getColorModel() instanceof IndexColorModel));
@@ -294,15 +283,15 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final BufferedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600),null),
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
+        cdef.setBackground(Color.GREEN);
+        final BufferedImage img = DefaultPortrayalService.portray(cdef,
                 new SceneDef(context,null, new PortrayalExtension() {
                         @Override
                         public void completeCanvas(J2DCanvas canvas) throws PortrayalException {
                             canvas.setBackgroundPainter(new GradiantColorPainter());
                         }
-                    }),
-                new ViewDef(env));
+                    }));
 
         //background is opaque we should obtain an RGB color model
         assertTrue(!(img.getColorModel() instanceof IndexColorModel));
@@ -321,10 +310,9 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final BufferedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), Color.WHITE),
-                new SceneDef(context),
-                new ViewDef(env));
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
+        cdef.setBackground(Color.WHITE);
+        final BufferedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         assertTrue( img.getColorModel() instanceof IndexColorModel);
         final IndexColorModel icm = (IndexColorModel) img.getColorModel();
@@ -358,10 +346,9 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final BufferedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), Color.WHITE),
-                new SceneDef(context),
-                new ViewDef(env));
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
+        cdef.setBackground(Color.WHITE);
+        final BufferedImage img = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         //background is opaque we should obtain an RGB color model since raster styles
         //are unpredictable
@@ -387,10 +374,9 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         File tempFile = File.createTempFile("testjpeg", ".jpg");
         tempFile.deleteOnExit();
 
-        DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), null),
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), env);
+        DefaultPortrayalService.portray(cdef,
                 new SceneDef(context),
-                new ViewDef(env),
                 new OutputDef("image/jpeg", tempFile));
 
         //we should obtain a white background image
@@ -419,10 +405,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = new GridCoverage2D(env, null, img);
 
         //display it
         final MapContext context = MapBuilder.createContext();
@@ -431,10 +414,9 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final Envelope envelope = Envelopes.transform(env, CRS.forCode("EPSG:3031"));
 
-        final BufferedImage result = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), Color.WHITE),
-                new SceneDef(context),
-                new ViewDef(envelope));
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), envelope);
+        cdef.setBackground(Color.WHITE);
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         //background is opaque we should obtain an RGB color model since raster styles
         //are unpredictable
@@ -470,10 +452,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = new GridCoverage2D(env, null, img);
 
         //display it
         final MapContext context = MapBuilder.createContext();
@@ -482,10 +461,9 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
         final Envelope envelope = Envelopes.transform(env, CRS.forCode("EPSG:3031"));
 
-        final BufferedImage result = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), Color.WHITE),
-                new SceneDef(context),
-                new ViewDef(envelope));
+        final CanvasDef cdef = new CanvasDef(new Dimension(800, 600), envelope);
+        cdef.setBackground(Color.WHITE);
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, new SceneDef(context));
 
         //background is opaque we should obtain an RGB color model since raster styles
         //are unpredictable

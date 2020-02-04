@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -32,7 +31,6 @@ import org.apache.batik.svggen.SVGGraphics2DIOException;
 import static org.geotoolkit.display.canvas.AbstractCanvas.ON_HOLD;
 import static org.geotoolkit.display.canvas.AbstractCanvas.RENDERING;
 import org.geotoolkit.display.container.GraphicContainer;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.factory.Hints;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.DOMImplementation;
@@ -53,11 +51,11 @@ public class J2DCanvasSVG extends J2DCanvas{
     private final SVGGraphics2D g2D;
     private final Document document;
 
-    public J2DCanvasSVG(final CoordinateReferenceSystem crs, final Dimension dim){
+    public J2DCanvasSVG(final CoordinateReferenceSystem crs, final Dimension dim) {
         this(crs,dim,null);
     }
 
-    public J2DCanvasSVG(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
+    public J2DCanvasSVG(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints) {
         super(crs,hints);
         setSize(dim);
 
@@ -73,7 +71,7 @@ public class J2DCanvasSVG extends J2DCanvas{
         return getDisplayBounds().getBounds().getSize();
     }
 
-    public void setSize(final Dimension dim){
+    public void setSize(final Dimension dim) {
         setDisplayBounds(new Rectangle(dim));
     }
 

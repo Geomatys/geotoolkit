@@ -18,7 +18,6 @@ package org.geotoolkit.wps.client.process;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import org.geotoolkit.wps.client.WebProcessingClient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,6 +40,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.wps.client.WPSProvider;
+import org.geotoolkit.wps.client.WebProcessingClient;
 import org.geotoolkit.wps.xml.v200.Capabilities;
 import org.geotoolkit.wps.xml.v200.Contents;
 import org.geotoolkit.wps.xml.v200.ProcessOffering;
@@ -212,10 +212,8 @@ public class WPSProcessingRegistry implements ProcessingRegistry {
                         try {
                             final ProcessDescriptor processDesc = toProcessDescriptor(processId);
                             descriptors.put(processDesc.getIdentifier().getCode(), processDesc);
-                        } catch(UnsupportedParameterException ex) {
-                            LOGGER.log(Level.WARNING, ex.getMessage());
-                        } catch(Exception ex) {
-                            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+                        } catch(Throwable ex) {
+                            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                         }
                     }
                 });

@@ -22,16 +22,15 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
-
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.style.StyleConstants;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.style.Description;
 
 /**
@@ -141,22 +140,6 @@ public abstract class AbstractMapItem implements MapItem {
             this.visible = visible;
         }
         firePropertyChange(VISIBILITY_PROPERTY, oldVisible, this.visible);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setUserProperty(final String key,final Object value){
-        parameters.put(key, value);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getUserProperty(final String key){
-        return parameters.get(key);
     }
 
     /**

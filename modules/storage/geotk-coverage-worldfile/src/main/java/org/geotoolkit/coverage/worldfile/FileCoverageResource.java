@@ -45,7 +45,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.TypeMap;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
@@ -252,17 +251,17 @@ public final class FileCoverageResource extends AbstractGridResource implements 
             }
             reader.setInput(ioreader);
         } catch (IOException ex) {
-            throw new CoverageStoreException(ex.getMessage(),ex);
+            throw new DataStoreException(ex.getMessage(),ex);
         }
         return reader;
     }
 
-    private ImageCoverageWriter acquireWriter() throws CoverageStoreException {
+    private ImageCoverageWriter acquireWriter() throws DataStoreException {
         final ImageCoverageWriter writer = new ImageCoverageWriter();
         try {
             writer.setOutput( ((FileCoverageStore)store).createWriter(file) );
         } catch (IOException ex) {
-            throw new CoverageStoreException(ex.getMessage(),ex);
+            throw new DataStoreException(ex.getMessage(),ex);
         }
         return writer;
     }

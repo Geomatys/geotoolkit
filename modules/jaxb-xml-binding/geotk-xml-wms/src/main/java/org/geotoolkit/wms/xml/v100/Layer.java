@@ -27,9 +27,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.wms.xml.AbstractDimension;
-import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 import org.geotoolkit.wms.xml.AbstractKeywordList;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractLogoURL;
@@ -38,6 +42,7 @@ import org.geotoolkit.wms.xml.AbstractURL;
 import org.geotoolkit.wms.xml.v111.KeywordList;
 import org.geotoolkit.wms.xml.v111.OnlineResource;
 import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -500,10 +505,41 @@ public class Layer implements AbstractLayer {
 
     @Override
     public Envelope getEnvelope() {
-        final AbstractGeographicBoundingBox bbox = getLatLonBoundingBox();
-        if(bbox != null){
-            return new GeneralEnvelope(bbox);
+        final GridGeometry grid = getGridGeometry2D();
+        if (grid == null) return null;
+        return grid.getEnvelope();
+    }
+
+    @Override
+    public GridGeometry getGridGeometry2D() {
+        if (getBoundingBox().isEmpty()) {
+            final LatLonBoundingBox bbox = getLatLonBoundingBox();
+            if (bbox != null) {
+                GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+                env.setRange(0, bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude());
+                env.setRange(1, bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude());
+                return new GridGeometry(null, env);
+            }
+            return null;
         }
+
+        final BoundingBox bbox = getBoundingBox().get(0);
+        try {
+            GeneralEnvelope env = new GeneralEnvelope(CRS.forCode(bbox.getCRSCode()));
+            env.setRange(0, bbox.getMinx(), bbox.getMaxx());
+            env.setRange(1, bbox.getMiny(), bbox.getMaxy());
+            Double resx = bbox.getResx();
+            Double resy = bbox.getResy();
+
+            if (resx != null && resy != null) {
+                return new EstimatedGridGeometry(env, new double[]{resx, resy});
+            } else {
+                return new GridGeometry(null, env);
+            }
+        } catch (FactoryException e) {
+            Logging.getLogger("org.geotoolkit.wms.xml.v100").warning(e.getMessage());
+        }
+
         return null;
     }
 

@@ -116,12 +116,91 @@ public class LanczosInterpolation extends Interpolation {
         final int wX = minX + windowSide;
         int dy, dx;
         double interpol = 0;
-        for (dy = minY; dy < hY; dy++) {
-            for (dx = minX; dx < wX; dx++) {
+
+        //unroll lanczos window sizes
+        //loops are very expensive
+        switch (windowSide) {
+            case 1 : {
+                dx = minX;
+                dy = minY;
                 pixelIterator.moveTo(dx, dy);
                 interpol += pixelIterator.getSampleDouble(b) * getLCZt(dx, x) * getLCZt(dy, y);
-            }
+                } break;
+            case 2 : {
+                double lczx0 = getLCZt(minX,   x);
+                double lczx1 = getLCZt(minX+1, x);
+                double lczy0 = getLCZt(minY,   y);
+                double lczy1 = getLCZt(minY+1, y);
+
+                dx = minX;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy1;
+
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy1;
+                } break;
+            case 3 : {
+                double lczx0 = getLCZt(minX,   x);
+                double lczx1 = getLCZt(minX+1, x);
+                double lczx2 = getLCZt(minX+2, x);
+                double lczy0 = getLCZt(minY,   y);
+                double lczy1 = getLCZt(minY+1, y);
+                double lczy2 = getLCZt(minY+2, y);
+
+                dx = minX;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy1;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy2;
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy1;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy2;
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx2 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx2 * lczy1;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx2 * lczy2;
+                } break;
+            case 4 : {
+                double lczx0 = getLCZt(minX,   x);
+                double lczx1 = getLCZt(minX+1, x);
+                double lczx2 = getLCZt(minX+2, x);
+                double lczx3 = getLCZt(minX+3, x);
+                double lczy0 = getLCZt(minY,   y);
+                double lczy1 = getLCZt(minY+1, y);
+                double lczy2 = getLCZt(minY+2, y);
+                double lczy3 = getLCZt(minY+3, y);
+
+                dx = minX;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy1;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy2;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx0 * lczy3;
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy1;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy2;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx1 * lczy3;
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx2 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx2 * lczy1;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx2 * lczy2;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx2 * lczy3;
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); interpol += pixelIterator.getSampleDouble(b) * lczx3 * lczy0;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx3 * lczy1;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx3 * lczy2;
+                pixelIterator.moveTo(dx, ++dy   ); interpol += pixelIterator.getSampleDouble(b) * lczx3 * lczy3;
+                } break;
+            default :
+                for (dy = minY; dy < hY; dy++) {
+                    for (dx = minX; dx < wX; dx++) {
+                        pixelIterator.moveTo(dx, dy);
+                        interpol += pixelIterator.getSampleDouble(b) * getLCZt(dx, x) * getLCZt(dy, y);
+                    }
+                }
         }
+
         if (interpol < minValue) {
             interpol = minValue;
         } else if (interpol > maxValue) {
@@ -141,6 +220,129 @@ public class LanczosInterpolation extends Interpolation {
 
     @Override
     public double[] interpolate(double x, double y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        if (!checkInterpolate(x, y)) return fillValue[b];
+        setInterpolateMin(x, y);
+        final int hY = minY + windowSide;
+        final int wX = minX + windowSide;
+        int dy, dx;
+        final int nbBand = pixelIterator.getNumBands();
+        final double[] interpol = new double[nbBand];
+        final double[] pixel = new double[nbBand];
+
+        //unroll lanczos window sizes
+        //loops are very expensive
+        switch (windowSide) {
+            case 1 : {
+                dx = minX;
+                dy = minY;
+                pixelIterator.moveTo(dx, dy);
+                pixelIterator.getPixel(pixel);
+                appendPixel(interpol, pixel, getLCZt(dx, x) * getLCZt(dy, y));
+                } break;
+            case 2 : {
+                double lczx0 = getLCZt(minX,   x);
+                double lczx1 = getLCZt(minX+1, x);
+                double lczy0 = getLCZt(minY,   y);
+                double lczy1 = getLCZt(minY+1, y);
+
+                dx = minX;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy1);
+
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy1);
+                } break;
+            case 3 : {
+                double lczx0 = getLCZt(minX,   x);
+                double lczx1 = getLCZt(minX+1, x);
+                double lczx2 = getLCZt(minX+2, x);
+                double lczy0 = getLCZt(minY,   y);
+                double lczy1 = getLCZt(minY+1, y);
+                double lczy2 = getLCZt(minY+2, y);
+
+                dx = minX;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy1);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy2);
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy1);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy2);
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx2 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx2 * lczy1);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx2 * lczy2);
+                } break;
+            case 4 : {
+                double lczx0 = getLCZt(minX,   x);
+                double lczx1 = getLCZt(minX+1, x);
+                double lczx2 = getLCZt(minX+2, x);
+                double lczx3 = getLCZt(minX+3, x);
+                double lczy0 = getLCZt(minY,   y);
+                double lczy1 = getLCZt(minY+1, y);
+                double lczy2 = getLCZt(minY+2, y);
+                double lczy3 = getLCZt(minY+3, y);
+
+                dx = minX;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy1);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy2);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx0 * lczy3);
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy1);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy2);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx1 * lczy3);
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx2 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx2 * lczy1);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx2 * lczy2);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx2 * lczy3);
+                dx++;
+                pixelIterator.moveTo(dx, dy=minY); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx3 * lczy0);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx3 * lczy1);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx3 * lczy2);
+                pixelIterator.moveTo(dx, ++dy   ); pixelIterator.getPixel(pixel); appendPixel(interpol, pixel, lczx3 * lczy3);
+                } break;
+            default :
+                for (dy = minY; dy < hY; dy++) {
+                    for (dx = minX; dx < wX; dx++) {
+                        pixelIterator.moveTo(dx, dy);
+                        pixelIterator.getPixel(pixel);
+                        appendPixel(interpol, pixel, getLCZt(dx, x) * getLCZt(dy, y));
+                    }
+                }
+        }
+
+        for (int i=0;i<nbBand;i++) {
+            if (interpol[i] < minValue) {
+                interpol[i] = minValue;
+            } else if (interpol[i] > maxValue) {
+                interpol[i] = maxValue;
+            }
+        }
+
+        return interpol;
+    }
+
+    private static void appendPixel(double[] interpol, double[] pixel, double lcz) {
+        final int nbBand = pixel.length;
+        switch (nbBand) {
+            case 4 :
+                interpol[3] += pixel[3] * lcz;
+            case 3 :
+                interpol[2] += pixel[2] * lcz;
+            case 2 :
+                interpol[1] += pixel[1] * lcz;
+            case 1 :
+                interpol[0] += pixel[0] * lcz;
+                break;
+            default :
+                for (int i=0;i<nbBand;i++) {
+                    interpol[i] += pixel[i] * lcz;
+                }
+        }
+
     }
 }

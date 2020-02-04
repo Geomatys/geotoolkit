@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.resources.IndexedResourceBundle;
-import org.geotoolkit.image.internal.ImageUtilities;
+import org.apache.sis.internal.coverage.j2d.ImageUtilities;
 
 import static org.geotoolkit.image.io.SpatialImageReader.Spi.getMetadataFormatCode;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;

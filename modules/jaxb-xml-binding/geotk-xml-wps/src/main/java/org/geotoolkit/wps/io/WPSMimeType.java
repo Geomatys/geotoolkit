@@ -42,6 +42,7 @@ public enum WPSMimeType {
     APP_NETCDF("application/netcdf"),
     APP_GRIB("application/x-ogc-grib"),
     APP_SLD("application/vnd.ogc.sld+xml"),
+    APP_EWKT("application/ewkt"), //for geometries
 
     OGC_WFS("application/x-ogc-wfs"),
     OGC_WMS("application/x-ogc-wms"),

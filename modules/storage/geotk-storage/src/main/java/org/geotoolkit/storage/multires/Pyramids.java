@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
@@ -39,7 +40,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.opengis.geometry.DirectPosition;
@@ -170,36 +170,12 @@ public final class Pyramids extends Static {
      *
      * @param mosaic not null
      * @param location not null
-     * @return MathTransform never null
-     */
-    public static LinearTransform getTileGridToCRS(Mosaic mosaic, Point location){
-        return getTileGridToCRS(mosaic, location, PixelInCell.CELL_CORNER);
-    }
-
-    /**
-     * Grid to CRS N dimension. CORNER transform
-     *
-     * @param mosaic not null
-     * @param location not null
      * @param orientation pixel orientation
      * @return MathTransform never null
      */
     public static LinearTransform getTileGridToCRS(Mosaic mosaic, Point location, PixelInCell orientation){
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
         return getTileGridToCRSND(mosaic, location, upperleft.getDimension(), orientation);
-    }
-
-    /**
-     * Grid to CRS N dimension. CORNER Transform.
-     * This allows to create a transform ignoring last axis transform.
-     *
-     * @param mosaic not null
-     * @param location not null
-     * @param nbDim : number of dimension wanted. value must be in range [2...crsNbDim]
-     * @return MathTransform never null
-     */
-    public static LinearTransform getTileGridToCRSND(Mosaic mosaic, Point location, int nbDim){
-        return getTileGridToCRSND(mosaic, location, nbDim, PixelInCell.CELL_CORNER);
     }
 
     /**
@@ -232,18 +208,6 @@ public final class Pyramids extends Static {
             }
             return MathTransforms.linear(gm);
         }
-    }
-
-    /**
-     * Grid to CRS 2D part.
-     * Transform correspond to the CORNER.
-     *
-     * @param mosaic not null
-     * @param location not null
-     * @return AffineTransform2D never null.
-     */
-    public static AffineTransform2D getTileGridToCRS2D(Mosaic mosaic, Point location){
-        return getTileGridToCRS2D(mosaic, location, PixelInCell.CELL_CORNER);
     }
 
     /**
@@ -328,7 +292,7 @@ public final class Pyramids extends Static {
      * @param wantedEnv searched envelope in mosaic {@link CoordinateReferenceSystem}
      * @return
      */
-    public static Rectangle getTilesInEnvelope(Mosaic mosaic, Envelope wantedEnv) throws CoverageStoreException {
+    public static Rectangle getTilesInEnvelope(Mosaic mosaic, Envelope wantedEnv) throws DataStoreException {
         if (wantedEnv == null) {
             return new Rectangle(mosaic.getGridSize());
         }
@@ -355,7 +319,7 @@ public final class Pyramids extends Static {
             wantedEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(wantedEnv,   mosCRS2D));
             mosEnv2D    = GeneralEnvelope.castOrCopy(Envelopes.transform(mosEnvelope, mosCRS2D));
         } catch(Exception ex) {
-            throw new CoverageStoreException(ex);
+            throw new DataStoreException(ex);
         }
 
         //-- define appropriate gridToCRS
@@ -375,7 +339,7 @@ public final class Pyramids extends Static {
         try {
             gridOfInterest = Envelopes.transform(gridToCrs2D.inverse(), envelopOfInterest2D);
         } catch (Exception ex) {
-            throw new CoverageStoreException(ex);
+            throw new DataStoreException(ex);
         }
 
         final long bBoxMinX = StrictMath.round(gridOfInterest.getMinimum(0));
@@ -395,7 +359,7 @@ public final class Pyramids extends Static {
     }
 
     /**
-     * Create a common WGS84 2D pyramid model with a fixed depth.
+     * Create a common WGS84 (CRS:84) 2D pyramid model with a fixed depth.
      * <p>
      * The pyramid covers the world in CRS:84 coordinate reference system.
      * Each mosaic is half the resolution of it's parent.
@@ -440,13 +404,37 @@ public final class Pyramids extends Static {
     }
 
     /**
-     * Create Google Pseudo-Mercator World pyramid.
+     * Create Google Pseudo-Mercator (EPSG:3857) World pyramid.
      *
      * @param maxDepth
      * @return
      */
     public static DefiningPyramid createPseudoMercatorTemplate(int maxDepth) throws FactoryException {
         final CoordinateReferenceSystem pseudoMercator = CRS.forCode("EPSG:3857");
+
+        //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E)
+        //Y goes from 0 (top edge is 85.0511 °N) to 2^zoom -1 (bottom edge is 85.0511 °S) in a Mercator projection
+        GeneralEnvelope MERCATOR_EXTEND = new GeneralEnvelope(pseudoMercator);
+        MERCATOR_EXTEND.setRange(0, -20037508.342789244d, 20037508.342789244d);
+        MERCATOR_EXTEND.setRange(1, -20037508.342789244d, 20037508.342789244d);
+
+        final double[] scales = new double[maxDepth+1];
+        scales[0] = MERCATOR_EXTEND.getSpan(0) / 256.0;
+        for (int i=1;i<scales.length;i++) {
+            scales[i] = scales[i-1] / 2.0;
+        }
+
+        return createTemplate(MERCATOR_EXTEND, new Dimension(256, 256), scales);
+    }
+
+    /**
+     * Create Mercator (EPSG:33950 )World pyramid.
+     *
+     * @param maxDepth
+     * @return
+     */
+    public static DefiningPyramid createMercatorTemplate(int maxDepth) throws FactoryException {
+        final CoordinateReferenceSystem pseudoMercator = CRS.forCode("EPSG:3395");
 
         //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E)
         //Y goes from 0 (top edge is 85.0511 °N) to 2^zoom -1 (bottom edge is 85.0511 °S) in a Mercator projection
@@ -490,67 +478,107 @@ public final class Pyramids extends Static {
      * Create multi dimension template from grid geometry.
      *
      * @param gridGeom reference grid geometry
+     * @param crs wanted template crs, if null, grid geometry crs is used
+     * @param tileSize wanted template tile size
      * @return
+     * @throws org.apache.sis.storage.DataStoreException if template could not be
+     *         created because grid geometry doesn't have enough information.
      */
     public static DefiningPyramid createTemplate(GridGeometry gridGeom, CoordinateReferenceSystem crs, Dimension tileSize) throws DataStoreException {
         ArgumentChecks.ensureNonNull("gridGeom", gridGeom);
-        ArgumentChecks.ensureNonNull("crs", crs);
 
         final DefiningPyramid pyramid = new DefiningPyramid(crs);
 
-        final GridGeometryIterator ite = new GridGeometryIterator(gridGeom);
-        while (ite.hasNext()) {
-            final GridGeometry slice = ite.next();
-            final Envelope envelope = slice.getEnvelope();
+        if (gridGeom.isDefined(GridGeometry.EXTENT)) {
 
-            final DirectPosition upperLeft = new GeneralDirectPosition(crs);
-            //-- We found the second horizontale axis dimension.
-            final int horizontalOrdinate = CRSUtilities.firstHorizontalAxis(crs);
-            for (int d = 0; d < crs.getCoordinateSystem().getDimension(); d++) {
-                final double v = (d == horizontalOrdinate+1) ? envelope.getMaximum(d) : envelope.getMinimum(d);
-                upperLeft.setOrdinate(d, v);
+            if (crs == null) {
+                crs = gridGeom.getCoordinateReferenceSystem();
+            } else if (!(Utilities.equalsIgnoreMetadata(gridGeom.getCoordinateReferenceSystem(), crs))) {
+                try {
+                    //transform given grid geometry to new crs
+                    MathTransform gridToCRS = gridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
+                    MathTransform crsToCrs = CRS.findOperation(gridGeom.getCoordinateReferenceSystem(), crs, null).getMathTransform();
+                    gridToCRS = MathTransforms.concatenate(gridToCRS, crsToCrs);
+                    gridGeom = new GridGeometry(gridGeom.getExtent(), PixelInCell.CELL_CENTER, gridToCRS, crs);
+                } catch (FactoryException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
             }
 
-            final double[] allRes;
+            //loop on all dimensions
             try {
-                allRes = slice.getResolution(true);
+                final GridGeometryIterator ite = new GridGeometryIterator(gridGeom);
+                while (ite.hasNext()) {
+                    final GridGeometry slice = ite.next();
+                    final Envelope envelope = slice.getEnvelope();
+
+                    final DirectPosition upperLeft = new GeneralDirectPosition(crs);
+                    //-- We found the second horizontale axis dimension.
+                    final int horizontalOrdinate = CRSUtilities.firstHorizontalAxis(crs);
+                    for (int d = 0; d < crs.getCoordinateSystem().getDimension(); d++) {
+                        final double v = (d == horizontalOrdinate+1) ? envelope.getMaximum(d) : envelope.getMinimum(d);
+                        upperLeft.setOrdinate(d, v);
+                    }
+
+                    final double[] allRes;
+                    try {
+                        allRes = slice.getResolution(true);
+                    } catch (IncompleteGridGeometryException ex) {
+                        throw new DataStoreException("Mosaic resolution could not be computed");
+                    }
+                    if (Double.isNaN(allRes[horizontalOrdinate])) {
+                        throw new DataStoreException("Horizontal resolution is undefined on axis " + horizontalOrdinate);
+                    }
+                    if (Double.isNaN(allRes[horizontalOrdinate+1])) {
+                        throw new DataStoreException("Horizontal resolution is undefined on axis " + (horizontalOrdinate+1));
+                    }
+                    double resolution = Double.min(allRes[horizontalOrdinate], allRes[horizontalOrdinate+1]);
+
+                    //find number of tiles needed
+                    Dimension gridSize = new Dimension();
+                    final double spanX = envelope.getSpan(horizontalOrdinate);
+                    final double spanY = envelope.getSpan(horizontalOrdinate+1);
+                    double nbX = (spanX / resolution) / tileSize.width;
+                    double nbY = (spanY / resolution) / tileSize.height;
+                    gridSize.width = (int) Math.ceil(nbX);
+                    gridSize.height = (int) Math.ceil(nbY);
+
+                    final DefiningMosaic m = new DefiningMosaic(UUID.randomUUID().toString(), upperLeft, resolution, tileSize, new Dimension(gridSize));
+                    pyramid.createMosaic(m);
+
+                    //multiply resolution by 2 until we reach a 1x1 grid size
+                    while (gridSize.width > 1 || gridSize.height > 1) {
+                        resolution *= 2.0;
+                        nbX = (spanX / resolution) / tileSize.width;
+                        nbY = (spanY / resolution) / tileSize.height;
+                        gridSize.width = (int) Math.ceil(nbX);
+                        gridSize.height = (int) Math.ceil(nbY);
+
+                        final DefiningMosaic m2 = new DefiningMosaic(UUID.randomUUID().toString(), upperLeft, resolution, tileSize, new Dimension(gridSize));
+                        pyramid.createMosaic(m2);
+                    }
+                }
+                return pyramid;
             } catch (IncompleteGridGeometryException ex) {
-                throw new DataStoreException("Mosaic resolution could not be computed");
+                throw new DataStoreException(ex);
             }
-            if (Double.isNaN(allRes[horizontalOrdinate])) {
-                throw new DataStoreException("Horizontal resolution is undefined on axis " + horizontalOrdinate);
-            }
-            if (Double.isNaN(allRes[horizontalOrdinate+1])) {
-                throw new DataStoreException("Horizontal resolution is undefined on axis " + (horizontalOrdinate+1));
-            }
-            double resolution = Double.min(allRes[horizontalOrdinate], allRes[horizontalOrdinate+1]);
-
-            //find number of tiles needed
-            Dimension gridSize = new Dimension();
-            final double spanX = envelope.getSpan(horizontalOrdinate);
-            final double spanY = envelope.getSpan(horizontalOrdinate+1);
-            double nbX = (spanX / resolution) / tileSize.width;
-            double nbY = (spanY / resolution) / tileSize.height;
-            gridSize.width = (int) Math.ceil(nbX);
-            gridSize.height = (int) Math.ceil(nbY);
-
-            final DefiningMosaic m = new DefiningMosaic(UUID.randomUUID().toString(), upperLeft, resolution, tileSize, new Dimension(gridSize));
-            pyramid.createMosaic(m);
-
-            //multiply resolution by 2 until we reach a 1x1 grid size
-            while (gridSize.width > 1 || gridSize.height > 1) {
-                resolution *= 2.0;
-                nbX = (spanX / resolution) / tileSize.width;
-                nbY = (spanY / resolution) / tileSize.height;
-                gridSize.width = (int) Math.ceil(nbX);
-                gridSize.height = (int) Math.ceil(nbY);
-
-                final DefiningMosaic m2 = new DefiningMosaic(UUID.randomUUID().toString(), upperLeft, resolution, tileSize, new Dimension(gridSize));
-                pyramid.createMosaic(m2);
+        } else {
+            try {
+                final Envelope envelope = gridGeom.getEnvelope();
+                final double[] resolution = gridGeom.getResolution(true);
+                if (resolution.length == 2) {
+                    final GridExtent extent = new GridExtent(
+                            (long) Math.ceil(envelope.getSpan(0) / resolution[0]),
+                            (long) Math.ceil(envelope.getSpan(1) / resolution[1]));
+                    final GridGeometry gg = new GridGeometry(extent, envelope);
+                    return createTemplate(gg, crs, tileSize);
+                } else {
+                    throw new DataStoreException("Can not create a pyramid model from a grid geometry with no extent and only a resolution information with more then two dimensions");
+                }
+            } catch (IncompleteGridGeometryException ex) {
+                throw new DataStoreException(ex);
             }
         }
-
-        return pyramid;
     }
 
     private static double[] computeScales(Envelope dataEnv, double minResolution) {
@@ -597,6 +625,61 @@ public final class Pyramids extends Static {
         }
 
         return new DefiningPyramid("Pyramid", "", crs, mosaics);
+    }
+
+    /**
+     * Find the matching pyramid depth for given resolution.
+     *
+     * @param resolution in WGS:84 units
+     * @return
+     */
+    public static int computeWorldWGS84DepthForResolution(double resolution) {
+        int depth = 0;
+        double scale = 180.0 / 256.0;
+        while (scale > resolution) {
+            depth++;
+            scale = scale / 2.0;
+        }
+        return depth;
+    }
+
+    /**
+     * Find the matching pyramid depth for given resolution.
+     *
+     * @param resolution in PseudoMercator units
+     * @return
+     * @throws org.opengis.util.FactoryException
+     */
+    public static int computePseudoMercatorDepthForResolution(double resolution) throws FactoryException {
+        final CoordinateReferenceSystem pseudoMercator = CRS.forCode("EPSG:3857");
+
+        //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E)
+        //Y goes from 0 (top edge is 85.0511 °N) to 2^zoom -1 (bottom edge is 85.0511 °S) in a Mercator projection
+        GeneralEnvelope MERCATOR_EXTEND = new GeneralEnvelope(pseudoMercator);
+        MERCATOR_EXTEND.setRange(0, -20037508.342789244d, 20037508.342789244d);
+        MERCATOR_EXTEND.setRange(1, -20037508.342789244d, 20037508.342789244d);
+
+        int depth = 0;
+        double scale = MERCATOR_EXTEND.getSpan(0) / 256.0;
+        while (scale > resolution) {
+            depth++;
+            scale = scale / 2.0;
+        }
+        return depth;
+    }
+
+    public static GridGeometry getTileGridGeometry2D(Mosaic mosaic, Point location, CoordinateReferenceSystem crs) {
+        final Dimension tileSize = mosaic.getTileSize();
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(mosaic, location, PixelInCell.CELL_CENTER);
+        final GridExtent tileExtent = new GridExtent(tileSize.width, tileSize.height);
+        return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs);
+    }
+
+    public static GridGeometry getTileGridGeometry2D(Mosaic mosaic, Rectangle rectangle, CoordinateReferenceSystem crs) {
+        final Dimension tileSize = mosaic.getTileSize();
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(mosaic, rectangle.getLocation(), PixelInCell.CELL_CENTER);
+        final GridExtent tileExtent = new GridExtent((long) tileSize.width * rectangle.width, (long) tileSize.height * rectangle.height);
+        return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs);
     }
 
 }

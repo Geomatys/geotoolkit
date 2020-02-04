@@ -37,6 +37,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.apache.sis.feature.Features;
 import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.storage.DataStore;
@@ -144,7 +145,7 @@ public class ExportFeatureSetItem extends TreeMenuItem {
 
                             //detect if we need one or multiple types.
                             final FeatureSet[] cols;
-                            final AttributeType<?> geomAtt = FeatureExt.castOrUnwrap(FeatureExt.getDefaultGeometry(baseType))
+                            final AttributeType<?> geomAtt = Features.toAttribute(FeatureExt.getDefaultGeometry(baseType))
                                     .orElseThrow(() -> new IllegalArgumentException("No geometric property found in layer " + layer.getName()));
                             if(ArraysExt.contains(supportedGeometryTypes,geomAtt.getValueClass()) ){
                                 cols = new FeatureSet[]{baseCol};

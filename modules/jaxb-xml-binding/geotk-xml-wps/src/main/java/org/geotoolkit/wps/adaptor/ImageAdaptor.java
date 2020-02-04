@@ -17,9 +17,15 @@
 package org.geotoolkit.wps.adaptor;
 
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import javax.imageio.ImageIO;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.wps.xml.v200.DataOutput;
 import org.geotoolkit.wps.xml.v200.Format;
 
 /**
@@ -53,6 +59,33 @@ public class ImageAdaptor extends ComplexAdaptor<RenderedImage> {
     public Class<RenderedImage> getValueClass() {
         return RenderedImage.class;
     }
+
+    @Override
+    public RenderedImage fromWPS2Input(DataOutput candidate) throws UnconvertibleObjectException {
+        if (candidate.getReference() != null) {
+            return super.fromWPS2Input(candidate);
+        }
+
+        final Data data = candidate.getData();
+        if (data == null) throw new UnconvertibleObjectException();
+        final String mimeType = data.getMimeType();
+        if (mimeType == null) throw new UnconvertibleObjectException();
+        if (data.getContent().size() != 1) throw new UnconvertibleObjectException();
+        Object cdt = data.getContent().get(0);
+        if (cdt instanceof String) {
+            //base64 encoded image
+            byte[] rawData = Base64.getDecoder().decode(cdt.toString());
+            try {
+                return ImageIO.read(new ByteArrayInputStream(rawData));
+            } catch (IOException ex) {
+                throw new UnconvertibleObjectException(ex.getMessage(), ex);
+            }
+        } else {
+            throw new UnconvertibleObjectException();
+        }
+    }
+
+
 
     public static class Spi implements ComplexAdaptor.Spi {
 

@@ -58,16 +58,15 @@ import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.storage.multires.MultiResolutionModel;
-import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.PyramidReader;
+import org.geotoolkit.storage.multires.MultiResolutionModel;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 
@@ -718,7 +717,7 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
     /**
      * {@inheritDoc }.
      */
-    public boolean isWritable() throws CoverageStoreException {
+    public boolean isWritable() throws DataStoreException {
         return true;
     }
 

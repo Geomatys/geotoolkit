@@ -18,7 +18,6 @@
 package org.geotoolkit.storage.event;
 
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.event.StorageEvent;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;

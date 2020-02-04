@@ -43,7 +43,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -86,7 +85,7 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
         this.reference = reference;
     }
 
-    public void write(GridCoverage coverage, Envelope requestedEnvelope, InterpolationCase interpolation) throws CoverageStoreException, CancellationException {
+    public void write(GridCoverage coverage, Envelope requestedEnvelope, InterpolationCase interpolation) throws DataStoreException, CancellationException {
         if (coverage == null) {
             return;
         }
@@ -102,14 +101,14 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
             crsCoverage2D = CRSUtilities.getCRS2D(coverage.getCoordinateReferenceSystem());
             envelopeCrs   = CRSUtilities.getCRS2D(requestedEnvelope.getCoordinateReferenceSystem());
         } catch (TransformException ex) {
-            throw new CoverageStoreException(ex);
+            throw new DataStoreException(ex);
         }
 
         if (!Utilities.equalsIgnoreMetadata(crsCoverage2D, envelopeCrs)) {
             try {
                 requestedEnvelope = ReferencingUtilities.transform2DCRS(requestedEnvelope, crsCoverage2D);
             } catch (TransformException ex) {
-                throw new CoverageStoreException(ex);
+                throw new DataStoreException(ex);
             }
         }
 
@@ -120,7 +119,7 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
             image        = coverage.render(null);
             srcCRSToGrid = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
         } catch (NoninvertibleTransformException ex) {
-            throw new CoverageStoreException(ex);
+            throw new DataStoreException(ex);
         }
 
         //to fill value table : see resample.
@@ -132,10 +131,8 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
             final TransformSeparator filter = new TransformSeparator(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
             tileQueue = new ByTileQueue(reference, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
-        } catch (DataStoreException ex) {
-            throw new CoverageStoreException(ex);
         } catch (FactoryException ex) {
-            throw new CoverageStoreException(ex);
+            throw new DataStoreException(ex);
         }
         final ThreadPoolExecutor service = new ThreadPoolExecutor(
                 Runtime.getRuntime().availableProcessors(),

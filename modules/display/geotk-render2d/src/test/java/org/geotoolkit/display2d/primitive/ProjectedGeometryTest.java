@@ -33,14 +33,13 @@ import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
@@ -58,6 +57,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.PointSymbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -88,7 +88,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
 
         final ProjectedGeometry pg = createProjectedGeometry(poly,
                 new Dimension(360, 180),
-                new AffineTransform(1, 0, 0, -1, +180, 90));
+                new AffineTransform(1, 0, 0, -1, +179.5, 89.5));
 
         testArray(pg.getObjectiveGeometryJTS(),
                 GF.createPolygon(new Coordinate[]{
@@ -143,7 +143,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
         //we reduce image width to avoid repetition
         final ProjectedGeometry pg = createProjectedGeometry(poly,
                 new Dimension(100, 180),
-                new AffineTransform(1, 0, 0, -1, -10, +90));
+                new AffineTransform(1, 0, 0, -1, -10.5, +89.5));
 
         testArray(pg.getObjectiveGeometryJTS(),
                 GF.createPolygon(new Coordinate[]{
@@ -233,7 +233,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
 
     }
 
-    private static ProjectedGeometry createProjectedGeometry(Geometry geometry, Dimension canvasBounds, AffineTransform objToDisp) throws NoninvertibleTransformException, TransformException {
+    private static ProjectedGeometry createProjectedGeometry(Geometry geometry, Dimension canvasBounds, AffineTransform objToDisp) throws NoninvertibleTransformException, TransformException, FactoryException {
 
         final int canvasWidth = canvasBounds.width;
         final int canvasHeight = canvasBounds.height;
@@ -261,13 +261,11 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
         final J2DCanvasBuffered canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(canvasWidth, canvasHeight));
         canvas.applyTransform(objToDisp);
 
-        final StatelessContextParams params = new StatelessContextParams(canvas, layer);
         final RenderingContext2D context = new RenderingContext2D(canvas);
         canvas.prepareContext(context, new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB).createGraphics(),
                 new Rectangle(0, 0, canvasWidth, canvasHeight));
-        params.update(context);
 
-        final ProjectedGeometry pg = new ProjectedGeometry(params);
+        final ProjectedGeometry pg = new ProjectedGeometry(context);
         pg.setDataGeometry(geometry, CommonCRS.WGS84.normalizedGeographic());
 
         Envelope env = canvas.getVisibleEnvelope();

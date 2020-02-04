@@ -18,17 +18,16 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.Collections;
 import java.util.logging.Level;
-import org.geotoolkit.feature.FeatureExt;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -54,22 +53,20 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
     private final boolean fullFeature;
 
     public ProjectedFeature(final J2DCanvas canvas, final FeatureMapLayer layer, final Feature feature){
-        super(new StatelessContextParams(canvas,layer),feature);
-        final RenderingContext2D context = new RenderingContext2D(canvas);
-        canvas.prepareContext(context, null, null);
-        params.update(context);
+        super(new RenderingContext2D(canvas),feature);
+        this.layer = layer;
+        canvas.prepareContext(getParameters(), null, null);
         fullFeature = true;
-
     }
 
-    public ProjectedFeature(final StatelessContextParams<FeatureMapLayer> params){
+    public ProjectedFeature(RenderingContext2D params) {
         this(params,null);
     }
 
-    public ProjectedFeature(final StatelessContextParams<FeatureMapLayer> params,
-            final Feature feature){
+    public ProjectedFeature(RenderingContext2D params, final Feature feature) {
         super(params,feature);
         fullFeature = false;
+        layer = null;
     }
 
     /**
@@ -79,7 +76,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
      */
     @Override
     public Feature getCandidate(){
-        if(fullFeature){
+        if (fullFeature) {
             try {
                 return getCompleteFeature(getFeatureId());
             } catch (DataStoreException ex) {
@@ -93,29 +90,29 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
     @Override
     public ProjectedGeometry getGeometry(Expression geomExp) {
-        if(geomExp == null) geomExp = DEFAULT_GEOM;
+        if (geomExp == null) geomExp = DEFAULT_GEOM;
         ProjectedGeometry proj = geometries.get(geomExp);
 
         CoordinateReferenceSystem dataCRS = null;
-        if(proj == null){
+        if (proj == null) {
 
             final FeatureType featuretype = candidate.getType();
             PropertyType prop = null;
 
-            if(!isNullorEmpty(geomExp)) {
-                if(geomExp instanceof PropertyName){
+            if (!isNullorEmpty(geomExp)) {
+                if (geomExp instanceof PropertyName) {
                     prop = featuretype.getProperty(((PropertyName)geomExp).getPropertyName());
-                }else{
+                } else {
                     //calculated geometry
                 }
-            }else if(featuretype != null){
-                try{
+            } else if (featuretype != null) {
+                try {
                     prop = FeatureExt.getDefaultGeometry(featuretype);
-                }catch(PropertyNotFoundException ex){
+                } catch (PropertyNotFoundException ex) {
                 }
             }
 
-            if(prop != null){
+            if (prop != null) {
                 dataCRS = FeatureExt.getCRS(prop);
             }
 
@@ -124,7 +121,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
         }
 
         //check that the geometry is set
-        if(!proj.isSet()){
+        if (!proj.isSet()) {
             proj.setDataGeometry(GO2Utilities.getGeometry(candidate, geomExp),dataCRS);
         }
 
@@ -132,12 +129,12 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
     }
 
     private static boolean isNullorEmpty(Expression exp){
-        if(exp==null || exp==Expression.NIL){
+        if (exp==null || exp==Expression.NIL) {
             return true;
-        }else if(exp instanceof PropertyName){
+        } else if (exp instanceof PropertyName) {
             final PropertyName pn = (PropertyName) exp;
             final String str = pn.getPropertyName();
-            if(str==null || str.trim().isEmpty()){
+            if (str == null || str.trim().isEmpty()) {
                 return true;
             }
         }
@@ -151,7 +148,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
      */
     @Override
     public FeatureMapLayer getLayer() {
-        return (FeatureMapLayer) params.layer;
+        return (FeatureMapLayer) layer;
     }
 
     /**
@@ -165,24 +162,23 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
     private Feature getCompleteFeature(final FeatureId id)throws DataStoreException{
 
-        final FeatureMapLayer fml = (FeatureMapLayer) params.layer;
-        if(fml != null){
+        final FeatureMapLayer fml = getLayer();
+        if (fml != null) {
             final Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
             Feature feature = null;
 
-            final FeatureSet collection =
-                    fml.getResource().subset(
-                    QueryBuilder.filtered(fml.getResource().getType().getName().toString(), filter));
-
+            final SimpleQuery query = new SimpleQuery();
+            query.setFilter(filter);
+            final FeatureSet collection = fml.getResource().subset(query);
             feature = collection.features(false).findAny().orElse(null);
 
-            if(feature == null){
+            if (feature == null) {
                 //worst case, return the partial feature
                 return this.candidate;
             }
 
             return feature;
-        }else{
+        } else {
             //worst case, return the partial feature
             return candidate;
         }

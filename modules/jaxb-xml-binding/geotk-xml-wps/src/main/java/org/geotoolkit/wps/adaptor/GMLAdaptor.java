@@ -28,11 +28,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.geotoolkit.wps.xml.v200.Format;
 import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v200.ComplexData;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.Format;
 import org.opengis.feature.Feature;
 import org.w3c.dom.Document;
 

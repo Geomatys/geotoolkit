@@ -33,19 +33,18 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.SampleDimensionType;
-import org.geotoolkit.storage.coverage.finder.CoverageFinder;
-import org.geotoolkit.storage.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.finder.CoverageFinder;
+import org.geotoolkit.storage.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.storage.multires.DefiningMosaic;
 import org.geotoolkit.storage.multires.DefiningPyramid;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -229,7 +228,7 @@ public final class CoverageUtilities {
     public static int getDataType(final GridCoverage coverage) {
         try {
             return firstSlice(coverage).render(null).getSampleModel().getDataType();
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new BackingStoreException(ex.getMessage(), ex);
         }
     }
@@ -332,9 +331,9 @@ public final class CoverageUtilities {
      *
      * @param coverage a GridCoverage2D or GridCoverageStack
      * @return first GridCoverage2D. Can't be null.
-     * @throws CoverageStoreException if GridCoverage2D not found or a empty GridCoverageStack
+     * @throws DataStoreException if GridCoverage2D not found or a empty GridCoverageStack
      */
-    public static GridCoverage2D firstSlice(GridCoverage coverage) throws CoverageStoreException {
+    public static GridCoverage2D firstSlice(GridCoverage coverage) throws DataStoreException {
         if (coverage instanceof GridCoverage2D) {
             return (GridCoverage2D) coverage;
         } else if (coverage instanceof GridCoverageStack) {
@@ -342,10 +341,10 @@ public final class CoverageUtilities {
             if (coverageStack.getStackSize() > 0) {
                 return firstSlice((GridCoverage) coverageStack.coverageAtIndex(0));
             } else {
-                throw new CoverageStoreException("Empty coverage list");
+                throw new DataStoreException("Empty coverage list");
             }
         }
-        throw new CoverageStoreException("Unknown GridCoverage");
+        throw new DataStoreException("Unknown GridCoverage");
     }
 
     /**

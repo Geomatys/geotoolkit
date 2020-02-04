@@ -16,20 +16,17 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EventListener;
-import java.util.Vector;
-import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.PlanarImage;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -58,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CoverageReferenceRenderedImage implements RenderedImage {
+public class CoverageReferenceRenderedImage extends PlanarImage {
 
     private final GridCoverageResource ref;
     private final Mosaic mosaic;
@@ -86,38 +83,6 @@ public class CoverageReferenceRenderedImage implements RenderedImage {
         //TODO wait for the new NETCDF reader
         //sampleDimensions = ref.acquireReader().getSampleDimensions(ref.getImageIndex());
 
-    }
-
-    /**
-     * Tiles are generated on the fly, so we have informations on their generation
-     * process but we don't have the tiles themselves.
-     *
-     * @return empty vector
-     */
-    @Override
-    public Vector<RenderedImage> getSources() {
-        return new Vector<RenderedImage>();
-    }
-
-    /**
-     * A PortrayalRenderedImage does not have any properties
-     *
-     * @param name
-     * @return always Image.UndefinedProperty
-     */
-    @Override
-    public Object getProperty(String name) {
-        return Image.UndefinedProperty;
-    }
-
-    /**
-     * A PortrayalRenderedImage does not have any properties
-     *
-     * @return always null
-     */
-    @Override
-    public String[] getPropertyNames() {
-        return null;
     }
 
     /**
@@ -333,61 +298,6 @@ public class CoverageReferenceRenderedImage implements RenderedImage {
             ex.printStackTrace();
             return null;
         }
-    }
-
-    @Override
-    public Raster getData() {
-        return getData(null);
-    }
-
-    @Override
-    public WritableRaster getData(Rectangle region) {
-        return copyData(region, null);
-    }
-
-    @Override
-    public WritableRaster copyData(WritableRaster raster) {
-        final Rectangle bounds = (raster!=null) ? raster.getBounds() : null;
-        return copyData(bounds, raster);
-    }
-
-    public WritableRaster copyData(Rectangle region, WritableRaster dstRaster) {
-        final Rectangle bounds = getBounds();   // image's bounds
-
-        if (region == null) {
-            region = bounds;
-        } else if (!region.intersects(bounds)) {
-            throw new IllegalArgumentException("Rectangle does not intersect datas.");
-        }
-
-        // Get the intersection of the region and the image bounds.
-        final Rectangle xsect = (region == bounds) ? region : region.intersection(bounds);
-
-        //create a raster of this size
-        if(dstRaster == null){
-            SampleModel sampleModel = getSampleModel();
-            sampleModel = sampleModel.createCompatibleSampleModel(xsect.width, xsect.height);
-            dstRaster = RasterFactory.createWritableRaster(sampleModel, new Point(0, 0));
-        }
-
-        //calculate the first and last tiles index we will need
-        final int startTileX = xsect.x / getTileWidth();
-        final int startTileY = xsect.y / getTileHeight();
-        final int endTileX = (xsect.x+xsect.width) / getTileWidth();
-        final int endTileY = (xsect.y+xsect.height) / getTileHeight();
-
-        //loop on each tile
-        for (int j = startTileY; j <= endTileY; j++) {
-            for (int i = startTileX; i <= endTileX; i++) {
-                final Raster tile = getTile(i, j);
-                dstRaster.setRect(
-                        i*getTileWidth(),
-                        j*getTileHeight(),
-                        tile);
-            }
-        }
-
-        return dstRaster;
     }
 
     protected void fireTileCreated(int x, int y){

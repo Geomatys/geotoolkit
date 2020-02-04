@@ -19,19 +19,15 @@ package org.geotoolkit.report.graphic.map;
 
 
 import java.util.logging.Level;
-
 import net.sf.jasperreports.engine.JRField;
-import org.geotoolkit.feature.SingleAttributeTypeBuilder;
-
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.display2d.service.ViewDef;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 
@@ -66,12 +62,11 @@ public class MapFieldRenderer implements JRFieldRenderer{
             //only create delegate if not yet assigned
             final CanvasDef canvasDef = map.getCanvasDef();
             final SceneDef sceneDef = map.getSceneDef();
-            final ViewDef viewDef = map.getViewDef();
 
             //create the canvas
             final CanvasRenderer renderable = new CanvasRenderer(sceneDef.getContext());
             try {
-                DefaultPortrayalService.prepareCanvas(renderable, canvasDef, sceneDef, viewDef);
+                DefaultPortrayalService.prepareCanvas(renderable, canvasDef, sceneDef);
             } catch (PortrayalException ex) {
                 Logging.getLogger("org.geotoolkit.report.graphic.map").log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }

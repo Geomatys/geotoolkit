@@ -43,7 +43,7 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
@@ -51,6 +51,7 @@ import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -66,7 +67,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
     private Pyramid dataSource;
     private final double minElevation;
     private final double maxElevation;
-    private GridMosaicRenderedImage dataRenderedImage = null;
+    private MosaicImage dataRenderedImage = null;
 
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
@@ -104,6 +105,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         return outputCrs;
     }
 
+    @Override
     public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException {
         this.outputCrs = outputCrs;
         try {
@@ -128,6 +130,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         }
     }
 
+    @Override
     public BufferedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
 
         if(outputCrs == null){
@@ -149,37 +152,40 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         final double[] scales = dataSource.getScales();
         final int indexImg = TextureUtils.getNearestScaleIndex(dataSource.getScales(), scale);
 
-        if (dataRenderedImage != null) {
-            final Mosaic gridMosaic = dataRenderedImage.getGridMosaic();
-            final double mosaicScale = gridMosaic.getScale();
-            final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
-            if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
+        try {
+            if (dataRenderedImage != null) {
+                final Mosaic gridMosaic = dataRenderedImage.getGridMosaic();
+                final double mosaicScale = gridMosaic.getScale();
+                final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
+                if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
+                    final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
+                    if (!mosaics.isEmpty()) {
+                        Mosaic mosaic = mosaics.iterator().next();
+                        dataRenderedImage = new MosaicImage(mosaic, ((GridCoverageResource) coverageRef).getSampleDimensions());
+                    } else {
+                        dataRenderedImage = null;
+                        return null;
+                    }
+                }
+            } else {
                 final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
-                    dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
+                    Mosaic mosaic = mosaics.iterator().next();
+                    dataRenderedImage = new MosaicImage(mosaic, ((GridCoverageResource) coverageRef).getSampleDimensions());
                 } else {
                     dataRenderedImage = null;
                     return null;
                 }
             }
-        } else {
-            final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
-            if (!mosaics.isEmpty()) {
-                dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
-            } else {
-                dataRenderedImage = null;
-                return null;
-            }
-        }
-        try {
+
             return extractTileImage(outputEnv, dataRenderedImage, transformFromOutput, outputDimension);
-        } catch (TransformException ex) {
+        } catch (TransformException| DataStoreException ex) {
             throw new PortrayalException(ex);
         }
     }
 
     private static BufferedImage extractTileImage(final Envelope tileEnvelope,
-            final GridMosaicRenderedImage dataRenderedImage, final MathTransform transformFromOutput,
+            final MosaicImage dataRenderedImage, final MathTransform transformFromOutput,
             final Dimension tileSize) throws TransformException {
         if (dataRenderedImage == null) {
             return null;
@@ -189,7 +195,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         final double targetTileHeight = tileSize.height;
 
         final Mosaic gridmosaic = dataRenderedImage.getGridMosaic();
-        final MathTransform mosaicCrsToMosaicGrid = Pyramids.getTileGridToCRS(gridmosaic, new Point(0, 0)).inverse();
+        final MathTransform mosaicCrsToMosaicGrid = Pyramids.getTileGridToCRS(gridmosaic, new Point(0, 0), PixelInCell.CELL_CORNER).inverse();
 
         final AffineTransform2D targetGridToTargetCrs = new AffineTransform2D(
                 tileEnvelope.getSpan(0)/targetTileWidth,

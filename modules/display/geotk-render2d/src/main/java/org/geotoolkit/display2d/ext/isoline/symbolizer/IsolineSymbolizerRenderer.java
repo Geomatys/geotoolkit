@@ -120,10 +120,10 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                         resolution = res;
                     }
 
-                    final Map<String, Double> queryValues = DefaultRasterSymbolizerRenderer.extractQuery(layer);
+                    final Map<String, Double> queryValues = RasterSymbolizerRenderer.extractQuery(layer);
                     if (queryValues != null && !queryValues.isEmpty()) {
-                        bounds = DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
-                        resolution = DefaultRasterSymbolizerRenderer.fixResolutionWithCRS(resolution, coverageMapLayerCRS);
+                        bounds = RasterSymbolizerRenderer.fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
+                        resolution = RasterSymbolizerRenderer.fixResolutionWithCRS(resolution, coverageMapLayerCRS);
                     }
 
                     GridCoverage inCoverage = coverageReference.read(coverageReference.getGridGeometry().derive().subgrid(bounds, resolution).build());

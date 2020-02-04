@@ -21,6 +21,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import org.apache.sis.image.PlanarImage;
 
 /**
  * TODO : this is an incomplete work. some parameters are not used and evaluator
@@ -28,7 +29,7 @@ import java.awt.image.WritableRaster;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ProcessedRenderedImage extends AbstractRenderedImage {
+public class ProcessedRenderedImage extends PlanarImage {
 
     private final SampleModel sampleModel;
     private final ColorModel colorModel;

@@ -25,14 +25,16 @@ import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.apache.sis.util.ArgumentChecks;
-import static org.geotoolkit.image.BufferedImages.createGrayScaleColorModel;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+
 import static org.geotoolkit.processing.image.bandselect.BandSelectDescriptor.*;
+
 import org.geotoolkit.processing.image.reformat.ReformatProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -88,7 +90,7 @@ public class BandSelectProcess extends AbstractProcess {
         } catch (Exception ex) {
             //various exceptions may happen here, RGB color model compatibility is obscur
             //fallback on grayscale
-            outCm = createGrayScaleColorModel(dataType,nbBand,0,0,1);
+            outCm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
         }
 
         final BufferedImage resultImage    = new BufferedImage(outCm, raster, false, new Hashtable<>());

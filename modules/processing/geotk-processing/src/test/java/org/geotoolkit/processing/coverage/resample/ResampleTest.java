@@ -288,7 +288,7 @@ public class ResampleTest extends AbstractProcessTest {
                                 .addQuantitative("values", -1, 1, Units.UNITY)
                                 .build()
                 ),
-                sourceImage
+                sourceImage, false
         );
         final ResampleProcess process = new ResampleProcess(sourceCvg, null, target, InterpolationCase.NEIGHBOR, new double[]{Double.NaN});
         final GridCoverage result = process.executeNow();

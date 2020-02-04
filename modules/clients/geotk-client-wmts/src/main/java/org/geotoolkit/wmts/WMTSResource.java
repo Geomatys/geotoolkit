@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmts;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.coverage.PyramidReader;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
+import org.geotoolkit.wmts.xml.v100.LayerType;
 import org.opengis.util.GenericName;
 
 /**
@@ -88,7 +90,43 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
 
     @Override
     public List<SampleDimension> getSampleDimensions() throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+        final List<SampleDimension> sd = new ArrayList<>();
+
+        String format = null;
+        final WMTSPyramidSet ps = getPyramidSet();
+        final List<LayerType> layers = ps.getCapabilities().getContents().getLayers();
+        for(LayerType lt : layers){
+            final String name = lt.getIdentifier().getValue();
+            if(this.name.tip().equals(name)){
+                final List<String> formats = lt.getFormat();
+                if(formats != null && !formats.isEmpty()){
+                    format = formats.get(0);
+                }
+            }
+        }
+
+        //last chance, use png as default
+        if (format == null) {
+            //set a default value
+            format = "image/png";
+        }
+
+        switch (format) {
+            case "image/png" :
+                //4 bands
+                sd.add(new SampleDimension.Builder().setName("1").build());
+                sd.add(new SampleDimension.Builder().setName("2").build());
+                sd.add(new SampleDimension.Builder().setName("3").build());
+                sd.add(new SampleDimension.Builder().setName("4").build());
+                break;
+            default :
+                //3 bands
+                sd.add(new SampleDimension.Builder().setName("1").build());
+                sd.add(new SampleDimension.Builder().setName("2").build());
+                sd.add(new SampleDimension.Builder().setName("3").build());
+
+        }
+        return sd;
     }
 
     @Override

@@ -60,7 +60,7 @@ public class PaletteReader {
     protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     protected static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
-    private class Row implements Comparable<Row>{
+    private static class Row implements Comparable<Row> {
         Double v1 = null;
         Double v2 = null;
         Integer r1 = null;
@@ -72,8 +72,7 @@ public class PaletteReader {
 
         @Override
         public int compareTo(Row other) {
-            if(v1==null) return -1;
-            else if (other.v1 == null) return 1;
+            if (v1 == null) return -1;
             return v1.compareTo(other.v1);
         }
 
@@ -88,10 +87,14 @@ public class PaletteReader {
     private final boolean categorize;
     private final Pattern valStart;
 
+    /**
+     *
+     * @param pattern
+     */
     public PaletteReader(String pattern) {
         final String[] parts = pattern.split("\n");
         ignorePatterns = new Pattern[parts.length-1];
-        for(int i=0,n=parts.length-1;i<n;i++){
+        for (int i = 0, n = parts.length-1; i < n; i++) {
             ignorePatterns[i] = Pattern.compile(parts[i].trim());
         }
         valuePattern = parts[parts.length-1].trim();
@@ -99,18 +102,18 @@ public class PaletteReader {
         valStart = Pattern.compile("^(v1|v2|r1|r2|g1|g2|b1|b2).*");
     }
 
-    public ColorMap read(String candidate) throws IOException{
+    public ColorMap read(String candidate) throws IOException {
         final String[] parts = candidate.split("\n");
 
         final List<Row> rows = new ArrayList<>();
         lines:
-        for(String part : parts){
+        for (String part : parts) {
             part = part.trim();
-            if(part.isEmpty()) continue lines;
+            if (part.isEmpty()) continue lines;
 
             //check if we ignore this line
-            for(Pattern p  : ignorePatterns){
-                if(p.matcher(part).matches()){
+            for (Pattern p  : ignorePatterns) {
+                if (p.matcher(part).matches()) {
                     continue lines;
                 }
             }
@@ -119,22 +122,22 @@ public class PaletteReader {
             String pattern = valuePattern;
             final Row row = new Row();
 
-            while(!part.isEmpty()){
+            while (!part.isEmpty()) {
                 boolean optional = false;
-                if(pattern.charAt(0) == '?'){
+                if (pattern.charAt(0) == '?') {
                     optional = true;
                     pattern = pattern.substring(1);
                 }
 
-                if(!valStart.matcher(pattern).matches()){
+                if (!valStart.matcher(pattern).matches()) {
                     char c = pattern.charAt(0);
-                    if(c==' '){
+                    if (c == ' ') {
                         part = part.trim();
-                    }else{
+                    } else {
                         char v = part.charAt(0);
-                        if(v==c){
+                        if (v == c) {
                             part = part.substring(1);
-                        }else if(!optional){
+                        } else if (!optional) {
                             throw new IOException("Pattern do not match.");
                         }
 
@@ -145,11 +148,11 @@ public class PaletteReader {
 
                 //we work with a value
                 final int numberEnd = numberEnd(part);
-                if(numberEnd==0){
+                if (numberEnd == 0) {
                     pattern = pattern.substring(2);
-                    if(optional){
+                    if (optional) {
                         continue;
-                    }else{
+                    } else {
                         throw new IOException("Pattern do not match.");
                     }
                 }
@@ -157,14 +160,14 @@ public class PaletteReader {
                 Double val = parseDouble(part, numberEnd);
                 part = part.substring(numberEnd);
 
-                if(pattern.startsWith("v1")) row.v1 = val;
-                if(pattern.startsWith("v2")) row.v2 = val;
-                if(pattern.startsWith("r1")) row.r1 = val.intValue();
-                if(pattern.startsWith("r2")) row.r2 = val.intValue();
-                if(pattern.startsWith("g1")) row.g1 = val.intValue();
-                if(pattern.startsWith("g2")) row.g2 = val.intValue();
-                if(pattern.startsWith("b1")) row.b1 = val.intValue();
-                if(pattern.startsWith("b2")) row.b2 = val.intValue();
+                if (pattern.startsWith("v1")) row.v1 = val;
+                if (pattern.startsWith("v2")) row.v2 = val;
+                if (pattern.startsWith("r1")) row.r1 = val.intValue();
+                if (pattern.startsWith("r2")) row.r2 = val.intValue();
+                if (pattern.startsWith("g1")) row.g1 = val.intValue();
+                if (pattern.startsWith("g2")) row.g2 = val.intValue();
+                if (pattern.startsWith("b1")) row.b1 = val.intValue();
+                if (pattern.startsWith("b2")) row.b2 = val.intValue();
 
                 pattern = pattern.substring(2);
             }
@@ -175,42 +178,48 @@ public class PaletteReader {
         Collections.sort(rows);
 
         final ColorMap colorMap;
-        if(!categorize){
+        if (!categorize) {
             //interpolated color model
             final List<InterpolationPoint> values = new ArrayList<>();
-            for(Row row : rows){
+            values.add( SF.interpolationPoint(Double.NaN, SF.literal(new Color(0,0,0,0))));
+            for (Row row : rows) {
                 values.add( SF.interpolationPoint(row.v1, SF.literal(new Color(row.r1,row.g1,row.b1))));
             }
             final Function function = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP,
                     values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
             colorMap = SF.colorMap(function);
 
-        }else{
+        } else {
             //categorize color model
             final Map<Expression, Expression> values = new HashMap<>();
-            for(int i=0,n=rows.size();i<n;i++){
+
+
+            for (int i = 0, n = rows.size(); i < n; i++) {
                 final Row row = rows.get(i);
 
-                if(values.isEmpty()){
-                    if(row.v1==null){
+                if (values.isEmpty()) {
+                    if (row.v1 == null) {
                         values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(row.r1,row.g1,row.b1)));
-                    }else{
+                    } else {
                         //add a translucent range from -infinity to value
                         values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(0f,0f,0f,0f)));
                         values.put( FF.literal(row.v1), SF.literal(new Color(row.r1,row.g1,row.b1)));
                     }
-                }else{
+                } else {
                     //two values, two colors
                     values.put( FF.literal(row.v1), SF.literal(new Color(row.r1,row.g1,row.b1)));
                 }
 
                 //special case for last element
-                if(i==n-1){
-                    if(row.r2==null){
+                if (i == n-1) {
+                    if (row.r2 == null) {
                         values.put( FF.literal(row.v2), SF.literal(new Color(0f,0f,0f,0f)));
-                    }else{
+                    } else {
                         values.put( FF.literal(row.v2), SF.literal(new Color(row.r2,row.g2,row.b2)));
                     }
+
+                    //add a NaN group
+                    values.put( FF.literal(Double.NaN), SF.literal(new Color(0f,0f,0f,0f)));
                 }
             }
             final Function function = SF.categorizeFunction(DEFAULT_CATEGORIZE_LOOKUP,
@@ -221,19 +230,19 @@ public class PaletteReader {
         return colorMap;
     }
 
-    private static double parseDouble(String candidate, int end){
+    private static double parseDouble(String candidate, int end) {
         String str = candidate.substring(0,end);
         return Double.parseDouble(str);
     }
 
-    private static int numberEnd(String candidate) throws IOException{
+    private static int numberEnd(String candidate) throws IOException {
         int end=0;
         //possible negation
-        if(candidate.charAt(0) == '-'){
+        if (candidate.charAt(0) == '-') {
             end++;
         }
 
-        while(candidate.length()>end && (Character.isDigit(candidate.charAt(end)) || candidate.charAt(end)=='.')){
+        while (candidate.length() > end && (Character.isDigit(candidate.charAt(end)) || candidate.charAt(end) == '.')) {
             end++;
         }
         return end;

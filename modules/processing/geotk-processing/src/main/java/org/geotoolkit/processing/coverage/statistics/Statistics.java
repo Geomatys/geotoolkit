@@ -17,6 +17,7 @@
 package org.geotoolkit.processing.coverage.statistics;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -30,13 +31,13 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
-import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.coverage.ImageStatistics;
+import org.geotoolkit.storage.coverage.MosaicImage;
+import org.geotoolkit.storage.multires.Mosaic;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -222,26 +223,17 @@ public class Statistics extends AbstractProcess {
 
         //optimization for GridMosaicRenderedImage impl
         NumericHistogram[] histo = new NumericHistogram[nbBands];
-        if (image instanceof GridMosaicRenderedImage) {
-            final GridMosaicRenderedImage mosaicImage = (GridMosaicRenderedImage) image;
+        if (image instanceof MosaicImage) {
+            final MosaicImage mosaicImage = (MosaicImage) image;
             final Mosaic gridMosaic = mosaicImage.getGridMosaic();
+            final Rectangle gridRange = mosaicImage.getGridRange();
             final Dimension gridSize = gridMosaic.getGridSize();
 
-            long startX = 0;
-            long startY = 0;
-            long endX = gridSize.width;
-            long endY = gridSize.height;
+            long startX = gridRange.x;
+            long startY = gridRange.y;
+            long endX = gridRange.x + gridRange.width;
+            long endY = gridRange.y + gridRange.height;
             long totalTiles = gridSize.width * gridSize.height;
-            Dimension tileSize = gridMosaic.getTileSize();
-
-            final GridExtent dataArea = gridMosaic.getDataExtent();
-            if (dataArea != null) {
-                startX = dataArea.getLow(0) / tileSize.width;
-                startY = dataArea.getLow(1) / tileSize.height;
-                endX = (long) Math.ceil((dataArea.getHigh(0)+1) / tileSize.width);
-                endY = (long) Math.ceil((dataArea.getHigh(1)+1) / tileSize.height);
-                totalTiles = (endX - startX) * (endY - startY);
-            }
 
             //analyse each tiles of GridMosaicRenderedImage
             Raster tile;
@@ -250,7 +242,7 @@ public class Statistics extends AbstractProcess {
             for (long y = startY; y < endY; y++) {
                 for (long x = startX; x < endX; x++) {
                     if (!gridMosaic.isMissing(x,y)) {
-                        tile = mosaicImage.getTile(Math.toIntExact(x), Math.toIntExact(y));
+                        tile = mosaicImage.getTile(Math.toIntExact(x-startX), Math.toIntExact(y-startY));
                         pix = new PixelIterator.Builder().create(tile);
 
                         analyseRange(pix, stats, bands, excludeNoData);
