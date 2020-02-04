@@ -90,14 +90,6 @@ public interface ObservationStore {
      */
     public abstract ObservationWriter getWriter();
 
-    /**
-     * Return an Observation Writer on the data.
-     *
-     * @param toClone
-     * @return An Observation Writer.
-     */
-    public abstract ObservationFilter cloneObservationFilter(ObservationFilter toClone);
-
     void close() throws DataStoreException;
 
 }

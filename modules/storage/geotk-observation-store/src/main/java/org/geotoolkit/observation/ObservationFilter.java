@@ -18,8 +18,8 @@
 package org.geotoolkit.observation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
@@ -37,24 +37,39 @@ public interface ObservationFilter {
      *
      * @param requestMode
      * @param resultModel
+     * @param hints
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void initFilterObservation(final ResponseModeType requestMode, final QName resultModel) throws DataStoreException;
+    void initFilterObservation(final ResponseModeType requestMode, final QName resultModel, final Map<String,String> hints) throws DataStoreException;
 
     /**
-     * Initialize the query for a restricted to the results request.
+     * Initialize the query for an extraction restricted to the results request.
      *
      * @param procedure
      * @param resultModel
+     * @param hints
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void initFilterGetResult(final String procedure, final QName resultModel) throws DataStoreException;
+    void initFilterGetResult(final String procedure, final QName resultModel, final Map<String,String> hints) throws DataStoreException;
 
     /**
-     * Initialize the query for a restricted to the results request.
+     * Initialize the query for extracting feature of interest request.
+     *
      * @throws org.apache.sis.storage.DataStoreException
      */
     void initFilterGetFeatureOfInterest() throws DataStoreException;
+
+    /**
+     * Initialize the query for extracting phenomenon request.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void initFilterGetPhenomenon() throws DataStoreException;
+
+    /**
+     * Initialize the query for extracting procedure request.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void initFilterGetSensor() throws DataStoreException;
 
     /**
      * Add some procedure filter to the request.
@@ -79,6 +94,13 @@ public interface ObservationFilter {
      * @param fois the feature of interest identifiers.
      */
     void setFeatureOfInterest(final List<String> fois);
+
+    /**
+     * Add some observation identifier filter to the request.
+     *
+     * @param ids the observations identifiers.
+     */
+    void setObservationIds(final List<String> ids);
 
     /**
      * Add a TM_Equals filter to the current request.
@@ -183,6 +205,20 @@ public interface ObservationFilter {
     Set<String> filterFeatureOfInterest() throws DataStoreException;
 
     /**
+     * Execute the current query and return a list of ObservedProperty ID.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Set<String> filterPhenomenon() throws DataStoreException;
+
+    /**
+     * Execute the current query and return a list of procedure ID.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Set<String> filterProcedure() throws DataStoreException;
+
+    /**
      * Return informations about the implementation class.
      */
     String getInfos();
@@ -202,13 +238,6 @@ public interface ObservationFilter {
      * Return true if template are filled with a default period when there is no eventTime suplied.
      */
     boolean isDefaultTemplateTime();
-
-    /**
-     * Set the global level for information message.
-     *
-     * @param logLevel
-     */
-    void setLoglevel(Level logLevel);
 
     void destroy();
 }

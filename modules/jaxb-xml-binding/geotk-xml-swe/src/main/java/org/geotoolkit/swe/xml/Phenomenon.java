@@ -25,5 +25,7 @@ import org.opengis.metadata.Identifier;
  */
 public interface Phenomenon extends org.opengis.observation.Phenomenon {
 
+    String getId();
+
     Identifier getName();
 }

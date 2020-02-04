@@ -23,6 +23,26 @@
     </Contact_Group>
   </Personnel>
   <Personnel>
+    <Role>METADATA AUTHOR</Role>
+    <Contact_Person uuid="987-887">
+      <First_Name>jean</First_Name>
+      <Middle_Name>pierre</Middle_Name>
+      <Last_Name>imbert</Last_Name>
+      <Address>
+        <Street_Address>12 rue blip</Street_Address>
+        <City>Montpellier</City>
+        <State_Province>Occitanie</State_Province>
+        <Postal_Code>34000</Postal_Code>
+        <Country>France</Country>
+      </Address>
+      <Phone>
+        <Number>0466441122</Number>
+        <Type>Direct Line</Type>
+      </Phone>
+      <Email>contact@geomatys.com</Email>
+    </Contact_Person>
+  </Personnel>
+  <Personnel>
     <Role>TECHNICAL CONTACT</Role>
     <Contact_Person uuid="1244110-777">
       <First_Name>michel</First_Name>

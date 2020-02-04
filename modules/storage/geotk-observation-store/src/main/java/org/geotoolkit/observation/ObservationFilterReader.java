@@ -18,10 +18,13 @@
 package org.geotoolkit.observation;
 
 import java.util.List;
+import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
 import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.observation.Process;
 
 /**
  *
@@ -32,31 +35,49 @@ public interface ObservationFilterReader extends ObservationFilter {
     /**
      * Return a list of Observation templates matching the builded filter.
      *
-     * @param version the sosversion for the xml object returned.
+     * @param hints extraction hints like the O&M version for the xml object returned.
      *
      * @return A list of Observation templates matching the builded filter.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    List<Observation> getObservationTemplates(final String version) throws DataStoreException;
+    List<Observation> getObservationTemplates(final Map<String,String> hints) throws DataStoreException;
 
      /**
      * Return a list of Observation matching the builded filter.
      *
-     * @param version the sosversion for the xml object returned.
+     * @param hints extraction hints like the O&M version for the xml object returned.
      *
      * @return A list of Observation matching the builded filter.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    List<Observation> getObservations(final String version) throws DataStoreException;
+    List<Observation> getObservations(final Map<String,String> hints) throws DataStoreException;
 
     /**
      *
-     * @param version the sosversion for the xml object returned.
+     * @param hints extraction hints like the O&M version for the xml object returned.
      *
      * @return
      * @throws DataStoreException
      */
-    List<SamplingFeature> getFeatureOfInterests(final String version) throws DataStoreException;
+    List<SamplingFeature> getFeatureOfInterests(final Map<String,String> hints) throws DataStoreException;
+
+    /**
+     *
+     * @param hints extraction hints like the O&M version for the xml object returned.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    List<Phenomenon> getPhenomenons(final Map<String,String> hints) throws DataStoreException;
+
+    /**
+     *
+     * @param hints extraction hints like the O&M version for the xml object returned.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    List<Process> getProcesses(final Map<String,String> hints) throws DataStoreException;
 
     /**
      * Return an encoded block of data in a string.

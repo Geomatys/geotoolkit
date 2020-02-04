@@ -1,0 +1,13 @@
+{
+    "components": [
+        "id",
+        "phenomenonTime",
+        "resultTime",
+        "result"
+    ],
+    "dataArray": [
+        [1, "2005-08-05T12:21:13Z", "2005-08-05T12:21:13Z", [10.2, 65, "clear"]],
+        [2, "2005-08-05T12:22:08Z", "2005-08-05T12:21:13Z", [9.8, 62, "unclear"]]
+    ],
+    "dataArray@iot.count": 3
+}

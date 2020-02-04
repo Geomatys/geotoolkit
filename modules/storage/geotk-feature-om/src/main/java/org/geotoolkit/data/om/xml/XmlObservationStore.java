@@ -430,14 +430,6 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
         throw new UnsupportedOperationException("Writing is not supported on this observation store.");
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ObservationFilter cloneObservationFilter(ObservationFilter toClone) {
-        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
-    }
-
     private final class FeatureView extends AbstractFeatureSet implements StoreResource {
 
         private final GenericName name;
