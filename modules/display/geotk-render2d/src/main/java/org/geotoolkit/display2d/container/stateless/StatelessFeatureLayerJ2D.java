@@ -40,7 +40,6 @@ import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.ALPHA_COMPOSITE_1F;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
@@ -75,7 +74,9 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.filter.Filter;
+import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
@@ -92,9 +93,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
-    // symbols margins, in objective CRS units, used to expand query and intersection enveloppes.
-    private double symbolsMargin = 0.0;
-
 
     public StatelessFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer, false);
@@ -107,7 +105,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     @Override
     public void eventOccured(StoreEvent event) {
-        if(item.isVisible() && getCanvas().isAutoRepaint()){
+        if (item.isVisible() && getCanvas().isAutoRepaint()) {
             //TODO should call a repaint only on this graphic
             getCanvas().repaint();
         }
@@ -118,81 +116,151 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      */
     @Override
     public boolean paintLayer(final RenderingContext2D renderingContext) {
+        final CanvasMonitor monitor = renderingContext.getMonitor();
 
         //search for a special graphic renderer
         final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
-        if(builder != null){
+        if (builder != null) {
             //let the parent class handle it
             return super.paintLayer(renderingContext);
         }
 
+        if (monitor.stopRequested()) return false;
+
         if(Boolean.TRUE.equals(item.getUserProperties().get(MapLayer.USERKEY_STYLED_FEATURE))){
             //feature have self defined styles.
-            return renderStyledFeature(renderingContext);
+            return renderStyledFeature(renderingContext, 0.0);
         }
 
-        //first extract the valid rules at this scale
-        final List<Rule> validRules;
+        final MutableStyle style = item.getStyle();
+        final Id selectionFilter = item.getSelectionFilter();
+        final MutableStyle selectionStyle = item.getSelectionStyle();
+        final FeatureType type;
         try {
-            validRules = getValidRules(renderingContext,item,item.getResource().getType());
+            type = item.getResource().getType();
         } catch (DataStoreException ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return false;
         }
 
-        //we perform a first check on the style to see if there is at least
-        //one valid rule at this scale, if not we just continue.
-        if(validRules.isEmpty()){
-            return false;
+        boolean rendered = false;
+
+        for (FeatureTypeStyle fts : style.featureTypeStyles()) {
+            if (monitor.stopRequested()) return false;
+            //first extract the valid rules at this scale
+            final List<Rule> validRules = getValidRules(renderingContext, fts, selectionFilter, type);
+
+            //we perform a first check on the style to see if there is at least
+            //one valid rule at this scale, if not we just continue.
+            if (validRules.isEmpty()) {
+                continue;
+            }
+
+            //extract the used names
+            Set<String> names = propertiesNames(validRules);
+            if (names.contains("*")) {
+                //we need all properties
+                names = null;
+            }
+
+            //calculate max symbol size, to expand search envelope.
+            double symbolsMargin = 0.0;
+            for (Rule rule : validRules) {
+                for (Symbolizer s : rule.symbolizers()) {
+                    final CachedSymbolizer cs = GO2Utilities.getCached(s, null);
+                    symbolsMargin = Math.max(symbolsMargin, cs.getMargin(null, renderingContext));
+                }
+            }
+            if (Double.isNaN(symbolsMargin) || Double.isInfinite(symbolsMargin)) {
+                //symbol margin can not be pre calculated, expect a max of 300pixels
+                symbolsMargin = 300f;
+            }
+            if (symbolsMargin > 0) {
+                final double scale = XAffineTransform.getScale(renderingContext.getDisplayToObjective());
+                symbolsMargin = scale * symbolsMargin;
+            }
+
+            final FeatureSet candidates;
+            final FeatureType expected;
+            try {
+                //optimize
+                candidates = RenderingRoutines.optimizeFeatureSet(renderingContext, item, names, validRules, symbolsMargin);
+                //get the expected result type
+                expected = candidates.getType();
+            } catch (Exception ex) {
+                renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
+                continue;
+            }
+
+            //calculate optimized rules and included filter + expressions
+            final CachedRule[] rules = toCachedRules(validRules, expected);
+
+            rendered |= paintVectorLayer(rules, candidates, renderingContext);
         }
 
-        //extract the used names
-        Set<String> names = propertiesNames(validRules);
-        if(names.contains("*")){
-            //we need all properties
-            names = null;
-        }
+        //render the selection
+        if (selectionStyle != null && selectionFilter != null && Filter.EXCLUDE.equals(selectionFilter)) {
+            for (FeatureTypeStyle fts : selectionStyle.featureTypeStyles()) {
+                if (monitor.stopRequested()) return false;
+                //first extract the valid rules at this scale
+                final List<Rule> validRules = getValidRules(renderingContext, fts, GO2Utilities.FILTER_FACTORY.not(selectionFilter), type);
 
-        //calculate max symbol size, to expand search envelope.
-        symbolsMargin = 0.0;
-        for (Rule rule : validRules) {
-            for (Symbolizer s : rule.symbolizers()) {
-                final CachedSymbolizer cs = GO2Utilities.getCached(s, null);
-                symbolsMargin = Math.max(symbolsMargin, cs.getMargin(null, renderingContext));
+                //we perform a first check on the style to see if there is at least
+                //one valid rule at this scale, if not we just continue.
+                if (validRules.isEmpty()) {
+                    continue;
+                }
+
+                //extract the used names
+                Set<String> names = propertiesNames(validRules);
+                if (names.contains("*")) {
+                    //we need all properties
+                    names = null;
+                }
+
+                //calculate max symbol size, to expand search envelope.
+                double symbolsMargin = 0.0;
+                for (Rule rule : validRules) {
+                    for (Symbolizer s : rule.symbolizers()) {
+                        final CachedSymbolizer cs = GO2Utilities.getCached(s, null);
+                        symbolsMargin = Math.max(symbolsMargin, cs.getMargin(null, renderingContext));
+                    }
+                }
+                if (Double.isNaN(symbolsMargin) || Double.isInfinite(symbolsMargin)) {
+                    //symbol margin can not be pre calculated, expect a max of 300pixels
+                    symbolsMargin = 300f;
+                }
+                if (symbolsMargin > 0) {
+                    final double scale = XAffineTransform.getScale(renderingContext.getDisplayToObjective());
+                    symbolsMargin = scale * symbolsMargin;
+                }
+
+                final FeatureSet candidates;
+                final FeatureType expected;
+                try {
+                    //optimize
+                    candidates = RenderingRoutines.optimizeFeatureSet(renderingContext, item, names, validRules, symbolsMargin);
+                    //get the expected result type
+                    expected = candidates.getType();
+                } catch (Exception ex) {
+                    renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
+                    continue;
+                }
+
+                //calculate optimized rules and included filter + expressions
+                final CachedRule[] rules = toCachedRules(validRules, expected);
+
+                rendered |= paintVectorLayer(rules, candidates, renderingContext);
             }
         }
-        if (Double.isNaN(symbolsMargin) || Double.isInfinite(symbolsMargin)) {
-            //symbol margin can not be pre calculated, expect a max of 300pixels
-            symbolsMargin = 300f;
-        }
-        if (symbolsMargin > 0) {
-            final double scale = XAffineTransform.getScale(renderingContext.getDisplayToObjective());
-            symbolsMargin = scale * symbolsMargin;
-        }
 
-
-        final FeatureSet candidates;
-        final FeatureType expected;
-        try {
-            //optimize
-            candidates = RenderingRoutines.optimizeFeatureSet(renderingContext, item, names, validRules, symbolsMargin);
-            //get the expected result type
-            expected = candidates.getType();
-        } catch (Exception ex) {
-            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
-            return false;
-        }
-
-        //calculate optimized rules and included filter + expressions
-        final CachedRule[] rules = toCachedRules(validRules, expected);
-
-        return paintVectorLayer(rules, candidates, renderingContext);
+        return rendered;
     }
 
     /**
      * Render styled features.
      */
-    private boolean renderStyledFeature(final RenderingContext2D context){
+    private boolean renderStyledFeature(final RenderingContext2D context, double symbolsMargin){
 
         final CanvasMonitor monitor = context.getMonitor();
         final GraphicIterator statefullIterator;
@@ -205,23 +273,23 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         }
 
         //prepare the rendering parameters
-        if(monitor.stopRequested()) return false;
+        if (monitor.stopRequested()) return false;
 
         boolean dataRendered = false;
-        try{
-            while(statefullIterator.hasNext()){
+        try {
+            while (statefullIterator.hasNext()) {
                 if(monitor.stopRequested()) return dataRendered;
                 final ProjectedObject projectedCandidate = statefullIterator.next();
                 final Feature feature = (Feature) projectedCandidate.getCandidate();
 
                 final List<Symbolizer> symbolizers;
-                try{
+                try {
                     symbolizers = (List<Symbolizer>) feature.getPropertyValue(FeatureExt.ATTRIBUTE_SYMBOLIZERS.toString());
-                }catch(PropertyNotFoundException ex){
+                } catch(PropertyNotFoundException ex) {
                     continue;
                 }
-                if(symbolizers==null) continue;
-                for(Symbolizer symbolizer : symbolizers){
+                if (symbolizers == null) continue;
+                for (Symbolizer symbolizer : symbolizers) {
                     final SymbolizerRendererService srs = GO2Utilities.findRenderer(symbolizer.getClass());
                     final CachedSymbolizer cs = srs.createCachedSymbolizer(symbolizer);
                     final SymbolizerRenderer sr = srs.createRenderer(cs, context);
@@ -232,7 +300,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                     }
                 }
             }
-        }finally{
+        } finally {
             try {
                 statefullIterator.close();
             } catch (IOException ex) {
@@ -276,17 +344,19 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             return graphics;
         }
 
-        if(graphics == null) graphics = new ArrayList<>();
+        if (graphics == null) graphics = new ArrayList<>();
 
-        if(mask instanceof SearchAreaJ2D){
-            return searchGraphicAt(item, rules, c2d, (SearchAreaJ2D)mask, filter, graphics);
-        }else{
-            return searchGraphicAt(item, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
+        final double symbolsMargin = 50.0;
+        if (mask instanceof SearchAreaJ2D) {
+            return searchGraphicAt(item, rules, c2d, (SearchAreaJ2D)mask, filter, graphics, symbolsMargin);
+        } else {
+            return searchGraphicAt(item, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics, symbolsMargin);
         }
     }
 
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
-            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter visitFilter, final List<Graphic> graphics) {
+            final RenderingContext2D renderingContext, final SearchAreaJ2D mask,
+            final VisitFilter visitFilter, final List<Graphic> graphics, double symbolsMargin) {
 
         final Query query;
         try {
@@ -424,7 +494,36 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             }
 
             return mixedRules;
+        }
 
+        return normalRules;
+    }
+
+    /**
+     * @return the valid rules at this scale, selection rules will be mixed in.
+     */
+    public static List<Rule> getValidRules(final RenderingContext2D renderingContext,
+            final FeatureTypeStyle fts, final Filter toExcludeFilter, final FeatureType type) {
+
+        final List<Rule> normalRules = GO2Utilities.getValidRules(
+                   fts, renderingContext.getSEScale(), type);
+
+        if (toExcludeFilter != null && !Filter.EXCLUDE.equals(toExcludeFilter)) {
+
+            final Filter exclusionFilter = FILTER_FACTORY.not(toExcludeFilter);
+
+            for (int i=0; i<normalRules.size();i++) {
+                final Rule rule = normalRules.get(i);
+                final MutableRule modifiedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
+                Filter f = rule.getFilter();
+                if (f == null) {
+                    f = exclusionFilter;
+                } else {
+                    f = FILTER_FACTORY.and(f, exclusionFilter);
+                }
+                modifiedRule.setFilter(f);
+                normalRules.set(i, modifiedRule);
+            }
         }
 
         return normalRules;
@@ -442,7 +541,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         return cached;
     }
 
-    protected boolean paintVectorLayer(final CachedRule[] rules, final FeatureSet candidates, final RenderingContext2D context) {
+    private boolean paintVectorLayer(final CachedRule[] rules, final FeatureSet candidates, final RenderingContext2D context) {
 
         final CanvasMonitor monitor = context.getMonitor();
 
@@ -463,7 +562,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             }
         }
 
-        symbolOrder = symbolOrder || Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
         if (symbolOrder) {
             try{
                 return renderBySymbolOrder(candidates, context, rules);

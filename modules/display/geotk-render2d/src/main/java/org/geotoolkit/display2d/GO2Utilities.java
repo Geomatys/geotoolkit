@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,31 +48,6 @@ import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
-
-import org.opengis.feature.AttributeType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.feature.PropertyType;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Id;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.geometry.Envelope;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.*;
-import org.opengis.util.GenericName;
-
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.Features;
 import org.apache.sis.geometry.Envelopes;
@@ -84,11 +60,11 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArgumentChecks;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -122,12 +98,13 @@ import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.DefaultInterpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.visitor.PrepareStyleVisitor;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -138,10 +115,29 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Id;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.*;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -1135,77 +1131,80 @@ public final class GO2Utilities {
 
     public static List<Rule> getValidRules(final Style style, final double scale, final FeatureType type) {
         final List<Rule> validRules = new ArrayList<Rule>();
+        for (final FeatureTypeStyle fts : style.featureTypeStyles()) {
+            validRules.addAll(getValidRules(fts, scale, type));
+        }
+        return validRules;
+    }
 
-        final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
-        for(final FeatureTypeStyle fts : ftss){
+    public static List<Rule> getValidRules(final FeatureTypeStyle fts, final double scale, final FeatureType type) {
 
-            final Id ids = fts.getFeatureInstanceIDs();
-            final Set<GenericName> names = fts.featureTypeNames();
+        final Id ids = fts.getFeatureInstanceIDs();
+        final Set<GenericName> names = fts.featureTypeNames();
 
-            //check semantic, only if we have a feature type
-            if(type != null){
-                final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
-                if(!semantics.isEmpty()){
-                    Class ctype;
-                    try {
-                        ctype = Features.toAttribute(FeatureExt.getDefaultGeometry(type))
-                                .map(AttributeType::getValueClass)
-                                .orElse(null);
-                    } catch (PropertyNotFoundException e) {
-                          ctype = null;
-                    }
+        //check semantic, only if we have a feature type
+        if(type != null){
+            final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
+            if(!semantics.isEmpty()){
+                Class ctype;
+                try {
+                    ctype = Features.toAttribute(FeatureExt.getDefaultGeometry(type))
+                            .map(AttributeType::getValueClass)
+                            .orElse(null);
+                } catch (PropertyNotFoundException e) {
+                      ctype = null;
+                }
 
-                    boolean valid = false;
-                    for(SemanticType semantic : semantics){
-                        if(semantic == SemanticType.ANY){
+                boolean valid = false;
+                for(SemanticType semantic : semantics){
+                    if(semantic == SemanticType.ANY){
+                        valid = true;
+                        break;
+                    }else if(semantic == SemanticType.LINE){
+                        if(ctype == LineString.class || ctype == MultiLineString.class || ctype == Geometry.class ){
                             valid = true;
                             break;
-                        }else if(semantic == SemanticType.LINE){
-                            if(ctype == LineString.class || ctype == MultiLineString.class || ctype == Geometry.class ){
-                                valid = true;
-                                break;
-                            }
-                        }else if(semantic == SemanticType.POINT){
-                            if(ctype == Point.class || ctype == MultiPoint.class || ctype == Geometry.class){
-                                valid = true;
-                                break;
-                            }
-                        }else if(semantic == SemanticType.POLYGON){
-                            if(ctype == Polygon.class || ctype == MultiPolygon.class || ctype == Geometry.class){
-                                valid = true;
-                                break;
-                            }
-                        }else if(semantic == SemanticType.RASTER){
-                            // can not test this on feature datas
-                        }else if(semantic == SemanticType.TEXT){
-                            //no text type in JTS, that's a stupid thing this Text semantic
                         }
+                    }else if(semantic == SemanticType.POINT){
+                        if(ctype == Point.class || ctype == MultiPoint.class || ctype == Geometry.class){
+                            valid = true;
+                            break;
+                        }
+                    }else if(semantic == SemanticType.POLYGON){
+                        if(ctype == Polygon.class || ctype == MultiPolygon.class || ctype == Geometry.class){
+                            valid = true;
+                            break;
+                        }
+                    }else if(semantic == SemanticType.RASTER){
+                        // can not test this on feature datas
+                    }else if(semantic == SemanticType.TEXT){
+                        //no text type in JTS, that's a stupid thing this Text semantic
                     }
-
-                    if(!valid) continue;
-
                 }
+
+                if (!valid) return Collections.EMPTY_LIST;
             }
+        }
 
 
-            //TODO filter correctly possibilities
-            //test if the featutetype is valid
-            //we move to next feature  type if not valid
-            if (false) continue;
-            //if (typeName != null && !(typeName.equalsIgnoreCase(fts.getFeatureTypeName())) ) continue;
+        //TODO filter correctly possibilities
+        //test if the featutetype is valid
+        //we move to next feature  type if not valid
+        if (false) return Collections.EMPTY_LIST;
+        //if (typeName != null && !(typeName.equalsIgnoreCase(fts.getFeatureTypeName())) ) continue;
 
-
-            final List<? extends Rule> rules = fts.rules();
-            for(final Rule rule : rules){
-                //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
-                    validRules.add(rule);
-                }
+        final List<? extends Rule> rules = fts.rules();
+        final List<Rule> validRules = new ArrayList<Rule>();
+        for(final Rule rule : rules){
+            //test if the scale is valid for this rule
+            if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
+                validRules.add(rule);
             }
         }
 
         return validRules;
     }
+
 
     public static CachedRule[] getValidCachedRules(final Style style, final double scale, final FeatureType type) {
         final List<CachedRule> validRules = new ArrayList<CachedRule>();

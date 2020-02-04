@@ -121,51 +121,24 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testSymbolizer() throws PortrayalException {
+        final CanvasDef cdef = new CanvasDef(new Dimension(500, 500), env);
 
         //test normal pass
         Hints hints = new Hints();
         hints.put(GO2Hints.KEY_MULTI_THREAD, Boolean.FALSE);
-        hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_SECOND);
-
         MokSymbolizerRenderer.called = 0;
-        CanvasDef cdef = new CanvasDef(new Dimension(500, 500), env);
         cdef.setBackground(Color.WHITE);
         DefaultPortrayalService.portray(cdef, new SceneDef(context,hints));
-
         assertEquals(5, MokSymbolizerRenderer.called);
 
 
         //test multithread
         hints = new Hints();
         hints.put(GO2Hints.KEY_MULTI_THREAD, Boolean.TRUE);
-        hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_SECOND);
-
         MokSymbolizerRenderer.called = 0;
         DefaultPortrayalService.portray(cdef, new SceneDef(context, hints));
-
         assertEquals(5, MokSymbolizerRenderer.called);
 
-
-        //test symbol rendering order
-        hints = new Hints();
-        hints.put(GO2Hints.KEY_MULTI_THREAD, Boolean.FALSE);
-        hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_PRIME);
-
-        MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(cdef, new SceneDef(context,hints));
-
-        assertEquals(5, MokSymbolizerRenderer.called);
-
-
-        //test symbol rendering order + multithread
-        hints = new Hints();
-        hints.put(GO2Hints.KEY_MULTI_THREAD, Boolean.TRUE);
-        hints.put(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_PRIME);
-
-        MokSymbolizerRenderer.called = 0;
-        DefaultPortrayalService.portray(cdef, new SceneDef(context,hints));
-
-        assertEquals(5, MokSymbolizerRenderer.called);
     }
 
 }

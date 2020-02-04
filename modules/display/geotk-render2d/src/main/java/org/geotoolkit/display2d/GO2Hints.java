@@ -87,14 +87,6 @@ public final class GO2Hints extends Static {
     public static final Key KEY_MAX_TILES = new NamedKey(Integer.class, "GO2 - Max tiles per pyramid when rendering");
 
     /**
-     * Configure the go2 engine to render in order symbolizer then feature.
-     * This hint usualy given much better rendered image but is more costly to
-     * produce in stateless mode.
-     * Default value is False : Feature priority
-     */
-    public static final Key KEY_SYMBOL_RENDERING_ORDER = new NamedKey(Boolean.class, "GO2 - Symbol rendering order");
-
-    /**
      * Configure the label renderer used.
      * The default label renderer is Straight forward and doesn't make any overlaping check or anything,
      * it fallows exactly the Symbology encoding specification.
@@ -159,8 +151,6 @@ public final class GO2Hints extends Static {
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;
     public static final Boolean GENERALIZE_ON = Boolean.TRUE;
     public static final Boolean GENERALIZE_OFF = Boolean.FALSE;
-    public static final Boolean SYMBOL_RENDERING_PRIME = Boolean.TRUE;
-    public static final Boolean SYMBOL_RENDERING_SECOND = Boolean.FALSE;
     public static final Boolean COVERAGE_WRITER_ON = Boolean.TRUE;
     public static final Boolean COVERAGE_WRITER_OFF = Boolean.FALSE;
     public static final Boolean PARALLAL_BUFFER_ON = Boolean.TRUE;
