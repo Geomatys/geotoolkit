@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
+import org.opengis.observation.sampling.SamplingFeature;
 
 /**
  *
@@ -44,7 +44,7 @@ public class ExtractionResult {
 
     public final List<ProcedureTree> procedures = new ArrayList<>();
 
-    public void addFeatureOfInterest(final SamplingFeature sf) {
+    public void addFeatureOfInterest(final org.geotoolkit.sampling.xml.SamplingFeature sf) {
         this.featureOfInterest.add(sf);
         this.featureOfInterestNames.add(sf.getId());
     }

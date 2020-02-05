@@ -158,8 +158,9 @@ public class NetcdfObservationReader implements ObservationReader {
     public SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException {
         try {
             final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
-            for (org.geotoolkit.sampling.xml.SamplingFeature feature : result.featureOfInterest) {
-                if (feature.getId().equals(samplingFeatureName)) {
+            for (SamplingFeature feature : result.featureOfInterest) {
+                if (feature instanceof org.geotoolkit.sampling.xml.SamplingFeature &&
+                   ((org.geotoolkit.sampling.xml.SamplingFeature)feature).getId().equals(samplingFeatureName)) {
                     return feature;
                 }
             }
