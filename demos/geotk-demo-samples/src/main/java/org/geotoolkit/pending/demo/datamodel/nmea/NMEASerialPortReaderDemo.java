@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.data.nmea.Discovery;
+import org.geotoolkit.data.nmea.FlowableFeatureSet;
 
 import reactor.core.Disposable;
 
@@ -43,15 +44,16 @@ public class NMEASerialPortReaderDemo {
 
         // On trigger, a scan of serial ports will be started. A dataset can be returned for each found port emiting nmea messages.
         final Disposable subscriber = serial.discover()
+                // For demo/simplicity, we just keep the first encountered communication channel
+                .next()
+                .flatMapMany(FlowableFeatureSet::flow)
                 .subscribe(
                         // On port acquisition, we can define what to do with received messages. Here, just log them.
-                        dataset -> dataset.flux()
-                                .map(f -> String.format("Next message:%n%s", f))
-                                .subscribe(LOGGER::info, error -> LOGGER.log(Level.WARNING, "Error in message flux", error)),
-
+                        feature -> LOGGER.info(String.format("Next message:%n%s", feature)),
                         error -> LOGGER.log(Level.WARNING, "A problem has occurred while scanning port", error)
                 );
 
+        // Do not forget to dispose your resources on shutdown.
         subscriber.dispose();
         LOGGER.log(Level.INFO, "Port reading ended.");
     }

@@ -2,7 +2,6 @@ package org.geotoolkit.data.nmea;
 
 import java.time.Duration;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -16,8 +15,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 
@@ -37,7 +34,7 @@ import reactor.core.scheduler.Schedulers;
  *     <li>Improve metadata build.</li>
  * </ul>
  */
-public class FluxFeatureSet implements FeatureSet {
+public class FluxFeatureSet implements FlowableFeatureSet {
 
     public static final Scheduler ENVELOPE_SCHEDULER = Schedulers.newSingle("envelope");
 
@@ -60,33 +57,28 @@ public class FluxFeatureSet implements FeatureSet {
     }
 
     @Override
-    public FeatureType getType() throws DataStoreException {
+    public FeatureType getType() {
         return NMEAStore.NMEA_TYPE;
     }
 
-    @Override
-    public Stream<Feature> features(boolean parallel) throws DataStoreException {
-        return datasource.toStream();
-    }
-
-    public Flux<Feature> flux() {
+    public Flux<Feature> flow() {
         return datasource;
     }
 
     @Override
-    public Optional<Envelope> getEnvelope() throws DataStoreException {
+    public Optional<Envelope> getEnvelope() {
         return Mono.fromSupplier(() -> envelopeComputer.getSnapshot())
                 .subscribeOn(ENVELOPE_SCHEDULER)
                 .block(Duration.ofMillis(20));
     }
 
     @Override
-    public Optional<GenericName> getIdentifier() throws DataStoreException {
+    public Optional<GenericName> getIdentifier() {
         return Optional.ofNullable(name);
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
+    public Metadata getMetadata() {
         // TODO: fill, factorize with NMEAStore, and keep in cache.
         final DefaultMetadata meta = new DefaultMetadata();
         return meta;

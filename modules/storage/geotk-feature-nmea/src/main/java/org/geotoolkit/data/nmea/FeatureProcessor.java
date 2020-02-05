@@ -57,7 +57,7 @@ class FeatureProcessor {
 
     private static final GeometryFactory GFACTORY = new GeometryFactory();
 
-    GlobalPositioningState state = new GlobalPositioningState();
+    private GlobalPositioningState state = new GlobalPositioningState();
 
     /**
      * Modify internal state to take account of given message data. Message information overrides related data
@@ -104,6 +104,13 @@ class FeatureProcessor {
         return Optional.empty();
     }
 
+    /**
+     * Creates a flux of features representing GPS information updates. This provides a new Feature each time source GPS
+     * updates position or time information.
+     *
+     * @param rawData The GPS messages to listen to update information and build features.
+     * @return A fresh reactive stream.
+     */
     static Flux<Feature> emit(Flux<Sentence> rawData) {
         return rawData.scanWith(() -> new GlobalPositioningState(), GlobalPositioningState::new)
             .filter(state -> state.isSpaceTimeSet() && state.isSpatialOrTemporalUpdate)
