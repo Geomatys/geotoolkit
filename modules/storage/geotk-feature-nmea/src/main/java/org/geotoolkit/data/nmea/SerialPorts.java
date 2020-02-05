@@ -19,6 +19,8 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.ReplayProcessor;
+import reactor.core.publisher.SignalType;
 import reactor.util.function.Tuple2;
 
 import static org.geotoolkit.data.nmea.NMEAStore.LOGGER;
@@ -30,16 +32,20 @@ class SerialPorts implements Discovery {
     @Override
     public Flux<FlowableFeatureSet> discover() {
         final SerialPort[] ports = SerialPort.getCommPorts();
-        LOGGER.fine(() -> String.format("FAZELCAST found %d ports", ports.length));
+        LOGGER.fine(() -> String.format("Found %d serial ports", ports.length));
         return Flux.fromArray(ports)
+                .map(this::startListen)
                 .filterWhen(this::sentenceReceived)
                 .map(this::publish);
     }
 
+    private NMEAListener startListen(SerialPort source) {
+        return new NMEAListener(source);
+    }
 
-    private Mono<Boolean> sentenceReceived(final SerialPort port) {
-        LOGGER.fine(() -> "Trying port: "+port.getDescriptivePortName());
-        return Flux.<Sentence>create(sink -> new NMEAListener(port, sink))
+    private Mono<Boolean> sentenceReceived(final NMEAListener source) {
+        LOGGER.fine(() -> "Trying port: "+source.source.getDescriptivePortName());
+        return source.output
                 .hasElements()
                 .doOnError(error -> LOGGER.log(Level.FINE, "Failed connecting to port", error))
                 .onErrorReturn(Exception.class, false);
@@ -54,14 +60,9 @@ class SerialPorts implements Discovery {
         return new FluxFeatureSet(FeatureProcessor.emit(datasource.getT2()), datasource.getT1());
     }
 
-    private FlowableFeatureSet publish(final SerialPort port) {
-        final LocalName portName = Names.createLocalName(NAMESPACE, ":", port.getDescriptivePortName());
-        final Flux<Sentence> sentences = Flux.<Sentence>create(sink -> new NMEAListener(port, sink))
-                // TODO: find a better strategy: serial port accept only a single listener at a time.
-                // therefore, We're forced to use upstream as a hot source (note something more powerful should be possible
-                // as we've got control over a global state.
-                .cache(1000);
-        return new FluxFeatureSet(FeatureProcessor.emit(sentences), portName);
+    private FlowableFeatureSet publish(final NMEAListener source) {
+        final LocalName portName = Names.createLocalName(NAMESPACE, ":", source.source.getDescriptivePortName());
+        return new FluxFeatureSet(FeatureProcessor.emit(source.output), portName);
     }
 
     /**
@@ -76,19 +77,23 @@ class SerialPorts implements Discovery {
     private class NMEAListener implements SerialPortMessageListener, Disposable {
 
         private final SerialPort source;
-        private final FluxSink<Sentence> target;
+        private final ReplayProcessor<Sentence> output;
+        private final FluxSink<Sentence> sink;
 
-        private NMEAListener(final SerialPort source, FluxSink<Sentence> target) {
+        private NMEAListener(final SerialPort source) {
             this.source = source;
-            this.target = target;
-
             configure(source);
             if (!source.openPort()) {
                 throw new IllegalArgumentException(String.format("Cannot connect to input port [%s]", source.getDescriptivePortName()));
             }
-            if (source.addDataListener(this)) {
-                target.onDispose(this);
-            } else throw new IllegalArgumentException(String.format("Input port [%s] is already bound", source.getDescriptivePortName()));
+            if (!source.addDataListener(this)) {
+                throw new IllegalArgumentException(String.format("Input port [%s] is already bound", source.getDescriptivePortName()));
+
+            }
+
+            output = ReplayProcessor.cacheLast();
+            output.doFinally(this::close);
+            sink = output.sink(FluxSink.OverflowStrategy.LATEST);
         }
 
         @Override
@@ -112,20 +117,26 @@ class SerialPorts implements Discovery {
                 final byte[] message = event.getReceivedData();
                 if (message == null || message.length < 1) return;
                 final String text = new String(message, StandardCharsets.US_ASCII);
-                FeatureProcessor.read(text).ifPresent(target::next);
+                // Trim is very important for messages with a checksum at the end.
+                FeatureProcessor.read(text.trim()).ifPresent(sink::next);
             } catch (RuntimeException e) {
-                target.error(e);
+                sink.error(e);
             }
         }
 
-        @Override
-        public void dispose() {
+        private void close(final SignalType termination) {
+            LOGGER.fine("Terminated by "+termination);
             try (
                     Closeable doNotListenAnymore = () -> source.removeDataListener();
                     Closeable closePort = () -> source.closePort()
             ) {} catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
+        }
+
+        @Override
+        public void dispose() {
+            output.dispose();
         }
     }
 }
