@@ -21,6 +21,6 @@ public interface Discovery {
      * @return A default discovery mechanism for serial ports.
      */
     static Discovery serial() {
-        return new SerialPorts();
+        return SerialPorts.getOrCreate();
     }
 }

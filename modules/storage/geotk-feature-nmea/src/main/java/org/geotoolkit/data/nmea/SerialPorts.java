@@ -1,12 +1,12 @@
 package org.geotoolkit.data.nmea;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
-import org.opengis.util.GenericName;
 import org.opengis.util.LocalName;
 
 import org.apache.sis.util.iso.Names;
@@ -21,7 +21,6 @@ import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.ReplayProcessor;
 import reactor.core.publisher.SignalType;
-import reactor.util.function.Tuple2;
 
 import static org.geotoolkit.data.nmea.NMEAStore.LOGGER;
 
@@ -29,12 +28,36 @@ class SerialPorts implements Discovery {
 
     public static final String NAMESPACE = "Serial";
 
+    private static SerialPorts INSTANCE;
+
+    static synchronized Discovery getOrCreate() {
+        if (INSTANCE == null) {
+            INSTANCE = new SerialPorts();
+        }
+        return INSTANCE;
+    }
+
+    private List<NMEAListener> listeners;
+
+    private SerialPorts() {
+        final SerialPort[] ports = SerialPort.getCommPorts();
+        if (ports.length < 1) {
+            throw new IllegalStateException("No serial port detected");
+        }
+        LOGGER.fine(() -> String.format("Found %d serial ports", ports.length));
+
+        final List<NMEAListener> listeners = Arrays.stream(ports)
+                .map(this::startListen)
+                .collect(Collectors.toList());
+
+        this.listeners = Collections.unmodifiableList(listeners);
+    }
+
     @Override
     public Flux<FlowableFeatureSet> discover() {
         final SerialPort[] ports = SerialPort.getCommPorts();
         LOGGER.fine(() -> String.format("Found %d serial ports", ports.length));
-        return Flux.fromArray(ports)
-                .map(this::startListen)
+        return Flux.fromIterable(listeners)
                 .filterWhen(this::sentenceReceived)
                 .map(this::publish);
     }
@@ -49,15 +72,6 @@ class SerialPorts implements Discovery {
                 .hasElements()
                 .doOnError(error -> LOGGER.log(Level.FINE, "Failed connecting to port", error))
                 .onErrorReturn(Exception.class, false);
-    }
-
-    /**
-     * Create an SIS Feature set capable of providing {@link FlowableFeatureSet#flow() asynchronous data streams}.
-     * @param datasource
-     * @return
-     */
-    private FlowableFeatureSet adapt(final Tuple2<GenericName, Flux<Sentence>> datasource) {
-        return new FluxFeatureSet(FeatureProcessor.emit(datasource.getT2()), datasource.getT1());
     }
 
     private FlowableFeatureSet publish(final NMEAListener source) {
@@ -126,12 +140,8 @@ class SerialPorts implements Discovery {
 
         private void close(final SignalType termination) {
             LOGGER.fine("Terminated by "+termination);
-            try (
-                    Closeable doNotListenAnymore = () -> source.removeDataListener();
-                    Closeable closePort = () -> source.closePort()
-            ) {} catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+            source.removeDataListener();
+            // TODO: should we close port ?
         }
 
         @Override
