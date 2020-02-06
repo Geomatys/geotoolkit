@@ -20,8 +20,8 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.storage.multires.Tile;
 
 /**
  * Expose informations on how to access a tile.
@@ -50,6 +50,8 @@ public interface ImageTile extends Tile {
             try {
                 reader    = getImageReader();
                 tileImage = reader.read(getImageIndex());
+            } catch (IOException ex) {
+                throw new IOException("Failed to read tile : "+ input +"\n"+ex.getMessage(), ex);
             } finally {
                 XImageIO.disposeSilently(reader);
             }

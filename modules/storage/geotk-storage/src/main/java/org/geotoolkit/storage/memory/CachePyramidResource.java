@@ -360,7 +360,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                 if (noblocking) {
                     if (tilesInProcess.add(key)) {
                         //TODO replace by a thread poll or an executor
-                        loadUpperTile(col, row);
+                        //loadUpperTile(col, row);
                         EXEC.submit(new Runnable() {
                             @Override
                             public void run() {
