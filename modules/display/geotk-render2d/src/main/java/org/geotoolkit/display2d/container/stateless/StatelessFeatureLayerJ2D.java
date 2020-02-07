@@ -196,7 +196,36 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             //calculate optimized rules and included filter + expressions
             final CachedRule[] rules = toCachedRules(validRules, expected);
 
-            rendered |= paintVectorLayer(rules, candidates, renderingContext);
+            //we do not check if the collection is empty or not since
+            //it can be a very expensive operation
+
+            //prepare the rendering parameters
+            if (monitor.stopRequested()) return false;
+
+            //check if we have group symbolizers, if it's the case we must render by symbol order.
+            boolean symbolOrder = false;
+            for (CachedRule rule : rules) {
+                for (CachedSymbolizer symbolizer : rule.symbolizers()) {
+                    if (symbolizer.getRenderer().isGroupSymbolizer()) {
+                        symbolOrder = true;
+                        break;
+                    }
+                }
+            }
+
+            if (symbolOrder) {
+                try {
+                    rendered |= renderBySymbolOrder(candidates, renderingContext, rules);
+                } catch(PortrayalException ex) {
+                    monitor.exceptionOccured(ex, Level.WARNING);
+                }
+            } else {
+                try {
+                    rendered |= renderByObjectOrder(candidates, renderingContext, rules);
+                } catch(PortrayalException ex) {
+                    monitor.exceptionOccured(ex, Level.WARNING);
+                }
+            }
         }
 
         return rendered;
@@ -456,47 +485,10 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         return cached;
     }
 
-    private boolean paintVectorLayer(final CachedRule[] rules, final FeatureSet candidates, final RenderingContext2D context) {
-
-        final CanvasMonitor monitor = context.getMonitor();
-
-        //we do not check if the collection is empty or not since
-        //it can be a very expensive operation
-
-        //prepare the rendering parameters
-        if (monitor.stopRequested()) return false;
-
-        //check if we have group symbolizers, if it's the case we must render by symbol order.
-        boolean symbolOrder = false;
-        for (CachedRule rule : rules) {
-            for (CachedSymbolizer symbolizer : rule.symbolizers()) {
-                if (symbolizer.getRenderer().isGroupSymbolizer()) {
-                    symbolOrder = true;
-                    break;
-                }
-            }
-        }
-
-        if (symbolOrder) {
-            try{
-                return renderBySymbolOrder(candidates, context, rules);
-            }catch(PortrayalException ex){
-                monitor.exceptionOccured(ex, Level.WARNING);
-            }
-        }else{
-            try{
-                return renderByObjectOrder(candidates, context, rules);
-            }catch(PortrayalException ex){
-                monitor.exceptionOccured(ex, Level.WARNING);
-            }
-        }
-        return false;
-    }
-
     /**
      * Render by object order.
      */
-    protected final boolean renderByObjectOrder(final FeatureSet candidates,
+    private final boolean renderByObjectOrder(final FeatureSet candidates,
             final RenderingContext2D context, final CachedRule[] rules) throws PortrayalException{
         final CanvasMonitor monitor = context.getMonitor();
 

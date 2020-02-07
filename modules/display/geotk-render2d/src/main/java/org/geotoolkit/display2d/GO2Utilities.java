@@ -63,7 +63,6 @@ import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
@@ -147,8 +146,6 @@ import org.opengis.util.GenericName;
 public final class GO2Utilities {
 
     public static final GeometryFactory JTS_FACTORY = new GeometryFactory();
-
-    private static final Cache<Symbolizer,CachedSymbolizer> CACHE = new Cache<Symbolizer, CachedSymbolizer>(50,50,true);
 
     private static final Map<Class<? extends CachedSymbolizer>,SymbolizerRendererService> RENDERERS =
             new HashMap<Class<? extends CachedSymbolizer>, SymbolizerRendererService>();
@@ -740,41 +737,6 @@ public final class GO2Utilities {
         }
 
         return -1;
-    }
-
-    private static Collection<Class<?>> findMostSpecialize(final Collection<Class<?>> classes) {
-        final Set<Class<?>> specialized = new HashSet<Class<?>>();
-
-        candidates :
-        for(final Class candidate : classes){
-
-            compare:
-            for(final Class compared : classes){
-                //continue if same class
-                if(compared == candidate) continue compare;
-                final Class result = findMostSpecialize(candidate, compared);
-
-                //candidate is not much specialized
-                if(result == compared) continue candidates;
-            }
-
-            specialized.add(candidate);
-        }
-
-        return specialized;
-    }
-
-    private static Class findMostSpecialize(final Class a, final Class b){
-        final boolean aisb = b.isAssignableFrom(a);
-        final boolean bisa = a.isAssignableFrom(b);
-
-        if(aisb && !bisa){
-            return a;
-        }else if(!aisb && bisa){
-            return b;
-        }else{
-            return null;
-        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1408,29 +1370,6 @@ public final class GO2Utilities {
         }
         return value;
 
-
-//        CachedSymbolizer value = CACHE.peek(symbol);
-//        if (value == null) {
-//            Cache.Handler<CachedSymbolizer> handler = CACHE.lock(symbol);
-//            try {
-//                value = handler.peek();
-//                if (value == null) {
-//                    final SymbolizerRendererService renderer = findRenderer(symbol.getClass());
-//                    if(renderer != null){
-//                        value = renderer.createCachedSymbolizer(symbol,expected);
-//                    } else {
-//                        throw new IllegalStateException("No renderer for the style "+ symbol);
-//                    }
-//                }
-//            } finally {
-//                handler.putAndUnlock(value);
-//            }
-//        }
-//        return value;
-    }
-
-    public static void clearCache(){
-        CACHE.clear();
     }
 
     ////////////////////////////////////////////////////////////////////////////
