@@ -92,7 +92,7 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
         FUNCTIONS.put(ROUND_DOUBLE,             RoundDoubleFunction.class);
         FUNCTIONS.put(LIST,                     ListFunction.class);
         FUNCTIONS.put(TABLE,                    TableFunction.class);
-        
+
     }
 
     public OtherFunctionFactory() {
