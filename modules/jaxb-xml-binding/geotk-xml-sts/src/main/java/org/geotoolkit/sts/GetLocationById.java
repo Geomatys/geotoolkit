@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2019, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,20 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.swe.xml;
-
-import org.opengis.metadata.Identifier;
+package org.geotoolkit.sts;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
-public interface Phenomenon extends org.opengis.observation.Phenomenon {
+public class GetLocationById extends AbstractSTSRequestById {
 
-    String getId();
-
-    Identifier getName();
-
-    String getDescription();
 }

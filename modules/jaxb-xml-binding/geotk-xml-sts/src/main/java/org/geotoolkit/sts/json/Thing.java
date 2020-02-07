@@ -29,6 +29,8 @@ public class Thing implements STSResponse {
     @JsonProperty("@iot.id")
     private String iotId = null;
 
+    private String name = null;
+
     @JsonProperty("@iot.selfLink")
     private String iotSelfLink = null;
 
@@ -54,8 +56,36 @@ public class Thing implements STSResponse {
     @JsonProperty("Locations@iot.navigationLink")
     private String locationsIotNavigationLink = null;
 
+    @JsonProperty("MultiDatastreams")
+    private List<MultiDatastream> multiDatastreams = null;
+
+    @JsonProperty("MultiDatastreams@iot.navigationLink")
+    private String multiDatastreamsIotNavigationLink = null;
+
     public Thing iotId(String iotId) {
         this.iotId = iotId;
+        return this;
+    }
+
+    /**
+     * A property provides a label for Sensor entity, commonly a descriptive
+     * name.
+     *
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Thing name(String name) {
+        this.name = name;
         return this;
     }
 
@@ -64,7 +94,7 @@ public class Thing implements STSResponse {
      * the entities of the same entity type.
      *
      * @return iotId
-  *
+     *
      */
     public String getIotId() {
         return iotId;
@@ -287,6 +317,50 @@ public class Thing implements STSResponse {
         this.locationsIotNavigationLink = locationsIotNavigationLink;
     }
 
+    public Thing addMultiDatastreamsItem(MultiDatastream multiDatastreamsItem) {
+        if (this.multiDatastreams == null) {
+            this.multiDatastreams = new ArrayList<>();
+        }
+
+        this.multiDatastreams.add(multiDatastreamsItem);
+        return this;
+    }
+
+    /**
+     * The Observations of a Datastream are measured with the same Sensor. One
+     * Sensor MAY produce zero-to-many Observations in different Datastreams.
+     *
+     * @return datastreams
+     *
+     */
+    public List<MultiDatastream> getMultiDatastreams() {
+        return multiDatastreams;
+    }
+
+    public void setMultiDatastreams(List<MultiDatastream> multiDatastreams) {
+        this.multiDatastreams = multiDatastreams;
+    }
+
+    public Thing multiDatastreamsIotNavigationLink(String multiDatastreamsIotNavigationLink) {
+        this.multiDatastreamsIotNavigationLink = multiDatastreamsIotNavigationLink;
+        return this;
+    }
+
+    /**
+     * link to related entities
+     *
+     * @return datastreamsIotNavigationLink
+     *
+     */
+    public String getMultiDatastreamsIotNavigationLink() {
+        return multiDatastreamsIotNavigationLink;
+    }
+
+    public void setMultiDatastreamsIotNavigationLink(String multiDatastreamsIotNavigationLink) {
+        this.multiDatastreamsIotNavigationLink = multiDatastreamsIotNavigationLink;
+    }
+
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -302,15 +376,17 @@ public class Thing implements STSResponse {
                 && Objects.equals(this.properties, thing.properties)
                 && Objects.equals(this.locations, thing.locations)
                 && Objects.equals(this.historicalLocations, thing.historicalLocations)
-                && Objects.equals(this.datastreams, thing.datastreams)
                 && Objects.equals(this.historicalLocationsIotNavigationLink, thing.historicalLocationsIotNavigationLink)
+                && Objects.equals(this.datastreams, thing.datastreams)
                 && Objects.equals(this.datastreamsIotNavigationLink, thing.datastreamsIotNavigationLink)
+                && Objects.equals(this.multiDatastreams, thing.multiDatastreams)
+                && Objects.equals(this.multiDatastreamsIotNavigationLink, thing.multiDatastreamsIotNavigationLink)
                 && Objects.equals(this.locationsIotNavigationLink, thing.locationsIotNavigationLink);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, description, properties, locations, historicalLocations, datastreams, historicalLocationsIotNavigationLink, datastreamsIotNavigationLink, locationsIotNavigationLink);
+        return java.util.Objects.hash(iotId, iotSelfLink, description, properties, locations, historicalLocations, datastreams, historicalLocationsIotNavigationLink, datastreamsIotNavigationLink, locationsIotNavigationLink, multiDatastreams, multiDatastreamsIotNavigationLink);
     }
 
     @Override
@@ -328,6 +404,8 @@ public class Thing implements STSResponse {
         sb.append("    historicalLocationsIotNavigationLink: ").append(toIndentedString(historicalLocationsIotNavigationLink)).append("\n");
         sb.append("    datastreamsIotNavigationLink: ").append(toIndentedString(datastreamsIotNavigationLink)).append("\n");
         sb.append("    locationsIotNavigationLink: ").append(toIndentedString(locationsIotNavigationLink)).append("\n");
+        sb.append("    multiDatastreams: ").append(toIndentedString(multiDatastreams)).append("\n");
+        sb.append("    multiDatastreamsIotNavigationLink: ").append(toIndentedString(multiDatastreamsIotNavigationLink)).append("\n");
         sb.append("}");
         return sb.toString();
     }

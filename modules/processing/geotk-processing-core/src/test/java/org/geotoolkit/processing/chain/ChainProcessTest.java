@@ -18,8 +18,12 @@ package org.geotoolkit.processing.chain;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
@@ -35,7 +39,9 @@ import org.geotoolkit.processing.chain.model.Parameter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.geotoolkit.processing.chain.model.Element.*;
+import org.geotoolkit.processing.chain.model.StringList;
 import org.geotoolkit.processing.chain.model.StringMap;
+import org.geotoolkit.processing.chain.model.StringMapList;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -277,6 +283,19 @@ public class ChainProcessTest extends org.geotoolkit.test.TestBase {
         param.setUserMap(userMap);
         f = File.createTempFile("chain", ".xml");
         chain.write(f);
+
+        // sting/map/list in user map
+        userMap = new HashMap<>();
+        HashMap<String, StringList> typeMapList = new HashMap<>();
+        ArrayList a = new ArrayList<>();
+        a.add("String");
+        a.add("String2");
+        typeMapList.put("String", new StringList(a));
+        userMap.put("test-map", new StringMapList(typeMapList));
+        param.setUserMap(userMap);
+        f = File.createTempFile("chain", ".xml");
+        chain.write(f);
+
     }
 
 }

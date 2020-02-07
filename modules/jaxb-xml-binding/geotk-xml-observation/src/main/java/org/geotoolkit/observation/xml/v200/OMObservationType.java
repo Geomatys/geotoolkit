@@ -441,11 +441,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
                 final List<String> fields = getFieldsFromResult((DataArrayProperty) result);
                 final List<InternalPhenomenon> phenomenons = new ArrayList<>();
                 for (String field : fields) {
-                    phenomenons.add(new InternalPhenomenon(null, field));
+                    phenomenons.add(new InternalPhenomenon(null, field, null));
                 }
-                return new InternalCompositePhenomenon(null, observedProperty.getHref(), phenomenons);
+                return new InternalCompositePhenomenon(null, observedProperty.getHref(), null, phenomenons);
             }
-            return new InternalPhenomenon(null, observedProperty.getHref());
+            return new InternalPhenomenon(null, observedProperty.getHref(), null);
         }
         return null;
     }
@@ -690,14 +690,18 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         private final String name;
 
+        private final String description;
+
         public InternalPhenomenon() {
             this.id = null;
             this.name = null;
+            this.description = null;
         }
 
-        public InternalPhenomenon(final String id, final String name) {
+        public InternalPhenomenon(final String id, final String name, final String description) {
             this.id = id;
             this.name = name;
+            this.description = description;
         }
 
         @Override
@@ -711,6 +715,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
 
         @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
         public boolean equals(final Object obj) {
             if (obj instanceof Phenomenon) {
                 final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
@@ -721,7 +730,17 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public String toString() {
-            return "[Anonymous Phenomenon] name:" + getName();
+            StringBuilder sb = new StringBuilder("[Anonymous Phenomenon]\n");
+            if (id != null) {
+                sb.append(" id:").append(id).append('\n');
+            }
+            if (name != null) {
+                sb.append(" name:").append(getName()).append('\n');
+            }
+            if (description != null) {
+                sb.append(" description:").append(description).append('\n');
+            }
+            return  sb.toString();
         }
 
         @Override
@@ -739,18 +758,22 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         private final String name;
 
+        private final String description;
+
         private final List<InternalPhenomenon> phenomenons;
 
         public InternalCompositePhenomenon() {
             this.id = null;
             this.name = null;
             this.phenomenons = new ArrayList<>();
+            this.description = null;
         }
 
-        public InternalCompositePhenomenon(final String id, final String name, List<InternalPhenomenon> phenomenons) {
+        public InternalCompositePhenomenon(final String id, final String name, final String description, List<InternalPhenomenon> phenomenons) {
             this.id = id;
             this.name = name;
             this.phenomenons = phenomenons;
+            this.description = description;
         }
 
         @Override
@@ -761,6 +784,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         @Override
         public Identifier getName() {
             return new DefaultIdentifier(name);
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
         }
 
         @Override
@@ -798,7 +826,17 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public String toString() {
-            return "[Anonymous composite Phenomenon] name:" + getName();
+            StringBuilder sb = new StringBuilder("[Anonymous composite Phenomenon]\n");
+            if (id != null) {
+                sb.append(" id:").append(id).append('\n');
+            }
+            if (name != null) {
+                sb.append(" name:").append(getName()).append('\n');
+            }
+            if (description != null) {
+                sb.append(" description:").append(description).append('\n');
+            }
+            return  sb.toString();
         }
 
         @Override

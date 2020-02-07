@@ -31,6 +31,7 @@ public class Field implements Serializable {
         public Type type;
         public int dimension;
         public String dimensionLabel;
+        public String description;
         public boolean mainVariableFirst = true;
 
         public Field(final String label, final Type type, final int dimension, final String dimensionLabel) {
@@ -39,10 +40,11 @@ public class Field implements Serializable {
             this.dimensionLabel = dimensionLabel;
         }
 
-        public Field(final String label, int dimension, final String dimensionLabel) {
+        public Field(final String label, int dimension, final String dimensionLabel, final String description) {
             this.label          = label;
             this.dimension      = dimension;
             this.dimensionLabel = dimensionLabel;
+            this.description    = description;
         }
 
         public Field(final String label, final Type type, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {

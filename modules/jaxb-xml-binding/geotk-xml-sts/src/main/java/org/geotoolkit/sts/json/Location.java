@@ -29,6 +29,8 @@ public class Location implements STSResponse {
     @JsonProperty("@iot.id")
     private String iotId = null;
 
+    private String name = null;
+
     @JsonProperty("@iot.selfLink")
     private String iotSelfLink = null;
 
@@ -89,6 +91,29 @@ public class Location implements STSResponse {
     public void setIotSelfLink(String iotSelfLink) {
         this.iotSelfLink = iotSelfLink;
     }
+
+    /**
+     * A property provides a label for Sensor entity, commonly a descriptive
+     * name.
+     *
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Location name(String name) {
+        this.name = name;
+        return this;
+    }
+
 
     public Location description(String description) {
         this.description = description;

@@ -19,11 +19,15 @@ package org.geotoolkit.data.om.xml;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
+import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V100;
+import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.observation.ObservationReader;
@@ -373,7 +377,7 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public List<String> getEventTime() throws DataStoreException {
+    public TemporalPrimitive getEventTime(String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
 
@@ -383,8 +387,11 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public List<String> getResponseFormats() throws DataStoreException {
-        return Arrays.asList(XmlObservationUtils.RESPONSE_FORMAT_V100, XmlObservationUtils.RESPONSE_FORMAT_V200);
+    public Map<String, List<String>> getResponseFormats() throws DataStoreException {
+        final Map<String, List<String>> result = new HashMap<>();
+        result.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
+        result.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
+        return result;
     }
 
     @Override

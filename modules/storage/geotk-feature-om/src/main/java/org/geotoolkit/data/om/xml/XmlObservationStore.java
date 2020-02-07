@@ -59,7 +59,7 @@ import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.observation.ObservationFilter;
+import org.geotoolkit.observation.ObservationFilterReader;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationWriter;
@@ -206,7 +206,7 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
-                final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component");
+                final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "timeseries", "Component");
                 if (sensorIds == null || sensorIds.contains(procedure.id)) {
                     if (!result.procedures.contains(procedure)) {
                         result.procedures.add(procedure);
@@ -232,7 +232,7 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
 
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
-            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
+            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "timeseries", "Component");
             if (sensorIds == null || sensorIds.contains(procedure.id)) {
                 result.observations .add(obs);
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
@@ -257,7 +257,7 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
-                final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component");
+                final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component", "timeseries");
 
                 if (!result.contains(procedure)) {
                     result.add(procedure);
@@ -275,7 +275,7 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
 
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
-            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
+            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component", "timeseries");
 
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
             procedure.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
@@ -418,7 +418,7 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
      * {@inheritDoc }
      */
     @Override
-    public ObservationFilter getFilter() {
+    public ObservationFilterReader getFilter() {
         throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
     }
 

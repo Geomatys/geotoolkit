@@ -164,7 +164,7 @@ public class OMUtils {
     public static Phenomenon getPhenomenon(final String version, final List<Field> phenomenons, final String phenomenonIdBase, final Set<org.opengis.observation.Phenomenon> existingPhens) {
         final Phenomenon phenomenon;
         if (phenomenons.size() == 1) {
-            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).label, phenomenons.get(0).label);
+            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).label, phenomenons.get(0).label, phenomenons.get(0).description);
         } else {
             final Set<PhenomenonType> types = new HashSet<>();
             for (Field phen : phenomenons) {

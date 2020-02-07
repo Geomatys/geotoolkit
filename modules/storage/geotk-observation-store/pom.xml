@@ -45,10 +45,24 @@
         <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>cdm</artifactId>
+    </dependency>
+    <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <scope>test</scope>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>UCAR</id>
+      <name>UCAR repository</name>
+      <url>${ucar.repository.url}</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
