@@ -16,15 +16,19 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.geotoolkit.display2d.presentation.Presentation;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.presentation.Presentation;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
@@ -68,11 +72,28 @@ public interface SymbolizerRenderer {
     /**
      * Paint in one iteration a complete set of features.
      *
-     * @param graphics : iterator over all graphics to render
+     * @param resource resource to portray
      * @return true if any data has been rendered
      * @throws PortrayalException
      */
-    boolean portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException;
+    default boolean portray(Resource resource) throws PortrayalException {
+        final CanvasMonitor monitor = getRenderingContext().getMonitor();
+        if (resource instanceof FeatureSet) {
+            final FeatureSet fs = (FeatureSet) resource;
+            try (RenderingRoutines.GraphicIterator graphics = RenderingRoutines.getIterator(fs, getRenderingContext())) {
+                boolean dataRendered = false;
+                while (graphics.hasNext()) {
+                    if (monitor.stopRequested()) return dataRendered;
+                    dataRendered |= portray(graphics.next());
+                }
+                return dataRendered;
+            } catch (IOException | DataStoreException ex) {
+                throw new PortrayalException(ex.getMessage(), ex);
+            }
+        } else {
+            throw new PortrayalException("Unsupported resource : " + resource);
+        }
+    }
 
     /**
      * Test if the graphic object hit the given search area.

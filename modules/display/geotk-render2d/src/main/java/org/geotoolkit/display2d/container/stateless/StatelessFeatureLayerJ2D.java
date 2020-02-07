@@ -500,28 +500,21 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             final RenderingContext2D context, final CachedRule[] rules) throws PortrayalException{
         final CanvasMonitor monitor = context.getMonitor();
 
-        final GraphicIterator statefullIterator;
-        try {
-            statefullIterator = RenderingRoutines.getIterator(candidates, context);
-        } catch (DataStoreException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
-        }
-
         //prepare the renderers
         final DefaultCachedRule renderers = new DefaultCachedRule(rules, context);
 
-        try {
-            //performance routine, only one symbol to render
-            if(renderers.rules.length == 1
-               && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
-               && renderers.rules[0].symbolizers().length == 1){
-                return renderers.renderers[0][0].portray(statefullIterator);
-            }
+        //performance routine, only one symbol to render
+        if(renderers.rules.length == 1
+           && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
+           && renderers.rules[0].symbolizers().length == 1){
+            return renderers.renderers[0][0].portray(candidates);
+        }
 
+        try (GraphicIterator ite = RenderingRoutines.getIterator(candidates, context)) {
             boolean dataRendered = false;
-            while (statefullIterator.hasNext()) {
+            while (ite.hasNext()) {
                 if(monitor.stopRequested()) return dataRendered;
-                final ProjectedObject projectedCandidate = statefullIterator.next();
+                final ProjectedObject projectedCandidate = ite.next();
 
                 boolean painted = false;
                 for(int i=0; i<renderers.elseRuleIndex; i++){
@@ -550,14 +543,10 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                     }
                 }
             }
-
             return dataRendered;
-        } finally {
-            try {
-                statefullIterator.close();
-            } catch (IOException ex) {
-                throw new PortrayalException(ex.getMessage());
-            }
+
+        } catch (DataStoreException | IOException ex) {
+            throw new PortrayalException(ex.getMessage(), ex);
         }
     }
 
@@ -569,26 +558,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             throws PortrayalException {
 
         //performance routine, only one symbol to render
-        if(rules.length == 1
+        if (rules.length == 1
            && (rules[0].getFilter() == null || rules[0].getFilter() == Filter.INCLUDE)
-           && rules[0].symbolizers().length == 1){
-            final GraphicIterator statefullIterator;
-            try {
-                statefullIterator = RenderingRoutines.getIterator(candidates, context);
-            } catch (DataStoreException ex) {
-                throw new PortrayalException(ex.getMessage(), ex);
-            }
+           && rules[0].symbolizers().length == 1) {
             final CachedSymbolizer s = rules[0].symbolizers()[0];
             final SymbolizerRenderer renderer = s.getRenderer().createRenderer(s, context);
-            boolean dataRendered = renderer.portray(statefullIterator);
-            try {
-                statefullIterator.close();
-            } catch (IOException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
-            return dataRendered;
+            return renderer.portray(candidates);
         }
-
         return renderBySymbolIndexInRule(candidates,context,rules);
     }
 
@@ -696,21 +672,14 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             for(int i=0; i<elseRuleIndex; i++){
                 final CachedRule rule = rules[i];
                 final CachedSymbolizer[] css = rule.symbolizers();
-                for(int k=0; k<css.length; k++){
-                    if(renderers[i][k].getService().isGroupSymbolizer()){
-                        final GraphicIterator ite;
-                        try {
-                            ite = RenderingRoutines.getIterator(candidates, context);
-                        } catch (DataStoreException ex) {
-                            throw new PortrayalException(ex.getMessage(), ex);
-                        }
-                        dataRendered |= renderers[i][k].portray(ite);
+                for (int k=0; k<css.length; k++) {
+                    if (renderers[i][k].getService().isGroupSymbolizer()) {
+                        dataRendered |= renderers[i][k].portray(candidates);
                     }
-
                 }
             }
 
-        }finally{
+        } finally {
             try {
                 statefullIterator.close();
             } catch (IOException ex) {

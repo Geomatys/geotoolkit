@@ -18,15 +18,12 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.util.Iterator;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.filter.expression.Expression;
@@ -79,16 +76,6 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     @Override
     public RenderingContext2D getRenderingContext() {
         return renderingContext;
-    }
-
-    @Override
-    public boolean portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
-        boolean dataRendered = false;
-        while(graphics.hasNext()){
-            if(monitor.stopRequested()) return dataRendered;
-            dataRendered |= portray(graphics.next());
-        }
-        return dataRendered;
     }
 
     ////////////////////////////////////////////////////////////////////////////
