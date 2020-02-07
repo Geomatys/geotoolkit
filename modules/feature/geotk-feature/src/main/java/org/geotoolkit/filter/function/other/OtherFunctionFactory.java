@@ -60,6 +60,7 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
     public static final String PROPERTY_EXISTS  = "PropertyExists";
     public static final String ROUND_DOUBLE = "roundDouble";
     public static final String LIST = "list";
+    public static final String TABLE = "table";
 
     private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
@@ -90,7 +91,8 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
         FUNCTIONS.put(PROPERTY_EXISTS,          PropertyExistsFunction.class);
         FUNCTIONS.put(ROUND_DOUBLE,             RoundDoubleFunction.class);
         FUNCTIONS.put(LIST,                     ListFunction.class);
-
+        FUNCTIONS.put(TABLE,                    TableFunction.class);
+        
     }
 
     public OtherFunctionFactory() {
@@ -103,6 +105,7 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
     @Override
     public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
         if(name.equals(IN)) return new InFunction(parameters);
+        if(name.equals(TABLE)) return new TableFunction(parameters);
         return super.createFunction(name,fallback,parameters);
     }
 

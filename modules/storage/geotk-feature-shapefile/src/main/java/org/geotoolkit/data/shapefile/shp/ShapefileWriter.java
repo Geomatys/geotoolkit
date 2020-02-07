@@ -139,6 +139,7 @@ public class ShapefileWriter implements Closeable{
         if (shapeBuffer == null)
             allocateBuffers();
 
+        shapeBuffer.rewind();
         ShapefileHeader.write(shapeBuffer, type, fileLength / 2,
                 bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
 

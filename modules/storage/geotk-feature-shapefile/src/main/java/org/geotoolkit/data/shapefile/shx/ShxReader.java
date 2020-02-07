@@ -73,7 +73,7 @@ public final class ShxReader implements Closeable{
             throws IOException {
 
         // init the tracer if we need to debug a connection leak
-        assert (creationStack = new IllegalStateException().fillInStackTrace()) != null;
+        creationStack = new IllegalStateException().fillInStackTrace();
 
         this.useMemoryMappedBuffer = useMemoryMappedBuffer;
         final ReadableByteChannel byteChannel = shxChannel;

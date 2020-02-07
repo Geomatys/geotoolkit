@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
@@ -572,18 +573,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         if(rules.length == 1
            && (rules[0].getFilter() == null || rules[0].getFilter() == Filter.INCLUDE)
            && rules[0].symbolizers().length == 1){
-            final GraphicIterator statefullIterator;
-            try {
-                statefullIterator = RenderingRoutines.getIterator(candidates, context);
-            } catch (DataStoreException ex) {
-                throw new PortrayalException(ex.getMessage(), ex);
-            }
-            final CachedSymbolizer s = rules[0].symbolizers()[0];
-            final SymbolizerRenderer renderer = s.getRenderer().createRenderer(s, context);
-            boolean dataRendered = renderer.portray(statefullIterator);
-            try {
-                statefullIterator.close();
-            } catch (IOException ex) {
+            boolean dataRendered = false;
+            try (final GraphicIterator statefullIterator = RenderingRoutines.getIterator(candidates, context)) {
+
+                final CachedSymbolizer s = rules[0].symbolizers()[0];
+                final SymbolizerRenderer renderer = s.getRenderer().createRenderer(s, context);
+                dataRendered = renderer.portray(statefullIterator);
+            } catch (DataStoreException | IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
             }
             return dataRendered;
@@ -596,7 +592,21 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    private boolean renderBySymbolIndexInRule(final FeatureSet candidates,
+    private boolean renderBySymbolIndexInRule(final FeatureSet candidates, final RenderingContext2D context, final CachedRule[] rules)
+            throws PortrayalException {
+
+        try (final GraphicIterator statefullIterator = RenderingRoutines.getIterator(candidates, context)) {
+            return renderBySymbolIndexInRule(candidates,statefullIterator, context, rules);
+        } catch (IOException | DataStoreException ex) {
+            throw new PortrayalException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Render by symbol index order in a single pass, this results in creating a buffered image
+     * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
+     */
+    private boolean renderBySymbolIndexInRule(final FeatureSet candidates,final GraphicIterator statefullIterator,
             final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
         final CanvasMonitor monitor = context.getMonitor();
@@ -649,47 +659,37 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         }
 
         boolean dataRendered = false;
+        while(statefullIterator.hasNext()){
+            if(monitor.stopRequested()) return dataRendered;
+            final ProjectedObject projectedCandidate = statefullIterator.next();
 
-        final GraphicIterator statefullIterator;
-        try {
-            statefullIterator = RenderingRoutines.getIterator(candidates, context);
-        } catch (DataStoreException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
-        }
-        try {
-            while (statefullIterator.hasNext()) {
-                if(monitor.stopRequested()) return dataRendered;
-                final ProjectedObject projectedCandidate = statefullIterator.next();
+            boolean painted = false;
+            for(int i=0; i<elseRuleIndex; i++){
+                final CachedRule rule = rules[i];
+                final Filter ruleFilter = rule.getFilter();
+                //test if the rule is valid for this feature
+                if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
+                    painted = true;
+                    final CachedSymbolizer[] css = rule.symbolizers();
+                    for(int k=0; k<css.length; k++){
+                        dataRendered |= renderers[i][k].portray(projectedCandidate);
+                    }
+                }
+            }
 
-                boolean painted = false;
-                for(int i=0; i<elseRuleIndex; i++){
+            //paint with else rules
+            if(!painted){
+                for(int i=elseRuleIndex; i<rules.length; i++){
                     final CachedRule rule = rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
-                        painted = true;
                         final CachedSymbolizer[] css = rule.symbolizers();
                         for(int k=0; k<css.length; k++){
                             dataRendered |= renderers[i][k].portray(projectedCandidate);
                         }
                     }
                 }
-
-                //paint with else rules
-                if(!painted){
-                    for(int i=elseRuleIndex; i<rules.length; i++){
-                        final CachedRule rule = rules[i];
-                        final Filter ruleFilter = rule.getFilter();
-                        //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
-                            final CachedSymbolizer[] css = rule.symbolizers();
-                            for(int k=0; k<css.length; k++){
-                                dataRendered |= renderers[i][k].portray(projectedCandidate);
-                            }
-                        }
-                    }
-                }
-
             }
 
             //paint group symbolizers
@@ -698,23 +698,24 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                 final CachedSymbolizer[] css = rule.symbolizers();
                 for(int k=0; k<css.length; k++){
                     if(renderers[i][k].getService().isGroupSymbolizer()){
-                        final GraphicIterator ite;
-                        try {
-                            ite = RenderingRoutines.getIterator(candidates, context);
-                        } catch (DataStoreException ex) {
+                        FeatureSet cdts = candidates;
+                        final Filter ruleFilter = rule.getFilter();
+                        if (ruleFilter != null && !Filter.INCLUDE.equals(ruleFilter)) {
+                            final SimpleQuery sq = new SimpleQuery();
+                            sq.setFilter(ruleFilter);
+                            try {
+                                cdts = cdts.subset(sq);
+                            } catch (DataStoreException ex) {
+                                throw new PortrayalException(ex.getMessage(), ex);
+                            }
+                        }
+                        try (GraphicIterator ite = RenderingRoutines.getIterator(cdts, context)){
+                            dataRendered |= renderers[i][k].portray(ite);
+                        } catch (DataStoreException | IOException ex) {
                             throw new PortrayalException(ex.getMessage(), ex);
                         }
-                        dataRendered |= renderers[i][k].portray(ite);
                     }
-
                 }
-            }
-
-        }finally{
-            try {
-                statefullIterator.close();
-            } catch (IOException ex) {
-                getLogger().log(Level.WARNING, null, ex);
             }
         }
 
