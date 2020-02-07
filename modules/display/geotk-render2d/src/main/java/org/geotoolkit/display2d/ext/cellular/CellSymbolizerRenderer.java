@@ -39,7 +39,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
+import org.geotoolkit.display2d.container.RenderingRules;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -214,7 +214,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
         final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
 
-        final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
+        final RenderingRules renderers = new RenderingRules(new CachedRule[]{symbol.getCachedRule()},renderingContext);
 
         //expand the search area by the maximum symbol size
         float symbolsMargin = renderers.getMargin(null, renderingContext);
@@ -326,7 +326,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final Feature feature = cellType.newInstance();
 
         final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
-        final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
+        final RenderingRules renderers = new RenderingRules(new CachedRule[]{symbol.getCachedRule()},renderingContext);
 
         //force image interpolation here
         Object oldValue = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
@@ -367,7 +367,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         return true;
     }
 
-    private void renderCellFeature(Feature feature, final ProjectedFeature pf, DefaultCachedRule renderers) throws PortrayalException{
+    private void renderCellFeature(Feature feature, final ProjectedFeature pf, RenderingRules renderers) throws PortrayalException{
         boolean painted = false;
         for(int i=0; i<renderers.elseRuleIndex; i++){
             final CachedRule rule = renderers.rules[i];

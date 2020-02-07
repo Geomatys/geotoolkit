@@ -23,24 +23,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.AbstractCanvas;
+import org.geotoolkit.display.container.DefaultGraphicContainer;
+import org.geotoolkit.display.container.MapContextContainer;
+import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display.container.DefaultGraphicContainer;
-import org.geotoolkit.display.primitive.SceneNode;
-import org.geotoolkit.display.container.MapContextContainer;
-import org.geotoolkit.display2d.container.statefull.RootSceneNode;
-import org.geotoolkit.display2d.container.statefull.StatefullMapItemJ2D;
-import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.opengis.display.canvas.CanvasState;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -56,8 +55,6 @@ import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.util.Utilities;
 
 /**
  * This is the general use case of a renderer, this renderer is made to work
@@ -119,15 +116,13 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
 
 
     private GraphicJ2D contextGraphic = null;
-    private final boolean statefull;
     private MapContext context = null;
 
     /**
      * CreContextContainer2D with no particular hints.
      */
-    public ContextContainer2D(final J2DCanvas canvas, final boolean statefull){
-        super(canvas, statefull ? new RootSceneNode(canvas) : new SceneNode(canvas));
-        this.statefull = statefull;
+    public ContextContainer2D(final J2DCanvas canvas){
+        super(canvas, new SceneNode(canvas));
     }
 
     @Override
@@ -240,12 +235,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
 
         if(this.context != null){
             //create the new graphics
-            if(statefull){
-                contextGraphic = new StatefullMapItemJ2D(getCanvas(), context, true);
-            }else{
-                contextGraphic = new StatelessMapItemJ2D(getCanvas(), context, true);
-            }
-
+            contextGraphic = new MapItemJ2D(getCanvas(), context, true);
             getRoot().getChildren().add(contextGraphic);
         }
 
@@ -253,7 +243,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
     }
 
     /**
-     * Returns the currently renderered map context
+     * Returns the currently rendered map context
      *
      * @return MapContext or null
      */

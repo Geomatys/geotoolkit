@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.stateless;
+package org.geotoolkit.display2d.container;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -89,12 +89,12 @@ import org.opengis.util.GenericName;
  * @author johann sorel (Geomatys)
  * @module
  */
-public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer> implements StoreListener<StoreEvent> {
+public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements StoreListener<StoreEvent> {
 
     protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
 
-    public StatelessFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
+    public FeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer, false);
 
         final FeatureSet resource = layer.getResource();
@@ -366,7 +366,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             iterator = stream.iterator();
 
             //prepare the renderers
-            final DefaultCachedRule preparedRenderers = new DefaultCachedRule(rules, renderingContext);
+            final RenderingRules preparedRenderers = new RenderingRules(rules, renderingContext);
 
             final ProjectedFeature projectedFeature = new ProjectedFeature(renderingContext);
             while (iterator.hasNext()) {
@@ -493,7 +493,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         final CanvasMonitor monitor = context.getMonitor();
 
         //prepare the renderers
-        final DefaultCachedRule renderers = new DefaultCachedRule(rules, context);
+        final RenderingRules renderers = new RenderingRules(rules, context);
 
         //performance routine, only one symbol to render
         if(renderers.rules.length == 1
@@ -569,7 +569,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
             throws PortrayalException {
         final CanvasMonitor monitor = context.getMonitor();
 
-        final int elseRuleIndex = DefaultCachedRule.sortByElseRule(rules);
+        final int elseRuleIndex = RenderingRules.sortByElseRule(rules);
 
         //store the ids of the features painted during the first round -----------------------------
         final BufferedImage originalBuffer = (BufferedImage) context.getCanvas().getSnapShot();

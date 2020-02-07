@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.container.stateless;
+package org.geotoolkit.display2d.container;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -46,7 +46,7 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2D<T> {
+public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> {
 
     private final LayerListener ll = new LayerListener() {
 
@@ -82,7 +82,7 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
     private SoftReference<Collection<? extends GraphicJ2D>> weakGraphic = null;
 
 
-    public StatelessMapLayerJ2D(final J2DCanvas canvas, final T layer, boolean allowChildren){
+    public MapLayerJ2D(final J2DCanvas canvas, final T layer, boolean allowChildren){
         //do not use layer crs here, to long to calculate
         super(canvas, layer, allowChildren);
         weakListener.registerSource(layer);

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gui.javafx.render2d;
 
-import org.geotoolkit.gui.javafx.render2d.navigation.FXZoomDecoration;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
@@ -30,6 +29,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import javafx.scene.input.GestureEvent;
 import javafx.scene.input.MouseEvent;
+import org.geotoolkit.gui.javafx.render2d.navigation.FXZoomDecoration;
 
 
 /**
@@ -46,8 +46,7 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
     }
 
     protected boolean isStateFull(){
-        if(map == null) return false;
-        return map.isStatefull();
+        return false;
     }
 
     /**

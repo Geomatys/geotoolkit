@@ -34,8 +34,8 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
-import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
+import org.geotoolkit.display2d.container.CoverageLayerJ2D;
+import org.geotoolkit.display2d.container.FeatureLayerJ2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -64,7 +64,7 @@ import org.opengis.feature.Feature;
  * @author Sorel Johann (Geomatys)
  * @module
  */
-public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
+public class IsolineGraphicJ2D extends FeatureLayerJ2D {
 
     private final ValueExtractor extractor;
     private MutableStyle isoPointStyle = null;
@@ -236,14 +236,14 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 }else if(coverageStyle != null){
                     //paint with the style
                     final MapLayer covlayer = MapBuilder.createCoverageLayer(coverage, coverageStyle, "test");
-                    final StatelessCoverageLayerJ2D graphic = new StatelessCoverageLayerJ2D(getCanvas(), covlayer);
+                    final CoverageLayerJ2D graphic = new CoverageLayerJ2D(getCanvas(), covlayer);
                     isRendered = graphic.paint(context);
                 }
             }
 
             if(isolines != null && isoLineStyle != null){
                 final FeatureMapLayer flayer = MapBuilder.createFeatureLayer(isolines, isoLineStyle);
-                final StatelessFeatureLayerJ2D graphic = new StatelessFeatureLayerJ2D(getCanvas(), flayer);
+                final FeatureLayerJ2D graphic = new FeatureLayerJ2D(getCanvas(), flayer);
                 isRendered |= graphic.paint(context);
             }
         } catch (TransformException ex) {

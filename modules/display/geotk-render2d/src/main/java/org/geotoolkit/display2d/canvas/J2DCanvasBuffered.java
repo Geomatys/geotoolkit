@@ -36,7 +36,7 @@ import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
-import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
+import org.geotoolkit.display2d.container.MapItemJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.color.ColorUtilities;
@@ -284,8 +284,8 @@ public class J2DCanvasBuffered extends J2DCanvas{
                 //this node has no visual representation
                 continue;
             }
-            if(gra instanceof StatelessMapItemJ2D){
-                final StatelessMapItemJ2D cn = (StatelessMapItemJ2D) gra;
+            if(gra instanceof MapItemJ2D){
+                final MapItemJ2D cn = (MapItemJ2D) gra;
                 colors = extractColors(cn.getUserObject(), colors);
             }else{
                 //can not extract colors
