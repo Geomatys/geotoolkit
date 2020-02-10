@@ -544,7 +544,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         // List the bands requested ////////////////////////////////////////////
         final List<SampleDimension> sampleDimensions;
         final List<VirtualBand> bands;
-        if (range.length != 0) {
+        if (range != null && range.length != 0) {
             bands = new ArrayList<>();
             sampleDimensions = new ArrayList<>();
             for (int i : range) {
