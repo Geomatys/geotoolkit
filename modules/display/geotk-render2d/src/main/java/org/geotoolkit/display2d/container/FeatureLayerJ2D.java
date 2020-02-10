@@ -48,7 +48,6 @@ import static org.geotoolkit.display2d.GO2Utilities.getCached;
 import static org.geotoolkit.display2d.GO2Utilities.propertiesNames;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -181,13 +180,15 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
                 symbolsMargin = scale * symbolsMargin;
             }
 
-            final FeatureSet candidates;
+            final FeatureSet featureSet = item.getResource();
+            final FeatureSet reducedFeatureSet;
             final FeatureType expected;
             try {
                 //optimize
-                candidates = RenderingRoutines.optimizeFeatureSet(renderingContext, item, names, validRules, symbolsMargin);
+                final Query query = RenderingRoutines.prepareQuery(renderingContext, featureSet, item, names, validRules, symbolsMargin);
+                reducedFeatureSet = featureSet.subset(query);
                 //get the expected result type
-                expected = candidates.getType();
+                expected = reducedFeatureSet.getType();
             } catch (Exception ex) {
                 renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
                 continue;
@@ -215,13 +216,13 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
 
             if (symbolOrder) {
                 try {
-                    rendered |= renderBySymbolOrder(candidates, renderingContext, rules);
+                    rendered |= renderBySymbolOrder(featureSet, reducedFeatureSet, renderingContext, rules);
                 } catch(PortrayalException ex) {
                     monitor.exceptionOccured(ex, Level.WARNING);
                 }
             } else {
                 try {
-                    rendered |= renderByObjectOrder(candidates, renderingContext, rules);
+                    rendered |= renderByObjectOrder(reducedFeatureSet, renderingContext, rules);
                 } catch(PortrayalException ex) {
                     monitor.exceptionOccured(ex, Level.WARNING);
                 }
@@ -239,7 +240,8 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
         final CanvasMonitor monitor = context.getMonitor();
         final GraphicIterator statefullIterator;
         try {
-            final FeatureSet candidates = RenderingRoutines.optimizeFeatureSet(context, item, symbolsMargin);
+            final Query query = RenderingRoutines.prepareQuery(context, item, symbolsMargin);
+            final FeatureSet candidates = item.getResource().subset(query);
             statefullIterator = RenderingRoutines.getIterator(candidates, context);
         } catch (Exception ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -341,7 +343,7 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
                 type.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
                 attributs.add(AttributeConvention.IDENTIFIER_PROPERTY.toString());
             }catch(PropertyNotFoundException ex){}
-            query = RenderingRoutines.prepareQuery(renderingContext, layer, attributs, null, symbolsMargin);
+            query = RenderingRoutines.prepareQuery(renderingContext, layer.getResource(), layer, attributs, null, symbolsMargin);
         } catch (PortrayalException | DataStoreException ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;
@@ -545,7 +547,7 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
     /**
      * render by symbol order.
      */
-    private final boolean renderBySymbolOrder(final FeatureSet candidates,
+    private final boolean renderBySymbolOrder(final FeatureSet featureSet, final FeatureSet reducedFeatureSet,
             final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
 
@@ -555,16 +557,20 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
            && rules[0].symbolizers().length == 1) {
             final CachedSymbolizer s = rules[0].symbolizers()[0];
             final SymbolizerRenderer renderer = s.getRenderer().createRenderer(s, context);
-            return renderer.portray(candidates);
+            if (renderer.getService().isGroupSymbolizer()) {
+                return renderer.portray(featureSet);
+            } else {
+                return renderer.portray(reducedFeatureSet);
+            }
         }
-        return renderBySymbolIndexInRule(candidates,context,rules);
+        return renderBySymbolIndexInRule(featureSet, reducedFeatureSet,context,rules);
     }
 
     /**
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    private boolean renderBySymbolIndexInRule(final FeatureSet candidates,
+    private boolean renderBySymbolIndexInRule(final FeatureSet featureSet, final FeatureSet reducedFeatureSet,
             final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
         final CanvasMonitor monitor = context.getMonitor();
@@ -620,7 +626,7 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
 
         final GraphicIterator statefullIterator;
         try {
-            statefullIterator = RenderingRoutines.getIterator(candidates, context);
+            statefullIterator = RenderingRoutines.getIterator(reducedFeatureSet, context);
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
@@ -666,7 +672,7 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
                 final CachedSymbolizer[] css = rule.symbolizers();
                 for (int k=0; k<css.length; k++) {
                     if (renderers[i][k].getService().isGroupSymbolizer()) {
-                        dataRendered |= renderers[i][k].portray(candidates);
+                        dataRendered |= renderers[i][k].portray(featureSet);
                     }
                 }
             }

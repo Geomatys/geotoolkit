@@ -160,10 +160,9 @@ public final class RenderingRoutines {
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    public static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer,
+    public static Query prepareQuery(final RenderingContext2D renderingContext, FeatureSet fs, final FeatureMapLayer layer,
             final Set<String> styleRequieredAtts, final List<Rule> rules, double symbolsMargin) throws PortrayalException{
 
-        final FeatureSet fs = layer.getResource();
         final FeatureType schema;
         try {
             schema = fs.getType();
@@ -192,10 +191,10 @@ public final class RenderingRoutines {
                     }
                 }
             }
-        }else{
+        } else {
             allDefined = false;
         }
-        if(geomDesc!=null && !allDefined){
+        if (geomDesc!=null && !allDefined) {
             geomProperties.add(geomDesc.getName().toString());
         }
 
@@ -205,10 +204,6 @@ public final class RenderingRoutines {
         //we better not do any call to the layer bounding box before since it can be
         //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
-        //if( ((BoundingBox)bbox).contains(new BoundingBox(layerBounds))){
-            //the layer bounds overlaps the bbox, no need for a spatial filter
-        //   filter = Filter.INCLUDE;
-        //}else{
         //make a bbox filter
         if(!geomProperties.isEmpty()){
             if(geomProperties.size()==1){
@@ -230,62 +225,65 @@ public final class RenderingRoutines {
         }else{
             filter = Filter.EXCLUDE;
         }
-        //}
 
         //concatenate geographic filter with data filter if there is one
-        Query query = layer.getQuery();
-        if (query instanceof SimpleQuery) {
-            filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
+        if (layer != null) {
+            Query query = layer.getQuery();
+            if (query instanceof SimpleQuery) {
+                filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
+            }
         }
 
         final Set<String> copy = new HashSet<>();
 
         //concatenate with temporal range if needed ----------------------------
-        for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
-            final CoordinateReferenceSystem crs = def.getCrs();
-            final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
-            final Envelope dimEnv;
-            try {
-                dimEnv = Envelopes.transform(canvasEnv, crs);
-            } catch (TransformException ex) {
-                continue;
-            }
+        if (layer != null) {
+            for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
+                final CoordinateReferenceSystem crs = def.getCrs();
+                final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
+                final Envelope dimEnv;
+                try {
+                    dimEnv = Envelopes.transform(canvasEnv, crs);
+                } catch (TransformException ex) {
+                    continue;
+                }
 
-            Object min = dimEnv.getMinimum(0);
-            Object max = dimEnv.getMaximum(0);
-            if(crs instanceof DefaultTemporalCRS){
-                min = ((DefaultTemporalCRS)crs).toDate((Double)min);
-                max = ((DefaultTemporalCRS)crs).toDate((Double)max);
-            }
+                Object min = dimEnv.getMinimum(0);
+                Object max = dimEnv.getMaximum(0);
+                if(crs instanceof DefaultTemporalCRS){
+                    min = ((DefaultTemporalCRS)crs).toDate((Double)min);
+                    max = ((DefaultTemporalCRS)crs).toDate((Double)max);
+                }
 
-            final Filter dimFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.or(
-                            FILTER_FACTORY.isNull(def.getLower()),
-                            FILTER_FACTORY.lessOrEqual(def.getLower(), FILTER_FACTORY.literal(max) )),
-                    FILTER_FACTORY.or(
-                            FILTER_FACTORY.isNull(def.getUpper()),
-                            FILTER_FACTORY.greaterOrEqual(def.getUpper(), FILTER_FACTORY.literal(min) ))
-            );
+                final Filter dimFilter = FILTER_FACTORY.and(
+                        FILTER_FACTORY.or(
+                                FILTER_FACTORY.isNull(def.getLower()),
+                                FILTER_FACTORY.lessOrEqual(def.getLower(), FILTER_FACTORY.literal(max) )),
+                        FILTER_FACTORY.or(
+                                FILTER_FACTORY.isNull(def.getUpper()),
+                                FILTER_FACTORY.greaterOrEqual(def.getUpper(), FILTER_FACTORY.literal(min) ))
+                );
 
-            filter = FILTER_FACTORY.and(filter, dimFilter);
+                filter = FILTER_FACTORY.and(filter, dimFilter);
 
-            //add extra dimension property name on attributes list for retype.
-            if (def.getLower() instanceof DefaultPropertyName) {
-                copy.add(((DefaultPropertyName)def.getLower()).getPropertyName());
-            }
+                //add extra dimension property name on attributes list for retype.
+                if (def.getLower() instanceof DefaultPropertyName) {
+                    copy.add(((DefaultPropertyName)def.getLower()).getPropertyName());
+                }
 
-            if (def.getUpper() instanceof DefaultPropertyName) {
-                copy.add(((DefaultPropertyName)def.getUpper()).getPropertyName());
+                if (def.getUpper() instanceof DefaultPropertyName) {
+                    copy.add(((DefaultPropertyName)def.getUpper()).getPropertyName());
+                }
             }
         }
 
         final FeatureType expected;
         final String[] atts;
-        if(styleRequieredAtts == null){
+        if (styleRequieredAtts == null) {
             //all properties are requiered
             expected = schema;
             atts = null;
-        }else{
+        } else {
             final Set<String> attributs = styleRequieredAtts;
             copy.addAll(attributs);
             copy.addAll(geomProperties);
@@ -293,10 +291,10 @@ public final class RenderingRoutines {
 
             //check that properties names does not hold sub properties values, if one is found
             //then we reduce it to the first parent property.
-            for(int i=0; i<atts.length; i++){
+            for (int i=0; i<atts.length; i++) {
                 String attName = atts[i];
                 int index = attName.indexOf('/');
-                if(index == 0){
+                if (index == 0) {
 
                     //remove all xpath elements
                     attName = attName.substring(1); //remove first slash
@@ -310,13 +308,13 @@ public final class RenderingRoutines {
                         sb.append(attName.substring(position, matcher.start()));
                         position = matcher.end();
 
-                        if(match.charAt(0) == '/'){
+                        if (match.charAt(0) == '/') {
                             //we don't query precisely sub elements
                             position = attName.length();
                             break;
-                        }else if(match.charAt(0) == '{'){
+                        } else if(match.charAt(0) == '{') {
                             sb.append(match);
-                        }else if(match.charAt(0) == '['){
+                        } else if(match.charAt(0) == '[') {
                             //strip indexes or xpath searches
                         }
                     }
@@ -334,9 +332,9 @@ public final class RenderingRoutines {
         }
 
         //combine the filter with rule filters----------------------------------
-        if(rules != null){
+        if (rules != null) {
             List<Filter> rulefilters = new ArrayList<>();
-            for(Rule rule : rules){
+            for (Rule rule : rules) {
                 if(rule.isElseFilter()){
                     //we can't append styling filters, an else rule match all features
                     rulefilters = null;
@@ -351,22 +349,22 @@ public final class RenderingRoutines {
                 rulefilters.add(rf);
             }
 
-            if(rulefilters != null){
+            if (rulefilters != null) {
                 final Filter combined;
-                if(rulefilters.size() == 1){
+                if (rulefilters.size() == 1) {
                     //we can optimze here, since we pass the filter on the query, we can remove
                     //the filter on the rule.
                     final MutableRule mr = StyleUtilities.copy(rules.get(0));
                     mr.setFilter(null);
                     rules.set(0, mr);
                     combined = rulefilters.get(0);
-                }else{
+                } else {
                     combined = FILTER_FACTORY.or(rulefilters);
                 }
 
-                if(filter != Filter.INCLUDE){
+                if (filter != Filter.INCLUDE) {
                     filter = FILTER_FACTORY.and(filter,combined);
-                }else{
+                } else {
                     filter = combined;
                 }
             }
@@ -374,7 +372,7 @@ public final class RenderingRoutines {
 
 
         //optimize the filter---------------------------------------------------
-        filter = FilterUtilities.prepare(filter,Feature.class,expected);
+        filter = FilterUtilities.prepare(filter, Feature.class, expected);
 
         final Hints queryHints = new Hints();
         final QueryBuilder qb = new QueryBuilder();
@@ -612,19 +610,6 @@ public final class RenderingRoutines {
 
         return bbox;
     }
-
-
-    public static FeatureSet optimizeFeatureSet(final RenderingContext2D context, FeatureMapLayer layer,
-            final Set<String> requieredAtts, final List<Rule> rules, double symbolsMargin) throws Exception {
-        final Query query = RenderingRoutines.prepareQuery(context, layer, requieredAtts, rules, symbolsMargin);
-        return layer.getResource().subset(query);
-    }
-
-    public static FeatureSet optimizeFeatureSet(final RenderingContext2D context, FeatureMapLayer layer, double symbolsMargin) throws Exception {
-        final Query query = RenderingRoutines.prepareQuery(context, layer, symbolsMargin);
-        return layer.getResource().subset(query);
-    }
-
 
     public static GraphicIterator getIterator(final FeatureSet features,
             final RenderingContext2D renderingContext) throws DataStoreException {
