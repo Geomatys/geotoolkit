@@ -21,8 +21,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -31,18 +31,22 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
+import org.geotoolkit.display2d.container.RenderingRules;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
@@ -78,11 +82,14 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         super(service, symbol, context);
     }
 
-    /**
-     * This symbolizer works with groups when it's features.
-     */
     @Override
-    public boolean portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
+    public boolean portray(Resource resource) throws PortrayalException {
+
+        if (!(resource instanceof FeatureSet)) {
+            return false;
+        }
+        final FeatureSet fs = (FeatureSet) resource;
+
         if(symbol.getCachedRule() == null){
             return false;
         }
@@ -126,7 +133,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         String[] numericProperties = null;
         Statistics[][][] stats = null;
 
-        try{
+        try (final RenderingRoutines.GraphicIterator graphics = RenderingRoutines.getIterator(fs, renderingContext)) {
             while(graphics.hasNext()){
                 final ProjectedObject obj = graphics.next();
                 final ProjectedFeature projFeature = (ProjectedFeature) obj;
@@ -192,7 +199,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                     }
                 }
             }
-        }catch(TransformException ex){
+        } catch (DataStoreException | IOException | TransformException ex) {
             throw new PortrayalException(ex);
         }
 
@@ -207,7 +214,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
         final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
 
-        final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
+        final RenderingRules renderers = new RenderingRules(new CachedRule[]{symbol.getCachedRule()},renderingContext);
 
         //expand the search area by the maximum symbol size
         float symbolsMargin = renderers.getMargin(null, renderingContext);
@@ -319,7 +326,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final Feature feature = cellType.newInstance();
 
         final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
-        final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
+        final RenderingRules renderers = new RenderingRules(new CachedRule[]{symbol.getCachedRule()},renderingContext);
 
         //force image interpolation here
         Object oldValue = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
@@ -360,7 +367,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         return true;
     }
 
-    private void renderCellFeature(Feature feature, final ProjectedFeature pf, DefaultCachedRule renderers) throws PortrayalException{
+    private void renderCellFeature(Feature feature, final ProjectedFeature pf, RenderingRules renderers) throws PortrayalException{
         boolean painted = false;
         for(int i=0; i<renderers.elseRuleIndex; i++){
             final CachedRule rule = renderers.rules[i];

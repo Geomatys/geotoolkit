@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.stateless;
+package org.geotoolkit.display2d.container;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +48,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> implements StoreListener<StoreEvent> {
+public class CoverageLayerJ2D extends MapLayerJ2D<MapLayer> implements StoreListener<StoreEvent> {
 
     protected StorageListener.Weak weakStoreListener = new StorageListener.Weak(this);
 
@@ -58,11 +58,11 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<MapLayer> im
     //compare values to update caches if necessary
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
-    public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
+    public CoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         this(canvas,layer,false);
     }
 
-    public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, final boolean ignoreBuilders){
+    public CoverageLayerJ2D(final J2DCanvas canvas, final MapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer, false);
         this.ignoreBuilders = ignoreBuilders;
         this.projectedCoverage = new ProjectedCoverage(layer);

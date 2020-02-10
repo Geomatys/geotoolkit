@@ -29,53 +29,53 @@ import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 
 /**
- * A cached rule is a container for cachedSymbolizer. those objects act
- * as temporary cache while rendering.
+ * A cached rule is a container for cachedSymbolizer. those objects act as
+ * temporary cache while rendering.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CachedRule extends Cache<Rule>{
+public class CachedRule extends Cache<Rule> {
 
     private final CachedSymbolizer[] symbols;
     private final Filter preparedFilter;
 
-    public CachedRule(final Rule source,final FeatureType expected){
+    public CachedRule(final Rule source, final FeatureType expected) {
         super(source);
 
         final List<? extends Symbolizer> ruleSymbols = source.symbolizers();
         final CachedSymbolizer[] array = new CachedSymbolizer[ruleSymbols.size()];
-        int i=0;
-        for(Symbolizer symbol : ruleSymbols){
-            final CachedSymbolizer cs = GO2Utilities.getCached(symbol,expected);
-            if(cs != null){
+        int i = 0;
+        for (Symbolizer symbol : ruleSymbols) {
+            final CachedSymbolizer cs = GO2Utilities.getCached(symbol, expected);
+            if (cs != null) {
                 array[i] = cs;
                 i++;
             }
         }
 
-        if(i == array.length){
+        if (i == array.length) {
             //we found a cached symbol for each symbol
             this.symbols = array;
-        }else{
+        } else {
             //we could not find a cache for each symbol, we must resize our array.
             this.symbols = Arrays.copyOf(array, i);
         }
 
-        this.preparedFilter = FilterUtilities.prepare(source.getFilter(),Feature.class,expected);
+        this.preparedFilter = FilterUtilities.prepare(source.getFilter(), Feature.class, expected);
     }
 
     /**
      * @return Rule optimized filter.
      */
-    public Filter getFilter(){
+    public Filter getFilter() {
         return preparedFilter;
     }
 
     /**
      * @return the live list of all cached Symbolizers.
      */
-    public CachedSymbolizer[] symbolizers(){
+    public CachedSymbolizer[] symbolizers() {
         return symbols;
     }
 
@@ -84,14 +84,16 @@ public class CachedRule extends Cache<Rule>{
      */
     @Override
     protected void evaluate() {
-        if(!isNotEvaluated) return;
+        if (!isNotEvaluated) {
+            return;
+        }
 
         Filter filter = styleElement.getFilter();
-        if(filter != null){
+        if (filter != null) {
             filter.accept(ListingPropertyVisitor.VISITOR, requieredAttributs);
         }
 
-        for(CachedSymbolizer cached : symbols){
+        for (CachedSymbolizer cached : symbols) {
             cached.getRequieredAttributsName(requieredAttributs);
         }
 
@@ -104,16 +106,18 @@ public class CachedRule extends Cache<Rule>{
     @Override
     public boolean isVisible(final Object candidate) {
 
-        for(CachedSymbolizer cached : symbols){
-            if(cached.isVisible(candidate)) return true;
+        for (CachedSymbolizer cached : symbols) {
+            if (cached.isVisible(candidate)) {
+                return true;
+            }
         }
 
         return false;
     }
 
-    public float getMargin(Object candidate, final RenderingContext2D ctx){
+    public float getMargin(Object candidate, final RenderingContext2D ctx) {
         float f = 0f;
-        for(CachedSymbolizer cs : symbols){
+        for (CachedSymbolizer cs : symbols) {
             f = Math.max(f, cs.getMargin(candidate, ctx));
         }
         return f;

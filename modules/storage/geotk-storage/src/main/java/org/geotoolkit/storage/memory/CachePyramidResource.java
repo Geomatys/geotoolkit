@@ -51,6 +51,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.nio.IOUtilities;
@@ -359,7 +360,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                 if (noblocking) {
                     if (tilesInProcess.add(key)) {
                         //TODO replace by a thread poll or an executor
-                        loadUpperTile(col, row);
+                        //loadUpperTile(col, row);
                         EXEC.submit(new Runnable() {
                             @Override
                             public void run() {
@@ -452,7 +453,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             CacheTile tile;
             try {
                 BufferedImage img = BufferedImages.createImage(image, null, null, null, null);
-                MosaicedCoverageResource.resample(coverage, image, tileGridGeometry, img);
+                MosaicedCoverageResource.resample(coverage, image, InterpolationCase.NEIGHBOR, tileGridGeometry, img);
                 tile = new CacheTile(img, coord, false);
             } catch (TransformException | FactoryException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);

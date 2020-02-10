@@ -36,6 +36,7 @@ import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
@@ -43,7 +44,6 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -544,7 +544,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         // List the bands requested ////////////////////////////////////////////
         final List<SampleDimension> sampleDimensions;
         final List<VirtualBand> bands;
-        if (range.length != 0) {
+        if (range != null && range.length != 0) {
             bands = new ArrayList<>();
             sampleDimensions = new ArrayList<>();
             for (int i : range) {
@@ -630,7 +630,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 continue;
             }
 
-            bandImages[bandIndex] = aggregate(sorted, canvas, bandIndex);
+            bandImages[bandIndex] = aggregate(sorted, canvas, bandIndex, interpolation);
             foundDatas |= (bandImages[bandIndex] != null);
         }
 
@@ -670,7 +670,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         return new GridCoverage2D(canvas, sampleDimensions, result);
     }
 
-    private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex) throws DataStoreException {
+    private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex, InterpolationCase interpolation) throws DataStoreException {
 
         final double[] noData = new double[]{this.noData[bandIndex]};
 
@@ -722,7 +722,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(intermediate, noData);
                 }
 
-                MosaicedCoverageResource.resample(coverage, tileImage, canvas, workImage);
+                MosaicedCoverageResource.resample(coverage, tileImage, interpolation, canvas, workImage);
 
                if (workImage != result) {
                     //we need to merge image, replacing only not-NaN values

@@ -46,7 +46,7 @@ public final class Portrayer {
     private static final MapContext EMPTY_CONTEXT = MapBuilder.createContext();
 
     private final J2DCanvasBuffered canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(1, 1));
-    private final ContextContainer2D container = new ContextContainer2D(canvas, false);
+    private final ContextContainer2D container = new ContextContainer2D(canvas);
 
     public Portrayer(){
         canvas.setContainer(container);

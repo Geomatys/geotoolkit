@@ -33,7 +33,7 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
+import org.geotoolkit.display2d.container.FeatureLayerJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.renderer.*;
@@ -178,7 +178,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
 
                         FeatureMapLayer fml = MapBuilder.createFeatureLayer(isolines, featureStyle);
 
-                        StatelessFeatureLayerJ2D statelessFeatureLayerJ2D = new StatelessFeatureLayerJ2D(renderingContext.getCanvas(), fml);
+                        FeatureLayerJ2D statelessFeatureLayerJ2D = new FeatureLayerJ2D(renderingContext.getCanvas(), fml);
                         isRendered |= statelessFeatureLayerJ2D.paintLayer(renderingContext);
                     }
                 }

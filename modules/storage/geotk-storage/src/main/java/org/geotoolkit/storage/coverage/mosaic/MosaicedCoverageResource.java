@@ -203,7 +203,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
                     }
                 }
 
-                resample(coverage, tileImage, canvas, buffer);
+                resample(coverage, tileImage, InterpolationCase.NEIGHBOR, canvas, buffer);
 
             } catch (NoSuchDataException | DisjointExtentException ex) {
                 //may happen, envelepe is larger then data
@@ -227,7 +227,8 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         return gcb.build();
     }
 
-    public static void resample(GridCoverage coverage, RenderedImage coverageImage, GridGeometry canvasGridGeometry, WritableRenderedImage canvasImage) throws TransformException, FactoryException {
+    public static void resample(GridCoverage coverage, RenderedImage coverageImage, InterpolationCase interpolation,
+            GridGeometry canvasGridGeometry, WritableRenderedImage canvasImage) throws TransformException, FactoryException {
 
         final GridGeometry coverageGridGeometry = coverage.getGridGeometry();
         final GridExtent sourceRendering = coverageGridGeometry.getExtent();
@@ -249,7 +250,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         final MathTransform targetToSource = MathTransforms.concatenate(canvasToCrs, crsToCrs, tileToTileCrs);
 
         final Resample resample = new Resample(targetToSource, canvasImage, coverageImage,
-                InterpolationCase.NEIGHBOR, ResampleBorderComportement.FILL_VALUE, null);
+                interpolation, ResampleBorderComportement.FILL_VALUE, null);
         resample.fillImage(true);
     }
 

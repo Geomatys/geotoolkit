@@ -24,9 +24,10 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import org.junit.Assert;
-import org.junit.Test;
 import static org.geotoolkit.util.grid.GridTraversal.EPSILON;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *
@@ -119,6 +120,33 @@ public class GridTraversalTest {
     public void monkeyTest() {
         final Random rand = new Random();
         final long seed = rand.nextLong();
+        rand.setSeed(seed);
+
+        for (int i = 0 ; i < 51 ; i++) {
+            final int dimension = rand.nextInt(5)+2;
+            final int segmentNumber = rand.nextInt(50) + 1;
+            final boolean parallel = rand.nextBoolean();
+            try {
+                final double[] trajectory = Stream.generate(() -> rand.doubles(dimension, -200, 200))
+                        .limit(segmentNumber + 1)
+                        .flatMapToDouble(in -> in)
+                        .toArray();
+                test(trajectory, dimension, true);
+            } catch (AssertionError|RuntimeException e) {
+                String msg = String.format(
+                        "Test failed for seed %d, iteration %d, %d dimensions and %d segments in %s mode",
+                        seed, i, dimension, segmentNumber, parallel? "parallel" : "sequential"
+                );
+                throw new AssertionError(msg, e);
+            }
+        }
+    }
+
+    @Ignore
+    @Test
+    public void monkeyTestFail() {
+        final Random rand = new Random();
+        final long seed = -1982049157139220700l;
         rand.setSeed(seed);
 
         for (int i = 0 ; i < 51 ; i++) {

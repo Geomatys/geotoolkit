@@ -25,8 +25,11 @@ import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.shape.TransformedShape;
@@ -96,49 +99,56 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
         return false;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
+    public boolean portray(Resource resource) throws PortrayalException {
 
-        if(dispGeom){
+        if (!(resource instanceof FeatureSet)) {
+            return false;
+        }
+        final FeatureSet fs = (FeatureSet) resource;
+
+        if (dispGeom) {
             renderingContext.switchToDisplayCRS();
-        }else{
+        } else {
             renderingContext.switchToObjectiveCRS();
         }
 
-        boolean dataRendered = false;
-        while(graphics.hasNext()){
+        try (final RenderingRoutines.GraphicIterator graphics = RenderingRoutines.getIterator(fs, renderingContext)) {
 
-            if(monitor.stopRequested()){
-                break;
+            boolean dataRendered = false;
+            while(graphics.hasNext()){
+
+                if(monitor.stopRequested()){
+                    break;
+                }
+
+                final ProjectedObject projectedFeature = graphics.next();
+                final Object feature = projectedFeature.getCandidate();
+                final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
+
+                //symbolizer doesnt match the featuretype, no geometry found with this name.
+                if(projectedGeometry == null) continue;
+
+                //test if the symbol is visible on this feature
+                if(!symbol.isVisible(feature)){
+                    continue;
+                }
+
+                final Shape[] j2dShapes = getShapes(projectedGeometry, feature);
+
+                // Do not try to draw this shape if null
+                if (j2dShapes == null) {
+                    continue;
+                }
+
+                for(Shape j2dShape : j2dShapes){
+                    dataRendered |= portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints, renderingContext);
+                }
             }
-
-            final ProjectedObject projectedFeature = graphics.next();
-            final Object feature = projectedFeature.getCandidate();
-            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
-
-            //symbolizer doesnt match the featuretype, no geometry found with this name.
-            if(projectedGeometry == null) continue;
-
-            //test if the symbol is visible on this feature
-            if(!symbol.isVisible(feature)){
-                continue;
-            }
-
-            final Shape[] j2dShapes = getShapes(projectedGeometry, feature);
-
-            // Do not try to draw this shape if null
-            if (j2dShapes == null) {
-                continue;
-            }
-
-            for(Shape j2dShape : j2dShapes){
-                dataRendered |= portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints, renderingContext);
-            }
+            return dataRendered;
+        } catch (DataStoreException | IOException ex) {
+            throw new PortrayalException(ex.getMessage(), ex);
         }
-        return dataRendered;
     }
 
     private boolean portray(final ProjectedGeometry projectedGeometry, final Object feature) throws PortrayalException{

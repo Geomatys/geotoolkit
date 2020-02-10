@@ -72,7 +72,7 @@ public class FXMapFrame extends BorderPane {
 
     public FXMapFrame(MapContext context, Hints hints){
 
-        map = new FXMap(false,hints);
+        map = new FXMap(hints);
         map.getContainer().setContext(context);
         tree = new FXMapContextTree();
         tree.getTreetable().setShowRoot(false);

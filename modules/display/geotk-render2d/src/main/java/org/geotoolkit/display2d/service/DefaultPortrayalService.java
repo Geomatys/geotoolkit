@@ -81,12 +81,12 @@ import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
-import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
+import org.geotoolkit.display2d.container.RenderingRules;
+import org.geotoolkit.display2d.container.FeatureLayerJ2D;
+import org.geotoolkit.display2d.presentation.Presentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedRule;
-import org.geotoolkit.display2d.presentation.Presentation;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
@@ -232,7 +232,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final Envelope contextEnv = canvasDef.getEnvelope();
         final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
 
-        final ContextContainer2D renderer = new ContextContainer2D(canvas, false);
+        final ContextContainer2D renderer = new ContextContainer2D(canvas);
         canvas.setContainer(renderer);
 
         final Color bgColor = canvasDef.getBackground();
@@ -665,7 +665,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final boolean strechImage = canvasDef.isStretchImage();
 
         final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension,hints);
-        final ContextContainer2D renderer = new ContextContainer2D(canvas, false);
+        final ContextContainer2D renderer = new ContextContainer2D(canvas);
         canvas.setContainer(renderer);
 
         renderer.setContext(context);
@@ -732,14 +732,14 @@ public final class DefaultPortrayalService implements PortrayalService{
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
             final FeatureSet resource = fml.getResource();
             final FeatureType type = resource.getType();
-            final List<Rule> rules = StatelessFeatureLayerJ2D.getValidRules(renderContext, fml, type);
+            final List<Rule> rules = FeatureLayerJ2D.getValidRules(renderContext, fml, type);
 
             if (rules.isEmpty()) continue;
 
-            final CachedRule[] cachedRules = StatelessFeatureLayerJ2D.toCachedRules(rules, type);
+            final CachedRule[] cachedRules = FeatureLayerJ2D.toCachedRules(rules, type);
 
             //prepare the renderers
-            final DefaultCachedRule renderers = new DefaultCachedRule(cachedRules, renderContext);
+            final RenderingRules renderers = new RenderingRules(cachedRules, renderContext);
 
             final ProjectedFeature projectedFeature = new ProjectedFeature(renderContext,null);
 

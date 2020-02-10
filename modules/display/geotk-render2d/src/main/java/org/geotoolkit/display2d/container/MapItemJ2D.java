@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.container.stateless;
+package org.geotoolkit.display2d.container;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -55,7 +55,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemListener {
+public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemListener {
 
     private static final TileRecycler TILE_RECYCLER = (TileRecycler)JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_RECYCLER);
     private static final TileFactory TILE_FACTORY = (TileFactory)JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_FACTORY);
@@ -68,7 +68,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
 
     protected final T item;
 
-    public StatelessMapItemJ2D(final J2DCanvas canvas, final T item, boolean allowChildren){
+    public MapItemJ2D(final J2DCanvas canvas, final T item, boolean allowChildren){
         super(canvas,allowChildren);
         this.item = item;
 
@@ -137,16 +137,16 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
         }
 
         //TODO simplify
-        final StatelessMapItemJ2D g2d;
+        final MapItemJ2D g2d;
         if (child instanceof FeatureMapLayer) {
-            g2d = new StatelessFeatureLayerJ2D(getCanvas(), (FeatureMapLayer)child);
+            g2d = new FeatureLayerJ2D(getCanvas(), (FeatureMapLayer)child);
         } else if (child instanceof CoverageMapLayer) {
             final CoverageMapLayer layer = (CoverageMapLayer) child;
-            g2d = new StatelessCoverageLayerJ2D(getCanvas(), layer);
+            g2d = new CoverageLayerJ2D(getCanvas(), layer);
         } else if (child instanceof MapLayer) {
-            g2d = new StatelessMapLayerJ2D(getCanvas(), (MapLayer)child, false);
+            g2d = new MapLayerJ2D(getCanvas(), (MapLayer)child, false);
         } else {
-            g2d = new StatelessMapItemJ2D(getCanvas(), child, true);
+            g2d = new MapItemJ2D(getCanvas(), child, true);
         }
         return g2d;
     }

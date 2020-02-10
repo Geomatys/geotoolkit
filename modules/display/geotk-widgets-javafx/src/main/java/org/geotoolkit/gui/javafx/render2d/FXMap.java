@@ -66,7 +66,6 @@ public class FXMap extends BorderPane {
 
     private final ObjectProperty<FXCanvasHandler> handlerProp = new SimpleObjectProperty<FXCanvasHandler>();
     private final J2DCanvasVolatile canvas;
-    private boolean statefull = false;
 
     private WritableImage image = null;
     private final Canvas view = new ResizableCanvas();
@@ -89,14 +88,10 @@ public class FXMap extends BorderPane {
     private FXMapDecoration backDecoration = new FXColorDecoration();
 
     public FXMap(){
-        this(false,null);
+        this(null);
     }
 
-    public FXMap(final boolean statefull) {
-        this(statefull, null);
-    }
-
-    public FXMap(final boolean statefull, Hints hints){
+    public FXMap(Hints hints){
 //        setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         view.heightProperty().bind(mapDecorationPane.heightProperty());
         view.widthProperty().bind(mapDecorationPane.widthProperty());
@@ -115,7 +110,7 @@ public class FXMap extends BorderPane {
 
         canvas = new J2DCanvasVolatile(CommonCRS.WGS84.normalizedGeographic(), new Dimension(100, 100), hints);
         canvas.setMonitor(new NeverFailMonitor());
-        canvas.setContainer(new ContextContainer2D(canvas, statefull));
+        canvas.setContainer(new ContextContainer2D(canvas));
         canvas.setAutoRepaint(true);
         canvas.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -217,10 +212,6 @@ public class FXMap extends BorderPane {
     public void resizeRelocate(double x, double y, double width, double height) {
         super.resizeRelocate(x, y, width, height);
         canvas.resize(new Dimension((int)width, (int)height));
-    }
-
-    public boolean isStatefull() {
-        return statefull;
     }
 
     /**
