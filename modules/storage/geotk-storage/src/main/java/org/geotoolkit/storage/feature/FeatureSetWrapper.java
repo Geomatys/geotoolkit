@@ -27,7 +27,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.logging.Logger;
+import java.util.stream.Stream;
+
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -35,7 +36,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.DefaultSession;
@@ -50,11 +50,11 @@ import org.opengis.util.GenericName;
 
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
+ * @deprecated Please restrict usage. It's a bridge object between obsolete and SIS Feature API.
  */
+@Deprecated
 public class FeatureSetWrapper  extends AbstractCollection<Feature> implements FeatureCollection {
-
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
 
     private final FeatureSet featureSet;
     private final DataStore store;
@@ -106,21 +106,21 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
 
     @Override
     public FeatureIterator iterator() throws FeatureStoreRuntimeException {
+        final Stream<Feature> features;
         try {
-            return new WrapFeatureIterator(featureSet.features(false).iterator()){};
+            features = featureSet.features(false);
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
+        final WrapFeatureIterator it = new WrapFeatureIterator(features.iterator()) {};
+        it.onClose(features::close);
+        return it;
     }
 
     @Override
     public FeatureIterator iterator(Hints hints) throws FeatureStoreRuntimeException {
         // what to do with hints ?
-        try {
-            return new WrapFeatureIterator(featureSet.features(false).iterator()){};
-        } catch (DataStoreException ex) {
-            throw new FeatureStoreRuntimeException(ex);
-        }
+        return iterator();
     }
 
     @Override
