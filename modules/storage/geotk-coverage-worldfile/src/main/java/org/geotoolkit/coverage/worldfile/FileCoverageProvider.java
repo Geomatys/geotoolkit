@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -44,6 +45,7 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.storage.Bundle;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
@@ -262,5 +264,19 @@ public class FileCoverageProvider extends DataStoreProvider {
         }
 
         return formatsDone;
+    }
+
+    public static GridCoverageResource open(Path file, String format) throws DataStoreException {
+        if (Files.isRegularFile(file)) {
+            FileCoverageStore store = new FileCoverageStore(file, format);
+            Collection<GridCoverageResource> list = DataStores.flatten(store, true, GridCoverageResource.class);
+            if (list.isEmpty()) {
+                throw new DataStoreException(file.toUri() + " contains no coverage resource.");
+            } else {
+                return list.iterator().next();
+            }
+        } else {
+            throw new DataStoreException(file.toUri() + " is not a regular file.");
+        }
     }
 }
