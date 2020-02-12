@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -161,8 +162,19 @@ public class GeometryTransformer implements Supplier<Geometry> {
      * A parameter which can be set by user to force {@link AxesConvention#RIGHT_HANDED}
      * convention on referencing information. If null, parameter has not been set
      * and we should check parent configuration. For more information, see {@link #isLongitudeFirst() }.
+     *
+     * Must be affected only by {@link #applyAxisResolveStrategy()}
      */
-    Boolean isLongitudeFirst;
+    private Boolean isLongitudeFirst;
+
+    /**
+     * Followed Axis Resolve strategy. It tries to ensure consistency
+     * {@link #axisResolve} with the {@link #parent}s and childs. Have to stay
+     * non-null. And should be accessed from the
+     * {@linkplain #getAxisResolve() getter} to check consistency with parents'
+     * axisResolve.
+     */
+    protected AxisResolve axisResolve;
 
     /**
      * A parameter which can be set by user to force the transformation of PolygonType into MultiPolygon instead of Polygon.
@@ -170,7 +182,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
      * False by default.
      * Warning this flag is only applied on the parent configuration.
      */
-    Boolean forceMultiPolygon;
+    protected boolean forceMultiPolygon;
 
     /**
      * Prepare conversion of a GML geometry.
@@ -191,6 +203,23 @@ public class GeometryTransformer implements Supplier<Geometry> {
         ArgumentChecks.ensureNonNull("GML Geometry to convert", source);
         this.source = source;
         this.parent = parent;
+        this.axisResolve = (parent == null)? AxisResolve.getDefault(): parent.getAxisResolve();
+    }
+
+    /**
+     * Prepare conversion of a GML geometry.
+     * @param source The geometry to convert to JTS.
+     * @param parent The transformer from which this one is created. It's useful
+     * to access information (like srs name or dimension) from an higher-level
+     * geometry.
+     * @param axisResolve
+     */
+    public GeometryTransformer(final AbstractGeometry source, final GeometryTransformer parent, final AxisResolve axisResolve) {
+        ArgumentChecks.ensureNonNull("GML Geometry to convert", source);
+        ArgumentChecks.ensureNonNull("AxisResolve",axisResolve);
+        this.source = source;
+        this.parent = parent;
+        this.setAxisResolve(axisResolve);
     }
 
     /**
@@ -604,15 +633,60 @@ public class GeometryTransformer implements Supplier<Geometry> {
                 .orElse(false);
     }
 
-    public void setLongitudeFirst(final Boolean forceLongitudeFirst) {
-        isLongitudeFirst = forceLongitudeFirst;
+    private void applyAxisResolveStrategy() {
+        final AxisResolve lastAxisResolve = getAxisResolve(); //Pass through the get method to check consistency with parents' axisResolve
+//        ArgumentChecks.ensureNonNull("Axis Resolve", lastAxisResolve); //Normally useless
+        switch (lastAxisResolve) {
+            case STRICT:
+                break;
+            case RIGHT_HANDED:
+                isLongitudeFirst = true;
+                break;
+            case AUTO:
+                try {
+                    final String srsName = getSrsName().get();
+                    isLongitudeFirst = !srsName.trim().startsWith("urn:");
+                } catch (NoSuchElementException ne) { //If we don't know the srsName we assume the longitude first
+                    isLongitudeFirst = true;
+                }
+                break;
+        }
     }
 
-    public boolean isForceMultiPolygon() {
-        if (forceMultiPolygon != null) {
-            return forceMultiPolygon;
+    /**
+     * Be carefull, set the input axis Resolve and propagate it to the current
+     * {@link #parent}s.
+     *
+     * @param axisResolve
+     */
+    public final void setAxisResolve(AxisResolve axisResolve) {
+        ArgumentChecks.ensureNonNull("AxisResolve input", axisResolve);
+
+        if(this.axisResolve == axisResolve) return;
+        this.axisResolve = axisResolve;
+        this.applyAxisResolveStrategy();
+        parent.setAxisResolve(axisResolve);
+    }
+
+    /**
+     * Return the followed Axis Resolve strategy. It tries to ensure consistency {@link #axisResolve}
+     * with the {@link #parent}s and childs.
+     * @return axisResolve
+     */
+    public final AxisResolve getAxisResolve() {
+        if (parent != null) {
+            final AxisResolve parentAxisResolve = parent.getAxisResolve();
+            if (parentAxisResolve != axisResolve) { //Normally in this cas the parent's axisResolve is newer
+                axisResolve=parentAxisResolve;
+            }
         }
-        return false;
+        return axisResolve;
+    }
+
+
+
+    public boolean isForceMultiPolygon() {
+        return forceMultiPolygon;
     }
 
     public void setForceMultiPolygon(final Boolean forceMultiPolygon) {

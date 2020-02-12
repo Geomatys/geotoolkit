@@ -12,6 +12,7 @@ import org.geotoolkit.storage.feature.FeatureReader;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.data.om.OMFeatureTypes;
 import org.geotoolkit.feature.ReprojectMapper;
+import org.geotoolkit.gml.AxisResolve;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
@@ -75,7 +76,7 @@ class NetcdfFeatureReader implements FeatureReader {
             try {
                 final Geometry geom;
                 if (isoGeom instanceof AbstractGeometry) {
-                    geom = GeometrytoJTS.toJTS((AbstractGeometry) isoGeom, false);
+                    geom = GeometrytoJTS.toJTS((AbstractGeometry) isoGeom, AxisResolve.STRICT);
                 } else {
                     geom = null;
                 }
