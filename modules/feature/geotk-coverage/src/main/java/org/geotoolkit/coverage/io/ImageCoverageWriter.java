@@ -44,17 +44,6 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.Warp;
 import javax.media.jai.operator.WarpDescriptor;
-
-import org.opengis.coverage.InterpolationMethod;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.InternationalString;
-
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -67,22 +56,28 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArraysExt;
-
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
-
-import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.opengis.coverage.InterpolationMethod;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -409,9 +404,6 @@ public class ImageCoverageWriter extends GridCoverageStore {
     protected ImageWriter createImageWriter(final String formatName, final Object output,
             final RenderedImage image) throws IOException
     {
-        if (MosaicImageWriter.Spi.DEFAULT.canEncodeOutput(output)) {
-            return MosaicImageWriter.Spi.DEFAULT.createWriterInstance();
-        }
         if (formatName != null) {
             return XImageIO.getWriterByFormatName(formatName, output, image);
         } else {

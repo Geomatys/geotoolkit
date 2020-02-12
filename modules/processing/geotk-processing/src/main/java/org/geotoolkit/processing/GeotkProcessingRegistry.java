@@ -62,7 +62,6 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.straighten.StraightenDescriptor.INSTANCE,
-                org.geotoolkit.processing.coverage.tiling.TilingDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.volume.ComputeVolumeDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.INSTANCE,
                 //datastore

@@ -58,7 +58,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage</artifactId>
+            <artifactId>geotk-image</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
