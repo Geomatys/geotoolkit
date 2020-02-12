@@ -661,11 +661,10 @@ public class GeometryTransformer implements Supplier<Geometry> {
      */
     public final void setAxisResolve(AxisResolve axisResolve) {
         ArgumentChecks.ensureNonNull("AxisResolve input", axisResolve);
-
-        if(this.axisResolve == axisResolve) return;
         this.axisResolve = axisResolve;
+        if (parent != null)
+            parent.setAxisResolve(axisResolve);
         this.applyAxisResolveStrategy();
-        parent.setAxisResolve(axisResolve);
     }
 
     /**
