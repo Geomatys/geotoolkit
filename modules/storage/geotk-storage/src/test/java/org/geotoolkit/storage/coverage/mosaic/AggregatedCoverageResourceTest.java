@@ -21,6 +21,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -31,6 +32,7 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.coverage.j2d.BufferedGridCoverage;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.event.StoreEvent;
@@ -46,6 +48,7 @@ import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
 
@@ -541,4 +544,111 @@ public class AggregatedCoverageResourceTest {
         Assert.assertEquals(Double.NaN, reader.getSampleDouble(2), 0.0);
     }
 
+    /**
+     * Test sample transform is applied and NaN value is evaluated after transform.
+     */
+    @Test
+    public void testSampleTransform() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        | 1 |NaN|NaN|
+        +---+---+---+
+
+        Coverage 2
+        +---+---+---+
+        | 2 | -5 |NaN|
+        +---+---+---+
+
+        Coverage 3
+        +---+---+---+
+        | 3 | 3 | 0 |
+        +---+---+---+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setSample(0, 1);
+        write1.moveTo(1, 0); write1.setSample(0, Double.NaN);
+        write1.moveTo(2, 0); write1.setSample(0, Double.NaN);
+        write2.moveTo(0, 0); write2.setSample(0, 2);
+        write2.moveTo(1, 0); write2.setSample(0, -5);
+        write2.moveTo(2, 0); write2.setSample(0, Double.NaN);
+        write3.moveTo(0, 0); write3.setSample(0, 3);
+        write3.moveTo(1, 0); write3.setSample(0, 3);
+        write3.moveTo(2, 0); write3.setSample(0, 0);
+
+
+        /*
+        We expect a final coverage with values [1,2,3] on a single row
+        +---+---+---+
+        | 12 |-3|NaN|
+        +---+---+---+
+        */
+        final MathTransform1D trs1 = new AbstractMathTransform1D() {
+            @Override
+            public double transform(double value) throws TransformException {
+                return value * 12.0;
+            }
+            @Override
+            public double derivative(double value) throws TransformException {
+                throw new TransformException("Not supported.");
+            }
+        };
+        final MathTransform1D trs2 = new AbstractMathTransform1D() {
+            @Override
+            public double transform(double value) throws TransformException {
+                return value < 0 ? Double.NaN : value;
+            }
+            @Override
+            public double derivative(double value) throws TransformException {
+                throw new TransformException("Not supported.");
+            }
+        };
+        final MathTransform1D trs3 = new AbstractMathTransform1D() {
+            @Override
+            public double transform(double value) throws TransformException {
+                return value > 0 ? -value : Double.NaN;
+            }
+            @Override
+            public double derivative(double value) throws TransformException {
+                throw new TransformException("Not supported.");
+            }
+        };
+
+        final AggregatedCoverageResource.VirtualBand band = new AggregatedCoverageResource.VirtualBand();
+        final AggregatedCoverageResource.Source source1 = new AggregatedCoverageResource.Source(resource1, 0, trs1);
+        final AggregatedCoverageResource.Source source2 = new AggregatedCoverageResource.Source(resource2, 0, trs2);
+        final AggregatedCoverageResource.Source source3 = new AggregatedCoverageResource.Source(resource3, 0, trs3);
+        band.setSources(source1, source2, source3);
+
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource(Collections.singletonList(band), AggregatedCoverageResource.Mode.ORDER, null);
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(12.0, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(1, 0); Assert.assertEquals(-3.0, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(2, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+    }
 }

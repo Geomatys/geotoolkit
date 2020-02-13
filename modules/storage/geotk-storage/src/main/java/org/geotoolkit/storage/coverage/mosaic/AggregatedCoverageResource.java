@@ -74,6 +74,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -704,6 +705,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
                 }
                 final RenderedImage tileImage = coverage.render(null);
+                if (source.sampleTransform != null) {
+
+                }
 
                 final BufferedImage workImage;
                 if (result == null) {
@@ -732,6 +736,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     final double[] pixelw = new double[read.getNumBands()];
                     while (read.next() & write.next()) {
                         read.getPixel(pixelr);
+                        //apply transform if defined before checking NaN
+                        if (source.sampleTransform != null) {
+                            pixelr[0] = source.sampleTransform.transform(pixelr[0]);
+                        }
                         if (noData[0] == pixelr[0] || Double.isNaN(pixelr[0])) continue;
                         write.getPixel(pixelw);
                         if (noData[0] == pixelw[0] || Double.isNaN(pixelw[0])) {
@@ -743,10 +751,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     }
                 } else {
                     //first resampled Image, fill the mask
-                    PixelIterator read = PixelIterator.create(workImage);
+                    WritablePixelIterator read = WritablePixelIterator.create(workImage);
                     final double[] pixelr = new double[read.getNumBands()];
                     while (read.next()) {
                         read.getPixel(pixelr);
+                        //apply transform if defined before checking NaN
+                        if (source.sampleTransform != null) {
+                            pixelr[0] = source.sampleTransform.transform(pixelr[0]);
+                            read.setPixel(pixelr);
+                        }
                         if (!(noData[0] == pixelr[0] || Double.isNaN(pixelr[0]))) {
                             Point pt = read.getPosition();
                             mask.set2D(pt.x, pt.y);
@@ -856,12 +869,16 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     public static class Source {
         public final GridCoverageResource resource;
         public final int bandIndex;
-        //leave space for possible futur parameters
-        //public MapTransform1D sampleTransform;
+        public final MathTransform1D sampleTransform;
 
         public Source(GridCoverageResource resource, int bandIndex) {
+            this(resource, bandIndex, null);
+        }
+
+        public Source(GridCoverageResource resource, int bandIndex, MathTransform1D sampleTransform) {
             this.resource = resource;
             this.bandIndex = bandIndex;
+            this.sampleTransform = sampleTransform;
         }
     }
 }
