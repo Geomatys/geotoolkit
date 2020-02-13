@@ -664,7 +664,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
         this.axisResolve = axisResolve;
         if (parent != null)
             parent.setAxisResolve(axisResolve);
-        this.applyAxisResolveStrategy();
+//        this.applyAxisResolveStrategy();
     }
 
     /**
@@ -712,6 +712,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
     }
 
     protected CoordinateReferenceSystem findCRS(final String srsName) {
+        applyAxisResolveStrategy();
         final boolean longitudeFirst = isLongitudeFirst();
         try {
             return CRS_CACHE.getOrCreate(new AbstractMap.SimpleImmutableEntry<>(srsName, longitudeFirst), () -> GeometryTransformer.loadCRS(srsName, longitudeFirst));
