@@ -23,10 +23,10 @@ import java.awt.image.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.image.PlanarImage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -46,7 +46,7 @@ import org.geotoolkit.storage.multires.Tile;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MosaicImage implements RenderedImage {
+public class MosaicImage extends PlanarImage implements RenderedImage {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
@@ -173,30 +173,6 @@ public class MosaicImage implements RenderedImage {
      * {@inheritDoc}
      */
     @Override
-    public Vector<RenderedImage> getSources() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getProperty(String name) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String[] getPropertyNames() {
-        return new String[0];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ColorModel getColorModel() {
         if (colorModel == null) {
             loadImageModel();
@@ -235,22 +211,6 @@ public class MosaicImage implements RenderedImage {
      * {@inheritDoc}
      */
     @Override
-    public int getMinX() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getMinY() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int getNumXTiles() {
         return  gridRange.width;
     }
@@ -267,22 +227,6 @@ public class MosaicImage implements RenderedImage {
      * {@inheritDoc}
      */
     @Override
-    public int getMinTileX() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getMinTileY() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int getTileWidth() {
         return this.mosaic.getTileSize().width;
     }
@@ -293,22 +237,6 @@ public class MosaicImage implements RenderedImage {
     @Override
     public int getTileHeight() {
         return this.mosaic.getTileSize().height;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getTileGridXOffset() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getTileGridYOffset() {
-        return 0;
     }
 
     /**
@@ -525,11 +453,4 @@ public class MosaicImage implements RenderedImage {
         return new Point(posX, posY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public WritableRaster copyData(WritableRaster raster) {
-        return null;
-    }
 }

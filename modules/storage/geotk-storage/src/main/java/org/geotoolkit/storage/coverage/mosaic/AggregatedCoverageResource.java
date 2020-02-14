@@ -596,11 +596,14 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         // Build expected GridGeometry /////////////////////////////////////////
 
+        //TODO : we force the canvas to start on zero, there is an issue with the resample
+        //when canvas does not start at zero.
         final GridGeometry canvas;
         if (gridGeometry.isDefined(GridGeometry.EXTENT)) {
-            canvas = gridGeometry.derive().subgrid(domain).build();
+            canvas = CoverageUtilities.forceLowerToZero(gridGeometry.derive().subgrid(domain).build());
         } else if (domain.isDefined(GridGeometry.EXTENT)) {
-            canvas = domain;
+            //note the crs may be different from this data
+            canvas = CoverageUtilities.forceLowerToZero(domain);
         } else {
             throw new DataStoreException("Aggregated resource require a grid extent to be defined on the resource or on the requested domain");
         }
@@ -705,8 +708,17 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         for (Source source : ordered) {
             try {
                 //check the mask if we have finish
-                final GridExtent maskExtent = mask.areaCleared().orElse(null);
-                if (maskExtent == null) break;
+                GridExtent maskExtent = mask.areaCleared().orElse(null);
+                if (maskExtent == null) {
+                    break;
+                } else {
+                    //add the base canvas offsets which may be negative or positive
+                    final long mincanvasx = canvas.getExtent().getLow(0);
+                    final long mincanvasy = canvas.getExtent().getLow(1);
+                    maskExtent = new GridExtent(null,
+                            new long[]{mincanvasx + maskExtent.getLow(0), mincanvasy + maskExtent.getLow(1)},
+                            new long[]{mincanvasx + maskExtent.getHigh(0), mincanvasy + maskExtent.getHigh(1)}, true);
+                }
                 final GridGeometry maskGrid = new GridGeometry(maskExtent, PixelInCell.CELL_CENTER, canvas.getGridToCRS(PixelInCell.CELL_CENTER), canvas.getCoordinateReferenceSystem());
 
                 //expend grid geometry a little for interpolation
@@ -726,9 +738,6 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
                 }
                 final RenderedImage tileImage = coverage.render(null);
-                if (source.sampleTransform != null) {
-
-                }
 
                 final BufferedImage workImage;
                 if (result == null) {
