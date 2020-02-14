@@ -24,6 +24,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
 import javax.measure.Unit;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.shape.TransformedShape;
@@ -39,7 +40,6 @@ import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;
 import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -123,7 +123,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Cached
                 //if(dispStep!=null) dispStep = inverse.deltaTransform(dispStep, dispStep);
 
                 renderingContext.switchToDisplayCRS();
-                sizeCorrection = (float)XAffineTransform.getScale(renderingContext.getObjectiveToDisplay());
+                sizeCorrection = (float)AffineTransforms2D.getScale(renderingContext.getObjectiveToDisplay());
 
                 if(offset!=0){
                     shapes = bufferDisplayGeometry(renderingContext, projectedGeometry, offset*sizeCorrection);

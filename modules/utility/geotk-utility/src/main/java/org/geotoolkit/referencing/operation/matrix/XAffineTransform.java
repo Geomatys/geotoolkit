@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.matrix;
 
 import java.awt.geom.AffineTransform;
-import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 import static java.lang.Math.*;
 
@@ -70,18 +69,6 @@ public final class XAffineTransform {
                abs(tr.getShearY())     <= tolerance &&
                abs(tr.getTranslateX()) <= tolerance &&
                abs(tr.getTranslateY()) <= tolerance;
-    }
-
-    /**
-     * Returns a global scale factor for the specified affine transform. This scale factor combines
-     * {@link #getScaleX0 getScaleX0(tr)} and {@link #getScaleY0 getScaleY0(tr)}. The way to compute
-     * such a "global" scale is somewhat arbitrary and may change in a future version.
-     *
-     * @param tr The affine transform to inspect.
-     * @return The magnitude of scale factory.
-     */
-    public static double getScale(final AffineTransform tr) {
-        return 0.5 * (AffineTransforms2D.getScaleX0(tr) + AffineTransforms2D.getScaleY0(tr));
     }
 
     /**

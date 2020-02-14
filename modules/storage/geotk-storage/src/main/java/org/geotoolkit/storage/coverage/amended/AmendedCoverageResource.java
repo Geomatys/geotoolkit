@@ -34,6 +34,7 @@ import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStore;
@@ -47,7 +48,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.storage.event.CoverageStoreManagementEvent;
 import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.geometry.Envelope;
@@ -452,7 +452,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
 
             if (originalToFixed!=null && coverageRes!=null) {
                 //adjust resolution
-                double s = XAffineTransform.getScale((AffineTransform2D)originalToFixed);
+                double s = AffineTransforms2D.getScale((AffineTransform2D)originalToFixed);
                 coverageRes[0] /= s;
                 coverageRes[1] /= s;
             }

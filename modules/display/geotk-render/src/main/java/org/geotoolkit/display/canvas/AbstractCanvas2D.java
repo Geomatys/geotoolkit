@@ -872,7 +872,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public final void setScale(final double newScale) throws NoninvertibleTransformException {
-        final double oldScale = XAffineTransform.getScale(getObjectiveToDisplay());
+        final double oldScale = AffineTransforms2D.getScale(getObjectiveToDisplay());
         scale(newScale / oldScale);
     }
 
@@ -890,7 +890,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @return scale
      */
     public final double getScale() {
-        return XAffineTransform.getScale(getObjectiveToDisplay());
+        return AffineTransforms2D.getScale(getObjectiveToDisplay());
     }
 
     /**

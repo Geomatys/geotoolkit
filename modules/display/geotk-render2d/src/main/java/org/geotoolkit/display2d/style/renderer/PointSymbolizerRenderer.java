@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.function.Consumer;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
@@ -36,7 +37,6 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LinearRing;
@@ -113,7 +113,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
             coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
             final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
-            coeff *= Math.abs(XAffineTransform.getScale(inverse));
+            coeff *= Math.abs(AffineTransforms2D.getScale(inverse));
         }
 
         //create the image--------------------------------------------------
@@ -223,7 +223,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
             coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
             final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
-            coeff *= Math.abs(XAffineTransform.getScale(inverse));
+            coeff *= Math.abs(AffineTransforms2D.getScale(inverse));
         }
 
         //caches
@@ -363,7 +363,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
             coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
             final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
-            coeff *= Math.abs(XAffineTransform.getScale(inverse));
+            coeff *= Math.abs(AffineTransforms2D.getScale(inverse));
         }
 
         //create the image------------------------------------------------------

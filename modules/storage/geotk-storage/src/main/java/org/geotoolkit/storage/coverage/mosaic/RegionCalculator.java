@@ -32,7 +32,6 @@ import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.opengis.referencing.datum.PixelInCell;
 
 
@@ -152,7 +151,7 @@ final class RegionCalculator {
             double yMin  = Double.POSITIVE_INFINITY;
             double scale = Double.POSITIVE_INFINITY;
             for (final AffineTransform tr : tilesAT.keySet()) {
-                final double s = XAffineTransform.getScale(tr);
+                final double s = AffineTransforms2D.getScale(tr);
                 double y = tr.getTranslateY(); if (tr.getScaleY() < 0 || tr.getShearY() < 0) y = -y;
                 double x = tr.getTranslateX(); if (tr.getScaleX() < 0 || tr.getShearX() < 0) x = -x;
                 if (!(Math.abs(s - scale) <= EPS)) {

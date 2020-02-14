@@ -31,6 +31,7 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
@@ -51,7 +52,6 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -96,7 +96,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //calculate the cells
         final int cellSize = symbol.getSource().getCellSize();
         final AffineTransform trs = renderingContext.getDisplayToObjective();
-        final double objCellSize = XAffineTransform.getScale(trs) * cellSize;
+        final double objCellSize = AffineTransforms2D.getScale(trs) * cellSize;
 
         //find min and max cols/rows
         final Envelope env = renderingContext.getCanvasObjectiveBounds2D();
@@ -256,7 +256,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //when building tiles
         final int cellSize = symbol.getSource().getCellSize();
         final AffineTransform2D displayToObjective = renderingContext.getDisplayToObjective();
-        double objCellSize = XAffineTransform.getScale(displayToObjective) * cellSize;
+        double objCellSize = AffineTransforms2D.getScale(displayToObjective) * cellSize;
         final GeneralEnvelope env = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         final int hidx = CRSUtilities.firstHorizontalAxis(env.getCoordinateReferenceSystem());
         //round under and above to match cell size
