@@ -19,6 +19,7 @@ package org.geotoolkit.storage.coverage.mosaic;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import org.apache.sis.coverage.SampleDimension;
@@ -47,12 +48,9 @@ public class MosaicedCoverageResourceTest {
 
     /**
      * Test mosaic add a NaN value to fill spaces.
-     *
-     * @throws DataStoreException
-     * @throws TransformException
      */
     @Test
-    public void testNoDataAdded() throws DataStoreException, TransformException {
+    public void testNoDataAdded() throws IOException, DataStoreException, TransformException {
 
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
