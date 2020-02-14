@@ -150,4 +150,17 @@ public class BitSet2D extends BitSet {
 
         return Optional.of(new GridExtent(null, new long[]{minx, starty}, new long[]{maxx,y}, true));
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        for (int y=0;y<height;y++) {
+            for (int x=0;x<width;x++) {
+                sb.append(get2D(x,y) ? '1' : '0');
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
 }
