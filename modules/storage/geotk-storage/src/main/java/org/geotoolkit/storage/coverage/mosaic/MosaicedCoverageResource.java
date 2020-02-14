@@ -283,8 +283,14 @@ public class MosaicedCoverageResource extends AbstractGridResource {
     @Override
     public String toString() {
         final List<String> texts = new ArrayList<>();
+        int i=0;
         for (Tile vb : tiles) {
             texts.add(vb.getResource().toString());
+            i++;
+            if (i>10) {
+                texts.add("... ("+tiles.length+" entries) ...");
+                break;
+            }
         }
         return StringUtilities.toStringTree("Mosaiced coverage resource", texts);
     }

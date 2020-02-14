@@ -837,12 +837,18 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             String name = vb.cachedSampleDimension.getName().toString();
             final List<String> sources = new ArrayList<>();
 
+            int i=0;
             for (Source source : vb.sources) {
                 String trstxt = source.sampleTransform == null ? "" : source.sampleTransform.getClass().getSimpleName();
                 final StringBuilder sb = new StringBuilder();
                 sb.append("Source(").append(source.bandIndex).append(", ").append(trstxt).append(") ");
                 sb.append(source.resource);
                 sources.add(sb.toString());
+                i++;
+                if (i>10) {
+                    sources.add("... ("+vb.sources.size()+" entries) ...");
+                    break;
+                }
             }
             texts.add(StringUtilities.toStringTree(name, sources));
         }
