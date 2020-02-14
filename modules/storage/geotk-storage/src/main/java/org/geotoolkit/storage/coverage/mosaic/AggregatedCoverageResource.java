@@ -31,6 +31,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.measure.Unit;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
@@ -56,7 +57,9 @@ import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.StoreListeners;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.FrequencySortedSet;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -66,7 +69,10 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.event.AggregationEvent;
 import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
+import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.index.quadtree.Quadtree;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
@@ -210,6 +216,18 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         } else {
             return Optional.empty();
         }
+    }
+
+    public List<VirtualBand> getBands() {
+        return new ArrayList<>(bands);
+    }
+
+    public void setBands(List<VirtualBand> bands) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("bands", bands);
+        this.bands.clear();
+        this.bands.addAll(bands);
+        eraseCaches();
+        initModel();
     }
 
     @Override
@@ -386,8 +404,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         } else if (components.size() == 1) {
             //copy exact definition
             GridCoverageResource resource = components.iterator().next();
-            this.cachedGridGeometry = resource.getGridGeometry();
-            return;
+            if (outputCrs == null || Utilities.equalsIgnoreMetadata(outputCrs, resource.getGridGeometry().getCoordinateReferenceSystem())) {
+                this.cachedGridGeometry = resource.getGridGeometry();
+                tree.insert(new JTSEnvelope2D(resource.getGridGeometry().getEnvelope()), resource);
+                return;
+            }
         }
 
         if (outputCrs == null) {
@@ -730,8 +751,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
                if (workImage != result) {
                     //we need to merge image, replacing only not-NaN values
-                    PixelIterator read = PixelIterator.create(workImage);
-                    WritablePixelIterator write = WritablePixelIterator.create(result);
+                    final PixelIterator read = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(workImage);
+                    final WritablePixelIterator write = new WritablePixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(result);
                     final double[] pixelr = new double[read.getNumBands()];
                     final double[] pixelw = new double[read.getNumBands()];
                     while (read.next() & write.next()) {
@@ -789,6 +810,42 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     @Override
     public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
         listeners.removeListener(eventType, listener);
+    }
+
+    @Override
+    public String toString() {
+        try {
+            initModel();
+        } catch (DataStoreException ex) {
+            Logging.getLogger("org.geotoolkit.coverage").log(Level.INFO, ex.getMessage(), ex);
+        }
+
+        final List<String> texts = new ArrayList<>();
+        texts.add("Interpolate : "+ interpolation);
+        texts.add("Mode : "+ mode);
+
+        for (VirtualBand vb : bands) {
+            String name = vb.cachedSampleDimension.getName().toString();
+            final List<String> sources = new ArrayList<>();
+
+            for (Source source : vb.sources) {
+                String trstxt = source.sampleTransform == null ? "" : source.sampleTransform.getClass().getSimpleName();
+                final StringBuilder sb = new StringBuilder();
+                sb.append("Source(").append(source.bandIndex).append(", ").append(trstxt).append(") ");
+                sb.append(source.resource);
+                sources.add(sb.toString());
+            }
+            texts.add(StringUtilities.toStringTree(name, sources));
+        }
+
+        String name = "Unnamed";
+        try {
+            name = getIdentifier().orElse(NamesExt.create("Unnamed")).toString();
+        } catch (DataStoreException ex) {
+            //do nothing
+        }
+
+        return StringUtilities.toStringTree(name + " aggregated coverage resource", texts);
     }
 
     /**

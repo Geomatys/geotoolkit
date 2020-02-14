@@ -54,6 +54,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -267,6 +268,15 @@ public class MosaicedCoverageResource extends AbstractGridResource {
 
     @Override
     public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+    }
+
+    @Override
+    public String toString() {
+        final List<String> texts = new ArrayList<>();
+        for (Tile vb : tiles) {
+            texts.add(vb.getResource().toString());
+        }
+        return StringUtilities.toStringTree("Mosaiced coverage resource", texts);
     }
 
     /**
