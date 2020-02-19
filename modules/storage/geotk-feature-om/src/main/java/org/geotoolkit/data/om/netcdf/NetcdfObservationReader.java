@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -238,6 +239,14 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public AbstractGeometry getSensorLocation(String sensorID, String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Date, AbstractGeometry> getSensorLocations(String sensorID, String version) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet in this implementation.");
     }
 
     @Override

@@ -27,12 +27,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBElement;
@@ -47,61 +45,41 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.xml.XmlObservationStoreFactory.FILE_PATH;
-import org.geotoolkit.gml.GMLUtilities;
-import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.gml.xml.AbstractRing;
-import org.geotoolkit.gml.xml.Envelope;
-import org.geotoolkit.gml.xml.LineString;
-import org.geotoolkit.gml.xml.Point;
-import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.observation.ObservationFilterReader;
+import org.geotoolkit.observation.AbstractObservationStore;
 import org.geotoolkit.observation.ObservationReader;
-import org.geotoolkit.observation.ObservationStore;
-import org.geotoolkit.observation.ObservationWriter;
 import org.geotoolkit.observation.xml.*;
-import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
-import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.geometry.Geometry;
 import org.opengis.metadata.Metadata;
-import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.Phenomenon;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.temporal.Instant;
-import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalObject;
 import org.opengis.util.GenericName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class XmlObservationStore extends DataStore implements Aggregate, ResourceOnFileSystem,ObservationStore {
-
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.om");
+public class XmlObservationStore extends AbstractObservationStore implements Aggregate, ResourceOnFileSystem {
 
     protected final GenericNameIndex<FeatureType> types;
-    private final ParameterValueGroup parameters;
     private final Path xmlFile;
     private final List<Resource> components = new ArrayList<>();
 
     public XmlObservationStore(final ParameterValueGroup params) throws IOException {
-        this.parameters = params;
+        super(params);
         xmlFile = Paths.get((URI) params.parameter(FILE_PATH.getName().toString()).getValue());
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
 
@@ -111,14 +89,19 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
     }
 
     public XmlObservationStore(final Path xmlFile) {
-        parameters = XmlObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        parameters.parameter(FILE_PATH.getName().toString()).setValue(xmlFile.toUri());
+        super(toParams(xmlFile));
         this.xmlFile = xmlFile;
         types = OMFeatureTypes.getFeatureTypes(IOUtilities.filenameWithoutExtension(xmlFile));
 
         for (GenericName name : types.getNames()) {
             components.add(new FeatureView(name));
         }
+    }
+
+    private static ParameterValueGroup toParams(final Path xmlFile) {
+        ParameterValueGroup params = XmlObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        params.parameter(FILE_PATH.getName().toString()).setValue(xmlFile.toUri());
+        return params;
     }
 
     @Override
@@ -129,11 +112,6 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
     @Override
     public Metadata getMetadata() throws DataStoreException {
         return new DefaultMetadata();
-    }
-
-    @Override
-    public Optional<ParameterValueGroup> getOpenParameters() {
-        return Optional.of(parameters);
     }
 
     @Override
@@ -222,10 +200,8 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
                     if (!result.phenomenons.contains(phen)) {
                         result.phenomenons.add(phen);
                     }
-                    appendTime(obs.getSamplingTime(), result.spatialBound);
-                    appendTime(obs.getSamplingTime(), procedure.spatialBound);
-                    appendGeometry(obs.getFeatureOfInterest(), result.spatialBound);
-                    appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
+                    result.spatialBound.appendLocation(o.getSamplingTime(), o.getFeatureOfInterest());
+                    procedure.spatialBound.appendLocation(o.getSamplingTime(), o.getFeatureOfInterest());
                     result.observations.add(o);
                 }
             }
@@ -239,10 +215,8 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
                 result.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
                 result.phenomenons.add(XmlObservationUtils.getPhenomenons(phenProp));
                 result.procedures.add(procedure);
-                appendTime(obs.getSamplingTime(), result.spatialBound);
-                appendTime(obs.getSamplingTime(), procedure.spatialBound);
-                appendGeometry(obs.getFeatureOfInterest(), result.spatialBound);
-                appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
+                result.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
+                procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
             }
 
         }
@@ -269,8 +243,7 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
                         procedure.fields.add(field);
                     }
                 }
-                appendTime(obs.getSamplingTime(), procedure.spatialBound);
-                appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
+                procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
             }
 
         } else if (obj instanceof AbstractObservation) {
@@ -280,63 +253,9 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
             procedure.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
             result.add(procedure);
-            appendTime(obs.getSamplingTime(), procedure.spatialBound);
-            appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
+            procedure.spatialBound.appendLocation(obs.getSamplingTime(), obs.getFeatureOfInterest());
         }
         return result;
-    }
-
-    private void appendTime(final TemporalObject time, final GeoSpatialBound spatialBound) {
-        if (time instanceof Instant) {
-            final Instant i = (Instant) time;
-            spatialBound.addDate(i.getDate());
-        } else if (time instanceof Period) {
-            final Period p = (Period) time;
-            spatialBound.addDate(p.getBeginning().getDate());
-            spatialBound.addDate(p.getEnding().getDate());
-        }
-    }
-
-    private void appendGeometry(final AnyFeature feature, final GeoSpatialBound spatialBound){
-        if (feature instanceof SamplingFeature) {
-            final SamplingFeature sf = (SamplingFeature) feature;
-            final Geometry geom = sf.getGeometry();
-            final AbstractGeometry ageom;
-            if (geom instanceof AbstractGeometry) {
-                ageom = (AbstractGeometry)geom;
-            } else if (geom != null) {
-                ageom = GMLUtilities.getGMLFromISO(geom);
-            } else {
-                ageom = null;
-            }
-            spatialBound.addGeometry(ageom);
-            spatialBound.addGeometry(ageom);
-            extractBoundary(ageom, spatialBound);
-            extractBoundary(ageom, spatialBound);
-        }
-    }
-
-    private void extractBoundary(final AbstractGeometry geom, final GeoSpatialBound spatialBound) {
-        if (geom instanceof Point) {
-            final Point p = (Point) geom;
-            if (p.getPos() != null) {
-                spatialBound.addXCoordinate(p.getPos().getOrdinate(0));
-                spatialBound.addYCoordinate(p.getPos().getOrdinate(1));
-            }
-        } else if (geom instanceof LineString) {
-            final LineString ls = (LineString) geom;
-            final Envelope env = ls.getBounds();
-            if (env != null) {
-                spatialBound.addXCoordinate(env.getMinimum(0));
-                spatialBound.addXCoordinate(env.getMaximum(0));
-                spatialBound.addYCoordinate(env.getMinimum(1));
-                spatialBound.addYCoordinate(env.getMaximum(1));
-            }
-        } else if (geom instanceof Polygon) {
-            final Polygon p = (Polygon) geom;
-            AbstractRing ext = p.getExterior().getAbstractRing();
-            // TODO
-        }
     }
 
     private Object readFile() {
@@ -387,12 +306,12 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
         if (obj instanceof ObservationCollection) {
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
-                appendTime(obs.getSamplingTime(), result.spatialBound);
+                result.spatialBound.addTime(obs.getSamplingTime());
             }
 
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
-            appendTime(obs.getSamplingTime(), result.spatialBound);
+            result.spatialBound.addTime(obs.getSamplingTime());
         }
         return result.spatialBound.getTimeObject("2.0.0");
     }
@@ -412,22 +331,6 @@ public class XmlObservationStore extends DataStore implements Aggregate, Resourc
     public ObservationReader getReader() {
         final Object obj = readFile();
         return new XmlObservationReader(Arrays.asList(obj));
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ObservationFilterReader getFilter() {
-        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ObservationWriter getWriter() {
-        throw new UnsupportedOperationException("Writing is not supported on this observation store.");
     }
 
     private final class FeatureView extends AbstractFeatureSet implements StoreResource {

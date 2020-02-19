@@ -18,17 +18,32 @@ package org.geotoolkit.sos.netcdf;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import org.geotoolkit.gml.GMLUtilities;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.AbstractRing;
 import org.geotoolkit.gml.xml.Envelope;
+import org.geotoolkit.gml.xml.LineString;
+import org.geotoolkit.gml.xml.Point;
+import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
+import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
+import org.opengis.geometry.Geometry;
+import org.opengis.observation.AnyFeature;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.temporal.TemporalObject;
 
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  */
 public class GeoSpatialBound {
 
@@ -42,14 +57,66 @@ public class GeoSpatialBound {
     public Double maxy;
 
     private final List<AbstractGeometry> geometries = new ArrayList<>();
+    private final Map<Date, AbstractGeometry> historicalLocation = new HashMap<>();
 
-    public void addDate(final long millis) {
-        final Date d = new Date(millis);
-        addDate(d);
+    public void appendLocation(final TemporalObject time, final AnyFeature feature) {
+        Date d = addTime(time);
+        AbstractGeometry ageom = null;
+        if (feature instanceof SamplingFeature) {
+            final SamplingFeature sf = (SamplingFeature) feature;
+            final Geometry geom = sf.getGeometry();
+            if (geom instanceof AbstractGeometry) {
+                ageom = (AbstractGeometry)geom;
+            } else if (geom != null) {
+                ageom = GMLUtilities.getGMLFromISO(geom);
+            }
+            addGeometry(ageom);
+            extractBoundary(ageom);
+        }
+        if (d != null && ageom != null) {
+            historicalLocation.put(d, ageom);
+        }
     }
 
-    public void addDate(final Date date) {
-        if (date == null) return;
+    public void addLocation(final long millis, AbstractGeometry geometry) {
+        final Date d = new Date(millis);
+        addLocation(d, geometry);
+    }
+
+    public void addLocation(final Date d, AbstractGeometry geometry) {
+        addDate(d);
+        addGeometry(geometry);
+        historicalLocation.put(d, geometry);
+    }
+
+    /**
+     * Add one or two dates (Instant or Period), extracted from the temporal object.
+     * Return then the first date.
+     *
+     * @param time a temporal object
+     * @return
+     */
+    public Date addTime(final TemporalObject time) {
+        if (time instanceof Instant) {
+            final Instant i = (Instant) time;
+            if (i.getDate() != null) {
+                return addDate(i.getDate());
+            }
+        } else if (time instanceof Period) {
+            final Period p = (Period) time;
+            addTime(p.getEnding());
+            return addTime(p.getBeginning());
+        }
+        return null;
+    }
+
+    public Date addDate(final long millis) {
+        final Date d = new Date(millis);
+        return addDate(d);
+    }
+
+    public Date addDate(final Date date) {
+        if (date == null) return null;
         if (dateStart == null) {
             dateStart = date;
         }
@@ -62,6 +129,7 @@ public class GeoSpatialBound {
         if (dateEnd.getTime() < date.getTime()) {
             dateEnd = date;
         }
+        return date;
     }
 
     public void addXYCoordinate(final Double x, final Double y) {
@@ -69,7 +137,7 @@ public class GeoSpatialBound {
         addYCoordinate(y);
     }
 
-    public void addXCoordinate(final Double x) {
+    private void addXCoordinate(final Double x) {
         if (x == null) return;
         if (minx == null) {
             minx = x;
@@ -85,7 +153,7 @@ public class GeoSpatialBound {
         }
     }
 
-    public void addYCoordinate(final Double y) {
+    private void addYCoordinate(final Double y) {
         if (y == null) return;
         if (miny == null) {
             miny = y;
@@ -111,6 +179,28 @@ public class GeoSpatialBound {
         maxy = 90.0;
     }
 
+    private void extractBoundary(final AbstractGeometry geom) {
+        if (geom instanceof Point) {
+            final Point p = (Point) geom;
+            if (p.getPos() != null) {
+                addXCoordinate(p.getPos().getOrdinate(0));
+                addYCoordinate(p.getPos().getOrdinate(1));
+            }
+        } else if (geom instanceof LineString) {
+            final LineString ls = (LineString) geom;
+            final Envelope env = ls.getBounds();
+            if (env != null) {
+                addXCoordinate(env.getMinimum(0));
+                addXCoordinate(env.getMaximum(0));
+                addYCoordinate(env.getMinimum(1));
+                addYCoordinate(env.getMaximum(1));
+            }
+        } else if (geom instanceof Polygon) {
+            final Polygon p = (Polygon) geom;
+            AbstractRing ext = p.getExterior().getAbstractRing();
+            // TODO
+        }
+    }
 
     public void addGeometry(final AbstractGeometry geometry) {
         if (!geometries.contains(geometry)) {
@@ -136,6 +226,7 @@ public class GeoSpatialBound {
                 this.geometries.add(geom);
             }
         }
+        this.historicalLocation.putAll(other.historicalLocation);
     }
 
     public TemporalGeometricPrimitive getTimeObject(final String version) {
@@ -199,7 +290,17 @@ public class GeoSpatialBound {
         }
     }
 
-    public AbstractGeometry getGeometry(final String version) {
+    public AbstractGeometry getLastGeometry(final String version) {
+        if (historicalLocation.isEmpty()) {
+            return null;
+        } else {
+            List<Date> keys = new ArrayList<>(historicalLocation.keySet());
+            Collections.sort(keys);
+            return historicalLocation.get(keys.get(keys.size() - 1));
+        }
+    }
+
+    public AbstractGeometry getFullGeometry(final String version) {
         if (geometries.isEmpty()) {
             return null;
         } else if (geometries.size() == 1) {
@@ -212,5 +313,9 @@ public class GeoSpatialBound {
             final org.geotoolkit.gml.xml.v321.MultiGeometryType geom = new org.geotoolkit.gml.xml.v321.MultiGeometryType(members);
             return geom;
         }
+    }
+
+    public Map<Date, AbstractGeometry> getHistoricalLocations() {
+        return historicalLocation;
     }
 }
