@@ -41,10 +41,10 @@ import org.opengis.util.FactoryException;
  */
 public class WKTAdaptor extends ComplexAdaptor {
 
-    private static final String ENC_UTF8 = "UTF-8";
-    private static final String ENC_BASE64 = "base64";
+    static final String ENC_UTF8 = "UTF-8";
+    static final String ENC_BASE64 = "base64";
 
-    private static final String MIME_TYPE = "application/ewkt";
+    static final String MIME_TYPE = "application/ewkt";
 
     private final String mimeType;
     private final String encoding;
@@ -88,7 +88,10 @@ public class WKTAdaptor extends ComplexAdaptor {
         try {
             CoordinateReferenceSystem crs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
             if (crs != null) {
+                dimension = crs.getCoordinateSystem().getDimension();
                 final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
+                // TODO: Ensure no project strongly rely on that, then remove. It's pure non-sense/madness.
+                // Note: If you read this after march 2020: do not ask : delete.
                 finder.setIgnoringAxes(true);
                 final CoordinateReferenceSystem epsgcrs = (CoordinateReferenceSystem) finder.findSingleton(crs);
                 if (epsgcrs != null) {
