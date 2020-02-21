@@ -29,6 +29,7 @@ import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInput;
 import org.geotoolkit.wps.xml.v200.Format;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTWriter;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -83,6 +84,7 @@ public class WKTAdaptor extends ComplexAdaptor {
         Geometry geom = (Geometry) candidate;
 
         int srid = 0;
+        int dimension = 2;
         try {
             CoordinateReferenceSystem crs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
             if (crs != null) {
@@ -97,13 +99,18 @@ public class WKTAdaptor extends ComplexAdaptor {
                     if (crs2 != crs) {
                         geom = JTS.transform(geom, crs2);
                     }
+                    if (crs2 != null)
+                        dimension = crs2.getCoordinateSystem().getDimension();
                 }
             }
         } catch (FactoryException | MismatchedDimensionException | TransformException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
 
-        String wkt = geom.toText();
+//        String wkt = geom.toText();
+
+        WKTWriter writer = new WKTWriter(dimension);
+        String wkt = writer.write(geom);
         if (srid > 0) {
             wkt = "SRID="+srid+";"+wkt;
         }
