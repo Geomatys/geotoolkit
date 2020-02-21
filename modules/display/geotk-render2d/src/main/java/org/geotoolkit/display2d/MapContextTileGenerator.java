@@ -24,7 +24,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
@@ -36,6 +35,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.function.LongConsumer;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
@@ -279,46 +279,42 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     LongStream.range(rect.y, rect.y+rect.height).parallel().forEach(new LongConsumer() {
                         @Override
                         public void accept(final long y) {
+                            final long[] nb = new long[2];
                             final NumberFormat format = NumberFormat.getIntegerInstance(Locale.FRANCE);
-                            long nb = 0;
                             try {
                                 final ProgressiveImage img = new ProgressiveImage(canvasDef, sceneDef,
-                                mosaic.getGridSize(), mosaic.getTileSize(), mosaic.getScale(), 0);
+                                    mosaic.getGridSize(), mosaic.getTileSize(), mosaic.getScale(), 0);
 
-                                for (int x=rect.x,xn=rect.x+rect.width;x<xn;x++) {
-                                    final Point coord = new Point((int)x, (int)y);
-                                    final Raster clipRaster = img.getTile(x, (int)y);
-                                    try {
-                                        if (skipEmptyTiles && img.isBatchEmpty()) {
-                                            //empty tile, for sure
-                                        } else {
-                                            //redefined raster corner to be at 0,0
-                                            final WritableRaster raster = clipRaster.createCompatibleWritableRaster(0, 0, clipRaster.getWidth(), clipRaster.getHeight());
-                                            raster.setRect(clipRaster);
-                                            final BufferedImage data = new BufferedImage(img.getColorModel(), raster, img.getColorModel().isAlphaPremultiplied(), null);
+                                Stream<Tile> stream = img.generate(rect.x, rect.x+rect.width, (int)y, skipEmptyTiles);
 
-                                            if (!skipEmptyTiles || (skipEmptyTiles && !BufferedImages.isAll(data, empty))) {
-                                                final ImageTile t = new DefaultImageTile(data, coord);
-                                                mosaic.writeTiles(Stream.of(t), null);
+                                if (listener != null) {
+                                    stream = stream.map(new Function<Tile, Tile>() {
+                                        @Override
+                                        public Tile apply(Tile t) {
+                                            nb[0]++;
+                                            if (nb[0]%1000 == 0) {
+                                                final long time = System.currentTimeMillis();
+                                                if (tempo.updateAndGet((long operand) -> ((time-operand)  > 3000) ? time : operand) == time) {
+                                                    long v = al.addAndGet(nb[0]);
+                                                    nb[1] += nb[0];
+                                                    nb[0] = 0;
+                                                    listener.progressing(new ProcessEvent(DUMMY, format.format(v)+msg, (float) (( ((double)v)/((double)total) )*100.0)  ));
+                                                }
                                             }
+                                            return t;
                                         }
-                                    } finally {
-                                        nb++;
-                                        if (listener != null && nb%1000 == 0) {
-                                            final long time = System.currentTimeMillis();
-                                            if (tempo.updateAndGet((long operand) -> ((time-operand)  > 3000) ? time : operand) == time) {
-                                                long v = al.addAndGet(nb);
-                                                nb = 0;
-                                                listener.progressing(new ProcessEvent(DUMMY, format.format(v)+msg, (float) (( ((double)v)/((double)total) )*100.0)  ));
-                                            }
-                                        }
-                                    }
+                                    });
                                 }
+                                mosaic.writeTiles(stream, null);
+
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
 
-                            long v = al.addAndGet(nb);
+                            al.addAndGet(nb[0]);
+                            nb[1] += nb[0];
+                            nb[0] = 0;
+                            long v = al.addAndGet(rect.width - nb[1]); //empty tiles
                             if (listener != null) {
                                 final long time = System.currentTimeMillis();
                                 if (tempo.updateAndGet((long operand) -> ((time-operand)  > 3000) ? time : operand) == time) {
