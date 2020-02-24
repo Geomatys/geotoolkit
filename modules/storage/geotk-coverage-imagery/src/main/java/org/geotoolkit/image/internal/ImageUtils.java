@@ -935,7 +935,7 @@ public class ImageUtils extends Static {
                  || dataBufferType == DataBuffer.TYPE_DOUBLE) {
                     final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
                     final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
-                    cs = ColorModelFactory.createColorSpace(numBand, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
+                    return ColorModelFactory.createGrayScale(dataBufferType, numBand, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
                 } else {
                     cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
                 }

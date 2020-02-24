@@ -17,11 +17,8 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.Point;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.SampleModel;
@@ -35,7 +32,9 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+
 import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
+
 import org.geotoolkit.io.LEDataInputStream;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -327,17 +326,8 @@ public class WKBRasterReader {
         ColorModel cm = PlanarImage.getDefaultColorModel(sm.getDataType(), raster.getNumBands());
         if(cm==null){
             //fallback
-            cm = createGrayScaleColorModel(sm.getDataType(), raster.getNumBands(), 0, min, max);
+            cm = ColorModelFactory.createGrayScale(sm.getDataType(), raster.getNumBands(), 0, min, max);
         }
-
         return new BufferedImage(cm, raster, false, null);
     }
-
-
-    private static ColorModel createGrayScaleColorModel(int dataType, int nbBand, int visibleBand, double min, double max) {
-        final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, visibleBand, min, max);
-        final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
-        return cm;
-    }
-
 }

@@ -23,8 +23,6 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
@@ -34,7 +32,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -735,8 +732,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                 sampleModel = colorModel.createCompatibleSampleModel(tileSize.width, tileSize.height);
             } else {
                 sampleModel = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, tileSize.width, tileSize.height, nbBand);
-                final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, 0, 0, 1);
-                colorModel = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, DataBuffer.TYPE_DOUBLE);
+                colorModel = ColorModelFactory.createGrayScale(DataBuffer.TYPE_DOUBLE, nbBand, 0, 0, 1);
             }
 
             /*

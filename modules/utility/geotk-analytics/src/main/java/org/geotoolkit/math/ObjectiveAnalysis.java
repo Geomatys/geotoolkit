@@ -26,6 +26,7 @@ import java.awt.image.DataBufferFloat;
 import java.awt.image.ComponentColorModel;
 import java.awt.color.ColorSpace;
 import java.awt.Transparency;
+import java.awt.image.ColorModel;
 import javax.vecmath.GVector;
 import javax.vecmath.GMatrix;
 import javax.media.jai.RasterFactory;
@@ -328,14 +329,14 @@ public class ObjectiveAnalysis {
             if (v < min) min = v;
             if (v > max) max = v;
         }
-        final ColorSpace cs;
+        final ColorModel cm;
         if (min < max) {
-            cs = ColorModelFactory.createColorSpace(1, 0, min, max);
+            cm = ColorModelFactory.createGrayScale(DataBufferFloat.TYPE_FLOAT, 1, 0, min, max);
         } else {
-            cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+            cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), false, false,
+                                         Transparency.OPAQUE, DataBufferFloat.TYPE_FLOAT);
         }
-        return new BufferedImage(new ComponentColorModel(cs, false, false,
-                Transparency.OPAQUE, DataBufferFloat.TYPE_FLOAT), raster, false, null);
+        return new BufferedImage(cm, raster, false, null);
     }
 
     /**
