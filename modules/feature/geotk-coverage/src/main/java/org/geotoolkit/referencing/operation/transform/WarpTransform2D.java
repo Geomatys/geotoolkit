@@ -61,9 +61,6 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  * are usually pixel coordinates in source and target image, which is why this transform may use
  * integer arithmetic.
  * <p>
- * This math transform can be created alone (by invoking its public constructors directly), or it can
- * be created by a factory like {@link org.geotoolkit.referencing.operation.builder.LocalizationGrid}.
- * <p>
  * For more information on image warp, see
  * <A HREF="http://java.sun.com/products/java-media/jai/forDevelopers/jai1_0_1guide-unc/Geom-image-manip.doc.html">Geometric
  * Image Manipulation</A> in the <cite>Programming in Java Advanced Imaging</cite> guide.
@@ -72,7 +69,6 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  * @author Alessio Fabiani (Geosolutions)
  * @version 3.18
  *
- * @see org.geotoolkit.referencing.operation.builder.LocalizationGrid#getPolynomialTransform(int)
  * @see Warp
  * @see WarpOpImage
  * @see WarpDescriptor

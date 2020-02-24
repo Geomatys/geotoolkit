@@ -76,7 +76,6 @@ import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
 import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.util.TimeParser;
@@ -754,7 +753,6 @@ final class LandsatMetadataParser {
 
     /**
      * Build grid to CRS from internal grid extent and fourth projected envelope corners.
-     * The returned {@link AffineTransform} is built from {@link LocalizationGrid#getAffineTransform() }.
      *
      * @param group Reflective, Panchromatic or Thermal
      * @return Grid to CRS from metadata for given Landsat group
