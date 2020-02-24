@@ -18,17 +18,14 @@
 package org.geotoolkit.processing;
 
 import java.util.Date;
-import java.util.concurrent.CancellationException;
 import javax.swing.event.EventListenerList;
-
+import org.apache.sis.metadata.iso.lineage.DefaultProcessStep;
+import org.apache.sis.metadata.iso.lineage.DefaultProcessing;
+import org.apache.sis.parameter.Parameters;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.process.*;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterValueGroup;
-import org.apache.sis.metadata.iso.lineage.DefaultProcessing;
-import org.apache.sis.metadata.iso.lineage.DefaultProcessStep;
-import org.apache.sis.parameter.Parameters;
-
-import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  *
@@ -48,7 +45,7 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
      */
     protected String jobId = null;
 
-    volatile boolean isCanceled = false;
+    volatile boolean isDismissed = false;
 
     volatile boolean isPaused = false;
 
@@ -162,13 +159,13 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
 
 
     /**
-     * {@linkplain #cancelProcess() CancelProcess} set the {@code isCanceled} flag to {@code true}.
-     * The {@code isCanceled} flag is used by the process to know if someone ask for his cancelation.
-     * Long process should when they can check the {@code isCanceled} flag through the {@link #isCanceled() isCanceled} method.
-     * If a process see his {@code isCanceled} flag to {@code true} he should throw an {@link CancellationException exception}.
+     * {@link #dismissProcess() DismissProcess} set the {@code isDimissed} flag to {@code true}.
+     * The {@code isDimissed} flag is used by the process to know if someone ask for it to be canceled.
+     * Long process should when they can check the {@code isCanceled} flag through the {@link #isDimissed() isDimissed} method.
+     * If a process see his {@code isDimissed} flag to {@code true} he should throw an {@link DismissProcessException exception}.
      */
-    public void cancelProcess(){
-        isCanceled = true;
+    public void dismissProcess(){
+        isDismissed = true;
     }
 
     /**
@@ -192,12 +189,12 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
     }
 
     /**
-     * Return the {@code isCanceled} flag value.
+     * Return the {@code isDimissed} flag value.
      *
-     * @return {@code isCanceled} flag value.
+     * @return {@code isDimissed} flag value.
      */
-    public boolean isCanceled(){
-        return isCanceled;
+    public boolean isDimissed(){
+        return isDismissed;
     }
 
     /**
@@ -207,6 +204,17 @@ public abstract class AbstractProcess implements org.geotoolkit.process.Process 
      */
     public boolean isPaused(){
         return isPaused;
+    }
+
+    /**
+     * Raise a DismissProcessException if process has been dismissed.
+     *
+     * @throws DismissProcessException if process has been dismissed.
+     */
+    protected void stopIfDismissed() throws DismissProcessException {
+        if (isDimissed()) {
+            throw new DismissProcessException("Process has been dismissed.", this);
+        }
     }
 
     /**

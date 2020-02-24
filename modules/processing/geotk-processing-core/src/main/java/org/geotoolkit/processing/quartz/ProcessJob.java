@@ -129,7 +129,7 @@ public class ProcessJob implements InterruptableJob {
     @Override
     public void interrupt() throws UnableToInterruptJobException {
         if (process != null) {
-            ((AbstractProcess) process).cancelProcess();
+            ((AbstractProcess) process).dismissProcess();
         }
     }
 

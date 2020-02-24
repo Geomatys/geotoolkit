@@ -21,18 +21,20 @@ import javax.measure.IncommensurableException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
@@ -40,8 +42,6 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.apache.sis.referencing.GeodeticCalculator;
-import org.apache.sis.storage.GridCoverageResource;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -260,10 +260,10 @@ public class ComputeVolumeProcess extends AbstractProcess {
             }
 
             while (pixPoint[1] < maxy) {
-                if(isCanceled()) break;
+                stopIfDismissed();
                 pixPoint[0] = debx;
                 while (pixPoint[0] < maxx) {
-                    if(isCanceled()) break;
+                    stopIfDismissed();
                     //-- project point in geomtry CRS
                     gridToGeom.transform(pixPoint, 0, geomPoint, 0, 1);
 
