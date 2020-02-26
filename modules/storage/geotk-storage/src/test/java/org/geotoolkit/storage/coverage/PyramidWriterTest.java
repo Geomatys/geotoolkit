@@ -76,7 +76,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testSingleGridOverride() throws DataStoreException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
+        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
@@ -114,7 +114,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testQuadGridOverride() throws DataStoreException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
+        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
@@ -157,7 +157,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testPartialQuadGridOverride() throws DataStoreException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
+        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
@@ -215,7 +215,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testPartialQuadGridOverride2() throws DataStoreException, IOException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
+        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
@@ -310,7 +310,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testPartialQuadGridOverrideFlip() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
+        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),
@@ -405,7 +405,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
     @Test
     public void testPartialQuadGridOverrideFlip2() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final InMemoryStore store = new InMemoryStore();
-        final T ref = (T) store.add(new DefiningPyramidResource(NAME));
+        final T ref = (T) store.add(new DefiningMultiResolutionResource(NAME));
         ref.setSampleDimensions(Arrays.asList(
                 new SampleDimension.Builder().setName(0).build(),
                 new SampleDimension.Builder().setName(1).build(),

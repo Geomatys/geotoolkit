@@ -23,23 +23,36 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.multires.DefiningPyramid;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileFormat;
 import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefiningPyramidResource extends DefiningCoverageResource implements MultiResolutionResource {
+public class DefiningMultiResolutionResource extends DefiningCoverageResource implements MultiResolutionResource {
 
     public final Map<String,MultiResolutionModel> models = new HashMap<>();
+    private TileFormat tileFormat;
 
-    public DefiningPyramidResource(GenericName identifier) {
+    public DefiningMultiResolutionResource(GenericName identifier) {
         super(identifier);
+    }
+
+    public void setTileFormat(TileFormat tileFormat) {
+        ArgumentChecks.ensureNonNull(null, tileFormat);
+        this.tileFormat = tileFormat;
+    }
+
+    @Override
+    public TileFormat getTileFormat() {
+        return tileFormat;
     }
 
     @Override
