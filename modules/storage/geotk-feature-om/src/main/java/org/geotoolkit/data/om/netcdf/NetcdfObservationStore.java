@@ -226,7 +226,7 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
      */
     @Override
     public ObservationFilterReader getFilter() {
-        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+        return null;
     }
 
     /**
@@ -234,7 +234,7 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
      */
     @Override
     public ObservationWriter getWriter() {
-        throw new UnsupportedOperationException("Writing is not supported on this observation store.");
+        return null;
     }
 
     private final class FeatureView extends AbstractFeatureSet implements StoreResource {

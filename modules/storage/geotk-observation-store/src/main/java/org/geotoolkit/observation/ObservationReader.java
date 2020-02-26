@@ -19,6 +19,7 @@ package org.geotoolkit.observation;
 
 // J2SE dependencies
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
@@ -301,6 +302,16 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     AbstractGeometry getSensorLocation(final String sensorID, final String version) throws DataStoreException;
+
+    /**
+     * Extract the locations through time for a procedure.
+     *
+     * @param sensorID the procedure/sensor identifier
+     * @param version
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Map<Date, AbstractGeometry> getSensorLocations(final String sensorID, final String version) throws DataStoreException;
 
     /**
      * Return informations about the implementation class.
