@@ -17,11 +17,14 @@
 package org.geotoolkit.observation;
 
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataStoreProvider;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -29,7 +32,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public abstract class AbstractObservationStoreFactory extends DataStoreFactory implements ObservationStoreFactory {
+public abstract class AbstractObservationStoreFactory extends DataStoreProvider  {
 
     /**
      * Identifier, Mandatory.
@@ -56,7 +59,6 @@ public abstract class AbstractObservationStoreFactory extends DataStoreFactory i
     /**
      * {@inheritDoc }
      */
-    @Override
     public boolean canProcess(final ParameterValueGroup params) {
         if(params == null){
             return false;
@@ -75,6 +77,33 @@ public abstract class AbstractObservationStoreFactory extends DataStoreFactory i
 
         final ConformanceResult result = Parameters.isValid(params, desc);
         return (result != null) && Boolean.TRUE.equals(result.pass());
+    }
+
+    /**
+     * Check if the Identifier parameter exist.
+     * if it exist, it must be set to 'value' otherwise return false.
+     * if not present, return true;
+     * @param params
+     * @return
+     */
+    protected boolean checkIdentifier(final ParameterValueGroup params){
+        final String expectedId;
+        try{
+            expectedId = ((ParameterDescriptor<String>)getOpenParameters()
+                .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
+        }catch(ParameterNotFoundException ex){
+            //this feature store factory does not declare a identifier id
+            return true;
+        }
+
+        for(GeneralParameterValue val : params.values()){
+            if(val.getDescriptor().getName().getCode().equals(IDENTIFIER.getName().getCode())){
+                final Object candidate = ((ParameterValue)val).getValue();
+                return expectedId.equals(candidate);
+            }
+        }
+
+        return true;
     }
 
     /**

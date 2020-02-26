@@ -18,12 +18,14 @@ package org.geotoolkit.data.om.xml;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.ProbeResult;
@@ -91,15 +93,6 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
     }
 
     @Override
-    public XmlObservationStore create(ParameterValueGroup params) throws DataStoreException {
-        try {
-            return new XmlObservationStore(params);
-        } catch (IOException e) {
-            throw new DataStoreException(e.getLocalizedMessage(), e);
-        }
-    }
-
-    @Override
     public Collection<String> getSuffix() {
         return Arrays.asList("xml");
     }
@@ -114,4 +107,9 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
         return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
 
+    @Override
+    public DataStore open(StorageConnector sc) throws DataStoreException {
+        final Path p = sc.getStorageAs(Path.class);
+        return new XmlObservationStore(p);
+    }
 }

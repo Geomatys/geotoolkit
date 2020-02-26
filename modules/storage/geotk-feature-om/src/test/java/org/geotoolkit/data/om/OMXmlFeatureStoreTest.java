@@ -23,21 +23,20 @@ import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.parameter.DefaultParameterValueGroup;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStore;
+import org.geotoolkit.data.om.xml.XmlObservationStore;
 import org.geotoolkit.storage.AbstractReadingTests;
 import org.geotoolkit.data.om.xml.XmlObservationStoreFactory;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.util.GenericName;
@@ -55,11 +54,11 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
         try{
 
             final Path f = IOUtilities.getResourceAsPath("org/geotoolkit/sql/observation1.xml");
-            final Map params = new HashMap<>();
-            params.put(XmlObservationStoreFactory.IDENTIFIER.getName().toString(), "observationXmlFile");
-            params.put(XmlObservationStoreFactory.FILE_PATH.getName().toString(), f.toUri().toURL());
+            DefaultParameterValueGroup parameters = (DefaultParameterValueGroup) XmlObservationStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+            parameters.getOrCreate(XmlObservationStoreFactory.IDENTIFIER).setValue("observationXmlFile");
+            parameters.getOrCreate(XmlObservationStoreFactory.FILE_PATH).setValue(f.toUri().toURL());
 
-            store = DataStores.open(params);
+            store = new XmlObservationStore(parameters);
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";
