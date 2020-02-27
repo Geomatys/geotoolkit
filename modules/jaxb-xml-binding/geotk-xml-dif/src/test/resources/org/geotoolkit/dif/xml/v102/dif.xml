@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DIF xmlns="http://gcmd.gsfc.nasa.gov/Aboutus/xml/dif/">
+  <Entry_ID>
+    <Short_Name>dif-1</Short_Name>
+  </Entry_ID>
+  <Entry_Title>title</Entry_Title>
+  <Personnel>
+    <Role>METADATA AUTHOR</Role>
+    <Contact_Group>
+      <Name>Geomatys</Name>
+      <Address>
+        <Street_Address>12 rue blip</Street_Address>
+        <City>Montpellier</City>
+        <State_Province>Occitanie</State_Province>
+        <Postal_Code>34000</Postal_Code>
+        <Country>France</Country>
+      </Address>
+      <Phone>
+        <Number>0466441122</Number>
+        <Type>Direct Line</Type>
+      </Phone>
+      <Email>contact@geomatys.com</Email>
+    </Contact_Group>
+  </Personnel>
+  <Personnel>
+    <Role>METADATA AUTHOR</Role>
+    <Contact_Person uuid="987-887">
+      <First_Name>jean</First_Name>
+      <Middle_Name>pierre</Middle_Name>
+      <Last_Name>imbert</Last_Name>
+      <Address>
+        <Street_Address>12 rue blip</Street_Address>
+        <City>Montpellier</City>
+        <State_Province>Occitanie</State_Province>
+        <Postal_Code>34000</Postal_Code>
+        <Country>France</Country>
+      </Address>
+      <Phone>
+        <Number>0466441122</Number>
+        <Type>Direct Line</Type>
+      </Phone>
+      <Email>contact@geomatys.com</Email>
+    </Contact_Person>
+  </Personnel>
+  <Personnel>
+    <Role>TECHNICAL CONTACT</Role>
+    <Contact_Person uuid="1244110-777">
+      <First_Name>michel</First_Name>
+      <Middle_Name>henry</Middle_Name>
+      <Last_Name>bel</Last_Name>
+      <Address>
+        <Street_Address>12 rue blip</Street_Address>
+        <City>Montpellier</City>
+        <State_Province>Occitanie</State_Province>
+        <Postal_Code>34000</Postal_Code>
+        <Country>France</Country>
+      </Address>
+      <Phone>
+        <Number>0466441122</Number>
+        <Type>Direct Line</Type>
+      </Phone>
+      <Email>tech-contact@geomatys.com</Email>
+    </Contact_Person>
+  </Personnel>
+  <Science_Keywords>
+    <Category>science category</Category>
+    <Topic>science topic</Topic>
+    <Term>science term</Term>
+  </Science_Keywords>
+  <ISO_Topic_Category>economy</ISO_Topic_Category>
+  <Ancillary_Keyword>anc kw1</Ancillary_Keyword>
+  <Ancillary_Keyword>anc kw2</Ancillary_Keyword>
+  <Temporal_Coverage>
+    <Range_DateTime>
+      <Beginning_Date_Time>2010-12-01T12:00Z</Beginning_Date_Time>
+      <Ending_Date_Time>2010-12-02T23:00Z</Ending_Date_Time>
+    </Range_DateTime>
+  </Temporal_Coverage>
+  <Dataset_Progress>COMPLETE</Dataset_Progress>
+  <Spatial_Coverage>
+    <Geometry>
+      <Bounding_Rectangle>
+        <Southernmost_Latitude>5.0</Southernmost_Latitude>
+        <Northernmost_Latitude>5.0</Northernmost_Latitude>
+        <Westernmost_Longitude>5.0</Westernmost_Longitude>
+        <Easternmost_Longitude>5.0</Easternmost_Longitude>
+        <Minimum_Altitude>3</Minimum_Altitude>
+        <Maximum_Altitude>10</Maximum_Altitude>
+      </Bounding_Rectangle>
+    </Geometry>
+  </Spatial_Coverage>
+  <Location>
+    <Detailed_Location>GARD</Detailed_Location>
+  </Location>
+  <Data_Resolution/>
+  <Access_Constraints>some acces constraint</Access_Constraints>
+  <Use_Constraints>use csts</Use_Constraints>
+  <Dataset_Language>French</Dataset_Language>
+  <Organization>
+    <Organization_Type>DISTRIBUTOR</Organization_Type>
+    <Organization_Name>
+      <Short_Name>Geom</Short_Name>
+      <Long_Name>Geomatys</Long_Name>
+    </Organization_Name>
+    <Organization_URL>http://www.geomatys.com</Organization_URL>
+    <Personnel>
+      <Role>DATA CENTER CONTACT</Role>
+      <Contact_Person uuid="666-777">
+        <First_Name>pedro</First_Name>
+        <Middle_Name>juan</Middle_Name>
+        <Last_Name>lopez</Last_Name>
+        <Address>
+          <Street_Address>12 rue blip</Street_Address>
+          <City>Montpellier</City>
+          <State_Province>Occitanie</State_Province>
+          <Postal_Code>34000</Postal_Code>
+          <Country>France</Country>
+        </Address>
+        <Phone>
+          <Number>0466441122</Number>
+          <Type>Direct Line</Type>
+        </Phone>
+        <Email>distributor@geomatys.com</Email>
+      </Contact_Person>
+    </Personnel>
+  </Organization>
+  <Distribution>
+    <Distribution_Media>http://link.com</Distribution_Media>
+    <Distribution_Size>3.12</Distribution_Size>
+    <Distribution_Format>binary</Distribution_Format>
+    <Fees>free</Fees>
+  </Distribution>
+  <Distribution>
+    <Distribution_Media>http://link/img</Distribution_Media>
+    <Distribution_Size>6</Distribution_Size>
+    <Distribution_Format>image/png</Distribution_Format>
+    <Fees>10$</Fees>
+  </Distribution>
+  <Multimedia_Sample>
+    <File>http://localhost:8080/quicklook/SCENE_5_083-342_09_04_16_09_38_39_1_J.png</File>
+    <Format>image/png</Format>
+    <Description>quicklook</Description>
+  </Multimedia_Sample>
+  <Summary>
+    <Abstract>some abstract</Abstract>
+    <Purpose>some purpose</Purpose>
+  </Summary>
+  <Related_URL>
+    <URL_Content_Type>
+      <Type>GET DATA</Type>
+    </URL_Content_Type>
+    <Protocol>http</Protocol>
+    <URL>https://gportal.jaxa.jp/</URL>
+    <Title>jaxa</Title>
+    <Description> desc blma</Description>
+  </Related_URL>
+  <Metadata_Association>
+    <Entry_ID>
+      <Short_Name>id-1</Short_Name>
+    </Entry_ID>
+    <Type>Parent</Type>
+  </Metadata_Association>
+  <Metadata_Dates>
+    <Metadata_Creation>2010-12-01T12:00Z</Metadata_Creation>
+  </Metadata_Dates>
+</DIF>

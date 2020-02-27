@@ -46,8 +46,8 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      * {@inheritDoc }
      */
     @Override
-    public ObservationFilter getFilter() {
-        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+    public ObservationFilterReader getFilter() {
+        return null;
     }
 
     /**
@@ -55,14 +55,6 @@ public abstract class AbstractObservationStore extends DataStore implements Obse
      */
     @Override
     public ObservationWriter getWriter() {
-        throw new UnsupportedOperationException("Writing is not supported on this observation store.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ObservationFilter cloneObservationFilter(ObservationFilter toClone) {
-        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+        return null;
     }
 }

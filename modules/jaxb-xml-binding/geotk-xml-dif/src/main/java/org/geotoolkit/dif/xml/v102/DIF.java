@@ -309,7 +309,7 @@ public class DIF {
      */
     public List<DatasetCitationType> getDatasetCitation() {
         if (datasetCitation == null) {
-            datasetCitation = new ArrayList<DatasetCitationType>();
+            datasetCitation = new ArrayList<>();
         }
         return this.datasetCitation;
     }
@@ -483,7 +483,7 @@ public class DIF {
      */
     public List<TemporalCoverageType> getTemporalCoverage() {
         if (temporalCoverage == null) {
-            temporalCoverage = new ArrayList<TemporalCoverageType>();
+            temporalCoverage = new ArrayList<>();
         }
         return this.temporalCoverage;
     }
@@ -772,7 +772,7 @@ public class DIF {
      */
     public List<OrganizationType> getOrganization() {
         if (organization == null) {
-            organization = new ArrayList<OrganizationType>();
+            organization = new ArrayList<>();
         }
         return this.organization;
     }

@@ -30,7 +30,7 @@ public class ChainMarshallerPool {
      private static final MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(JAXBContext.newInstance(Chain.class, StringMap.class), null);
+            instance = new MarshallerPool(JAXBContext.newInstance(Chain.class, StringMap.class, StringMapList.class), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

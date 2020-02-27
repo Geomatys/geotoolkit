@@ -125,6 +125,7 @@
     <module>geotk-xml-mathml</module>
     <module>geotk-xml-providers</module>
     <module>geotk-xml-thw</module>
+    <module>geotk-xml-sts</module>
   </modules>
 
 </project>

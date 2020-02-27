@@ -85,6 +85,16 @@ public class ScienceKeywordsType {
     @XmlAttribute(name = "uuid")
     protected String uuid;
 
+    public ScienceKeywordsType() {
+
+    }
+
+    public ScienceKeywordsType(String category, String topic, String term) {
+        this.category = category;
+        this.topic = topic;
+        this.term = term;
+    }
+
     /**
      * Obtient la valeur de la propriété category.
      *

@@ -21,7 +21,8 @@ import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.sos.xml.ObservationOffering;
-import org.geotoolkit.swes.xml.ObservationTemplate;
+import org.geotoolkit.observation.model.ObservationTemplate;
+import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 
@@ -130,12 +131,10 @@ public interface ObservationWriter {
     /**
      * Record a procedure with its location and parent.
      *
-     * @param procedureID identifier of the procedure.
-     * @param position The GML position of the procedure or @{code null}.
-     * @param parent The parent procedure identifier @{code null}
+     * @param procedure
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void writeProcedure(final String procedureID, final AbstractGeometry position, final String parent, final String type) throws DataStoreException;
+    void writeProcedure(final ExtractionResult.ProcedureTree procedure) throws DataStoreException;
 
     /**
      * Record the location of a sensor.

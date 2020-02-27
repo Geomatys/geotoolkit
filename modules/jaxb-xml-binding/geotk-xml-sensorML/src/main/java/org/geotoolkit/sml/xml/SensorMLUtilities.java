@@ -17,10 +17,12 @@
 
 package org.geotoolkit.sml.xml;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 
 /**
  *
@@ -128,6 +130,29 @@ public class SensorMLUtilities {
             return process.getId();
         }
         return "unknow_identifier";
+    }
+
+    /**
+     * Return the position of a sensor.
+     *
+     * @param sensor
+     * @return
+     */
+    public static AbstractGeometry getSensorPosition(final AbstractSensorML sensor) {
+        if (sensor.getMember().size() == 1) {
+            if (sensor.getMember().get(0).getRealProcess() instanceof AbstractDerivableComponent) {
+                final AbstractDerivableComponent component = (AbstractDerivableComponent) sensor.getMember().get(0).getRealProcess();
+                if (component.getSMLLocation() != null && component.getSMLLocation().getGeometry()!= null) {
+                    return component.getSMLLocation().getGeometry();
+                } else if (component.getPosition() != null && component.getPosition().getPosition() != null &&
+                           component.getPosition().getPosition().getLocation() != null && component.getPosition().getPosition().getLocation().getVector() != null) {
+                    final URI crs = component.getPosition().getPosition().getReferenceFrame();
+                    return component.getPosition().getPosition().getLocation().getVector().getGeometry(crs);
+                }
+            }
+        }
+        LOGGER.warning("there is no sensor position in the specified sensorML");
+        return null;
     }
 
 }

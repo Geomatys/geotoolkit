@@ -73,6 +73,16 @@ public class MetadataAssociationType {
     @XmlElement(name = "Description")
     protected String description;
 
+    public MetadataAssociationType() {
+
+    }
+
+    public MetadataAssociationType(EntryIDType entryID, MetadataAssociationTypeEnum type, String description) {
+        this.entryID = entryID;
+        this.description = description;
+        this.type = type;
+    }
+
     /**
      * Obtient la valeur de la propriété entryID.
      *

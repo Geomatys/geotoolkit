@@ -76,6 +76,25 @@ public class OrgPersonnelType {
     @XmlElement(name = "Contact_Group")
     protected List<ContactGroupType> contactGroup;
 
+    public OrgPersonnelType() {
+
+    }
+
+    public OrgPersonnelType(OrganizationPersonnelRoleEnum role, ContactPersonType contactPerson, ContactGroupType contactGroup) {
+        if (role != null) {
+            this.role = new ArrayList<>();
+            this.role.add(role);
+        }
+        if (contactPerson != null) {
+            this.contactPerson = new ArrayList<>();
+            this.contactPerson.add(contactPerson);
+        }
+        if (contactGroup != null) {
+            this.contactGroup = new ArrayList<>();
+            this.contactGroup.add(contactGroup);
+        }
+    }
+
     /**
      * Gets the value of the role property.
      *

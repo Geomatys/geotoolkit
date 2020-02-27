@@ -79,6 +79,15 @@ public class Geometry {
     })
     protected List<Object> boundingRectangleOrPointOrLine;
 
+    public Geometry() {
+
+    }
+
+    public Geometry(BoundingRectangleType rec) {
+        this.boundingRectangleOrPointOrLine = new ArrayList<>();
+        this.boundingRectangleOrPointOrLine.add(rec);
+    }
+
     /**
      * Obtient la valeur de la propriété coordinateSystem.
      *

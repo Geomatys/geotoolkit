@@ -81,7 +81,7 @@ public interface ObservationStore {
      *
      * @return An Observation Filter.
      */
-    public abstract ObservationFilter getFilter();
+    public abstract ObservationFilterReader getFilter();
 
     /**
      * Return an Observation Writer on the data.
@@ -89,14 +89,6 @@ public interface ObservationStore {
      * @return An Observation Writer.
      */
     public abstract ObservationWriter getWriter();
-
-    /**
-     * Return an Observation Writer on the data.
-     *
-     * @param toClone
-     * @return An Observation Writer.
-     */
-    public abstract ObservationFilter cloneObservationFilter(ObservationFilter toClone);
 
     void close() throws DataStoreException;
 

@@ -441,11 +441,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
                 final List<String> fields = getFieldsFromResult((DataArrayProperty) result);
                 final List<InternalPhenomenon> phenomenons = new ArrayList<>();
                 for (String field : fields) {
-                    phenomenons.add(new InternalPhenomenon(field));
+                    phenomenons.add(new InternalPhenomenon(null, field, null));
                 }
-                return new InternalCompositePhenomenon(observedProperty.getHref(), phenomenons);
+                return new InternalCompositePhenomenon(null, observedProperty.getHref(), null, phenomenons);
             }
-            return new InternalPhenomenon(observedProperty.getHref());
+            return new InternalPhenomenon(null, observedProperty.getHref(), null);
         }
         return null;
     }
@@ -686,19 +686,37 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @XmlRootElement
     public static class InternalPhenomenon implements org.geotoolkit.swe.xml.Phenomenon {
 
+        private final String id;
+
         private final String name;
 
+        private final String description;
+
         public InternalPhenomenon() {
+            this.id = null;
             this.name = null;
+            this.description = null;
         }
 
-        public InternalPhenomenon(final String name) {
+        public InternalPhenomenon(final String id, final String name, final String description) {
+            this.id = id;
             this.name = name;
+            this.description = description;
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override
         public Identifier getName() {
             return new DefaultIdentifier(name);
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
         }
 
         @Override
@@ -712,7 +730,17 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public String toString() {
-            return "[Anonymous Phenomenon] name:" + getName();
+            StringBuilder sb = new StringBuilder("[Anonymous Phenomenon]\n");
+            if (id != null) {
+                sb.append(" id:").append(id).append('\n');
+            }
+            if (name != null) {
+                sb.append(" name:").append(getName()).append('\n');
+            }
+            if (description != null) {
+                sb.append(" description:").append(description).append('\n');
+            }
+            return  sb.toString();
         }
 
         @Override
@@ -726,23 +754,41 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @XmlRootElement
     public static class InternalCompositePhenomenon implements org.geotoolkit.swe.xml.CompositePhenomenon {
 
+        private final String id;
+
         private final String name;
+
+        private final String description;
 
         private final List<InternalPhenomenon> phenomenons;
 
         public InternalCompositePhenomenon() {
+            this.id = null;
             this.name = null;
             this.phenomenons = new ArrayList<>();
+            this.description = null;
         }
 
-        public InternalCompositePhenomenon(final String name, List<InternalPhenomenon> phenomenons) {
+        public InternalCompositePhenomenon(final String id, final String name, final String description, List<InternalPhenomenon> phenomenons) {
+            this.id = id;
             this.name = name;
             this.phenomenons = phenomenons;
+            this.description = description;
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override
         public Identifier getName() {
             return new DefaultIdentifier(name);
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
         }
 
         @Override
@@ -780,7 +826,17 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public String toString() {
-            return "[Anonymous composite Phenomenon] name:" + getName();
+            StringBuilder sb = new StringBuilder("[Anonymous composite Phenomenon]\n");
+            if (id != null) {
+                sb.append(" id:").append(id).append('\n');
+            }
+            if (name != null) {
+                sb.append(" name:").append(getName()).append('\n');
+            }
+            if (description != null) {
+                sb.append(" description:").append(description).append('\n');
+            }
+            return  sb.toString();
         }
 
         @Override

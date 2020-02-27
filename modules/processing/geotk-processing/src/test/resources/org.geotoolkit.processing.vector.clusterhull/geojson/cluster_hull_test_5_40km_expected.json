@@ -1,0 +1,163 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -6.2,
+            46.1
+          ],
+          [
+            -4.1,
+            46.4
+          ]
+        ]
+      },
+      "properties": {
+        "type": "LineString"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -2.4,
+              43.5
+            ],
+            [
+              -4,
+              43.7
+            ],
+            [
+              -1.8,
+              46.4
+            ],
+            [
+              -1.7,
+              45.3
+            ],
+            [
+              -2.4,
+              43.5
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.4,
+            47.5
+          ],
+          [
+            -5.5,
+            47.8
+          ]
+        ]
+      },
+      "properties": {
+        "type": "LineString"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -7.6,
+              43.9
+            ],
+            [
+              -8.6,
+              44.9
+            ],
+            [
+              -3.7,
+              45.5
+            ],
+            [
+              -7.6,
+              43.9
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -7.5,
+              46.5
+            ],
+            [
+              -4.6,
+              47
+            ],
+            [
+              -3.1,
+              46.9
+            ],
+            [
+              -6.1,
+              46.5
+            ],
+            [
+              -7.5,
+              46.5
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.8,
+            47
+          ],
+          [
+            -4,
+            47.6
+          ]
+        ]
+      },
+      "properties": {
+        "type": "LineString"
+      }
+    }
+  ]
+}

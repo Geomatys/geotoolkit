@@ -17,12 +17,14 @@
 package org.geotoolkit.data.om.netcdf;
 
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.ProbeResult;
@@ -86,11 +88,6 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
     }
 
     @Override
-    public NetcdfObservationStore create(ParameterValueGroup params) throws DataStoreException {
-        return new NetcdfObservationStore(params);
-    }
-
-    @Override
     public Collection<String> getSuffix() {
         return Arrays.asList("nc", "cdf");
     }
@@ -105,4 +102,9 @@ public class NetcdfObservationStoreFactory extends AbstractObservationStoreFacto
         return FileFeatureStoreFactory.probe(this, connector, MIME_TYPE);
     }
 
+    @Override
+    public DataStore open(StorageConnector sc) throws DataStoreException {
+        final Path p = sc.getStorageAs(Path.class);
+        return new NetcdfObservationStore(p);
+    }
 }

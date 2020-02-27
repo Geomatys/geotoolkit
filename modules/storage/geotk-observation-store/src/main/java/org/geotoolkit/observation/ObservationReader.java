@@ -19,7 +19,9 @@ package org.geotoolkit.observation;
 
 // J2SE dependencies
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
@@ -27,6 +29,7 @@ import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
+import org.opengis.observation.Process;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalPrimitive;
@@ -127,12 +130,28 @@ public interface ObservationReader {
     Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException;
 
     /**
+     * Return a  phenomenon.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Phenomenon getPhenomenon(final String identifier, final String version) throws DataStoreException;
+
+
+    /**
+     * Return a process.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Process getProcess(final String identifier, final String version) throws DataStoreException;
+
+    /**
      * Return a list of the sensor identifiers measuring the specified phenomenon.
      *
      * @param observedProperty an observed phenomenon.
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
+    @Deprecated
     Collection<String> getProceduresForPhenomenon(final String observedProperty) throws DataStoreException;
 
     /**
@@ -142,6 +161,7 @@ public interface ObservationReader {
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
+    @Deprecated
     Collection<String> getPhenomenonsForProcedure(final String sensorID) throws DataStoreException;
 
     /**
@@ -257,7 +277,7 @@ public interface ObservationReader {
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    List<String> getEventTime() throws DataStoreException;
+    TemporalPrimitive getEventTime(String version) throws DataStoreException;
 
     /**
      * Return the list of supported response Mode
@@ -267,11 +287,11 @@ public interface ObservationReader {
     List<ResponseModeType> getResponseModes() throws DataStoreException;
 
     /**
-     * Return the list of supported response Mode
+     * Return the list of supported response formats for each version
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    List<String> getResponseFormats() throws DataStoreException;
+    Map<String, List<String>> getResponseFormats() throws DataStoreException;
 
     /**
      * Extract the geometry for a procedure.
@@ -282,6 +302,16 @@ public interface ObservationReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     AbstractGeometry getSensorLocation(final String sensorID, final String version) throws DataStoreException;
+
+    /**
+     * Extract the locations through time for a procedure.
+     *
+     * @param sensorID the procedure/sensor identifier
+     * @param version
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    Map<Date, AbstractGeometry> getSensorLocations(final String sensorID, final String version) throws DataStoreException;
 
     /**
      * Return informations about the implementation class.

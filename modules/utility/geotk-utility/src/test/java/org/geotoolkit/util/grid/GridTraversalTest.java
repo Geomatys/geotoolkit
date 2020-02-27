@@ -33,9 +33,52 @@ import org.junit.Test;
  *
  * @author Alexis Manin (Geomatys)
  *
- * @todo test failure has been reported for random seed 1695120540846454768.
  */
 public class GridTraversalTest {
+
+    @Test
+    public void testIncludeStart() {
+        final GridTraversal.Builder builder = new GridTraversal.Builder()
+                .setPolyline(2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7)
+                .setIncludeStart(false);
+
+        double[] firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to second point", new double[]{4, 4}, firstPoint, 1e-9);
+
+        builder.setIncludeStart(true);
+
+        firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to first point", new double[]{3, 3}, firstPoint, 1e-9);
+
+        builder.setPolyline(2, 3, 3, 2, 2);
+
+        firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to first point", new double[]{3, 3}, firstPoint, 1e-9);
+
+        builder.setIncludeStart(false);
+
+        firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to second point", new double[]{2, 2}, firstPoint, 1e-9);
+
+        // Now we check for single dimension move
+        builder.setPolyline(1, 3, 2, 1);
+        firstPoint = getFirstPoint(builder);
+        Assert.assertArrayEquals("Should be equal to second point", new double[]{2}, firstPoint, 1e-9);
+
+        builder.setIncludeStart(true);
+        Assert.assertArrayEquals("Should be equal to first point", new double[]{2}, firstPoint, 1e-9);
+
+        // Check behavior when putting only one point
+        builder.setIncludeStart(false)
+            .setPolyline(1, 1);
+        Assert.assertFalse("No point should be returned", builder.stream().findFirst().isPresent());
+    }
+
+    private static double[] getFirstPoint(final GridTraversal.Builder source) {
+        return source.stream()
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Grid traversal returned no result !"));
+    }
 
     @Test
     public void testVectorCreation() {
@@ -75,37 +118,22 @@ public class GridTraversalTest {
 
     @Test
     public void monkeyTest() {
-        final Random rand = new Random();
-        final long seed = rand.nextLong();
-        rand.setSeed(seed);
-
-        for (int i = 0 ; i < 51 ; i++) {
-            final int dimension = rand.nextInt(5)+2;
-            final int segmentNumber = rand.nextInt(50) + 1;
-            final boolean parallel = rand.nextBoolean();
-            try {
-                final double[] trajectory = Stream.generate(() -> rand.doubles(dimension, -200, 200))
-                        .limit(segmentNumber + 1)
-                        .flatMapToDouble(in -> in)
-                        .toArray();
-                test(trajectory, dimension, true);
-            } catch (AssertionError|RuntimeException e) {
-                String msg = String.format(
-                        "Test failed for seed %d, iteration %d, %d dimensions and %d segments in %s mode",
-                        seed, i, dimension, segmentNumber, parallel? "parallel" : "sequential"
-                );
-                throw new AssertionError(msg, e);
-            }
-        }
+        monkeyTest(new Random().nextLong());
     }
 
-    @Ignore
+    /**
+     * This test purpose is to keep track of past failed random tests, and run them each time to ensure no regression is
+     * introduced. That mostly check corner cases.
+     */
     @Test
-    public void monkeyTestFail() {
-        final Random rand = new Random();
-        final long seed = -1982049157139220700l;
-        rand.setSeed(seed);
+    public void monkeyTestCornerCases() {
+        // Generated test polyline contains 2 segments "almost" colinears, and test protocol was not robust to it.
+        monkeyTest(-1982049157139220700l);
+    }
 
+    private void monkeyTest(final long seed) {
+        final Random rand = new Random();
+        rand.setSeed(seed);
         for (int i = 0 ; i < 51 ; i++) {
             final int dimension = rand.nextInt(5)+2;
             final int segmentNumber = rand.nextInt(50) + 1;
@@ -170,6 +198,7 @@ public class GridTraversalTest {
 
                     try {
                         checkColinearity(segmentVector, previousPt, currentPt);
+                        checkStep(segmentVector, previousPt, currentPt);
                     } catch (AssertionError e) {
                     /* If there's an error, it could be because we're gone to the next segment. However, if it is not
                      * the case, then there's a real error to give back.
@@ -187,7 +216,6 @@ public class GridTraversalTest {
                         }
                     }
 
-                    checkStep(segmentVector, previousPt, currentPt);
                     previousPt = currentPt;
                     idx++;
                 }

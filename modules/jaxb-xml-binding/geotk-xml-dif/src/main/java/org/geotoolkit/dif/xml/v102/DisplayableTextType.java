@@ -52,6 +52,14 @@ public class DisplayableTextType {
     @XmlAttribute(name = "mime_type")
     protected DisplayableTextEnum mimeType;
 
+    public DisplayableTextType() {
+
+    }
+
+    public DisplayableTextType(String value) {
+        this.value = value;
+    }
+
     /**
      * Obtient la valeur de la propriété value.
      *

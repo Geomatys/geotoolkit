@@ -20,8 +20,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
@@ -37,8 +40,10 @@ import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
+import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
+import org.opengis.observation.Process;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalPrimitive;
@@ -86,6 +91,19 @@ public class NetcdfObservationReader implements ObservationReader {
     @Override
     public Collection<Phenomenon> getPhenomenons(final String version) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet in netcdf implementation.");
+    }
+
+    @Override
+    public Phenomenon getPhenomenon(String identifier, String version) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet in netcdf implementation.");
+    }
+
+    @Override
+    public Process getProcess(String identifier, String version) throws DataStoreException {
+        if (existProcedure(identifier)) {
+            return SOSXmlFactory.buildProcess(version, identifier);
+        }
+        return null;
     }
 
     @Override
@@ -141,8 +159,9 @@ public class NetcdfObservationReader implements ObservationReader {
     public SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException {
         try {
             final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null, new HashSet<>());
-            for (org.geotoolkit.sampling.xml.SamplingFeature feature : result.featureOfInterest) {
-                if (feature.getId().equals(samplingFeatureName)) {
+            for (SamplingFeature feature : result.featureOfInterest) {
+                if (feature instanceof org.geotoolkit.sampling.xml.SamplingFeature &&
+                   ((org.geotoolkit.sampling.xml.SamplingFeature)feature).getId().equals(samplingFeatureName)) {
                     return feature;
                 }
             }
@@ -200,7 +219,7 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public List<String> getEventTime() throws DataStoreException {
+    public TemporalPrimitive getEventTime(String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
@@ -210,13 +229,24 @@ public class NetcdfObservationReader implements ObservationReader {
     }
 
     @Override
-    public List<String> getResponseFormats() throws DataStoreException {
-        return Arrays.asList(RESPONSE_FORMAT_V100, RESPONSE_FORMAT_V200);
+    public Map<String, List<String>> getResponseFormats() throws DataStoreException {
+        final Map<String, List<String>> result = new HashMap<>();
+        result.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
+        result.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
+        return result;
     }
 
     @Override
     public AbstractGeometry getSensorLocation(String sensorID, String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this this implementation.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Date, AbstractGeometry> getSensorLocations(String sensorID, String version) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet in this implementation.");
     }
 
     @Override

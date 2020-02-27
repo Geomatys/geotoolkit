@@ -146,6 +146,7 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.vector.differencegeometry.DifferenceGeometryDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.intersection.IntersectionDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.convexhull.ConvexHullDescriptor.INSTANCE,
+                org.geotoolkit.processing.vector.clusterhull.ClusterHullDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.regroup.RegroupDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.affinetransform.AffineTransformDescriptor.INSTANCE,
                 org.geotoolkit.processing.vector.reproject.ReprojectDescriptor.INSTANCE,

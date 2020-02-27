@@ -19,11 +19,16 @@ package org.geotoolkit.data.om.xml;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
+import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V100;
+import static org.geotoolkit.data.om.xml.XmlObservationUtils.RESPONSE_FORMAT_V200;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.observation.ObservationReader;
@@ -31,7 +36,6 @@ import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.xml.*;
 import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
-import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
@@ -39,10 +43,7 @@ import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
-import org.opengis.temporal.Instant;
-import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
-import org.opengis.temporal.TemporalObject;
 import org.opengis.temporal.TemporalPrimitive;
 
 /**
@@ -102,6 +103,38 @@ public class XmlObservationReader implements ObservationReader {
             }
         }
         return phenomenons;
+    }
+
+    @Override
+    public Phenomenon getPhenomenon(String identifier, String version) throws DataStoreException {
+        for (Object xmlObject : xmlObjects) {
+            if (xmlObject instanceof ObservationCollection) {
+                final ObservationCollection collection = (ObservationCollection)xmlObject;
+                for (Observation obs : collection.getMember()) {
+                    final AbstractObservation o = (AbstractObservation)obs;
+                    final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+                    Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
+                    if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
+                        org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
+                        if (identifier.equals(phe.getName().getCode())) {
+                            return ph;
+                        }
+                    }
+                }
+
+            } else if (xmlObject instanceof AbstractObservation) {
+                final AbstractObservation obs = (AbstractObservation)xmlObject;
+                final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
+                Phenomenon ph = XmlObservationUtils.getPhenomenons(phenProp);
+                if (ph instanceof org.geotoolkit.swe.xml.Phenomenon) {
+                    org.geotoolkit.swe.xml.Phenomenon phe = (org.geotoolkit.swe.xml.Phenomenon) ph;
+                    if (identifier.equals(phe.getName().getCode())) {
+                        return ph;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -180,36 +213,24 @@ public class XmlObservationReader implements ObservationReader {
     @Override
     public TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException {
         final ExtractionResult result = new ExtractionResult();
-        result.spatialBound.initBoundary();
         for (Object xmlObject : xmlObjects) {
             if (xmlObject instanceof ObservationCollection) {
                 final ObservationCollection collection = (ObservationCollection)xmlObject;
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation) obs;
-                    if (o.getProcedure().getHref().equals(sensorID)) {
-                        appendTime(obs.getSamplingTime(), result.spatialBound);
+                    if (sensorID.equals(o.getProcedure().getHref())) {
+                        result.spatialBound.addTime(obs.getSamplingTime());
                     }
                 }
 
             } else if (xmlObject instanceof AbstractObservation) {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
-                if (obs.getProcedure().getHref().equals(sensorID)) {
-                    appendTime(obs.getSamplingTime(), result.spatialBound);
+                if (sensorID.equals(obs.getProcedure().getHref())) {
+                    result.spatialBound.addTime(obs.getSamplingTime());
                 }
             }
         }
         return result.spatialBound.getTimeObject("2.0.0");
-    }
-
-    private void appendTime(final TemporalObject time, final GeoSpatialBound spatialBound) {
-        if (time instanceof Instant) {
-            final Instant i = (Instant) time;
-            spatialBound.addDate(i.getDate());
-        } else if (time instanceof Period) {
-            final Period p = (Period) time;
-            spatialBound.addDate(p.getBeginning().getDate());
-            spatialBound.addDate(p.getEnding().getDate());
-        }
     }
 
     @Override
@@ -331,12 +352,17 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
+    public org.opengis.observation.Process getProcess(String identifier, String version) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public String getNewObservationId() throws DataStoreException {
         throw new DataStoreException("Not supported in this implementation.");
     }
 
     @Override
-    public List<String> getEventTime() throws DataStoreException {
+    public TemporalPrimitive getEventTime(String version) throws DataStoreException {
         throw new DataStoreException("Not supported yet in this implementation.");
     }
 
@@ -346,13 +372,24 @@ public class XmlObservationReader implements ObservationReader {
     }
 
     @Override
-    public List<String> getResponseFormats() throws DataStoreException {
-        return Arrays.asList(XmlObservationUtils.RESPONSE_FORMAT_V100, XmlObservationUtils.RESPONSE_FORMAT_V200);
+    public Map<String, List<String>> getResponseFormats() throws DataStoreException {
+        final Map<String, List<String>> result = new HashMap<>();
+        result.put("1.0.0", Arrays.asList(RESPONSE_FORMAT_V100));
+        result.put("2.0.0", Arrays.asList(RESPONSE_FORMAT_V200));
+        return result;
     }
 
     @Override
     public AbstractGeometry getSensorLocation(final String sensorID, final String version) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet in this implementation.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Date, AbstractGeometry> getSensorLocations(String sensorID, String version) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet in this implementation.");
     }
 
     @Override

@@ -1,0 +1,119 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -2.4,
+              43.5
+            ],
+            [
+              -4,
+              43.7
+            ],
+            [
+              -1.8,
+              46.4
+            ],
+            [
+              -1.7,
+              45.3
+            ],
+            [
+              -2.4,
+              43.5
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -7.6,
+              43.9
+            ],
+            [
+              -8.6,
+              44.9
+            ],
+            [
+              -3.7,
+              45.5
+            ],
+            [
+              -7.6,
+              43.9
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -6.2,
+              46.1
+            ],
+            [
+              -7.5,
+              46.5
+            ],
+            [
+              -8.8,
+              47
+            ],
+            [
+              -8.4,
+              47.5
+            ],
+            [
+              -5.5,
+              47.8
+            ],
+            [
+              -4,
+              47.6
+            ],
+            [
+              -3.1,
+              46.9
+            ],
+            [
+              -4.1,
+              46.4
+            ],
+            [
+              -6.2,
+              46.1
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "type": "Polygon"
+      }
+    }
+  ]
+}

@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.opengis.observation.BaseUnit;
+import org.opengis.observation.Measure;
 
 
 /**
@@ -60,7 +62,7 @@ import javax.xml.bind.annotation.XmlValue;
     AreaType.class,
     TimeType.class
 })
-public class MeasureType {
+public class MeasureType implements Measure {
 
     @XmlValue
     private double value;
@@ -80,8 +82,9 @@ public class MeasureType {
      * Gets the value of the value property.
      *
      */
-    public double getValue() {
-        return value;
+    @Override
+    public float getValue() {
+        return (float) value;
     }
 
     /**
@@ -100,7 +103,12 @@ public class MeasureType {
      *     {@link String }
      *
      */
-    public String getUom() {
+    @Override
+    public BaseUnit getUom() {
+        return null; // problem
+    }
+
+    public String getUomStr() {
         return uom;
     }
 

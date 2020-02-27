@@ -72,7 +72,7 @@ public class UnitDefinitionType
      *     {@link StringOrRefType }
      *
      */
-    public StringOrRefType getQuantityType() {
+    public StringOrRefType getQuantityTypeRef() {
         return quantityType;
     }
 
@@ -86,6 +86,13 @@ public class UnitDefinitionType
      */
     public void setQuantityType(StringOrRefType value) {
         this.quantityType = value;
+    }
+
+    public String getQuantityType() {
+        if (quantityType != null) {
+            return quantityType.getHref();
+        }
+        return null;
     }
 
     /**

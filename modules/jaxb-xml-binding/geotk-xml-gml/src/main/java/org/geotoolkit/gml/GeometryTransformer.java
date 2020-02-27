@@ -536,7 +536,7 @@ public class GeometryTransformer implements Supplier<Geometry> {
     }
 
     private Measure asMeasure(final MeasureType in) {
-        return new Measure(in.getValue(), hackUnit(in.getUom()));
+        return new Measure(in.getValue(), hackUnit(in.getUomStr()));
     }
 
     private Measure asMeasure(final org.geotoolkit.gml.xml.v311.MeasureType in) {

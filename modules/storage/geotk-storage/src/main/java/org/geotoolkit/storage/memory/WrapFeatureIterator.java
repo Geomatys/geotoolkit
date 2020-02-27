@@ -21,8 +21,13 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
+import java.util.stream.Stream;
+
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+
+import org.apache.sis.internal.system.Loggers;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.Feature;
@@ -31,11 +36,15 @@ import org.opengis.feature.Feature;
  * Encapsulate FeatureIterator
  * @author Quentin Boileau
  * @module
+ * @deprecated Please restrict usage. It's a bridge object between obsolete and SIS Feature API.
  */
+@Deprecated
 public abstract class WrapFeatureIterator implements FeatureIterator {
 
     private final Iterator<? extends Feature> originalFI;
     private Feature nextFeature;
+
+    private AutoCloseable closeOp;
 
     /**
      * Connect to the original FeatureIterator
@@ -44,6 +53,9 @@ public abstract class WrapFeatureIterator implements FeatureIterator {
     public WrapFeatureIterator(final Iterator<? extends Feature> originalFI) {
         this.originalFI = originalFI;
         nextFeature = null;
+        if (originalFI instanceof AutoCloseable) {
+            onClose((AutoCloseable)originalFI);
+        }
     }
 
     /**
@@ -68,12 +80,29 @@ public abstract class WrapFeatureIterator implements FeatureIterator {
      */
     @Override
     public void close() {
-        if (originalFI instanceof Closeable) {
-            try {
-                ((Closeable) originalFI).close();
-            } catch (IOException ex) {
-                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, null, ex);
-            }
+        if (closeOp == null) return;
+        try {
+            closeOp.close();
+        } catch (Exception e) {
+            Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, "Error while closing resources", e);
+        }
+    }
+
+    /**
+     * Same behavior as {@link Stream#onClose(Runnable)}. Any error on closing will be logged, but do not cause failure.
+     * @param toCloseAlso A resource to close when this iterator is. Note that it stacks upon any previous registered
+     *                    resource. It does not replace it/them.
+     */
+    public void onClose(final AutoCloseable toCloseAlso) {
+        if (closeOp == null) closeOp = toCloseAlso;
+        else {
+            final AutoCloseable currentCloseOp = closeOp;
+            closeOp = () -> {
+                try (
+                        final AutoCloseable newResourceToClose = toCloseAlso;
+                        final AutoCloseable previouscloseOp = currentCloseOp;
+                ) {}
+            };
         }
     }
 

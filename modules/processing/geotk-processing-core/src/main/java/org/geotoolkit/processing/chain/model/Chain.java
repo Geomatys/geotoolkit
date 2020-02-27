@@ -483,7 +483,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     public static synchronized MarshallerPool getPoolInstance() throws JAXBException{
         if(POOL == null){
-            POOL = new MarshallerPool(JAXBContext.newInstance(Chain.class, StringMap.class), null);
+            POOL = new MarshallerPool(JAXBContext.newInstance(Chain.class, StringMap.class, StringMapList.class), null);
         }
         return POOL;
     }

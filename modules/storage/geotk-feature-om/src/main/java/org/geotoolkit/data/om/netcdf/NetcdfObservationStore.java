@@ -42,7 +42,7 @@ import org.geotoolkit.data.om.OMFeatureTypes;
 import static org.geotoolkit.data.om.netcdf.NetcdfObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.observation.ObservationFilter;
+import org.geotoolkit.observation.ObservationFilterReader;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.observation.ObservationWriter;
@@ -225,8 +225,8 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
      * {@inheritDoc }
      */
     @Override
-    public ObservationFilter getFilter() {
-        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+    public ObservationFilterReader getFilter() {
+        return null;
     }
 
     /**
@@ -234,15 +234,7 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
      */
     @Override
     public ObservationWriter getWriter() {
-        throw new UnsupportedOperationException("Writing is not supported on this observation store.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ObservationFilter cloneObservationFilter(ObservationFilter toClone) {
-        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+        return null;
     }
 
     private final class FeatureView extends AbstractFeatureSet implements StoreResource {

@@ -256,8 +256,13 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         }
 
         // make sure to write the last feature...
-        if (currentFeature != null) {
-            write();
+        FeatureStoreRuntimeException wEx = null;
+        try{
+            if (currentFeature != null) {
+                write();
+            }
+        } catch (Throwable ex) {
+            wEx = new FeatureStoreRuntimeException(ex);
         }
 
         // if the attribute reader is here, that means we may have some
@@ -289,20 +294,29 @@ public class ShapefileFeatureWriter implements FeatureWriter {
                     attReader.dbf.transferTo(dbfWriter);
                 }
             }
-        }catch(IOException ex){
-            throw new FeatureStoreRuntimeException(ex);
-        }catch(DataStoreException ex){
-            throw new FeatureStoreRuntimeException(ex);
+        } catch(IOException | DataStoreException ex) {
+            if (wEx == null) {
+                wEx = new FeatureStoreRuntimeException(ex);
+            } else {
+                wEx.addSuppressed(ex);
+            }
         }
 
         doClose();
         try {
             clean();
         } catch (IOException ex) {
-            throw new FeatureStoreRuntimeException(ex);
+            if (wEx == null) {
+                wEx = new FeatureStoreRuntimeException(ex);
+            } else {
+                wEx.addSuppressed(ex);
+            }
         }
 
         fireDataChangeEvents();
+        if (wEx != null) {
+            throw wEx;
+        }
     }
 
     private void fireDataChangeEvents(){

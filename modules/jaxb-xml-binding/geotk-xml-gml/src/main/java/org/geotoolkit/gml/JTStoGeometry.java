@@ -402,6 +402,7 @@ public final class JTStoGeometry {
         final org.geotoolkit.gml.xml.Point gmlPoint = buildPoint(gmlVersion, null, coordinateToDirectPosition(gmlVersion, jtsPoint.getCoordinate(), crs));
 
         gmlPoint.setSrsName(getSRS(crs));
+        gmlPoint.setSrsDimension(getSRSDimension(crs));
         return gmlPoint;
     }
 
@@ -483,5 +484,12 @@ public final class JTStoGeometry {
         }
 
         return srs;
+    }
+
+    private static Integer getSRSDimension(final CoordinateReferenceSystem crs) throws FactoryException {
+        if (crs != null && crs.getCoordinateSystem() != null) {
+            return crs.getCoordinateSystem().getDimension();
+        }
+        return null;
     }
 }

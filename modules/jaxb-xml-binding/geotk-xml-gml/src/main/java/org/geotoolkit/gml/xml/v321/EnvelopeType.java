@@ -194,6 +194,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
                            srsName = "urn:ogc:def:crs:EPSG::unknow";
                         }
                     }
+                    srsDimension = crs.getCoordinateSystem().getDimension();
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.SEVERE, "Factory exception while creating GML envelope from opengis one", ex);
                 }
@@ -313,6 +314,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link String }
      *
      */
+    @Override
     public void setSrsName(String value) {
         this.srsName = value;
     }
@@ -359,6 +361,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return this.axisLabels;
     }
 
+    @Override
     public void setAxisLabels(final List<String> axisLabels) {
         this.axisLabels = axisLabels;
     }

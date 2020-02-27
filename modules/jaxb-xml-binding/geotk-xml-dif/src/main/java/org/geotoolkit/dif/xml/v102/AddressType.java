@@ -81,6 +81,21 @@ public class AddressType {
     @XmlElement(name = "Country")
     protected String country;
 
+    public AddressType() {
+
+    }
+
+    public AddressType(String streetAddress, String city, String stateProvince, String postalCode, String country) {
+        if (streetAddress != null) {
+            this.streetAddress = new ArrayList<>();
+            this.streetAddress.add(streetAddress);
+        }
+        this.city = city;
+        this.stateProvince = stateProvince;
+        this.postalCode = postalCode;
+        this.country = country;
+    }
+
     /**
      * Gets the value of the streetAddress property.
      *
