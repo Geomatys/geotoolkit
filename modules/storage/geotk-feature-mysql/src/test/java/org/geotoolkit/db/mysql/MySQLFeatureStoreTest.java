@@ -67,7 +67,7 @@ import org.opengis.util.GenericName;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
-import static org.geotoolkit.db.mysql.MySQLFeatureStoreFactory.*;
+import static org.geotoolkit.db.mysql.MySQLProvider.*;
 import org.geotoolkit.storage.DataStores;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.feature.query.SQLQuery;
@@ -201,7 +201,7 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
 
     }
 
-    private MySQLFeatureStore store;
+    private MySQLStore store;
 
     public MySQLFeatureStoreTest(){
     }
@@ -241,8 +241,8 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         }
 
         //open in complex type to delete all types
-        params.getOrCreate(MySQLFeatureStoreFactory.SIMPLETYPE).setValue(false);
-        store = (MySQLFeatureStore) DataStores.open(params);
+        params.getOrCreate(MySQLProvider.SIMPLETYPE).setValue(false);
+        store = (MySQLStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n.toString());
             vc.dropVersioning();
@@ -252,8 +252,8 @@ public class MySQLFeatureStoreTest extends org.geotoolkit.test.TestBase {
         store.close();
 
         //reopen the way it was asked
-        params.getOrCreate(MySQLFeatureStoreFactory.SIMPLETYPE).setValue(simpleType);
-        store = (MySQLFeatureStore) DataStores.open(params);
+        params.getOrCreate(MySQLProvider.SIMPLETYPE).setValue(simpleType);
+        store = (MySQLStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }
 

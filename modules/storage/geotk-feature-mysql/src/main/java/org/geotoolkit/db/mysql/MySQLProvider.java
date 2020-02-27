@@ -20,7 +20,7 @@ import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
+import org.geotoolkit.db.AbstractJDBCProvider;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -36,16 +36,14 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadata(
-        formatName = MySQLFeatureStoreFactory.NAME,
+        formatName = MySQLProvider.NAME,
         capabilities = {Capability.READ, Capability.WRITE},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(resourceTypes = ResourceType.VECTOR)
-public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
+public class MySQLProvider extends AbstractJDBCProvider {
 
     /** factory identification **/
     public static final String NAME = "mysql";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * Parameter for database port
@@ -54,7 +52,7 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName(NAME).addName("MySQLParameters").createGroup(
-                IDENTIFIER,HOST,PORT,DATABASE,TABLE,USER,PASSWORD,
+                HOST,PORT,DATABASE,TABLE,USER,PASSWORD,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,SIMPLETYPE);
 
     @Override
@@ -99,9 +97,9 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
     }
 
     @Override
-    protected MySQLFeatureStore toFeatureStore(ParameterValueGroup params, String factoryId) {
+    protected MySQLStore toFeatureStore(ParameterValueGroup params, String factoryId) {
         //add versioning support
-        return new MySQLFeatureStore(params, factoryId);
+        return new MySQLStore(params, factoryId);
     }
 
 }

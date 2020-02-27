@@ -63,7 +63,7 @@ import org.junit.Test;
 
 import org.opengis.util.GenericName;
 
-import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
+import static org.geotoolkit.db.postgres.PostgresProvider.*;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import static org.junit.Assert.*;
 import org.geotoolkit.storage.DataStores;
@@ -223,7 +223,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
 
     }
 
-    private PostgresFeatureStore store;
+    private PostgresStore store;
 
     public PostgresComplexTypeTest(){
     }
@@ -263,8 +263,8 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         }
 
         //open in complex type to delete all types
-        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(false);
-        store = (PostgresFeatureStore) DataStores.open(params);
+        params.getOrCreate(PostgresProvider.SIMPLETYPE).setValue(false);
+        store = (PostgresStore) DataStores.open(params);
         while(!store.getNames().isEmpty()){ // we get the list each type because relations may delete multiple types each time
             final GenericName n = store.getNames().iterator().next();
             final VersionControl vc = store.getVersioning(n.toString());
@@ -275,8 +275,8 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         store.close();
 
         //reopen the way it was asked
-        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(simpleType);
-        store = (PostgresFeatureStore) DataStores.open(params);
+        params.getOrCreate(PostgresProvider.SIMPLETYPE).setValue(simpleType);
+        store = (PostgresStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }
 

@@ -12,7 +12,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
-import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
+import org.geotoolkit.db.postgres.PostgresProvider;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -75,7 +75,7 @@ public class FeatureStoreReadingDemo {
 
         //find out how to describe things
         System.out.println(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
-        System.out.println(PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(PostgresProvider.PARAMETERS_DESCRIPTOR);
 
         final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();

@@ -9,7 +9,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.db.postgres.PostgresFeatureStore;
+import org.geotoolkit.db.postgres.PostgresStore;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -35,7 +35,7 @@ public class PostgisRasterDemo {
         final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
 
         //connect to postgres feature store
-        final FeatureStore store = new PostgresFeatureStore("localhost", 5432, "table", "public", "user", "password");
+        final FeatureStore store = new PostgresStore("localhost", 5432, "table", "public", "user", "password");
 
         //create a feature type with a coverage attribute type
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

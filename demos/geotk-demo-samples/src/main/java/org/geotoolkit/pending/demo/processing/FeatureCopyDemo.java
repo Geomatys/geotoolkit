@@ -3,7 +3,7 @@ package org.geotoolkit.pending.demo.processing;
 
 import java.net.URI;
 import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
+import org.geotoolkit.db.postgres.PostgresProvider;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.datastore.copy.CopyDescriptor;
@@ -22,7 +22,7 @@ public class FeatureCopyDemo {
 
         final FeatureStore source = (FeatureStore) DataStores.open(shpParams);
 
-        final ParameterValueGroup pgParams = PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        final ParameterValueGroup pgParams = PostgresProvider.PARAMETERS_DESCRIPTOR.createValue();
         pgParams.parameter("host").setValue("host");
         pgParams.parameter("port").setValue(5432);
         pgParams.parameter("database").setValue("database");

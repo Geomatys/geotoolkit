@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
+public class PostgresStore extends DefaultJDBCFeatureStore{
 
     private static final QueryCapabilities PG_CAPA = new DefaultQueryCapabilities(false, true, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
 
@@ -48,24 +48,24 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
     private Boolean hasHSFunctions;
     private PostgresQueryBuilder querybuilder = null;
 
-    public PostgresFeatureStore(String host, int port, String database, String schema, String user, String password) throws DataStoreException {
-        super(toParameters(host,port,database,schema,user,password), PostgresFeatureStoreFactory.NAME);
-        ((PostgresFeatureStoreFactory)getProvider()).prepareStore(this, parameters);
+    public PostgresStore(String host, int port, String database, String schema, String user, String password) throws DataStoreException {
+        super(toParameters(host,port,database,schema,user,password), PostgresProvider.NAME);
+        ((PostgresProvider)getProvider()).prepareStore(this, parameters);
     }
 
-    public PostgresFeatureStore(ParameterValueGroup params, String factoryId) {
+    public PostgresStore(ParameterValueGroup params, String factoryId) {
         super(params, factoryId);
     }
 
     private static ParameterValueGroup toParameters(String host, int port,
             String database, String schema, String user, String password){
-        final Parameters params = Parameters.castOrWrap(PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(PostgresFeatureStoreFactory.HOST).setValue(host);
-        params.getOrCreate(PostgresFeatureStoreFactory.PORT).setValue(port);
-        params.getOrCreate(PostgresFeatureStoreFactory.DATABASE).setValue(database);
-        params.getOrCreate(PostgresFeatureStoreFactory.SCHEMA).setValue(schema);
-        params.getOrCreate(PostgresFeatureStoreFactory.USER).setValue(user);
-        params.getOrCreate(PostgresFeatureStoreFactory.PASSWORD).setValue(password);
+        final Parameters params = Parameters.castOrWrap(PostgresProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(PostgresProvider.HOST).setValue(host);
+        params.getOrCreate(PostgresProvider.PORT).setValue(port);
+        params.getOrCreate(PostgresProvider.DATABASE).setValue(database);
+        params.getOrCreate(PostgresProvider.SCHEMA).setValue(schema);
+        params.getOrCreate(PostgresProvider.USER).setValue(user);
+        params.getOrCreate(PostgresProvider.PASSWORD).setValue(password);
         return params;
     }
 
@@ -136,7 +136,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
         try{
             cnx = getDataSource().getConnection();
             final ScriptRunner scriptRunner = new ScriptRunner(cnx);
-            scriptRunner.run(PostgresFeatureStore.class.getResourceAsStream("/org/geotoolkit/db/postgres/HS_Functions.sql"));
+            scriptRunner.run(PostgresStore.class.getResourceAsStream("/org/geotoolkit/db/postgres/HS_Functions.sql"));
         }catch(IOException ex){
             throw new VersioningException(ex.getMessage(),ex);
         }catch(SQLException ex){
@@ -157,7 +157,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
         try{
             cnx = getDataSource().getConnection();
             final ScriptRunner scriptRunner = new ScriptRunner(cnx);
-            scriptRunner.run(PostgresFeatureStore.class.getResourceAsStream("/org/geotoolkit/db/postgres/HS_DropFunctions.sql"));
+            scriptRunner.run(PostgresStore.class.getResourceAsStream("/org/geotoolkit/db/postgres/HS_DropFunctions.sql"));
         }catch(IOException ex){
             throw new VersioningException(ex.getMessage(),ex);
         }catch(SQLException ex){

@@ -20,7 +20,7 @@ import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
+import org.geotoolkit.db.AbstractJDBCProvider;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadata(
-        formatName = PostgresFeatureStoreFactory.NAME,
+        formatName = PostgresProvider.NAME,
         capabilities = {Capability.READ, Capability.WRITE},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
@@ -56,12 +56,10 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
+public class PostgresProvider extends AbstractJDBCProvider{
 
     /** factory identification **/
     public static final String NAME = "postgresql";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * Parameter for loose bbox filter.
@@ -81,7 +79,7 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName(NAME).addName("PostgresParameters").createGroup(
-                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,
+                HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,SIMPLETYPE);
 
     @Override
@@ -117,7 +115,7 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
     @Override
     protected DefaultJDBCFeatureStore toFeatureStore(ParameterValueGroup params, String factoryId) {
         //add versioning support
-        return new PostgresFeatureStore(params, factoryId);
+        return new PostgresStore(params, factoryId);
     }
 
 }

@@ -39,7 +39,7 @@ public class PostgresFeatureStoreFactoryTest extends org.geotoolkit.test.TestBas
         final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof PostgresFeatureStoreFactory){
+            if(ite.next() instanceof PostgresProvider){
                 found = true;
             }
         }

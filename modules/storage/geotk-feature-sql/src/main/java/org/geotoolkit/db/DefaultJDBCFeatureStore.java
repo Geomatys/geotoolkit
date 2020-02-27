@@ -118,12 +118,12 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         super(params);
         this.factoryId = factoryId;
 
-        fetchSize = parameters.getValue(AbstractJDBCFeatureStoreFactory.FETCHSIZE);
-        final boolean simpleTypes = parameters.getValue(AbstractJDBCFeatureStoreFactory.SIMPLETYPE);
+        fetchSize = parameters.getValue(AbstractJDBCProvider.FETCHSIZE);
+        final boolean simpleTypes = parameters.getValue(AbstractJDBCProvider.SIMPLETYPE);
         dbmodel = new DataBaseModel(this, simpleTypes);
 
         try{
-            baseSchema = parameters.getValue(AbstractJDBCFeatureStoreFactory.SCHEMA);
+            baseSchema = parameters.getValue(AbstractJDBCProvider.SCHEMA);
             if (baseSchema != null && baseSchema.isEmpty()) {
                 baseSchema = null;
             }

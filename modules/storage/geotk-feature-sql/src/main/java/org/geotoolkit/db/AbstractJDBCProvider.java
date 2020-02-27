@@ -26,21 +26,25 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.jdbc.DBCPDataSource;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.parameter.Parameters;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
- * Abstract FeatureStoreFactory for databases.
+ * Abstract JDBC provider for databases.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractJDBCFeatureStoreFactory extends DataStoreFactory {
+public abstract class AbstractJDBCProvider extends DataStoreProvider {
 
     /** parameter for database host */
     public static final ParameterDescriptor<String> HOST = new ParameterBuilder()
@@ -171,10 +175,15 @@ public abstract class AbstractJDBCFeatureStoreFactory extends DataStoreFactory {
     }
 
     @Override
-    public boolean canProcess(final ParameterValueGroup params) {
-        final boolean valid = super.canProcess(params);
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        return new ProbeResult(false, null, null);
+    }
 
-        if(!valid){
+    public boolean canProcess(final ParameterValueGroup params) {
+        final ConformanceResult result = Parameters.isValid(params, getOpenParameters());
+        final boolean valid =(result != null) && Boolean.TRUE.equals(result.pass());
+
+        if (!valid){
             //check if the datasource is set
             try{
                 final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().toString()).getValue();
@@ -191,8 +200,15 @@ public abstract class AbstractJDBCFeatureStoreFactory extends DataStoreFactory {
     }
 
     @Override
+    public DataStore open(StorageConnector sc) throws DataStoreException {
+        throw new DataStoreException("Unsupported input");
+    }
+
+    @Override
     public JDBCFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
-        ensureCanProcess(params);
+        if (!canProcess(params)) {
+            throw new DataStoreException("Parameter values not supported by this factory.");
+        }
 
         final DefaultJDBCFeatureStore featureStore = toFeatureStore(params, getOpenParameters().getName().getCode());
         prepareStore(featureStore, params);
@@ -233,7 +249,6 @@ public abstract class AbstractJDBCFeatureStoreFactory extends DataStoreFactory {
      * @return
      * @throws DataStoreException
      */
-    @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
 
         JDBCFeatureStore store = null;

@@ -21,9 +21,9 @@ import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
-import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.DATABASE;
-import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.HOST;
+import org.geotoolkit.db.AbstractJDBCProvider;
+import static org.geotoolkit.db.AbstractJDBCProvider.DATABASE;
+import static org.geotoolkit.db.AbstractJDBCProvider.HOST;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -45,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 @StoreMetadata(
-        formatName = OracleFeatureStoreFactory.NAME,
+        formatName = OracleProvider.NAME,
         capabilities = {Capability.READ, Capability.WRITE},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
@@ -57,12 +57,10 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class OracleFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
+public class OracleProvider extends AbstractJDBCProvider{
 
     /** factory identification **/
     public static final String NAME = "oracle";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     /**
      * Parameter for database port.
@@ -71,7 +69,7 @@ public class OracleFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName(NAME).addName("OracleParameters").createGroup(
-                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,
+                HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,SIMPLETYPE);
 
     @Override
@@ -106,7 +104,7 @@ public class OracleFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
 
     @Override
     protected DefaultJDBCFeatureStore toFeatureStore(ParameterValueGroup params, String factoryId) {
-        return new OracleFeatureStore(params, factoryId);
+        return new OracleStore(params, factoryId);
     }
 
     protected String getJDBCUrl(final ParameterValueGroup params) throws IOException {

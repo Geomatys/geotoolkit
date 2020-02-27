@@ -36,7 +36,7 @@ public class MySQLFeatureStoreFactoryTest extends org.geotoolkit.test.TestBase {
     public void testFactory() {
         boolean found = false;
         for (DataStoreProvider provider : DataStores.providers()){
-            if (provider instanceof MySQLFeatureStoreFactory) {
+            if (provider instanceof MySQLProvider) {
                 found = true;
             }
         }

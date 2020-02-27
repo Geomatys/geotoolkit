@@ -23,9 +23,9 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MySQLFeatureStore extends DefaultJDBCFeatureStore{
+public class MySQLStore extends DefaultJDBCFeatureStore{
 
-    public MySQLFeatureStore(ParameterValueGroup params, String factoryId) {
+    public MySQLStore(ParameterValueGroup params, String factoryId) {
         super(params, factoryId);
     }
 

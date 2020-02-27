@@ -26,26 +26,26 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class OracleFeatureStore extends DefaultJDBCFeatureStore {
+public class OracleStore extends DefaultJDBCFeatureStore {
 
-    public OracleFeatureStore(String host, int port, String database, String schema, String user, String password) throws DataStoreException {
-        super(toParameters(host,port,database,schema,user,password), OracleFeatureStoreFactory.NAME);
-        ((OracleFeatureStoreFactory)getProvider()).prepareStore(this, parameters);
+    public OracleStore(String host, int port, String database, String schema, String user, String password) throws DataStoreException {
+        super(toParameters(host,port,database,schema,user,password), OracleProvider.NAME);
+        ((OracleProvider)getProvider()).prepareStore(this, parameters);
     }
 
-    public OracleFeatureStore(ParameterValueGroup params, String factoryId) {
+    public OracleStore(ParameterValueGroup params, String factoryId) {
         super(params, factoryId);
     }
 
     private static ParameterValueGroup toParameters(String host, int port,
             String database, String schema, String user, String password){
-        final Parameters params = Parameters.castOrWrap(OracleFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(OracleFeatureStoreFactory.HOST).setValue(host);
-        params.getOrCreate(OracleFeatureStoreFactory.PORT).setValue(port);
-        params.getOrCreate(OracleFeatureStoreFactory.DATABASE).setValue(database);
-        params.getOrCreate(OracleFeatureStoreFactory.SCHEMA).setValue(schema);
-        params.getOrCreate(OracleFeatureStoreFactory.USER).setValue(user);
-        params.getOrCreate(OracleFeatureStoreFactory.PASSWORD).setValue(password);
+        final Parameters params = Parameters.castOrWrap(OracleProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(OracleProvider.HOST).setValue(host);
+        params.getOrCreate(OracleProvider.PORT).setValue(port);
+        params.getOrCreate(OracleProvider.DATABASE).setValue(database);
+        params.getOrCreate(OracleProvider.SCHEMA).setValue(schema);
+        params.getOrCreate(OracleProvider.USER).setValue(user);
+        params.getOrCreate(OracleProvider.PASSWORD).setValue(password);
         return params;
     }
 

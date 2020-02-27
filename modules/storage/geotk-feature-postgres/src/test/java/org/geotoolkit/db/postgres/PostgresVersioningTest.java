@@ -37,7 +37,7 @@ import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
-import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
+import static org.geotoolkit.db.postgres.PostgresProvider.*;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
@@ -80,7 +80,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
     }
 
-    private PostgresFeatureStore store;
+    private PostgresStore store;
 
     public PostgresVersioningTest(){
     }
@@ -120,8 +120,8 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //open in complex type to delete all types
-        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(false);
-        store = (PostgresFeatureStore) DataStores.open(params);
+        params.getOrCreate(PostgresProvider.SIMPLETYPE).setValue(false);
+        store = (PostgresStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n.toString());
             vc.dropVersioning();
@@ -131,8 +131,8 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         store.close();
 
         //reopen the way it was asked
-        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(simpleType);
-        store = (PostgresFeatureStore) DataStores.open(params);
+        params.getOrCreate(PostgresProvider.SIMPLETYPE).setValue(simpleType);
+        store = (PostgresStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
 
         //delete historisation functions, he must create them himself
@@ -1051,10 +1051,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         // ------------------- initialize public2 schema --------------------
         /// creation 2eme table
-        PostgresFeatureStore store2;
+        PostgresStore store2;
         final ParameterValueGroup params2  = params.clone();
         params2.parameter("schema").setValue("public2");
-        store2 = (PostgresFeatureStore) DataStores.open(params2);
+        store2 = (PostgresStore) DataStores.open(params2);
 
         //-------------- create schema in public2 schema --------------------
         try {

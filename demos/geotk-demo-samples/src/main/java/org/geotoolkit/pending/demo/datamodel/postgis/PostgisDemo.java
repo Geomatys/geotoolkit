@@ -3,7 +3,7 @@ package org.geotoolkit.pending.demo.datamodel.postgis;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
+import org.geotoolkit.db.postgres.PostgresProvider;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -19,14 +19,14 @@ public class PostgisDemo {
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
 
-        System.out.println(PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(PostgresProvider.PARAMETERS_DESCRIPTOR);
 
-        final Parameters parameters = Parameters.castOrWrap(PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        parameters.getOrCreate(PostgresFeatureStoreFactory.HOST).setValue("hote");
-        parameters.getOrCreate(PostgresFeatureStoreFactory.PORT).setValue(5432);
-        parameters.getOrCreate(PostgresFeatureStoreFactory.DATABASE).setValue("base");
-        parameters.getOrCreate(PostgresFeatureStoreFactory.USER).setValue("user");
-        parameters.getOrCreate(PostgresFeatureStoreFactory.PASSWORD).setValue("secret");
+        final Parameters parameters = Parameters.castOrWrap(PostgresProvider.PARAMETERS_DESCRIPTOR.createValue());
+        parameters.getOrCreate(PostgresProvider.HOST).setValue("hote");
+        parameters.getOrCreate(PostgresProvider.PORT).setValue(5432);
+        parameters.getOrCreate(PostgresProvider.DATABASE).setValue("base");
+        parameters.getOrCreate(PostgresProvider.USER).setValue("user");
+        parameters.getOrCreate(PostgresProvider.PASSWORD).setValue("secret");
 
         final FeatureStore store = (FeatureStore) DataStores.open(parameters);
 
