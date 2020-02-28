@@ -19,22 +19,33 @@ package org.geotoolkit.data.shapefile;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
+import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.nio.PosixPathMatcher;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.AbstractFolderFeatureStoreFactory;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -55,10 +66,41 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
+public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
+
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
 
     /** factory identification **/
     public static final String NAME = derivateName(ShapefileFeatureStoreFactory.NAME);
+
+    /**
+     * url to the folder.
+     */
+    public static final ParameterDescriptor<URI> FOLDER_PATH = new ParameterBuilder()
+            .addName("path")
+            .addName(org.geotoolkit.storage.Bundle.formatInternational(org.geotoolkit.storage.Bundle.Keys.paramPathAlias))
+            .setRemarks(org.geotoolkit.storage.Bundle.formatInternational(org.geotoolkit.storage.Bundle.Keys.paramPathRemarks))
+            .setRequired(true)
+            .create(URI.class, null);
+
+    /**
+     * recursively search folder.
+     */
+    public static final ParameterDescriptor<Boolean> RECURSIVE = new ParameterBuilder()
+            .addName("recursive")
+            .addName(org.geotoolkit.storage.Bundle.formatInternational(org.geotoolkit.storage.Bundle.Keys.recursive))
+            .setRemarks(org.geotoolkit.storage.Bundle.formatInternational(org.geotoolkit.storage.Bundle.Keys.recursive_remarks))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.TRUE);
+
+    public static final ParameterDescriptor<Boolean> EMPTY_DIRECTORY = new ParameterBuilder()
+            .addName("emptyDirectory")
+            .addName(org.geotoolkit.storage.Bundle.formatInternational(org.geotoolkit.storage.Bundle.Keys.emptyDirectory))
+            .setRemarks(org.geotoolkit.storage.Bundle.formatInternational(org.geotoolkit.storage.Bundle.Keys.emptyDirectory_remarks))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
+
+    private final ParameterDescriptorGroup paramDesc;
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
@@ -66,7 +108,83 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
             derivateDescriptor(NAME,ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
     public ShapefileFolderFeatureStoreFactory(){
-        super(PARAMETERS_DESCRIPTOR);
+        paramDesc = PARAMETERS_DESCRIPTOR;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ParameterDescriptorGroup getOpenParameters() {
+        return paramDesc;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DataStore open(final ParameterValueGroup params) throws DataStoreException {
+        ensureCanProcess(params);
+        return new DefaultFolderFeatureStore(params,this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        //we can open an empty featurestore of this type
+        //the open featurestore will always work, it will just be empty if there are no files in it.
+        return open(params);
+    }
+
+    @Override
+    public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
+        //always false
+        return ProbeResult.UNSUPPORTED_STORAGE;
+    }
+
+    /**
+     * Derivate a folder factory name from original single file factory.
+     */
+    protected static String derivateName(final String name){
+        return name+"-folder";
+    }
+
+    /**
+     * Create a Folder FeatureStore descriptor group based on the single file factory
+     * parameters.
+     *
+     * @param name factory name
+     * @param sd single file factory parameters.
+     * @return ParameterDescriptorGroup
+     */
+    protected static ParameterDescriptorGroup derivateDescriptor(
+            final String name, final ParameterDescriptorGroup sd){
+
+        final List<GeneralParameterDescriptor> params = new ArrayList<>(sd.descriptors());
+        for(int i=0;i<params.size();i++){
+            if(params.get(i).getName().getCode().equals(DataStoreFactory.IDENTIFIER.getName().getCode())){
+                params.remove(i);
+                break;
+            }
+        }
+
+        final ParameterDescriptor<String> identifierParam = createFixedIdentifier(name);
+        params.remove(ShapefileFeatureStoreFactory.PATH);
+        params.add(0, identifierParam);
+        params.add(1, FOLDER_PATH);
+        params.add(2, RECURSIVE);
+        params.add(3, EMPTY_DIRECTORY);
+
+        final ParameterBuilder pb = new ParameterBuilder();
+        pb.addName(name);
+        //old name as alias for backward compatibility
+        for (String singleName : IdentifiedObjects.getNames(sd, null)) {
+            pb.addName(singleName+"Folder");
+        }
+
+        return pb.createGroup(params.toArray(new GeneralParameterDescriptor[params.size()]));
     }
 
     @Override
@@ -74,7 +192,6 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
         return NAME;
     }
 
-    @Override
     public ShapefileFeatureStoreFactory getSingleFileFactory() {
         return (ShapefileFeatureStoreFactory) DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
     }
@@ -92,7 +209,21 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
      */
     @Override
     public boolean canProcess(final ParameterValueGroup params) {
-        final boolean valid = super.canProcess(params);
+        boolean valid;
+        {
+            valid = super.canProcess(params);
+            if (valid) {
+                final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
+                if(!(obj instanceof URI)){
+                    return false;
+                }
+
+                final URI path = (URI)obj;
+                Path pathFile = Paths.get(path);
+                valid = Files.isDirectory(pathFile);
+            }
+        }
+
         if (!valid) {
             return false;
         }

@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
@@ -33,15 +34,17 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -78,7 +81,7 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
+public class ShapefileFeatureStoreFactory extends DataStoreFactory implements FileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "shapefile";
@@ -89,6 +92,17 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
 
     public static final String MIME_TYPE = "application/x-shapefile";
+
+    /**
+     * url to the file.
+     */
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
+            .addName("path")
+            .addName(org.geotoolkit.storage.Bundle.formatInternational(org.geotoolkit.storage.Bundle.Keys.paramPathAlias))
+            .addName(LOCATION)
+            .setRemarks(org.geotoolkit.storage.Bundle.formatInternational(org.geotoolkit.storage.Bundle.Keys.paramPathRemarks))
+            .setRequired(true)
+            .create(URI.class, null);
 
     /**
      * Optional - enable/disable the use of memory-mapped io
@@ -167,6 +181,56 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     @Override
     public Collection<byte[]> getSignature() {
         return Collections.singleton(new byte[]{0x00,0x00,0x27,0x0A});
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean canProcess(final ParameterValueGroup params) {
+        if (super.canProcess(params)) {
+            final Object obj = params.parameter(PATH.getName().toString()).getValue();
+            if(obj != null && obj instanceof URI){
+                return extensionMatch((URI)obj);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the path of given URI ends with one of the file extensions
+     * specified as manageable by {@link #getSuffix() } method.
+     *
+     * @param location The URI to test.
+     * @return True if the path of given URI ends with a known extension. False
+     * otherwise.
+     */
+    private boolean extensionMatch(final URI location) {
+        final String path = location.getPath().toLowerCase();
+        for (final String ext : getSuffix()) {
+            if (path.endsWith(ext.toLowerCase()) && !path.endsWith("*" + ext.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc }
+     * @param uri
+     */
+    @Override
+    public FeatureStore createDataStore(final URI uri) throws DataStoreException {
+        FeatureStore result;
+        final  Map params = Collections.singletonMap(PATH.getName().toString(), uri);
+        try {
+            result = (FeatureStore) DataStores.open(this,params);
+        } catch (DataStoreException e) {
+            result = (FeatureStore) DataStores.create(this,params);
+        }
+        return result;
     }
 
     @Override

@@ -35,7 +35,6 @@ import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
-import org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -59,7 +58,10 @@ public class DbaseFileProvider extends DataStoreProvider implements ProviderOnFi
     public static final String NAME = "dbf";
     public static final String MIME_TYPE = "application/dbase";
 
-    public static final ParameterDescriptor<URI> PATH = AbstractFileFeatureStoreFactory.PATH;
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
+            .addName(LOCATION)
+            .setRequired(true)
+            .create(URI.class, null);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder()

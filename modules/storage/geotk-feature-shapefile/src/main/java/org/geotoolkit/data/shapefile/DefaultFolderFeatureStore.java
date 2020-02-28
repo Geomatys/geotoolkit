@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage.feature;
+package org.geotoolkit.data.shapefile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,13 +31,17 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import static org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory.*;
-import static org.geotoolkit.storage.feature.AbstractFolderFeatureStoreFactory.*;
-import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
-import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.event.StorageEvent;
+import org.geotoolkit.storage.feature.AbstractFeatureStore;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.FeatureWriter;
+import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
+import org.geotoolkit.storage.feature.GenericNameIndex;
+import org.geotoolkit.storage.feature.query.DefaultQueryCapabilities;
+import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
@@ -74,12 +78,12 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
     };
 
     private final Parameters folderParameters;
-    private final AbstractFolderFeatureStoreFactory folderFactory;
-    private final T singleFileFactory;
+    private final ShapefileFolderFeatureStoreFactory folderFactory;
+    private final ShapefileFeatureStoreFactory singleFileFactory;
     private final Parameters singleFileDefaultParameters;
     private GenericNameIndex<FeatureStore> stores = null;
 
-    public DefaultFolderFeatureStore(final ParameterValueGroup params, final AbstractFolderFeatureStoreFactory factory){
+    public DefaultFolderFeatureStore(final ParameterValueGroup params, final ShapefileFolderFeatureStoreFactory factory){
         super(params);
         this.folderParameters = Parameters.castOrWrap(params);
         this.folderFactory = factory;
@@ -88,7 +92,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         final ParameterDescriptorGroup desc = singleFileFactory.getOpenParameters();
         singleFileDefaultParameters = Parameters.castOrWrap(desc.createValue());
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
-            if(pdesc == PATH || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
+            if(pdesc == ShapefileFeatureStoreFactory.PATH || pdesc.getName().getCode().equals(ShapefileFeatureStoreFactory.IDENTIFIER.getName().getCode())) {
                 continue;
             }
             singleFileDefaultParameters.getOrCreate((ParameterDescriptor)pdesc)
@@ -101,7 +105,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
      * {@inheritDoc}
      */
     @Override
-    public AbstractFolderFeatureStoreFactory getProvider() {
+    public ShapefileFolderFeatureStoreFactory getProvider() {
         return folderFactory;
     }
 
@@ -142,9 +146,9 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
                 }
             }
 
-            Boolean recursive = folderParameters.getValue(RECURSIVE);
+            Boolean recursive = folderParameters.getValue(ShapefileFolderFeatureStoreFactory.RECURSIVE);
             if (recursive == null) {
-                recursive = RECURSIVE.getDefaultValue();
+                recursive = ShapefileFolderFeatureStoreFactory.RECURSIVE.getDefaultValue();
             }
 
             try {
@@ -185,7 +189,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         }
 
         final Parameters params = singleFileDefaultParameters.clone();
-        params.getOrCreate(PATH).setValue(file.toUri());
+        params.getOrCreate(ShapefileFeatureStoreFactory.PATH).setValue(file.toUri());
 
         if (singleFileFactory.canProcess(params)) {
             try {
@@ -214,7 +218,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
             final Path folder = getFolder(folderParameters);
             final String fileName = typeName.tip().toString() +"."+ singleFileFactory.getSuffix().iterator().next();
             final Path newFile = folder.resolve(fileName);
-            params.getOrCreate(PATH).setValue(newFile.toUri().toURL());
+            params.getOrCreate(ShapefileFeatureStoreFactory.PATH).setValue(newFile.toUri().toURL());
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex);
         }
@@ -249,7 +253,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
                 sourceFiles = ((ResourceOnFileSystem) store).getComponentFiles();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
-                final URI fileURI = Parameters.castOrWrap(store.getOpenParameters().get()).getValue(PATH);
+                final URI fileURI = Parameters.castOrWrap(store.getOpenParameters().get()).getValue(ShapefileFeatureStoreFactory.PATH);
                 if (fileURI == null) {
                     throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
                 }
@@ -355,7 +359,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
     }
 
     private Path getFolder(final Parameters params) throws DataStoreException{
-        final URI uri = params.getValue(FOLDER_PATH);
+        final URI uri = params.getValue(ShapefileFolderFeatureStoreFactory.FOLDER_PATH);
 
         try {
             return Paths.get(uri);
