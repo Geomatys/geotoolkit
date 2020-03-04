@@ -26,7 +26,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.measure.Unit;
@@ -157,8 +156,6 @@ public class GridCoverage2D extends GridCoverage {
      *          If non-null, then this array length must matches the number of bands in {@code image}.
      * @param sources
      *          The sources for this grid coverage, or {@code null} if none.
-     * @param properties
-     *          The set of properties for this coverage, or {@code null} none.
      * @throws IllegalArgumentException
      *          If the number of bands differs from the number of sample dimensions.
      */
@@ -166,11 +163,10 @@ public class GridCoverage2D extends GridCoverage {
                           final RenderedImage           image,
                                 GridGeometry2D   gridGeometry,
                           final SampleDimension[]       bands,
-                          final GridCoverage[]        sources,
-                          final Map<?,?>           properties)
+                          final GridCoverage[]        sources)
             throws IllegalArgumentException
     {
-        super(name, fillGridGeometry(image, gridGeometry), fillSampleDimensions(name, image, bands), sources, properties);
+        super(name, fillGridGeometry(image, gridGeometry), fillSampleDimensions(name, image, bands), sources);
         this.image = image;
     }
 

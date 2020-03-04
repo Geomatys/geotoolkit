@@ -684,8 +684,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                     envelope.getCoordinateReferenceSystem(),
                     zDimension != null ? zDimension  : envelope.getDimension() - 1
                 ),
-                buildSampleDimensions(elements),
-                null);
+                buildSampleDimensions(elements));
         assert ArraysExt.isSorted(elements, COMPARATOR, false);
         this.elements = elements;
         this.envelope = envelope;

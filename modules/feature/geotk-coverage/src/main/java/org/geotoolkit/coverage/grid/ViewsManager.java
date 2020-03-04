@@ -648,7 +648,7 @@ testLinear: for (int i=0; i<numBands; i++) {
             logger.log(record);
         }
         final GridCoverage[] sources = new GridCoverage[] {coverage};
-        return new GridCoverage2D(name, view, coverage.getGridGeometry(), targetBands, sources, null);
+        return new GridCoverage2D(name, view, coverage.getGridGeometry(), targetBands, sources);
     }
 
     /**

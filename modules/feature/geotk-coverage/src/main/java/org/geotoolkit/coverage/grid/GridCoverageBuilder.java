@@ -512,18 +512,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     protected GridCoverage[] sources;
 
     /**
-     * An optional map of properties to be associated with the grid coverage,
-     * or {@code null} if none. Those properties will be given to the
-     * {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
-     * SampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor} without
-     * any processing by this builder class.
-     *
-     * @see #getProperties()
-     * @see #setProperties(Map)
-     */
-    protected Map<?,?> properties;
-
-    /**
      * Optional hints for fetching factories, or {@code null} if none. Those hints can be
      * specified at {@linkplain #GridCoverageBuilder(Hints) builder construction time}.
      */
@@ -2332,8 +2320,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     getRenderedImage(),
                     GridGeometry2D.castOrCopy(getGridGeometry()),
                     getSampleDimensions(),
-                    getSources(),
-                    getProperties());
+                    getSources());
         }
         return coverage;
     }
@@ -2452,39 +2439,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Returns optional properties to be given to the coverage, or {@code null} if none.
-     *
-     * {@section Implementation note}
-     * This method returns a direct reference to the {@linkplain #properties} field.
-     * The map is not cloned because it is not used for any calculation in this class.
-     * {@code GridCoverageBuilder} users are responsible for the content of this map.
-     *
-     * @return Optional map of coverage properties, or {@code null}.
-     *
-     * @see #properties
-     * @see GridCoverage2D#getProperties()
-     * @see GridCoverage2D#getPropertyNames()
-     */
-    public Map<?,?> getProperties() {
-        return properties; // NOSONAR
-    }
-
-    /**
-     * Sets the optional properties to be given to the coverage.
-     *
-     * {@section Reference to the given map}
-     * The given map is not cloned at this method invocation time. The map will be cloned by
-     * the {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
-     * SampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}. This builder
-     * does nothing but passing the map to that constructor.
-     *
-     * @param properties Optional map of coverage properties, or {@code null}.
-     */
-    public void setProperties(final Map<?,?> properties) {
-        this.properties = properties; // NOSONAR
-    }
-
-    /**
      * Creates the grid coverage. Current implementation delegates to {@link #getGridCoverage2D()},
      * but future implementations may instantiate different coverage types.
      */
@@ -2511,7 +2465,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         image              = null;
         coverage           = null;
         sources            = null;
-        properties         = null;
         numBands           = 0;
         if (variables != null) {
             Arrays.fill(variables, null);

@@ -53,7 +53,6 @@ import javax.media.jai.ImageFunction;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.PropertySourceImpl;
 import javax.media.jai.TiledImage;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
@@ -149,8 +148,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      */
     private final InternationalString name;
 
-    protected transient Map<?,?> properties;
-
     /**
      * Constructs a coverage using the specified coordinate reference system. If the coordinate
      * reference system is {@code null}, then the subclasses must override {@link #getDimension()}.
@@ -159,18 +156,12 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      *          The coverage name, or {@code null} if none.
      * @param grid   the grid extent, CRS and conversion from cell indices to CRS.
      * @param bands  sample dimensions for each image band.
-     * @param properties
-     *          The set of properties for this coverage, or {@code null} if there is none.
-     *          Keys are {@link String} objects ({@link javax.media.jai.util.CaselessStringKey}
-     *          are accepted as well), while values may be any {@link Object}.
      */
     protected GridCoverage(final CharSequence name,
                            final GridGeometry grid,
-                           final Collection<? extends SampleDimension> bands,
-                           final Map<?,?>     properties)
+                           final Collection<? extends SampleDimension> bands)
     {
         super(grid, bands);
-        this.properties = properties;
         this.name = Types.toInternationalString(name);
         this.sources = null;
     }
@@ -201,17 +192,13 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * @param bands  sample dimensions for each image band.
      * @param sources
      *          The {@linkplain #getSources sources} for a grid coverage, or {@code null} if none.
-     * @param properties
-     *          Set of additional properties for this coverage, or {@code null} if there is none.
      */
-    protected GridCoverage(final CharSequence             name,
+    protected GridCoverage(final CharSequence name,
                            final GridGeometry grid,
                            final Collection<? extends SampleDimension> bands,
-                           final GridCoverage[]        sources,
-                           final Map<?,?>           properties)
+                           final GridCoverage[] sources)
     {
         super(grid, bands);
-        this.properties = properties;
         this.name = Types.toInternationalString(name);
         if (sources != null) {
             switch (sources.length) {
@@ -252,20 +239,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      */
     public Envelope getEnvelope() {
         return getGridGeometry().getEnvelope();
-    }
-
-    /**
-     * Returns a localized error message for the specified array.
-     */
-    private static String formatErrorMessage(final Object array) {
-        Class<?> type = null;
-        if (array != null) {
-            type = array.getClass();
-            if (type.isArray()) {
-                type = type.getComponentType();
-            }
-        }
-        return Errors.format(Errors.Keys.CantConvertFromType_1, type);
     }
 
     @Override
@@ -310,10 +283,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         return new Renderable(xAxis, yAxis);
     }
 
-    public Map getProperties() {
-        return properties;
-    }
-
     /////////////////////////////////////////////////////////////////////////
     ////////////////                                         ////////////////
     ////////////////     RenderableImage / ImageFunction     ////////////////
@@ -327,19 +296,8 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid coverage}).
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @see AbstractCoverage#getRenderableImage
-     *
-     * @since 2.0
-     * @module
      */
-    protected class Renderable extends PropertySourceImpl implements RenderableImage, ImageFunction {
-        /**
-         * For compatibility during cross-version serialization.
-         */
-        private static final long serialVersionUID = -6661389795161502552L;
-
+    protected class Renderable implements RenderableImage, ImageFunction {
         /**
          * The two dimensional view of the coverage's envelope.
          */
@@ -374,7 +332,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
          * @param yAxis Dimension to use for <var>y</var> axis.
          */
         public Renderable(final int xAxis, final int yAxis) {
-            super(GridCoverage.this.properties, null);
             this.xAxis = xAxis;
             this.yAxis = yAxis;
             final Envelope envelope = getEnvelope();
@@ -757,6 +714,16 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                 }
                 coordinate.coordinates[1] += deltaY;
             }
+        }
+
+        @Override
+        public Object getProperty(String name) {
+            return java.awt.Image.UndefinedProperty;
+        }
+
+        @Override
+        public String[] getPropertyNames() {
+            return new String[0];
         }
     }
 
