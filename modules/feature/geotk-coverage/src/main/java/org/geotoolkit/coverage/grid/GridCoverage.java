@@ -39,7 +39,6 @@ import java.awt.image.renderable.RenderContext;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -80,7 +79,6 @@ import org.geotoolkit.lang.Debug;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -151,7 +149,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      */
     private final InternationalString name;
 
-    protected transient Map properties;
+    protected transient Map<?,?> properties;
 
     /**
      * Constructs a coverage using the specified coordinate reference system. If the coordinate
@@ -270,196 +268,8 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         return Errors.format(Errors.Keys.CantConvertFromType_1, type);
     }
 
-    public abstract Object evaluate(final DirectPosition point) throws CannotEvaluateException;
-
-    /**
-     * Returns a sequence of boolean values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code boolean} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public boolean[] evaluate(final DirectPosition coord, boolean[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new boolean[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getBoolean(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of byte values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code byte} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public byte[] evaluate(final DirectPosition coord, byte[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new byte[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getByte(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of integer values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code int} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public int[] evaluate(final DirectPosition coord, int[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new int[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getInt(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of float values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code float} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public float[] evaluate(final DirectPosition coord, float[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new float[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getFloat(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of double values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code double} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public double[] evaluate(final DirectPosition coord, double[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new double[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getDouble(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
     @Override
     public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
-
         final int[] indices = sliceExtent.getSubspaceDimensions(2);
         final int xAxis = indices[0];
         final int yAxis = indices[1];
@@ -904,20 +714,9 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                                 final int   countX, final int   countY, final int dim,
                                 final float[] real, final float[] imag)
         {
-            int index = 0;
-            float[] buffer = null;
-            // Clones the coordinate point in order to allow multi-thread invocation.
-            final GeneralDirectPosition coordinate = new GeneralDirectPosition(this.coordinate);
-            coordinate.coordinates[1] = startY;
-            for (int j=0; j<countY; j++) {
-                coordinate.coordinates[0] = startX;
-                for (int i=0; i<countX; i++) {
-                    buffer = evaluate(coordinate, buffer);
-                    real[index++] = buffer[dim];
-                    coordinate.coordinates[0] += deltaX;
-                }
-                coordinate.coordinates[1] += deltaY;
-            }
+            final double[] tmp = new double[real.length];
+            getElements(startX, startY, deltaX, deltaY, countX, countY, dim, tmp, null);
+            for (int i=0; i<real.length; i++) real[i] = (float) tmp[i];
         }
 
         /**

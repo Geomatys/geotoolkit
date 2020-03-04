@@ -147,7 +147,6 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
         gcb.setEnvelope(envelope);
         gcb.setSampleDimensions(band);
         coverage = gcb.getGridCoverage2D();
-        assertEquals("raw", coverage.tileEncoding);
         /*
          * Grid coverage construction finished.  Now test it.  First we test the creation of a
          * "geophysics" view. This test make sure that the 'view(type)' method does not create
@@ -201,7 +200,6 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
      */
     protected final GridCoverage2D serialize() throws IOException, ClassNotFoundException {
         assertNotNull("CoverageTestCase.coverage field is not assigned.", coverage);
-        coverage.tileEncoding = null;
         /*
          * The previous line is not something that we should do.
          * But we want to test the default GridCoverage2D encoding.

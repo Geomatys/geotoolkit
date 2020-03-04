@@ -2333,8 +2333,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     GridGeometry2D.castOrCopy(getGridGeometry()),
                     getSampleDimensions(),
                     getSources(),
-                    getProperties(),
-                    hints);
+                    getProperties());
         }
         return coverage;
     }
