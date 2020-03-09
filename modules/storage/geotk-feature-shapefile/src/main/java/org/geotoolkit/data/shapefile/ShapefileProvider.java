@@ -226,7 +226,7 @@ public class ShapefileProvider extends DataStoreProvider implements FileFeatureS
         try {
             result = (FeatureStore) DataStores.open(this,params);
         } catch (DataStoreException e) {
-            result = (FeatureStore) DataStores.create(this,params);
+            result = (FeatureStore) this.create(Parameters.toParameter(params, getOpenParameters()));
         }
         return result;
     }

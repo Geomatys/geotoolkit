@@ -5,11 +5,11 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
-import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.shapefile.ShapefileProvider;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureStore;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class ShapefileDemo {
@@ -18,10 +18,10 @@ public class ShapefileDemo {
         Demos.init();
 
         //create using a Parameters object--------------------------------------
-        System.out.println(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(ShapefileProvider.PARAMETERS_DESCRIPTOR);
 
-        final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        parameters.parameter(ShapefileFeatureStoreFactory.PATH.getName().getCode()).setValue(
+        final ParameterValueGroup parameters = ShapefileProvider.PARAMETERS_DESCRIPTOR.createValue();
+        parameters.parameter(ShapefileProvider.PATH.getName().getCode()).setValue(
                 ShapefileDemo.class.getResource("/data/world/Countries.shp").toURI());
 
         final FeatureStore store1 = (FeatureStore) DataStores.open(parameters);

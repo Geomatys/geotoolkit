@@ -16,23 +16,22 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.junit.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.storage.feature.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileProvider;
-import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.test.TestData;
-
-import org.junit.Before;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @module
@@ -82,7 +81,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
         if (newDS) {
             // This may provided a warning if the file already is created
-            ds = (ShapefileFeatureStore) DataStores.create(factory,map);
+            ds = (ShapefileFeatureStore) factory.create(Parameters.toParameter(map, factory.getOpenParameters()));
         } else {
             ds = (ShapefileFeatureStore) DataStores.open(factory,map);
         }

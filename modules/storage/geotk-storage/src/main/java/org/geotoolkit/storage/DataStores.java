@@ -349,23 +349,6 @@ public final class DataStores extends Static {
     }
 
     /**
-     * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
-     */
-    public static org.apache.sis.storage.DataStore create(DataStoreProvider factory, Map<String, ? extends Serializable> params) throws DataStoreException {
-        final ParameterValueGroup prm;
-        try {
-            prm = Parameters.toParameter(DataStores.forceIdentifier(factory, params), factory.getOpenParameters());
-        } catch(IllegalArgumentException ex) {
-            throw new DataStoreException(ex);
-        }
-        if (factory instanceof DataStoreFactory) {
-            return ((DataStoreFactory) factory).create(prm);
-        } else {
-            return factory.open(prm);
-        }
-    }
-
-    /**
      * Test to see if this factory is suitable for processing the data pointed
      * to by the params map.
      *
