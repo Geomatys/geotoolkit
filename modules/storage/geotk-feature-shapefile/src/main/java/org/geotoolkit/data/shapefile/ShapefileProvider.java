@@ -30,6 +30,8 @@ import org.apache.sis.internal.storage.Capability;
 import org.apache.sis.internal.storage.StoreMetadata;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
@@ -39,7 +41,7 @@ import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
@@ -49,8 +51,11 @@ import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
+import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -72,7 +77,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module
  */
 @StoreMetadata(
-        formatName = ShapefileFeatureStoreFactory.NAME,
+        formatName = ShapefileProvider.NAME,
         capabilities = {Capability.READ, Capability.WRITE, Capability.CREATE},
         resourceTypes = {FeatureSet.class})
 @StoreMetadataExt(
@@ -81,12 +86,10 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class ShapefileFeatureStoreFactory extends DataStoreFactory implements FileFeatureStoreFactory {
+public class ShapefileProvider extends DataStoreProvider implements FileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "shapefile";
-
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final String ENCODING = "UTF-8";
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
@@ -147,7 +150,7 @@ public class ShapefileFeatureStoreFactory extends DataStoreFactory implements Fi
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName(NAME).addName("ShapefileParameters").createGroup(
-                IDENTIFIER, PATH,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
+                PATH,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
 
     @Override
     public String getShortName() {
@@ -183,13 +186,8 @@ public class ShapefileFeatureStoreFactory extends DataStoreFactory implements Fi
         return Collections.singleton(new byte[]{0x00,0x00,0x27,0x0A});
     }
 
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public boolean canProcess(final ParameterValueGroup params) {
-        if (super.canProcess(params)) {
+        if (canProcessAbs(params)) {
             final Object obj = params.parameter(PATH.getName().toString()).getValue();
             if(obj != null && obj instanceof URI){
                 return extensionMatch((URI)obj);
@@ -315,10 +313,6 @@ public class ShapefileFeatureStoreFactory extends DataStoreFactory implements Fi
         }
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public ShapefileFeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         final URI uri = (URI) params.parameter(PATH.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
@@ -359,6 +353,65 @@ public class ShapefileFeatureStoreFactory extends DataStoreFactory implements Fi
             }
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Uri for shapefile malformed: " + uri, mue);
+        }
+    }
+
+    /**
+     * @param params
+     * @return
+     * @see org.geotoolkit.storage.DataStoreFactory#canProcess(java.util.Map)
+     */
+    private boolean canProcessAbs(final ParameterValueGroup params) {
+        if(params == null){
+            return false;
+        }
+
+        final ParameterDescriptorGroup desc = getOpenParameters();
+        if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
+            return false;
+        }
+
+        final ConformanceResult result = Parameters.isValid(params, desc);
+        return (result != null) && Boolean.TRUE.equals(result.pass());
+    }
+
+    @Override
+    public org.apache.sis.storage.DataStore open(StorageConnector connector) throws DataStoreException {
+        GeneralParameterDescriptor desc;
+        try {
+            desc = getOpenParameters().descriptor(LOCATION);
+        } catch (ParameterNotFoundException e) {
+            throw new DataStoreException("Unsupported input");
+        }
+
+        if (!(desc instanceof ParameterDescriptor)) {
+            throw new DataStoreException("Unsupported input");
+        }
+
+        try {
+            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
+            final ParameterValueGroup params = getOpenParameters().createValue();
+            params.parameter(LOCATION).setValue(locationValue);
+
+            if (canProcess(params)) {
+                return open(params);
+            }
+        } catch(IllegalArgumentException ex) {
+            throw new DataStoreException("Unsupported input:" + ex.getMessage());
+        }
+
+        throw new DataStoreException("Unsupported input");
+    }
+
+    /**
+     * @param params
+     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup)
+     * @throws DataStoreException if identifier is not valid
+     */
+    protected void ensureCanProcess(final ParameterValueGroup params) throws DataStoreException{
+        final boolean valid = canProcess(params);
+        if(!valid){
+            throw new DataStoreException("Parameter values not supported by this factory.");
         }
     }
 

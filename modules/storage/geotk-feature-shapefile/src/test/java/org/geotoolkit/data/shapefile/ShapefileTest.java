@@ -154,8 +154,8 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         tmpFile.delete();
 
         // write features
-        ShapefileFeatureStoreFactory make = new ShapefileFeatureStoreFactory();
-        String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
+        ShapefileProvider make = new ShapefileProvider();
+        String pathId = ShapefileProvider.PATH.getName().getCode();
         FeatureStore s = (FeatureStore) DataStores.create(make,Collections.singletonMap(pathId, tmpFile.toURI().toURL()));
         s.createFeatureType(type);
         GenericName typeName = type.getName();

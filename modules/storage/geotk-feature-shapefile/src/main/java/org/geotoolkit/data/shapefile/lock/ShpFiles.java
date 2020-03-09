@@ -27,9 +27,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
-
-import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.LOGGER;
+import org.geotoolkit.data.shapefile.ShapefileProvider;
+import static org.geotoolkit.data.shapefile.ShapefileProvider.LOGGER;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.QIX;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHP;
 import org.geotoolkit.index.quadtree.QuadTree;
@@ -484,7 +483,7 @@ public final class ShpFiles {
                 }
             }
         } catch (IOException e) {
-            ShapefileFeatureStoreFactory.LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
+            ShapefileProvider.LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         }
 
         if(!matchingPaths.isEmpty()){

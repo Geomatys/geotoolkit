@@ -30,6 +30,8 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import static org.apache.sis.storage.DataStoreProvider.LOCATION;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
@@ -37,6 +39,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PathFilterVisitor;
 import org.geotoolkit.nio.PosixPathMatcher;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreFactory;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
@@ -45,9 +48,11 @@ import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -66,12 +71,12 @@ import org.opengis.parameter.ParameterValueGroup;
                         MultiPoint.class,
                         MultiLineString.class,
                         MultiPolygon.class})
-public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
+public class ShapefileFolderProvider extends DataStoreProvider {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
 
     /** factory identification **/
-    public static final String NAME = derivateName(ShapefileFeatureStoreFactory.NAME);
+    public static final String NAME = derivateName(ShapefileProvider.NAME);
 
     /**
      * url to the folder.
@@ -102,12 +107,10 @@ public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
 
     private final ParameterDescriptorGroup paramDesc;
 
-    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            derivateDescriptor(NAME,ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(NAME,ShapefileProvider.PARAMETERS_DESCRIPTOR);
 
-    public ShapefileFolderFeatureStoreFactory(){
+    public ShapefileFolderProvider(){
         paramDesc = PARAMETERS_DESCRIPTOR;
     }
 
@@ -128,10 +131,6 @@ public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
         return new DefaultFolderFeatureStore(params,this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
         //we can open an empty featurestore of this type
         //the open featurestore will always work, it will just be empty if there are no files in it.
@@ -170,12 +169,10 @@ public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
             }
         }
 
-        final ParameterDescriptor<String> identifierParam = createFixedIdentifier(name);
-        params.remove(ShapefileFeatureStoreFactory.PATH);
-        params.add(0, identifierParam);
-        params.add(1, FOLDER_PATH);
-        params.add(2, RECURSIVE);
-        params.add(3, EMPTY_DIRECTORY);
+        params.remove(ShapefileProvider.PATH);
+        params.add(0, FOLDER_PATH);
+        params.add(1, RECURSIVE);
+        params.add(2, EMPTY_DIRECTORY);
 
         final ParameterBuilder pb = new ParameterBuilder();
         pb.addName(name);
@@ -192,8 +189,8 @@ public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
         return NAME;
     }
 
-    public ShapefileFeatureStoreFactory getSingleFileFactory() {
-        return (ShapefileFeatureStoreFactory) DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
+    public ShapefileProvider getSingleFileFactory() {
+        return (ShapefileProvider) DataStores.getProviderById(ShapefileProvider.NAME);
     }
 
     public CharSequence getDescription() {
@@ -204,14 +201,10 @@ public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
         return Bundle.formatInternational(Bundle.Keys.datastoreFolderTitle);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public boolean canProcess(final ParameterValueGroup params) {
         boolean valid;
         {
-            valid = super.canProcess(params);
+            valid = canProcessAbs(params);
             if (valid) {
                 final Object obj = params.parameter(FOLDER_PATH.getName().toString()).getValue();
                 if(!(obj instanceof URI)){
@@ -253,6 +246,21 @@ public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
         return false;
     }
 
+    private boolean canProcessAbs(final ParameterValueGroup params) {
+        if(params == null){
+            return false;
+        }
+
+        final ParameterDescriptorGroup desc = getOpenParameters();
+        if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
+            return false;
+        }
+
+        final ConformanceResult result = Parameters.isValid(params, desc);
+        return (result != null) && Boolean.TRUE.equals(result.pass());
+    }
+
+
     private static boolean containsShp(Path folder, boolean recursive) throws IOException {
 
         int depth = recursive ? Integer.MAX_VALUE : 1;
@@ -260,6 +268,46 @@ public class ShapefileFolderFeatureStoreFactory extends DataStoreFactory {
         Files.walkFileTree(folder, EnumSet.of(FileVisitOption.FOLLOW_LINKS), depth, visitor);
 
         return !(visitor.getMatchedPaths().isEmpty());
+    }
+
+    @Override
+    public org.apache.sis.storage.DataStore open(StorageConnector connector) throws DataStoreException {
+        GeneralParameterDescriptor desc;
+        try {
+            desc = getOpenParameters().descriptor(LOCATION);
+        } catch (ParameterNotFoundException e) {
+            throw new DataStoreException("Unsupported input");
+        }
+
+        if (!(desc instanceof ParameterDescriptor)) {
+            throw new DataStoreException("Unsupported input");
+        }
+
+        try {
+            final Object locationValue = connector.getStorageAs(((ParameterDescriptor)desc).getValueClass());
+            final ParameterValueGroup params = getOpenParameters().createValue();
+            params.parameter(LOCATION).setValue(locationValue);
+
+            if (canProcess(params)) {
+                return open(params);
+            }
+        } catch(IllegalArgumentException ex) {
+            throw new DataStoreException("Unsupported input:" + ex.getMessage());
+        }
+
+        throw new DataStoreException("Unsupported input");
+    }
+
+    /**
+     * @param params
+     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup)
+     * @throws DataStoreException if identifier is not valid
+     */
+    protected void ensureCanProcess(final ParameterValueGroup params) throws DataStoreException{
+        final boolean valid = canProcess(params);
+        if(!valid){
+            throw new DataStoreException("Parameter values not supported by this factory.");
+        }
     }
 
 }

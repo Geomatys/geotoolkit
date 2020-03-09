@@ -225,7 +225,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
         File tmp = getTempFile();
 
-        ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
+        ShapefileProvider maker = new ShapefileProvider();
         test(type, one, tmp, maker, true, charset);
 
         File tmp2 = getTempFile(); // TODO consider reuse tmp results in
@@ -234,16 +234,16 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
     }
 
     private void test(final FeatureType type, final FeatureCollection original,
-            final File tmp, final ShapefileFeatureStoreFactory maker, final boolean memorymapped, final Charset charset)
+            final File tmp, final ShapefileProvider maker, final boolean memorymapped, final Charset charset)
             throws IOException, MalformedURLException, Exception {
 
         ShapefileFeatureStore shapefile;
         GenericName typeName = type.getName();
 
         final ParameterValueGroup params = maker.getOpenParameters().createValue();
-        params.parameter(ShapefileFeatureStoreFactory.LOCATION).setValue(tmp.toURI());
-        params.parameter(ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString()).setValue(memorymapped);
-        params.parameter(ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString()).setValue(charset);
+        params.parameter(ShapefileProvider.LOCATION).setValue(tmp.toURI());
+        params.parameter(ShapefileProvider.MEMORY_MAPPED.getName().toString()).setValue(memorymapped);
+        params.parameter(ShapefileProvider.DBFCHARSET.getName().toString()).setValue(charset);
 
         shapefile = (ShapefileFeatureStore) maker.open(params);
 

@@ -146,11 +146,11 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         super(params);
 
         final URI uri = (URI) params.parameter(
-                ShapefileFeatureStoreFactory.PATH.getName().toString()).getValue();
+                ShapefileProvider.PATH.getName().toString()).getValue();
         final Boolean useMemoryMapped = (Boolean) params.parameter(
-                ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString()).getValue();
+                ShapefileProvider.MEMORY_MAPPED.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(
-                ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString()).getValue();
+                ShapefileProvider.DBFCHARSET.getName().toString()).getValue();
 
         shpFiles = new ShpFiles(uri);
 
@@ -178,18 +178,18 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
     private static ParameterValueGroup toParameter(final URI uri,
             final boolean useMemoryMapped, Charset dbfCharset){
-        final Parameters params = Parameters.castOrWrap(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue());
-        params.getOrCreate(ShapefileFeatureStoreFactory.PATH).setValue(uri);
-        params.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED).setValue(useMemoryMapped);
+        final Parameters params = Parameters.castOrWrap(ShapefileProvider.PARAMETERS_DESCRIPTOR.createValue());
+        params.getOrCreate(ShapefileProvider.PATH).setValue(uri);
+        params.getOrCreate(ShapefileProvider.MEMORY_MAPPED).setValue(useMemoryMapped);
         if(dbfCharset!=null){
-            params.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET).setValue(dbfCharset);
+            params.getOrCreate(ShapefileProvider.DBFCHARSET).setValue(dbfCharset);
         }
         return params;
     }
 
     @Override
     public DataStoreProvider getProvider() {
-        return DataStores.getProviderById(ShapefileFeatureStoreFactory.NAME);
+        return DataStores.getProviderById(ShapefileProvider.NAME);
     }
 
     @Override

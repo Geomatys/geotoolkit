@@ -27,7 +27,7 @@ import java.util.logging.Level;
 
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 
-import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
+import static org.geotoolkit.data.shapefile.ShapefileProvider.*;
 import org.geotoolkit.data.dbf.Closeable;
 
 /**

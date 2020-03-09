@@ -29,7 +29,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileProvider;
 import org.geotoolkit.data.shapefile.ShapefileFeatureWriter;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
@@ -86,7 +86,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
                     }
                 } catch (Throwable e) {
                     indexedShapefileFeatureStore.treeType = IndexType.NONE;
-                    ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING,
+                    ShapefileProvider.LOGGER.log(Level.WARNING,
                             "Error creating Spatial index", e);
                 }
             }
@@ -151,7 +151,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
             fidWriter.close();
         }catch(Throwable e){
             indexedShapefileFeatureStore.treeType = IndexType.NONE;
-            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING,
+            ShapefileProvider.LOGGER.log(Level.WARNING,
                     "Error creating Feature ID index", e);
         }
     }

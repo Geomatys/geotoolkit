@@ -32,7 +32,7 @@ import java.util.logging.Level;
 
 import static java.nio.file.StandardOpenOption.*;
 import static java.nio.file.StandardOpenOption.CREATE;
-import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
+import static org.geotoolkit.data.shapefile.ShapefileProvider.*;
 
 /**
  * Encapsulates the idea of a file for writing data to and then later updating the original.

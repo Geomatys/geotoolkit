@@ -78,12 +78,12 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
     };
 
     private final Parameters folderParameters;
-    private final ShapefileFolderFeatureStoreFactory folderFactory;
-    private final ShapefileFeatureStoreFactory singleFileFactory;
+    private final ShapefileFolderProvider folderFactory;
+    private final ShapefileProvider singleFileFactory;
     private final Parameters singleFileDefaultParameters;
     private GenericNameIndex<FeatureStore> stores = null;
 
-    public DefaultFolderFeatureStore(final ParameterValueGroup params, final ShapefileFolderFeatureStoreFactory factory){
+    public DefaultFolderFeatureStore(final ParameterValueGroup params, final ShapefileFolderProvider factory){
         super(params);
         this.folderParameters = Parameters.castOrWrap(params);
         this.folderFactory = factory;
@@ -92,7 +92,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         final ParameterDescriptorGroup desc = singleFileFactory.getOpenParameters();
         singleFileDefaultParameters = Parameters.castOrWrap(desc.createValue());
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
-            if(pdesc == ShapefileFeatureStoreFactory.PATH || pdesc.getName().getCode().equals(ShapefileFeatureStoreFactory.IDENTIFIER.getName().getCode())) {
+            if (pdesc == ShapefileProvider.PATH) {
                 continue;
             }
             singleFileDefaultParameters.getOrCreate((ParameterDescriptor)pdesc)
@@ -105,7 +105,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
      * {@inheritDoc}
      */
     @Override
-    public ShapefileFolderFeatureStoreFactory getProvider() {
+    public ShapefileFolderProvider getProvider() {
         return folderFactory;
     }
 
@@ -146,9 +146,9 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
                 }
             }
 
-            Boolean recursive = folderParameters.getValue(ShapefileFolderFeatureStoreFactory.RECURSIVE);
+            Boolean recursive = folderParameters.getValue(ShapefileFolderProvider.RECURSIVE);
             if (recursive == null) {
-                recursive = ShapefileFolderFeatureStoreFactory.RECURSIVE.getDefaultValue();
+                recursive = ShapefileFolderProvider.RECURSIVE.getDefaultValue();
             }
 
             try {
@@ -189,7 +189,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
         }
 
         final Parameters params = singleFileDefaultParameters.clone();
-        params.getOrCreate(ShapefileFeatureStoreFactory.PATH).setValue(file.toUri());
+        params.getOrCreate(ShapefileProvider.PATH).setValue(file.toUri());
 
         if (singleFileFactory.canProcess(params)) {
             try {
@@ -218,7 +218,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
             final Path folder = getFolder(folderParameters);
             final String fileName = typeName.tip().toString() +"."+ singleFileFactory.getSuffix().iterator().next();
             final Path newFile = folder.resolve(fileName);
-            params.getOrCreate(ShapefileFeatureStoreFactory.PATH).setValue(newFile.toUri().toURL());
+            params.getOrCreate(ShapefileProvider.PATH).setValue(newFile.toUri().toURL());
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex);
         }
@@ -253,7 +253,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
                 sourceFiles = ((ResourceOnFileSystem) store).getComponentFiles();
             } else {
                 // Not a file store ? We try to find an url parameter and see if it's a file one.
-                final URI fileURI = Parameters.castOrWrap(store.getOpenParameters().get()).getValue(ShapefileFeatureStoreFactory.PATH);
+                final URI fileURI = Parameters.castOrWrap(store.getOpenParameters().get()).getValue(ShapefileProvider.PATH);
                 if (fileURI == null) {
                     throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
                 }
@@ -359,7 +359,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
     }
 
     private Path getFolder(final Parameters params) throws DataStoreException{
-        final URI uri = params.getValue(ShapefileFolderFeatureStoreFactory.FOLDER_PATH);
+        final URI uri = params.getValue(ShapefileFolderProvider.FOLDER_PATH);
 
         try {
             return Paths.get(uri);
