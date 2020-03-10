@@ -29,11 +29,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.web.WebView;
 import org.apache.sis.internal.util.X364;
 import static org.apache.sis.internal.util.X364.BOLD;
 import static org.apache.sis.internal.util.X364.FOREGROUND_DEFAULT;
@@ -56,6 +58,7 @@ public class FXProcessPane extends SplitPane {
 
     private final SimpleObjectProperty<ProcessDescriptor> processProperty = new SimpleObjectProperty<>();
 
+    private final WebView browser = new WebView();
     private final FXParameterEditor editorInput = new FXParameterEditor();
     private final FXParameterEditor editorOuput = new FXParameterEditor();
     private final Button executeButton = new Button("Execute");
@@ -119,13 +122,22 @@ public class FXProcessPane extends SplitPane {
         flow.setAlignment(Pos.CENTER_RIGHT);
         flow.setPadding(new Insets(4));
 
+        final ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(browser);
+        scrollPane.setMinSize(100, 100);
+        scrollPane.setMinViewportWidth(100);
+
         final BorderPane border = new BorderPane();
         border.setCenter(pane);
         border.setBottom(flow);
         border.setMinWidth(200);
         border.setMaxWidth(400);
 
-        getItems().addAll(border, progress);
+        final BorderPane left = new BorderPane();
+        left.setCenter(browser);
+        left.setBottom(border);
+
+        getItems().addAll(left, progress);
         update(null);
     }
 
@@ -134,7 +146,6 @@ public class FXProcessPane extends SplitPane {
     }
 
     private void update(ProcessDescriptor desc) {
-        progress.setText("");
 
         if (desc == null) {
             editorInput.setParameter(null);
@@ -143,8 +154,18 @@ public class FXProcessPane extends SplitPane {
             editorOuput.setDisable(true);
             executeButton.setDisable(true);
             progress.setDisable(true);
+            browser.getEngine().loadContent("");
             return;
         }
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append("<html><body>");
+        sb.append(String.valueOf(desc.getIdentifier().getCode()));
+        sb.append("</body></html>");
+        browser.getEngine().loadContent(sb.toString());
+
+        progress.setText("");
+
         editorInput.setDisable(false);
         editorOuput.setDisable(false);
         executeButton.setDisable(false);

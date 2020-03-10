@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -119,9 +118,11 @@ public class FXProcessRegistryPane extends BorderPane {
                 fnode.getChildren().add(pnode);
             }
             root.getChildren().add(fnode);
+            fnode.setExpanded(true);
         }
 
         uiTree.setRoot(root);
+        uiTree.getRoot().setExpanded(true);
     }
 
     private class ClickFCell extends TreeCell<Object> {

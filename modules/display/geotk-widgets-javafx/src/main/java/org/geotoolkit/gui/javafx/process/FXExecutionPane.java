@@ -18,6 +18,8 @@ package org.geotoolkit.gui.javafx.process;
 
 import java.util.Collection;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -37,10 +39,15 @@ public class FXExecutionPane extends SplitPane {
     public FXExecutionPane() {
         setOrientation(Orientation.HORIZONTAL);
         processPane.valueProperty().bind(registryPane.valueProperty());
+        processPane.visibleProperty().bind(Bindings.isNotNull((ObservableObjectValue)registryPane.valueProperty()));
 
         registryPane.setMinWidth(200);
         registryPane.setMaxWidth(300);
         getItems().addAll(registryPane, processPane);
+    }
+
+    public void setProcessingRegistry(Collection<? extends ProcessingRegistry> registries) {
+        registryPane.setProcessingRegistry(registries);
     }
 
     /**
