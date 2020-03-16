@@ -39,6 +39,7 @@ import org.geotoolkit.display3d.utils.TextureUtils;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
@@ -185,7 +186,7 @@ public class PyramidImageLoader implements ImageLoader{
         final double[] fillValue = new double[targetImage.getData().getNumBands()];
         final PixelIterator it = new  PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(dataRenderedImage);
         final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
-        final Resample resampler = new Resample(sourceToTarget, targetImage, interpol, fillValue);
+        final Resample resampler = new Resample(sourceToTarget, targetImage, null, interpol, fillValue, ResampleBorderComportement.EXTRAPOLATION);
         resampler.fillImage();
 
         return targetImage;

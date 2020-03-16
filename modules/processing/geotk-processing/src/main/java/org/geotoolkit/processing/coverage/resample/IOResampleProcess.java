@@ -16,33 +16,53 @@
  */
 package org.geotoolkit.processing.coverage.resample;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.*;
-
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.PixelIterator;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.image.io.large.LargeCache;
 import org.geotoolkit.image.io.large.LargeRenderedImage;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.processing.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -381,8 +401,8 @@ public class IOResampleProcess extends AbstractProcess {
                             new AffineTransform2D(1d, 0, 0, 1d, (double) computeZone.x, (double) computeZone.y), baseTransform);
                     destination = new BufferedImage(outCModel,
                             outCModel.createCompatibleWritableRaster(computeZone.width, computeZone.height), false, null);
-                    final Resample resampler = new Resample(gridTransform, destination, interpolator, fillValue);
-                    resampler.fillImagePx();
+                    final Resample resampler = new Resample(gridTransform, destination, null, interpolator, fillValue, ResampleBorderComportement.EXTRAPOLATION);
+                    resampler.fillImage(false);
                     final Map.Entry<Point, RenderedImage> output = new AbstractMap.SimpleEntry<>(computeZone.getLocation(), (RenderedImage) destination);
 
                     writingQueue.offer(output, TIMEOUT, TIMEOUT_UNIT);

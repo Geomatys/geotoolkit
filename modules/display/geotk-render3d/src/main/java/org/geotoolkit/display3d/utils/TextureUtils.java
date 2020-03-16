@@ -24,6 +24,7 @@ import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -49,7 +50,7 @@ public final class TextureUtils {
         final WritableRaster raster = colorModel.createCompatibleWritableRaster(imgSrc.getWidth(), imgSrc.getHeight());
         final BufferedImage destImage = new BufferedImage(colorModel, raster, false, null);
 
-        final Resample resampler = new Resample(transform, destImage, interpol, sampleValue);
+        final Resample resampler = new Resample(transform, destImage, null, interpol, sampleValue, ResampleBorderComportement.EXTRAPOLATION);
         resampler.fillImage();
 
         return destImage;

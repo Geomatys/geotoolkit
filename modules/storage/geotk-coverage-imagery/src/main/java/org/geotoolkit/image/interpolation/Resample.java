@@ -113,47 +113,6 @@ public class Resample {
     ResampleGrid theGrid;
 
     /**
-     * <p>Fill destination image from interpolation of source pixels.<br/>
-     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.<br/>
-     * The default border comportement is {@link ResampleBorderComportement#EXTRAPOLATION}.<br/><br/>
-     *
-     * <strong>
-     * Moreover : the specified MathTransform should be from CENTER of target image point to CENTER of source image point.<br/>
-     * The used MathTransform is consider with {@link PixelInCell#CELL_CENTER} configuration.</strong></p>
-     *
-     * @param mathTransform Transformation use to transform target point to source point.
-     * @param imageDest image will be fill by image source pixel interpolation.
-     * @param interpol Interpolation use to interpolate source image pixels.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary.
-     * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
-     */
-    @Deprecated
-    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException, TransformException {
-        this(mathTransform, imageDest, null, interpol, fillValue);
-    }
-
-    /**
-     * <p>Fill destination image area from interpolation of source pixels.<br/>
-     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.<br/>
-     * The default border comportement is {@link ResampleBorderComportement#EXTRAPOLATION}.<br/><br/>
-     *
-     * <strong>
-     * Moreover : the specified MathTransform should be from CENTER of target image point to CENTER of source image point.<br/>
-     * The used MathTransform is consider with {@link PixelInCell#CELL_CENTER} configuration.</strong></p>
-     *
-     * @param mathTransform Transformation use to transform target point to source point.
-     * @param imageDest image will be fill by image source pixel interpolation.
-     * @param resampleArea destination image area within pixels are resample.
-     * @param interpol Interpolation use to interpolate source image pixels.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary.
-     * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
-     */
-    @Deprecated
-    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Rectangle resampleArea, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException, TransformException {
-        this(mathTransform, imageDest, resampleArea, interpol, fillValue, ResampleBorderComportement.EXTRAPOLATION);
-    }
-
-    /**
      * <p>Fill destination image area from interpolation of source pixels from imageSrc.<br/>
      * Source pixel coordinates is obtained from invert transformation of destination pixel coordinates.<br/><br/>
      * - In case where interpolation equals {@linkplain InterpolationCase#LANCZOS lanczos interpolation} the default
@@ -199,28 +158,6 @@ public class Resample {
     public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, RenderedImage imageSrc,
             InterpolationCase interpolation, ResampleBorderComportement rbc, double[] fillValue) throws TransformException {
         this(mathTransform, imageDest, null, imageSrc, interpolation, 2, rbc, fillValue);
-    }
-
-    /**
-     * <p>Fill destination image area from interpolation of source pixels from imageSrc.<br/>
-     * Source pixel coordinates is obtained from invert transformation of destination pixel coordinates.<br/><br/>
-     * <strong>
-     * Moreover : the specified MathTransform should be from CENTER of target image point to CENTER of source image point.<br/>
-     * The used MathTransform is consider as {@link PixelInCell#CELL_CENTER} configuration.</strong></p>
-     *
-     * @param mathTransform Transformation use to transform target point to source point.
-     * @param imageDest image will be fill by image source pixel interpolation.
-     * @param imageSrc source image which contain pixel values which will be interpolate.
-     * @param interpolation case of interpolation.
-     * @param lanczosWindow only use about Lanczos interpolation.
-     * @param rbc comportement of the destination image border.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary, or {@code null}.
-     * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
-     * @see ResampleBorderComportement
-     */
-    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, RenderedImage imageSrc,
-            InterpolationCase interpolation, int lanczosWindow, ResampleBorderComportement rbc, double[] fillValue) throws TransformException {
-        this(mathTransform, imageDest, null, imageSrc, interpolation, lanczosWindow, rbc, fillValue);
     }
 
     /**
@@ -293,7 +230,7 @@ public class Resample {
      *
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
-     * @param resampleArea destination image area within pixels are resample.
+     * @param resampleArea destination image area within pixels are resample, can be null.
      * @param interpol Interpolation use to interpolate source image pixels.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * @param rbc comportement of the destination image border.
@@ -663,32 +600,6 @@ public class Resample {
             }
         }
         fillImageByTransform();
-    }
-
-    /**
-     * Please use {@link #fillImageByTransform() } method.
-     *
-     * @throws TransformException
-     * @deprecated replace by {@link #fillImageByTransform() }.
-     */
-    @Deprecated
-    public void fillImagePx() throws TransformException {
-        while (destIterator.next()) {
-            //-- Compute source coordinate from destination coordinate and mathtransform.
-            final Point position = destIterator.getPosition();
-            destCoords[0] = position.x;
-            destCoords[1] = position.y;
-            destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
-
-            //-- if destination coordinate transformation is out of source boundary.
-            if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
-                if (fillValue != null) destIterator.setPixel(fillValue);
-            } else {
-                double[] pixel = interpol.interpolate(srcCoords[0], srcCoords[1]);
-                if (clamp != null) XMath.applyClamp(pixel, clamp[0], clamp[1]);
-                destIterator.setPixel(pixel);
-            }
-        }
     }
 
     /**

@@ -47,6 +47,7 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.Mosaic;
@@ -468,7 +469,7 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
             if(tminx==tmaxx || tminy==tmaxy) return;
 
             try {
-                final Resample resample = new Resample(destImgToCrsCoverage, currentlyTile, tileAreaWork, interpolation, new double[nbBand]);
+                final Resample resample = new Resample(destImgToCrsCoverage, currentlyTile, tileAreaWork, interpolation, new double[nbBand], ResampleBorderComportement.EXTRAPOLATION);
                 resample.fillImage();
                 mosaic.writeTiles(Stream.of(new DefaultImageTile(currentlyTile, new Point(idx, idy))), null);
             } catch (Exception ex) {
