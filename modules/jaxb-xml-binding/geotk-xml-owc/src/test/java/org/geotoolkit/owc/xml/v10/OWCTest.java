@@ -33,6 +33,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.MetadataAssert.*;
+import org.geotoolkit.owc.xml.OwcMarshallerPool;
 
 
 public class OWCTest extends org.geotoolkit.test.TestBase {
@@ -128,12 +129,10 @@ public class OWCTest extends org.geotoolkit.test.TestBase {
         entriesToSet.add(OBJ_ATOM_FACT.createEntry(newEntry));
 
 
-        final JAXBContext jaxbCtxt = JAXBContext.newInstance("org.geotoolkit.owc.xml.v10:org.w3._2005.atom:org.geotoolkit.georss.xml.v100:org.geotoolkit.gml.xml.v311");
-        final MarshallerPool pool = new MarshallerPool(jaxbCtxt, null);
-        final Marshaller marsh = pool.acquireMarshaller();
+        final Marshaller marsh = OwcMarshallerPool.getPool().acquireMarshaller();
         final StringWriter sw = new StringWriter();
         marsh.marshal(feed, sw);
-        pool.recycle(marsh);
+        OwcMarshallerPool.getPool().recycle(marsh);
 
         assertXmlEquals(EXP_RESULT, sw.toString(), "xmlns:*");
     }

@@ -45,6 +45,7 @@ public class OwcMarshallerPool {
             classes.add(org.geotoolkit.gml.xml.v311.ObjectFactory.class);
             classes.add(org.geotoolkit.georss.xml.v100.ObjectFactory.class);
             classes.add(org.w3._2005.atom.ObjectFactory.class);
+            classes.add(org.geotoolkit.ops.xml.v110.ObjectFactory.class);
             classes.add(org.geotoolkit.owc.xml.v10.ObjectFactory.class);
             classes.addAll(JAXBSLDUtilities.getSLD110PoolClasses());
 
