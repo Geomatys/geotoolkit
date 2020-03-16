@@ -21,6 +21,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
@@ -38,7 +39,7 @@ public class FXInfoAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_INFO, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     public FXInfoAction(FXMap map) {
-        super(map,GeotkFX.getString(FXMesureAreaAction.class,"mesurearea"),GeotkFX.getString(FXMesureAreaAction.class,"mesurearea"),ICON);
+        super(map,GeotkFX.getString(FXMesureAreaAction.class,"mesurearea"),GeotkFX.getString(FXMesureAreaAction.class,"mesurearea"),GeotkFX.createGlyph(FontAwesome.Glyph.INFO_CIRCLE));
 
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override

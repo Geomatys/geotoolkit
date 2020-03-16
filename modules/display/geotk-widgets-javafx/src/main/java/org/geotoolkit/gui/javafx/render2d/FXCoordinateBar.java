@@ -36,8 +36,11 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -46,7 +49,6 @@ import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.controlsfx.control.StatusBar;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.gui.javafx.crs.CRSButton;
@@ -114,11 +116,12 @@ public class FXCoordinateBar extends GridPane {
     };
 
 
-    private final StatusBar statusBar = new StatusBar();
+    private final BorderPane statusBar = new BorderPane();
     private final ComboBox scaleCombo = new ComboBox();
     private final ColorPicker colorPicker = new ColorPicker(Color.WHITE);
     private final CRSButton crsButton = new CRSButton();
     private final DatePicker datePicker = new DatePicker();
+    private final TextField text = new TextField();
 
     public FXCoordinateBar(FXMap map) {
         this.map = map;
@@ -160,7 +163,12 @@ public class FXCoordinateBar extends GridPane {
             }
         });
 
-        statusBar.getLeftItems().add(datePicker);
+        statusBar.setLeft(new ToolBar(datePicker));
+        text.setMaxWidth(Double.MAX_VALUE);
+        text.setPrefWidth(450);
+        text.setMinWidth(200);
+        final ToolBar centerbar = new ToolBar(text);
+        statusBar.setCenter(centerbar);
 
         scaleCombo.getItems().addAll(  1000l,
                                  5000l,
@@ -171,9 +179,7 @@ public class FXCoordinateBar extends GridPane {
         scaleCombo.setEditable(true);
         scaleCombo.setConverter(new LongStringConverter());
 
-        statusBar.getRightItems().add(scaleCombo);
-        statusBar.getRightItems().add(colorPicker);
-        statusBar.getRightItems().add(crsButton);
+        statusBar.setRight(new ToolBar(scaleCombo,colorPicker,crsButton));
 
         map.addEventHandler(MouseEvent.ANY, new myListener());
 
@@ -204,22 +210,9 @@ public class FXCoordinateBar extends GridPane {
 
         // Set button tooltips
         datePicker.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "temporalTooltip")));
-        statusBar.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "coordinateTooltip")));
         scaleCombo.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "scaleTooltip")));
         colorPicker.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "bgColorTooltip")));
         crsButton.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "crsTooltip")));
-    }
-
-    public void setCrsButtonVisible(boolean visible){
-        if(statusBar.getRightItems().contains(crsButton)){
-            statusBar.getRightItems().remove(crsButton);
-        }else{
-            statusBar.getRightItems().add(crsButton);
-        }
-    }
-
-    public boolean isCrsButtonVisible(){
-        return crsButton.isVisible();
     }
 
     /**
@@ -241,7 +234,7 @@ public class FXCoordinateBar extends GridPane {
             try {
                 coord = map.getCanvas().getObjectiveToDisplay().inverseTransform(pt, coord);
             } catch (NoninvertibleTransformException ex) {
-                statusBar.setText("");
+                text.setText("");
                 return;
             }
 
@@ -255,7 +248,7 @@ public class FXCoordinateBar extends GridPane {
             sb.append(crs.getCoordinateSystem().getAxis(1).getAbbreviation());
             sb.append(" : ");
             sb.append(NUMBER_FORMAT.format(coord.getY()));
-            statusBar.setText(sb.toString());
+            text.setText(sb.toString());
         }
 
     }

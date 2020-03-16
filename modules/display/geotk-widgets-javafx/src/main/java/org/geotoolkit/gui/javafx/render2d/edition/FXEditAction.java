@@ -27,6 +27,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -45,7 +46,7 @@ public final class FXEditAction extends FXMapAction {
     private Stage dialog;
 
     public FXEditAction(FXMap map) {
-        super(map,GeotkFX.getString(FXEditAction.class,"edit"),GeotkFX.getString(FXEditAction.class,"edit"),ICON);
+        super(map,GeotkFX.getString(FXEditAction.class,"edit"),GeotkFX.getString(FXEditAction.class,"edit"),GeotkFX.createGlyph(FontAwesome.Glyph.PENCIL));
     }
 
     @Override

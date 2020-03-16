@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -40,7 +41,7 @@ public final class FXZoomAllAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_GLOBE, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     public FXZoomAllAction(FXMap map) {
-        super(map,GeotkFX.getString(FXZoomAllAction.class,"zoom_all"),GeotkFX.getString(FXZoomAllAction.class,"zoom_all"),ICON);
+        super(map,GeotkFX.getString(FXZoomAllAction.class,"zoom_all"),GeotkFX.getString(FXZoomAllAction.class,"zoom_all"),GeotkFX.createGlyph(FontAwesome.Glyph.GLOBE));
     }
 
     @Override

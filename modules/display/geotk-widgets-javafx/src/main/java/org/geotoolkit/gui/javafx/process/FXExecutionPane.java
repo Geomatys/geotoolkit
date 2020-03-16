@@ -18,13 +18,14 @@ package org.geotoolkit.gui.javafx.process;
 
 import java.util.Collection;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
 
 /**
@@ -33,21 +34,38 @@ import org.geotoolkit.process.ProcessingRegistry;
  */
 public class FXExecutionPane extends SplitPane {
 
-    private final FXProcessRegistryPane registryPane = new FXProcessRegistryPane();
+    private final FXRegistryTree registryTree = new FXRegistryTree();
     private final FXProcessPane processPane = new FXProcessPane();
+    private final FXRegistryPane registryPane = new FXRegistryPane();
 
     public FXExecutionPane() {
         setOrientation(Orientation.HORIZONTAL);
-        processPane.valueProperty().bind(registryPane.valueProperty());
-        processPane.visibleProperty().bind(Bindings.isNotNull((ObservableObjectValue)registryPane.valueProperty()));
 
-        registryPane.setMinWidth(200);
-        registryPane.setMaxWidth(300);
-        getItems().addAll(registryPane, processPane);
+        registryTree.valueProperty().addListener(new ChangeListener<Object>() {
+            @Override
+            public void changed(ObservableValue<? extends Object> ov, Object old, Object ne) {
+                if (ne instanceof ProcessingRegistry) {
+                    registryPane.valueProperty().setValue((ProcessingRegistry) ne);
+                    getItems().set(1, registryPane);
+                } else if (ne instanceof ProcessDescriptor) {
+                    processPane.setVisible(true);
+                    processPane.valueProperty().setValue((ProcessDescriptor) ne);
+                    getItems().set(1, processPane);
+                } else {
+                    processPane.setVisible(true);
+                    processPane.valueProperty().setValue(null);
+                    getItems().set(1, processPane);
+                }
+            }
+        });
+
+        registryTree.setMinWidth(200);
+        registryTree.setMaxWidth(300);
+        getItems().addAll(registryTree, processPane);
     }
 
     public void setProcessingRegistry(Collection<? extends ProcessingRegistry> registries) {
-        registryPane.setProcessingRegistry(registries);
+        registryTree.setProcessingRegistry(registries);
     }
 
     /**
@@ -75,7 +93,7 @@ public class FXExecutionPane extends SplitPane {
         public void start(Stage stage) throws Exception {
             final FXExecutionPane pane = new FXExecutionPane();
             if (registries != null) {
-                pane.registryPane.setProcessingRegistry(registries);
+                pane.registryTree.setProcessingRegistry(registries);
             }
             final Scene scene = new Scene(pane, 1024, 768);
             stage.setTitle("Process execution");

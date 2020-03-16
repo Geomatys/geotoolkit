@@ -72,7 +72,7 @@ final class CRSTable extends ScrollPane {
 
     private static final Color COLOR = new Color(30, 150, 250);
     private static final Image ICON_GEO, ICON_SQUARE, ICON_STEREO, ICON_UTM, ICON_CONIC;
-    private static final Image ICON_UNKNOWN = FontGlyphs.createImage("\uE22F",16,COLOR);
+    private static final Image ICON_UNKNOWN; // = FontGlyphs.createImage("\uE22F",16,COLOR);
     static {
         final Class<?> c = CRSTable.class;
         final Dimension dim = new Dimension(16, 16);
@@ -82,6 +82,7 @@ final class CRSTable extends ScrollPane {
             ICON_STEREO = FXUtilities.getImage(c, "proj_stereo.png", dim);
             ICON_UTM    = FXUtilities.getImage(c, "proj_utm.png",    dim);
             ICON_CONIC  = FXUtilities.getImage(c, "proj_conic.png",  dim);
+            ICON_UNKNOWN = ICON_SQUARE;
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }

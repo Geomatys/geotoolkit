@@ -21,6 +21,7 @@ import java.awt.geom.AffineTransform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
@@ -35,7 +36,7 @@ public final class FXZoomNextAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHEVRON_RIGHT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     public FXZoomNextAction(FXMap map) {
-        super(map,GeotkFX.getString(FXZoomNextAction.class,"zoom_next"),GeotkFX.getString(FXZoomNextAction.class,"zoom_next"),ICON);
+        super(map,GeotkFX.getString(FXZoomNextAction.class,"zoom_next"),GeotkFX.getString(FXZoomNextAction.class,"zoom_next"),GeotkFX.createGlyph(FontAwesome.Glyph.CHEVRON_RIGHT));
     }
 
     @Override

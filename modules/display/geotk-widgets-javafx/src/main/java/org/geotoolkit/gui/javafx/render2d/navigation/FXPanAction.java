@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
@@ -38,7 +39,7 @@ public final class FXPanAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_HAND_PAPER, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     public FXPanAction(FXMap map, boolean infoOnClick) {
-        super(map,GeotkFX.getString(FXPanAction.class,"pan"),GeotkFX.getString(FXPanAction.class,"pan"),ICON);
+        super(map,GeotkFX.getString(FXPanAction.class,"pan"),GeotkFX.getString(FXPanAction.class,"pan"),GeotkFX.createGlyph(FontAwesome.Glyph.ARROWS));
         this.infoOnClick = infoOnClick;
 
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {

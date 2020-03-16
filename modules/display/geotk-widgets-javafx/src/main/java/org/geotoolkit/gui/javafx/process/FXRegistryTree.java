@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import javafx.beans.property.Property;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -43,7 +43,7 @@ import org.geotoolkit.process.ProcessingRegistry;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXProcessRegistryPane extends BorderPane {
+public class FXRegistryTree extends BorderPane {
 
     private static final Image ICON_PROCESS  = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_COG,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     private static final Image ICON_REGISTRY = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_COGS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
@@ -66,11 +66,11 @@ public class FXProcessRegistryPane extends BorderPane {
             }
         };
 
-    private final SimpleObjectProperty<ProcessDescriptor> processProperty = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<Object> processProperty = new SimpleObjectProperty<>();
     private final List<ProcessingRegistry> registries = new ArrayList();
     private final TreeView<Object> uiTree;
 
-    public FXProcessRegistryPane() {
+    public FXRegistryTree() {
 
         uiTree = new TreeView();
         uiTree.setShowRoot(false);
@@ -84,7 +84,9 @@ public class FXProcessRegistryPane extends BorderPane {
                 } else {
                     Object obj = newValue.getValue();
                     if (obj instanceof ProcessDescriptor) {
-                        processProperty.setValue((ProcessDescriptor) obj);
+                        processProperty.setValue(obj);
+                    } else if (obj instanceof ProcessingRegistry) {
+                        processProperty.setValue(obj);
                     } else {
                         processProperty.setValue(null);
                     }
@@ -97,7 +99,11 @@ public class FXProcessRegistryPane extends BorderPane {
         setCenter(uiTree);
     }
 
-    public Property<ProcessDescriptor> valueProperty() {
+    /**
+     * Get current selected object, ProcessDescriptor or ProcessingRegistry.
+     * @return property
+     */
+    public ObjectProperty<Object> valueProperty() {
         return processProperty;
     }
 
@@ -123,6 +129,10 @@ public class FXProcessRegistryPane extends BorderPane {
 
         uiTree.setRoot(root);
         uiTree.getRoot().setExpanded(true);
+
+        if (!registries.isEmpty()) {
+            uiTree.getSelectionModel().selectFirst();
+        }
     }
 
     private class ClickFCell extends TreeCell<Object> {

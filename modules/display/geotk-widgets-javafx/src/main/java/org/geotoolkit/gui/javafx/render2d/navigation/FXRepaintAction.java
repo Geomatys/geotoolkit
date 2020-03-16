@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.render2d.navigation;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
@@ -33,7 +34,7 @@ public final class FXRepaintAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SYNC_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     public FXRepaintAction(FXMap map) {
-        super(map,GeotkFX.getString(FXRepaintAction.class,"refresh"),GeotkFX.getString(FXRepaintAction.class,"refresh"),ICON);
+        super(map,GeotkFX.getString(FXRepaintAction.class,"refresh"),GeotkFX.getString(FXRepaintAction.class,"refresh"),GeotkFX.createGlyph(FontAwesome.Glyph.REFRESH));
     }
 
     @Override

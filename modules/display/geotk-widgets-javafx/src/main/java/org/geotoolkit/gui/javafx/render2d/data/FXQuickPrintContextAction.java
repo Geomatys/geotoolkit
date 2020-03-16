@@ -33,6 +33,7 @@ import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javax.swing.SwingConstants;
 import org.apache.sis.measure.Units;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.ext.DecorationXMLParser;
@@ -110,7 +111,7 @@ public class FXQuickPrintContextAction extends FXMapAction {
 
     public FXQuickPrintContextAction(FXMap map) {
         super(map,GeotkFX.getString(FXQuickPrintContextAction.class,"label"),
-                GeotkFX.getString(FXQuickPrintContextAction.class,"label"),ICON_PRINT);
+                GeotkFX.getString(FXQuickPrintContextAction.class,"label"),GeotkFX.createGlyph(FontAwesome.Glyph.PRINT));
     }
 
     @Override

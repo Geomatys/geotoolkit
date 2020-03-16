@@ -28,6 +28,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -42,6 +43,8 @@ import static org.apache.sis.internal.util.X364.FOREGROUND_DEFAULT;
 import static org.apache.sis.internal.util.X364.FOREGROUND_GREEN;
 import static org.apache.sis.internal.util.X364.FOREGROUND_RED;
 import static org.apache.sis.internal.util.X364.RESET;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.Glyph;
 import org.geotoolkit.gui.javafx.parameter.FXParameterEditor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -61,7 +64,10 @@ public class FXProcessPane extends SplitPane {
     private final WebView browser = new WebView();
     private final FXParameterEditor editorInput = new FXParameterEditor();
     private final FXParameterEditor editorOuput = new FXParameterEditor();
-    private final Button executeButton = new Button("Execute");
+    private final TitledPane titlein = new TitledPane("Inputs", editorInput);
+    private final TitledPane titleout = new TitledPane("Outputs", editorOuput);
+    private final Accordion accordion = new Accordion();
+    private final Button executeButton = new Button("Execute", new Glyph("FontAwesome", FontAwesome.Glyph.PLAY));
     private final TextArea progress = new TextArea();
 
     private final ProcessListener processListener = new ProcessListener() {
@@ -107,16 +113,9 @@ public class FXProcessPane extends SplitPane {
             execute();
         });
 
-        final TitledPane titlein = new TitledPane("Inputs", editorInput);
-        titlein.setCollapsible(false);
-        titlein.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        final TitledPane titleout = new TitledPane("Outputs", editorOuput);
-        titleout.setCollapsible(false);
-        titleout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-
-        final SplitPane pane = new SplitPane();
-        pane.setOrientation(Orientation.VERTICAL);
-        pane.getItems().addAll(titlein, titleout);
+        accordion.getPanes().add(titlein);
+        accordion.getPanes().add(titleout);
+        accordion.setExpandedPane(titlein);
 
         final FlowPane flow = new FlowPane(executeButton);
         flow.setAlignment(Pos.CENTER_RIGHT);
@@ -128,10 +127,8 @@ public class FXProcessPane extends SplitPane {
         scrollPane.setMinViewportWidth(100);
 
         final BorderPane border = new BorderPane();
-        border.setCenter(pane);
-        border.setBottom(flow);
-        border.setMinWidth(200);
-        border.setMaxWidth(400);
+        border.setCenter(flow);
+        border.setBottom(accordion);
 
         final BorderPane left = new BorderPane();
         left.setCenter(browser);
@@ -146,6 +143,7 @@ public class FXProcessPane extends SplitPane {
     }
 
     private void update(ProcessDescriptor desc) {
+        accordion.setExpandedPane(titlein);
 
         if (desc == null) {
             editorInput.setParameter(null);
@@ -160,7 +158,12 @@ public class FXProcessPane extends SplitPane {
 
         final StringBuilder sb = new StringBuilder();
         sb.append("<html><body>");
-        sb.append(String.valueOf(desc.getIdentifier().getCode()));
+        if (desc.getIdentifier() != null) {
+            sb.append("<h1>").append(String.valueOf(desc.getIdentifier().getCode()).toUpperCase()).append("</h1>");
+        }
+        if (desc.getProcedureDescription() != null) {
+            sb.append("<p>").append(desc.getProcedureDescription()).append("</p>");
+        }
         sb.append("</body></html>");
         browser.getEngine().loadContent(sb.toString());
 
@@ -186,7 +189,9 @@ public class FXProcessPane extends SplitPane {
             process.addListener(processListener);
             final ParameterValueGroup results = process.call();
             editorOuput.setParameter(results);
+            accordion.setExpandedPane(titleout);
         } catch (Exception ex) {
+            accordion.setExpandedPane(titleout);
             print(FOREGROUND_RED,ex.getLocalizedMessage(),FOREGROUND_DEFAULT,"\n");
         }
     }

@@ -22,6 +22,8 @@ import java.util.logging.Level;
 import javafx.event.ActionEvent;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.gui.javafx.chooser.FXContextChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
@@ -30,7 +32,6 @@ import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapContext;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -40,7 +41,7 @@ public class FXOpenContextAction extends FXMapAction {
 
     public FXOpenContextAction(FXMap map) {
         super(map,GeotkFX.getString(FXOpenContextAction.class,"label"),
-                GeotkFX.getString(FXOpenContextAction.class,"label"),GeotkFX.ICON_OPEN);
+                GeotkFX.getString(FXOpenContextAction.class,"label"),GeotkFX.createGlyph(FontAwesome.Glyph.FOLDER_OPEN));
     }
 
     @Override

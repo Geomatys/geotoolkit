@@ -30,12 +30,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javax.imageio.ImageIO;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ArgumentChecks;
 import org.controlsfx.dialog.ExceptionDialog;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -72,6 +76,7 @@ public final class GeotkFX {
     public static final Image ICON_MOVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_HAND_PAPER,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_EMPTY     = new WritableImage(16, 16);
 
+    private static GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
     public static final String BUNDLE_PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
     public static final String CSS_PATH = "/org/geotoolkit/gui/javafx/style/StyleEditor.css";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_PATH,Locale.getDefault(),GeotkFX.class.getClassLoader());
@@ -86,6 +91,10 @@ public final class GeotkFX {
     public synchronized static MutableStyleFactory getStyleFactory(){
         if(SF==null)SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
         return SF;
+    }
+
+    public static Label createGlyph(FontAwesome.Glyph glyph) {
+        return fontAwesome.create(glyph);
     }
 
     /**

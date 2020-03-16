@@ -20,6 +20,8 @@ package org.geotoolkit.gui.javafx.render2d.data;
 import java.util.logging.Level;
 import javafx.event.ActionEvent;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.util.logging.Logging;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.gui.javafx.chooser.FXContextChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
@@ -27,7 +29,6 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -37,7 +38,7 @@ public class FXSaveContextAction extends FXMapAction {
 
     public FXSaveContextAction(FXMap map) {
         super(map,GeotkFX.getString(FXSaveContextAction.class,"label"),
-                GeotkFX.getString(FXSaveContextAction.class,"label"),GeotkFX.ICON_SAVE);
+                GeotkFX.getString(FXSaveContextAction.class,"label"),GeotkFX.createGlyph(FontAwesome.Glyph.SAVE));
     }
 
     @Override

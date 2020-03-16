@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.render2d;
 
 import java.util.function.Consumer;
 import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -41,7 +42,7 @@ public abstract class FXMapAction extends Action implements Consumer<ActionEvent
     }
 
     public FXMapAction(String text) {
-        this(null,text,null,null);
+        this(null,text,null,(Image) null);
     }
 
     public FXMapAction(FXMap map) {
@@ -53,6 +54,14 @@ public abstract class FXMapAction extends Action implements Consumer<ActionEvent
         super(shortText);
         setLongText(longText);
         if(graphic!=null) graphicProperty().set(new ImageView(graphic));
+        setMap(map);
+        setEventHandler(this);
+    }
+
+    public FXMapAction(FXMap map, String shortText, String longText, Node graphic) {
+        super(shortText);
+        setLongText(longText);
+        if(graphic!=null) graphicProperty().set(graphic);
         setMap(map);
         setEventHandler(this);
 

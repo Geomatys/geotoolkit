@@ -35,6 +35,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.crs.CRSButton;
@@ -55,7 +56,7 @@ public final class FXZoomToAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_MAP_MARKER_ALT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
 
     public FXZoomToAction(FXMap map) {
-        super(map,GeotkFX.getString(FXZoomToAction.class,"zoom_at"),GeotkFX.getString(FXZoomToAction.class,"zoom_at"),ICON);
+        super(map,GeotkFX.getString(FXZoomToAction.class,"zoom_at"),GeotkFX.getString(FXZoomToAction.class,"zoom_at"),GeotkFX.createGlyph(FontAwesome.Glyph.MAP_MARKER));
     }
 
     @Override

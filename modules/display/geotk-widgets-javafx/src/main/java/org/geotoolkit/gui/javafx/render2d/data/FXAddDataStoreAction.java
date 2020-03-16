@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import javafx.event.ActionEvent;
 import org.apache.sis.storage.DataStoreException;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.geotoolkit.gui.javafx.chooser.FXStoreChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
@@ -36,7 +37,7 @@ public class FXAddDataStoreAction extends FXMapAction {
 
     public FXAddDataStoreAction(FXMap map) {
         super(map,GeotkFX.getString(FXAddDataStoreAction.class,"label"),
-                GeotkFX.getString(FXAddDataStoreAction.class,"label"),GeotkFX.ICON_ADD);
+                GeotkFX.getString(FXAddDataStoreAction.class,"label"), GeotkFX.createGlyph(FontAwesome.Glyph.PLUS));
     }
 
     @Override
