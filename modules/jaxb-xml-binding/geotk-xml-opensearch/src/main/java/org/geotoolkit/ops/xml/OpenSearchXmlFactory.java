@@ -29,17 +29,17 @@ public class OpenSearchXmlFactory {
     public static FeedType buildFeed(String id, String title, PersonType author, String source, Long totalResults, Long startIndex, Long itemsPerPage) {
         FeedType feed = new FeedType(id, title, author, source);
         final ObjectFactory factory = new ObjectFactory();
-        feed.getAuthorOrCategoryOrContributor().add(factory.createTotalResults(totalResults));
-        feed.getAuthorOrCategoryOrContributor().add(factory.createStartIndex(startIndex));
-        feed.getAuthorOrCategoryOrContributor().add(factory.createItemsPerPage(itemsPerPage));
+        feed.getPagingAttributes().add(factory.createTotalResults(totalResults));
+        feed.getPagingAttributes().add(factory.createStartIndex(startIndex));
+        feed.getPagingAttributes().add(factory.createItemsPerPage(itemsPerPage));
         return feed;
     }
 
     public static FeedType completeFeed(FeedType feed, Long totalResults, Long startIndex, Long itemsPerPage) {
         final ObjectFactory factory = new ObjectFactory();
-        feed.getAuthorOrCategoryOrContributor().add(factory.createTotalResults(totalResults));
-        feed.getAuthorOrCategoryOrContributor().add(factory.createStartIndex(startIndex));
-        feed.getAuthorOrCategoryOrContributor().add(factory.createItemsPerPage(itemsPerPage));
+        feed.getPagingAttributes().add(factory.createTotalResults(totalResults));
+        feed.getPagingAttributes().add(factory.createStartIndex(startIndex));
+        feed.getPagingAttributes().add(factory.createItemsPerPage(itemsPerPage));
         return feed;
     }
 }
