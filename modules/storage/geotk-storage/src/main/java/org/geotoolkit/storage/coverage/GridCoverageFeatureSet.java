@@ -38,9 +38,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
@@ -64,8 +62,8 @@ import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -369,10 +367,10 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
     }
 
     private static Iterator<Feature> create(FeatureType recordType, GridCoverage coverage) {
-        if (coverage instanceof GridCoverage2D) {
-            return new GridCoverage2DRecordIterator(recordType, (GridCoverage2D) coverage);
-        } else if (coverage instanceof GridCoverageStack) {
+        if (coverage instanceof GridCoverageStack) {
             return new GridCoverageRecordIterator(recordType, (GridCoverageStack) coverage);
+        } else if (coverage instanceof GridCoverage) {
+            return new GridCoverage2DRecordIterator(recordType, coverage);
         } else {
             throw new UnsupportedOperationException("Unsupported coverage type "+coverage.getClass().getName());
         }
@@ -442,7 +440,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
 
         private final GeometryFactory GF = new GeometryFactory();
         private final FeatureType recordType;
-        private final GridCoverage2D coverage;
+        private final GridCoverage coverage;
         private final String[] properties;
         private final PixelIterator pixelIterator;
         private final MathTransform gridToCrs2D;
@@ -452,15 +450,15 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         private boolean iteNext;
         private Feature next = null;
 
-        private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage2D coverage) {
+        private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage coverage) {
             this.recordType = recordType;
             this.coverage = coverage.forConvertedValues(true);
-            this.pixelIterator = new PixelIterator.Builder().create(this.coverage.getRenderedImage());
-            final GridGeometry2D gridGeometry = this.coverage.getGridGeometry();
-            this.gridToCrs2D = gridGeometry.getGridToCRS2D(PixelOrientation.LOWER_LEFT);
+            this.pixelIterator = new PixelIterator.Builder().create(this.coverage.render(null));
+            final GridGeometry gridGeometry = this.coverage.getGridGeometry();
+            this.gridToCrs2D = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             this.envelope = gridGeometry.getEnvelope();
             this.crs = gridGeometry.getCoordinateReferenceSystem();
-            this.crs2D = gridGeometry.getCoordinateReferenceSystem2D();
+            this.crs2D = CRS.getHorizontalComponent(crs);
 
             //list properties
             final List<String> properties = new ArrayList<>();
@@ -505,11 +503,11 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
                 final int y = pixelIterator.getPosition().y;
 
                 final double[] poly = new double[]{
-                    x  ,y,
-                    x+1,y,
-                    x+1,y+1,
-                    x  ,y+1,
-                    x  ,y
+                    x-0.5, y-0.5,
+                    x+0.5, y-0.5,
+                    x+0.5, y+0.5,
+                    x-0.5, y+0.5,
+                    x-0.5, y-0.5
                 };
                 try {
                     gridToCrs2D.transform(poly, 0, poly, 0, 5);

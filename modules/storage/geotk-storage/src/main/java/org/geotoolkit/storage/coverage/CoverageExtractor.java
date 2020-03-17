@@ -17,14 +17,17 @@
 
 package org.geotoolkit.storage.coverage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.lang.Static;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -87,13 +90,19 @@ public class CoverageExtractor extends Static {
     private static void evaluateAllSlices(GeneralDirectPosition directPos, GridCoverage coverage, Ray result)
             throws DataStoreException, TransformException {
 
-        if (coverage instanceof GridCoverage2D) {
-            final GridCoverage2D coverage2D = (GridCoverage2D) coverage;
+        if (coverage instanceof GridCoverageStack) {
+            final GridCoverageStack coverageStack = (GridCoverageStack) coverage;
+            int length = coverageStack.getStackSize();
+            for (int i = 0; i < length; i++) {
+                evaluateAllSlices(directPos, (GridCoverage) coverageStack.coverageAtIndex(i), result);
+            }
+        } else if (coverage instanceof GridCoverage) {
+            final GridCoverage coverage2D = coverage;
             double[] values = new double[coverage2D.getSampleDimensions().size()];
 
             //place directPos to a pixel center
-            GridGeometry2D gg2D = coverage2D.getGridGeometry();
-            MathTransform gridToCRS = gg2D.getGridToCRS2D();
+            GridGeometry gg2D = coverage2D.getGridGeometry();
+            MathTransform gridToCRS = gg2D.getGridToCRS(PixelInCell.CELL_CENTER);
             gridToCRS.inverse().transform(directPos, directPos);
 
             for (int i = 0; i < directPos.getDimension(); i++) {
@@ -117,12 +126,8 @@ public class CoverageExtractor extends Static {
             position.setOrdinate(1, directPos.getOrdinate(1));
             result.getValues().put(position, values);
 
-        } else if (coverage instanceof GridCoverageStack) {
-            final GridCoverageStack coverageStack = (GridCoverageStack) coverage;
-            int length = coverageStack.getStackSize();
-            for (int i = 0; i < length; i++) {
-                evaluateAllSlices(directPos, (GridCoverage) coverageStack.coverageAtIndex(i), result);
-            }
+        } else {
+            throw new DataStoreException("Unexpected coverage type " + coverage.getClass().getName());
         }
     }
 

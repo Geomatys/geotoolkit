@@ -28,16 +28,14 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -76,11 +74,11 @@ public class ShadedRelief extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        GridCoverage2D coverage = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.COVERAGE));
+        GridCoverage coverage = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.COVERAGE));
         GridCoverage elevation = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.ELEVATION));
         MathTransform1D eleConv = inputParameters.getValue(ShadedReliefDescriptor.ELECONV);
         //prepare coverage for the expected work
-        coverage = coverage.view(ViewType.RENDERED);
+        coverage = coverage.forConvertedValues(false);
         elevation = elevation.forConvertedValues(true);
 
         //light informations
@@ -88,7 +86,7 @@ public class ShadedRelief extends AbstractProcess {
         final Vector3f fragToEye = new Vector3f(0, 0, 1);
         lightDirection.normalize();
 
-        final RenderedImage baseImage = coverage.getRenderedImage();
+        final RenderedImage baseImage = coverage.render(null);
         final ColorModel cm = baseImage.getColorModel();
         final Raster baseRaster = getData(baseImage);
 
@@ -109,10 +107,10 @@ public class ShadedRelief extends AbstractProcess {
         }
 
         //we convert everything to meters
-        final MathTransform gridToData = coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        final MathTransform gridToData = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
         final MathTransform dataToMercator;
         try {
-            dataToMercator = CRS.findOperation(coverage.getCoordinateReferenceSystem2D(), MERCATOR, null).getMathTransform();
+            dataToMercator = CRS.findOperation(coverage.getCoordinateReferenceSystem(), MERCATOR, null).getMathTransform();
             final MathTransform gridToMercator = MathTransforms.concatenate(gridToData, dataToMercator);
             gridToMercator.transform(coords, 0, coords, 0, coords.length/2);
 
@@ -194,10 +192,10 @@ public class ShadedRelief extends AbstractProcess {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("Shaded-"+coverage.getName());
+        gcb.setName("Shaded");
         gcb.setGridGeometry(coverage.getGridGeometry());
         gcb.setRenderedImage(resImage);
-        final GridCoverage2D result = gcb.getGridCoverage2D();
+        final GridCoverage result = gcb.getGridCoverage2D();
         outputParameters.getOrCreate(ShadedReliefDescriptor.OUTCOVERAGE).setValue(result);
     }
 

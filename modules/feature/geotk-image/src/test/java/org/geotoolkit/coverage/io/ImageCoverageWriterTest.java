@@ -25,15 +25,11 @@ import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Locale;
 import javax.imageio.ImageWriter;
+import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.system.OS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.geotoolkit.coverage.io.ImageCoverageWriterInspector;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.io.LineFormat;
@@ -88,10 +84,10 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     /**
      * Creates a {@link GridCoverage2D} from the given file.
      */
-    private static GridCoverage2D read(final String file) throws IOException, DataStoreException {
+    private static GridCoverage read(final String file) throws IOException, DataStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, file));
-        final GridCoverage2D coverage = reader.read(null);
+        final GridCoverage coverage = reader.read(null);
         reader.dispose();
         return coverage;
     }
@@ -174,7 +170,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      */
     @Test
     public void writeFull() throws IOException, DataStoreException, ParseException {
-        final GridCoverage2D coverage = read("matrix.txt");
+        final GridCoverage coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeFull", "matrix");
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
@@ -198,7 +194,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      */
     @Test
     public void writeRegion() throws IOException, DataStoreException, ParseException {
-        final GridCoverage2D coverage = read("matrix.txt");
+        final GridCoverage coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         param.setFormatName("matrix");
@@ -240,7 +236,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      */
     @Test
     public void writeSubsampledRegion() throws IOException, DataStoreException, ParseException {
-        final GridCoverage2D coverage = read("matrix.txt");
+        final GridCoverage coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeSubsampledRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         param.setFormatName("matrix");
@@ -275,7 +271,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      */
     @Test
     public void writeScaledRegion() throws IOException, DataStoreException, ParseException {
-        final GridCoverage2D coverage = read("matrix.txt");
+        final GridCoverage coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeScaledRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         param.setFormatName("matrix");
@@ -342,7 +338,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     public void writeExpandedUpperLeftRegion() throws IOException, DataStoreException, ParseException {
         assumeTrue(OS.current() == OS.MAC_OS);
 
-        final GridCoverage2D coverage = read("matrix.txt");
+        final GridCoverage coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeOutsideRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         param.setFormatName("matrix");
@@ -386,7 +382,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     public void writeTwice() throws IOException, DataStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(TestData.file(SampleModels.class, "Contour.png"));
-        final GridCoverage2D coverage = reader.read(null);
+        final GridCoverage coverage = reader.read(null);
         reader.dispose();
         try (ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192)) {
             assertEquals("Expected an initially empty stream.", 0, buffer.size());
