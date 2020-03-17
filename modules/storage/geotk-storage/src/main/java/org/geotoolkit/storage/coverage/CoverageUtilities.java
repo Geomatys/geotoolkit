@@ -29,12 +29,14 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.TransformSeparator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.storage.coverage.finder.CoverageFinder;
 import org.geotoolkit.storage.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.storage.multires.DefiningMosaic;
@@ -45,11 +47,14 @@ import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.SphericalCS;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -340,5 +345,95 @@ public final class CoverageUtilities {
             }
         }
         return pyramidEnv;
+    }
+
+    /**
+     * Returns the math transform for two dimensions of the specified transform. This methods
+     * search for all grid dimensions in the given grid envelope having a length greater than
+     * 1 pixel. The corresponding CRS dimensions are inferred from the transform itself.
+     *
+     * @param  gridToCRS The transform, or {@code null} if none.
+     * @param  extent The extent of grid coordinates in a grid coverage, or {@code null} if unknown.
+     * @param  dimensions An array of length 4 initialized to 0. This is the array where to store
+     *         {@link #gridDimensionX}, {@link #gridDimensionY}, {@link #axisDimensionX} and
+     *         {@link #axisDimensionY} values. This argument is actually a workaround for a
+     *         Java language limitation (no multiple return values). If we could, we would
+     *         have returned directly the arrays computed in the body of this method.
+     * @return The {@link MathTransform2D} part of {@code transform}, or {@code null}
+     *         if and only if {@code gridToCRS} was null..
+     * @throws IllegalArgumentException if the 2D part is not separable.
+     */
+    public static MathTransform2D getMathTransform2D(final MathTransform gridToCRS,
+            final GridExtent extent, final int[] dimensions) throws IllegalArgumentException
+    {
+        if (gridToCRS != null) {
+            if (extent != null) {
+                if (extent.getDimension() != gridToCRS.getSourceDimensions()) {
+                    throw new MismatchedDimensionException(Errors.format(
+                            Errors.Keys.MismatchedDimension_3, "extent", extent.getDimension(), gridToCRS.getSourceDimensions()));
+                }
+            }
+        }
+        if (gridToCRS == null || gridToCRS instanceof MathTransform2D) {
+            dimensions[1] = dimensions[3] = 1; // Identity: (0,1) --> (0,1)
+            return (MathTransform2D) gridToCRS;
+        }
+        /*
+         * Finds the axis for the two dimensional parts. We infer them from the grid envelope.
+         * If no grid envelope were specified, then we assume that they are the 2 first dimensions.
+         */
+        final TransformSeparator filter = new TransformSeparator(gridToCRS);
+        long dimAdded = 0;
+        if (extent != null) {
+            final int dimension = extent.getDimension();
+            for (int i=0; i<dimension; i++) {
+                if (extent.getSize(i) > 1) {
+                    if (i >= Long.SIZE) {
+                        throw new ArithmeticException();
+                    }
+                    dimAdded |= (1L << i);
+                }
+            }
+        }
+        if (dimAdded < 3) {
+            dimAdded = 3;           // If we have only one of dimension 0 and 1, or non of them, add both of them.
+        }
+        while (dimAdded != 0) {
+            final int i = Long.numberOfTrailingZeros(dimAdded);
+            filter.addSourceDimensions(i);
+            dimAdded &= ~(1L << i);
+        }
+        Exception cause = null;
+        int[] srcDim = filter.getSourceDimensions();
+        /*
+         * Select a math transform that operate only on the two dimensions chosen above.
+         * If such a math transform doesn't have exactly 2 output dimensions, then select
+         * the same output dimensions than the input ones.
+         */
+        MathTransform candidate;
+        if (srcDim.length == 2) {
+            dimensions[0] = srcDim[0]; // gridDimensionX
+            dimensions[1] = srcDim[1]; // gridDimensionY
+            try {
+                candidate = filter.separate();
+                if (candidate.getTargetDimensions() != 2) {
+                    filter.clear();
+                    filter.addSourceDimensions(srcDim);
+                    filter.addTargetDimensions(srcDim);
+                    candidate = filter.separate();
+                }
+                srcDim = filter.getTargetDimensions();
+                dimensions[2] = srcDim[0]; // axisDimensionX
+                dimensions[3] = srcDim[1]; // axisDimensionY
+                try {
+                    return (MathTransform2D) candidate;
+                } catch (ClassCastException exception) {
+                    cause = exception;
+                }
+            } catch (FactoryException exception) {
+                cause = exception;
+            }
+        }
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.NoTransform2dAvailable), cause);
     }
 }
