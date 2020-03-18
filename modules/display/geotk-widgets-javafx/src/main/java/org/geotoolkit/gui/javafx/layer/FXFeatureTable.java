@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gui.javafx.layer;
 
-import org.locationtech.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,14 +41,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
-import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Id;
@@ -127,7 +127,7 @@ public class FXFeatureTable extends FXPropertyPane{
 
     @Override
     public String getTitle() {
-        return "Feature table";
+        return "Features table";
     }
 
     public String getCategory(){

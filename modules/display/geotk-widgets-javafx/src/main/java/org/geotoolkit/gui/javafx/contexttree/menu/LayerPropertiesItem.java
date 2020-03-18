@@ -30,6 +30,7 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
+import org.geotoolkit.gui.javafx.layer.FXFeatureTreeTable;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTypePane;
 import org.geotoolkit.gui.javafx.layer.FXLayerStructure;
 import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
@@ -58,6 +59,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
             new FXLayerStructure(),
             new FXFeatureTypePane(),
             new FXFeatureTable(),
+            new FXFeatureTreeTable(),
             new FXStyleAggregatedPane());
     }
 
