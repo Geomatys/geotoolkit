@@ -72,7 +72,7 @@ public final strictfp class FloatRasterTest extends GridCoverageTestBase {
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
         GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("My grayscale coverage");
-        gcb.setRenderedImage(raster);
+        gcb.setValues(raster);
         gcb.setEnvelope(envelope);
         GridCoverage gc = gcb.getGridCoverage2D();
         show(gc);
@@ -86,9 +86,9 @@ public final strictfp class FloatRasterTest extends GridCoverageTestBase {
         Color[] colors = new Color[] {Color.BLUE, Color.CYAN, Color.WHITE, Color.YELLOW, Color.RED};
         gcb = new GridCoverageBuilder();
         gcb.setName("My colored coverage");
-        gcb.setRenderedImage(raster);
+        gcb.setValues(raster);
         gcb.setEnvelope(envelope);
-        gcb.setSampleDimensions(null, null, null, colors);
+        gcb.setRanges(null, null, null, colors);
         gc = gcb.getGridCoverage2D();
         show(gc);
     }
@@ -110,7 +110,7 @@ public final strictfp class FloatRasterTest extends GridCoverageTestBase {
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
         GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("My grayscale matrix");
-        gcb.setRenderedImage(matrix);
+        gcb.setValues(matrix);
         gcb.setEnvelope(envelope);
         GridCoverage gc = gcb.getGridCoverage2D();
         show(gc);

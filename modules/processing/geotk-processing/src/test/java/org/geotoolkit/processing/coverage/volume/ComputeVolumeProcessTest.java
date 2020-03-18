@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -31,7 +32,6 @@ import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import static org.junit.Assert.*;
@@ -412,11 +412,10 @@ public strictfp class ComputeVolumeProcessTest extends org.geotoolkit.test.TestB
             final SampleDimension gsd = builder.build();
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
-            gcb.setEnvelope(envelope);
-            gcb.setRenderedImage(image);
-            gcb.setSampleDimensions(gsd);
-            coverage = gcb.getGridCoverage2D();
+            gcb.setDomain(envelope);
+            gcb.setValues(image);
+            gcb.setRanges(gsd);
+            coverage = gcb.build();
         }
 
         @Override

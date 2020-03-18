@@ -6,9 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.db.postgres.PostgresStore;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -60,12 +62,9 @@ public class PostgisRasterDemo {
 
         //Create a coverage
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("world");
-        gcb.setRenderedImage(image);
-        gcb.setCoordinateReferenceSystem(crs);
-        gcb.setGridToCRS(-1, 0, 0, 1, +90, -180);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        gcb.setValues(image);
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(-1, 0, 0, 1, +90, -180), crs));
+        final GridCoverage coverage = gcb.build();
 
         //Create a feature
         final Feature feature = type.newInstance();

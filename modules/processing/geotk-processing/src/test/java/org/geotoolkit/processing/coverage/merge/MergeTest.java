@@ -23,10 +23,14 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -57,10 +61,12 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
         g.fillRect(0, 0, 1440, 720);
         g.setColor(Color.GREEN);
         g.fillRect(720, 0, 720, 720);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        env.setEnvelope(-180,-90,+180,+90);
+
         final GridCoverageBuilder gcb1 = new GridCoverageBuilder();
-        gcb1.setRenderedImage(inputImage1);
-        gcb1.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
-        gcb1.setEnvelope(-180,-90,+180,+90);
+        gcb1.setValues(inputImage1);
+        gcb1.setDomain(env);
         final GridCoverage inCoverage1 = gcb1.build();
 
         //second image, EPSG:4326, 1 float, 2x scale
@@ -70,10 +76,12 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
                 data[y][x] = x+y;
             }
         }
+        final GeneralEnvelope env2 = new GeneralEnvelope(CommonCRS.WGS84.geographic());
+        env2.setEnvelope(-90,-180,+90,+180);
         final GridCoverageBuilder gcb2 = new GridCoverageBuilder();
-        gcb2.setRenderedImage(data);
-        gcb2.setCoordinateReferenceSystem(CommonCRS.WGS84.geographic());
-        gcb2.setEnvelope(-90,-180,+90,+180);
+        gcb2.setValues(BufferedImages.toDataBuffer1D(data));
+        gcb2.setDomain(new GridGeometry(new GridExtent(720, 360), env2));
+        gcb2.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage inCoverage2 = gcb2.build();
 
 

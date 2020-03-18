@@ -18,42 +18,39 @@
 package org.geotoolkit.factory;
 
 import java.awt.RenderingHints;
-import javax.swing.event.ChangeListener; // For javadoc
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.ObjectStreamException;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import javax.naming.Name;
 import javax.sql.DataSource;
+import javax.swing.event.ChangeListener;
 import org.apache.sis.io.TableAppender;
-
-import org.opengis.util.InternationalString;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CSAuthorityFactory;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.lang.Configuration;
+import org.geotoolkit.resources.Errors;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
-
-import org.geotoolkit.lang.Configuration;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.resources.Errors;
-
-import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CSAuthorityFactory;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -442,28 +439,6 @@ public class Hints extends RenderingHints {
      * @category Coverage
      */
     public static final Key TILE_ENCODING = new Key(String.class);
-
-    /**
-     * Forces the grid coverage processor to perform operations on the specified view.
-     * <p>
-     * Some operation when called on a {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid
-     * coverage} tries to converts to {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
-     * geophysics} view before to execute. The rationale behind this is that the other views are
-     * just the rendered version of a coverage data, and operations like interpolations have a
-     * physical meaning only when applied on the geophysics view (e.g. interpolate <cite>Sea
-     * Surface Temperature</cite> (SST) values, not the RGB values that colorize the temperature).
-     * <p>
-     * However, in some cases like when doing pure rendering of images, we might want to force
-     * operations to work on {@linkplain org.geotoolkit.coverage.grid.ViewType#PHOTOGRAPHIC
-     * photographic} view directly, even performing color expansions as needed. This can be
-     * accomplished by setting this hint to the desired view. Be aware that interpolations
-     * after color expansions may produce colors that do not accurately represent the geophysical
-     * value.
-     *
-     * @since 2.5
-     * @category Coverage
-     */
-    public static final Key COVERAGE_PROCESSING_VIEW = new Key("org.geotoolkit.coverage.grid.ViewType");
 
     /**
      * The {@link org.geotoolkit.coverage.SampleDimensionType} to use.

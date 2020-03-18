@@ -38,7 +38,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.OutOfDomainOfValidityException;
@@ -287,23 +286,6 @@ public final class CoverageUtilities extends Static {
             }
         }
         return gg;
-    }
-
-    /**
-     * Converts SIS grid coverage to Geotk one.
-     */
-    public static GridCoverage2D toGeotk(final org.apache.sis.coverage.grid.GridCoverage coverage) {
-        if (coverage == null) return null;
-        if (coverage instanceof GridCoverage2D) return (GridCoverage2D) coverage;
-        GridGeometry gg = forceLowerToZero(coverage.getGridGeometry());
-        if (gg.getDimension() > 2) {
-            gg = gg.derive().sliceByRatio(0.5, 0, 1).build();
-        }
-        GridCoverageBuilder builder = new GridCoverageBuilder();
-        builder.setGridGeometry(gg);
-        builder.setSampleDimensions(coverage.getSampleDimensions());
-        builder.setRenderedImage(coverage.render(null));
-        return builder.getGridCoverage2D();
     }
 
     public static InternationalString getName(GridCoverage coverage) {

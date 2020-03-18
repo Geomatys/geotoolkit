@@ -55,6 +55,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
@@ -64,7 +65,6 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.display.PortrayalException;
@@ -81,8 +81,8 @@ import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.container.RenderingRules;
 import org.geotoolkit.display2d.container.FeatureLayerJ2D;
+import org.geotoolkit.display2d.container.RenderingRules;
 import org.geotoolkit.display2d.presentation.Presentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -90,7 +90,6 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -475,9 +474,9 @@ public final class DefaultPortrayalService implements PortrayalService{
                 image = (BufferedImage) rectifyImageColorModel(image, mime);
 
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                gcb.setEnvelope(env);
-                gcb.setRenderedImage(image);
-                final GridCoverage coverage = gcb.getGridCoverage2D();
+                gcb.setDomain(env);
+                gcb.setValues(image);
+                final GridCoverage coverage = gcb.build();
                 writeCoverage(coverage, env, resolution, outputDef,null);
             }else{
                 try {
@@ -546,7 +545,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                     final int nbBands = image.getSampleModel().getNumBands();
                     if(nbBands > 3){
                         //we can remove the fourth band assuming it is the alpha
-                        coverage = new BandSelectProcess(CoverageUtilities.toGeotk(coverage), new int[]{0,1,2}).executeNow();
+                        coverage = new BandSelectProcess(coverage, new int[]{0,1,2}).executeNow();
                     }
                 }
             }
@@ -613,7 +612,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             }
 
             writer.setOutput(outputDef.getOutput());
-            writer.write(CoverageUtilities.toGeotk(coverage), writeParam);
+            writer.write(coverage, writeParam);
 
         } catch (DataStoreException ex) {
             throw new PortrayalException(ex);

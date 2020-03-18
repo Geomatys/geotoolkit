@@ -37,21 +37,21 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.storage.feature.FeatureSetWrapper;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.storage.feature.FeatureSetWrapper;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
 import org.geotoolkit.wps.io.WPSIO;
@@ -111,9 +111,9 @@ public final class ConvertersTestUtils {
 
         //create the coverage
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        return gcb.getGridCoverage2D();
+        gcb.setDomain(env);
+        gcb.setValues(img);
+        return gcb.build();
     }
 
     /**

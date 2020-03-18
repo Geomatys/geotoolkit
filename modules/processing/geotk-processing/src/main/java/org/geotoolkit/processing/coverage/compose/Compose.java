@@ -25,7 +25,11 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.List;
 import java.util.Map.Entry;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
@@ -40,10 +44,6 @@ import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.referencing.operation.transform.MathTransforms.concatenate;
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
@@ -273,12 +273,11 @@ public class Compose extends AbstractProcess {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("imageOut");
-        gcb.setRenderedImage(outImage);
-        gcb.setGridGeometry(outGridGeom);
-        if (sampleDimensions!=null) gcb.setSampleDimensions(sampleDimensions);
+        gcb.setValues(outImage);
+        gcb.setDomain(outGridGeom);
+        if (sampleDimensions!=null) gcb.setRanges(sampleDimensions);
 
-        final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+        final GridCoverage gridCoverage2d = gcb.build();
         final ParameterValue<?> gridCoverageParamOut = outputParameters.parameter(COVERAGE_PARAM.getName().getCode());
         gridCoverageParamOut.setValue(gridCoverage2d);
     }

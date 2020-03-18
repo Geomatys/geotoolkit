@@ -19,7 +19,6 @@ package org.geotoolkit.storage.coverage;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -27,11 +26,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.memory.InMemoryStore;
@@ -97,10 +98,8 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setGridToCRS(new AffineTransform(1, 0, 0, -1, -180, 90));
-        gcb.setCoordinateReferenceSystem(CRS84);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setRenderedImage(createImage(360, 180, Color.RED));
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, -1, -180, 90), CRS84));
+        gcb.setValues(createImage(360, 180, Color.RED));
         writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //image should be red
@@ -140,10 +139,8 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setGridToCRS(new AffineTransform(10, 0, 0, -10, -180, 90));
-        gcb.setCoordinateReferenceSystem(CRS84);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setRenderedImage(createImage(36, 18, Color.RED));
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(10, 0, 0, -10, -180, 90), CRS84));
+        gcb.setValues(createImage(36, 18, Color.RED));
         writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //image should be red
@@ -183,10 +180,8 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setGridToCRS(new AffineTransform(10, 0, 0, -10, -120, 60));
-        gcb.setCoordinateReferenceSystem(CRS84);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setRenderedImage(createImage(19, 9, Color.RED));
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(10, 0, 0, -10, -120, 60), CRS84));
+        gcb.setValues(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //image should be black/red
@@ -248,10 +243,8 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setGridToCRS(new AffineTransform(10, 0, 0, -10, -120, 60));
-        gcb.setCoordinateReferenceSystem(CRS84);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setRenderedImage(createImage(19, 9, Color.RED));
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(10, 0, 0, -10, -120, 60), CRS84));
+        gcb.setValues(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //lower image should be black/red---------------------------------------
@@ -343,10 +336,8 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setGridToCRS(new AffineTransform(10, 0, 0, -10, -120, 60));
-        gcb.setCoordinateReferenceSystem(CRS84);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setRenderedImage(createImage(19, 9, Color.RED));
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(10, 0, 0, -10, -120, 60), CRS84));
+        gcb.setValues(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //lower image should be black/red---------------------------------------
@@ -438,10 +429,8 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         env.setRange(0, -30, +60);
         env.setRange(1, -120, +70);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setGridToCRS(new AffineTransform(-10, 0, 0, 10, 60,-120));
-        gcb.setCoordinateReferenceSystem(EPSG4326);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setRenderedImage(createImage(9, 19, Color.RED));
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(-10, 0, 0, 10, 60,-120), EPSG4326));
+        gcb.setValues(createImage(9, 19, Color.RED));
         writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
 
         //lower image should be black/red---------------------------------------

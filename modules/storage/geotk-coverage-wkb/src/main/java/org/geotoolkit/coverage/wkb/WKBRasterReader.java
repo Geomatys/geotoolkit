@@ -31,17 +31,17 @@ import java.io.InputStream;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-
-import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
-
-import org.geotoolkit.io.LEDataInputStream;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
+import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
+import org.geotoolkit.io.LEDataInputStream;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 
 /**
@@ -106,14 +106,15 @@ public class WKBRasterReader {
         final BufferedImage image = read(stream);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         final String epsgCode = "EPSG:"+srid;
-        if(authorityFactory != null){
-            gcb.setCoordinateReferenceSystem(authorityFactory.createCoordinateReferenceSystem(epsgCode));
-        }else{
-            gcb.setCoordinateReferenceSystem(CRS.forCode(epsgCode));
+        final CoordinateReferenceSystem crs;
+        if (authorityFactory != null) {
+            crs = authorityFactory.createCoordinateReferenceSystem(epsgCode);
+        } else {
+            crs = CRS.forCode(epsgCode);
         }
-        gcb.setGridToCRS((MathTransform)getGridToCRS());
-        gcb.setRenderedImage(image);
-        return gcb.getGridCoverage2D();
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CENTER, getGridToCRS(), crs));
+        gcb.setValues(image);
+        return gcb.build();
     }
 
     /**

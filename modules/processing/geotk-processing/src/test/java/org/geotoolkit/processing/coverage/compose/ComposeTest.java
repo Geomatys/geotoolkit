@@ -24,11 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
@@ -55,12 +53,10 @@ public class ComposeTest {
 
         final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
-        final GridExtent gridEnvelope = new GridExtent(2, 2);
         final CoordinateReferenceSystem crs = CommonCRS.WGS84. normalizedGeographic();
         final GeneralEnvelope envelope = new GeneralEnvelope(crs);
         envelope.setRange(0, 0, 2);
         envelope.setRange(1, 0, 2);
-        final GridGeometry2D gridGeometry = new GridGeometry2D(gridEnvelope, envelope);
 
         {
             final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
@@ -69,11 +65,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 1);
             image.getRaster().setSample(1, 1, 0, 1);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image0");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -96,11 +92,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 2);
             image.getRaster().setSample(1, 1, 0, 2);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image1");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -130,12 +126,10 @@ public class ComposeTest {
 
         final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
-        final GridExtent gridEnvelope = new GridExtent(2, 2);
         final CoordinateReferenceSystem crs = CommonCRS.WGS84. normalizedGeographic();
         final GeneralEnvelope envelope = new GeneralEnvelope(crs);
         envelope.setRange(0, 0, 2);
         envelope.setRange(1, 0, 2);
-        final GridGeometry2D gridGeometry = new GridGeometry2D(gridEnvelope, envelope);
 
         {
             final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
@@ -144,11 +138,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 1);
             image.getRaster().setSample(1, 1, 0, 1);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image0");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -171,11 +165,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 2);
             image.getRaster().setSample(1, 1, 0, 2);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image1");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -198,11 +192,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 3);
             image.getRaster().setSample(1, 1, 0, 3);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image2");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -233,12 +227,10 @@ public class ComposeTest {
         final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
         {
-            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 0, 2);
             envelope.setRange(1, 0, 2);
-            final GridGeometry2D gridGeometry = new GridGeometry2D(gridEnvelope, envelope);
 
             final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
             image.getRaster().setSample(0, 0, 0, 1);
@@ -246,11 +238,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 1);
             image.getRaster().setSample(1, 1, 0, 1);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image0");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -267,12 +259,10 @@ public class ComposeTest {
         }
 
         {
-            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 1, 3);
             envelope.setRange(1, 1, 3);
-            final GridGeometry2D gridGeometry = new GridGeometry2D(gridEnvelope, envelope);
 
             final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
             image.getRaster().setSample(0, 0, 0, 2);
@@ -280,11 +270,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 2);
             image.getRaster().setSample(1, 1, 0, 2);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image0");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -323,12 +313,10 @@ public class ComposeTest {
         final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
         {
-            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 0, 2);
             envelope.setRange(1, 0, 2);
-            final GridGeometry2D gridGeometry = new GridGeometry2D(gridEnvelope, envelope);
 
             final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
             image.getRaster().setSample(0, 0, 0, 1);
@@ -336,11 +324,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 1);
             image.getRaster().setSample(1, 1, 0, 1);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image0");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -357,12 +345,10 @@ public class ComposeTest {
         }
 
         {
-            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 1, 3);
             envelope.setRange(1, 0, 2);
-            final GridGeometry2D gridGeometry = new GridGeometry2D(gridEnvelope, envelope);
 
             final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
             image.getRaster().setSample(0, 0, 0, 2);
@@ -370,11 +356,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 2);
             image.getRaster().setSample(1, 1, 0, 2);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image0");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -407,12 +393,10 @@ public class ComposeTest {
         final List<Map.Entry<GridCoverage,Geometry[]>> inputs = new ArrayList<>();
 
         {
-            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 0, 2);
             envelope.setRange(1, 0, 2);
-            final GridGeometry2D gridGeometry = new GridGeometry2D(gridEnvelope, envelope);
 
             final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
             image.getRaster().setSample(0, 0, 0, 1);
@@ -420,11 +404,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 1);
             image.getRaster().setSample(1, 1, 0, 1);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image0");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {
@@ -441,12 +425,10 @@ public class ComposeTest {
         }
 
         {
-            final GridExtent gridEnvelope = new GridExtent(2, 2);
             final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
             envelope.setRange(0, 4, 6);
             envelope.setRange(1, 0, 2);
-            final GridGeometry2D gridGeometry = new GridGeometry2D(gridEnvelope, envelope);
 
             final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_INT);
             image.getRaster().setSample(0, 0, 0, 2);
@@ -454,11 +436,11 @@ public class ComposeTest {
             image.getRaster().setSample(0, 1, 0, 2);
             image.getRaster().setSample(1, 1, 0, 2);
 
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("image0");
-            gcb.setRenderedImage(image);
-            gcb.setGridGeometry(gridGeometry);
-            final GridCoverage gridCoverage2d = gcb.getGridCoverage2D();
+            final GridCoverage gridCoverage2d = new GridCoverageBuilder()
+                    .setValues(image)
+                    .setDomain(envelope)
+                    .flipAxis(1)
+                    .build();
 
             Geometry geometry = GF.createPolygon(
                 new Coordinate[] {

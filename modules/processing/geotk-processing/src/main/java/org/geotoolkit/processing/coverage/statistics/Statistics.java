@@ -125,7 +125,7 @@ public class Statistics extends AbstractProcess {
 
     /**
      * Run Statistics process with a CoverageResource and return ImageStatistics
- the process is run on a reduced version of the data to avoid consuming to much resources.
+     * the process is run on a reduced version of the data to avoid consuming to much resources.
      *
      * @param ref CoverageResource
      * @param excludeNoData exclude no-data flag
@@ -149,7 +149,7 @@ public class Statistics extends AbstractProcess {
 
 
         final GridGeometry query = gridGeom.derive().subgrid(env, res).sliceByRatio(0.5, 0, 1).build();
-        GridCoverage coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(ref.read(query));
+        GridCoverage coverage = ref.read(query);
         //we want the statistics on the real data values
         coverage = coverage.forConvertedValues(true);
         org.geotoolkit.process.Process process = new Statistics(coverage, excludeNoData);
@@ -460,7 +460,7 @@ public class Statistics extends AbstractProcess {
      */
     private GridCoverage getCoverage(GridCoverageResource ref) throws ProcessException {
         try {
-            return org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(ref.read(null, null));
+            return ref.read(null, null);
         } catch (DataStoreException e) {
             throw new ProcessException(e.getMessage(), this, e);
         }

@@ -24,11 +24,11 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.ProcessException;
@@ -303,10 +303,10 @@ public class ReduceToDomainProcess extends AbstractProcess {
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             final GridGeometry2D gg = new GridGeometry2D(null, PixelOrientation.UPPER_LEFT, gtc, crs);
-            gcb.setGridCoverage(candidate);
-            gcb.setGridGeometry(gg);
-            gcb.setRenderedImage(resimg);
-            final GridCoverage outgc = gcb.getGridCoverage2D();
+            gcb.setDomain(gg);
+            gcb.setRanges(candidate.getSampleDimensions());
+            gcb.setValues(resimg);
+            final GridCoverage outgc = gcb.build();
             outputParameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT).setValue(outgc);
         }catch(TransformException ex){
             throw new ProcessException(ex.getMessage(), this, ex);

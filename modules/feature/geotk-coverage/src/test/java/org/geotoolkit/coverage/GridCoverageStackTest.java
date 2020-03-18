@@ -194,7 +194,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setGridToCRS(gridtoCrs);
-        gcb.setRenderedImage(image);
+        gcb.setValues(image);
 
         return gcb.getGridCoverage2D();
     }
@@ -215,7 +215,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setGridToCRS(gridtoCrs);
-        gcb.setRenderedImage(image);
+        gcb.setValues(image);
 
         return gcb.getGridCoverage2D();
     }

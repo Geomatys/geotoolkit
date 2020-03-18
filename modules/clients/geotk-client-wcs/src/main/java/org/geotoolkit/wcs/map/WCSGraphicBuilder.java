@@ -28,13 +28,13 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.Canvas;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -123,9 +123,9 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             }
 
             final GridCoverageBuilder gc = new GridCoverageBuilder();
-            gc.setEnvelope(env);
-            gc.setRenderedImage(image);
-            final GridCoverage coverage = gc.getGridCoverage2D();
+            gc.setDomain(env);
+            gc.setValues(image);
+            final GridCoverage coverage = gc.build();
             try {
                 return GO2Utilities.portray(context2D, coverage);
             } catch (PortrayalException ex) {

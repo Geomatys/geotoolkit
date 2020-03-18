@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.kriging;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
@@ -26,16 +23,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.vecmath.Point3d;
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
-import org.geotoolkit.processing.AbstractProcess;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import static org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.*;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.opengis.coverage.grid.SequenceType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
@@ -43,10 +50,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
-import org.apache.sis.internal.feature.AttributeConvention;
-
-import static org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.*;
-import org.opengis.coverage.grid.SequenceType;
 
 
 /**
@@ -285,8 +288,9 @@ public class KrigingProcess extends AbstractProcess {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(matrix);
-        return gcb.getGridCoverage2D();
+        gcb.setDomain(new GridGeometry(new GridExtent(xs.length, ys.length), env));
+        gcb.setValues(BufferedImages.toDataBuffer1D(matrix));
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+        return gcb.build();
     }
 }

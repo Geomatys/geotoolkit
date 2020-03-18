@@ -32,9 +32,9 @@ import java.util.Map.Entry;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.SceneDef;
@@ -156,9 +156,9 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
         g.setPaint(paint);
         g.fill(new Rectangle(0, 0, 1000, 1000));
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        gcb.setDomain(env);
+        gcb.setValues(img);
+        final GridCoverage coverage = gcb.build();
 
         final MapContext context = MapBuilder.createContext();
         context.layers().add(MapBuilder.createCoverageLayer(coverage,

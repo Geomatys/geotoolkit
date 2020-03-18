@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
@@ -27,16 +26,17 @@ import java.util.Collections;
 import java.util.Iterator;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrix4;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.feature.TypeConventions;
@@ -48,6 +48,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
@@ -88,11 +89,9 @@ public class GridCoverageFeatureSetTest {
         final SampleDimension sdim2 = sdb.build();
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("MyCoverage");
-        gcb.setRenderedImage(image);
-        gcb.setGridToCRS(new AffineTransform(2, 0, 0, 2, 31, 11));
-        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
-        gcb.setSampleDimensions(sdim1,sdim2);
+        gcb.setValues(image);
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CENTER, new AffineTransform2D(2, 0, 0, 2, 31, 11), CommonCRS.WGS84.normalizedGeographic()));
+        gcb.setRanges(sdim1,sdim2);
         final GridCoverage coverage = gcb.build();
 
         //test mapped feature type
@@ -100,10 +99,10 @@ public class GridCoverageFeatureSetTest {
         final FeatureAssociationRole role = (FeatureAssociationRole) coverageType.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
         final FeatureType recordType = role.getValueType();
 
-        assertEquals("MyCoverage",coverageType.getName().toString());
+        assertEquals("Coverage",coverageType.getName().toString());
         assertTrue(TypeConventions.COVERAGE_TYPE.isAssignableFrom(coverageType));
 
-        assertEquals("MyCoverageRecord",recordType.getName().toString());
+        assertEquals("Record",recordType.getName().toString());
         assertTrue(TypeConventions.COVERAGE_RECORD_TYPE.isAssignableFrom(recordType));
 
         //convert coverage to feature
@@ -174,13 +173,12 @@ public class GridCoverageFeatureSetTest {
                     0, 0, 1, 100,
                     0, 0, 0, 1);
             final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, null, new long[]{2,2,1}, false), gridToCrs, crs3d);
+            final GridGeometry gg = new GridGeometry(new GridExtent(null, null, new long[]{2,2,1}, false), PixelInCell.CELL_CENTER, gridToCrs, crs3d);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("Slice1");
-            gcb.setRenderedImage(image1);
-            gcb.setGridGeometry(gg);
-            gcb.setSampleDimensions(sdim1,sdim2);
+            gcb.setValues(image1);
+            gcb.setDomain(gg);
+            gcb.setRanges(sdim1,sdim2);
             slice1 = gcb.build();
         }
 
@@ -199,13 +197,12 @@ public class GridCoverageFeatureSetTest {
                     0, 0, 1, 101,
                     0, 0, 0, 1);
             final MathTransform gridToCrs = MathTransforms.linear(matrix);
-            final GridGeometry2D gg = new GridGeometry2D(new GridExtent(null, null, new long[]{2,2,1}, false), gridToCrs, crs3d);
+            final GridGeometry gg = new GridGeometry(new GridExtent(null, null, new long[]{2,2,1}, false), PixelInCell.CELL_CENTER, gridToCrs, crs3d);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName("Slice2");
-            gcb.setRenderedImage(image1);
-            gcb.setGridGeometry(gg);
-            gcb.setSampleDimensions(sdim1,sdim2);
+            gcb.setValues(image1);
+            gcb.setDomain(gg);
+            gcb.setRanges(sdim1,sdim2);
             slice2 = gcb.build();
         }
 

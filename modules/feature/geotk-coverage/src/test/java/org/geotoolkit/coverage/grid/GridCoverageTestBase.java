@@ -143,9 +143,9 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder(hints);
         gcb.setName("Test");
-        gcb.setRenderedImage(image);
+        gcb.setValues(image);
         gcb.setEnvelope(envelope);
-        gcb.setSampleDimensions(band);
+        gcb.setRanges(band);
         coverage = gcb.getGridCoverage2D();
         /*
          * Grid coverage construction finished.  Now test it.  First we test the creation of a

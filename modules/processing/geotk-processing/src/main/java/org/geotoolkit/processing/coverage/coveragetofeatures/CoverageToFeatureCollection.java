@@ -23,7 +23,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.operation.TransformException;
@@ -81,7 +80,7 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
     protected Feature create(long x, long y) throws FeatureStoreRuntimeException {
         Feature feat = null;
         try {
-            feat = CoverageToFeaturesProcess.convertToFeature(getFeatureType(), x, y, CoverageUtilities.toGeotk(coverage), reader, gridGeom);
+            feat = CoverageToFeaturesProcess.convertToFeature(getFeatureType(), x, y, coverage, reader, gridGeom);
         } catch (DataStoreException ex) {
            throw new FeatureStoreRuntimeException(ex);
         } catch (TransformException ex) {

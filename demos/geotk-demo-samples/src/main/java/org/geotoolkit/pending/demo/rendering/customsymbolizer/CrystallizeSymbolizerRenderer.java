@@ -20,12 +20,11 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 
 
 public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<CrystallizeCachedSymbolizer>{
@@ -80,7 +79,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
         //we switch in objective CRS to render the coverage.
         renderingContext.switchToObjectiveCRS();
 
-        final MathTransform2D trs2D = CoverageUtilities.toGeotk(dataCoverage).getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
         if(trs2D instanceof AffineTransform){
             g2d.drawImage(buffer, (AffineTransform)trs2D, null);
         }

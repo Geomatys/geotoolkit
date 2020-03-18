@@ -41,10 +41,10 @@ import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.BalloonStyle;
@@ -654,9 +654,9 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             envelope.setRange(0, west, east);
             envelope.setRange(1, south, north);
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setEnvelope(envelope);
-            gcb.setRenderedImage(image);
-            final GridCoverage coverage = gcb.getGridCoverage2D();
+            gcb.setDomain(envelope);
+            gcb.setValues(image);
+            final GridCoverage coverage = gcb.build();
 
             final GridCoverage resampled = new ResampleProcess(coverage, context2d.getObjectiveCRS2D(), null, InterpolationCase.NEIGHBOR, null).executeNow();
 

@@ -189,6 +189,62 @@ public class BufferedImages extends Static {
         }
     }
 
+    public static DataBuffer toDataBuffer1D(Object data) throws ArithmeticException {
+        if (data instanceof byte[][]) {
+            final byte[][] matrix = (byte[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final byte[] datas = new byte[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferByte(datas, datas.length);
+        } else if (data instanceof short[][]) {
+            final short[][] matrix = (short[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final short[] datas = new short[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferShort(datas, datas.length);
+        } else if (data instanceof int[][]) {
+            final int[][] matrix = (int[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final int[] datas = new int[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferInt(datas, datas.length);
+        } else if (data instanceof float[][]) {
+            final float[][] matrix = (float[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final float[] datas = new float[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferFloat(datas, datas.length);
+        } else if (data instanceof double[][]) {
+            final double[][] matrix = (double[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final double[] datas = new double[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferDouble(datas, datas.length);
+        } else {
+            throw new IllegalArgumentException("Unexpected array type "+data.getClass());
+        }
+    }
+
     /**
      * Compare the pixles of given image to reference pixel and return true
      * if all pixels share those same samples.

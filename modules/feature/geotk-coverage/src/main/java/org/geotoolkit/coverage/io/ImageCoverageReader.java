@@ -1584,9 +1584,9 @@ public class ImageCoverageReader extends GridCoverageStore {
         final GridCoverageBuilder builder = coverageBuilder;
         try {
             builder.setName(name);
-            builder.setRenderedImage(image);
-            builder.setSampleDimensions(bands);
-            builder.setGridGeometry(gridGeometry);
+            builder.setValues(image);
+            builder.setRanges(bands);
+            builder.setDomain(gridGeometry);
             coverage = builder.getGridCoverage2D();
         } finally {
             builder.reset();

@@ -16,18 +16,23 @@
  */
 package org.geotoolkit.processing.coverage.isoline2;
 
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -35,6 +40,7 @@ import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  *
@@ -50,13 +56,15 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, 0, 3);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(new float[][]{
+        gcb.setDomain(new GridGeometry(new GridExtent(3, 3), env));
+        gcb.setValues(BufferedImages.toDataBuffer1D(new float[][]{
             {100,100,100},
             {100,200,100},
             {100,100,100}
-        });
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        }));
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+
+        final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
@@ -78,13 +86,14 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, 0, 3);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(new float[][]{
+        gcb.setDomain(new GridGeometry(new GridExtent(3, 3), env));
+        gcb.setValues(BufferedImages.toDataBuffer1D(new float[][]{
             {10,10,20},
             {10,10,20},
             {10,15,10},
-        });
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        }));
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+        final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
 
@@ -107,14 +116,15 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, 0, 3);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(new float[][]{
+        gcb.setDomain(new GridGeometry(new GridExtent(3, 4), PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, -0.75, 0, 3.0), env.getCoordinateReferenceSystem()));
+        gcb.setValues(BufferedImages.toDataBuffer1D(new float[][]{
             {10,10,20},
             {10,10,20},
             {10,15,10},
             {10,15,10},
-        });
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        }));
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+        final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
 
@@ -137,17 +147,17 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         env.setRange(1, 0, 7);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(new float[][]{
+        gcb.setDomain(new GridGeometry(new GridExtent(7, 6), PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, -1.1666666666666667, 0, 7.0), env.getCoordinateReferenceSystem()));
+        gcb.setValues(BufferedImages.toDataBuffer1D(new float[][]{
                 { Float.NaN,  Float.NaN, Float.NaN,  Float.NaN, Float.NaN, Float.NaN, Float.NaN},
                 { Float.NaN,  3.164f,  2.91f,  2.78f,  1.03f, -2.086f,Float.NaN},
                 { Float.NaN, 3.41f,  5.41f,  4.66f,  4.28f, 0.163f, Float.NaN},
                 { Float.NaN, 3.78f,  0.41f, -0.83f,  -0.83f, 0.663f, Float.NaN},
                 { Float.NaN, -0.58f, -2.83f, -1.21f, -0.83f, 0.038f, Float.NaN},
                 { Float.NaN,  Float.NaN, Float.NaN,  Float.NaN, Float.NaN, Float.NaN, Float.NaN}
-        });
-
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        }));
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+        final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
         double[] intervales = {3.163};

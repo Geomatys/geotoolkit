@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -46,8 +47,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
@@ -177,7 +176,7 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
                     envelope.setRange(0, longitude, longitude+1);
                     envelope.setRange(1, latitude, latitude+1);
 
-                    grid = new GridGeometry2D(extent, envelope);
+                    grid = new GridGeometry(extent, envelope);
                 } catch (IOException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
                 }
@@ -220,10 +219,9 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
             System.arraycopy(allData, 0, ((DataBufferShort) dataBuffer).getData(), 0, allData.length);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName(name.toString());
-            gcb.setRenderedImage(image);
-            gcb.setSampleDimensions(getSampleDimensions());
-            gcb.setGridGeometry(gridGeometry);
+            gcb.setValues(image);
+            gcb.setRanges(getSampleDimensions());
+            gcb.setDomain(gridGeometry);
             return gcb.build();
         }
 

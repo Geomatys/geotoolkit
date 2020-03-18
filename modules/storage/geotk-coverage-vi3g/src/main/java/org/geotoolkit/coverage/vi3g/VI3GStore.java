@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -46,7 +47,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.GeoreferencedGridCoverageResource;
@@ -275,10 +275,9 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
             System.arraycopy(allData, 0, ((DataBufferShort) dataBuffer).getData(), 0, allData.length);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setName(name.toString());
-            gcb.setRenderedImage(image);
-            gcb.setSampleDimensions(getSampleDimensions());
-            gcb.setGridGeometry(gridGeometry);
+            gcb.setValues(image);
+            gcb.setRanges(getSampleDimensions());
+            gcb.setDomain(gridGeometry);
             return gcb.build();
         }
 

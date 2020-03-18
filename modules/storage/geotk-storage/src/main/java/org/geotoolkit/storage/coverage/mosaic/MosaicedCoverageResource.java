@@ -37,13 +37,14 @@ import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.Tile;
 import org.apache.sis.internal.referencing.j2d.TileOrganizer;
 import org.apache.sis.internal.storage.AbstractGridResource;
-import org.apache.sis.internal.referencing.j2d.Tile;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
@@ -51,7 +52,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
@@ -226,10 +226,9 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("Mosaic");
-        gcb.setGridGeometry(canvas);
-        gcb.setSampleDimensions(getSampleDimensions());
-        gcb.setRenderedImage(buffer);
+        gcb.setDomain(canvas);
+        gcb.setRanges(getSampleDimensions());
+        gcb.setValues(buffer);
         return gcb.build();
     }
 

@@ -95,7 +95,7 @@ public class FeedType implements OpenSearchResponse {
     })
     @XmlAnyElement(lax = true)
     protected List<Object> authorOrCategoryOrContributor;
-    
+
     @XmlElementRefs({
         @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "totalResults", type = JAXBElement.class, required = false),
         @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "startIndex", type = JAXBElement.class, required = false),
@@ -104,7 +104,7 @@ public class FeedType implements OpenSearchResponse {
     })
     @XmlAnyElement(lax = true)
     private List<Object> pagingAttributes;
-    
+
     @XmlElementRefs({
         @XmlElementRef(name = "entry", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false)
     })
@@ -174,7 +174,7 @@ public class FeedType implements OpenSearchResponse {
         }
         return this.authorOrCategoryOrContributor;
     }
-    
+
      /**
      * @return the pagingAttributes
      */

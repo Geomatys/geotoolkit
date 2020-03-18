@@ -24,12 +24,11 @@ import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import javax.vecmath.Vector3f;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -74,8 +73,8 @@ public class ShadedRelief extends AbstractProcess {
 
     @Override
     protected void execute() throws ProcessException {
-        GridCoverage coverage = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.COVERAGE));
-        GridCoverage elevation = CoverageUtilities.toGeotk(inputParameters.getValue(ShadedReliefDescriptor.ELEVATION));
+        GridCoverage coverage = inputParameters.getValue(ShadedReliefDescriptor.COVERAGE);
+        GridCoverage elevation = inputParameters.getValue(ShadedReliefDescriptor.ELEVATION);
         MathTransform1D eleConv = inputParameters.getValue(ShadedReliefDescriptor.ELECONV);
         //prepare coverage for the expected work
         coverage = coverage.forConvertedValues(false);
@@ -192,10 +191,9 @@ public class ShadedRelief extends AbstractProcess {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("Shaded");
-        gcb.setGridGeometry(coverage.getGridGeometry());
-        gcb.setRenderedImage(resImage);
-        final GridCoverage result = gcb.getGridCoverage2D();
+        gcb.setDomain(coverage.getGridGeometry());
+        gcb.setValues(resImage);
+        final GridCoverage result = gcb.build();
         outputParameters.getOrCreate(ShadedReliefDescriptor.OUTCOVERAGE).setValue(result);
     }
 

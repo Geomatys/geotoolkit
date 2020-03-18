@@ -47,7 +47,7 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
     @Test
     public void testRGB() {
         final GridCoverageBuilder builder = new GridCoverageBuilder();
-        builder.setRenderedImage(new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB));
+        builder.setValues(new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB));
         builder.setEnvelope(new Envelope2D(null, 0, 0, 2, 2));
         builder.setCoordinateReferenceSystem(PredefinedCRS.GRID_2D);
         coverage = builder.getGridCoverage2D();
@@ -69,7 +69,7 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         builder.variable(0).setSampleRange(30, 220);
         builder.variable(0).setLinearTransform(0.1, 10);
         builder.variable(0).addNodataValue("Missing values", 255, Color.GRAY);
-        builder.setRenderedImage(SampleCoverage.SST.raster());
+        builder.setValues(SampleCoverage.SST.raster());
         coverage = builder.getGridCoverage2D();
         SampleCoverage.SST.verifyGridGeometry(coverage, 0);
         assertTrue  ("Expected ViewType.PACKED", coverage.getViewTypes().contains(ViewType.PACKED));
@@ -93,7 +93,7 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         builder.setEnvelope(new Envelope2D(SampleCoverage.FLOAT.crs, SampleCoverage.FLOAT.bounds));
         builder.variable(0).setSampleRange(0, 256);
         builder.variable(0).setGeophysicsRange(0, 1000);
-        builder.setRenderedImage(SampleCoverage.FLOAT.raster());
+        builder.setValues(SampleCoverage.FLOAT.raster());
         coverage = builder.getGridCoverage2D();
         SampleCoverage.SST.verifyGridGeometry(coverage, 0);
         assertTrue ("Expected ViewType.GEOPHYSICS", coverage.getViewTypes().contains(ViewType.GEOPHYSICS));

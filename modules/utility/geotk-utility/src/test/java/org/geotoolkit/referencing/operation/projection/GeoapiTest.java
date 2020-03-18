@@ -17,18 +17,18 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.test.referencing.ParameterizedTransformTest;
+import static java.lang.StrictMath.*;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import static java.lang.StrictMath.*;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.TransformException;
 import static org.opengis.test.Assert.*;
+import org.opengis.test.referencing.ParameterizedTransformTest;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -47,6 +47,7 @@ import static org.opengis.test.Assert.*;
  *
  * @since 3.19
  */
+@Ignore
 @RunWith(JUnit4.class)
 public final strictfp class GeoapiTest extends ParameterizedTransformTest {
     /**

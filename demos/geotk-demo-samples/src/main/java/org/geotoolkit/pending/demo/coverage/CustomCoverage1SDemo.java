@@ -4,10 +4,11 @@ package org.geotoolkit.pending.demo.coverage;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -35,16 +36,16 @@ public class CustomCoverage1SDemo {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(matrix);
+        gcb.setValues(BufferedImages.toDataBuffer(matrix));
 
         //set it's envelope
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 100);
         env.setRange(1, 0, 100);
-        gcb.setEnvelope(env);
+        gcb.setDomain(env);
 
         //create the coverage
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        final GridCoverage coverage = gcb.build();
 
         //display it
         final MapContext context = MapBuilder.createContext();

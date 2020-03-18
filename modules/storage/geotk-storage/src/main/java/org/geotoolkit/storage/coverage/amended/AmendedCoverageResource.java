@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -44,8 +45,6 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.event.CoverageStoreManagementEvent;
@@ -246,23 +245,14 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
         loadRefData();
-        if(isGridGeometryOverriden()){
-            if(refGridGeom instanceof GridGeometry2D){
-                final GridExtent extent = refGridGeom.getExtent();
-                return new GridGeometry2D(
-                        extent,
-                        overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
-                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
-                        overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
-            }else{
-                final GridExtent extent = refGridGeom.getExtent();
-                return new GridGeometry(
-                        extent,
-                        overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
-                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
-                        overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
-            }
-        }else{
+        if (isGridGeometryOverriden()) {
+            final GridExtent extent = refGridGeom.getExtent();
+            return new GridGeometry(
+                    extent,
+                    overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
+                    overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(PixelInCell.CELL_CENTER),
+                    overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
+        } else {
             return refGridGeom;
         }
     }
@@ -470,16 +460,21 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
 
             //fix coverage transform and crs
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setGridCoverage(coverage);
-            if(overrideCRS!=null){
-                gcb.setCoordinateReferenceSystem(overrideCRS);
+
+            CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
+            GridExtent extent = coverage.getGridGeometry().getExtent();
+            MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
+
+            if (overrideCRS != null) {
+                crs = overrideCRS;
             }
-            if(overrideGridToCrs!=null || overridePixelInCell!=null){
-                final MathTransform localGridToCrs = gcb.getGridToCRS();
-                final MathTransform localFixedGridToCrs = MathTransforms.concatenate(localGridToCrs, originalToFixed);
-                gcb.setGridToCRS(localFixedGridToCrs);
+            if (overrideGridToCrs != null || overridePixelInCell != null) {
+                gridToCRS = MathTransforms.concatenate(gridToCRS, originalToFixed);
             }
 
+            gcb.setDomain(new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS, crs));
+            gcb.setRanges(coverage.getSampleDimensions());
+            gcb.setValues(coverage.render(null));
             coverage = gcb.build();
 
         } else {
@@ -505,8 +500,9 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
             }
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setGridCoverage(coverage);
-            gcb.setSampleDimensions(overs.toArray(new SampleDimension[overs.size()]));
+            gcb.setValues(coverage.render(null));
+            gcb.setDomain(coverage.getGridGeometry());
+            gcb.setRanges(overs.toArray(new SampleDimension[overs.size()]));
             coverage = gcb.build();
         }
 

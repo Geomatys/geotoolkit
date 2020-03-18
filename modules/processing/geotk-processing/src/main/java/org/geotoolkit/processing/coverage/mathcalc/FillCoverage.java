@@ -27,6 +27,7 @@ import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
@@ -39,7 +40,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.*;
@@ -170,10 +170,9 @@ public class FillCoverage {
             final MathTransform concat = MathTransforms.concatenate(cornerToGrid, gridToCrs);
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setCoordinateReferenceSystem(gg.getCoordinateReferenceSystem());
-            gcb.setRenderedImage(zoneImage);
-            gcb.setGridToCRS(concat);
-            final GridCoverage zoneCoverage = gcb.getGridCoverage2D();
+            gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CENTER, concat, gg.getCoordinateReferenceSystem()));
+            gcb.setValues(zoneImage);
+            final GridCoverage zoneCoverage = gcb.build();
             outRef.write(zoneCoverage, WritableGridCoverageResource.CommonOption.UPDATE);
         }
 
