@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ops.xml;
 
+import org.geotoolkit.ops.xml.v110.CompleteQueryType;
 import org.geotoolkit.ops.xml.v110.ObjectFactory;
 import org.w3._2005.atom.FeedType;
 import org.w3._2005.atom.PersonType;
@@ -40,6 +41,9 @@ public class OpenSearchXmlFactory {
         feed.getPagingAttributes().add(factory.createTotalResults(totalResults));
         feed.getPagingAttributes().add(factory.createStartIndex(startIndex));
         feed.getPagingAttributes().add(factory.createItemsPerPage(itemsPerPage));
+        CompleteQueryType query = new CompleteQueryType();
+        query.setRole("request");
+        feed.getPagingAttributes().add(factory.createQuery(query));
         return feed;
     }
 }

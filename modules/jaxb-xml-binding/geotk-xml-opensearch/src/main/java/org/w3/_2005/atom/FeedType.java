@@ -99,7 +99,8 @@ public class FeedType implements OpenSearchResponse {
     @XmlElementRefs({
         @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "totalResults", type = JAXBElement.class, required = false),
         @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "startIndex", type = JAXBElement.class, required = false),
-        @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "itemsPerPage", type = JAXBElement.class, required = false)
+        @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "itemsPerPage", type = JAXBElement.class, required = false),
+        @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "Query", type = JAXBElement.class, required = false)
     })
     @XmlAnyElement(lax = true)
     private List<Object> pagingAttributes;
