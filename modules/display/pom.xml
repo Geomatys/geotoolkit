@@ -80,17 +80,4 @@
     <module>geotk-jasperreport</module>
   </modules>
 
-  <profiles>
-    <profile>
-      <id>javafx</id>
-      <activation>
-        <jdk>1.8</jdk>
-      </activation>
-      <modules>
-        <module>geotk-widgets-javafx</module>
-        <module>geotk-widgets-javafx-scenebuilder</module>
-      </modules>
-    </profile>
-  </profiles>
-
 </project>

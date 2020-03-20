@@ -12,7 +12,6 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.db.postgres.PostgresStore;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -79,7 +78,7 @@ public class PostgisRasterDemo {
         final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createDefaultRasterStyle());
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
-        FXMapFrame.show(context);
+//        FXMapFrame.show(context);
 
 
     }

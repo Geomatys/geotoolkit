@@ -4,7 +4,6 @@ package org.geotoolkit.pending.demo.clients.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
@@ -34,7 +33,7 @@ public class WMSClientDemo {
         context.layers().add(MapBuilder.createCoverageLayer(layer));
         context.layers().add(MapBuilder.createCoverageLayer(layer2));
         //context.layers().add(layer3);
-        FXMapFrame.show(context);
+//        FXMapFrame.show(context);
     }
 
 }

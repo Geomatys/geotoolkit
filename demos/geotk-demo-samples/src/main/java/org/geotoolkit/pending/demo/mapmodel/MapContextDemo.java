@@ -12,7 +12,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.map.MapBuilder;
@@ -57,7 +56,7 @@ public class MapContextDemo {
         context.layers().add(featureLayer);
 
         //quickly test if it works
-        FXMapFrame.show(context);
+//        FXMapFrame.show(context);
 
 
         //Build the context in a tree structure

@@ -1,16 +1,15 @@
 package org.geotoolkit.pending.demo.datamodel.postgis;
 
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.FeatureCollection;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.db.postgres.PostgresProvider;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.util.GenericName;
 
@@ -40,7 +39,7 @@ public class PostgisDemo {
         }
 
 
-        FXMapFrame.show(context);
+//        FXMapFrame.show(context);
 
     }
 

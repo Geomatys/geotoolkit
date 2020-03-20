@@ -7,7 +7,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.coverage.worldfile.FileCoverageProvider;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.geotoolkit.map.MapBuilder;
@@ -46,7 +45,7 @@ public class CoverageStoreDemo {
         }
 
         //display it
-        FXMapFrame.show(context);
+//        FXMapFrame.show(context);
 
     }
 

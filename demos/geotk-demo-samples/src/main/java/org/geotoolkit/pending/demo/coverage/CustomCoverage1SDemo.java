@@ -7,7 +7,6 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -51,7 +50,7 @@ public class CustomCoverage1SDemo {
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
-        FXMapFrame.show(context);
+//        FXMapFrame.show(context);
     }
 
 }
