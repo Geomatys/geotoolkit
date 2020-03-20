@@ -18,8 +18,10 @@ package org.geotoolkit.wps.converters.outputs.reference;
 
 import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
@@ -53,7 +55,7 @@ public class GeometryToReferenceConverterTest extends org.geotoolkit.test.TestBa
         assertNull(reference.getSchema());
         assertNotNull(reference.getHref());
 
-        Geometry geometry = ConvertersTestUtils.getGeometryFromGeoJsonContent(new URL(reference.getHref()).getPath());
+        Geometry geometry = ConvertersTestUtils.getGeometryFromGeoJsonContent(Paths.get(URI.create(reference.getHref())));
         ConvertersTestUtils.assertGeometryIsValid((Geometry) testResource);
         ConvertersTestUtils.assertGeometryIsValid(geometry);
     }

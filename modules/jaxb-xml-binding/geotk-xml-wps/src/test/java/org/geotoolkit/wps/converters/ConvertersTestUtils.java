@@ -401,8 +401,8 @@ public final class ConvertersTestUtils {
      * @throws IOException on IO errors when reading the file
      * @throws FactoryException when the crs of the geometry cannot be retrieved
      */
-    public static Geometry getGeometryFromGeoJsonContent(final String path) throws IOException, FactoryException {
-        final GeoJSONObject geoJsonObject = GeoJSONParser.parse(Paths.get(path));
+    public static Geometry getGeometryFromGeoJsonContent(final Path path) throws IOException, FactoryException {
+        final GeoJSONObject geoJsonObject = GeoJSONParser.parse(path);
         GeoJSONGeometry geoJsonGeometry = null;
 
         if (geoJsonObject instanceof GeoJSONFeature) {
