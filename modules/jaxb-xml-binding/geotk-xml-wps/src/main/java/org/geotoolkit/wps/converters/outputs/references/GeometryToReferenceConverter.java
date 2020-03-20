@@ -117,13 +117,13 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
                 m.marshal(JTStoGeometry.toGML(gmlVersion, source), geometryStream);
 
                 final String relLoc = getRelativeLocation(geometryFile, params);
-                reference.setHref(tmpDirUrl + File.separator + relLoc);
+                reference.setHref(tmpDirUrl + '/' + relLoc.replace('\\', '/'));
                 WPSMarshallerPool.getInstance().recycle(m);
 
             } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
                 GeoJSONStreamWriter.writeSingleGeometry(geometryStream, source, JsonEncoding.UTF8, WPSConvertersUtils.FRACTION_DIGITS, true);
                 final String relLoc = getRelativeLocation(geometryFile, params);
-                reference.setHref(tmpDirUrl + File.separator + relLoc);
+                reference.setHref(tmpDirUrl + '/' + relLoc.replace('\\', '/'));
             } else {
                 throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
             }
