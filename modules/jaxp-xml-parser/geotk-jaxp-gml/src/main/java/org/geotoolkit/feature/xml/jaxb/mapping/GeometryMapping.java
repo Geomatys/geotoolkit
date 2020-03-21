@@ -299,7 +299,7 @@ public class GeometryMapping implements XSDMapping {
 
             //extract longitude first parameter
             final Object bool = stack.getProperty(JAXPStreamFeatureReader.LONGITUDE_FIRST);
-            final boolean longitudeFirst = (bool == null) || Boolean.TRUE.equals(bool);
+            final boolean longitudeFirst = (bool != null) && Boolean.FALSE.equals(bool);
 
             //extract marshaller parameter
             Object bindingPackage = stack.getProperties().get(BINDING_PACKAGE);
