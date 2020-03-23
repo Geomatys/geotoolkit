@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.image.io.plugin.yaml;
 
-import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -276,8 +275,7 @@ public final class YamlFiles {
     private static class writerPropertyUtils extends PropertyUtils {
 
         @Override
-        protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bAccess)
-                throws IntrospectionException {
+        protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bAccess) {
             final Set<Property> result = new LinkedHashSet<Property>();
             final Map<String, Property> props = getPropertiesMap(type, BeanAccess.DEFAULT);
             final String[] orderArray;
