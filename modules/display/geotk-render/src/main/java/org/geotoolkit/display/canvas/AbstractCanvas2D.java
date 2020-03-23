@@ -62,7 +62,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -131,7 +130,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     private final transient Map<CoordinateReferenceSystem,MathTransform> transforms = new HashMap<>();
 
     private GridGeometry gridGeometry = new GridGeometry(new GridExtent(360, 180), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()));
-    private GridGeometry2D gridGeometry2d = new GridGeometry2D(gridGeometry);
+    private GridGeometry gridGeometry2d = gridGeometry;
     private boolean proportion = true;
     private boolean autoRepaint = false;
 
@@ -184,7 +183,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         {
             final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
             if (crs.getCoordinateSystem().getDimension() == 2) {
-                gridGeometry2d = new GridGeometry2D(gridGeometry);
+                gridGeometry2d = gridGeometry;
             } else {
                 final CoordinateReferenceSystem crs2d = getHorizontalComponent(crs);
                 final int idx = getHorizontalIndex(crs);
@@ -195,7 +194,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
                 //we are expecting axis index to be preserved from grid to crs
                 final GridExtent extent = gridGeometry.getExtent().reduce(idx, idx+1);
-                gridGeometry2d = new GridGeometry2D(extent, PixelInCell.CELL_CENTER, gridToCRS2D, crs2d);
+                gridGeometry2d = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCRS2D, crs2d);
             }
         }
         repaintIfAuto();

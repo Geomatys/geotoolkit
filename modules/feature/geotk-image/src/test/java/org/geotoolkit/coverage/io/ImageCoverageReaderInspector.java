@@ -18,15 +18,10 @@
 package org.geotoolkit.coverage.io;
 
 import javax.imageio.IIOParam;
-
-import org.opengis.referencing.operation.MathTransform2D;
-
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
-
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.GridCoverageStoreParam;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.opengis.referencing.operation.MathTransform2D;
 
 
 /**

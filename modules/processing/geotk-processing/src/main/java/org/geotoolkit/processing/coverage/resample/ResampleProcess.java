@@ -36,7 +36,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -45,9 +44,7 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
-
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -129,7 +126,7 @@ public class ResampleProcess extends AbstractProcess {
     /**
      * Creates a new coverage with a different coordinate reference reference system. If a
      * grid geometry is supplied, only its {@linkplain GridGeometry#getExtent()}  grid envelope}
-     * and {@linkplain GridGeometry2D#getGridToCRS grid to CRS} transform are taken in account.
+     * and {@linkplain GridGeometry#getGridToCRS grid to CRS} transform are taken in account.
      *
      * @param sourceCoverage The source grid coverage.
      * @param targetCRS      Coordinate reference system for the new grid coverage, or {@code null}.

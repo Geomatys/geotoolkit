@@ -149,7 +149,7 @@ public class Compose extends AbstractProcess {
         }
 
         //compute output grid
-        GridGeometry2D outGridGeom = inputParameters.getValue(GRID_PARAM);
+        GridGeometry2D outGridGeom = (GridGeometry2D) inputParameters.getValue(GRID_PARAM);
         if(outGridGeom == null) {
             try {
                 outGridGeom = getOutputGridGeometry(inGridCoverages);
