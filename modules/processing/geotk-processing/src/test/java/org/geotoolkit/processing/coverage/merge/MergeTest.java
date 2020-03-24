@@ -79,7 +79,7 @@ public class MergeTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env2 = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env2.setEnvelope(-90,-180,+90,+180);
         final GridCoverageBuilder gcb2 = new GridCoverageBuilder();
-        gcb2.setValues(BufferedImages.toDataBuffer1D(data));
+        gcb2.setValues(BufferedImages.toDataBuffer1D(data), null);
         gcb2.setDomain(new GridGeometry(new GridExtent(720, 360), env2));
         gcb2.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage inCoverage2 = gcb2.build();

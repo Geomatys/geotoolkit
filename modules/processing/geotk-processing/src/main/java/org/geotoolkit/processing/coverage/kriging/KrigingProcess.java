@@ -289,7 +289,7 @@ public class KrigingProcess extends AbstractProcess {
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(new GridExtent(xs.length, ys.length), env));
-        gcb.setValues(BufferedImages.toDataBuffer1D(matrix));
+        gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         return gcb.build();
     }

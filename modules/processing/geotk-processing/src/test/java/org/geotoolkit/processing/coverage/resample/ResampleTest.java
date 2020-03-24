@@ -84,7 +84,7 @@ public class ResampleTest extends AbstractProcessTest {
         env.setRange(0, -180, +180);
         env.setRange(1, -80, +80);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setValues(BufferedImages.toDataBuffer1D(matrix));
+        gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
         gcb.setDomain(new GridGeometry(new GridExtent(4, 4), env));
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage coverage = gcb.build();
@@ -127,7 +127,7 @@ public class ResampleTest extends AbstractProcessTest {
         gridToCrs = PixelTranslation.translate(gridToCrs, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(new GridExtent(3, 3), PixelInCell.CELL_CENTER, gridToCrs, crs));
-        gcb.setValues(BufferedImages.toDataBuffer1D(array));
+        gcb.setValues(BufferedImages.toDataBuffer1D(array), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage coverage = gcb.build();
 
@@ -165,7 +165,7 @@ public class ResampleTest extends AbstractProcessTest {
         gridToCrs = PixelTranslation.translate(gridToCrs, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(new GridExtent(3, 3), PixelInCell.CELL_CENTER, gridToCrs, crs));
-        gcb.setValues(BufferedImages.toDataBuffer1D(array));
+        gcb.setValues(BufferedImages.toDataBuffer1D(array), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage coverage = gcb.build();
 

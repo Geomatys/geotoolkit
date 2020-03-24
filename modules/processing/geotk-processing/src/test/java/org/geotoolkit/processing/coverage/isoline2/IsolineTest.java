@@ -61,7 +61,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {100,100,100},
             {100,200,100},
             {100,100,100}
-        }));
+        }), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
 
         final GridCoverage coverage = gcb.build();
@@ -91,7 +91,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {10,10,20},
             {10,10,20},
             {10,15,10},
-        }));
+        }), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
@@ -122,7 +122,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
             {10,10,20},
             {10,15,10},
             {10,15,10},
-        }));
+        }), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
@@ -155,7 +155,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
                 { Float.NaN, 3.78f,  0.41f, -0.83f,  -0.83f, 0.663f, Float.NaN},
                 { Float.NaN, -0.58f, -2.83f, -1.21f, -0.83f, 0.038f, Float.NaN},
                 { Float.NaN,  Float.NaN, Float.NaN,  Float.NaN, Float.NaN, Float.NaN, Float.NaN}
-        }));
+        }), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);

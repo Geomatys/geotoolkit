@@ -35,7 +35,7 @@ public class CustomCoverage1SDemo {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setValues(BufferedImages.toDataBuffer(matrix));
+        gcb.setValues(BufferedImages.toDataBuffer(matrix), null);
 
         //set it's envelope
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());

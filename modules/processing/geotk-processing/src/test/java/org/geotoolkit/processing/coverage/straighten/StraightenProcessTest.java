@@ -55,7 +55,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setValues(BufferedImages.toDataBuffer1D(matrix));
+        gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,-1,20,30);
         final GridExtent gridEnv = new GridExtent(60, 40);
@@ -94,7 +94,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setValues(BufferedImages.toDataBuffer1D(matrix));
+        gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,1,20,30);
         final GridExtent gridEnv = new GridExtent(60, 40);

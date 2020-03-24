@@ -149,7 +149,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         for(int i=0;i<180;i++)Arrays.fill(data[i], 15f);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setValues(BufferedImages.toDataBuffer(data));
+        gcb.setValues(BufferedImages.toDataBuffer(data), null);
         final AffineTransform trs = new AffineTransform(1,0,0,-1,-180,90);
         gcb.setDomain(new GridGeometry(new GridExtent(360, 180), PixelInCell.CELL_CENTER, new AffineTransform2D(trs), CommonCRS.WGS84.normalizedGeographic()));
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());

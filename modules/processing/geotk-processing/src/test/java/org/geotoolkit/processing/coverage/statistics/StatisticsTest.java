@@ -56,7 +56,7 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
                 {100,100,100},
                 {100,200,100},
                 {100,100,100}
-        }));
+        }), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         coverage = gcb.build();
     }
