@@ -71,7 +71,9 @@ import org.geotoolkit.ops.xml.OpenSearchResponse;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "feedType", propOrder = {
-    "authorOrCategoryOrContributor"
+    "authorOrCategoryOrContributor",
+    "pagingAttributes",
+    "entries"
 })
 @XmlRootElement(name="feed")
 public class FeedType implements OpenSearchResponse {
@@ -82,7 +84,6 @@ public class FeedType implements OpenSearchResponse {
         @XmlElementRef(name = "id", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "logo", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "where", namespace = "http://www.georss.org/georss", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "entry", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "author", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "contributor", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "rights", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false),
@@ -94,6 +95,21 @@ public class FeedType implements OpenSearchResponse {
     })
     @XmlAnyElement(lax = true)
     protected List<Object> authorOrCategoryOrContributor;
+
+    @XmlElementRefs({
+        @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "totalResults", type = JAXBElement.class, required = false),
+        @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "startIndex", type = JAXBElement.class, required = false),
+        @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "itemsPerPage", type = JAXBElement.class, required = false),
+        @XmlElementRef(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "Query", type = JAXBElement.class, required = false)
+    })
+    @XmlAnyElement(lax = true)
+    private List<Object> pagingAttributes;
+
+    @XmlElementRefs({
+        @XmlElementRef(name = "entry", namespace = "http://www.w3.org/2005/Atom", type = JAXBElement.class, required = false)
+    })
+    @XmlAnyElement(lax = true)
+    private List<Object> entries;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     protected String base;
@@ -157,6 +173,16 @@ public class FeedType implements OpenSearchResponse {
             authorOrCategoryOrContributor = new ArrayList<>();
         }
         return this.authorOrCategoryOrContributor;
+    }
+
+     /**
+     * @return the pagingAttributes
+     */
+    public List<Object> getPagingAttributes() {
+        if (pagingAttributes == null) {
+            pagingAttributes = new ArrayList<>();
+        }
+        return pagingAttributes;
     }
 
     public void addId(IdType id) {
@@ -281,7 +307,10 @@ public class FeedType implements OpenSearchResponse {
 
     public void addEntry(EntryType entry) {
         if (entry != null) {
-            getAuthorOrCategoryOrContributor().add(OBJ_ATOM_FACT.createEntry(entry));
+            if (entries == null) {
+                entries = new ArrayList<>();
+            }
+            entries.add(OBJ_ATOM_FACT.createEntry(entry));
         }
     }
 
@@ -430,10 +459,10 @@ public class FeedType implements OpenSearchResponse {
 
     public List<EntryType> getEntries() {
         List<EntryType> results = new ArrayList<>();
-        for (Object obj : getAuthorOrCategoryOrContributor()) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement elem = (JAXBElement) obj;
-                if (ObjectFactory._Entry_QNAME.equals(elem.getName())) {
+        if (entries != null) {
+            for (Object obj : entries) {
+                if (obj instanceof JAXBElement) {
+                    JAXBElement elem = (JAXBElement) obj;
                     results.add((EntryType) elem.getValue());
                 }
             }
@@ -441,7 +470,7 @@ public class FeedType implements OpenSearchResponse {
         return results;
     }
     public Integer getTotalResults() {
-        for (Object obj : getAuthorOrCategoryOrContributor()) {
+        for (Object obj : getPagingAttributes()) {
             if (obj instanceof JAXBElement) {
                 JAXBElement elem = (JAXBElement) obj;
                 if (org.geotoolkit.ops.xml.v110.ObjectFactory._TotalResults_QNAME.equals(elem.getName())) {
@@ -453,7 +482,7 @@ public class FeedType implements OpenSearchResponse {
     }
 
     public Integer getStartIndex() {
-        for (Object obj : getAuthorOrCategoryOrContributor()) {
+        for (Object obj : getPagingAttributes()) {
             if (obj instanceof JAXBElement) {
                 JAXBElement elem = (JAXBElement) obj;
                 if (org.geotoolkit.ops.xml.v110.ObjectFactory._StartIndex_QNAME.equals(elem.getName())) {
@@ -465,7 +494,7 @@ public class FeedType implements OpenSearchResponse {
     }
 
     public Integer getItemsPerPage() {
-        for (Object obj : getAuthorOrCategoryOrContributor()) {
+        for (Object obj : getPagingAttributes()) {
             if (obj instanceof JAXBElement) {
                 JAXBElement elem = (JAXBElement) obj;
                 if (org.geotoolkit.ops.xml.v110.ObjectFactory._ItemsPerPage_QNAME.equals(elem.getName())) {

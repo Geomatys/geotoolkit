@@ -141,7 +141,7 @@ public class OpenSearchDescription implements OpenSearchResponse{
     @XmlElement(name = "Image")
     protected ImageType image;
     @XmlElement(name = "Query")
-    protected List<InspireQueryType> query;
+    protected List<CompleteQueryType> query;
     @XmlElement(name = "Developer")
     protected String developer;
     @XmlElement(name = "Attribution")
@@ -361,9 +361,9 @@ public class OpenSearchDescription implements OpenSearchResponse{
      *
      *
      */
-    public List<InspireQueryType> getQuery() {
+    public List<CompleteQueryType> getQuery() {
         if (query == null) {
-            query = new ArrayList<InspireQueryType>();
+            query = new ArrayList<>();
         }
         return this.query;
     }

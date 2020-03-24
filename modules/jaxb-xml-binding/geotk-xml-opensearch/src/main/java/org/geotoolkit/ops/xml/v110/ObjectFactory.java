@@ -97,8 +97,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://a9.com/-/spec/opensearch/1.1/", name = "Query")
-    public JAXBElement<InspireQueryType> createQuery(InspireQueryType value) {
-        return new JAXBElement<InspireQueryType>(_Query_QNAME, InspireQueryType.class, null, value);
+    public JAXBElement<CompleteQueryType> createQuery(CompleteQueryType value) {
+        return new JAXBElement<CompleteQueryType>(_Query_QNAME, CompleteQueryType.class, null, value);
     }
 
     /**

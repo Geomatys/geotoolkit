@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ops.xml;
 
+import org.geotoolkit.ops.xml.v110.CompleteQueryType;
 import org.geotoolkit.ops.xml.v110.ObjectFactory;
 import org.w3._2005.atom.FeedType;
 import org.w3._2005.atom.PersonType;
@@ -29,17 +30,20 @@ public class OpenSearchXmlFactory {
     public static FeedType buildFeed(String id, String title, PersonType author, String source, Long totalResults, Long startIndex, Long itemsPerPage) {
         FeedType feed = new FeedType(id, title, author, source);
         final ObjectFactory factory = new ObjectFactory();
-        feed.getAuthorOrCategoryOrContributor().add(factory.createTotalResults(totalResults));
-        feed.getAuthorOrCategoryOrContributor().add(factory.createStartIndex(startIndex));
-        feed.getAuthorOrCategoryOrContributor().add(factory.createItemsPerPage(itemsPerPage));
+        feed.getPagingAttributes().add(factory.createTotalResults(totalResults));
+        feed.getPagingAttributes().add(factory.createStartIndex(startIndex));
+        feed.getPagingAttributes().add(factory.createItemsPerPage(itemsPerPage));
         return feed;
     }
 
     public static FeedType completeFeed(FeedType feed, Long totalResults, Long startIndex, Long itemsPerPage) {
         final ObjectFactory factory = new ObjectFactory();
-        feed.getAuthorOrCategoryOrContributor().add(factory.createTotalResults(totalResults));
-        feed.getAuthorOrCategoryOrContributor().add(factory.createStartIndex(startIndex));
-        feed.getAuthorOrCategoryOrContributor().add(factory.createItemsPerPage(itemsPerPage));
+        feed.getPagingAttributes().add(factory.createTotalResults(totalResults));
+        feed.getPagingAttributes().add(factory.createStartIndex(startIndex));
+        feed.getPagingAttributes().add(factory.createItemsPerPage(itemsPerPage));
+        CompleteQueryType query = new CompleteQueryType();
+        query.setRole("request");
+        feed.getPagingAttributes().add(factory.createQuery(query));
         return feed;
     }
 }
