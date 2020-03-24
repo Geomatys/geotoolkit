@@ -156,7 +156,6 @@ public class DimensionSlice extends DimensionIdentification {
      *
      * @see DimensionSlice
      * @see MultidimensionalImageStore
-     * @see IllegalImageDimensionException
      *
      * @since 3.08
      * @module
