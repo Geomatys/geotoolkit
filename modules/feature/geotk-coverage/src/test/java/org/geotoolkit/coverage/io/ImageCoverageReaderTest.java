@@ -26,14 +26,22 @@ import java.io.IOException;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.JAXBException;
+
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.datum.PixelInCell;
+
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
-import static org.apache.sis.test.MetadataAssert.*;
-import static org.apache.sis.test.TestUtilities.getSingleton;
 import org.apache.sis.xml.XML;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.image.SampleModels;
@@ -43,14 +51,18 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
-import org.junit.*;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.identification.DataIdentification;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.metadata.identification.Resolution;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.datum.PixelInCell;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.apache.sis.test.MetadataAssert.assertEquals;
+import static org.apache.sis.test.MetadataAssert.assertFalse;
+import static org.apache.sis.test.MetadataAssert.assertNotNull;
+import static org.apache.sis.test.MetadataAssert.assertTrue;
+import static org.apache.sis.test.MetadataAssert.assertXmlEquals;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
@@ -160,7 +172,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
             out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
-        final RenderedImage image = gridCoverage.getRenderedImage();
+        final RenderedImage image = gridCoverage.render(null);
         assertEquals("Image columns",  0, image.getMinX());
         assertEquals("Image rows",     0, image.getMinY());
         assertEquals("Image columns", 20, image.getWidth());
@@ -169,7 +181,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         /*
          * Check the envelope, which should be the envelope of the full coverage.
          */
-        final Envelope envelope = gridCoverage.getEnvelope();
+        final Envelope envelope = gridCoverage.getGridGeometry2D().getEnvelope();
         assertEquals("Envelope X", -10000, envelope.getMinimum(0), EPS);
         assertEquals("Envelope Y", -21000, envelope.getMinimum(1), EPS);
         assertEquals("Envelope X",  10000, envelope.getMaximum(0), EPS);
@@ -207,7 +219,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
             out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
-        final RenderedImage image = gridCoverage.getRenderedImage();
+        final RenderedImage image = gridCoverage.render(null);
         assertEquals("Image columns",  0, image.getMinX());
         assertEquals("Image rows",     0, image.getMinY());
         assertEquals("Image columns",  9, image.getWidth());
@@ -217,7 +229,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
          * (in this particular test case, since the reader does not have to clip
          * the envelope or snap to grid coordinates).
          */
-        final Envelope envelope = gridCoverage.getEnvelope();
+        final Envelope envelope = gridCoverage.getGridGeometry2D().getEnvelope();
         assertEquals("Envelope X", -1000, envelope.getMinimum(0), EPS);
         assertEquals("Envelope Y", -2000, envelope.getMinimum(1), EPS);
         assertEquals("Envelope X",  8000, envelope.getMaximum(0), EPS);
@@ -256,7 +268,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
             out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
-        final RenderedImage image = gridCoverage.getRenderedImage();
+        final RenderedImage image = gridCoverage.render(null);
         assertEquals("Image columns", 0, image.getMinX());
         assertEquals("Image rows",    0, image.getMinY());
         assertEquals("Image columns", 5, image.getWidth());
@@ -265,7 +277,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
          * Check the envelope, which should be sightly bigger than the requested one in
          * order to contains fully the requested envelope, taking subsampling on account.
          */
-        final Envelope envelope = gridCoverage.getEnvelope();
+        final Envelope envelope = gridCoverage.getGridGeometry2D().getEnvelope();
         assertEquals("Envelope X", -1000, envelope.getMinimum(0), EPS);
         assertEquals("Envelope Y", -3000, envelope.getMinimum(1), EPS);
         assertEquals("Envelope X",  9000, envelope.getMaximum(0), EPS);

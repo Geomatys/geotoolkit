@@ -29,7 +29,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.system.OS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.io.LineFormat;
