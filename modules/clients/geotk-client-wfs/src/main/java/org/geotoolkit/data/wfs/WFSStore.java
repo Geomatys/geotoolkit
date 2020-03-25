@@ -105,7 +105,6 @@ public class WFSStore extends DataStore implements Aggregate, Client {
         Changement de comportement : Cela suppose qu'on ne le remplit plus dans les parameters si les params ne le fournissent pas. (À VALIDER)
         */
         //parameters.getOrCreate(WFSFeatureStoreFactory.VERSION).setValue("1.1.0");
-        parameters.parameter(WFSProvider.POST_REQUEST.getName().getCode());
     }
 
     @Override

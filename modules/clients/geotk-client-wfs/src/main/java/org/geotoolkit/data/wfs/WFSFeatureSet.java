@@ -64,18 +64,18 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStreams;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
-import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.storage.FeatureMapUpdate;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStreams;
+import org.geotoolkit.storage.feature.GenericNameIndex;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
@@ -160,7 +160,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
             }
         }
 
-        sft = sftb.build();
+        type = sftb.build();
         final GenericName name = sft.getName();
         if (isNamespacePresent) {
             prefixes.put(NamesExt.getNamespace(name), prefix);

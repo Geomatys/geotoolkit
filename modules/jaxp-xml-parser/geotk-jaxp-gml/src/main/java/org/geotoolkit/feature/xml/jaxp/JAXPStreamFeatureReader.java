@@ -49,10 +49,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.feature.xml.ExceptionReport;
 import org.geotoolkit.feature.xml.GMLConvention;
 import org.geotoolkit.feature.xml.Utils;
@@ -63,8 +59,12 @@ import org.geotoolkit.feature.xml.jaxb.mapping.GeometryMapping;
 import org.geotoolkit.feature.xml.jaxb.mapping.XSDMapping;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
-import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.GenericNameIndex;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.xml.StaxStreamReader;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
@@ -1031,7 +1031,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             fid = reader.getAttributeValue(0);
                         }
 
-                        if (name.tip().toString().equals("featureMember") || name.tip().toString().equals("featureMembers")) {
+                        if (name.tip().toString().equals("featureMember")
+                            || name.tip().toString().equals("featureMembers")
+                            || name.tip().toString().equals("member") // WFS -2
+                             ) {
                             continue;
 
                         } else if (name.tip().toString().equals("boundedBy")) {
