@@ -1508,12 +1508,6 @@ public class ImageCoverageReader extends GridCoverageStore {
         final String name;
         RenderedImage image;
         try {
-            final GenericName gname = getCoverageName();
-            try {
-                name = (gname != null) ? gname.toString() : null;
-            } catch (BackingStoreException e) {
-                throw e.unwrapOrRethrow(IOException.class);
-            }
             if (usePaletteFactory) {
                 SampleDimensionPalette.BANDS.set(bands);
                 ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
