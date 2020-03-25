@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.metadata.landsat;
 
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -26,10 +28,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
@@ -37,6 +41,7 @@ import org.geotoolkit.image.io.large.ImageCacheConfiguration;
 import org.geotoolkit.image.io.large.LargeCache;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.lang.Setup;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -88,13 +93,16 @@ public final strictfp class WritableLargeRenderedImageTests {
         WritableLargeRenderedImage inputTestImg    = ImageUtils.createLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE, 1, PhotometricInterpretation.GRAYSCALE, false, false, null);
 
         final ExecutorService poule = Executors.newFixedThreadPool(3);
+        final Random rand = new Random();
+        final long seed = rand.nextLong();
+        rand.setSeed(seed);
 
         for (int nb = 0, nbTimes = 1; nb < nbTimes; nb++) { //-- to improve comportement increase nbTimes attribut.
 
             final long t = System.currentTimeMillis();
 
             //-- assigned default test value.
-            final byte value = (byte) (StrictMath.random() * 255);
+            final byte value = (byte) (rand.nextDouble() * 255);
 
             //-- fill input image by value.
             final WritablePixelIterator It = new PixelIterator.Builder().createWritable(inputTestImg);
@@ -120,8 +128,11 @@ public final strictfp class WritableLargeRenderedImageTests {
             final PixelIterator createDefaultIterator = PixelIterator.create(outPutImageTest);
 
             while (createDefaultIterator.next()) {
-                Assert.assertEquals("unexpected byte value : at x = "+createDefaultIterator.getPosition().x
-                        +", y = "+createDefaultIterator.getPosition().y, (value & 0xFF), (createDefaultIterator.getSample(0) & 0xFF));
+                final Point position = createDefaultIterator.getPosition();
+                Assert.assertEquals(String.format(
+                        "unexpected byte value (seed: %d): at x = %d, y = %d",
+                        seed, position.x, position.y
+                ), (value & 0xFF), (createDefaultIterator.getSample(0) & 0xFF));
             }
             LOGGER.log(Level.INFO, "iteration nb : "+nb+", time : "+(System.currentTimeMillis() - t));
         }
