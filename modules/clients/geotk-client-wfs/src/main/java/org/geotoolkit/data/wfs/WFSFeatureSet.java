@@ -101,7 +101,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
 
     private static final AtomicLong NS_INC = new AtomicLong();
 
-    private final WFSStore store;
+    private final WebFeatureClient store;
     private final WFSCapabilities capabilities;
     private final org.geotoolkit.wfs.xml.FeatureType ftt;
     private final Map<String,String> prefixes = new HashMap<>();
@@ -109,7 +109,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
     private FeatureType type;
     private Envelope envelope;
 
-    public WFSFeatureSet(WFSStore store, WFSCapabilities capabilities, org.geotoolkit.wfs.xml.FeatureType ftt) {
+    public WFSFeatureSet(WebFeatureClient store, WFSCapabilities capabilities, org.geotoolkit.wfs.xml.FeatureType ftt) {
         this.store = store;
         this.capabilities = capabilities;
         this.ftt = ftt;

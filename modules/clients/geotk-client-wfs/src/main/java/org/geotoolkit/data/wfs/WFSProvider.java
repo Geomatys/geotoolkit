@@ -122,8 +122,8 @@ public class WFSProvider extends DataStoreProvider {
     }
 
     @Override
-    public WFSStore open(ParameterValueGroup params) throws DataStoreException {
-        return new WFSStore(params);
+    public WebFeatureClient open(ParameterValueGroup params) throws DataStoreException {
+        return new WebFeatureClient(params);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class WFSProvider extends DataStoreProvider {
     }
 
     @Override
-    public WFSStore open(StorageConnector connector) throws DataStoreException {
+    public WebFeatureClient open(StorageConnector connector) throws DataStoreException {
         final URL url = connector.getStorageAs(URL.class);
         final Parameters parameters = Parameters.castOrWrap(PARAMETERS_DESCRIPTOR.createValue());
         parameters.getOrCreate(AbstractClientProvider.URL).setValue(url);

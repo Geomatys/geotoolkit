@@ -66,7 +66,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class WFSStore extends DataStore implements Aggregate, Client {
+public class WebFeatureClient extends DataStore implements Aggregate, Client {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
 
@@ -87,17 +87,19 @@ public class WFSStore extends DataStore implements Aggregate, Client {
     private volatile WFSCapabilities capabilities;
 
 
-    public WFSStore(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
-        this(create(WFSProvider.PARAMETERS_DESCRIPTOR, serverURL, security));
+    public WebFeatureClient(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
+         Parameters parameters = Parameters.castOrWrap(create(WFSProvider.PARAMETERS_DESCRIPTOR, serverURL, security));
+        this.serverURL = parameters.getMandatoryValue(AbstractClientProvider.URL);
         if(version == null){
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
         parameters.getOrCreate(WFSProvider.VERSION).setValue(version.getCode());
         parameters.getOrCreate(WFSProvider.POST_REQUEST).setValue(usePost);
+        this.parameters = Parameters.unmodifiable(parameters);
     }
 
 
-    public WFSStore(ParameterValueGroup params) {
+    public WebFeatureClient(ParameterValueGroup params) {
         this.parameters = Parameters.unmodifiable(params);
         this.serverURL = parameters.getMandatoryValue(AbstractClientProvider.URL);
         /*
