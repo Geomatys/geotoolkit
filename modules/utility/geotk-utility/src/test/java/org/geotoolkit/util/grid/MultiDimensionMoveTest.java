@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import static org.geotoolkit.util.grid.GridTraversal.EPSILON;
 import static org.geotoolkit.util.grid.GridTraversalTest.checkSegment;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -67,7 +68,7 @@ public class MultiDimensionMoveTest {
     }
 
     private void test2D(final boolean parallel) {
-        // first, test a mainly horisontal move
+        // first, test a mainly horizontal move
         final double[] start = {2.3,4.6};
         final double[] end = {6.6, 5.0};
         MultiDimensionMove move = new MultiDimensionMove(start, end);
@@ -81,7 +82,7 @@ public class MultiDimensionMoveTest {
         double expectedXVal = 3.0;
         for (int i = 0 ; i < result.length - 2 ; i+=2) {
             Assert.assertEquals(expectedXVal, result[i], EPSILON);
-            Assert.assertTrue("Y coordinate should never reach end point value before last point", result[i+1] < end[1]);
+            assertTrue("Y coordinate should never reach end point value before last point", result[i+1] < end[1]);
             expectedXVal++;
         }
 
@@ -101,7 +102,7 @@ public class MultiDimensionMoveTest {
         double expectedYVal = 4.0;
         for (int i = 0 ; i < result.length - 2 ; i+=2) {
             Assert.assertEquals(expectedYVal, result[i+1], EPSILON);
-            Assert.assertTrue("Y coordinate should never reach end point value before last point", result[i] < end[0]);
+            assertTrue("Y coordinate should never reach end point value before last point", result[i] < end[0]);
             expectedYVal--;
         }
 
