@@ -83,7 +83,7 @@ public class DocumentIndexer extends AbstractIndexer<DocumentEnvelope>{
         public NamedEnvelope env;
         public Document doc;
 
-        public DocumentEnvelope(Document doc, NamedEnvelope env) {
+        public DocumentEnvelope(Document doc,NamedEnvelope env) {
             this.doc = doc;
             this.env = env;
 
