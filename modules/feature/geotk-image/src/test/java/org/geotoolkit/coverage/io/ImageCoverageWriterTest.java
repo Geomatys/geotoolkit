@@ -30,10 +30,6 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.system.OS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.test.DependsOn;
-<<<<<<< HEAD:modules/feature/geotk-image/src/test/java/org/geotoolkit/coverage/io/ImageCoverageWriterTest.java
-=======
-import org.apache.sis.coverage.grid.GridCoverage2D;
->>>>>>> master:modules/feature/geotk-coverage/src/test/java/org/geotoolkit/coverage/io/ImageCoverageWriterTest.java
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.io.LineFormat;
