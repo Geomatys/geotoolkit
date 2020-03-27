@@ -441,7 +441,6 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    @org.junit.Ignore("Test failure to investigate: reprojection should not have generated black pixels.")
     public void testReprojectionCoverageRGB() throws TransformException, PortrayalException, NoSuchAuthorityCodeException, FactoryException{
 
          //create a test coverage
