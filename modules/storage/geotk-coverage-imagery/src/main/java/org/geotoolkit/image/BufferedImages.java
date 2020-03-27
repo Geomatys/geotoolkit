@@ -25,6 +25,7 @@ import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
@@ -67,7 +68,8 @@ public class BufferedImages extends Static {
 
         if (nbBand == reference.getSampleModel().getNumBands() && dataType == reference.getSampleModel().getDataType()) {
             //we can preserver color model and raster configuration
-            final WritableRaster raster = reference.getTile(0, 0).createCompatibleWritableRaster(width, height);
+            final Raster anyTile = reference.getTile(reference.getMinTileX(), reference.getMinTileY());
+            final WritableRaster raster = anyTile.createCompatibleWritableRaster(width, height);
             final ColorModel cm = reference.getColorModel();
             final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
             return resultImage;

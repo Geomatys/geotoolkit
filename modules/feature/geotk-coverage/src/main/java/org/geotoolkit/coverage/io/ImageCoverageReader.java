@@ -48,6 +48,7 @@ import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
@@ -71,8 +72,6 @@ import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.factory.Hints;
@@ -269,13 +268,6 @@ public class ImageCoverageReader extends GridCoverageStore {
     private transient MetadataHelper helper;
 
     /**
-     * The grid coverage builder to use for building {@link GridCoverage2D} instances.
-     *
-     * @since 3.21
-     */
-    private final GridCoverageBuilder coverageBuilder;
-
-    /**
      * The name factory to use for building {@link GenericName} instances.
      * This factory can be specified at construction time in the {@link Hints} map.
      *
@@ -294,19 +286,7 @@ public class ImageCoverageReader extends GridCoverageStore {
      * {@linkplain GridCoverageFactory grid coverage factory}.
      */
     public ImageCoverageReader() {
-        this(null);
-    }
-
-    /**
-     * Creates a new instance using the {@linkplain GridCoverageFactory grid coverage factory}
-     * specified by the given set of hints.
-     *
-     * @param hints The hints to use for fetching a {@link GridCoverageFactory},
-     *        or {@code null} for the default hints.
-     */
-    public ImageCoverageReader(final Hints hints) {
         ignoreGridTransforms = true;
-        coverageBuilder = new GridCoverageBuilder(hints);
         nameFactory = DefaultFactories.forBuildin(NameFactory.class);
         imageMetadataIndex = -1;
     }
@@ -706,9 +686,6 @@ public class ImageCoverageReader extends GridCoverageStore {
                 final SpatialMetadata metadata = getImageMetadata(imageReader, index);
                 if (metadata != null) {
                     crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
-                    if (crs == null || crs == PredefinedCRS.GRID_2D) {
-                        crs = coverageBuilder.getCoordinateReferenceSystem();
-                    }
                     if (crs == null) {
                         crs = PredefinedCRS.GRID_2D;
                     }
@@ -1512,12 +1489,6 @@ public class ImageCoverageReader extends GridCoverageStore {
         final String name;
         RenderedImage image;
         try {
-            final GenericName gname = getCoverageName();
-            try {
-                name = (gname != null) ? gname.toString() : null;
-            } catch (BackingStoreException e) {
-                throw e.unwrapOrRethrow(IOException.class);
-            }
             if (usePaletteFactory) {
                 SampleDimensionPalette.BANDS.set(bands);
                 ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
@@ -1580,17 +1551,9 @@ public class ImageCoverageReader extends GridCoverageStore {
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem());
             }
         }
-        final GridCoverage2D coverage;
-        final GridCoverageBuilder builder = coverageBuilder;
-        try {
-            builder.setName(name);
-            builder.setValues(image);
-            builder.setRanges(bands);
-            builder.setDomain(gridGeometry);
-            coverage = builder.getGridCoverage2D();
-        } finally {
-            builder.reset();
-        }
+
+        final GridCoverage2D coverage = new org.apache.sis.coverage.grid.GridCoverage2D(gridGeometry, Arrays.asList(bands), image);
+
         if (loggingEnabled) {
             fullTime = System.nanoTime() - fullTime;
             final Level level = getLogLevel(fullTime);

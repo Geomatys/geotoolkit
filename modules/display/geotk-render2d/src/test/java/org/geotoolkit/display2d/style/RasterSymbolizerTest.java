@@ -25,6 +25,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
+
+import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.util.FactoryException;
+
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
@@ -35,6 +41,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -49,13 +56,12 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import static org.junit.Assert.*;
+
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opengis.filter.FilterFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.util.FactoryException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test that raster symbolizer are properly rendered.
@@ -116,13 +122,13 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
     @Test
     public void renderRGBIndexedCoverage() throws FactoryException, PortrayalException {
 
-        final BufferedImage image = new BufferedImage(360, 180, BufferedImage.TYPE_BYTE_INDEXED);
+        final BufferedImage image = new BufferedImage(18, 9, BufferedImage.TYPE_BYTE_INDEXED);
         image.setRGB(0, 0, Color.RED.getRGB());
-        image.setRGB(359, 0, Color.GREEN.getRGB());
-        image.setRGB(0, 179, Color.BLUE.getRGB());
+        image.setRGB(17, 0, Color.GREEN.getRGB());
+        image.setRGB(0, 8, Color.BLUE.getRGB());
 
-        final GridExtent extent = new GridExtent(360, 180);
-        final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, 1, 0, 0);
+        final GridExtent extent = new GridExtent(18, 9);
+        final AffineTransform2D gridToCrs = new AffineTransform2D(20, 0, 0, 20, -170, -80);
         final GridGeometry grid = new GridGeometry(extent, PixelInCell.CELL_CENTER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
 
         /*
@@ -137,10 +143,27 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final CanvasDef cdef = new CanvasDef(grid);
         final SceneDef sdef = new SceneDef(context);
-        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
+        BufferedImage result = DefaultPortrayalService.portray(cdef, sdef);
         assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
-        assertEquals(Color.GREEN.getRGB(), result.getRGB(359, 0));
-        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 179));
+        assertEquals(Color.GREEN.getRGB(), result.getRGB(17, 0));
+        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 8));
+
+        // Now, test with a resample (flip axes):
+        final GridExtent latLonExtent = new GridExtent(9, 18);
+        AffineTransform2D latLonG2C = new AffineTransform2D(20, 0, 0, 20, -80, -170);
+        GridGeometry latLonGrid = new GridGeometry(latLonExtent, PixelInCell.CELL_CENTER, latLonG2C, CommonCRS.WGS84.geographic());
+        result = DefaultPortrayalService.portray(new CanvasDef(latLonGrid), sdef);
+        assertEquals(Color.RED.getRGB(),   result.getRGB(0, 0));
+        assertEquals(Color.GREEN.getRGB(), result.getRGB(0, 17));
+        assertEquals(Color.BLUE.getRGB(),  result.getRGB(8, 0));
+
+        latLonG2C = new AffineTransform2D(-20, 0, 0, 20, 80, -170);
+        latLonGrid = new GridGeometry(latLonExtent, PixelInCell.CELL_CENTER, latLonG2C, CommonCRS.WGS84.geographic());
+        result = DefaultPortrayalService.portray(new CanvasDef(latLonGrid), sdef);
+        assertEquals(Color.RED.getRGB(),   result.getRGB(8, 0));
+        assertEquals(Color.GREEN.getRGB(), result.getRGB(8, 17));
+        assertEquals(Color.BLUE.getRGB(),  result.getRGB(0, 0));
+
     }
 
     /**

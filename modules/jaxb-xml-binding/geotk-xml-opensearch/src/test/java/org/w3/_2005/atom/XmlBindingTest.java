@@ -28,10 +28,10 @@ import org.junit.Test;
 
 /**
  *
- * @author Ganji
+ * @author Guilhem Legal (Geomatys)
  */
 public class XmlBindingTest {
-    
+
     @Test
     public void ComponentMarshalingTest() throws Exception {
 
@@ -40,7 +40,7 @@ public class XmlBindingTest {
         feed.addEntry(new EntryType());
         OpenSearchXmlFactory.completeFeed(feed, 100L, 1L, 10L);
         feed.addLink(new LinkType("http://hh.com", "collection", "test/xml"));
-        
+
         Marshaller marshaller = OpenSearchMarshallerPool.getInstance().acquireMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         StringWriter sw = new StringWriter();
@@ -48,18 +48,18 @@ public class XmlBindingTest {
 
         String result = sw.toString();
         System.out.println("result:" + result);
-        
+
         Unmarshaller um = OpenSearchMarshallerPool.getInstance().acquireUnmarshaller();
-        
+
         Object umarshalled = um.unmarshal(new StringReader(result));
         if (umarshalled instanceof JAXBElement) {
             umarshalled = ((JAXBElement)umarshalled).getValue();
         }
-        
+
         Assert.assertTrue(umarshalled instanceof FeedType);
 
         FeedType f = (FeedType) umarshalled;
-        
+
         Assert.assertEquals(f.getTotalResults(), new Integer(100));
     }
 
