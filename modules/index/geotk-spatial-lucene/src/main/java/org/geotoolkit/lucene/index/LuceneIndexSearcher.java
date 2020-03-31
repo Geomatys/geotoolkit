@@ -33,8 +33,8 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser.Operator;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -367,7 +367,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 query = SIMPLE_QUERY;
             }
             LOGGER.log(Level.FINER, "QueryType:{0}", query.getClass().getName());
-            final Filter filter = spatialQuery.getSpatialFilter();
+            final Query filter = spatialQuery.getSpatialFilter();
             final LogicalFilterType operator  = spatialQuery.getLogicalOperator();
             final Sort sort     = spatialQuery.getSort();
             String sorted = "";
@@ -386,11 +386,20 @@ public class LuceneIndexSearcher extends IndexLucene {
 
             // simple query with an AND
             if (operator == LogicalFilterType.AND || (operator == LogicalFilterType.OR && filter == null)) {
+                Query singleQuery;
+                if (filter != null) {
+                    singleQuery = new BooleanQuery.Builder()
+                                    .add(filter, BooleanClause.Occur.MUST)
+                                    .add(query,                    BooleanClause.Occur.MUST)
+                                    .build();
+                } else {
+                    singleQuery = query;
+                }
                 final TopDocs docs;
                 if (sort != null) {
-                    docs = searcher.search(query, filter, maxRecords, sort);
+                    docs = searcher.search(singleQuery, maxRecords, sort);
                 } else {
-                    docs = searcher.search(query, filter, maxRecords);
+                    docs = searcher.search(singleQuery, maxRecords);
                 }
                 for (ScoreDoc doc : docs.scoreDocs) {
                     addToResult(results, doc.doc);
@@ -400,12 +409,16 @@ public class LuceneIndexSearcher extends IndexLucene {
             } else if (operator == LogicalFilterType.OR) {
                 final TopDocs hits1;
                 final TopDocs hits2;
+                BooleanQuery boolQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(SIMPLE_QUERY,                    BooleanClause.Occur.MUST)
+                                .build();
                 if (sort != null) {
                     hits1 = searcher.search(query, maxRecords, sort);
-                    hits2 = searcher.search(SIMPLE_QUERY, spatialQuery.getSpatialFilter(), maxRecords, sort);
+                    hits2 = searcher.search(boolQuery, maxRecords, sort);
                 } else {
                     hits1 = searcher.search(query, maxRecords);
-                    hits2 = searcher.search(SIMPLE_QUERY, spatialQuery.getSpatialFilter(), maxRecords);
+                    hits2 = searcher.search(boolQuery, maxRecords);
                 }
                 for (ScoreDoc doc : hits1.scoreDocs) {
                     addToResult(results, doc.doc);
@@ -416,11 +429,15 @@ public class LuceneIndexSearcher extends IndexLucene {
 
             // for a NOT we need to perform many request
             } else if (operator == LogicalFilterType.NOT) {
+                BooleanQuery boolQuery = new BooleanQuery.Builder()
+                                .add(filter, BooleanClause.Occur.MUST)
+                                .add(query,                    BooleanClause.Occur.MUST)
+                                .build();
                 final TopDocs hits1;
                 if (sort != null) {
-                    hits1 = searcher.search(query, filter, maxRecords, sort);
+                    hits1 = searcher.search(boolQuery, maxRecords, sort);
                 } else {
-                    hits1 = searcher.search(query, filter, maxRecords);
+                    hits1 = searcher.search(boolQuery, maxRecords);
                 }
                 final Set<String> unWanteds = new LinkedHashSet<>();
                 for (ScoreDoc doc : hits1.scoreDocs) {

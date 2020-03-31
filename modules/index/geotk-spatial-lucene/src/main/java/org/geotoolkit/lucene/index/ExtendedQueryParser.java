@@ -26,6 +26,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermRangeQuery;
+import org.apache.lucene.util.BytesRef;
 
 /**
  *
@@ -89,7 +90,9 @@ public class ExtendedQueryParser extends QueryParser {
             }
 
         } else {
-            return (TermRangeQuery) super.getRangeQuery(field, part1, part2, startInclusive, endInclusive);
+            // i don't know why. but it seems that the default query parsera has an issue with TermRangeQuery
+            return new TermRangeQuery(field, new BytesRef(part1.getBytes()), new BytesRef(part2.getBytes()), startInclusive, endInclusive);
+            //return (TermRangeQuery) super.getRangeQuery(field, part1, part2, startInclusive, endInclusive);
         }
     }
 }

@@ -19,17 +19,15 @@ package org.geotoolkit.lucene.analysis.standard;
 
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
-import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.standard.ClassicFilter;
-import org.apache.lucene.analysis.util.CharArraySet;
-import org.apache.lucene.analysis.util.StopwordAnalyzerBase;
-import org.apache.lucene.analysis.util.WordlistLoader;
+
 import org.apache.lucene.util.Version;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 /**
  * Filters {@link ClassicTokenizer} with {@link ClassicFilter}, {@link
@@ -61,7 +59,7 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
 
   /** An unmodifiable set containing some common English words that are usually not
   useful for searching. */
-  public static final CharArraySet STOP_WORDS_SET = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
+  public static final CharArraySet STOP_WORDS_SET = EnglishAnalyzer.ENGLISH_STOP_WORDS_SET;
 
   /** Builds an analyzer with the given stop words.
    * @param stopWords stop words */
@@ -77,7 +75,7 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
   }
 
   /** Builds an analyzer with the stop words from the given reader.
-   * @see WordlistLoader#getWordSet(Reader, Version)
+   * @see WordlistLoader#getWordSet(Reader)
    * @param stopwords Reader to read stop words from */
   public ClassicAnalyzer(Reader stopwords) throws IOException {
     this(loadStopwordSet(stopwords));
@@ -107,12 +105,14 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
     TokenStream tok = new ClassicFilter(src);
     tok = new LowerCaseFilter(tok);
     tok = new StopFilter(tok, stopwords);
-    return new TokenStreamComponents(src, tok) {
-      @Override
-      protected void setReader(final Reader reader) {
-        src.setMaxTokenLength(ClassicAnalyzer.this.maxTokenLength);
-        super.setReader(reader);
-      }
-    };
+    return new TokenStreamComponents(r -> {
+      src.setMaxTokenLength(ClassicAnalyzer.this.maxTokenLength);
+      src.setReader(r);
+    }, tok);
+  }
+
+  @Override
+  protected TokenStream normalize(String fieldName, TokenStream in) {
+    return new LowerCaseFilter(in);
   }
 }

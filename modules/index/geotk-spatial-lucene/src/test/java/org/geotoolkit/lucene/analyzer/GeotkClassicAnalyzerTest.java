@@ -19,7 +19,6 @@
 
 package org.geotoolkit.lucene.analyzer;
 
-import org.apache.lucene.search.Filter;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
@@ -90,6 +89,12 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
     @Override
     public void simpleSearchTest() throws Exception {
         super.simpleSearchTest();
+    }
+
+    @Test
+    @Override
+    public void stringRangeSearchTest() throws Exception {
+        super.stringRangeSearchTest();
     }
 
      /**
@@ -209,42 +214,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
     @Test
     @Override
     public void wildCharUnderscoreSearchTest() throws Exception {
-        String resultReport = "";
-
-        /**
-         * Test 1 simple search: title = title1
-         */
-        SpatialQuery spatialQuery = new SpatialQuery("identifier:*MDWeb_FR_SY*", LogicalFilterType.AND);
-        Set<String> result = indexSearcher.doSearch(spatialQuery);
-
-        for (String s: result) {
-            resultReport = resultReport + s + '\n';
-        }
-
-        LOGGER.log(Level.FINER, " wildCharUnderscoreSearch 1:\n{0}", resultReport);
-
-        Set<String> expectedResult = new LinkedHashSet<>();
-        expectedResult.add("MDWeb_FR_SY_couche_vecteur_258");
-
-
-        assertEquals(expectedResult, result);
-
-        /**
-         * Test 2 simple search: title = identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*
-         */
-        spatialQuery = new SpatialQuery("identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*", LogicalFilterType.AND);
-        result = indexSearcher.doSearch(spatialQuery);
-
-        for (String s: result) {
-            resultReport = resultReport + s + '\n';
-        }
-
-        LOGGER.log(Level.FINER, " wildCharUnderscoreSearch 1:\n{0}", resultReport);
-
-        expectedResult = new LinkedHashSet<>();
-        expectedResult.add("Spot5-Cyprus-THX-IMAGERY3_ortho1");
-
-        assertEquals(expectedResult, result);
+        super.wildCharUnderscoreSearchTest();
     }
 
      /**

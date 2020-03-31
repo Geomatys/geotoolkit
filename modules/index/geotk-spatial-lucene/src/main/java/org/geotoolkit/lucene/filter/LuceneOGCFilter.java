@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.*;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DocsEnum;
+//import org.apache.lucene.index.DocsEnum;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
@@ -98,7 +98,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Query implements  
 
     /**
      * {@inheritDoc }
-     */
+
     @Override
     public DocIdSet getDocIdSet(final LeafReaderContext ctx, final Bits b) throws IOException {
 
@@ -109,7 +109,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Query implements  
         if (tree != null) {
             /*
              * For distance buffer filter no envelope only mode
-             */
+             *
             if (filter instanceof DistanceBufferOperator) {
                 distanceFilter = true;
                 reverse        = filter instanceof Beyond;
@@ -222,7 +222,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Query implements  
         }
 
         return set;
-    }
+    } */
 
     public static LuceneOGCFilter wrap(final Filter filter){
         return new LuceneOGCFilter(filter);

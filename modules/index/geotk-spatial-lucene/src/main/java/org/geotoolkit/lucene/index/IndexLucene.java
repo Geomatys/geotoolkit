@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.util.CharArraySet;
+import org.apache.lucene.analysis.CharArraySet;
 
 import org.apache.lucene.store.RAMDirectory;
 import org.geotoolkit.index.tree.Tree;

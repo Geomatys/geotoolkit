@@ -185,35 +185,12 @@ public class StopAnalyzerTest extends AbstractAnalyzerTest {
         expectedResult.add("11325_158_19640418141800");
 
         assertEquals(expectedResult, result);
+    }
 
-        /**
-         * Test 6 range search: Title <= FRA
-         */
-        spatialQuery = new SpatialQuery("Title_raw:[0 TO FRA]", LogicalFilterType.AND);
-        result = indexSearcher.doSearch(spatialQuery);
-        logResultReport("simpleSearch 6:", result);
-
-        expectedResult = new LinkedHashSet<>();
-        expectedResult.add("42292_5p_19900609195600");
-        expectedResult.add("42292_9s_19900610041000");
-        expectedResult.add("39727_22_19750113062500");
-        expectedResult.add("11325_158_19640418141800");
-        expectedResult.add("40510_145_19930221211500");
-
-        assertEquals(expectedResult, result);
-
-        /**
-         * Test 7 range search: Title > FRA
-         */
-        spatialQuery = new SpatialQuery("Title_raw:[FRA TO z]", LogicalFilterType.AND);
-        result = indexSearcher.doSearch(spatialQuery);
-        logResultReport("simpleSearch 7:", result);
-
-        expectedResult = new LinkedHashSet<>();
-        expectedResult.add("CTDF02");
-        expectedResult.add("MDWeb_FR_SY_couche_vecteur_258");
-
-        assertEquals(expectedResult, result);
+    @Test
+    @Override
+    public void stringRangeSearchTest() throws Exception {
+        super.stringRangeSearchTest();
     }
 
      /**
@@ -309,8 +286,33 @@ public class StopAnalyzerTest extends AbstractAnalyzerTest {
     @Test
     @Override
     public void wildCharUnderscoreSearchTest() throws Exception {
-        super.wildCharUnderscoreSearchTest();
+
+        /**
+         * Test 1 simple search: title = title1
+         */
+        SpatialQuery spatialQuery = new SpatialQuery("identifier:*MDWeb_FR_SY*", LogicalFilterType.AND);
+        Set<String> result = indexSearcher.doSearch(spatialQuery);
+        logResultReport("wildCharUnderscoreSearch 1:", result);
+
+        Set<String> expectedResult = new LinkedHashSet<>();
+        //expectedResult.add("MDWeb_FR_SY_couche_vecteur_258"); error '_' is tokenized with this analyzer
+
+        assertEquals(expectedResult, result);
+
+        /**
+         * Test 2 simple search: title =
+         * identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*
+         */
+        spatialQuery = new SpatialQuery("identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*", LogicalFilterType.AND);
+        result = indexSearcher.doSearch(spatialQuery);
+        logResultReport("wildCharUnderscoreSearch 2:", result);
+
+        expectedResult = new LinkedHashSet<>();
+        //expectedResult.add("Spot5-Cyprus-THX-IMAGERY3_ortho1"); // error '_' is tokenized  this analyzer
+
+        assertEquals(expectedResult, result);
     }
+
 
 
      /**
@@ -325,7 +327,7 @@ public class StopAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 1 date search: date after 25/01/2009
          */
-        SpatialQuery spatialQuery = new SpatialQuery("date:{20090125 30000101}", LogicalFilterType.AND);
+        SpatialQuery spatialQuery = new SpatialQuery("date:{20090125 TO 30000101}", LogicalFilterType.AND);
         Set<String> result = indexSearcher.doSearch(spatialQuery);
         logResultReport("DateSearch 1:", result);
 

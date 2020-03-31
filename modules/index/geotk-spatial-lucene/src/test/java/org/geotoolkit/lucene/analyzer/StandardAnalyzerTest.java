@@ -92,6 +92,12 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         super.simpleSearchTest();
     }
 
+    @Test
+    @Override
+    public void stringRangeSearchTest() throws Exception {
+        super.stringRangeSearchTest();
+    }
+
      /**
      * Test simple lucene search.
      *

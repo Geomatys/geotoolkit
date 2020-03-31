@@ -45,12 +45,10 @@ import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.QueryBuilder;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.geometry.jts.JTS;
@@ -2725,8 +2723,29 @@ public abstract class AbstractAnalyzerTest {
 
         assertEquals(expectedResult, result);
 
+    }
+
+    public void stringRangeSearchTest() throws Exception {
+
         /**
-         * Test 6 range search: Title <= FRA
+         * Test 1 range search: Title <= FRA (direct lucene query)
+         */
+        TermRangeQuery query = new TermRangeQuery("Title_raw", new BytesRef("0".getBytes()), new BytesRef("FRA".getBytes()), true, true);
+        SpatialQuery spatialQuery = new SpatialQuery("metafile:doc", query, LogicalFilterType.AND);
+        Set<String> result = indexSearcher.doSearch(spatialQuery);
+        logResultReport("simpleSearch 6:", result);
+
+        Set<String> expectedResult = new LinkedHashSet<>();
+        expectedResult.add("42292_5p_19900609195600");
+        expectedResult.add("42292_9s_19900610041000");
+        expectedResult.add("39727_22_19750113062500");
+        expectedResult.add("11325_158_19640418141800");
+        expectedResult.add("40510_145_19930221211500");
+
+        assertEquals(expectedResult, result);
+
+        /**
+         * Test 2 range search: Title <= FRA
          */
         spatialQuery = new SpatialQuery("Title_raw:[0 TO FRA]", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
@@ -2771,7 +2790,7 @@ public abstract class AbstractAnalyzerTest {
         logResultReport("wildCharUnderscoreSearch 1:", result);
 
         Set<String> expectedResult = new LinkedHashSet<>();
-        //expectedResult.add("MDWeb_FR_SY_couche_vecteur_258"); error '_' is tokenized
+        expectedResult.add("MDWeb_FR_SY_couche_vecteur_258");
 
         assertEquals(expectedResult, result);
 
@@ -2784,7 +2803,7 @@ public abstract class AbstractAnalyzerTest {
         logResultReport("wildCharUnderscoreSearch 2:", result);
 
         expectedResult = new LinkedHashSet<>();
-        //expectedResult.add("Spot5-Cyprus-THX-IMAGERY3_ortho1"); // error
+        expectedResult.add("Spot5-Cyprus-THX-IMAGERY3_ortho1");
 
         assertEquals(expectedResult, result);
     }
@@ -2794,7 +2813,7 @@ public abstract class AbstractAnalyzerTest {
         /**
          * Test 1 date search: date after 25/01/2009
          */
-        SpatialQuery spatialQuery = new SpatialQuery("date:{20090125 30000101}", LogicalFilterType.AND);
+        SpatialQuery spatialQuery = new SpatialQuery("date:{20090125 TO 30000101}", LogicalFilterType.AND);
         Set<String> result = indexSearcher.doSearch(spatialQuery);
         logResultReport("DateSearch 1:", result);
 

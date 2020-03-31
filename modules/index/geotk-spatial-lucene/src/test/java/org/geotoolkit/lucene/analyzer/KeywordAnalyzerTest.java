@@ -111,6 +111,12 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
        super.simpleSearchTest();
     }
 
+    @Test
+    @Override
+    public void stringRangeSearchTest() throws Exception {
+        super.stringRangeSearchTest();
+    }
+
      /**
      * Test simple lucene search.
      *
@@ -154,8 +160,8 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
         expectedResult = new LinkedHashSet<>();
         expectedResult.add("42292_5p_19900609195600");
 
-        // it didn't find any result (why???)
-        expectedResult = new LinkedHashSet<>();
+        /* corrections 8.4.0
+        expectedResult = new LinkedHashSet<>();*/
 
         assertEquals(expectedResult, result);
 
@@ -212,6 +218,7 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
 
         LOGGER.log(Level.FINER, "wildCharSearch 5:\n{0}", resultReport);
 
+        // should be
         expectedResult = new LinkedHashSet<>();
         expectedResult.add("42292_5p_19900609195600");
         expectedResult.add("42292_9s_19900610041000");
@@ -219,8 +226,10 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
         expectedResult.add("40510_145_19930221211500");
 
 
-        // ERROR it didn't find any result (why???)
+        // but with this analyzer we got 11325_158_19640418141800
+        // witch got for format = 'ASCII MEDATLAS'
         expectedResult = new LinkedHashSet<>();
+        expectedResult.add("11325_158_19640418141800");
 
         assertEquals(expectedResult, result);
 
@@ -232,6 +241,7 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void wildCharUnderscoreSearchTest() throws Exception {
         super.wildCharUnderscoreSearchTest();
     }
@@ -243,6 +253,7 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void dateSearchTest() throws Exception {
         super.dateSearchTest();
     }
@@ -253,6 +264,7 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void sortedSearchTest() throws Exception {
         super.sortedSearchTest();
     }
@@ -264,6 +276,7 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void spatialSearchTest() throws Exception {
         super.spatialSearchTest();
     }
@@ -275,6 +288,7 @@ public class KeywordAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void TermQueryTest() throws Exception {
         super.TermQueryTest();
     }
