@@ -18,9 +18,12 @@ package org.geotoolkit.lucene.index;
 
 import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.DoublePoint;
+import org.apache.lucene.document.FloatPoint;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermRangeQuery;
 
@@ -42,22 +45,45 @@ public class ExtendedQueryParser extends QueryParser {
         final Character fieldType = numericFields.get(field);
         if (fieldType != null) {
             switch (fieldType) {
-                case 'd': return NumericRangeQuery.newDoubleRange(field,
-                                                                  Double.parseDouble(part1),
-                                                                  Double.parseDouble(part2),
-                                                                  startInclusive, endInclusive);
-                case 'i': return NumericRangeQuery.newIntRange(field,
-                                                               Integer.parseInt(part1),
-                                                               Integer.parseInt(part2),
-                                                               startInclusive, endInclusive);
-                case 'f': return NumericRangeQuery.newFloatRange(field,
-                                                                 Float.parseFloat(part1),
-                                                                 Float.parseFloat(part2),
-                                                                 startInclusive, endInclusive);
-                case 'l': return NumericRangeQuery.newLongRange(field,
-                                                                Long.parseLong(part1),
-                                                                Long.parseLong(part2),
-                                                                startInclusive, endInclusive);
+                case 'd': double startD = Double.parseDouble(part1);
+                          if (!startInclusive) {
+                              startD = DoublePoint.nextUp(startD);
+                          }
+                          double endD   = Double.parseDouble(part2);
+                          if (!endInclusive) {
+                              endD = DoublePoint.nextDown(endD);
+                          }
+                          return DoublePoint.newRangeQuery(field, startD, endD);
+
+                case 'i': int startI = Integer.parseInt(part1);
+                          if (!startInclusive) {
+                              startI = Math.addExact(startI, 1);
+                          }
+                          int endI = Integer.parseInt(part2);
+                          if (!endInclusive) {
+                              endI = Math.addExact(endI, -1);
+                          }
+                          return IntPoint.newRangeQuery(field, startI, endI);
+
+                case 'f': float startF = Float.parseFloat(part1);
+                          if (!startInclusive) {
+                              startF = FloatPoint.nextUp(startF);
+                          }
+                          float endF = Float.parseFloat(part2);
+                          if (!endInclusive) {
+                              endF = FloatPoint.nextDown(endF);
+                          }
+                          return FloatPoint.newRangeQuery(field, startF, endF);
+
+                case 'l': long startL = Long.parseLong(part1);
+                          if (!startInclusive) {
+                              startL = Math.addExact(startL, 1);
+                          }
+                          long endL = Long.parseLong(part2);
+                          if (!endInclusive) {
+                              endL = Math.addExact(endL, -1);
+                          }
+                          return LongPoint.newRangeQuery(field, startL, endL);
 
                 default: throw new IllegalArgumentException("Unexpected field type:" + field);
             }

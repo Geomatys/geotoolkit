@@ -36,7 +36,6 @@ import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
-import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.referencing.CRS;
@@ -56,7 +55,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.index.LogicalFilterType;
 
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -137,15 +135,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         org.opengis.filter.Filter spaFilter = FF.bbox(GEOMETRY_PROPERTY, -20,-20,20,20,"CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(spaFilter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -173,15 +175,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
                 2226389.8158654715, 2258423.6490963805,
                 "EPSG:3395");
         bboxQuery = new SpatialQuery(wrap(spaFilter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -206,15 +212,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         spaFilter = FF.bbox(GEOMETRY_PROPERTY, -5, -5, 60, 60, "CRS:84");
         bboxQuery = new SpatialQuery(wrap(spaFilter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -238,15 +248,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         spaFilter = FF.bbox(GEOMETRY_PROPERTY, 40, -9, 50, -5, "CRS:84");
         bboxQuery = new SpatialQuery(wrap(spaFilter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -273,15 +287,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -310,15 +328,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(AbstractCRS.castOrCopy(CRS.forCode("EPSG:3395")).forConvention(AxesConvention.RIGHT_HANDED));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(bbox));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -348,9 +370,13 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.intersects(GEOMETRY_PROPERTY,FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
@@ -358,7 +384,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -383,15 +409,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CRS.forCode("EPSG:3395"));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:Line 1 CRS=3395: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -415,15 +445,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -445,15 +479,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CRS.forCode("EPSG:3395"));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:Line 2 CRS=3395: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -481,15 +519,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "EQ:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -511,15 +553,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "EQ:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -540,15 +586,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "EQ:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -575,15 +625,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -604,15 +658,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -630,15 +688,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -656,15 +718,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),0.00001,"m");
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -689,13 +755,17 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -722,15 +792,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -763,15 +837,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:Point 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -805,15 +883,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -844,15 +926,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -883,15 +969,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(bbox));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:BBox 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -916,15 +1006,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.disjoint(GEOMETRY_PROPERTY,FF.literal(bbox));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:BBox 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -960,15 +1054,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -990,15 +1088,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1017,15 +1119,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 3 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1044,16 +1150,20 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 4 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1074,15 +1184,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 5 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1104,15 +1218,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1135,15 +1253,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1166,15 +1288,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1199,15 +1325,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(bbox));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:BBox 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1240,15 +1370,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.within(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "WT:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1274,15 +1408,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.within(GEOMETRY_PROPERTY, FF.literal(bbox));
         bboxQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "WT:BBOX 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1306,15 +1444,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.within(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "WT:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1344,15 +1486,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1375,15 +1521,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1408,15 +1558,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1436,15 +1590,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1466,15 +1624,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Point 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1496,15 +1658,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(bbox));
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1537,22 +1703,21 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery1 = new SpatialQuery(wrap(filter1));
         SpatialQuery spatialQuery2 = new SpatialQuery(wrap(filter2));
 
-        List<Filter> filters  = new ArrayList<>();
-        filters.add(spatialQuery1.getSpatialFilter());
-        filters.add(spatialQuery2.getSpatialFilter());
-        LogicalFilterType filterType[]  = {LogicalFilterType.OR};
-        SerialChainFilter serialFilter = new SerialChainFilter(filters, filterType);
-
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery1.getSpatialFilter(), BooleanClause.Occur.SHOULD)
+                                .add(spatialQuery2.getSpatialFilter(), BooleanClause.Occur.SHOULD)
+                                .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                                .build();
 
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, serialFilter, 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO || BBOX: BBox 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1574,17 +1739,20 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          * case 2: same test with AND instead of OR
          *
          */
-        LogicalFilterType filterType2[]  = {LogicalFilterType.AND};
-        serialFilter = new SerialChainFilter(filters, filterType2);
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery1.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(spatialQuery2.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, serialFilter, 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO && BBOX: BBox 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1606,19 +1774,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
-        List<Filter> filters3     = new ArrayList<>();
-        filters3.add(spatialQuery.getSpatialFilter());
-        LogicalFilterType filterType3[]         = {LogicalFilterType.NOT};
-        serialFilter              = new SerialChainFilter(filters3, filterType3);
+        serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST_NOT)
+                          .add(simpleQuery,                     BooleanClause.Occur.MUST)
+                          .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, serialFilter, 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1650,20 +1818,20 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox2.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         org.opengis.filter.Filter bfilter = FF.bbox(GEOMETRY_PROPERTY, -12,-17,15,50,"CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bfilter));
-        List<Filter> filters4  = new ArrayList<>();
-        filters4.add(spatialQuery.getSpatialFilter());
-        filters4.add(bboxQuery.getSpatialFilter());
-        LogicalFilterType filterType4[]         = {LogicalFilterType.AND};
-        serialFilter              = new SerialChainFilter(filters4, filterType4);
+        serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                          .add(bboxQuery.getSpatialFilter(),    BooleanClause.Occur.MUST)
+                          .add(simpleQuery,                     BooleanClause.Occur.MUST)
+                          .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, serialFilter, 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1672,7 +1840,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
-    assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
@@ -1681,17 +1849,20 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          * case 5: INTERSECT line AND NOT BBOX
          *
          */
-        LogicalFilterType filterType5[] = {LogicalFilterType.AND, LogicalFilterType.NOT};
-        serialFilter      = new SerialChainFilter(filters4, filterType5);
+        serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                          .add(bboxQuery.getSpatialFilter(),    BooleanClause.Occur.MUST_NOT)
+                          .add(simpleQuery,                     BooleanClause.Occur.MUST)
+                          .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, serialFilter, 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1718,15 +1889,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5.0,"kilometers");
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1748,15 +1923,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),1500.0,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1781,15 +1960,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),1500000,"meters");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 1500000m CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1814,15 +1997,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),2000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 2000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1850,15 +2037,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),4000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1887,15 +2078,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1926,15 +2121,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),6000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -1968,15 +2167,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(bbox), 5.0, "kilometers");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2002,15 +2205,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(bbox), 1500.0, "kilometers");
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2036,15 +2243,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(bbox),3000.0, "kilometers");
         bboxQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 3000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2080,15 +2291,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+         serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2105,15 +2320,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),4000.0, "kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2133,17 +2352,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5000.0, "kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
-
-
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2169,15 +2390,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom), 6000.0, "kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2217,15 +2442,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2254,15 +2483,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),1500,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2289,15 +2522,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),1500000,"meters");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 1500000m CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2324,15 +2561,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),2000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 2000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2355,15 +2596,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),4000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2385,15 +2630,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2413,15 +2662,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),6000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2440,15 +2693,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY,FF.literal(bbox), 5.0, "kilometers");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2469,15 +2726,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY,FF.literal(bbox),1500.0, "kilometers");
         bboxQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2497,15 +2758,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY,FF.literal(bbox),3000.0, "kilometers");
         bboxQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 3000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2526,15 +2791,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Line 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2564,15 +2833,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
          */
         filter = FF.beyond(GEOMETRY_PROPERTY,FF.literal(geom), 4000.0, "kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Line 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2604,13 +2877,13 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 //        spatialQuery = new SpatialQuery(wrap(filter));
 //
 //        //we perform a lucene query
-//        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+//        docs = searcher.search(serialQuery, 15);
 //
 //        nbResults = docs.totalHits;
 //        logger.finer("BY:Line 1 dist: 5000km CRS=4326: nb Results: " + nbResults);
 //
 //        results = new ArrayList<>();
-//        for (int i = 0; i < nbResults; i++) {
+//        for (int i = 0; i < nbResults.value; i++) {
 //            Document doc = searcher.doc(docs.scoreDocs[i].doc);
 //            String name =  doc.get("id");
 //            results.add(name);
@@ -2634,13 +2907,13 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 //        spatialQuery = new SpatialQuery(wrap(filter));
 //
 //        //we perform a lucene query
-//        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+//        docs = searcher.search(serialQuery, 15);
 //
 //        nbResults = docs.totalHits;
 //        logger.finer("BY:Line 1 dist: 6000km CRS=4326: nb Results: " + nbResults);
 //
 //        results = new ArrayList<>();
-//        for (int i = 0; i < nbResults; i++) {
+//        for (int i = 0; i < nbResults.value; i++) {
 //            Document doc = searcher.doc(docs.scoreDocs[i].doc);
 //            String name =  doc.get("id");
 //            results.add(name);
@@ -2668,15 +2941,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.overlaps(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "OL:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2696,15 +2973,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         filter = FF.overlaps(GEOMETRY_PROPERTY, FF.literal(bbox));
         bboxQuery = new SpatialQuery(wrap(filter));
+        serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "OL:BBOX 2 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2734,15 +3015,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         org.opengis.filter.Filter bboxFilter = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2771,13 +3056,18 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         QueryParser parser  = new QueryParser("metafile", analyzer);
         Query query         = parser.parse("id:point*");
 
-        docs = searcher.search(query, bboxQuery.getSpatialFilter(), 15);
+        BooleanQuery serialQuery1 = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(query,                  BooleanClause.Occur.MUST)
+                                .build();
+
+        docs = searcher.search(serialQuery1, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "QnS: title like point* AND BBOX 1: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2785,7 +3075,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 4);
+        assertEquals(results.size(), 4);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2801,30 +3091,29 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         query         = parser.parse("id:point*");
 
         TopDocs hits1 = searcher.search(query, 15);
-        TopDocs hits2 = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs hits2 = searcher.search(serialQuery, 15);
 
 
         results = new ArrayList<>();
         StringBuilder resultString = new StringBuilder();
-        for (int i = 0; i < hits1.totalHits; i++) {
+        for (int i = 0; i < hits1.totalHits.value; i++) {
 
             String name = searcher.doc(hits1.scoreDocs[i].doc).get("id");
             results.add(name);
             resultString.append('\t').append("id: ").append(name).append('\n');
         }
-        for (int i = 0; i < hits2.totalHits; i++) {
+        for (int i = 0; i < hits2.totalHits.value; i++) {
             String name = searcher.doc(hits2.scoreDocs[i].doc).get("id");
             if (!results.contains(name)) {
                 results.add(name);
                 resultString.append('\t').append("id: ").append(name).append('\n');
             }
         }
-        nbResults = results.size();
-        LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", nbResults);
+        LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", results.size());
         LOGGER.finer(resultString.toString());
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 12);
+        assertEquals(results.size(), 12);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2857,29 +3146,38 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
 
-        hits1 = searcher.search(query1, bboxQuery.getSpatialFilter(), 15);
-        hits2 = searcher.search(query2, interQuery.getSpatialFilter(), 15);
+        serialQuery1 = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(query1,                       BooleanClause.Occur.MUST)
+                                .build();
+
+        BooleanQuery serialQuery2 = new BooleanQuery.Builder()
+                                .add(interQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(query2,                        BooleanClause.Occur.MUST)
+                                .build();
+
+        hits1 = searcher.search(serialQuery1, 15);
+        hits2 = searcher.search(serialQuery2, 15);
 
         results      = new ArrayList<>();
         resultString = new StringBuilder();
-        for (int i = 0; i < hits1.totalHits; i++) {
+        for (int i = 0; i < hits1.totalHits.value; i++) {
             String name = searcher.doc(hits1.scoreDocs[i].doc).get("id");
             results.add(name);
             resultString.append('\t').append("id: ").append(name).append('\n');
         }
-        for (int i = 0; i < hits2.totalHits; i++) {
+        for (int i = 0; i < hits2.totalHits.value; i++) {
             String name = searcher.doc(hits2.scoreDocs[i].doc).get("id");
             if (!results.contains(name)) {
                 results.add(name);
                 resultString.append('\t').append("id: ").append(name).append('\n');
             }
         }
-        nbResults = results.size();
-        LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", nbResults);
+        LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", results.size());
         LOGGER.finer(resultString.toString());
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 5);
+        assertEquals(results.size(), 5);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2916,15 +3214,19 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         org.opengis.filter.Filter bboxFilter = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(bboxQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .build();
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        TopDocs docs = searcher.search(serialQuery, 15);
 
-        int nbResults = docs.totalHits;
+        TotalHits nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         List<String> results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);
@@ -2965,13 +3267,13 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
 
          //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        docs = searcher.search(serialQuery, 15);
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         results = new ArrayList<>();
-        for (int i = 0; i < nbResults; i++) {
+        for (int i = 0; i < nbResults.value; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
             results.add(name);

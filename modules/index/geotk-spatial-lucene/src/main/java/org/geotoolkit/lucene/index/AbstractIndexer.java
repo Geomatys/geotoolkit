@@ -313,8 +313,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param writer An Lucene index writer.
      * @param meta The object to index.
      */
-    public void indexDocument(final IndexWriter writer, final E meta) throws IndexingException, IOException {
-        final int docId = writer.maxDoc();
+    protected void indexDocument(final IndexWriter writer, final E meta) throws IndexingException, IOException {
+        final int docId = writer.getDocStats().maxDoc;
         //adding the document in a specific model. in this case we use a MDwebDocument.
         writer.addDocument(createDocument(meta, docId));
         LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
@@ -326,15 +326,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param meta The object to index.
      */
     public void indexDocument(final E meta) {
-        try {
-            final IndexWriterConfig config = new IndexWriterConfig(analyzer);
-            final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
+        final IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        try (final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config)) {
 
-            final int docId = writer.maxDoc();
+            final int docId = writer.getDocStats().maxDoc;
             //adding the document in a specific model. in this case we use a MDwebDocument.
             writer.addDocument(createDocument(meta, docId));
             LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
-            writer.close();
             if (rTree != null) {
                 rTree.getTreeElementMapper().flush();
                 rTree.flush();

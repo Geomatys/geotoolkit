@@ -99,13 +99,12 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
      */
     @Test
     public void wildCharSearchTest() throws Exception {
-        Filter nullFilter   = null;
         String resultReport = "";
 
         /**
          * Test 1 simple search: title = title1
          */
-        SpatialQuery spatialQuery = new SpatialQuery("Title:90008411*", nullFilter, LogicalFilterType.AND);
+        SpatialQuery spatialQuery = new SpatialQuery("Title:90008411*", LogicalFilterType.AND);
         Set<String> result = indexSearcher.doSearch(spatialQuery);
 
         for (String s: result) {
@@ -123,7 +122,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 2 wildChar search: abstract LIKE *NEDIPROD*
          */
-        spatialQuery = new SpatialQuery("abstract:*NEDIPROD*", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("abstract:*NEDIPROD*", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
 
         resultReport = "";
@@ -142,7 +141,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
          * Test 3 wildChar search: title like *.ctd
          */
         resultReport = "";
-        spatialQuery = new SpatialQuery("Title:*.ctd", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("Title:*.ctd", LogicalFilterType.AND);
         result       = indexSearcher.doSearch(spatialQuery);
 
         for (String s: result) {
@@ -162,7 +161,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 4 wildCharSearch: abstract LIKE *onnees CTD NEDIPROD VI 120
          */
-        spatialQuery = new SpatialQuery("abstract:(*onnees CTD NEDIPROD VI 120)", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("abstract:(*onnees CTD NEDIPROD VI 120)", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
 
         resultReport = "";
@@ -181,7 +180,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 5 wildCharSearch: Format LIKE *MEDATLAS ASCII*
          */
-        spatialQuery = new SpatialQuery("Format:(*MEDATLAS ASCII*)", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("Format:(*MEDATLAS ASCII*)", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
 
         resultReport = "";
@@ -208,14 +207,14 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void wildCharUnderscoreSearchTest() throws Exception {
-        Filter nullFilter   = null;
         String resultReport = "";
 
         /**
          * Test 1 simple search: title = title1
          */
-        SpatialQuery spatialQuery = new SpatialQuery("identifier:*MDWeb_FR_SY*", nullFilter, LogicalFilterType.AND);
+        SpatialQuery spatialQuery = new SpatialQuery("identifier:*MDWeb_FR_SY*", LogicalFilterType.AND);
         Set<String> result = indexSearcher.doSearch(spatialQuery);
 
         for (String s: result) {
@@ -233,7 +232,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 2 simple search: title = identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*
          */
-        spatialQuery = new SpatialQuery("identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
 
         for (String s: result) {
@@ -254,6 +253,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void dateSearchTest() throws Exception {
         super.dateSearchTest();
     }
@@ -264,6 +264,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void sortedSearchTest() throws Exception {
         super.sortedSearchTest();
     }
@@ -275,6 +276,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void spatialSearchTest() throws Exception {
         super.spatialSearchTest();
     }
@@ -286,6 +288,7 @@ public class GeotkClassicAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void TermQueryTest() throws Exception {
         super.TermQueryTest();
     }

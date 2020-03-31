@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.geotoolkit.index.LogicalFilterType;
@@ -42,7 +42,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     /**
      * The spatial filter added to the lucene query.
      */
-    private final Filter spatialFilter ;
+    private final Query spatialFilter ;
 
     /**
      * The lucene query
@@ -94,12 +94,16 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
      * @param filter A lucene filter (spatial, serialChain, ...)
      * @param logicalOperator The logical operator to apply between the query and the spatialFilter.
      */
-    public SpatialQuery(final String query, final Filter filter, final LogicalFilterType logicalOperator) {
+    public SpatialQuery(final String query, final Query filter, final LogicalFilterType logicalOperator) {
         this(query,filter,logicalOperator,null);
     }
 
+    public SpatialQuery(final String query, final LogicalFilterType logicalOperator) {
+        this(query,null,logicalOperator,null);
+    }
 
-    private SpatialQuery(final String query, final Filter filter, final LogicalFilterType logicalOperator, final List<SpatialQuery> sub){
+
+    private SpatialQuery(final String query, final Query filter, final LogicalFilterType logicalOperator, final List<SpatialQuery> sub){
         this.query           = new StringBuilder(query);
         this.spatialFilter   = filter;
         this.logicalOperator = logicalOperator;
@@ -114,7 +118,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
      * Return the spatial filter (it can be a SerialChainFilter) to add to the lucene query.
      */
     @Override
-    public Filter getSpatialFilter() {
+    public Query getSpatialFilter() {
         return spatialFilter;
     }
 
@@ -238,7 +242,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
         }
 
         if (spatialFilter != null && !query.toString().equals("")) {
-            s.append(SerialChainFilter.valueOf(logicalOperator)).append('\n');
+            s.append(logicalOperator.valueOf()).append('\n');
         }
 
         if (spatialFilter != null) {

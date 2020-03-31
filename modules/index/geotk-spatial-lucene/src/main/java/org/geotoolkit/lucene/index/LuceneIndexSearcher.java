@@ -47,7 +47,6 @@ import org.geotoolkit.index.LogicalFilterType;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.index.SearchingException;
-import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.index.SpatialQuery;
 
 
@@ -357,10 +356,10 @@ public class LuceneIndexSearcher extends IndexLucene {
             }
 
             //we set off the mecanism setting all the character to lower case
-            // we do that for range queries only for now. TODO see if we need to set it every time
+            /* we do that for range queries only for now. TODO see if we need to set it every time
             if (stringQuery.contains(" TO ")) {
                 parser.setLowercaseExpandedTerms(false);
-            }
+            }*/
             final Query query;
             if (!stringQuery.isEmpty()) {
                query = parser.parse(stringQuery);
@@ -381,7 +380,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             }
             String operatorValue = "";
             if (!(operator == LogicalFilterType.AND || (operator == LogicalFilterType.OR && filter == null))) {
-                operatorValue = '\n' + SerialChainFilter.valueOf(operator);
+                operatorValue = '\n' + operator.valueOf();
             }
             LOGGER.log(logLevel, "Searching for: " + query.toString(field) + operatorValue +  f + sorted + "\nmax records: " + maxRecords);
 
@@ -402,7 +401,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 final TopDocs hits1;
                 final TopDocs hits2;
                 if (sort != null) {
-                    hits1 = searcher.search(query, null, maxRecords, sort);
+                    hits1 = searcher.search(query, maxRecords, sort);
                     hits2 = searcher.search(SIMPLE_QUERY, spatialQuery.getSpatialFilter(), maxRecords, sort);
                 } else {
                     hits1 = searcher.search(query, maxRecords);
@@ -430,7 +429,7 @@ public class LuceneIndexSearcher extends IndexLucene {
 
                 final TopDocs hits2;
                 if (sort != null) {
-                    hits2 = searcher.search(SIMPLE_QUERY, null, maxRecords, sort);
+                    hits2 = searcher.search(SIMPLE_QUERY, maxRecords, sort);
                 } else {
                     hits2 = searcher.search(SIMPLE_QUERY, maxRecords);
                 }

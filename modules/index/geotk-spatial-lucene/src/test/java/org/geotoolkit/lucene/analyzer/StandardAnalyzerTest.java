@@ -20,7 +20,6 @@
 package org.geotoolkit.lucene.analyzer;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.geotoolkit.index.LogicalFilterType;
@@ -100,12 +99,11 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
      */
     @Test
     public void wildCharSearchTest() throws Exception {
-        Filter nullFilter   = null;
 
         /**
          * Test 1 simple search: title = title1
          */
-        SpatialQuery spatialQuery = new SpatialQuery("Title:90008411*", nullFilter, LogicalFilterType.AND);
+        SpatialQuery spatialQuery = new SpatialQuery("Title:90008411*", LogicalFilterType.AND);
         Set<String> result = indexSearcher.doSearch(spatialQuery);
         logResultReport("wildCharSearch 1:", result);
 
@@ -118,7 +116,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 2 wildChar search: abstract LIKE *NEDIPROD*
          */
-        spatialQuery = new SpatialQuery("abstract:*NEDIPROD*", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("abstract:*NEDIPROD*", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
         logResultReport("wildCharSearch 2:", result);
 
@@ -130,7 +128,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 3 wildChar search: title like *.ctd
          */
-        spatialQuery = new SpatialQuery("Title:*.ctd", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("Title:*.ctd", LogicalFilterType.AND);
         result       = indexSearcher.doSearch(spatialQuery);
         logResultReport("wildCharSearch 3:", result);
 
@@ -144,7 +142,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 4 wildCharSearch: abstract LIKE *onnees CTD NEDIPROD VI 120
          */
-        spatialQuery = new SpatialQuery("abstract:(*onnees CTD NEDIPROD VI 120)", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("abstract:(*onnees CTD NEDIPROD VI 120)", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
         logResultReport("wildCharSearch 4:", result);
 
@@ -157,7 +155,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 5 wildCharSearch: Format LIKE *MEDATLAS ASCII*
          */
-        spatialQuery = new SpatialQuery("Format:(*MEDATLAS ASCII*)", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("Format:(*MEDATLAS ASCII*)", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
         logResultReport("wildCharSearch 5:", result);
 
@@ -178,14 +176,14 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void wildCharUnderscoreSearchTest() throws Exception {
-        Filter nullFilter   = null;
         String resultReport = "";
 
         /**
          * Test 1 simple search: title = title1
          */
-        SpatialQuery spatialQuery = new SpatialQuery("identifier:*MDWeb_FR_SY*", nullFilter, LogicalFilterType.AND);
+        SpatialQuery spatialQuery = new SpatialQuery("identifier:*MDWeb_FR_SY*", LogicalFilterType.AND);
         Set<String> result = indexSearcher.doSearch(spatialQuery);
         logResultReport("wildCharUnderscoreSearch 1:", result);
 
@@ -197,7 +195,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 2 simple search: title = identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*
          */
-        spatialQuery = new SpatialQuery("identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("identifier:Spot5-Cyprus-THX-IMAGERY3_ortho*", LogicalFilterType.AND);
         result = indexSearcher.doSearch(spatialQuery);
         logResultReport("wildCharUnderscoreSearch 2:", result);
 
@@ -214,6 +212,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void dateSearchTest() throws Exception {
         super.dateSearchTest();
     }
@@ -224,14 +223,13 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
      * @throws java.lang.Exception
      */
     @Test
+    @Override
     public void sortedSearchTest() throws Exception {
-
-        Filter nullFilter   = null;
 
         /**
          * Test 1 sorted search: all orderBy identifier ASC
          */
-        SpatialQuery spatialQuery = new SpatialQuery("metafile:doc", nullFilter, LogicalFilterType.AND);
+        SpatialQuery spatialQuery = new SpatialQuery("metafile:doc", LogicalFilterType.AND);
         SortField sf = new SortField("identifier_sort", SortField.Type.STRING, false);
         spatialQuery.setSort(new Sort(sf));
 
@@ -253,7 +251,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 2 sorted search: all orderBy identifier DSC
          */
-        spatialQuery = new SpatialQuery("metafile:doc", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("metafile:doc", LogicalFilterType.AND);
         sf = new SortField("identifier_sort", SortField.Type.STRING, true);
         spatialQuery.setSort(new Sort(sf));
 
@@ -275,7 +273,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 3 sorted search: all orderBy Abstract ASC
          */
-        spatialQuery = new SpatialQuery("metafile:doc", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("metafile:doc", LogicalFilterType.AND);
         sf = new SortField("Abstract_sort", SortField.Type.STRING, false);
         spatialQuery.setSort(new Sort(sf));
 
@@ -297,7 +295,7 @@ public class StandardAnalyzerTest extends AbstractAnalyzerTest {
         /**
          * Test 4 sorted search: all orderBy Abstract DSC
          */
-        spatialQuery = new SpatialQuery("metafile:doc", nullFilter, LogicalFilterType.AND);
+        spatialQuery = new SpatialQuery("metafile:doc", LogicalFilterType.AND);
         sf = new SortField("Abstract_sort", SortField.Type.STRING, true);
         spatialQuery.setSort(new Sort(sf));
 

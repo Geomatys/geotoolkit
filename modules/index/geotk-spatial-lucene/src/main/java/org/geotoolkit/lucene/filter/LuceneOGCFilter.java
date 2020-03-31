@@ -53,7 +53,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements  org.geotoolkit.lucene.filter.Filter {
+public class LuceneOGCFilter extends org.apache.lucene.search.Query implements  org.geotoolkit.lucene.filter.Filter {
 
     public static final String GEOMETRY_FIELD_NAME     = "idx_lucene_geometry";
     public static final String IDENTIFIER_FIELD_NAME   = "id";

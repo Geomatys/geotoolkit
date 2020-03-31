@@ -35,7 +35,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.Envelopes;
@@ -50,7 +51,6 @@ import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
-import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.referencing.CRS;
@@ -1236,13 +1236,12 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         SpatialQuery spatialQuery1 = new SpatialQuery(wrap(filter1));
         SpatialQuery spatialQuery2 = new SpatialQuery(wrap(filter2));
 
-        List<Filter> filters  = new ArrayList<>();
-        filters.add(spatialQuery1.getSpatialFilter());
-        filters.add(spatialQuery2.getSpatialFilter());
-        LogicalFilterType filterType[]  = {LogicalFilterType.OR, LogicalFilterType.OR};
-        SerialChainFilter serialFilter = new SerialChainFilter(filters, filterType);
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery1.getSpatialFilter(), BooleanClause.Occur.SHOULD)
+                                .add(spatialQuery2.getSpatialFilter(), BooleanClause.Occur.SHOULD)
+                                .build();
 
-        SpatialQuery sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        SpatialQuery sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         Set<String> results = searcher.doSearch(sQuery);
@@ -1262,9 +1261,11 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          * case 2: same test with AND instead of OR
          *
          */
-        LogicalFilterType filterType2[]  = {LogicalFilterType.AND, LogicalFilterType.AND};
-        serialFilter = new SerialChainFilter(filters, filterType2);
-        sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery1.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(spatialQuery2.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .build();
+        sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
@@ -1286,11 +1287,10 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
-        List<Filter> filters3     = new ArrayList<>();
-        filters3.add(spatialQuery.getSpatialFilter());
-        LogicalFilterType filterType3[]         = {LogicalFilterType.NOT};
-        serialFilter              = new SerialChainFilter(filters3, filterType3);
-        sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST_NOT)
+                          .build();
+        sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
@@ -1316,12 +1316,11 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         bbox2.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         org.opengis.filter.Filter bfilter = FF.bbox(GEOMETRY_PROPERTY, -12,-17,15,50,"CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bfilter));
-        List<Filter> filters4  = new ArrayList<>();
-        filters4.add(spatialQuery.getSpatialFilter());
-        filters4.add(bboxQuery.getSpatialFilter());
-        LogicalFilterType filterType4[]         = {LogicalFilterType.AND, LogicalFilterType.AND};
-        serialFilter              = new SerialChainFilter(filters4, filterType4);
-        sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                          .add(bboxQuery.getSpatialFilter(),    BooleanClause.Occur.MUST)
+                          .build();
+        sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
@@ -1338,9 +1337,11 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          * case 5: INTERSECT line AND NOT BBOX
          *
          */
-        LogicalFilterType filterType5[] = {LogicalFilterType.AND, LogicalFilterType.NOT};
-        serialFilter      = new SerialChainFilter(filters4, filterType5);
-        sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+         serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                          .add(bboxQuery.getSpatialFilter(),    BooleanClause.Occur.MUST_NOT)
+                          .build();
+        sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
