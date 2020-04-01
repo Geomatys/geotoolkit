@@ -152,14 +152,11 @@ public class WebProcessingClient extends AbstractClient {
             throw new IllegalArgumentException("Unknown version : " + version);
         }
         this.forceGET = forceGET;
-
-        LOGGER.log(Level.INFO, "Web processing client initialization complete.");
     }
 
 
     public WebProcessingClient(ParameterValueGroup params) {
         super(params);
-        LOGGER.log(Level.INFO, "Web processing client initialization complete.");
     }
 
     @Override
@@ -226,7 +223,6 @@ public class WebProcessingClient extends AbstractClient {
         if (capabilities == null) {
             throw new CapabilitiesException("A problem occured while getting Service capabilities.");
         }
-        LOGGER.log(Level.INFO, "GetCapabilities request succeed.");
         return capabilities;
     }
 
