@@ -17,6 +17,7 @@
 package org.geotoolkit.metadata.landsat;
 
 import java.awt.Point;
+import java.awt.image.WritableRenderedImage;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -28,12 +29,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
@@ -41,7 +40,6 @@ import org.geotoolkit.image.io.large.ImageCacheConfiguration;
 import org.geotoolkit.image.io.large.LargeCache;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.lang.Setup;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -89,8 +87,8 @@ public final strictfp class WritableLargeRenderedImageTests {
     @Test
     public void test() throws InterruptedException, ExecutionException {
 
-        WritableLargeRenderedImage outPutImageTest = ImageUtils.createRGBLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE);
-        WritableLargeRenderedImage inputTestImg    = ImageUtils.createLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE, 1, PhotometricInterpretation.GRAYSCALE, false, false, null);
+        WritableRenderedImage outPutImageTest = ImageUtils.createRGBLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE);
+        WritableRenderedImage inputTestImg    = ImageUtils.createLargeImage(IMG_SIZE, IMG_SIZE, SampleType.BYTE, 1, PhotometricInterpretation.GRAYSCALE, false, false, null);
 
         final ExecutorService poule = Executors.newFixedThreadPool(3);
         final Random rand = new Random();
@@ -149,12 +147,12 @@ public final strictfp class WritableLargeRenderedImageTests {
         /**
          * Input image which will be rewriting into output image.
          */
-        private final WritableLargeRenderedImage input;
+        private final WritableRenderedImage input;
 
         /**
          * Output thread image.
          */
-        private final WritableLargeRenderedImage output;
+        private final WritableRenderedImage output;
 
         /**
          * Band index where {@link #input} is rewriting into
@@ -168,8 +166,8 @@ public final strictfp class WritableLargeRenderedImageTests {
          * @param output destination filled image.
          * @param bandIndex band index of the destination image which will be filled.
          */
-        public pixelWork(final WritableLargeRenderedImage input,
-                         final WritableLargeRenderedImage output,
+        public pixelWork(final WritableRenderedImage input,
+                         final WritableRenderedImage output,
                          final int bandIndex) {
             ArgumentChecks.ensureNonNull("input", input);
             ArgumentChecks.ensureNonNull("output", output);

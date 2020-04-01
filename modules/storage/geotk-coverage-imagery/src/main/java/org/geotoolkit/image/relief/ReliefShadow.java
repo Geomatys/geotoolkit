@@ -24,14 +24,12 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.referencing.cs.AxisDirection;
 
 /**
  * Travel a source image and a dem (Digital Elevation Model) image to compute shadow.<br/>
  *
- * To Do : replace destination {@link BufferedImage} to destination {@link WritableLargeRenderedImage}.
  * @author Rémi Marechal (Geomatys).
  */
 public final class ReliefShadow {
