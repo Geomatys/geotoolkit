@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.image.internal;
 
-import java.util.Arrays;
-
-import java.awt.Dimension;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BandedSampleModel;
@@ -31,14 +28,12 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
-
+import java.util.Arrays;
 import javax.imageio.ImageTypeSpecifier;
-
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+import static org.geotoolkit.image.internal.PlanarConfiguration.INTERLEAVED;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.lang.Static;
-
-import static org.geotoolkit.image.internal.PlanarConfiguration.INTERLEAVED;
 
 /**
  * Aggregate some methods to create {@link BufferedImage} or {@link WritableLargeRenderedImage} more easily.
@@ -286,62 +281,6 @@ public class ImageUtils extends Static {
     }
 
     /**
-     * Returns a {@link WritableLargeRenderedImage} with an internaly palette {@link ColorSpace}, created from given parameters.
-     *
-     * <p><strong>Moreover : <br/>
-     * - the type of internal image {@link SampleModel} is pixel interleaved.<br/>
-     * - In other words the internal planar configuration is {@link PlanarConfiguration#INTERLEAVED} type.<br/>
-     * - Image will NOT CONTAIN any alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @param numBand band number.
-     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette.
-     * @return created palette {@link WritableLargeRenderedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @throws IllegalArgumentException if colorMap argument is {@code null}.
-     * @see SampleType
-     * @see WritableLargeRenderedImage
-     * @see PhotometricInterpretation#PALETTE
-     */
-    public static WritableLargeRenderedImage createPaletteLargeImage(final int width, final int height,
-                                                                     final SampleType type, final int numBand,
-                                                                     final int[] java2DColorMap) {
-        final ColorModel cm  = createColorModel(type, numBand, PhotometricInterpretation.PALETTE, false, false, java2DColorMap);
-        final SampleModel sm = createSampleModel(INTERLEAVED, type, width, height, numBand);
-        return new WritableLargeRenderedImage(width, height, cm, sm);
-    }
-
-    /**
-     * Returns a {@link WritableLargeRenderedImage} with an internaly AlphaRGB {@link ColorSpace} and 4 bands, created from given parameters.
-     *
-     * <p><strong>Moreover : <br/>
-     * - the type of internal image {@link SampleModel} is interleaved.<br/>
-     * - In other words the internal planar configuration is {@link PlanarConfiguration#INTERLEAVED} type.<br/>
-     * - Image will CONTAIN alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @param isAlphaPremultiplied
-     * @return created ARGB {@link WritableLargeRenderedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @throws IllegalArgumentException if colorMap argument is {@code null} when PhotometricInterpretation is type palette.
-     * @see SampleType
-     * @see WritableLargeRenderedImage
-     * @see PhotometricInterpretation#RGB
-     */
-    public static WritableLargeRenderedImage createARGBLargeImage(final int width, final int height,
-                                                                  final SampleType type, final boolean isAlphaPremultiplied) {
-        final ColorModel cm  = createColorModel(type, 4, PhotometricInterpretation.RGB, true, isAlphaPremultiplied, null);
-        final SampleModel sm = createSampleModel(INTERLEAVED, type, width, height, 4);
-        return new WritableLargeRenderedImage(width, height, cm, sm);
-    }
-
-    /**
      * Returns a {@link WritableLargeRenderedImage} of 3 bands with an internaly RGB {@link ColorSpace},
      * created from given parameters.
      *
@@ -364,33 +303,6 @@ public class ImageUtils extends Static {
     public static WritableLargeRenderedImage createRGBLargeImage(final int width, final int height, final SampleType type) {
         final ColorModel cm  = createColorModel(type, 3, PhotometricInterpretation.RGB, false, false, null);
         final SampleModel sm = createSampleModel(INTERLEAVED, type, width, height, 3);
-        return new WritableLargeRenderedImage(width, height, cm, sm);
-    }
-
-    /**
-     * Returns a {@link WritableLargeRenderedImage} with an internaly gray scaled {@link ColorSpace}, created from given parameters.
-     *
-     * <p><strong>Moreover : <br/>
-     * - the type of internal image {@link SampleModel} is interleaved.<br/>
-     * - In other words the internal planar configuration is {@link PlanarConfiguration#INTERLEAVED} type.<br/>
-     * - Image will NOT CONTAIN alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @param numBand band number.
-     * @return created gray Scaled {@link WritableLargeRenderedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @throws IllegalArgumentException if colorMap argument is {@code null} when PhotometricInterpretation is type palette.
-     * @see SampleType
-     * @see WritableLargeRenderedImage
-     * @see PhotometricInterpretation#GRAYSCALE
-     */
-    public static WritableLargeRenderedImage createGreyScaledLargeImage(final int width, final int height,
-                                                                    final SampleType type, final int numBand) {
-        final ColorModel cm  = createColorModel(type, numBand, PhotometricInterpretation.GRAYSCALE, false, false, null);
-        final SampleModel sm = createSampleModel(INTERLEAVED, type, width, height, numBand);
         return new WritableLargeRenderedImage(width, height, cm, sm);
     }
 
@@ -422,43 +334,6 @@ public class ImageUtils extends Static {
         final ColorModel cm = createColorModel(type, numBand, pI, hasAlpha, isAlphaPremultiplied, java2DColorMap);
         final SampleModel sm = createSampleModel(INTERLEAVED, type, width, height, numBand);
         return new WritableLargeRenderedImage(width, height, cm, sm);
-    }
-
-    /**
-     * Returns a {@link WritableLargeRenderedImage} created from given parameters.
-     *
-     * <p><strong>Moreover : the type of internal image {@link SampleModel} is pixel interleaved.<br/>
-     * In other words the internal planar configuration is {@link PlanarConfiguration#INTERLEAVED} type.</strong></p>
-     *
-     * @param minx minimum image coordinate in X direction.
-     * @param miny minimum image coordinate in Y direction.
-     * @param width image width.
-     * @param height image height.
-     * @param tileSize size of internal image tiles.
-     * @param type type of internal data.
-     * @param numBand band number.
-     * @param tilegridXOffset
-     * @param tilegridYOffset
-     * @param pI define type of {@link ColorModel}, for example RGB, palette etc.
-     * @param hasAlpha
-     * @param isAlphaPremultiplied
-     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
-     * @return created {@link WritableLargeRenderedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @throws IllegalArgumentException if colorMap argument is {@code null} when PhotometricInterpretation is type palette.
-     * @see SampleType
-     * @see PhotometricInterpretation
-     * @see WritableLargeRenderedImage
-     */
-    public static WritableLargeRenderedImage createLargeImage(final int minx, final int miny, final int width, final int height,
-                                                              final Dimension tileSize, final SampleType type, final int numBand,
-                                                              final int tilegridXOffset, final int tilegridYOffset,
-                                                              final PhotometricInterpretation pI,
-                                                             final boolean hasAlpha, final boolean isAlphaPremultiplied,
-                                                             final int[] java2DColorMap) {
-        final ColorModel cm  = createColorModel(type, numBand, pI, hasAlpha, isAlphaPremultiplied, java2DColorMap);
-        final SampleModel sm = createSampleModel(INTERLEAVED, type, width, height, numBand);
-        return new WritableLargeRenderedImage(minx, miny, width, height, tileSize, tilegridXOffset, tilegridYOffset, cm, sm);
     }
 
     /**
