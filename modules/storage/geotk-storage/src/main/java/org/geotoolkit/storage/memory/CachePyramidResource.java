@@ -23,7 +23,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,6 +45,7 @@ import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.collection.Cache;
@@ -161,22 +161,26 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
     public Collection<Pyramid> getModels() throws DataStoreException {
         final Collection<Pyramid> parentPyramids = (Collection<Pyramid>) parent.getModels();
 
-        //check cached pyramids, we need to do this until an event system is created
+        final List<Pyramid> pyramids;
+        synchronized (cacheMap) {
+            //check cached pyramids, we need to do this until an event system is created
 
-        //add missing pyramids in the cache view
-        final Set<String> keys = new HashSet<>();
-        for (Pyramid candidate : parentPyramids) {
-            if (!cacheMap.containsKey(candidate.getIdentifier())) {
-                cacheMap.put(candidate.getIdentifier(), new CachePyramid(candidate));
+            //add missing pyramids in the cache view
+            final Set<String> keys = new HashSet<>();
+            for (Pyramid candidate : parentPyramids) {
+                if (!cacheMap.containsKey(candidate.getIdentifier())) {
+                    cacheMap.put(candidate.getIdentifier(), new CachePyramid(candidate));
+                }
+                keys.add(candidate.getIdentifier());
             }
-            keys.add(candidate.getIdentifier());
-        }
-        if (cacheMap.size() != parentPyramids.size()) {
-            //some pyramids have been deleted from parent
-            cacheMap.keySet().retainAll(keys);
+            if (cacheMap.size() != parentPyramids.size()) {
+                //some pyramids have been deleted from parent
+                cacheMap.keySet().retainAll(keys);
+            }
+            pyramids = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new Pyramid[0]));
         }
 
-        return Collections.unmodifiableCollection(cacheMap.values());
+        return pyramids;
     }
 
     /**
@@ -197,16 +201,20 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
      */
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        final MultiResolutionModel newParentPyramid = parent.createModel(template);
-        final CachePyramid cached = new CachePyramid((Pyramid) newParentPyramid);
-        cacheMap.put(cached.getIdentifier(), cached);
-        return cached;
+        synchronized (cacheMap) {
+            final MultiResolutionModel newParentPyramid = parent.createModel(template);
+            final CachePyramid cached = new CachePyramid((Pyramid) newParentPyramid);
+            cacheMap.put(cached.getIdentifier(), cached);
+            return cached;
+        }
     }
 
     @Override
     public void removeModel(String identifier) throws DataStoreException {
-        parent.removeModel(identifier);
-        cacheMap.remove(identifier);
+        synchronized (cacheMap) {
+            parent.removeModel(identifier);
+            cacheMap.remove(identifier);
+        }
     }
 
     @Override
@@ -238,33 +246,41 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             //check cached mosaics, we need to do this until an event system is created
 
             //add missing mosaics in the cache view
-            final Set<String> keys = new HashSet<>();
-            for (Mosaic m : parentMosaics) {
-                if (!cacheMap.containsKey(m.getIdentifier())) {
-                    cacheMap.put(m.getIdentifier(), new CacheMosaic(this, parent.getIdentifier(), m));
+            final List<Mosaic> mosaics;
+            synchronized (cacheMap) {
+                final Set<String> keys = new HashSet<>();
+                for (Mosaic m : parentMosaics) {
+                    if (!cacheMap.containsKey(m.getIdentifier())) {
+                        cacheMap.put(m.getIdentifier(), new CacheMosaic(this, parent.getIdentifier(), m));
+                    }
+                    keys.add(m.getIdentifier());
                 }
-                keys.add(m.getIdentifier());
-            }
-            if (cacheMap.size() != parentMosaics.size()) {
-                //some mosaics have been deleted from parent
-                cacheMap.keySet().retainAll(keys);
+                if (cacheMap.size() != parentMosaics.size()) {
+                    //some mosaics have been deleted from parent
+                    cacheMap.keySet().retainAll(keys);
+                }
+                mosaics = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new Mosaic[0]));
             }
 
-            return Collections.unmodifiableCollection(cacheMap.values());
+            return mosaics;
         }
 
         @Override
         public Mosaic createMosaic(Mosaic template) throws DataStoreException {
-            final Mosaic newParentMosaic = parent.createMosaic(template);
-            final CacheMosaic cached = new CacheMosaic(this, parent.getIdentifier(), newParentMosaic);
-            cacheMap.put(cached.getIdentifier(), cached);
-            return cached;
+            synchronized (cacheMap) {
+                final Mosaic newParentMosaic = parent.createMosaic(template);
+                final CacheMosaic cached = new CacheMosaic(this, parent.getIdentifier(), newParentMosaic);
+                cacheMap.put(cached.getIdentifier(), cached);
+                return cached;
+            }
         }
 
         @Override
         public void deleteMosaic(String mosaicId) throws DataStoreException {
-            parent.deleteMosaic(mosaicId);
-            cacheMap.remove(mosaicId);
+            synchronized (cacheMap) {
+                parent.deleteMosaic(mosaicId);
+                cacheMap.remove(mosaicId);
+            }
         }
 
         @Override
