@@ -16,10 +16,17 @@
  */
 package org.geotoolkit.image.io.plugin.yaml.internal;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.Locale;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransferFunction;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.opengis.referencing.operation.MathTransform1D;
 
 /**
  * Equivalent class of {@link Category} use during Yaml binding.
@@ -27,7 +34,8 @@ import org.apache.sis.coverage.Category;
  * @author Remi Marechal (Geomatys).
  * @since 4.0
  */
-public class YamlCategory {
+@JsonInclude(Include.NON_NULL)
+public final class YamlCategory {
 
     /**
      * Name of the current {@link Category}.
@@ -71,6 +79,22 @@ public class YamlCategory {
     private Double value;
 
     /**
+     * Scale value use to build internaly {@link MathTransform1D} sample to geophysic.
+     *
+     * @see Category#Category(java.lang.CharSequence, java.awt.Color[], int, int, double, double)
+     * @see Category#createLinearTransform(double, double)
+     */
+    private Double scale;
+
+    /**
+     * Offset value use to build internaly {@link MathTransform1D} sample to geophysic.
+     *
+     * @see Category#Category(java.lang.CharSequence, java.awt.Color[], int, int, double, double)
+     * @see Category#createLinearTransform(double, double)
+     */
+    private Double offset;
+
+    /**
      * Constructor only use during Yaml binding.
      */
     public YamlCategory() {
@@ -106,9 +130,17 @@ public class YamlCategory {
             maxSampleValue = tempmaxSampleValue;
             isMaxInclusive = tempisMaxInclusive;
         }
-    }
 
-    //-------------- GETTER --------
+        final MathTransform1D mtSToGeo = category.getTransferFunction().orElse(null);
+        //-- peut etre mettre un log si la function de transformation est null .
+        if (mtSToGeo != null) {
+            final TransferFunction tf = new TransferFunction();
+            tf.setTransform(mtSToGeo);
+
+            scale  = tf.getScale();
+            offset = tf.getOffset();
+        }
+    }
 
     /**
      * Returns the name of this {@link YamlCategory}.
@@ -118,6 +150,16 @@ public class YamlCategory {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Set name of this category.
+     *
+     * @param name
+     * @see #name
+     */
+    public void setName(final String name) {
+        this.name = name;
     }
 
     /**
@@ -131,60 +173,6 @@ public class YamlCategory {
     }
 
     /**
-     * Return {@code true} if {@link #minSampleValue} is <strong>Inclusive</strong>,
-     * else {@code false} for <strong>Exclusive</strong>.
-     *
-     * @return {@code true} for inclusive minimum intervale value, else {@code false}.
-     */
-    public Boolean getIsMinInclusive() {
-        return isMinInclusive;
-    }
-
-    /**
-     * Returns maximum sample value from internaly stored {@link Category} samples.
-     *
-     * @return maximum sample value
-     * @see #maxSampleValue
-     */
-    public Double getMaxSampleValue() {
-        return maxSampleValue;
-    }
-
-    /**
-     * Return {@code true} if {@link #maxSampleValue} is <strong>Inclusive</strong>,
-     * else {@code false} for <strong>Exclusive</strong>.
-     *
-     * @return {@code true} for inclusive maximum interval value, else {@code false}.
-     */
-    public Boolean getIsMaxInclusive() {
-        return isMaxInclusive;
-    }
-
-    /**
-     * Returns singleton sample value if min and max category border are equals else return {@code null}.
-     *
-     * @return singleton sample value.
-     * @see #value
-     * @see #YamlCategory(org.geotoolkit.coverage.Category)
-     */
-    public Double getValue() {
-        return value;
-    }
-
-
-    //------------- SETTER-----
-
-    /**
-     * Set name of this category.
-     *
-     * @param name
-     * @see #name
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    /**
      * Set minimum sample value from internaly stored samples.
      *
      * @param minSampleValue
@@ -195,6 +183,16 @@ public class YamlCategory {
     }
 
     /**
+     * Return {@code true} if {@link #minSampleValue} is <strong>Inclusive</strong>,
+     * else {@code false} for <strong>Exclusive</strong>.
+     *
+     * @return {@code true} for inclusive minimum intervale value, else {@code false}.
+     */
+    public Boolean getIsMinInclusive() {
+        return isMinInclusive;
+    }
+
+    /**
      * Set {@code true} to define {@link #minSampleValue} as inclusive, else {@code false}.
      *
      * @param isMinInclusive
@@ -202,6 +200,16 @@ public class YamlCategory {
      */
     public void setIsMinInclusive(final Boolean isMinInclusive) {
         this.isMinInclusive = isMinInclusive;
+    }
+
+    /**
+     * Returns maximum sample value from internaly stored {@link Category} samples.
+     *
+     * @return maximum sample value
+     * @see #maxSampleValue
+     */
+    public Double getMaxSampleValue() {
+        return maxSampleValue;
     }
 
     /**
@@ -225,6 +233,27 @@ public class YamlCategory {
     }
 
     /**
+     * Return {@code true} if {@link #maxSampleValue} is <strong>Inclusive</strong>,
+     * else {@code false} for <strong>Exclusive</strong>.
+     *
+     * @return {@code true} for inclusive maximum interval value, else {@code false}.
+     */
+    public Boolean getIsMaxInclusive() {
+        return isMaxInclusive;
+    }
+
+    /**
+     * Returns singleton sample value if min and max category border are equals else return {@code null}.
+     *
+     * @return singleton sample value.
+     * @see #value
+     * @see #YamlCategory(org.geotoolkit.coverage.Category)
+     */
+    public Double getValue() {
+        return value;
+    }
+
+    /**
      * Set singleton {@link Category} border.
      *
      * @param value inclusive min and max category border value.
@@ -232,5 +261,83 @@ public class YamlCategory {
     public void setValue(final Double value) {
         ArgumentChecks.ensureNonNull("value", value);
         this.value = value;
+    }
+
+    /**
+     * Returns needed scale value to build sample to geophysic mathematic functions.
+     *
+     * @return scale
+     * @see #scale
+     */
+    public Double getScale() {
+        return scale;
+    }
+
+    /**
+     * Set needed offset value to build sample to geophysic mathematic functions.
+     *
+     * @param scaleZ
+     * @see #offset
+     */
+    public void setScale(Double scaleZ) {
+        this.scale = scaleZ;
+    }
+
+    /**
+     * Returns needed offset value to build sample to geophysic mathematic functions.
+     *
+     * @return offset
+     * @see #offset
+     */
+    public Double getOffset() {
+        return offset;
+    }
+
+    /**
+     * Set needed scale value to build sample to geophysic mathematic functions.
+     *
+     * @param offsetZ
+     * @see #scale
+     */
+    public void setOffset(Double offsetZ) {
+        this.offset = offsetZ;
+    }
+
+    Category toCategory(Class dataType) {
+
+        final SampleDimension.Builder builder = new SampleDimension.Builder();
+
+        MathTransform1D trs = null;
+        if (scale != null) {
+            trs = (MathTransform1D) MathTransforms.linear(scale, offset);
+        }
+
+        final double  minSampleValue, maxSampleValue;
+        final boolean isMinInclusive, isMaxInclusive;
+        if (value != null) {
+            minSampleValue = maxSampleValue = value;
+            isMinInclusive = isMaxInclusive = true;
+        } else {
+            minSampleValue = this.minSampleValue;
+            isMinInclusive = this.isMinInclusive;
+            maxSampleValue = this.maxSampleValue;
+            isMaxInclusive = this.isMaxInclusive;
+        }
+
+        if (name.equalsIgnoreCase(SampleDimensionUtils.NODATA_CATEGORY_NAME.toString(Locale.ENGLISH))) {
+            builder.addQualitative(null,
+                    new NumberRange(dataType, minSampleValue, isMinInclusive, maxSampleValue, isMaxInclusive));
+        } else if (Double.isNaN(minSampleValue) && Double.isNaN(maxSampleValue)) {
+            builder.setBackground(name, minSampleValue);
+        } else if (value != null) {
+            builder.addQualitative(name, value);
+        } else {
+            final NumberRange range = new NumberRange(dataType,
+                    minSampleValue, isMinInclusive,
+                    maxSampleValue, isMaxInclusive);
+            builder.addQuantitative(name, range, trs, null);
+        }
+
+        return builder.categories().get(0);
     }
 }

@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.image.io.plugin.yaml.internal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
@@ -27,11 +30,13 @@ import org.apache.sis.coverage.SampleDimension;
  * @since 4.0
  * //-- faire un lien vers les methods utilitaire
  */
-public class YamlImageInfo {
+@JsonInclude(Include.NON_NULL)
+public final class YamlImageInfo {
 
     /**
      * Define version of Yaml Image information.
      */
+    @JsonIgnore
     static final String VERSION = "1.0";
 
     /**
@@ -48,19 +53,14 @@ public class YamlImageInfo {
     }
 
     /**
-     * Build and prepare future written attributs from {@link YamlWriterBuilder}.
+     * Build and prepare future written attributs.
      *
-     * @param yamlWB Builder which contains all image informations which will be written into Yaml format.
+     * @param sampleDims
      */
-    public YamlImageInfo(final YamlWriterBuilder yamlWB) {
-        if (!(yamlWB instanceof YamlBuilder)) {
-            throw new IllegalArgumentException("You can't write image informations "
-                    + "with builder which not be instance of org.geotoolkit.image.io.plugin.yaml.YamlBuilder");
-        }
+    public YamlImageInfo(final List<SampleDimension> sampleDims) {
         version = VERSION;
-        final YamlBuilder yb = (YamlBuilder) yamlWB;
         this.sampleDimension = new ArrayList<YamlSampleDimension>();
-        for (final SampleDimension gsd : yb.getSampleDimensions()) {
+        for (final SampleDimension gsd : sampleDims) {
             this.sampleDimension.add(new YamlSampleDimension(gsd));
         }
     }
@@ -75,15 +75,6 @@ public class YamlImageInfo {
     }
 
     /**
-     * Returns all {@link YamlSampleDimension} which just have been read from Yaml file.
-     *
-     * @return {@link YamlSampleDimension}
-     */
-    public List<YamlSampleDimension> getSampleDimension() {
-        return sampleDimension;
-    }
-
-    /**
      * Set current version of Yaml work.
      *
      * @param version current version of Yaml work.
@@ -93,11 +84,32 @@ public class YamlImageInfo {
     }
 
     /**
+     * Returns all {@link YamlSampleDimension} which just have been read from Yaml file.
+     *
+     * @return {@link YamlSampleDimension}
+     */
+    public List<YamlSampleDimension> getSampleDimension() {
+        return sampleDimension;
+    }
+
+    /**
      * Set {@link YamlSampleDimension} which will be written into Yaml.
      *
      * @param sampleDimension
      */
     public void setSampleDimension(final List<YamlSampleDimension> sampleDimension) {
         this.sampleDimension = sampleDimension;
+    }
+
+    public List<SampleDimension> toSampleDimensions(Class dataType) {
+        if (!VERSION.equals(version)) {
+            throw new IllegalStateException("Current file version does not match expected : 1.0. Found : " + version);
+        }
+
+        final List<SampleDimension> dim = new ArrayList<>();
+        for (YamlSampleDimension sd : sampleDimension) {
+            dim.add(sd.toSampleDimension(dataType));
+        }
+        return dim;
     }
 }
