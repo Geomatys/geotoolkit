@@ -137,7 +137,8 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition   = new TimePositionType(endValue);
     }
 
-    public TimePeriodType(final Date beginValue, final Date endValue){
+    public TimePeriodType(final String id, final Date beginValue, final Date endValue){
+        super(id);
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(endValue);
     }
@@ -163,7 +164,8 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }
 
-    public TimePeriodType(final Date beginValue){
+    public TimePeriodType(final String id, final Date beginValue){
+        super(id);
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }

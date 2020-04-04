@@ -17,6 +17,7 @@
 package org.geotoolkit.observation.xml.v100;
 
 // jaxb import
+import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
@@ -516,7 +517,7 @@ public class ObservationType implements Entry, AbstractObservation {
       * @param lastDate The last date of measure. If this parameter is null, the last date will be kept.
      * @throws IllegalArgumentException if the resulat of the observation is not a DataArray.
      */
-    public void updateDataArrayResult(final String values, final int nbResult, final String lastDate) {
+    public void updateDataArrayResult(final String values, final int nbResult, final Date lastDate) {
         if (lastDate != null) {
             extendSamplingTime(lastDate);
         }
@@ -556,14 +557,14 @@ public class ObservationType implements Entry, AbstractObservation {
      * {@inheritDoc}
      */
     @Override
-    public void extendSamplingTime(final String newEndBound) {
+    public void extendSamplingTime(final Date newEndBound) {
         if (newEndBound != null) {
             if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimePeriodType) {
                 ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
             } else if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) samplingTime.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getValue(), newEndBound);
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
                     samplingTime.setTimeGeometricPrimitive(period);
                 }
             }

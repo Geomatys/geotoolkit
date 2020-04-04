@@ -18,6 +18,7 @@
 package org.geotoolkit.observation.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -300,14 +301,14 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     @Override
-    public void extendSamplingTime(final String newEndBound) {
+    public void extendSamplingTime(final Date newEndBound) {
         if (newEndBound != null) {
             if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimePeriodType) {
                 ((TimePeriodType)phenomenonTime.getTimeObject()).setEndPosition(new TimePositionType(newEndBound));
             } else if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) phenomenonTime.getTimeObject();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getValue(), newEndBound);
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getDate(), newEndBound);
                     phenomenonTime.setTimeObject(period);
                 }
             }

@@ -217,7 +217,23 @@ public class OMUtils {
     public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
             final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
 
-        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString());
+        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString(), null);
+        final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
+        return OMXmlFactory.buildObservation("2.0.0",       // version
+                                             obsid,         // id
+                                             obsid,         // name
+                                             null,          // description
+                                             foi,           // foi
+                                             phenomenon,    // phenomenon
+                                             procedure,     // procedure
+                                             result,        // result
+                                             time);
+    }
+
+    public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
+            final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final List<Object> dataValues, final TemporalGeometricPrimitive time) {
+
+        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, null, dataValues);
         final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
         return OMXmlFactory.buildObservation("2.0.0",       // version
                                              obsid,         // id

@@ -17,10 +17,8 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,12 +28,8 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.GmlInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.opengis.filter.expression.Literal;
-import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Instant;
-import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalPosition;
-import org.opengis.util.GenericName;
-import org.opengis.util.InternationalString;
 
 
 /**
@@ -92,6 +86,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     }
 
     public TimeInstantType(final Date timePosition) {
+        this.timePosition = new TimePositionType(timePosition);
+    }
+
+    public TimeInstantType(final String id, final Date timePosition) {
+        super(id);
         this.timePosition = new TimePositionType(timePosition);
     }
 

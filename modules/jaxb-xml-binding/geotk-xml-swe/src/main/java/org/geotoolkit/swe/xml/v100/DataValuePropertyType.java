@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.swe.xml.AbstractDataValueProperty;
-import org.w3c.dom.Element;
 
 
 /**
@@ -58,8 +57,8 @@ import org.w3c.dom.Element;
 })
 public class DataValuePropertyType implements AbstractDataValueProperty {
 
-    @XmlAnyElement
-    private List<Element> any;
+    @XmlAnyElement(lax = true)
+    private List<Object> any;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -87,6 +86,10 @@ public class DataValuePropertyType implements AbstractDataValueProperty {
 
     }
 
+    public DataValuePropertyType(List<Object> any) {
+        this.any = any;
+    }
+
     public DataValuePropertyType(final AbstractDataValueProperty dv) {
         if (dv != null) {
             this.actuate      = dv.getActuate();
@@ -99,8 +102,8 @@ public class DataValuePropertyType implements AbstractDataValueProperty {
             this.type         = dv.getType();
             this.otherAttributes = dv.getOtherAttributes();
             if (dv.getAny() != null) {
-                this.any = new ArrayList<Element>();
-                for (Element e :dv.getAny()) {
+                this.any = new ArrayList<Object>();
+                for (Object e : dv.getAny()) {
                     this.any.add(e);
                 }
             }
@@ -111,9 +114,10 @@ public class DataValuePropertyType implements AbstractDataValueProperty {
     /**
      * Gets the value of the any property.
      */
-    public List<Element> getAny() {
+    @Override
+    public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Element>();
+            any = new ArrayList<Object>();
         }
         return this.any;
     }

@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
+import org.geotoolkit.swe.xml.AbstractDataValueProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
+import org.geotoolkit.swe.xml.v200.EncodedValuesPropertyType;
 import org.opengis.metadata.Identifier;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Observation;
@@ -103,6 +105,11 @@ public class OMXmlFactory {
             final String id = resultv200.getDataArray().getId();
             final org.geotoolkit.swe.xml.v101.TextBlockType enc = new org.geotoolkit.swe.xml.v101.TextBlockType(encodingV200.getId(), encodingV200.getDecimalSeparator(), encodingV200.getTokenSeparator(), encodingV200.getBlockSeparator());
             final String values = resultv200.getDataArray().getValues();
+            List<Object> dataValues = null;
+            final EncodedValuesPropertyType dataValues200 = resultv200.getDataArray().getDataValues();
+            if (dataValues200 != null) {
+                dataValues = dataValues200.getAny();
+            }
 
             final org.geotoolkit.swe.xml.v200.DataRecordType recordv200 =  (org.geotoolkit.swe.xml.v200.DataRecordType) resultv200.getDataArray().getElementType().getAbstractRecord();
             final List<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType> fields = new ArrayList<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType>();
@@ -115,7 +122,7 @@ public class OMXmlFactory {
                                                                                                                                  recordv200.isFixed(),
                                                                                                                                  fields);
 
-            final org.geotoolkit.swe.xml.v101.DataArrayType array = new org.geotoolkit.swe.xml.v101.DataArrayType(id, count, null, record, enc, values);
+            final org.geotoolkit.swe.xml.v101.DataArrayType array = new org.geotoolkit.swe.xml.v101.DataArrayType(id, count, null, record, enc, values, dataValues);
             final org.geotoolkit.swe.xml.v101.DataArrayPropertyType resultv100 = new org.geotoolkit.swe.xml.v101.DataArrayPropertyType(array);
             result = resultv100;
         } else {
@@ -176,6 +183,11 @@ public class OMXmlFactory {
             final String id = resultv100.getDataArray().getId();
             final org.geotoolkit.swe.xml.v200.TextEncodingType enc = new org.geotoolkit.swe.xml.v200.TextEncodingType(encodingV100.getId(), encodingV100.getDecimalSeparator(), encodingV100.getTokenSeparator(), encodingV100.getBlockSeparator());
             final String values = resultv100.getDataArray().getValues();
+            List<Object> dataValues = null;
+            final AbstractDataValueProperty dataValues100 = resultv100.getDataArray().getDataValues();
+            if (dataValues100 != null) {
+                dataValues = dataValues100.getAny();
+            }
             final org.geotoolkit.swe.xml.v101.SimpleDataRecordType recordv100 =  (org.geotoolkit.swe.xml.v101.SimpleDataRecordType) resultv100.getDataArray().getElementType();
             final List<org.geotoolkit.swe.xml.v200.Field> fields = new ArrayList<org.geotoolkit.swe.xml.v200.Field>();
             for (org.geotoolkit.swe.xml.v101.AnyScalarPropertyType scalar : recordv100.getField()) {
@@ -184,7 +196,7 @@ public class OMXmlFactory {
             }
             final org.geotoolkit.swe.xml.v200.DataRecordType record = new org.geotoolkit.swe.xml.v200.DataRecordType(recordv100.getId(), recordv100.getDefinition(), recordv100.isFixed(), fields);
             //final ElementType elem = new ElementType(resultv100.getDataArray().getName(), record);
-            final org.geotoolkit.swe.xml.v200.DataArrayType array = new org.geotoolkit.swe.xml.v200.DataArrayType(id, count, enc, values, id, record);
+            final org.geotoolkit.swe.xml.v200.DataArrayType array = new org.geotoolkit.swe.xml.v200.DataArrayType(id, count, enc, values, id, record, dataValues);
             final org.geotoolkit.swe.xml.v200.DataArrayPropertyType resultv200 = new org.geotoolkit.swe.xml.v200.DataArrayPropertyType(array);
             result = resultv200;
         } else {

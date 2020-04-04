@@ -60,8 +60,8 @@ import org.w3c.dom.Element;
 })
 public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
-    @XmlAnyElement
-    private List<Element> any;
+    @XmlAnyElement(lax = true)
+    private List<Object> any;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private TypeType type;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
@@ -81,6 +81,10 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     public EncodedValuesPropertyType() {
 
+    }
+
+    public EncodedValuesPropertyType(List<Object> any) {
+        this.any = any;
     }
 
     public EncodedValuesPropertyType(final EncodedValuesPropertyType that) {
@@ -103,9 +107,9 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
      *
      */
     @Override
-    public List<Element> getAny() {
+    public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Element>();
+            any = new ArrayList<Object>();
         }
         return this.any;
     }
@@ -322,7 +326,7 @@ public class EncodedValuesPropertyType implements AbstractDataValueProperty {
         if (any != null) {
             sb.append("any::\n");
             int i = 0;
-            for (Element e : any) {
+            for (Object e : any) {
                 sb.append(i).append(':').append(e).append('\n');
             }
         }

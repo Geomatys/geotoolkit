@@ -584,10 +584,14 @@ public class SOSXmlFactory {
     }
 
     public static Period buildTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
+        return buildTimePeriod(version, null, dateBegin, dateEnd);
+    }
+
+    public static Period buildTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
         if ("2.0.0".equals(version)) {
-            return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
+            return GMLXmlFactory.createTimePeriod("3.2.1", id, dateBegin, dateEnd);
         } else if ("1.0.0".equals(version)) {
-            return GMLXmlFactory.createTimePeriod("3.1.1", dateBegin, dateEnd);
+            return GMLXmlFactory.createTimePeriod("3.1.1", id, dateBegin, dateEnd);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
@@ -655,10 +659,14 @@ public class SOSXmlFactory {
     }
 
     public static Instant buildTimeInstant(final String version, final Date date) {
+        return buildTimeInstant(version, null, date);
+    }
+    
+    public static Instant buildTimeInstant(final String version, final String id, final Date date) {
         if ("2.0.0".equals(version)) {
-            return GMLXmlFactory.createTimeInstant("3.2.1", date);
+            return GMLXmlFactory.createTimeInstant("3.2.1", id, date);
         } else if ("1.0.0".equals(version)) {
-            return GMLXmlFactory.createTimeInstant("3.1.1", date);
+            return GMLXmlFactory.createTimeInstant("3.1.1", id, date);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
@@ -1128,21 +1136,22 @@ public class SOSXmlFactory {
         }
     }
 
-    public static DataArray buildDataArray(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType, final AbstractEncoding encoding, final String values) {
+    public static DataArray buildDataArray(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType, final AbstractEncoding encoding, final String values, final List<Object> dataValues) {
         if ("2.0.0".equals(version)) {
-            return SweXmlFactory.buildDataArray("2.0.0",  id, count, elementName, elementType, encoding, values);
+            return SweXmlFactory.buildDataArray("2.0.0",  id, count, elementName, elementType, encoding, values, dataValues);
         } else if ("1.0.0".equals(version)) {
-            return SweXmlFactory.buildDataArray("1.0.1",  id, count, elementName, elementType, encoding, values);
+            return SweXmlFactory.buildDataArray("1.0.1",  id, count, elementName, elementType, encoding, values, dataValues);
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
 
-    public static DataArrayProperty buildDataArrayProperty(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType, final AbstractEncoding encoding, final String values) {
+    public static DataArrayProperty buildDataArrayProperty(final String version, final String id, final int count, final String elementName,
+            final AbstractDataRecord elementType, final AbstractEncoding encoding, final String values, final List<Object> dataValues) {
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.swe.xml.v200.DataArrayPropertyType((org.geotoolkit.swe.xml.v200.DataArrayType)SweXmlFactory.buildDataArray("2.0.0",  id, count, elementName, elementType, encoding, values));
+            return new org.geotoolkit.swe.xml.v200.DataArrayPropertyType((org.geotoolkit.swe.xml.v200.DataArrayType)SweXmlFactory.buildDataArray("2.0.0",  id, count, elementName, elementType, encoding, values, dataValues));
         } else if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.swe.xml.v101.DataArrayPropertyType((org.geotoolkit.swe.xml.v101.DataArrayType)SweXmlFactory.buildDataArray("1.0.1",  id, count, elementName, elementType, encoding, values));
+            return new org.geotoolkit.swe.xml.v101.DataArrayPropertyType((org.geotoolkit.swe.xml.v101.DataArrayType)SweXmlFactory.buildDataArray("1.0.1",  id, count, elementName, elementType, encoding, values, dataValues));
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
