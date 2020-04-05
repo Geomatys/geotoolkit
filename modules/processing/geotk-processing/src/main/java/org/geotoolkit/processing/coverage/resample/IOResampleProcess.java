@@ -402,7 +402,7 @@ public class IOResampleProcess extends AbstractProcess {
                     destination = new BufferedImage(outCModel,
                             outCModel.createCompatibleWritableRaster(computeZone.width, computeZone.height), false, null);
                     final Resample resampler = new Resample(gridTransform, destination, null, interpolator, fillValue, ResampleBorderComportement.EXTRAPOLATION);
-                    resampler.fillImage(false);
+                    resampler.fillImage();
                     final Map.Entry<Point, RenderedImage> output = new AbstractMap.SimpleEntry<>(computeZone.getLocation(), (RenderedImage) destination);
 
                     writingQueue.offer(output, TIMEOUT, TIMEOUT_UNIT);

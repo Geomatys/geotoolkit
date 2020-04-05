@@ -72,20 +72,15 @@ public final class XAffineTransform {
     }
 
     /**
-     * If scale and shear coefficients are close to integers, replaces their current values by
-     * their rounded values. The scale and shear coefficients are handled in a "all or nothing"
-     * way; either all of them are rounded, or either none of them. The translation terms are
-     * handled separately, provided that the scale and shear coefficients has been rounded.
-     * <p>
-     * This rounding up is useful for example in order to speedup image displays.
+     * If scale and shear coefficients are close to integers, replaces their current values by their rounded values.
+     * The scale and shear coefficients are handled in a "all or nothing" way; either all of them or none are rounded.
+     * The translation terms are handled separately, provided that the scale and shear coefficients have been rounded.
      *
-     * @param tr The matrix to round. Rounding will be applied in place.
-     * @param tolerance The maximal departure from integers in order to allow rounding.
-     *        It is typically a small number like {@code 1E-6}.
+     * <p>This rounding up is useful for example in order to speedup image displays.</p>
      *
-     * @see org.geotoolkit.image.io.metadata.MetadataHelper#adjustForRoundingError(double)
-     *
-     * @since 3.14 (derived from 2.3.1)
+     * @param  tr  the transform to round. Rounding will be applied in place.
+     * @param  tolerance  the maximal departure from integers in order to allow rounding.
+     *         It is typically a small number like {@code 1E-6}.
      */
     // LGPL (only the 'tolerance' argument actually)
     public static void roundIfAlmostInteger(final AffineTransform tr, final double tolerance) {
@@ -98,7 +93,7 @@ public final class XAffineTransform {
         {
             /*
              * At this point the scale and shear coefficients can been rounded to integers.
-             * Continue only if this rounding doesn't lead to a non-invertible transform.
+             * Continue only if this rounding does not make the transform non-invertible.
              */
             if ((m00!=0 || m01!=0) && (m10!=0 || m11!=0)) {
                 double m02, m12;

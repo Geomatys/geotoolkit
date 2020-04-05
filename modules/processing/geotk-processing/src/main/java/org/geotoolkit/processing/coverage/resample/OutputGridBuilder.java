@@ -267,10 +267,6 @@ public final class OutputGridBuilder {
         return null;
     }
 
-    static boolean isSameCrs() {
-        return false;
-    }
-
     private static MathTransform concatenateGrid2Crs(final GridGeometry source, CoordinateReferenceSystem target, PixelInCell inCell) throws FactoryException {
         MathTransform g2c = source.getGridToCRS(inCell);
         if (target != null) {

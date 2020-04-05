@@ -234,13 +234,6 @@ public class MosaicedCoverageResource extends AbstractGridResource {
 
     /**
      * TODO, FIXME : the canvas grid extent offset is ignored.
-     * @param coverage
-     * @param coverageImage
-     * @param interpolation
-     * @param canvasGridGeometry
-     * @param canvasImage
-     * @throws TransformException
-     * @throws FactoryException
      */
     public static void resample(GridCoverage coverage, RenderedImage coverageImage, InterpolationCase interpolation,
             GridGeometry canvasGridGeometry, WritableRenderedImage canvasImage) throws TransformException, FactoryException {
@@ -266,7 +259,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
 
         final Resample resample = new Resample(targetToSource, canvasImage, coverageImage,
                 interpolation, ResampleBorderComportement.FILL_VALUE, null);
-        resample.fillImage(true);
+        resample.fillImage();
     }
 
     static boolean isAllZero(double[] array) {

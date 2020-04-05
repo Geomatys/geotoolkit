@@ -50,13 +50,11 @@ import org.geotoolkit.geometry.GeometricUtilities.WrapResolution;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.interpolation.GridFactory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.compose.ComposeDescriptor.*;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -74,9 +72,6 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class Compose extends AbstractProcess {
-
-    private static final GeometryFactory GF = new GeometryFactory();
-
     Compose(ParameterValueGroup input) {
         super(ComposeDescriptor.INSTANCE, input);
     }
@@ -214,7 +209,6 @@ public class Compose extends AbstractProcess {
         //compute output grid crs to source coverage grid crs.
         final MathTransform2D[] outGridCSToSourceGridCS = new MathTransform2D[nbCoverage];
         final Rectangle outRect = new Rectangle(0, 0, outWidth, outHeight);
-        final GridFactory gf = new GridFactory(0.3);
         for (int i = 0; i < nbCoverage; i++) {
             try {
                 final GridGeometry2D g2d = GridGeometry2D.castOrCopy(inGridCoverages[i].getGridGeometry());
@@ -233,15 +227,6 @@ public class Compose extends AbstractProcess {
                 } else {
                     throw new ProcessException("Cannot deduce 2D transform from given data.", this);
                 }
-
-                try {
-                    //try to optimize it
-                    Object obj = gf.create(outGridCSToSourceGridCS[i], outRect);
-                    if (obj instanceof AffineTransform) {
-                        outGridCSToSourceGridCS[i] = new AffineTransform2D((AffineTransform)obj);
-                    }
-                } catch (Exception e) {}
-
             } catch (NoninvertibleTransformException | FactoryException e) {
                 throw new ProcessException(e.getMessage(),this,e);
             }
@@ -322,10 +307,5 @@ public class Compose extends AbstractProcess {
 
         final GridExtent extent = new GridExtent(outWidth, outHeight);
         return new GridGeometry2D(extent, PixelOrientation.UPPER_LEFT, gridToGeo, crs);
-    }
-
-    @FunctionalInterface
-    private static interface TriConsumer<A, B, C> {
-        void accept(A a, B b, C c);
     }
 }

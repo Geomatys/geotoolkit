@@ -17,11 +17,7 @@
 package org.geotoolkit.processing.coverage.resample;
 
 import java.awt.Dimension;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.Collection;
@@ -309,50 +305,10 @@ public class ResampleProcess extends AbstractProcess {
                 // the setRect method is more expensive but will make the appropriate clipping
                 targetRaster.setRect(0, 0, sourceImage.getData());
             }
-
         } else {
-
-            //try to optimize resample using java wrap operation
-//        if(canUseJavaInterpolation(sourceImage, targetToSource, interpolationType)){
-//            allSteps2D = PixelTranslation.translate(allSteps2D, PixelOrientation.CENTER,PixelOrientation.UPPER_LEFT,0,1);
-//            try{
-//                return resampleUsingJava(sourceCoverage, sourceImage, interpolationType,
-//                                   allSteps2D, targetImage, targetGG, finalView, hints);
-//            }catch(ImagingOpException ex){
-//                LOGGER.log(Level.WARNING, "Resampling process : Failed to use java affine resampling.");
-//            }
-//        }
-
-//        if(!(targetToSource instanceof AffineTransform)){
-//            //try to use a grid transform to improve performances
-//            try{
-//                final TransformGrid tr = TransformGrid.create(
-//                        (MathTransform2D)targetToSource,
-//                        new Rectangle(targetImage.getWidth(),targetImage.getHeight()) );
-//                if(tr.globalTransform!=null){
-//                    //we can completly replace it by an affine transform
-//                    targetToSource = new AffineTransform2D(tr.globalTransform);
-//                    targetToSource = PixelTranslation.translate(targetToSource, PixelOrientation.UPPER_LEFT,PixelOrientation.UPPER_LEFT,0,1);
-//
-//                    // we should be able to use Java affine op here, but this produces plenty of artifact
-//                    // since the transform is approximative, artifact = white pixels on tile borders
-//                    //if(canUseJavaInterpolation(sourceImage, targetToSource, interpolationType)){
-//                    //    MathTransform inv = targetToSource.inverse();
-//                    //    return resampleUsingJava(sourceCoverage, sourceImage, interpolationType,
-//                    //                       inv, targetImage, targetGG, finalView, hints);
-//                    //}
-//                }else{
-//                    targetToSource = new GridMathTransform(tr);
-//                }
-//            }catch(ArithmeticException ex){
-//                //could not be optimized
-//                LOGGER.log(Level.FINE, ex.getMessage());
-//            }
-//        }
-
             final Resample resample = new Resample(targetToSource, targetImage, sourceImage,
                     interpolationType, borderComportement, fillValue);
-            resample.fillImage(builder.isSameCrs());
+            resample.fillImage();
         }
 
         return new NoConversionCoverage(builder.target, outputSampleDims, targetImage, !geophysicRequired);
@@ -372,78 +328,6 @@ public class ResampleProcess extends AbstractProcess {
         if (noDataValues.isEmpty())
             return defaultValue;
         return noDataValues.iterator().next().doubleValue();
-    }
-
-    /**
-     * Check if conditions are met to use java affine interpolation.
-     */
-    private static boolean canUseJavaInterpolation(RenderedImage sourceImage,
-            MathTransform trs, InterpolationCase interpolation){
-        final int datatype = sourceImage.getSampleModel().getDataType();;
-        if(!(datatype == DataBuffer.TYPE_BYTE || datatype == DataBuffer.TYPE_INT)){
-            return false;
-        }
-        return interpolation != InterpolationCase.LANCZOS && trs instanceof AffineTransform &&
-              ((sourceImage instanceof BufferedImage) || (sourceImage.getNumXTiles()==1 && sourceImage.getNumYTiles()==1));
-    }
-
-    /**
-     * Find the Java interpolation equivalent value.
-     *
-     * @return RenderingHints or null if not found
-     */
-    private static Object fingJavaInterpolationHint(final InterpolationCase interpolationType){
-        switch(interpolationType){
-            case NEIGHBOR : return RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
-            case BILINEAR : return RenderingHints.VALUE_INTERPOLATION_BILINEAR;
-            case BICUBIC : return RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-            case BICUBIC2 : return RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-            default: return null;
-        }
-    }
-
-    // TODO: try to re-activate, it would allow optimize a few cases.
-    private static void resampleUsingJava(
-            RenderedImage sourceImage,InterpolationCase interpolationType, AffineTransform trs,
-            BufferedImage targetImage){
-
-        final Object javaInterHint = fingJavaInterpolationHint(interpolationType);
-        final RenderingHints ophints;
-        if (javaInterHint != null) ophints = new RenderingHints(RenderingHints.KEY_INTERPOLATION, javaInterHint);
-        else ophints = null;
-        if(sourceImage instanceof BufferedImage){
-            final AffineTransformOp op = new AffineTransformOp(trs, ophints);
-            op.filter((BufferedImage)sourceImage, targetImage);
-        }else{
-            //only one tile
-            final AffineTransformOp op = new AffineTransformOp(trs, ophints);
-            // TODO : shouldn't we deduce a set of tiles to filter on ?
-            op.filter(sourceImage.getTile(0, 0), targetImage.getRaster());
-        }
-    }
-
-    /**
-     * Returns a source CRS compatible with the given target CRS. This method try to returns
-     * a CRS which would not thrown an {@link NoninvertibleTransformException} if attempting
-     * to transform from "target" to "source" (reminder: Warp works on <strong>inverse</strong>
-     * transforms).
-     *
-     * @param sourceCRS2D
-     *          The two-dimensional source CRS. Actually, this method accepts arbitrary dimension
-     *          provided that are not greater than {@code sourceCRS}, but in theory it is 2D.
-     * @param sourceCRS
-     *          The n-dimensional source CRS.
-     * @param targetCRS
-     *          The n-dimensional target CRS.
-     */
-    private static CoordinateReferenceSystem compatibleSourceCRS(
-             final CoordinateReferenceSystem sourceCRS2D,
-             final CoordinateReferenceSystem sourceCRS,
-             final CoordinateReferenceSystem targetCRS)
-    {
-        final int dim2D = sourceCRS2D.getCoordinateSystem().getDimension();
-        return (targetCRS.getCoordinateSystem().getDimension() == dim2D &&
-                sourceCRS.getCoordinateSystem().getDimension()  > dim2D) ? sourceCRS2D : sourceCRS;
     }
 
     /**

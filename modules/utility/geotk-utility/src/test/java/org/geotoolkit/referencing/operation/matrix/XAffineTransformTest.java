@@ -33,22 +33,24 @@ import static org.junit.Assert.*;
  */
 public final strictfp class XAffineTransformTest extends org.geotoolkit.test.TestBase {
     /**
-     * Tests the {@link XAffineTransform#roundIfAlmostInteger} method.
+     * Tests the {@link XAffineTransform#roundIfAlmostInteger(AffineTransform, double)} method.
      */
     @Test
     public void testRoundIfAlmostInteger() {
+        final double tolerance = 1E-5;
         final AffineTransform test = new AffineTransform(4, 0, 0, 4, -400, -1186);
         final AffineTransform copy = new AffineTransform(test);
-        XAffineTransform.roundIfAlmostInteger(test, 1E-6);
+        XAffineTransform.roundIfAlmostInteger(test, tolerance);
         assertEquals("Translation terms were already integers, so the " +
                 "transform should not have been modified.", copy, test);
 
-        test.translate(1E-8, 2E-8);
-        XAffineTransform.roundIfAlmostInteger(test, 1E-9);
+        test.translate(tolerance/8, -tolerance/8);
+        XAffineTransform.roundIfAlmostInteger(test, tolerance);
+        assertEquals("Translation terms should have been rounded.", copy, test);
+
+        test.translate(tolerance*2, -tolerance*2);
+        XAffineTransform.roundIfAlmostInteger(test, tolerance);
         assertFalse("Treshold was smaller than the translation, so the " +
                 "transform should not have been modified.", copy.equals(test));
-
-        XAffineTransform.roundIfAlmostInteger(test, 1E-6);
-        assertEquals("Translation terms should have been rounded.", copy, test);
     }
 }

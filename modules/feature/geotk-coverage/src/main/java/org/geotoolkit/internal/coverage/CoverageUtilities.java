@@ -306,8 +306,8 @@ public final class CoverageUtilities extends Static {
         final int[] imgAxes = subgrid.getSubspaceDimensions(2);
         final int subX = Math.toIntExact(subgrid.getLow(imgAxes[0]));
         final int subY = Math.toIntExact(subgrid.getLow(imgAxes[1]));
-        final int subWidth = Math.toIntExact(Math.round(subgrid.getSize(imgAxes[0])));
-        final int subHeight = Math.toIntExact(Math.round(subgrid.getSize(imgAxes[1])));
+        final int subWidth = Math.toIntExact(subgrid.getSize(imgAxes[0]));
+        final int subHeight = Math.toIntExact(subgrid.getSize(imgAxes[1]));
         return baseImage.getSubimage(subX, subY, subWidth, subHeight);
     }
 
