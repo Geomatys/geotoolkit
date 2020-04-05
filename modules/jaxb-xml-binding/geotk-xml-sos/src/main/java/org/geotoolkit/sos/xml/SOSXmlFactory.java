@@ -661,7 +661,7 @@ public class SOSXmlFactory {
     public static Instant buildTimeInstant(final String version, final Date date) {
         return buildTimeInstant(version, null, date);
     }
-    
+
     public static Instant buildTimeInstant(final String version, final String id, final Date date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", id, date);

@@ -20,7 +20,6 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +31,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -67,13 +67,12 @@ import org.opengis.util.InternationalString;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "TimePositionType", propOrder = {
-    "value"
+    "values"
 })
 public class TimePositionType extends AbstractTimePosition implements Serializable{
 
-    @XmlValue
     private List<String> value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -82,6 +81,9 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     private String calendarEraName;
     @XmlAttribute
     private TimeIndeterminateValueType indeterminatePosition;
+
+    @XmlTransient
+    private Date cachedDate;
 
      /**
      * empty constructor used by JAXB.
@@ -117,17 +119,6 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      * @param value a date.
      */
-    public TimePositionType(final Timestamp time) {
-        if (time != null) {
-            this.value = Arrays.asList(FORMATTERS.get(0).format(time));
-        }
-    }
-
-    /**
-     * build a simple Timposition with only a value from a timestamp.
-     *
-     * @param value a date.
-     */
     public TimePositionType(final Date time) {
         setValue(time);
     }
@@ -140,14 +131,31 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      */
+    @XmlValue
     public List<String> getValues() {
         if (value == null) {
             value = new ArrayList<>();
         }
+        getValue();
         return this.value;
     }
 
     public String getValue() {
+        if (cachedDate != null && (value == null || value.isEmpty())) {
+            final Calendar c = Calendar.getInstance();
+            c.setTime(cachedDate);
+            if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
+                final DateFormat df = FORMATTERS.get(3);
+                synchronized (df) {
+                    this.value = Arrays.asList(df.format(cachedDate));
+                }
+            } else {
+                final DateFormat df = FORMATTERS.get(0);
+                synchronized (df) {
+                    this.value = Arrays.asList(df.format(cachedDate));
+                }
+            }
+        }
         if (value != null && !value.isEmpty()) {
             return value.get(0);
         }
@@ -155,6 +163,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     public void setValue(final String val) {
+        this.cachedDate = null;
         if (value == null) {
             value = new ArrayList<>();
         }
@@ -162,19 +171,8 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     public final void setValue(final Date value) {
-        final Calendar c = Calendar.getInstance();
-        c.setTime(value);
-        if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
-            final DateFormat df = FORMATTERS.get(3);
-            synchronized (df) {
-                this.value = Arrays.asList(df.format(value));
-            }
-        } else {
-            final DateFormat df = FORMATTERS.get(0);
-            synchronized (df) {
-                this.value = Arrays.asList(df.format(value));
-            }
-        }
+        this.cachedDate = value;
+        this.value = null;
     }
 
     /**
@@ -254,26 +252,28 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         this.indeterminatePosition = value;
     }
 
-//    @Override
+    @Override
     public Date getDate() {
-        if (value!= null && !value.isEmpty()) {
-            return parseDate(value.get(0));
+        if (cachedDate == null && value!= null && !value.isEmpty()) {
+            cachedDate = parseDate(value.get(0));
         }
-        return null;
+        return cachedDate;
     }
 
 //    @Override
     public Time getTime() {
-        if (value != null && !value.isEmpty()) {
-            return Time.valueOf(value.get(0));
+        String v = getValue();
+        if (v != null) {
+            return Time.valueOf(v);
         }
         return null;
     }
 
 //    @Override
     public InternationalString getDateTime() {
-        if (value != null && !value.isEmpty()) {
-            return new SimpleInternationalString(value.get(0));
+        String v = getValue();
+        if (v != null) {
+            return new SimpleInternationalString(v);
         }
         return null;
     }
