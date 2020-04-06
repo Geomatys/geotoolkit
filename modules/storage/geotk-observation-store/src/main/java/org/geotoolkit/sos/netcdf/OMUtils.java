@@ -21,8 +21,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import org.geotoolkit.gml.xml.FeatureProperty;
@@ -166,7 +169,7 @@ public class OMUtils {
         if (phenomenons.size() == 1) {
             phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).label, phenomenons.get(0).label, phenomenons.get(0).description);
         } else {
-            final Set<PhenomenonType> types = new HashSet<>();
+            final Set<PhenomenonType> types = new LinkedHashSet<>();
             for (Field phen : phenomenons) {
                 types.add(new PhenomenonType(phen.label, phen.label));
             }
@@ -190,8 +193,10 @@ public class OMUtils {
 
     private static boolean componentsEquals(Collection as, Collection bs) {
         if (as.size() == bs.size()) {
-            for (Object a : as) {
-                if (!bs.contains(a)) {
+            Iterator i1 = as.iterator();
+            Iterator i2 = bs.iterator();
+            while (i1.hasNext()) {
+                if (!Objects.equals(i1.next(), i2.next())) {
                     return false;
                 }
             }
