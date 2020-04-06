@@ -19,12 +19,13 @@ package org.geotoolkit.sts.json;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * HistoricalLocation
  */
-public class HistoricalLocation implements STSResponse {
+public class HistoricalLocation implements STSResponse, Comparable<HistoricalLocation> {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -33,7 +34,7 @@ public class HistoricalLocation implements STSResponse {
     private String iotSelfLink = null;
 
     @JsonProperty("time")
-    private String time = null;
+    private Date time = null;
 
     @JsonProperty("Locations")
     private List<Location> locations = null;
@@ -87,7 +88,7 @@ public class HistoricalLocation implements STSResponse {
         this.iotSelfLink = iotSelfLink;
     }
 
-    public HistoricalLocation time(String time) {
+    public HistoricalLocation time(Date time) {
         this.time = time;
         return this;
     }
@@ -99,11 +100,11 @@ public class HistoricalLocation implements STSResponse {
      * @return time
   *
      */
-    public String getTime() {
+    public Date getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Date time) {
         this.time = time;
     }
 
@@ -244,4 +245,8 @@ public class HistoricalLocation implements STSResponse {
         return o.toString().replace("\n", "\n    ");
     }
 
+    @Override
+    public int compareTo(HistoricalLocation o) {
+        return this.time.compareTo(o.time);
+    }
 }
