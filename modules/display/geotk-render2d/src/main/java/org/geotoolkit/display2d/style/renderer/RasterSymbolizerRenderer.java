@@ -47,32 +47,6 @@ import javax.media.jai.LookupTableJAI;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
-
-import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.grid.SequenceType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.ChannelSelection;
-import org.opengis.style.ColorMap;
-import org.opengis.style.ContrastEnhancement;
-import org.opengis.style.ContrastMethod;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.SelectedChannelType;
-import org.opengis.util.FactoryException;
-import org.opengis.util.LocalName;
-
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
@@ -80,6 +54,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -87,8 +62,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.iso.Names;
-
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
@@ -120,17 +95,38 @@ import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-
 import org.locationtech.jts.geom.Geometry;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
+import org.opengis.coverage.CannotEvaluateException;
+import org.opengis.coverage.grid.SequenceType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.ChannelSelection;
+import org.opengis.style.ColorMap;
+import org.opengis.style.ContrastEnhancement;
+import org.opengis.style.ContrastMethod;
+import org.opengis.style.RasterSymbolizer;
+import org.opengis.style.SelectedChannelType;
+import org.opengis.util.FactoryException;
+import org.opengis.util.LocalName;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -535,6 +531,19 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
         boolean dataRendered = false;
 
         RenderedImage img = coverage.render(null);
+
+		/*
+		 * Try to prefetch image before rendering
+		 * resampled image or mosaic have deferred tiles
+		 * java2d render tiles one by one which can be slow when working with
+		 * computed coverages or distant services like WMTS or TMS
+		 */
+		if ( (img.getWidth() * img.getHeight()) < 5000*5000) {
+			ImageProcessor processor = new ImageProcessor();
+			processor.setExecutionMode(ImageProcessor.Mode.PARALLEL);
+			img = processor.prefetch(img);
+		}
+
         if (monitor.stopRequested()) return false;
 
         final InterpolationCase interpolationCase = (InterpolationCase) hints.get(GO2Hints.KEY_INTERPOLATION);
