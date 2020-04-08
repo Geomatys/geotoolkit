@@ -532,17 +532,17 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
         RenderedImage img = coverage.render(null);
 
-		/*
-		 * Try to prefetch image before rendering
-		 * resampled image or mosaic have deferred tiles
-		 * java2d render tiles one by one which can be slow when working with
-		 * computed coverages or distant services like WMTS or TMS
-		 */
-		if ( (img.getWidth() * img.getHeight()) < 5000*5000) {
-			ImageProcessor processor = new ImageProcessor();
-			processor.setExecutionMode(ImageProcessor.Mode.PARALLEL);
-			img = processor.prefetch(img);
-		}
+        /*
+         * Try to prefetch image before rendering
+         * resampled image or mosaic have deferred tiles
+         * java2d render tiles one by one which can be slow when working with
+         * computed coverages or distant services like WMTS or TMS
+         */
+        if ( (img.getWidth() * img.getHeight()) < 5000*5000) {
+            ImageProcessor processor = new ImageProcessor();
+            processor.setExecutionMode(ImageProcessor.Mode.PARALLEL);
+            img = processor.prefetch(img);
+        }
 
         if (monitor.stopRequested()) return false;
 

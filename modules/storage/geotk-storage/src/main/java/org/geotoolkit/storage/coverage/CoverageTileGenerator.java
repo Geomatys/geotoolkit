@@ -168,8 +168,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         }
 
         RenderedImage image = coverage.render(null);
-		ImageProcessor ip = new ImageProcessor();
-		image = ip.prefetch(image);
+        ImageProcessor ip = new ImageProcessor();
+        image = ip.prefetch(image);
         return new DefaultImageTile(image, tileCoord);
     }
 
