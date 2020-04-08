@@ -30,7 +30,6 @@ import org.apache.sis.image.PlanarImage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.math.XMath;
@@ -49,11 +48,6 @@ import org.geotoolkit.storage.multires.Tile;
 public class MosaicImage extends PlanarImage implements RenderedImage {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
-
-    /**
-     * A tile cache
-     */
-    private final Cache<Point,Raster> tileCache = new Cache<>(10, 12, true);
 
     /**
      * The original mosaic to read
@@ -251,58 +245,54 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
         final int mosaictileX = gridRange.x + tileX;
         final int mosaictileY = gridRange.y + tileY;
 
-        Raster raster;
-        try {
-            raster = this.tileCache.get(new Point(tileX, tileY));
-        } catch (IllegalArgumentException ex) {
-            raster = null;
-        }
+        Raster raster = null;
+		try {
+			DataBuffer buffer = null;
 
-        if (raster == null) {
-            try {
-                DataBuffer buffer = null;
+			if (!mosaic.isMissing(mosaictileX,mosaictileY)) {
+				final ImageTile tile = (ImageTile) mosaic.getTile(mosaictileX,mosaictileY);
+				//can happen if tile is really missing, the isMissing method is a best effort call
+				if (tile != null) {
+					final RenderedImage image = tile.getImage();
+					setImageModel(image);
+					Raster tileRaster = image.getData();
+					tileRaster = makeConform(tileRaster);
+					buffer = tileRaster.getDataBuffer();
+				}
+			}
 
-                if (!mosaic.isMissing(mosaictileX,mosaictileY)) {
-                    final ImageTile tile = (ImageTile) mosaic.getTile(mosaictileX,mosaictileY);
-                    //can happen if tile is really missing, the isMissing method is a best effort call
-                    if (tile != null) {
-                        final RenderedImage image = tile.getImage();
-                        setImageModel(image);
-                        Raster tileRaster = image.getData();
-                        tileRaster = makeConform(tileRaster);
-                        buffer = tileRaster.getDataBuffer();
-                    }
-                }
+			if (!nullable && buffer == null) {
+				//create an empty buffer
+				buffer = getSampleModel().createDataBuffer();
+				//TODO should be filled with no data pixel value
+			}
 
-                if (!nullable && buffer == null) {
-                    //create an empty buffer
-                    buffer = getSampleModel().createDataBuffer();
-                    //TODO should be filled with no data pixel value
-                }
+			if (buffer != null) {
+				//create a raster from tile image with tile position offset.
+				LOGGER.log(Level.FINE, "Request tile {0}:{1} ", new Object[]{tileX,tileY});
+				final int rX = tileX * this.getTileWidth();
+				final int rY = tileY * this.getTileHeight();
+				raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
+			}
 
-                if (buffer != null) {
-                    //create a raster from tile image with tile position offset.
-                    LOGGER.log(Level.FINE, "Request tile {0}:{1} ", new Object[]{tileX,tileY});
-                    final int rX = tileX * this.getTileWidth();
-                    final int rY = tileY * this.getTileHeight();
-                    raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
-                    this.tileCache.put(new Point(tileX, tileY), raster);
-                }
+		} catch (DataStoreException | IOException e) {
+			LOGGER.log(Level.WARNING, e.getMessage(), e);
+		}
 
-            } catch (DataStoreException | IOException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-            }
-        }
+		if (raster == null && !nullable) {
+			//create an empty buffer
+			final DataBuffer buffer = getSampleModel().createDataBuffer();
+			final int rX = tileX * this.getTileWidth();
+			final int rY = tileY * this.getTileHeight();
+			raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
+			//TODO should be filled with no data pixel value
+		}
 
         return raster;
     }
 
     private boolean isTileMissing(int x, int y) throws DataStoreException{
         return mosaic.isMissing(x+gridRange.x, y+gridRange.y);
-    }
-
-    private ImageTile getTileReference(int x, int y) throws DataStoreException{
-        return (ImageTile) mosaic.getTile(x+gridRange.x,y+gridRange.y);
     }
 
     /**
@@ -446,10 +436,8 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
      * @return
      */
     private Point getPositionOf(int x, int y){
-
         final int posX = (int)(Math.floor(x/this.getTileWidth()));
         final int posY = (int)(Math.floor(y/this.getTileHeight()));
-
         return new Point(posX, posY);
     }
 
