@@ -101,7 +101,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Query implements  
 
     @Override
     public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-        return new LuceneOGCWeight(this, tree, filter, searcher, scoreMode, boost);
+        return new LuceneOGCWeight(this, tree, filter, searcher, scoreMode, boost, envelopeOnly);
     }
 
     public static LuceneOGCFilter wrap(final Filter filter){

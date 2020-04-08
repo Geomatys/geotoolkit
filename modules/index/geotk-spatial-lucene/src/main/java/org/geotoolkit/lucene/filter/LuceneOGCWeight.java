@@ -86,20 +86,21 @@ public class LuceneOGCWeight extends Weight {
     private final org.opengis.filter.Filter filter;
     private final SpatialFilterType filterType;
 
-    private boolean envelopeOnly = true;
+    private boolean envelopeOnly;
 
     private final ScoreMode scoreMode;
     private final float boost;
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene.filter");
 
-    public LuceneOGCWeight(Query parentQuery, final Tree tree, org.opengis.filter.Filter filter, IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+    public LuceneOGCWeight(Query parentQuery, final Tree tree, org.opengis.filter.Filter filter, IndexSearcher searcher, ScoreMode scoreMode, float boost, boolean envelopeOnly) {
         super(parentQuery);
         this.boost = boost;
         this.scoreMode = scoreMode;
         this.filter = filter;
         this.filterType = getSpatialFilterType(filter);
         this.tree = tree;
+        this.envelopeOnly = envelopeOnly;
     }
 
     @Override
