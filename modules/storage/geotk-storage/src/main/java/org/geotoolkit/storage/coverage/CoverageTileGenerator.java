@@ -27,6 +27,7 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -123,7 +124,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     @Override
     public Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord) throws DataStoreException {
-
         final Dimension tileSize = mosaic.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final LinearTransform gridToCrsNd = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
@@ -167,7 +167,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
-        final RenderedImage image = coverage.render(null);
+        RenderedImage image = coverage.render(null);
+		ImageProcessor ip = new ImageProcessor();
+		image = ip.prefetch(image);
         return new DefaultImageTile(image, tileCoord);
     }
 
