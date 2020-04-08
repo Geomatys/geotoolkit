@@ -1611,7 +1611,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery1.getSpatialFilter(), BooleanClause.Occur.SHOULD)
                                .add(spatialQuery2.getSpatialFilter(), BooleanClause.Occur.SHOULD)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
                                .build();
 
 

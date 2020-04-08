@@ -20,6 +20,8 @@ package org.geotoolkit.lucene.filter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
@@ -222,8 +224,17 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     }
 
     public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
-        if (spatialFilter instanceof org.geotoolkit.lucene.filter.Filter) {
-            ((org.geotoolkit.lucene.filter.Filter)spatialFilter).applyRtreeOnFilter(rTree, envelopeOnly);
+        applyRtreeOnFilter(spatialFilter, rTree, envelopeOnly);
+    }
+
+    private void applyRtreeOnFilter(final Query query, final Tree rTree, final boolean envelopeOnly) {
+        if (query instanceof org.geotoolkit.lucene.filter.Filter) {
+            ((org.geotoolkit.lucene.filter.Filter)query).applyRtreeOnFilter(rTree, envelopeOnly);
+        } else if (query instanceof BooleanQuery) {
+            BooleanQuery bQuery = (BooleanQuery) query;
+            for (BooleanClause clause : bQuery.clauses()) {
+                applyRtreeOnFilter(clause.getQuery(), rTree, envelopeOnly);
+            }
         }
     }
 

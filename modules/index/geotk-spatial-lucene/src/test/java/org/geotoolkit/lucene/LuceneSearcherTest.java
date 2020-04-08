@@ -39,8 +39,11 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.Envelopes;
@@ -92,6 +95,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
     private static CoordinateReferenceSystem treeCrs;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
+    private static Query simpleQuery;
 
     @BeforeClass
     public static void setUpMethod() throws Exception {
@@ -111,6 +115,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         indexer.destroy();
 
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(), false);
+        simpleQuery = new TermQuery(new Term("metafile", "doc"));
     }
 
     @AfterClass
@@ -1410,6 +1415,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                           .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST_NOT)
+                          .add(simpleQuery,                     BooleanClause.Occur.MUST)
                           .build();
 
         sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);

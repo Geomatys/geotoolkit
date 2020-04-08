@@ -390,7 +390,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 if (filter != null) {
                     singleQuery = new BooleanQuery.Builder()
                                     .add(filter, BooleanClause.Occur.MUST)
-                                    .add(query,                    BooleanClause.Occur.MUST)
+                                    .add(query,  BooleanClause.Occur.MUST)
                                     .build();
                 } else {
                     singleQuery = query;

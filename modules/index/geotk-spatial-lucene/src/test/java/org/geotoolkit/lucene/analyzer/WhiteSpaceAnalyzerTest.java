@@ -144,8 +144,8 @@ public class WhiteSpaceAnalyzerTest extends AbstractAnalyzerTest {
         expectedResult = new LinkedHashSet<>();
         expectedResult.add("42292_5p_19900609195600");
 
-        // ERROR it didn't find any result (why???)
-        expectedResult = new LinkedHashSet<>();
+        // ERROR it didn't find any result fixed by lucene 8.4.0
+        //expectedResult = new LinkedHashSet<>();
         assertEquals(expectedResult, result);
 
         /**
@@ -186,8 +186,10 @@ public class WhiteSpaceAnalyzerTest extends AbstractAnalyzerTest {
         expectedResult.add("39727_22_19750113062500");
         expectedResult.add("40510_145_19930221211500");
 
-         // ERROR it didn't find any result (why???)
-        expectedResult = new LinkedHashSet<>();
+        // ERROR it didn't find any result fixed by lucene 8.4.0
+        // but add the document 11325_158_19640418141800 which contains "ASCII MEDATLAS"
+        //expectedResult = new LinkedHashSet<>();
+        expectedResult.add("11325_158_19640418141800");
 
         assertEquals(expectedResult, result);
 

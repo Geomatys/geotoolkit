@@ -224,7 +224,6 @@ public class LuceneOGCWeight extends Weight {
                 final int docId     = i;
                 final Document doc  = reader.document(docId, ID_FIELDS);
                 final String id     = doc.get(IDENTIFIER_FIELD_NAME);
-                System.out.println("ID:" + id);
                 final boolean match = treeMatching.contains(id);
                 if (treeSearch && reverse && !match) {
                     set.set(docId);
@@ -241,7 +240,6 @@ public class LuceneOGCWeight extends Weight {
                 }
             }
         }
-
         return new ConstantScoreScorer(this, boost, scoreMode, new BitSetIterator(set, 5));
       }
 

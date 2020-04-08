@@ -45,8 +45,10 @@ import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.util.BytesRef;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -2957,10 +2959,11 @@ public abstract class AbstractAnalyzerTest {
 
         //sf           = new BBOXFilter(bbox, "urn:x-ogc:def:crs:EPSG:6.11:4326");
         sf = LuceneOGCFilter.wrap(FF.bbox(LuceneOGCFilter.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
-        LogicalFilterType[] op = {LogicalFilterType.NOT};
 
         BooleanQuery query = new BooleanQuery.Builder()
-                                .add(sf, BooleanClause.Occur.MUST_NOT).build();
+                                .add(sf, BooleanClause.Occur.MUST_NOT)
+                                .add(new TermQuery(new Term("metafile", "doc")), BooleanClause.Occur.MUST)
+                                .build();
         spatialQuery = new SpatialQuery("metafile:doc", query, LogicalFilterType.AND);
 
         result = indexSearcher.doSearch(spatialQuery);

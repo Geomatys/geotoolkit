@@ -155,7 +155,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
+        assertEquals(nbResults.value, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -195,7 +195,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
+        assertEquals(nbResults.value, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -232,7 +232,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
          //we verify that we obtain the correct results
-        assertEquals(nbResults, 9);
+        assertEquals(nbResults.value, 9);
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("box 3"));
@@ -268,7 +268,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
          //we verify that we obtain the correct results
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 5"));
     }
 
@@ -307,7 +307,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 10);
+        assertEquals(nbResults.value, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -348,7 +348,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
+        assertEquals(nbResults.value, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -393,7 +393,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults.value, 4);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("line 1" ));
@@ -429,7 +429,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults.value, 4);
         assertTrue(results.contains("box 2"  ));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("line 1" ));
@@ -465,7 +465,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("point 4"));
 
@@ -499,7 +499,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("point 4"));
     }
@@ -539,7 +539,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 3"));
 
 
@@ -573,7 +573,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("line 1" ));
 
         //TODO  issue here the projected line does not have the exact same coordinates (this issue happen for all geometry in Equals)
@@ -606,7 +606,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
          //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("point 1" ));
     }
 
@@ -645,7 +645,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 1"));
 
         /*
@@ -678,7 +678,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 4"));
 
         /*
@@ -708,7 +708,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 4"));
 
         /*
@@ -739,7 +739,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
 
@@ -773,7 +773,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
     }
@@ -812,7 +812,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 14);
+        assertEquals(nbResults.value, 14);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -857,7 +857,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
+        assertEquals(nbResults.value, 11);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -903,7 +903,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 8);
+        assertEquals(nbResults.value, 8);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 4"));
@@ -946,7 +946,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
+        assertEquals(nbResults.value, 11);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -989,7 +989,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
+        assertEquals(nbResults.value, 5);
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"  ));
@@ -1026,7 +1026,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 9);
+        assertEquals(nbResults.value, 9);
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("box 2"));
@@ -1074,7 +1074,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 3);
+        assertEquals(nbResults.value, 3);
 //        assertTrue(results.contains("point 3")); //it overlaps
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected")); // match because precision errors have been corrected
@@ -1108,7 +1108,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 4"));
 
         /*
@@ -1139,7 +1139,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 1"));
 
         /*
@@ -1173,7 +1173,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 0);
+        assertEquals(nbResults.value, 0);
 //        assertTrue(results.contains("line 2")); //point intersect or in within, it is not consider "touches" in jts
 
         /*
@@ -1204,7 +1204,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 0);
+        assertEquals(nbResults.value, 0);
 //        assertTrue(results.contains("point 4")); //same point intersect,within,overlaps but not consider "touches"
 
         /*
@@ -1238,7 +1238,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected")); // match because precision errors have been corrected
 
@@ -1273,7 +1273,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
 
@@ -1308,7 +1308,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
+        assertEquals(nbResults.value, 5);
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("line 1"));
@@ -1345,7 +1345,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 7);
+        assertEquals(nbResults.value, 7);
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 3"  ));
@@ -1390,7 +1390,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 7);
+        assertEquals(nbResults.value, 7);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -1428,7 +1428,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 3);
+        assertEquals(nbResults.value, 3);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("point 4"));
@@ -1464,7 +1464,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 0);
+        assertEquals(nbResults.value, 0);
 //        assertTrue(results.contains("point 4")); //intersect or crosses but not within
 //        assertTrue(results.contains("point 5")); // within is only when a point in between two nodes
     }
@@ -1506,7 +1506,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 3"));
 //        assertTrue(results.contains("point 4")); //a point cant not cross anything
 
@@ -1541,7 +1541,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults.value, 4);
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
@@ -1578,7 +1578,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 1"));
 
@@ -1610,7 +1610,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 0);
+        assertEquals(nbResults.value, 0);
 //        assertTrue(results.contains("point 3")); // crossing a point is not possible
 //        assertTrue(results.contains("line 1"));
 //        assertTrue(results.contains("line 1 projected"));
@@ -1644,7 +1644,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 0);
+        assertEquals(nbResults.value, 0);
 //        assertTrue(results.contains("box 2"));            //crossing a point is not possible
 //        assertTrue(results.contains("box 2 projected"));
 
@@ -1678,7 +1678,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
 //        assertTrue(results.contains("point 2"));     //points can not cross anything
@@ -1706,7 +1706,6 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery1.getSpatialFilter(), BooleanClause.Occur.SHOULD)
                                 .add(spatialQuery2.getSpatialFilter(), BooleanClause.Occur.SHOULD)
-                                .add(simpleQuery,                      BooleanClause.Occur.MUST)
                                 .build();
 
 
@@ -1725,7 +1724,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
+        assertEquals(nbResults.value, 5);
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("line 1"));
@@ -1760,7 +1759,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("line 1"));
 
         /*
@@ -1794,7 +1793,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
+        assertEquals(nbResults.value, 11);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -1839,7 +1838,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults.value, 4);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("line 1"));
@@ -1870,7 +1869,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 0);
+        assertEquals(nbResults.value, 0);
 
 
     }
@@ -1909,7 +1908,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults.value, 4);
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
@@ -1943,7 +1942,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 7);
+        assertEquals(nbResults.value, 7);
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("line 1"));
@@ -1980,7 +1979,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 7);
+        assertEquals(nbResults.value, 7);
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("line 1"));
@@ -2017,7 +2016,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 10);
+        assertEquals(nbResults.value, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2057,7 +2056,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
+        assertEquals(nbResults.value, 11);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2098,7 +2097,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 13);
+        assertEquals(nbResults.value, 13);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2141,7 +2140,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 15);
+        assertEquals(nbResults.value, 15);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2187,7 +2186,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 10);
+        assertEquals(nbResults.value, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2225,7 +2224,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
+        assertEquals(nbResults.value, 11);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2263,7 +2262,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 15);
+        assertEquals(nbResults.value, 15);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2311,7 +2310,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 1"));
 
          /*
@@ -2340,7 +2339,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("box 1"));
 //        assertTrue(results.contains("box 3"));
         assertTrue(results.contains("line 2"));
@@ -2373,7 +2372,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 3);
+        assertEquals(nbResults.value, 3);
 //        assertTrue(results.contains("point 2"));   //touches are not considered within
 //        assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 1"));
@@ -2410,7 +2409,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 9);
+        assertEquals(nbResults.value, 9);
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 1"));
@@ -2462,7 +2461,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
+        assertEquals(nbResults.value, 11);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2512,7 +2511,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
 
-        assertEquals(nbResults, 8);
+        assertEquals(nbResults.value, 8);
 
         /*
          * case 3: point distance 1500000m
@@ -2542,7 +2541,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 8);
+        assertEquals(nbResults.value, 8);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 4"));
@@ -2581,7 +2580,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
+        assertEquals(nbResults.value, 5);
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"));
@@ -2616,7 +2615,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults.value, 4);
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"));
@@ -2650,7 +2649,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults.value, 2);
         assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"));
 
@@ -2682,7 +2681,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 0);
+        assertEquals(nbResults.value, 0);
 
         /*
          * case 8: BBOX distance 5km
@@ -2713,7 +2712,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
+        assertEquals(nbResults.value, 5);
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"));
@@ -2746,7 +2745,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults.value, 4);
         assertTrue(results.contains("point 4"));
         assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"));
@@ -2778,7 +2777,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 0);
+        assertEquals(nbResults.value, 0);
 
          /*
          * case 10: a line distance 5km
@@ -2811,7 +2810,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 14);
+        assertEquals(nbResults.value, 14);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2853,7 +2852,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 13);
+        assertEquals(nbResults.value, 13);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -2891,7 +2890,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 //        }
 //
 //        //we verify that we obtain the correct results.
-//        assertEquals(nbResults, 6);
+//        assertEquals(nbResults.value, 6);
 //        assertTrue(results.contains("point 1"));
 //        assertTrue(results.contains("point 1 projected"));
 //      assertTrue(results.contains("point 4"));
@@ -2921,7 +2920,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
 //        }
 //
 //        //we verify that we obtain the correct results.
-//        assertEquals(nbResults, 1);
+//        assertEquals(nbResults.value, 1);
 //  assertTrue(results.contains("point 5"));
 
 
@@ -2961,7 +2960,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults.value, 1);
         assertTrue(results.contains("box 4"));
 
         /*
@@ -2993,7 +2992,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 3);
+        assertEquals(nbResults.value, 3);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
     assertTrue(results.contains("box 2 projected"));
@@ -3035,7 +3034,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
+        assertEquals(nbResults.value, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -3234,7 +3233,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 9);
+        assertEquals(nbResults.value, 9);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -3281,7 +3280,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
+        assertEquals(nbResults.value, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
