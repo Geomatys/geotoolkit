@@ -321,7 +321,7 @@ public class LuceneIndexSearcher extends IndexLucene {
         try {
             final long start = System.currentTimeMillis();
             final Set<String> results = new LinkedHashSet<>();
-            spatialQuery.applyRtreeOnFilter(rTree, envelopeOnly);
+            spatialQuery.applyRtreeOnQuery(rTree, envelopeOnly);
 
             //we look for a cached Query
             if (isCacheEnabled && cachedQueries.containsKey(spatialQuery)) {
@@ -337,7 +337,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             }
 
             final String field       = "title";
-            String stringQuery       = spatialQuery.getQuery();
+            String stringQuery       = spatialQuery.getTextQuery();
             final QueryParser parser = new ExtendedQueryParser(field, analyzer, numericFields);
             parser.setDefaultOperator(Operator.AND);
 
@@ -367,7 +367,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 query = SIMPLE_QUERY;
             }
             LOGGER.log(Level.FINER, "QueryType:{0}", query.getClass().getName());
-            final Query filter = spatialQuery.getSpatialFilter();
+            final Query filter = spatialQuery.getQuery();
             final LogicalFilterType operator  = spatialQuery.getLogicalOperator();
             final Sort sort     = spatialQuery.getSort();
             String sorted = "";
@@ -410,7 +410,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 final TopDocs hits1;
                 final TopDocs hits2;
                 BooleanQuery boolQuery = new BooleanQuery.Builder()
-                                .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
+                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
                                 .add(SIMPLE_QUERY,                    BooleanClause.Occur.MUST)
                                 .build();
                 if (sort != null) {

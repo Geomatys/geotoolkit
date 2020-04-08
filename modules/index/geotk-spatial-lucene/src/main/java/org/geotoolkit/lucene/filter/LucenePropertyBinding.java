@@ -66,11 +66,11 @@ public class LucenePropertyBinding extends AbstractBinding<Document> {
     @Override
     public <T> T get(Document doc, String xpath, Class<T> target) throws IllegalArgumentException {
 
-        if(xpath.equals(LuceneOGCFilter.GEOMETRY_FIELD_NAME)){
+        if(xpath.equals(LuceneOGCSpatialQuery.GEOMETRY_FIELD_NAME)){
 
             //if the requested field is the geometry we must grab the crs field too
             //to generate the geometry
-            final BytesRef compact = doc.getBinaryValue(LuceneOGCFilter.GEOMETRY_FIELD_NAME);
+            final BytesRef compact = doc.getBinaryValue(LuceneOGCSpatialQuery.GEOMETRY_FIELD_NAME);
             if (compact == null) {
                 return null;
             }

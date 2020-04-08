@@ -24,9 +24,9 @@ import org.opengis.filter.sort.SortBy;
  */
 public interface SpatialQuery {
 
-    String getQuery();
+    String getTextQuery();
 
-    Object getSpatialFilter();
+    Object getQuery();
 
     Object getSort();
 

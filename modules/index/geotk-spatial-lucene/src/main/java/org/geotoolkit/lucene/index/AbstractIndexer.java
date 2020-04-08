@@ -49,7 +49,7 @@ import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.index.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
-import org.geotoolkit.lucene.filter.LuceneOGCFilter;
+import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
 
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -488,7 +488,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         } catch (TransformException | FactoryException | MismatchedReferenceSystemException | StoreIndexException | IOException ex) {
             LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
         }
-        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
+        doc.add(new StoredField(LuceneOGCSpatialQuery.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
         return namedBound;
     }
 

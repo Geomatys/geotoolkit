@@ -22,7 +22,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.LogicalFilterType;
-import org.geotoolkit.lucene.filter.LuceneOGCFilter;
+import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
 import org.opengis.filter.FilterFactory2;
@@ -2940,7 +2940,7 @@ public abstract class AbstractAnalyzerTest {
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
         CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
         bbox.setCoordinateReferenceSystem(crs);
-        LuceneOGCFilter sf = LuceneOGCFilter.wrap(FF.bbox(LuceneOGCFilter.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
+        LuceneOGCSpatialQuery sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
         SpatialQuery spatialQuery = new SpatialQuery("metafile:doc", sf, LogicalFilterType.AND);
 
         Set<String> result = indexSearcher.doSearch(spatialQuery);
@@ -2958,7 +2958,7 @@ public abstract class AbstractAnalyzerTest {
          */
 
         //sf           = new BBOXFilter(bbox, "urn:x-ogc:def:crs:EPSG:6.11:4326");
-        sf = LuceneOGCFilter.wrap(FF.bbox(LuceneOGCFilter.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
+        sf = LuceneOGCSpatialQuery.wrap(FF.bbox(LuceneOGCSpatialQuery.GEOMETRY_PROPERTY, -20, -20, 20, 20, "EPSG:4326"));
 
         BooleanQuery query = new BooleanQuery.Builder()
                                 .add(sf, BooleanClause.Occur.MUST_NOT)
@@ -3033,7 +3033,7 @@ public abstract class AbstractAnalyzerTest {
         final String id = doc.get("id");
         final NamedEnvelope namedBound = LuceneUtils.getNamedEnvelope(id, geom, treeCrs);
 
-        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME, WKBUtils.toWKBwithSRID(geom)));
+        doc.add(new StoredField(LuceneOGCSpatialQuery.GEOMETRY_FIELD_NAME, WKBUtils.toWKBwithSRID(geom)));
         return namedBound;
     }
 }
