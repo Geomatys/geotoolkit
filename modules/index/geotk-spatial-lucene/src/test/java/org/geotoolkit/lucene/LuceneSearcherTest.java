@@ -2282,10 +2282,10 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         org.opengis.filter.Filter bboxFilter = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
-        SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
+        SpatialQuery sQuery = new SpatialQuery(wrap(bboxFilter));
 
         //we perform a lucene query
-        Set<String> results = searcher.doSearch(bboxQuery);
+        Set<String> results = searcher.doSearch(sQuery);
 
         int nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
@@ -2304,11 +2304,30 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("line 1 projected"));
 
         /*
+         *  case 1.2: NOT a normal spatial request BBOX
+         */
+        sQuery = new SpatialQuery(null, wrap(bboxFilter), LogicalFilterType.NOT);
+
+        //we perform a lucene query
+        results = searcher.doSearch(sQuery);
+
+        nbResults = results.size();
+        LOGGER.log(Level.FINER, "NOT QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 5);
+        assertTrue(results.contains("point 4"));
+        assertTrue(results.contains("point 5"));
+        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("box 5"));
+
+        /*
          *  case 2: same filter with a StringQuery
          */
 
         //we perform a lucene query
-        SpatialQuery sQuery = new SpatialQuery("id:point*", bboxQuery.getQuery(), LogicalFilterType.AND);
+        sQuery = new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.AND);
 
         results = searcher.doSearch(sQuery);
 
@@ -2322,19 +2341,41 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
 
+
+        /*
+         *  case 2.1: NOT same filter with a StringQuery
+         */
+
+        //we perform a lucene query
+        sQuery = new SpatialQuery(null, LogicalFilterType.NOT);
+        sQuery.addSubQuery(new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.AND));
+
+        results = searcher.doSearch(sQuery);
+
+        nbResults = results.size();
+        LOGGER.log(Level.FINER, "QnS: title like point* AND BBOX 1: nb Results: {0}", nbResults);
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 11);
+        assertTrue(results.contains("point 4"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
+        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("point 5"));
+        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 5"));
+
         /*
          *  case 3: same filter same query but with an OR
          */
 
         //we perform two lucene query
-        sQuery = new SpatialQuery("id:point*");
-        Set<String> hits1 = searcher.doSearch(sQuery);
-        Set<String> hits2 = searcher.doSearch(bboxQuery);
-
-
-        results = new HashSet<>();
-        results.addAll(hits1);
-        results.addAll(hits2);
+        sQuery = new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.OR);
+        results = searcher.doSearch(sQuery);
 
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", nbResults);
@@ -2355,6 +2396,24 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("line 1"));
 
         /*
+         *  case 3.1: NOT same filter same query but with an OR
+         */
+         //we perform two lucene query
+        sQuery = new SpatialQuery(null, LogicalFilterType.NOT);
+        sQuery.addSubQuery(new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.OR));
+        results = searcher.doSearch(sQuery);
+
+
+        nbResults = results.size();
+        LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", nbResults);
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 3);
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 5"));
+
+        /*
          *  case 4: two filter two query with an OR in the middle
          *          (BBOX and name like point*) OR (INTERSECT line1 and name like box*)
          */
@@ -2368,15 +2427,13 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
 
-        SpatialQuery query1     = new SpatialQuery("id:point*", bboxQuery.getQuery(), LogicalFilterType.AND);
+        SpatialQuery query1     = new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.AND);
         SpatialQuery query2     = new SpatialQuery("id:box*", interQuery.getQuery(),  LogicalFilterType.AND);
+        SpatialQuery query3     = new SpatialQuery(null, LogicalFilterType.OR);
+        query3.addSubQuery(query1);
+        query3.addSubQuery(query2);
 
-        hits1 = searcher.doSearch(query1);
-        hits2 = searcher.doSearch(query2);
-
-        results      = new HashSet<>();
-        results.addAll(hits1);
-        results.addAll(hits2);
+        results = searcher.doSearch(query3);
 
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", nbResults);
@@ -2388,6 +2445,32 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 3"));
+
+        /*
+         *  case 4.1: NOT (two filter two query with an OR in the middle
+         *          (BBOX and name like point*) OR (INTERSECT line1 and name like box*))
+         */
+        query3     = new SpatialQuery(null, LogicalFilterType.NOT);
+        query3.addSubQuery(query1);
+        query3.addSubQuery(query2);
+        results = searcher.doSearch(query3);
+
+        nbResults = results.size();
+        LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", nbResults);
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 10);
+        assertTrue(results.contains("point 4"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
+        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("point 5"));
+        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 5"));
+
     }
 
 

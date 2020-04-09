@@ -49,7 +49,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     /**
      * The lucene text query to be parsed.
      */
-    private final StringBuilder textQuery;
+    private StringBuilder textQuery;
 
     /**
      * Logical operator to apply between the spatial filter and the query
@@ -86,7 +86,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
      * @throws org.opengis.referencing.operation.TransformException
      */
     public SpatialQuery(final Query query) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
-        this("",query,LogicalFilterType.AND);
+        this(null,query,LogicalFilterType.AND);
     }
 
     /**
@@ -106,9 +106,16 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
 
 
     private SpatialQuery(final String textQuery, final Query query, final LogicalFilterType logicalOperator, final List<SpatialQuery> sub){
-        this.textQuery = new StringBuilder(textQuery);
+        if (textQuery != null) {
+            this.textQuery = new StringBuilder();
+            this.textQuery.append(textQuery);
+        }
         this.query   = query;
-        this.logicalOperator = logicalOperator;
+        if (logicalOperator != null) {
+            this.logicalOperator = logicalOperator;
+        } else {
+            this.logicalOperator = LogicalFilterType.AND;
+        }
         if(sub != null){
             this.subQueries.addAll(sub);
         }
@@ -129,10 +136,10 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
      */
     @Override
     public String getTextQuery() {
-        if (textQuery == null || textQuery.toString().equals("") || textQuery.toString().equals(" ")) {
-            return "metafile:doc";
+        if (textQuery != null) {
+            return textQuery.toString();
         }
-        return textQuery.toString();
+        return null;
     }
 
     /**
@@ -211,8 +218,10 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
      * Set the lucene text query associated with the Query object.
      */
     public void setQuery(final String textQuery) {
-        this.textQuery.delete(0, this.textQuery.length()-1);
-        this.textQuery.append(textQuery);
+        if (textQuery != null) {
+            this.textQuery = new StringBuilder();
+            this.textQuery.append(textQuery);
+        }
     }
 
     /**
@@ -221,6 +230,9 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
      * @param s a piece of lucene query.
      */
     public void appendToTextQuery(final String s) {
+        if (this.textQuery == null) {
+            this.textQuery = new StringBuilder();
+        }
         textQuery.append(s);
     }
 

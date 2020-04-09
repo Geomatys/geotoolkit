@@ -35,6 +35,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.CollectionStatistics;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -206,7 +207,11 @@ public class LuceneIndexSearcher extends IndexLucene {
     private void initIdentifiersList() throws IOException {
         final Map<Integer, String> temp = new HashMap<>();
         final int nbValidDoc = searcher.getIndexReader().numDocs(); // do not take in count deleted document
-        final long nbDoc = searcher.collectionStatistics("id").maxDoc(); // contains deleted document
+        long nbDoc = 0;
+        CollectionStatistics cs = searcher.collectionStatistics("id"); // contains deleted document
+        if (cs != null) {
+           nbDoc= cs.maxDoc();
+        }
         for (int i = 0; i < nbDoc; i++) {
             final String metadataID = getMatchingID(searcher.doc(i));
             temp.put(i, metadataID);
@@ -259,18 +264,22 @@ public class LuceneIndexSearcher extends IndexLucene {
      */
     public String identifierQuery(final String id) throws SearchingException {
         try {
-            final TermQuery query = new TermQuery(new Term(getIdentifierSearchField(), id));
+            final String idField = getIdentifierSearchField();
+            final TermQuery query = new TermQuery(new Term(idField, id));
             final Set<String> results = new LinkedHashSet<>();
-            final int maxRecords = (int)searcher.collectionStatistics("id").maxDoc();
+            int maxRecords = 0;
+            CollectionStatistics cs = searcher.collectionStatistics(idField); // contains deleted document
+            if (cs != null) {
+               maxRecords = (int) cs.maxDoc();
+            }
             if (maxRecords == 0) {
                 LOGGER.warning("There is no document in the index");
                 return null;
             }
             final TopDocs hits = searcher.search(query, maxRecords);
             for (ScoreDoc doc : hits.scoreDocs) {
-                final Set<String> fieldsToLoad = new HashSet<>();
-                fieldsToLoad.add("id");
-                results.add(searcher.doc(doc.doc, fieldsToLoad).get("id"));
+                final Set<String> fieldsToLoad = Collections.singleton(idField);
+                results.add(searcher.doc(doc.doc, fieldsToLoad).get(idField));
             }
             if (results.size() > 1) {
                 LOGGER.log(Level.WARNING, "multiple record in lucene index for identifier: {0}", id);
@@ -320,6 +329,7 @@ public class LuceneIndexSearcher extends IndexLucene {
         org.geotoolkit.lucene.filter.SpatialQuery spatialQuery = (org.geotoolkit.lucene.filter.SpatialQuery) spatialQueryI;
         try {
             final long start = System.currentTimeMillis();
+            final String idField = getIdentifierSearchField();
             final Set<String> results = new LinkedHashSet<>();
             spatialQuery.applyRtreeOnQuery(rTree, envelopeOnly);
 
@@ -330,7 +340,11 @@ public class LuceneIndexSearcher extends IndexLucene {
                 return cachedResults;
             }
 
-            int maxRecords = (int) searcher.collectionStatistics("id").maxDoc();
+            int maxRecords = 0;
+            CollectionStatistics cs = searcher.collectionStatistics(idField); // contains deleted document
+            if (cs != null) {
+               maxRecords = (int) cs.maxDoc();
+            }
             if (maxRecords == 0) {
                 LOGGER.warning("The index seems to be empty.");
                 maxRecords = 1;
@@ -338,35 +352,37 @@ public class LuceneIndexSearcher extends IndexLucene {
 
             final String field       = "title";
             String stringQuery       = spatialQuery.getTextQuery();
-            final QueryParser parser = new ExtendedQueryParser(field, analyzer, numericFields);
-            parser.setDefaultOperator(Operator.AND);
 
-            // remove term:* query
-            stringQuery = removeOnlyWildchar(stringQuery);
-
-            // escape '/' character
-            stringQuery = stringQuery.replace("/", "\\/");
-
-            // we enable the leading wildcard mode if the first character of the query is a '*'
-            if (stringQuery.indexOf(":*") != -1 || stringQuery.indexOf(":?") != -1 || stringQuery.indexOf(":(*") != -1
-             || stringQuery.indexOf(":(+*") != -1 || stringQuery.indexOf(":+*") != -1) {
-                parser.setAllowLeadingWildcard(true);
-                LOGGER.log(Level.FINER, "Allowing leading wildChar");
-                BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
-            }
-
-            //we set off the mecanism setting all the character to lower case
-            /* we do that for range queries only for now. TODO see if we need to set it every time
-            if (stringQuery.contains(" TO ")) {
-                parser.setLowercaseExpandedTerms(false);
-            }*/
             final Query query;
-            if (!stringQuery.isEmpty()) {
-               query = parser.parse(stringQuery);
+            if (stringQuery != null && !stringQuery.isEmpty()) {
+
+                final QueryParser parser = new ExtendedQueryParser(field, analyzer, numericFields);
+                parser.setDefaultOperator(Operator.AND);
+
+                // remove term:* query
+                stringQuery = removeOnlyWildchar(stringQuery);
+
+                // escape '/' character
+                stringQuery = stringQuery.replace("/", "\\/");
+
+                // we enable the leading wildcard mode if the first character of the query is a '*'
+                if (stringQuery.contains(":*") || stringQuery.contains(":?") || stringQuery.contains(":(*")
+                 || stringQuery.contains(":(+*") || stringQuery.contains(":+*")) {
+                    parser.setAllowLeadingWildcard(true);
+                    LOGGER.log(Level.FINER, "Allowing leading wildChar");
+                    BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
+                }
+
+                //we set off the mecanism setting all the character to lower case
+                /* we do that for range queries only for now. TODO see if we need to set it every time
+                if (stringQuery.contains(" TO ")) {
+                    parser.setLowercaseExpandedTerms(false);
+                }*/
+                query = parser.parse(stringQuery);
             } else {
-                query = SIMPLE_QUERY;
+                query = null;
             }
-            LOGGER.log(Level.FINER, "QueryType:{0}", query.getClass().getName());
+
             final Query filter = spatialQuery.getQuery();
             final LogicalFilterType operator  = spatialQuery.getLogicalOperator();
             final Sort sort     = spatialQuery.getSort();
@@ -382,107 +398,128 @@ public class LuceneIndexSearcher extends IndexLucene {
             if (!(operator == LogicalFilterType.AND || (operator == LogicalFilterType.OR && filter == null))) {
                 operatorValue = '\n' + operator.valueOf();
             }
-            LOGGER.log(logLevel, "Searching for: " + query.toString(field) + operatorValue +  f + sorted + "\nmax records: " + maxRecords);
+            LOGGER.log(logLevel, "Searching for: " + (query != null ? query.toString(field) : "") + operatorValue +  f + sorted + "\nmax records: " + maxRecords);
 
-            // simple query with an AND
-            if (operator == LogicalFilterType.AND || (operator == LogicalFilterType.OR && filter == null)) {
-                Query singleQuery;
-                if (filter != null) {
-                    singleQuery = new BooleanQuery.Builder()
-                                    .add(filter, BooleanClause.Occur.MUST)
-                                    .add(query,  BooleanClause.Occur.MUST)
-                                    .build();
+            final List<org.geotoolkit.lucene.filter.SpatialQuery> subQueries = spatialQuery.getSubQueries();
+
+            if (filter != null || query != null) {
+                // query with an AND
+                if (operator == LogicalFilterType.AND || (operator == LogicalFilterType.OR && filter == null)) {
+                    Query singleQuery;
+                    if (filter != null && query != null) {
+                        singleQuery = new BooleanQuery.Builder()
+                                        .add(filter, BooleanClause.Occur.MUST)
+                                        .add(query,  BooleanClause.Occur.MUST)
+                                        .build();
+                    }  else if (filter != null && query == null) {
+                        singleQuery = filter;
+                    } else {
+                        singleQuery = query;
+                    }
+                    final TopDocs docs;
+                    if (sort != null) {
+                        docs = searcher.search(singleQuery, maxRecords, sort);
+                    } else {
+                        docs = searcher.search(singleQuery, maxRecords);
+                    }
+                    for (ScoreDoc doc : docs.scoreDocs) {
+                        addToResult(results, doc.doc);
+                    }
+
+                // query with an OR
+                } else if (operator == LogicalFilterType.OR) {
+                    final TopDocs docs;
+                    Query singleQuery;
+                    if (filter != null && query != null) {
+                        singleQuery = new BooleanQuery.Builder()
+                                        .add(filter, BooleanClause.Occur.SHOULD)
+                                        .add(query,  BooleanClause.Occur.SHOULD)
+                                        .build();
+                    }  else if (filter != null && query == null) {
+                        singleQuery = filter;
+                    } else {
+                        singleQuery = query;
+                    }
+                    if (sort != null) {
+                        docs = searcher.search(singleQuery, maxRecords, sort);
+                    } else {
+                        docs = searcher.search(singleQuery, maxRecords);
+                    }
+                    for (ScoreDoc doc : docs.scoreDocs) {
+                        addToResult(results, doc.doc);
+                    }
+
+                // for a NOT we need to perform many request
+                } else if (operator == LogicalFilterType.NOT) {
+                    Query singleQuery;
+                    if (filter != null && query != null) {
+                        singleQuery = new BooleanQuery.Builder()
+                                        .add(filter,        BooleanClause.Occur.MUST_NOT)
+                                        .add(query,         BooleanClause.Occur.MUST_NOT)
+                                        .add(SIMPLE_QUERY,  BooleanClause.Occur.MUST)
+                                        .build();
+                    }  else if (filter != null && query == null) {
+                        singleQuery = new BooleanQuery.Builder()
+                                        .add(filter,        BooleanClause.Occur.MUST_NOT)
+                                        .add(SIMPLE_QUERY,  BooleanClause.Occur.MUST)
+                                        .build();
+                    } else {
+                        singleQuery = new BooleanQuery.Builder()
+                                        .add(query,         BooleanClause.Occur.MUST_NOT)
+                                        .add(SIMPLE_QUERY,  BooleanClause.Occur.MUST)
+                                        .build();
+                    }
+
+                    final TopDocs docs;
+                    if (sort != null) {
+                        docs = searcher.search(singleQuery, maxRecords, sort);
+                    } else {
+                        docs = searcher.search(singleQuery, maxRecords);
+                    }
+                    for (ScoreDoc doc : docs.scoreDocs) {
+                        addToResult(results, doc.doc);
+                    }
+
                 } else {
-                    singleQuery = query;
+                    throw new IllegalArgumentException("unsupported logical Operator");
                 }
+            } else if (!subQueries.isEmpty() && operator == LogicalFilterType.NOT) {
                 final TopDocs docs;
                 if (sort != null) {
-                    docs = searcher.search(singleQuery, maxRecords, sort);
+                    docs = searcher.search(SIMPLE_QUERY, maxRecords, sort);
                 } else {
-                    docs = searcher.search(singleQuery, maxRecords);
+                    docs = searcher.search(SIMPLE_QUERY, maxRecords);
                 }
                 for (ScoreDoc doc : docs.scoreDocs) {
                     addToResult(results, doc.doc);
                 }
-
-            // for a OR we need to perform many request
-            } else if (operator == LogicalFilterType.OR) {
-                final TopDocs hits1;
-                final TopDocs hits2;
-                BooleanQuery boolQuery = new BooleanQuery.Builder()
-                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(SIMPLE_QUERY,                    BooleanClause.Occur.MUST)
-                                .build();
-                if (sort != null) {
-                    hits1 = searcher.search(query, maxRecords, sort);
-                    hits2 = searcher.search(boolQuery, maxRecords, sort);
-                } else {
-                    hits1 = searcher.search(query, maxRecords);
-                    hits2 = searcher.search(boolQuery, maxRecords);
-                }
-                for (ScoreDoc doc : hits1.scoreDocs) {
-                    addToResult(results, doc.doc);
-                }
-                for (ScoreDoc doc : hits2.scoreDocs) {
-                    addToResult(results, doc.doc);
-                }
-
-            // for a NOT we need to perform many request
-            } else if (operator == LogicalFilterType.NOT) {
-                BooleanQuery boolQuery = new BooleanQuery.Builder()
-                                .add(filter, BooleanClause.Occur.MUST)
-                                .add(query,                    BooleanClause.Occur.MUST)
-                                .build();
-                final TopDocs hits1;
-                if (sort != null) {
-                    hits1 = searcher.search(boolQuery, maxRecords, sort);
-                } else {
-                    hits1 = searcher.search(boolQuery, maxRecords);
-                }
-                final Set<String> unWanteds = new LinkedHashSet<>();
-                for (ScoreDoc doc : hits1.scoreDocs) {
-                    addToResult(unWanteds, doc.doc);
-                }
-
-                final TopDocs hits2;
-                if (sort != null) {
-                    hits2 = searcher.search(SIMPLE_QUERY, maxRecords, sort);
-                } else {
-                    hits2 = searcher.search(SIMPLE_QUERY, maxRecords);
-                }
-                for (ScoreDoc doc : hits2.scoreDocs) {
-                    final String id = identifiers.get(doc.doc);
-                    if (id != null && !unWanteds.contains(id)) {
-                        results.add(id);
-                    }
-                }
-
-            } else {
-                throw new IllegalArgumentException("unsupported logical Operator");
             }
 
             // if we have some subQueries we execute it separely and merge the result
-            if (spatialQuery.getSubQueries().size() > 0) {
+            if (subQueries.size() > 0) {
 
-                if (operator == LogicalFilterType.OR && query.equals(SIMPLE_QUERY)) {
-                    results.clear();
-                }
 
-                for (SpatialQuery sub : spatialQuery.getSubQueries()) {
+                for (SpatialQuery sub : subQueries) {
                     final Set<String> subResults = doSearch(sub);
-                    if (operator == LogicalFilterType.AND) {
-                        final Set<String> toRemove   = new HashSet<>();
-                        for (String r : results) {
-                            if (!subResults.contains(r)) {
-                                toRemove.add(r);
+                    switch (operator) {
+                        case AND:
+                            final Set<String> toRemove = new HashSet<>();
+                            for (String r : results) {
+                                if (!subResults.contains(r)) {
+                                    toRemove.add(r);
+                                }
                             }
-                        }
-                        results.removeAll(toRemove);
-                    } else if (operator == LogicalFilterType.OR){
-                        results.addAll(subResults);
-
-                    } else {
-                        LOGGER.warning("unimplemented case in doSearch");
+                            results.removeAll(toRemove);
+                            break;
+                        case OR:
+                            results.addAll(subResults);
+                            break;
+                        case NOT:
+                            results.removeAll(subResults);
+                            break;
+                        default:
+                            LOGGER.warning("unimplemented case in subQuery");
+                            break;
                     }
                 }
             }
