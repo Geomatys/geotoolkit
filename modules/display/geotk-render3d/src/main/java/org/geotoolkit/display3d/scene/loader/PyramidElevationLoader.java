@@ -162,7 +162,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
                     final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                     if (!mosaics.isEmpty()) {
                         Mosaic mosaic = mosaics.iterator().next();
-                        dataRenderedImage = new MosaicImage(mosaic, ((GridCoverageResource) coverageRef).getSampleDimensions());
+                        dataRenderedImage = MosaicImage.create(mosaic, null, ((GridCoverageResource) coverageRef).getSampleDimensions());
                     } else {
                         dataRenderedImage = null;
                         return null;
@@ -172,7 +172,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
                 final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
                     Mosaic mosaic = mosaics.iterator().next();
-                    dataRenderedImage = new MosaicImage(mosaic, ((GridCoverageResource) coverageRef).getSampleDimensions());
+                    dataRenderedImage = MosaicImage.create(mosaic, null, ((GridCoverageResource) coverageRef).getSampleDimensions());
                 } else {
                     dataRenderedImage = null;
                     return null;

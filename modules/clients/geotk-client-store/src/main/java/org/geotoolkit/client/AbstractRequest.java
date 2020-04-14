@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.client;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -360,7 +361,7 @@ public abstract class AbstractRequest implements Request {
                     httpCnx.setRequestProperty(entry.getKey(),entry.getValue());
                 }
                 //security
-                httpCnx = (HttpURLConnection)security.secure(httpCnx);
+                httpCnx = (HttpURLConnection) security.secure(httpCnx);
             }else{
                 return is;
             }
@@ -381,8 +382,14 @@ public abstract class AbstractRequest implements Request {
         try {
             setTimeout(cnx, timeout, timeout*2);
             InputStream stream = cnx.getInputStream();
+            if (!(stream instanceof BufferedInputStream)) {
+                stream = new BufferedInputStream(stream);
+            }
             //security
             stream = security.decrypt(stream);
+            if (!(stream instanceof BufferedInputStream)) {
+                stream = new BufferedInputStream(stream);
+            }
 
             if ("gzip".equalsIgnoreCase(cnx.getContentEncoding())) {
                 return new GZIPInputStream(stream);

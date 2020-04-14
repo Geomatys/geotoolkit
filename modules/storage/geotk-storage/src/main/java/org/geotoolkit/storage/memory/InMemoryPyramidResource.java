@@ -241,12 +241,12 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
         }
 
         @Override
-        public Optional<Tile> anyTile() throws DataStoreException {
+        public Tile anyTile() throws DataStoreException {
             final Iterator<InMemoryTile> iterator = mpTileReference.values().iterator();
             if (iterator.hasNext()) {
-                return Optional.of(iterator.next());
+                return iterator.next();
             }
-            return Optional.empty();
+            throw new DataStoreException("No tiles in mosaic");
         }
     }
 

@@ -22,13 +22,11 @@ import java.awt.Rectangle;
 import java.awt.image.*;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.image.PlanarImage;
+import org.apache.sis.image.ComputedImage;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.BufferedImages;
@@ -45,7 +43,7 @@ import org.geotoolkit.storage.multires.Tile;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MosaicImage extends PlanarImage implements RenderedImage {
+public class MosaicImage extends ComputedImage implements RenderedImage {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
@@ -54,11 +52,6 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
      */
     private final Mosaic mosaic;
     /**
-     * The original mosaic to read
-     */
-    private final List<SampleDimension> sampleDimensions;
-
-    /**
      * Tile range to map as a rendered image in the mosaic
      */
     private final Rectangle gridRange;
@@ -66,23 +59,49 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
     /**
      * The color model of the mosaic rendered image
      */
-    private ColorModel colorModel = null;
+    private final ColorModel colorModel;
     /**
      * The sample model of the mosaic rendered image
      */
-    private SampleModel sampleModel = null;
+    private final SampleModel sampleModel;
     /**
      * The raster model of the mosaic rendered image
      */
-    private Raster rasterModel = null;
+    private final Raster rasterModel;
 
+    public static MosaicImage create(Mosaic mosaic, Rectangle gridRange, final List<SampleDimension> sampleDimensions) throws DataStoreException {
+        if (gridRange == null) {
+            gridRange = new Rectangle(mosaic.getGridSize());
+        }
 
-    /**
-     * Constructor
-     * @param mosaic the mosaic to read as a rendered image
-     */
-    public MosaicImage(final Mosaic mosaic, final List<SampleDimension> sampleDimensions){
-        this(mosaic,new Rectangle(mosaic.getGridSize()), sampleDimensions);
+        if (gridRange.width == 0 || gridRange.height == 0) {
+            throw new DataStoreException("Mosaic grid range is empty : " + gridRange);
+        }
+
+        RenderedImage sample;
+        try {
+            Tile tile = mosaic.anyTile();
+            if (tile instanceof ImageTile) {
+                sample = ((ImageTile) tile).getImage();
+            } else {
+                throw new DataStoreException("Mosaic does not contain images");
+            }
+        } catch (DataStoreException | IOException ex) {
+            if (sampleDimensions != null) {
+                //use a fake tile created from sample dimensions
+                final Dimension tileSize = mosaic.getTileSize();
+                sample = BufferedImages.createImage(tileSize.width, tileSize.height, sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
+            } else if (ex instanceof DataStoreException) {
+                throw (DataStoreException) ex;
+            } else {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
+
+        final SampleModel sm = sample.getSampleModel();
+        final ColorModel cm = sample.getColorModel();
+        final Raster rm = sample.getTile(sample.getMinTileX(), sample.getMinTileY());
+        return new MosaicImage(mosaic, gridRange, sm, cm, rm);
     }
 
     /**
@@ -91,60 +110,13 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
      * @param gridRange the tile to include in the rendered image.
      *        rectangle max max values are exclusive.
      */
-    public MosaicImage(final Mosaic mosaic, Rectangle gridRange, final List<SampleDimension> sampleDimensions){
-        ArgumentChecks.ensureNonNull("mosaic", mosaic);
-        ArgumentChecks.ensureNonNull("range", gridRange);
-        ArgumentChecks.ensureNonNull("sampleDimensions", sampleDimensions);
-
-        if (mosaic.getGridSize().width == 0 || mosaic.getGridSize().height == 0) {
-            throw new IllegalArgumentException("Mosaic grid can not be empty.");
-        }
+    private MosaicImage(final Mosaic mosaic, Rectangle gridRange, SampleModel sampleModel, ColorModel colorModel, Raster rasterModel){
+        super(sampleModel);
         this.mosaic = mosaic;
         this.gridRange = gridRange;
-        this.sampleDimensions = sampleDimensions;
-    }
-
-    /**
-     * Try to find a valid tile and load sample and color models from it.
-     */
-    private synchronized void loadImageModel() {
-        try {
-            final Optional<Tile> anyTile = mosaic.anyTile();
-            if (anyTile.isPresent()) {
-                final ImageTile imgTile = (ImageTile) anyTile.get();
-                final RenderedImage image = imgTile.getImage();
-                sampleModel = image.getSampleModel();
-                colorModel = image.getColorModel();
-                rasterModel = image.getTile(0, 0);
-            }
-        } catch (DataStoreException | IOException e) {
-            LOGGER.log(Level.FINE, e.getMessage(), e);
-        }
-
-        if (sampleModel == null) {
-            //use a fake tile created from sample dimensions
-            final Dimension tileSize = mosaic.getTileSize();
-            final BufferedImage image = BufferedImages.createImage(tileSize.width, tileSize.height, sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
-            setImageModel(image);
-        }
-    }
-
-    public synchronized void setImageModel(RenderedImage image) {
-        if (sampleModel != null) return;
-        sampleModel = image.getSampleModel();
-        colorModel = image.getColorModel();
-        rasterModel = image.getTile(0, 0);
-
-        if (sampleDimensions.size() != sampleModel.getNumBands()) {
-            throw new BackingStoreException("Mosaic tile image declares " + sampleModel.getNumBands()
-                    + " bands, but sample dimensions have " + sampleDimensions.size()
-                    + ", please fix mosaic implementation "+mosaic.getClass().getName());
-        }
-
-    }
-
-    public List<SampleDimension> getSampleDimensions() {
-        return sampleDimensions;
+        this.sampleModel = sampleModel;
+        this.colorModel = colorModel;
+        this.rasterModel = rasterModel;
     }
 
     /**
@@ -168,9 +140,6 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
      */
     @Override
     public ColorModel getColorModel() {
-        if (colorModel == null) {
-            loadImageModel();
-        }
         return this.colorModel;
     }
 
@@ -179,9 +148,6 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
      */
     @Override
     public SampleModel getSampleModel() {
-        if (sampleModel == null) {
-            loadImageModel();
-        }
         return this.sampleModel;
     }
 
@@ -233,11 +199,8 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
         return this.mosaic.getTileSize().height;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Raster getTile(final int tileX, final int tileY) {
+    protected Raster computeTile(int tileX, int tileY, WritableRaster previous) throws Exception {
         return getTile(tileX, tileY, false);
     }
 
@@ -254,7 +217,6 @@ public class MosaicImage extends PlanarImage implements RenderedImage {
                 //can happen if tile is really missing, the isMissing method is a best effort call
                 if (tile != null) {
                     final RenderedImage image = tile.getImage();
-                    setImageModel(image);
                     Raster tileRaster = image.getData();
                     tileRaster = makeConform(tileRaster);
                     buffer = tileRaster.getDataBuffer();

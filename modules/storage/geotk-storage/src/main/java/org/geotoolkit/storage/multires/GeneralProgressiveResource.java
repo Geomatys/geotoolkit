@@ -290,12 +290,13 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
 
         @Override
-        public Optional<Tile> anyTile() throws DataStoreException {
-            final Optional<Tile> anyTile = base.anyTile();
-            if (anyTile.isPresent()) {
-                return anyTile;
+        public Tile anyTile() throws DataStoreException {
+            try {
+                return base.anyTile();
+            } catch (DataStoreException ex) {
+                //may be empty
             }
-            return Optional.ofNullable(getTile(0, 0, null));
+            return getTile(0, 0, null);
         }
 
     }

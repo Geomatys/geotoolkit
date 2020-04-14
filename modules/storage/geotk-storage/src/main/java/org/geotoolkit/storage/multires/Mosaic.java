@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
@@ -111,10 +110,12 @@ public interface Mosaic {
      * This tile should be fast to access, it's purpose is to provide a sample
      * of content of the mosaic.
      *
-     * @return Optional tile, empty is none exist.
+     * The returned tile may not really exist or be part of this mosaic at all.
+     *
+     * @return tile, should not be null.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    public Optional<Tile> anyTile() throws DataStoreException;
+    public Tile anyTile() throws DataStoreException;
 
     /**
      * Get a tile.

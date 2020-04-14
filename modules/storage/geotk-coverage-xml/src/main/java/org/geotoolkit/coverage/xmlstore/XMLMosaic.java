@@ -39,7 +39,6 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -142,6 +141,7 @@ public class XMLMosaic implements Mosaic {
     Boolean cacheTileState;
 
     Path folder;
+    private Tile anyTile = null;
 
     final ReentrantReadWriteLock bitsetLock = new ReentrantReadWriteLock();
 
@@ -818,9 +818,11 @@ public class XMLMosaic implements Mosaic {
     }
 
     @Override
-    public Optional<Tile> anyTile() throws DataStoreException {
-        //it will create a valid tile with correct sample model
-        return Optional.ofNullable(getTile(0, 0, null));
+    public synchronized Tile anyTile() throws DataStoreException {
+        if (anyTile == null) {
+            anyTile = getTile(0, 0, null);
+        }
+        return anyTile;
     }
 
     private class TileWriter implements Runnable{

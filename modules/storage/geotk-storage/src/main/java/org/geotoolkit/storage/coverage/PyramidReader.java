@@ -290,23 +290,13 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
      */
     private GridCoverage readSlice(Mosaic mosaic, Envelope wantedEnv) throws DataStoreException {
 
-        List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
+        final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
         final Rectangle tilesInEnvelope = Pyramids.getTilesInEnvelope(mosaic, wantedEnv);
         final int tileMinCol = tilesInEnvelope.x;
         final int tileMinRow = tilesInEnvelope.y;
 
         final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
-
-        final RenderedImage image =  new MosaicImage(mosaic, tilesInEnvelope, sampleDimensions);
-
-        //build the coverage ---------------------------------------------------
-        if (sampleDimensions == null) {
-            //dimension have not been defined
-            sampleDimensions = new ArrayList<>();
-            for (int i = 0, n = image.getSampleModel().getNumBands(); i < n; i++) {
-                sampleDimensions.add(new SampleDimension.Builder().setName(i).build());
-            }
-        }
+        final RenderedImage image =  MosaicImage.create(mosaic, tilesInEnvelope, sampleDimensions);
 
         final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
         Arrays.fill(high, 1);

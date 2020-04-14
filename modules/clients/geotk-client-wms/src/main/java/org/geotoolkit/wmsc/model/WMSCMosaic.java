@@ -19,7 +19,6 @@ package org.geotoolkit.wmsc.model;
 import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
@@ -50,6 +49,7 @@ public class WMSCMosaic implements Mosaic {
     private final Dimension gridSize = new Dimension();
     private final double tileSpanX;
     private final double tileSpanY;
+    private Tile anyTile = null;
 
     public WMSCMosaic(final WMSCPyramid pyramid, final double scaleLevel) {
         this.pyramid = pyramid;
@@ -150,7 +150,10 @@ public class WMSCMosaic implements Mosaic {
     }
 
     @Override
-    public Optional<Tile> anyTile() throws DataStoreException {
-        return Optional.of(getTile(0, 0, null));
+    public synchronized Tile anyTile() throws DataStoreException {
+        if (anyTile == null) {
+            anyTile = getTile(0, 0, null);
+        }
+        return anyTile;
     }
 }

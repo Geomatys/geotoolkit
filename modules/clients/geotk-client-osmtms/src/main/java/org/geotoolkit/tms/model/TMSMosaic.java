@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.ImageTile;
@@ -38,6 +37,7 @@ public class TMSMosaic extends AbstractMosaic {
 
     private final TMSPyramidSet set;
     private final int scaleLevel;
+    private Tile anyTile = null;
 
     public TMSMosaic(TMSPyramidSet set, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
@@ -66,8 +66,11 @@ public class TMSMosaic extends AbstractMosaic {
     }
 
     @Override
-    public Optional<Tile> anyTile() throws DataStoreException {
-        return Optional.ofNullable(getTile(0, 0, null));
+    public synchronized Tile anyTile() throws DataStoreException {
+        if (anyTile == null) {
+            anyTile = getTile(0, 0, null);
+        }
+        return anyTile;
     }
 
 }

@@ -20,7 +20,6 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
@@ -53,6 +52,7 @@ public class WMTSMosaic implements Mosaic{
     private final TileMatrix matrix;
     private final TileMatrixLimits limit;
     private final double scale;
+    private Tile anyTile = null;
 
     public WMTSMosaic(final WMTSPyramid pyramid, final TileMatrix matrix, final TileMatrixLimits limits) {
         this.pyramid = pyramid;
@@ -133,8 +133,8 @@ public class WMTSMosaic implements Mosaic{
 
     @Override
     public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
-        if(hints==null) hints = new HashMap();
-        if(!hints.containsKey(Pyramids.HINT_FORMAT)) hints.put(Pyramids.HINT_FORMAT,"image/png");
+        if (hints == null) hints = new HashMap();
+        if (!hints.containsKey(Pyramids.HINT_FORMAT)) hints.put(Pyramids.HINT_FORMAT,"image/png");
 
         return pyramid.getPyramidSet().getTile(pyramid, this, col, row, hints);
     }
@@ -178,11 +178,14 @@ public class WMTSMosaic implements Mosaic{
     }
 
     @Override
-    public Optional<Tile> anyTile() throws DataStoreException {
-        if (limit == null) {
-            return Optional.ofNullable(getTile(0, 0, null));
-        } else {
-            return Optional.ofNullable(getTile(limit.getMinTileCol(), limit.getMinTileRow(), null));
+    public synchronized Tile anyTile() throws DataStoreException {
+        if (anyTile == null) {
+            if (limit == null) {
+                anyTile = getTile(0, 0, null);
+            } else {
+                anyTile = getTile(limit.getMinTileCol(), limit.getMinTileRow(), null);
+            }
         }
+        return anyTile;
     }
 }

@@ -132,7 +132,7 @@ public class PyramidImageLoader implements ImageLoader{
                 if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
                     final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                     if (!mosaics.isEmpty()) {
-                        dataRenderedImage = new MosaicImage(mosaics.iterator().next(), ((GridCoverageResource) ref).getSampleDimensions());
+                        dataRenderedImage = MosaicImage.create(mosaics.iterator().next(), null, ((GridCoverageResource) ref).getSampleDimensions());
                     } else {
                         dataRenderedImage = null;
                         return null;
@@ -141,7 +141,7 @@ public class PyramidImageLoader implements ImageLoader{
             } else {
                 final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
-                    dataRenderedImage = new MosaicImage(mosaics.iterator().next(), ((GridCoverageResource) ref).getSampleDimensions());
+                    dataRenderedImage = MosaicImage.create(mosaics.iterator().next(), null, ((GridCoverageResource) ref).getSampleDimensions());
                 } else {
                     dataRenderedImage = null;
                     return null;
