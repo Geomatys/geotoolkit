@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -74,7 +74,7 @@ import org.opengis.util.GenericName;
  */
 public class CachePyramidResource <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridResource implements MultiResolutionResource, GridCoverageResource {
 
-    private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors()*200);
+    private static final BlockingQueue IMAGEQUEUE = new PriorityBlockingQueue(Runtime.getRuntime().availableProcessors()*200);
     private static final ThreadPoolExecutor EXEC;
     static {
         final int nbLoader = Runtime.getRuntime().availableProcessors();
@@ -370,18 +370,8 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             if (value == null) {
                 if (noblocking) {
                     if (tilesInProcess.add(key)) {
-                        //TODO replace by a thread poll or an executor
                         //loadUpperTile(col, row);
-                        EXEC.submit(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    loadTile(col, row, hints);
-                                } catch (DataStoreException ex) {
-                                    Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
-                                }
-                            }
-                        });
+                        IMAGEQUEUE.add(new TileLoader(CacheMosaic.this, col, row, hints));
                     }
                 } else {
                     value = loadTile(col, row, hints);
@@ -572,4 +562,35 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         }
     }
 
+    private class TileLoader implements Runnable, Comparable<TileLoader> {
+
+        private final long creationTime;
+        private final CacheMosaic mosaic;
+        private final long col;
+        private final long row;
+        private final Map hints;
+
+        private TileLoader(CacheMosaic mosaic, long col, long row, Map hints) {
+            this.mosaic = mosaic;
+            this.col = col;
+            this.row = row;
+            this.hints = hints;
+            this.creationTime = System.nanoTime();
+        }
+
+        @Override
+        public void run() {
+            try {
+                mosaic.loadTile(col, row, hints);
+            } catch (DataStoreException ex) {
+                Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+
+        @Override
+        public int compareTo(TileLoader o) {
+            return Long.compare(creationTime, o.creationTime);
+        }
+
+    }
 }
