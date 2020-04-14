@@ -107,7 +107,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
-        DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue");
+        DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue", null);
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
         ObservationType obs = new ObservationType("urn:Observation-007", "observation definition", sp, observedProperty, "urn:sensor:007", arrayProp, samplingTime);
 
@@ -331,7 +331,7 @@ public class ObservationXMLBindingTest extends org.geotoolkit.test.TestBase {
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
-        DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue");
+        DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue", null);
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
 
         ObservationType expResult = new ObservationType("urn:Observation-007", null, sp, observedProperty, "urn:sensor:007", arrayProp, samplingTime);

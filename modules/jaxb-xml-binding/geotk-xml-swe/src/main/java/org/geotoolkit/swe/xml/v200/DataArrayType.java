@@ -17,6 +17,7 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -77,7 +78,8 @@ import org.geotoolkit.swe.xml.DataArray;
     "elementCount",
     "elementType",
     "encoding",
-    "values"
+    "values",
+    "dataValues"
 })
 @XmlSeeAlso({
     MatrixType.class
@@ -89,7 +91,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
     @XmlElement(required = true)
     private DataArrayType.ElementType elementType;
     private DataArrayType.Encoding encoding;
-    //private EncodedValuesPropertyType values;
+    private EncodedValuesPropertyType dataValues;
     private String values;
 
     /**
@@ -119,7 +121,8 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     }
 
-    public DataArrayType(final String id, final int count, final AbstractEncodingType encoding, final String values, final String elementName, final AbstractDataComponentType elementType) {
+    public DataArrayType(final String id, final int count, final AbstractEncodingType encoding, final String values,
+            final String elementName, final AbstractDataComponentType elementType , final List<Object> dataValues) {
         super(id, null, null);
         this.elementCount = new CountPropertyType(count);
         if (encoding != null) {
@@ -128,6 +131,9 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         this.values       = values;
         if (elementType != null) {
             this.elementType  = new ElementType(elementName, elementType);
+        }
+        if (dataValues != null) {
+            this.dataValues = new EncodedValuesPropertyType(dataValues);
         }
     }
 
@@ -235,7 +241,14 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
      */
     @Override
     public EncodedValuesPropertyType getDataValues() {
-        return null;
+        return dataValues;
+    }
+
+     /**
+     * @param dataValues the dataValues to set
+     */
+    public void setDataValues(EncodedValuesPropertyType dataValues) {
+        this.dataValues = dataValues;
     }
 
     /**
@@ -279,6 +292,9 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         if (values != null) {
             sb.append("values:").append(values).append('\n');
         }
+        if (dataValues != null) {
+            sb.append("dataValues:").append(dataValues).append('\n');
+        }
         return sb.toString();
     }
 
@@ -295,6 +311,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
             return Objects.equals(this.elementCount,   that.elementCount)   &&
                    Objects.equals(this.elementType,    that.elementType)   &&
                    Objects.equals(this.encoding,       that.encoding)    &&
+                   Objects.equals(this.dataValues,       that.dataValues)    &&
                    Objects.equals(this.values,         that.values);
         }
         return false;
@@ -308,6 +325,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         hash = 29 * hash + (this.elementType != null ? this.elementType.hashCode() : 0);
         hash = 29 * hash + (this.encoding != null ? this.encoding.hashCode() : 0);
         hash = 29 * hash + (this.values != null ? this.values.hashCode() : 0);
+        hash = 29 * hash + (this.dataValues != null ? this.dataValues.hashCode() : 0);
         return hash;
     }
 

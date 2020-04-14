@@ -364,7 +364,7 @@ public class SweXmlFactory {
     }
 
     public static DataArray buildDataArray(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType,
-            final AbstractEncoding encoding, final String values) {
+            final AbstractEncoding encoding, final String values, final List<Object> dataValues) {
         if ("1.0.0".equals(version)) {
             if (!(elementType instanceof org.geotoolkit.swe.xml.v100.AbstractDataRecordType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for elementType object.");
@@ -377,7 +377,8 @@ public class SweXmlFactory {
                                                                  elementName,
                                                                  (org.geotoolkit.swe.xml.v100.AbstractDataRecordType)elementType,
                                                                  (org.geotoolkit.swe.xml.v100.AbstractEncodingType)encoding,
-                                                                 values);
+                                                                 values,
+                                                                 dataValues);
 
         } else if ("1.0.1".equals(version)) {
             if (!(elementType instanceof org.geotoolkit.swe.xml.v101.AbstractDataRecordType)) {
@@ -391,7 +392,8 @@ public class SweXmlFactory {
                                                                  elementName,
                                                                  (org.geotoolkit.swe.xml.v101.AbstractDataRecordType)elementType,
                                                                  (org.geotoolkit.swe.xml.v101.AbstractEncodingType)encoding,
-                                                                 values);
+                                                                 values,
+                                                                 dataValues);
         } else if ("2.0.0".equals(version)) {
             if (!(elementType instanceof org.geotoolkit.swe.xml.v200.DataRecordType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for elementType object.");
@@ -404,7 +406,8 @@ public class SweXmlFactory {
                                                                  (org.geotoolkit.swe.xml.v200.AbstractEncodingType)encoding,
                                                                  values,
                                                                  elementName,
-                                                                 (org.geotoolkit.swe.xml.v200.DataRecordType)elementType);
+                                                                 (org.geotoolkit.swe.xml.v200.DataRecordType)elementType,
+                                                                 dataValues);
         } else {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }

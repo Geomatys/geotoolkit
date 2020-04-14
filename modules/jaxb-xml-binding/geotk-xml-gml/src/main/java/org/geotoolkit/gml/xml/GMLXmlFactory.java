@@ -24,7 +24,6 @@ import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-//import org.opengis.temporal.Position;
 
 /**
  *
@@ -242,17 +241,21 @@ public class GMLXmlFactory {
     }
 
     public static Period createTimePeriod(final String version, final Date dateBegin, final Date dateEnd) {
+        return createTimePeriod(version, null, dateBegin, dateEnd);
+    }
+
+    public static Period createTimePeriod(final String version, final String id, final Date dateBegin, final Date dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd == null) {
-                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin);
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, dateBegin);
             } else {
-                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin, dateEnd);
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, dateBegin, dateEnd);
             }
         } else if ("3.1.1".equals(version)) {
             if (dateEnd == null) {
-                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin);
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(id, dateBegin);
             } else {
-                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin, dateEnd);
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(id, dateBegin, dateEnd);
             }
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
@@ -321,11 +324,15 @@ public class GMLXmlFactory {
     }
 
     public static Instant createTimeInstant(final String version, final Date date) {
+        return createTimeInstant(version, null, date);
+    }
+
+    public static Instant createTimeInstant(final String version, final String id, final Date date) {
         if ("3.2.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v321.TimeInstantType(date);
+            return new org.geotoolkit.gml.xml.v321.TimeInstantType(id, date);
 
         } else if ("3.1.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v311.TimeInstantType(date);
+            return new org.geotoolkit.gml.xml.v311.TimeInstantType(id, date);
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -80,14 +81,16 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     }
 
     public DataArrayType(final String id, final int count, final String elementName, final AbstractDataRecordType elementType,
-            final AbstractEncodingType encoding, final String values) {
+            final AbstractEncodingType encoding, final String values, final List<Object> dataValues) {
         super(id, count);
         if (elementType != null) {
             this.elementType = new DataComponentPropertyType(elementType, elementName);
         }
         this.encoding    = new BlockEncodingPropertyType(encoding);
         this.values      = values;
-
+        if (dataValues != null) {
+            this.dataValues = new DataValuePropertyType(dataValues);
+        }
     }
 
     /**

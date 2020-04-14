@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -52,7 +53,8 @@ import org.apache.sis.util.ComparisonMode;
 @XmlType(name = "DataArrayType", propOrder = {
     "elementType",
     "encoding",
-    "values"
+    "values",
+    "dataValues"
 })
 @XmlRootElement(name = "DataArray")
 public class DataArrayType extends AbstractDataArrayType implements DataArray {
@@ -61,6 +63,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     private DataComponentPropertyType elementType;
     private AbstractEncodingPropertyType encoding;
     private String values;
+    private DataValuePropertyType dataValues;
 
     /**
      * An empty constructor used by JAXB.
@@ -90,14 +93,16 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
      * Build a new data array.
      */
     public DataArrayType(final String id, final int count, final String elementName, final AbstractDataRecordType elementType,
-            final AbstractEncodingType encoding, final String values) {
+            final AbstractEncodingType encoding, final String values, final List<Object> dataValues) {
         super(id, count);
         if (elementType != null) {
             this.elementType = new DataComponentPropertyType(elementType, elementName);
         }
         this.encoding    = new AbstractEncodingPropertyType(encoding);
         this.values      = values;
-
+        if (dataValues != null) {
+            this.dataValues = new DataValuePropertyType(dataValues);
+        }
     }
 
     /**
@@ -162,7 +167,14 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
 
     @Override
     public AbstractDataValueProperty getDataValues() {
-        return null;
+        return dataValues;
+    }
+
+    /**
+     * @param dataValues the dataValues to set
+     */
+    public void setDataValues(DataValuePropertyType dataValues) {
+        this.dataValues = dataValues;
     }
 
     /**
@@ -177,6 +189,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
             final DataArrayType that = (DataArrayType) object;
             return Objects.equals(this.elementType,   that.elementType)   &&
                    Objects.equals(this.encoding,    that.encoding)    &&
+                   Objects.equals(this.dataValues,    that.dataValues)    &&
                    Objects.equals(this.values,       that.values);
         }
         return false;
@@ -188,6 +201,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         hash = 29 * hash + (this.elementType != null ? this.elementType.hashCode() : 0);
         hash = 29 * hash + (this.encoding != null ? this.encoding.hashCode() : 0);
         hash = 29 * hash + (this.values != null ? this.values.hashCode() : 0);
+        hash = 29 * hash + (this.dataValues != null ? this.dataValues.hashCode() : 0);
         return hash;
     }
 
