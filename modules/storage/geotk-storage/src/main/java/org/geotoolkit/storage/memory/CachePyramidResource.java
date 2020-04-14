@@ -75,10 +75,15 @@ import org.opengis.util.GenericName;
 public class CachePyramidResource <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridResource implements MultiResolutionResource, GridCoverageResource {
 
     private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors()*200);
-    private static final ThreadPoolExecutor EXEC = new ThreadPoolExecutor(
-            0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, IMAGEQUEUE,
+    private static final ThreadPoolExecutor EXEC;
+    static {
+        final int nbLoader = Runtime.getRuntime().availableProcessors();
+        EXEC = new ThreadPoolExecutor(
+            nbLoader, nbLoader, 1, TimeUnit.MINUTES, IMAGEQUEUE,
             Threads.createThreadFactory("Cached pyramid tile loader thread "),
             new ThreadPoolExecutor.CallerRunsPolicy());
+        EXEC.prestartAllCoreThreads();
+    }
 
 
     private final T parent;
