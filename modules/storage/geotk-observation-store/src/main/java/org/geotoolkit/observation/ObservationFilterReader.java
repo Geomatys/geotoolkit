@@ -17,6 +17,7 @@
 
 package org.geotoolkit.observation;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.sos.xml.ResponseModeType;
+import org.opengis.geometry.Geometry;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -79,6 +81,18 @@ public interface ObservationFilterReader {
      * @throws org.apache.sis.storage.DataStoreException
      */
     void initFilterOffering() throws DataStoreException;
+
+    /**
+     * Initialize the query for extracting procedure locations request.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void initFilterGetLocations() throws DataStoreException;
+
+    /**
+     * Initialize the query for extracting procedure locations request.
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void initFilterGetProcedureTimes() throws DataStoreException;
 
     /**
      * Add some procedure filter to the request.
@@ -309,6 +323,24 @@ public interface ObservationFilterReader {
      * @throws DataStoreException
      */
     List<Process> getProcesses(final Map<String,String> hints) throws DataStoreException;
+
+    /**
+     *
+     * @param hints extraction hints like the O&M version for the xml object returned.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    Map<String, Map<Date, Geometry>> getSensorLocations(final Map<String,String> hints) throws DataStoreException;
+
+    /**
+     *
+     * @param hints extraction hints like the O&M version for the xml object returned.
+     *
+     * @return
+     * @throws DataStoreException
+     */
+    Map<String, List<Date>> getSensorTimes(final Map<String,String> hints) throws DataStoreException;
 
     /**
      * Return an encoded block of data in a string.

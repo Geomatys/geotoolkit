@@ -42,7 +42,7 @@ public abstract class AbstractTimePosition {
     protected static final List<DateFormat> FORMATTERS = new ArrayList<DateFormat>();
 
     static {
-        FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS"));
+        FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"));
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd"));

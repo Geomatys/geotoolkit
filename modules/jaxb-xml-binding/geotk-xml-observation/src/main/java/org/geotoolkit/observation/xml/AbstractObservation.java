@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.observation.xml;
 
+import java.util.Date;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.observation.Observation;
@@ -45,7 +46,7 @@ public interface AbstractObservation extends Observation {
 
     void setSamplingTimePeriod(final Period period);
 
-    void extendSamplingTime(final String newEndBound);
+    void extendSamplingTime(final Date newEndBound);
 
     boolean matchTemplate(final Observation template);
 

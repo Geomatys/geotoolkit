@@ -20,7 +20,6 @@ package org.geotoolkit.swe.xml;
 import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
-import org.w3c.dom.Element;
 
 /**
  *
@@ -28,7 +27,7 @@ import org.w3c.dom.Element;
  */
 public interface AbstractDataValueProperty {
 
-    public List<? extends Element> getAny();
+    public List<Object> getAny();
 
     public String getRemoteSchema();
 

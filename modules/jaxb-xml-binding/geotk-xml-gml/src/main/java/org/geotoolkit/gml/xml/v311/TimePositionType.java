@@ -18,7 +18,6 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,13 +26,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
-import org.opengis.temporal.IndeterminateValue;
-import org.opengis.temporal.TemporalReferenceSystem;
 import org.opengis.util.InternationalString;
 
 
@@ -64,13 +62,12 @@ import org.opengis.util.InternationalString;
  *
  * @module
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "TimePositionType", propOrder = {
     "value"
 })
 public class TimePositionType extends AbstractTimePosition implements Serializable {
 
-    @XmlValue
     private String value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -79,6 +76,9 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     private String calendarEraName;
     @XmlAttribute
     private TimeIndeterminateValueType indeterminatePosition;
+
+    @XmlTransient
+    private Date cachedDate;
 
     /**
      * empty constructor used by JAXB.
@@ -113,15 +113,6 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      * @param value a date.
      */
-    public TimePositionType(final Timestamp time){
-        this.value = FORMATTERS.get(0).format(time);
-    }
-
-    /**
-     * build a simple Timposition with only a value from a timestamp.
-     *
-     * @param value a date.
-     */
     public TimePositionType(final Date time){
         setValue(time);
     }
@@ -137,32 +128,34 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      * are assembled by gml:CalDate Gets the value of the value property.
      *
      */
+    @XmlValue
     public String getValue() {
-        return value;
-    }
-
-    public void setValue(final String value) {
-        this.value = value;
-    }
-
-    public final void setValue(final Date value) {
-        if (value != null) {
+        if (cachedDate != null && value == null) {
             final Calendar c = Calendar.getInstance();
-            c.setTime(value);
+            c.setTime(cachedDate);
             if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
                 final DateFormat df = FORMATTERS.get(3);
                 synchronized (df) {
-                    this.value = df.format(value);
+                    this.value = df.format(cachedDate);
                 }
             } else {
                 final DateFormat df = FORMATTERS.get(0);
                 synchronized (df) {
-                    this.value = df.format(value);
+                    this.value = df.format(cachedDate);
                 }
             }
-        } else {
-            this.value = null;
         }
+        return value;
+    }
+
+    public void setValue(final String value) {
+        this.cachedDate = null;
+        this.value = value;
+    }
+
+    public final void setValue(final Date value) {
+        this.cachedDate = value;
+        this.value = null;
     }
 
     /**
@@ -240,18 +233,26 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
 
     @Override
     public Date getDate() {
-        return parseDate(value);
+        if (cachedDate == null && value != null) {
+            cachedDate = parseDate(value);
+        }
+        return cachedDate;
     }
 
 //    @Override
     public Time getTime() {
-        return Time.valueOf(value);
+        String v = getValue();
+        if (v != null) {
+            return Time.valueOf(v);
+        }
+        return null;
     }
 
 //    @Override
     public InternationalString getDateTime() {
-        if (value != null) {
-            return new SimpleInternationalString(value);
+        String v = getValue();
+        if (v != null) {
+            return new SimpleInternationalString(v);
         }
         return null;
     }
@@ -269,7 +270,8 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
             return Objects.equals(this.calendarEraName,       that.calendarEraName)       &&
                    Objects.equals(this.frame,                 that.frame)                 &&
                    Objects.equals(this.indeterminatePosition, that.indeterminatePosition) &&
-                   Objects.equals(this.value,                 that.value);
+                   // fix equals issue with diferent facet value, but same dateTime
+                   (Objects.equals(this.value, that.value) || Objects.equals(this.getDate(), that.getDate()));
         }
         return false;
     }

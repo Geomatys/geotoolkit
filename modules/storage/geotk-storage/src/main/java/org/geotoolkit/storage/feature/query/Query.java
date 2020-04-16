@@ -111,7 +111,7 @@ public final class Query extends SimpleQuery {
         setLimit(MaxFeature);
         setSortBy(sort);
 
-        if (attributs != null) {
+        if (attributs != null && attributs.length > 0) {
             final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
             final List<Column> columns = new ArrayList<>();
             for (String att : attributs) {
