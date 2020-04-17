@@ -80,15 +80,15 @@ public class WKBRasterImageReader extends ImageReader{
     @Override
     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         final WKBRasterReader reader = new WKBRasterReader();
-        if(input instanceof byte[]){
+        if (input instanceof byte[]) {
             return reader.read((byte[])input);
-        }else if(input instanceof ImageInputStream){
+        } else if(input instanceof ImageInputStream) {
             return reader.read(new InputStreamAdapter((ImageInputStream)input));
-        }else{
+        } else {
             InputStream stream;
-            if(input instanceof InputStream){
+            if (input instanceof InputStream) {
                 stream = (InputStream) input;
-            }else{
+            } else {
                 stream = IOUtilities.open(input);
                 stream = new BufferedInputStream(stream);
             }
@@ -109,6 +109,7 @@ public class WKBRasterImageReader extends ImageReader{
             version         = Utilities.VERSION.toString();
             writerSpiNames  = new String[] {"PostGISWKBraster"};
             inputTypes      = new Class[0];
+            inputTypes      = ArraysExt.append(inputTypes, InputStream.class);
             inputTypes      = ArraysExt.append(inputTypes, ImageInputStream.class);
             inputTypes      = ArraysExt.append(inputTypes, File.class);
             inputTypes      = ArraysExt.append(inputTypes, URL.class);

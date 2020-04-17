@@ -130,6 +130,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private boolean forceTransformedValues;
     private double[] noData;
     private MergingMode mergeMode;
+    private int dataType = DataBuffer.TYPE_DOUBLE;
 
 
     public static GridCoverageResource create(CoordinateReferenceSystem resultCrs, GridCoverageResource ... resources) throws DataStoreException, TransformException {
@@ -355,6 +356,19 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     public void setMode(Mode mode) {
         ArgumentChecks.ensureNonNull("mode", mode);
         this.mode = mode;
+    }
+
+    /**
+     * Set preferred image raster data type.
+     *
+     * @param dataType
+     */
+    public void setDataType(int dataType) {
+        this.dataType = dataType;
+    }
+
+    public int getDataType() {
+        return dataType;
     }
 
     /**
@@ -670,7 +684,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 BufferedImage band = BufferedImages.createImage(
                         (int) canvas.getExtent().getSize(0),
                         (int) canvas.getExtent().getSize(1),
-                        1, DataBuffer.TYPE_DOUBLE);
+                        1, dataType);
                 if (noData[i] != 0) {
                     BufferedImages.setAll(band, new double[]{noData[i]});
                 }
@@ -680,8 +694,20 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         BufferedImage result = null;
         if (bandImages.length == 1) {
             result = bandImages[0];
+
+            if (result.getSampleModel().getDataType() != dataType) {
+                final BufferedImage cp = BufferedImages.createImage(result, null, null, null, dataType);
+                final PixelIterator readIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(result);
+                final WritablePixelIterator writeIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(cp);
+                final double[] buffer = new double[cp.getSampleModel().getNumBands()];
+                while (readIte.next() && writeIte.next()) {
+                    writeIte.setPixel(readIte.getPixel(buffer));
+                }
+                result = cp;
+            }
+
         } else {
-            result = BufferedImages.createImage(bandImages[0].getWidth(), bandImages[1].getHeight(), bandImages.length, DataBuffer.TYPE_DOUBLE);
+            result = BufferedImages.createImage(bandImages[0].getWidth(), bandImages[1].getHeight(), bandImages.length, dataType);
             WritablePixelIterator writer = WritablePixelIterator.create(result);
             for (int bandIndex = 0; bandIndex < bandImages.length; bandIndex++) {
                 final PixelIterator reader = PixelIterator.create(bandImages[bandIndex]);
