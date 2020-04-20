@@ -1494,7 +1494,7 @@ public class ImageCoverageReader extends GridCoverageStore {
                 ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
             }
             if (param != null && param.isDeferred()) {
-                image = new LargeRenderedImage(imageReader.getOriginatingProvider(), imageParam, imageReader.getInput(), index, null, null);
+                image = new LargeRenderedImage(imageReader.getOriginatingProvider(), imageParam, imageReader.getInput(), index, null);
             } else {
                 image = imageReader.read(index, imageParam);
             }

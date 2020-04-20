@@ -57,7 +57,6 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.coverage.metadataextractor.ExtractionDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.reducetodomain.ReduceToDomainDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.reformat.ReformatDescriptor.INSTANCE,
-                org.geotoolkit.processing.coverage.resample.IOResampleDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.resample.ResampleDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.INSTANCE,

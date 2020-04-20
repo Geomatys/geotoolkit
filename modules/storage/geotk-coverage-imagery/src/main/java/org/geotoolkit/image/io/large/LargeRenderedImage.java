@@ -30,13 +30,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import javax.media.jai.TileCache;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.media.jai.TileCache;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
@@ -141,7 +141,7 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
      * @throws IOException if an error occurs during reading.
      */
     public LargeRenderedImage(ImageReader imageReader, int imageIndex) throws IOException{
-        this(imageReader, imageIndex, null, null);
+        this(imageReader, imageIndex, null);
     }
 
     /**
@@ -149,30 +149,28 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
      *
      * @param imageReader reader which target at image stored on disk.
      * @param imageIndex the index of the image to be retrieved.
-     * @param tilecache cache mechanic class. if {@code null} a default {@link TileCache}
-     *                  is define with a default memory capacity of 64 Mb.
      * @param tileSize internal {@link Raster} (tile) dimension. if {@code null}
      *                 a default tile size is chosen (256x256 pixels).
      * @throws IOException if an error occurs during reading.
      */
-    public LargeRenderedImage(ImageReader imageReader, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException {
-        this(imageReader, null, imageIndex, tilecache, tileSize);
+    public LargeRenderedImage(ImageReader imageReader, int imageIndex, Dimension tileSize) throws IOException {
+        this(imageReader, null, imageIndex, tileSize);
     }
 
     public LargeRenderedImage(ImageReader imageReader, ImageReadParam readParam, int imageIndex,
-            TileCache tilecache, Dimension tileSize) throws IOException
+            Dimension tileSize) throws IOException
     {
-        this(null, imageReader, readParam, null, imageIndex, tilecache, tileSize);
+        this(null, imageReader, readParam, null, imageIndex, tileSize);
     }
 
     public LargeRenderedImage(ImageReaderSpi spi, ImageReadParam readParam, final Object input, int imageIndex,
-            TileCache tilecache, Dimension tileSize) throws IOException
+            Dimension tileSize) throws IOException
     {
-        this(spi, null, readParam, input, imageIndex, tilecache, tileSize);
+        this(spi, null, readParam, input, imageIndex, tileSize);
     }
 
     private LargeRenderedImage(ImageReaderSpi spi, ImageReader imageReader, ImageReadParam readParam,
-            final Object input, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException
+            final Object input, int imageIndex, Dimension tileSize) throws IOException
     {
         ArgumentChecks.ensurePositive("image index", imageIndex);
         this.spi         = spi;
@@ -224,7 +222,7 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
         }
 
 
-        this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance();
+        this.tilecache = LargeCache.getInstance();
         this.tileGridXOffset = 0;
         this.tileGridYOffset = 0;
         if (tileSize != null) {
