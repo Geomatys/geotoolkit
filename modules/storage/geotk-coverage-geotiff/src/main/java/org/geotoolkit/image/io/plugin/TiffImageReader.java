@@ -3767,6 +3767,7 @@ public class TiffImageReader extends SpatialImageReader {
             suffixes        = SUFFIXES;
             inputTypes      = INPUT_TYPES;
             MIMETypes       = MIME_TYPES;
+            writerSpiNames  = new String[] {TiffImageWriter.Spi.class.getName()};
             pluginClassName = "org.geotoolkit.image.io.plugin.TiffImageReader";
             // Current implementation does not support metadata.
             nativeStreamMetadataFormatName = null;

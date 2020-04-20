@@ -44,6 +44,7 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static java.nio.file.StandardOpenOption.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
-
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -60,35 +60,30 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
-
 import org.apache.sis.internal.storage.io.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
-
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.internal.ImageUtils;
+import static org.geotoolkit.image.internal.ImageUtils.*;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.WritableImageByteChannel;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DomUtilities;
-
+import static org.geotoolkit.util.DomUtilities.getNodeByLocalName;
+import org.geotoolkit.util.Utilities;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import static java.nio.file.StandardOpenOption.*;
-import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
-import static org.geotoolkit.util.DomUtilities.getNodeByLocalName;
-import static org.geotoolkit.image.internal.ImageUtils.*;
 
 /**
  *
@@ -3762,6 +3757,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             vendorName      = "Geotoolkit.org";
             version         = Utilities.VERSION.toString();
             outputTypes     = TYPES;
+            readerSpiNames  = new String[] {TiffImageReader.Spi.class.getName()};
             nativeImageMetadataFormatName = "geotiff";
             extraImageMetadataFormatNames = new String[]{SpatialMetadataFormat.GEOTK_FORMAT_NAME};
             nativeStreamMetadataFormatName = "geotiff";
