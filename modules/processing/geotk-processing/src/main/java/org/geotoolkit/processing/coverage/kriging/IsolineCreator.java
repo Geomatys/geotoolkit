@@ -15,22 +15,22 @@
  */
 package org.geotoolkit.processing.coverage.kriging;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
+import static java.lang.Double.isNaN;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import javax.vecmath.Point3d;
-import org.opengis.coverage.grid.SequenceType;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.util.ArgumentChecks;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
-import static java.lang.Double.isNaN;
+import org.opengis.coverage.grid.SequenceType;
 
 
 /**
@@ -250,12 +250,14 @@ public class IsolineCreator {
      */
     public CoordinateSequence[][] createPolylines() {
         calculateIntersectionGrids();
-        final CoordinateSequence[][] polylines = new CoordinateSequence[intersections.length][];
+        final CoordinateSequence[][] polylines = new CoordinateSequence[intersections.length][0];
         for (int i=0; i<intersections.length; i++) {
-            final Collection<Polyline> p = intersections[i].createPolylines();
-            polylines[i] = p.toArray(new CoordinateSequence[p.size()]);
-            // We convert to array in order to allow the garbage collector to collect
-            // the map entries, since the key values are not of interest to the user.
+            if (intersections[i] != null) {
+                final Collection<Polyline> p = intersections[i].createPolylines();
+                polylines[i] = p.toArray(new CoordinateSequence[p.size()]);
+                // We convert to array in order to allow the garbage collector to collect
+                // the map entries, since the key values are not of interest to the user.
+            }
         }
         return polylines;
     }
