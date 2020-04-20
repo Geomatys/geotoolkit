@@ -107,7 +107,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         mosaics.sort((Mosaic o1, Mosaic o2) -> Double.compare(o2.getScale(), o1.getScale()));
         for (final Mosaic mosaic : mosaics) {
-            if (resolutions == null || resolutions.contains(mosaic.getScale())) {
+            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
                 final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
@@ -154,7 +154,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         long count = 0;
         for (Mosaic mosaic : pyramid.getMosaics()) {
             final Mosaic m = mosaic;
-            if (resolutions == null || resolutions.contains(mosaic.getScale())) {
+            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
                 if (env == null) {
                     count += ((long) m.getGridSize().width) * ((long) m.getGridSize().height);
                 } else {
