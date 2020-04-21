@@ -17,6 +17,7 @@
 package org.geotoolkit.image;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -32,6 +33,9 @@ import java.awt.image.WritableRenderedImage;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.function.LongFunction;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
@@ -272,5 +276,45 @@ public class BufferedImages extends Static {
         while (ite.next()) {
             ite.setPixel(pixel);
         }
+    }
+
+    /**
+     * Create a stream of rectangle covering each tile in the image.
+     * <p>
+     * A margin on each side can be defined to expend the rectangle in the limit of the image size.
+     * This behavior allows to overlaps tile border in case the algorithm requires it.
+     * </p>
+     *
+     * @param image
+     * @param top top tile margin
+     * @param right right tile margin
+     * @param bottom bottom tile margin
+     * @param left  left tile margin
+     * @return Stram of Rectangle for each tile in the image.
+     */
+    public static Stream<Rectangle> tileStream(RenderedImage image, int top, int right, int bottom, int left) {
+        final int tileWidth = image.getTileWidth();
+        final int tileHeight = image.getTileHeight();
+        final int numXTiles = image.getNumXTiles();
+        final int numYTiles = image.getNumYTiles();
+        final int minTileX = image.getMinTileX();
+        final int minTileY = image.getMinTileY();
+        final long nbTile = (long)numXTiles * numYTiles;
+        final Rectangle imageBounds = new Rectangle(image.getMinX(), image.getMinY(), image.getWidth(), image.getHeight());
+
+        final int rectWidth = tileWidth + right + left;
+        final int rectHeight = tileHeight + top + bottom;
+
+        return LongStream.range(0, nbTile)
+                .mapToObj(new LongFunction<Rectangle>() {
+                    @Override
+                    public Rectangle apply(long value) {
+                        final int tileX = (int) (value % numXTiles);
+                        final int tileY = (int) (value / numXTiles);
+                        int rectX = (minTileX + tileX) * tileWidth;
+                        int rectY = (minTileY + tileY) * tileHeight;
+                        return new Rectangle(rectX - left,rectY - bottom,rectWidth,rectHeight).intersection(imageBounds);
+                    }
+                });
     }
 }
