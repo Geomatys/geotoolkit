@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.DoubleUnaryOperator;
-import static org.geotoolkit.util.grid.GridTraversal.isNearZero;
 import static org.geotoolkit.util.grid.GridTraversal.EPSILON;
+import static org.geotoolkit.util.grid.GridTraversal.isNearZero;
 import static org.geotoolkit.util.grid.GridTraversal.toVector;
 
 /**

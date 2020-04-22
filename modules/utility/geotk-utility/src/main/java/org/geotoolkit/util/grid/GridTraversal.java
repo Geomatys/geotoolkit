@@ -47,7 +47,7 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public class GridTraversal implements Spliterator<double[]> {
 
-    static final double EPSILON = 1e-7;
+    static final double EPSILON = 1e-5;
 
     private final PointList trajectory;
 
