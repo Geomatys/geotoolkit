@@ -21,31 +21,30 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.util.Date;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.test.TestBase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.operation.TransformException;
 
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
-import org.geotoolkit.referencing.ReferencingUtilities;
-
-import org.apache.sis.referencing.CommonCRS;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class Go2UtilitiesTest extends org.geotoolkit.test.TestBase {
+public class Go2UtilitiesTest extends TestBase {
 
     private static final double DELTA = 0.0000001d;
 
@@ -66,20 +65,6 @@ public class Go2UtilitiesTest extends org.geotoolkit.test.TestBase {
 
     @After
     public void tearDown() {
-    }
-
-    @Test
-    public void ensureCompoundCRSHaveName() throws TransformException{
-        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
-        env.setRange(0, -180, 180);
-        env.setRange(1, -90, 90);
-
-        Envelope cenv = ReferencingUtilities.combine(env,
-                new Date[]{new Date(0),new Date(10000000)},
-                new Double[]{-50d,150d});
-
-        assertNotNull(cenv);
-        assertNotNull(cenv.getCoordinateReferenceSystem().getName().getCode());
     }
 
     @Test
