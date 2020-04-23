@@ -29,7 +29,7 @@ import org.geotoolkit.util.StringUtilities;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class MapDef extends RenderableField{
+public final class MapDef extends RenderableField {
 
     private CanvasDef canvasDef;
     private SceneDef sceneDef;

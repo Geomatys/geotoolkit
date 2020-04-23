@@ -23,12 +23,11 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRRenderable;
-
+import net.sf.jasperreports.engine.JasperReportsContext;
+import net.sf.jasperreports.renderers.Graphics2DRenderable;
+import net.sf.jasperreports.renderers.Renderable;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
@@ -42,7 +41,7 @@ import org.geotoolkit.map.MapContext;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class LegendRenderer implements JRRenderable{
+public class LegendRenderer implements Graphics2DRenderable, Renderable {
 
     private BackgroundTemplate back = new DefaultBackgroundTemplate(
             new BasicStroke(0),
@@ -65,57 +64,18 @@ public class LegendRenderer implements JRRenderable{
     public LegendRenderer(){
     }
 
-    public void setContext(final MapContext context){
-        this.context = context;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public String getId() {
         return id;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte getType() {
-        return TYPE_SVG;
+    public void setContext(final MapContext context){
+        this.context = context;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public byte getImageType() {
-        return IMAGE_TYPE_PNG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Dimension2D getDimension() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte[] getImageData() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void render(final Graphics2D g, final Rectangle2D rect) {
+    public void render(JasperReportsContext jrc, Graphics2D g2d, Rectangle2D rect) throws JRException {
         if(context == null) return;
-        final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
         J2DLegendUtilities.paintLegend(context, g2d, area, template);
     }

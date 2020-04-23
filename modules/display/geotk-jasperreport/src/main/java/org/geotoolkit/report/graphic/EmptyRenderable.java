@@ -17,10 +17,11 @@
 package org.geotoolkit.report.graphic;
 
 import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRRenderable;
+import net.sf.jasperreports.engine.JasperReportsContext;
+import net.sf.jasperreports.renderers.Graphics2DRenderable;
+import net.sf.jasperreports.renderers.Renderable;
 
 /**
  * A JRRenderable which paint nothing.
@@ -28,7 +29,7 @@ import net.sf.jasperreports.engine.JRRenderable;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class EmptyRenderable implements JRRenderable{
+public class EmptyRenderable implements Graphics2DRenderable, Renderable {
 
     public static final EmptyRenderable INSTANCE = new EmptyRenderable();
 
@@ -39,43 +40,8 @@ public class EmptyRenderable implements JRRenderable{
         return "EmptyRenderable";
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public byte getType() {
-        return TYPE_SVG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte getImageType() {
-        return IMAGE_TYPE_PNG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Dimension2D getDimension() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte[] getImageData() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
+    public void render(JasperReportsContext jrc, Graphics2D gd, Rectangle2D rd) throws JRException {
         //do nothing
     }
 

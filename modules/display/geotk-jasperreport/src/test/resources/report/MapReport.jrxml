@@ -142,7 +142,7 @@
 			</rectangle>
 			<image>
 				<reportElement x="15" y="0" width="521" height="297"/>
-				<imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{map}]]></imageExpression>
+				<imageExpression class="net.sf.jasperreports.renderers.Graphics2DRenderable"><![CDATA[$F{map}]]></imageExpression>
 			</image>
 		</band>
 	</detail>

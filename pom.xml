@@ -432,7 +432,7 @@
       <dependency>
         <groupId>net.sf.jasperreports</groupId>
         <artifactId>jasperreports</artifactId>
-        <version>6.1.0</version>                <!-- Can not upgrade to 6.9.0 because it breaks Geotk tests. -->
+        <version>6.12.2</version>
       </dependency>
 
       <!-- Groovy -->

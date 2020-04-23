@@ -21,25 +21,24 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRRenderable;
-
-import org.geotoolkit.display.canvas.AbstractCanvas2D;
+import net.sf.jasperreports.engine.JasperReportsContext;
+import net.sf.jasperreports.renderers.Graphics2DRenderable;
+import net.sf.jasperreports.renderers.Renderable;
+import org.apache.sis.measure.Units;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
 import org.geotoolkit.report.graphic.map.CanvasRenderer;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.measure.Units;
 
 /**
  * Jasper Report renderer used to render scale bar graphic.
@@ -47,7 +46,7 @@ import org.apache.sis.measure.Units;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class ScaleBarRenderer implements JRRenderable{
+public class ScaleBarRenderer implements Graphics2DRenderable, Renderable {
 
     private final ScaleBarTemplate template = new DefaultScaleBarTemplate(
                             null,new Dimension(300,30),6,
@@ -62,9 +61,6 @@ public class ScaleBarRenderer implements JRRenderable{
         this.canvas = canvas;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public String getId() {
         return id;
@@ -74,39 +70,7 @@ public class ScaleBarRenderer implements JRRenderable{
      * {@inheritDoc }
      */
     @Override
-    public byte getType() {
-        return TYPE_SVG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte getImageType() {
-        return IMAGE_TYPE_PNG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Dimension2D getDimension() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte[] getImageData() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
+    public void render(JasperReportsContext jrc, final Graphics2D g, final Rectangle2D rect) throws JRException {
         final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
 

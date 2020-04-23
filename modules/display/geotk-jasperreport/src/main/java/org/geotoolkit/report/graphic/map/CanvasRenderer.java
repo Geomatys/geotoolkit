@@ -18,24 +18,22 @@ package org.geotoolkit.report.graphic.map;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
-
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRRenderable;
-
-import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.map.MapContext;
+import net.sf.jasperreports.engine.JasperReportsContext;
+import net.sf.jasperreports.renderers.Graphics2DRenderable;
+import net.sf.jasperreports.renderers.Renderable;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display.container.GraphicContainer;
-
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -45,7 +43,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class CanvasRenderer extends J2DCanvas implements JRRenderable{
+public class CanvasRenderer extends J2DCanvas implements Graphics2DRenderable, Renderable {
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
 
@@ -126,51 +124,13 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         throw new UnsupportedOperationException("JasperCanvas doesnt support getSnapshot");
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public String getId() {
         return id;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public byte getType() {
-        return TYPE_SVG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte getImageType() {
-        return IMAGE_TYPE_PNG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Dimension2D getDimension() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte[] getImageData() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
+    public void render(JasperReportsContext jrc, Graphics2D gd, Rectangle2D rect) throws JRException {
         double rotation = getRotation();
 
         setDisplayBounds(rect);
@@ -181,7 +141,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
             Logging.getLogger("org.geotoolkit.report.graphic.map").log(Level.WARNING, null, ex);
         }
 
-        g2d = (Graphics2D) g.create();
+        g2d = (Graphics2D) gd.create();
         g2d.clip(rect);
         g2d.translate(rect.getMinX(), rect.getMinY());
         //fix Itext library not supported translucent images

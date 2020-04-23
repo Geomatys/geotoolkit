@@ -19,12 +19,11 @@ package org.geotoolkit.report.graphic.northarrow;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRRenderable;
-
+import net.sf.jasperreports.engine.JasperReportsContext;
+import net.sf.jasperreports.renderers.Graphics2DRenderable;
+import net.sf.jasperreports.renderers.Renderable;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.northarrow.DefaultNorthArrowTemplate;
 import org.geotoolkit.display2d.ext.northarrow.J2DNorthArrowUtilities;
@@ -36,7 +35,7 @@ import org.geotoolkit.display2d.ext.northarrow.NorthArrowTemplate;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class NorthArrowRenderer implements JRRenderable{
+public class NorthArrowRenderer implements Graphics2DRenderable, Renderable {
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
     private double rotation = 0;
@@ -48,9 +47,6 @@ public class NorthArrowRenderer implements JRRenderable{
         this.rotation = rotation;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public String getId() {
         return id;
@@ -60,39 +56,7 @@ public class NorthArrowRenderer implements JRRenderable{
      * {@inheritDoc }
      */
     @Override
-    public byte getType() {
-        return TYPE_SVG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte getImageType() {
-        return IMAGE_TYPE_PNG;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Dimension2D getDimension() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public byte[] getImageData() throws JRException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
+    public void render(JasperReportsContext jrc, final Graphics2D g, final Rectangle2D rect) throws JRException {
         final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
 
@@ -106,6 +70,5 @@ public class NorthArrowRenderer implements JRRenderable{
             throw new JRException(ex);
         }
     }
-
 
 }
