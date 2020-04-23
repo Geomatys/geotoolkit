@@ -18,7 +18,6 @@
 package org.geotoolkit.util.grid;
 
 import java.util.Iterator;
-import java.util.Random;
 import java.util.stream.DoubleStream;
 import java.util.stream.StreamSupport;
 import org.junit.Assert;
@@ -42,29 +41,6 @@ public class MultiDimensionMoveTest {
     @Test
     public void test3DSequential() {
         test3D(false);
-    }
-
-    @Test
-    public void monkeyTesting() {
-        final Random rand = new Random();
-        final long seed = rand.nextLong();
-        rand.setSeed(seed);
-
-        for (int i = 0 ; i < 13 ; i++) {
-            final int dimension = rand.nextInt(49)+2;
-            final boolean parallel = false; // TODO : randomize
-            try {
-                double[] start = rand.doubles(dimension, -2000, 2000).toArray();
-                double[] end = rand.doubles(dimension, -2000, 2000).toArray();
-                check(start, end, parallel);
-            } catch (AssertionError|RuntimeException e) {
-                String msg = String.format(
-                        "Test failed for seed %d, iteration %d, %d dimensions, %s mode",
-                        seed, i, dimension, parallel? "parallel" : "sequential"
-                );
-                throw new AssertionError(msg, e);
-            }
-        }
     }
 
     private void test2D(final boolean parallel) {
