@@ -50,7 +50,7 @@ public class GeotkProcessingRegistry extends AbstractProcessingRegistry {
                 org.geotoolkit.processing.coverage.coveragetofeatures.CoverageToFeaturesDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.coveragetovector.CoverageToVectorDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.isoline.IsolineDescriptor.INSTANCE,
-                org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.INSTANCE,
+                org.geotoolkit.processing.coverage.isoline.IsolineDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.mathcalc.MathCalcDescriptor.INSTANCE,
                 org.geotoolkit.processing.coverage.merge.MergeDescriptor.INSTANCE,

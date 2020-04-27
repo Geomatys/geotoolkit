@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.processing.coverage.isoline2;
+package org.geotoolkit.processing.coverage.isoline;
 
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -35,10 +35,9 @@ import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.PixelInCell;
 
@@ -67,7 +66,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = gcb.build();
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
         procparams.parameter("inIntervals").setValue(new double[]{150});
@@ -97,14 +96,17 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
         procparams.parameter("inIntervals").setValue(new double[]{15});
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
-        FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
-        assertEquals(2, FeatureStoreUtilities.getCount(col, true).longValue());
+        final FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
+        assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
+        final Feature feature = col.features(false).iterator().next();
+        final MultiLineString geom = (MultiLineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
+        assertEquals("MULTILINESTRING ((2 0.5, 2 1.5), (2.5 2, 2 1.5))", geom.toText());
 
     }
 
@@ -128,14 +130,17 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final GridCoverageResource ref = new InMemoryGridCoverageResource(coverage);
 
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
         procparams.parameter("inIntervals").setValue(new double[]{15});
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
         FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
-        assertEquals(4, FeatureStoreUtilities.getCount(col, true).longValue());
+        assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
+        final Feature feature = col.features(false).iterator().next();
+        final MultiLineString geom = (MultiLineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
+        assertEquals("MULTILINESTRING ((2 2.625, 2 1.875), (2.5 1.5, 2 1.875))", geom.toText());
 
     }
 
@@ -162,7 +167,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
 
         double[] intervales = {3.163};
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor2.NAME);
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, IsolineDescriptor.NAME);
         final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
         procparams.parameter("inCoverageRef").setValue(ref);
         procparams.parameter("inIntervals").setValue(intervales);
@@ -173,35 +178,9 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
 
         org.opengis.feature.Feature candidate = col.features(false).iterator().next();
         Geometry geom = (Geometry) candidate.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-        assertTrue(geom instanceof LineString);
-        LineString line = (LineString) geom;
-        CoordinateSequence sequence = line.getCoordinateSequence();
-        assertEquals(16, sequence.size());
-
-        Coordinate[] expected = new Coordinate[] {
-                new Coordinate(1.5, 2.7515672842277548),
-                new Coordinate(1.6830860462828303, 2.916666666666667),
-                new Coordinate(2.5, 3.5590333533118175),
-                new Coordinate(3.1477647294354694, 3.672392184341381),
-                new Coordinate(3.5, 3.765209494383989),
-                new Coordinate(4.281408969159637, 3.8283104640195758),
-                new Coordinate(4.5, 3.8283104640195758),
-                new Coordinate(4.771314100938449, 4.083333333333334),
-                new Coordinate(4.675463427429896, 4.288040665334878),
-                new Coordinate(4.5, 4.484307738208203),
-                new Coordinate(3.912396666264486, 4.564462777308567),
-                new Coordinate(3.5, 5.01232266160712),
-                new Coordinate(3.3543726058308847, 5.080101373469366),
-                new Coordinate(2.5, 5.131933362127943),
-                new Coordinate(1.9940001716613773, 4.659666866938274),
-                new Coordinate(1.5039371438387095, 5.25)
-        };
-
-        for (int i = 0; i < sequence.size(); i++) {
-            for (int j = 0; j < 2; j++) {
-                assertEquals(expected[i].getOrdinate(j),sequence.getCoordinate(i).getOrdinate(j), 0.0000001);
-            }
-        }
+        assertTrue(geom instanceof MultiLineString);
+        MultiLineString line = (MultiLineString) geom;
+        assertEquals("MULTILINESTRING ((2.5 5.131933362127943, 1.5039371438387097 5.25), (2.5 3.5590333533118175, 1.6830860462828303 2.916666666666667), (1.5 2.7515672842277548, 1.6830860462828303 2.916666666666667), (2.5 5.131933362127943, 3.5 5.01232266160712), (2.5 3.5590333533118175, 3.5 3.765209494383988), (3.5 5.01232266160712, 4.5 4.484307738208203), (3.5 3.765209494383988, 4.5 3.8283104640195758), (4.5 4.484307738208203, 4.771314100938448 4.083333333333334), (4.5 3.8283104640195758, 4.771314100938448 4.083333333333334))", line.toText());
     }
 
 }

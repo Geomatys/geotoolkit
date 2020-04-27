@@ -22,7 +22,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.*;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2;
+import org.geotoolkit.processing.coverage.isoline.IsolineDescriptor;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
@@ -61,7 +61,7 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
             this.cachedRS = null;
         }
 
-        this.isolineDesc = IsolineDescriptor2.INSTANCE;
+        this.isolineDesc = IsolineDescriptor.INSTANCE;
     }
 
     /**

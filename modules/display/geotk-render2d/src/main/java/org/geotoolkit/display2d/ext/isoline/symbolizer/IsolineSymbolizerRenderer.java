@@ -43,7 +43,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.*;
-import org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2;
+import org.geotoolkit.processing.coverage.isoline.IsolineDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import static org.geotoolkit.processing.coverage.resample.ResampleDescriptor.*;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
@@ -158,11 +158,11 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                     ProcessDescriptor isolineDesc = symbol.getIsolineDesc();
                     if (isolineDesc != null) {
                         final Parameters inputs = Parameters.castOrWrap(isolineDesc.getInputDescriptor().createValue());
-                        inputs.getOrCreate(IsolineDescriptor2.COVERAGE_REF).setValue(subref);
-                        inputs.getOrCreate(IsolineDescriptor2.INTERVALS).setValue(intervales);
+                        inputs.getOrCreate(IsolineDescriptor.COVERAGE_REF).setValue(subref);
+                        inputs.getOrCreate(IsolineDescriptor.INTERVALS).setValue(intervales);
                         final org.geotoolkit.process.Process process = isolineDesc.createProcess(inputs);
                         final ParameterValueGroup result = process.call();
-                        isolines = (FeatureSet) result.parameter(IsolineDescriptor2.FCOLL.getName().getCode()).getValue();
+                        isolines = (FeatureSet) result.parameter(IsolineDescriptor.FCOLL.getName().getCode()).getValue();
                     }
 
                     /////////////////////
