@@ -27,7 +27,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,16 +38,15 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
-import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
-import org.geotoolkit.data.geojson.binding.GeoJSONObject;
-import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.internal.geojson.GeoJSONParser;
+import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.feature.FeatureSetWrapper;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
@@ -216,7 +214,7 @@ public final class ConvertersTestUtils {
             testResource = WPSConvertersUtils.readFeatureFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
         else if ("/inputs/featurecollection.json".equals(resourcePath)) {
             FeatureSet fs = WPSConvertersUtils.readFeatureCollectionFromJson(ConvertersTestUtils.class.getResource(resourcePath).toURI());
-            testResource = new FeatureSetWrapper(fs, ((StoreResource)fs).getOriginator());
+            testResource = new FeatureSetWrapper(fs, null);
         } else
             fail("Unknown test resource : " + resourcePath);
 

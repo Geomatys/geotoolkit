@@ -56,19 +56,18 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.data.geojson.GeoJSONProvider;
-import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
-import org.geotoolkit.data.geojson.binding.GeoJSONObject;
-import org.geotoolkit.data.geojson.utils.GeoJSONParser;
-import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
+import org.geotoolkit.internal.geojson.GeoJSONParser;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.util.NamesExt;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
@@ -886,7 +885,7 @@ public class WPSConvertersUtils {
         else
             crs = CommonCRS.WGS84.normalizedGeographic();
 
-        return GeometryUtils.toJTS(jsonGeometry, crs);
+        return GeoJSONGeometry.toJTS(jsonGeometry, crs);
     }
 
     /**

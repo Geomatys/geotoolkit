@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.storage.feature.FeatureCollection;
@@ -72,7 +71,7 @@ public final class ComplexToFeatureCollectionConverter extends AbstractComplexIn
                         if (t instanceof FeatureCollection) {
                             return (FeatureCollection) t;
                         } else {
-                            return new FeatureSetWrapper(t, ((StoreResource)t).getOriginator());
+                            return new FeatureSetWrapper(t, null);
                         }
                     }
                 }).orElse(null);

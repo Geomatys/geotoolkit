@@ -17,7 +17,6 @@
 package org.geotoolkit.wps.converters.inputs.complex;
 
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -25,15 +24,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
-import org.geotoolkit.gml.GeometrytoJTS;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
-import org.geotoolkit.data.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
-import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
+import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.util.FactoryException;
 
 /**

@@ -22,8 +22,8 @@ import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
@@ -31,14 +31,15 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
+import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Reference;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -111,7 +112,13 @@ public final class FeatureSetToReferenceConverter extends AbstractReferenceOutpu
 
             try (OutputStream fos = Files.newOutputStream(dataFile, CREATE,  TRUNCATE_EXISTING, WRITE);
                  GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)){
-                 FeatureStoreUtilities.write(writer, (Collection) source);
+                Iterator<Feature> iterator = source.features(false).iterator();
+                while (iterator.hasNext()) {
+                    Feature next = iterator.next();
+                    Feature neww = writer.next();
+                    FeatureExt.copy(next, neww, false);
+                    writer.write();
+                }
             } catch (DataStoreException e) {
                 throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
             } catch (IOException e) {

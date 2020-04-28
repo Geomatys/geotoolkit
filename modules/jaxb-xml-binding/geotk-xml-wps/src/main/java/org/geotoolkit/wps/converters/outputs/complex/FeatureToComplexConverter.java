@@ -22,18 +22,17 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.feature.FeatureExt;
-
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v200.Data;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
+import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
+import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.v200.Data;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 

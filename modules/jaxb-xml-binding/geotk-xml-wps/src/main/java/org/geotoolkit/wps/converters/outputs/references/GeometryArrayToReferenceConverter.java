@@ -17,9 +17,6 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,10 +25,13 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
-import org.geotoolkit.wps.xml.v200.Reference;;
+import org.geotoolkit.wps.xml.v200.Reference;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;;
 
 /**
  *

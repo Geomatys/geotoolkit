@@ -16,15 +16,14 @@
  */
 package org.geotoolkit.wps.converters.outputs.complex;
 
-import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
-import org.geotoolkit.data.geojson.binding.GeoJSONObject;
-import org.geotoolkit.data.geojson.utils.GeoJSONParser;
+import org.geotoolkit.internal.geojson.GeoJSONParser;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSEncoding;
@@ -32,6 +31,7 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.util.FactoryException;
 
 /**
