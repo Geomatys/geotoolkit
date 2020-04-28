@@ -407,14 +407,14 @@ public class GridTraversal implements Spliterator<double[]> {
     }
 
     /**
-     * Ensure that vector encoded by first parameter is parallel to the second given one.
+     * Ensure that vector encoded by first parameter is proportional (u = kv) to the second given one.
      * Note that any non finite value in any of the source vectors will cause a detection failure (return false).
      *
      * <em>Note on precision</em>: this code rely on {@link GridTraversal#COLINEAR_EPSILON}, so it's required precision
      * (and therefore limit) is around this magnitude.
      *
-     * @param u First vector to compare.
-     * @param v Second vector in the comparison.
+     * @param u First vector to compare (should be avector representing a segment, or a move along a segment).
+     * @param v Second vector in the comparison (should be avector representing a segment, or a move along a segment).
      * @return True if we detect that the two vectors are colinear. False if not.
      */
     static boolean areColinear(final double[] u, final double[] v) {
