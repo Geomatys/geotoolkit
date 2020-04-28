@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
 
 
 /**
@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
  * @author Martin Desruisseaux (Geomatys)
  */
 public abstract strictfp class TestBase extends org.apache.sis.test.TestCase {
+
     /**
      * Installs the customized validators defined in the {@link org.geotoolkit.test.validator} package.
      * Those validators ensures that ISO or GeoAPI restrictions apply, then checks for yet more restrictive
