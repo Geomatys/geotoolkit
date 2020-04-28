@@ -27,7 +27,6 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.Unit;
@@ -64,15 +63,12 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import static org.geotoolkit.style.StyleConstants.*;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -84,22 +80,20 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.ChannelSelection;
-import org.opengis.style.ColorMap;
-import org.opengis.style.ContrastEnhancement;
-import org.opengis.style.Description;
-import org.opengis.style.Fill;
-import org.opengis.style.Graphic;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.Mark;
-import org.opengis.style.OverlapBehavior;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.ShadedRelief;
-import org.opengis.style.Stroke;
-import org.opengis.style.Symbolizer;
+import org.opengis.style.*;
 import org.opengis.util.FactoryException;
+
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_ANCHOR_POINT;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_DISPLACEMENT;
+import static org.geotoolkit.style.StyleConstants.LITERAL_ONE_FLOAT;
+import static org.geotoolkit.style.StyleConstants.MARK_CIRCLE;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Testing portrayal service.
@@ -114,8 +108,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     private final List<FeatureSet> featureColls = new ArrayList<>();
     private final List<GridCoverage> coverages = new ArrayList<>();
     private final List<Envelope> envelopes = new ArrayList<>();
-    private final List<Date[]> dates = new ArrayList<>();
-    private final List<Double[]> elevations = new ArrayList<>();
+    private final List<double[]> timestamps = new ArrayList<>();
+    private final List<double[]> elevations = new ArrayList<>();
 
     public PortrayalServiceTest() throws Exception {
 
@@ -173,16 +167,16 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         envelopes.add(env);
 
         //create a serie of date ranges ----------------------------------------
-        dates.add(new Date[]{new Date(1000),new Date(15000)});
-        dates.add(new Date[]{null,          new Date(15000)});
-        dates.add(new Date[]{new Date(1000),null});
-        dates.add(new Date[]{null,          null});
+        timestamps.add(new double[]{             1000, 15000});
+        timestamps.add(new double[]{NEGATIVE_INFINITY, 15000});
+        timestamps.add(new double[]{             1000, POSITIVE_INFINITY});
+        timestamps.add(new double[]{NEGATIVE_INFINITY, POSITIVE_INFINITY});
 
         //create a serie of elevation ranges -----------------------------------
-        elevations.add(new Double[]{-15d,   50d});
-        elevations.add(new Double[]{null,   50d});
-        elevations.add(new Double[]{-15d,   null});
-        elevations.add(new Double[]{null,   null});
+        elevations.add(new double[]{             -15d, 50d});
+        elevations.add(new double[]{NEGATIVE_INFINITY, 50d});
+        elevations.add(new double[]{             -15d, POSITIVE_INFINITY});
+        elevations.add(new double[]{NEGATIVE_INFINITY, POSITIVE_INFINITY});
 
 
         //create some coverages ------------------------------------------------
@@ -604,7 +598,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, count.get());
     }
 
-    private void testRendering(final MapLayer layer) throws TransformException, PortrayalException {
+    private void testRendering(final MapLayer layer) throws Exception {
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 
         final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
@@ -612,9 +606,14 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, context.layers().size());
 
         for(final Envelope env : envelopes){
-            for(Date[] drange : dates){
-                for(Double[] erange : elevations){
-                    final Envelope cenv = ReferencingUtilities.combine(env, drange, erange);
+            for(double[] drange : timestamps){
+                for(double[] erange : elevations){
+                    final GeneralEnvelope cenv = new GeneralEnvelope(CRS.compound(
+                            env.getCoordinateReferenceSystem(), CommonCRS.Vertical.ELLIPSOIDAL.crs(), CommonCRS.Temporal.JAVA.crs()
+                    ));
+                    cenv.subEnvelope(0, 2).setEnvelope(env);
+                    cenv.setRange(2, erange[0], erange[1]);
+                    cenv.setRange(3, drange[0], drange[1]);
                     final CanvasDef cdef = new CanvasDef(new Dimension(800,600), cenv);
                     cdef.setAzimuth(0);
                     cdef.setMonitor(monitor);

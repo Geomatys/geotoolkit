@@ -21,7 +21,8 @@ import java.util.Arrays;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.DoubleUnaryOperator;
-import static org.geotoolkit.util.grid.GridTraversal.EPSILON;
+
+import static org.geotoolkit.util.grid.GridTraversal.areColinear;
 import static org.geotoolkit.util.grid.GridTraversal.isNearZero;
 import static org.geotoolkit.util.grid.GridTraversal.toVector;
 
@@ -45,7 +46,7 @@ import static org.geotoolkit.util.grid.GridTraversal.toVector;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class MultiDimensionMove implements Spliterator<double[]> {
+class MultiDimensionMove implements Spliterator<double[]> {
 
     /**
      * Start of the segment to browse along the grid
@@ -78,7 +79,7 @@ public class MultiDimensionMove implements Spliterator<double[]> {
      * @param startPoint The start point of the segment to analyze (A).
      * @param endPoint The end point of the segment to analyze (B).
      */
-    public MultiDimensionMove(double[] startPoint, double[] endPoint) {
+    MultiDimensionMove(double[] startPoint, double[] endPoint) {
         if (startPoint.length != endPoint.length) {
             throw new IllegalArgumentException(String.format(
                     "Dimension of given points does not match: start is %dD, but end is %dD",
@@ -138,6 +139,11 @@ public class MultiDimensionMove implements Spliterator<double[]> {
 
         for (int i = 0; i < previousPoint.length; i++) {
             previousPoint[i] += minDist * segmentVector[i];
+            // Workaround: if current ordinate overflow segment endpoint (because of rounding error), we force it back
+            // to the end-point.
+            if (segmentVector[i] >= 0 ? previousPoint[i] > endPoint[i] : previousPoint[i] < endPoint[i]) {
+                previousPoint[i] = endPoint[i];
+            }
         }
 
         assert areColinear(segmentVector, toVector(startPoint, previousPoint));
@@ -163,27 +169,5 @@ public class MultiDimensionMove implements Spliterator<double[]> {
     @Override
     public int characteristics() {
         return ORDERED | DISTINCT | NONNULL;
-    }
-
-    static boolean areColinear(final double[] u, final double[] v) {
-        double[] coefs = new double[u.length];
-        for (int i = 0 ; i < u.length ; i++) {
-            double uv = v[i] - u[i];
-            if (isNearZero(uv)) {
-                coefs[i] = Double.NaN;
-            } else if (isNearZero(u[i])) {
-                return false;
-            } else {
-                coefs[i] = v[i] / u[i];
-            }
-        }
-
-        for (int i = 1 ; i < coefs.length ; i++) {
-            if (coefs[i - 1] != coefs[i] && (coefs[i-1] - EPSILON > coefs[i] || coefs[i-1] + EPSILON < coefs[i])) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

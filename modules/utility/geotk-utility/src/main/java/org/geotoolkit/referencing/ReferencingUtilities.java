@@ -18,10 +18,15 @@ package org.geotoolkit.referencing;
 
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -30,13 +35,6 @@ import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CRS;
-
-import static org.apache.sis.referencing.CRS.getHorizontalComponent;
-import static org.apache.sis.referencing.CRS.getSingleComponents;
-import static org.apache.sis.referencing.CRS.getTemporalComponent;
-import static org.apache.sis.referencing.CRS.getVerticalComponent;
-
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
@@ -77,7 +75,15 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.acos;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
+import static org.apache.sis.referencing.CRS.getHorizontalComponent;
+import static org.apache.sis.referencing.CRS.getSingleComponents;
+import static org.apache.sis.referencing.CRS.getTemporalComponent;
+import static org.apache.sis.referencing.CRS.getVerticalComponent;
 
 
 /**
@@ -408,138 +414,6 @@ public final class ReferencingUtilities {
             }
         }
         return indexes;
-    }
-
-    /**
-     * Make a new envelope with vertical and temporal dimensions.
-     */
-    public static GeneralEnvelope combine(final Envelope bounds, final Date[] temporal, final Double[] elevation) throws TransformException{
-        CoordinateReferenceSystem crs = bounds.getCoordinateReferenceSystem();
-        Rectangle2D rect = new Rectangle2D.Double(
-                bounds.getMinimum(0),
-                bounds.getMinimum(1),
-                bounds.getSpan(0),
-                bounds.getSpan(1));
-        return combine(crs, rect, temporal, elevation);
-    }
-
-    /**
-     * Make a new envelope with vertical and temporal dimensions.
-     */
-    public static GeneralEnvelope combine(CoordinateReferenceSystem crs, final Rectangle2D bounds,
-            final Date[] temporal, final Double[] elevation) throws TransformException{
-        final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
-        TemporalCRS temporalDim = null;
-        VerticalCRS verticalDim = null;
-
-        if(temporal != null && (temporal[0] != null || temporal[1] != null)){
-            temporalDim = getTemporalComponent(crs);
-
-            if(temporalDim == null){
-                temporalDim = CommonCRS.Temporal.JAVA.crs();
-            }
-        }
-
-        if(elevation != null && (elevation[0] != null || elevation[1] != null)){
-            verticalDim = getVerticalComponent(crs, true);
-
-            if(verticalDim == null){
-                verticalDim = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-            }
-        }
-
-        final GeneralEnvelope env;
-        if (temporalDim != null && verticalDim != null) {
-            try {
-                crs = CRS.compound(crs2D, verticalDim, temporalDim);
-            } catch (FactoryException ex) {
-                throw new TransformException(ex.getMessage(), ex);      // TODO: not appropriate.
-            }
-            env = new GeneralEnvelope(crs);
-
-            int[] indexes = findDimensionIndexes(crs);
-            env.setRange(indexes[0], bounds.getMinX(), bounds.getMaxX());
-            env.setRange(indexes[1], bounds.getMinY(), bounds.getMaxY());
-
-            try {
-                final CoordinateReferenceSystem realTemporal = CommonCRS.Temporal.JAVA.crs();
-                final MathTransform trs = CRS.findOperation(realTemporal, temporalDim, null).getMathTransform();
-                final double[] coords = new double[2];
-                coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
-                coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
-                trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(indexes[3],coords[0],coords[1]);
-            } catch (FactoryException ex) {
-                throw new TransformException(ex.getMessage(),ex);
-            }
-            try {
-                final CoordinateReferenceSystem realElevation = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-                final MathTransform trs = CRS.findOperation(realElevation, verticalDim, null).getMathTransform();
-                final double[] coords = new double[2];
-                coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
-                coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
-                trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(indexes[2],coords[0],coords[1]);
-            } catch (FactoryException ex) {
-                throw new TransformException(ex.getMessage(),ex);
-            }
-        } else if (temporalDim != null) {
-            try {
-                crs = CRS.compound(crs2D,  temporalDim);
-            } catch (FactoryException ex) {
-                throw new TransformException(ex.getMessage(), ex);      // TODO: not appropriate.
-            }
-            env = new GeneralEnvelope(crs);
-
-            int[] indexes = findDimensionIndexes(crs);
-            env.setRange(indexes[0], bounds.getMinX(), bounds.getMaxX());
-            env.setRange(indexes[1], bounds.getMinY(), bounds.getMaxY());
-
-            try {
-                final CoordinateReferenceSystem realTemporal = CommonCRS.Temporal.JAVA.crs();
-                final MathTransform trs = CRS.findOperation(realTemporal, temporalDim, null).getMathTransform();
-                final double[] coords = new double[2];
-                coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
-                coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
-                trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(indexes[3],coords[0],coords[1]);
-            } catch (FactoryException ex) {
-                throw new TransformException(ex.getMessage(),ex);
-            }
-
-
-        } else if (verticalDim != null) {
-            try {
-                crs = CRS.compound(crs2D, verticalDim);
-            } catch (FactoryException ex) {
-                throw new TransformException(ex.getMessage(), ex);      // TODO: not appropriate.
-            }
-            env = new GeneralEnvelope(crs);
-
-            int[] indexes = findDimensionIndexes(crs);
-            env.setRange(indexes[0], bounds.getMinX(), bounds.getMaxX());
-            env.setRange(indexes[1], bounds.getMinY(), bounds.getMaxY());
-
-            try {
-                final CoordinateReferenceSystem realElevation = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-                final MathTransform trs = CRS.findOperation(realElevation, verticalDim, null).getMathTransform();
-                final double[] coords = new double[2];
-                coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
-                coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
-                trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(indexes[2],coords[0],coords[1]);
-            } catch (FactoryException ex) {
-                throw new TransformException(ex.getMessage(),ex);
-            }
-
-        }else{
-            crs = crs2D;
-            env = new GeneralEnvelope(crs);
-            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
-            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-        }
-
-        return env;
     }
 
     /**

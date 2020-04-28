@@ -47,7 +47,24 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public class GridTraversal implements Spliterator<double[]> {
 
-    static final double EPSILON = 1e-5;
+    /**
+     * Authorized rounding when testing if two values are close. Note that changing that will impact your unit tests
+     * because:
+     * <ul>
+     *     <li>A test check the rounding tolerance</li>
+     *     <li>
+     *         Another test checks this algorithm tolerance to big values.
+     *         However, as we restrict to double precision, there could be rounding errors too big for this delta.
+     *     </li>
+     * </ul>
+     */
+    static final double EPSILON = 1e-8;
+
+    /**
+     * The epsilon to use when checking for colinearity. It is less precise than default epsilon, because it's used as
+     * a check at the end of the operation chain, where there's more rounding errors.
+     */
+    static final double COLINEAR_EPSILON = 1e-5;
 
     private final PointList trajectory;
 
@@ -163,7 +180,7 @@ public class GridTraversal implements Spliterator<double[]> {
 
     static double ceilOrIncrement(final double source) {
         double upper = Math.ceil(source);
-        if (source - EPSILON < upper && upper < source + EPSILON) {
+        if (isNearZero(source - upper)) {
             upper += 1;
         }
 
@@ -172,7 +189,7 @@ public class GridTraversal implements Spliterator<double[]> {
 
     static double floorOrDecrement(final double source) {
         double lower = Math.floor(source);
-        if (source - EPSILON < lower && lower < source + EPSILON) {
+        if (isNearZero(source - lower)) {
             lower -= 1;
         }
 
@@ -180,7 +197,7 @@ public class GridTraversal implements Spliterator<double[]> {
     }
 
     static boolean isNearZero(double ordinate) {
-        return -EPSILON < ordinate && ordinate < EPSILON;
+        return -EPSILON <= ordinate && ordinate <= EPSILON;
     }
 
     static double[] toVector(double[] start, double[] end) {
@@ -387,5 +404,38 @@ public class GridTraversal implements Spliterator<double[]> {
                 }
             }
         }
+    }
+
+    /**
+     * Ensure that vector encoded by first parameter is proportional (u = kv) to the second given one.
+     * Note that any non finite value in any of the source vectors will cause a detection failure (return false).
+     *
+     * <em>Note on precision</em>: this code rely on {@link GridTraversal#COLINEAR_EPSILON}, so it's required precision
+     * (and therefore limit) is around this magnitude.
+     *
+     * @param u First vector to compare (should be avector representing a segment, or a move along a segment).
+     * @param v Second vector in the comparison (should be avector representing a segment, or a move along a segment).
+     * @return True if we detect that the two vectors are colinear. False if not.
+     */
+    static boolean areColinear(final double[] u, final double[] v) {
+        // Ensure that u = kv for any moving/non null dimension.
+        double coef = Double.NaN;
+        for (int i = 0 ; i < u.length ; i++) {
+            double uv = v[i] - u[i];
+            if (!Double.isFinite(uv)) {
+                return false;
+            } else if (isNearZero(uv)) {
+                // No need to take into account. No move along this dimension
+                continue;
+            } else if (isNearZero(u[i])) {
+                return false;
+            } else if (!Double.isFinite(coef)) {
+                coef = v[i] / u[i];
+            } else if (Math.abs(coef - (v[i] / u[i])) > COLINEAR_EPSILON) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
