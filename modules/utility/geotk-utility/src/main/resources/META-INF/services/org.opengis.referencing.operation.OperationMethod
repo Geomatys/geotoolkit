@@ -1,7 +1,6 @@
 org.geotoolkit.referencing.operation.provider.Logarithmic
 org.geotoolkit.referencing.operation.provider.Exponential
 org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea
-org.geotoolkit.referencing.operation.provider.CassiniSoldner
 org.geotoolkit.referencing.operation.provider.Stereographic
 org.geotoolkit.referencing.operation.provider.NewZealandMapGrid
 org.geotoolkit.referencing.operation.provider.Krovak

@@ -32,7 +32,6 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.iso.Types;
-import org.geotoolkit.internal.jdk8.JDK8;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;

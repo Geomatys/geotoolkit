@@ -78,7 +78,7 @@ final class Assertions extends Static {
      * @return Always {@code true} if the {@code tolerance} value is valid.
      * @throws ProjectionException if the comparison failed.
      */
-    static boolean checkTransform(final double[] expected, final int offset,
+    private static boolean checkTransform(final double[] expected, final int offset,
             final double x, final double y, final double tolerance)
             throws ProjectionException
     {
@@ -113,7 +113,7 @@ final class Assertions extends Static {
      * @return Always {@code true} if the {@code tolerance} value is valid.
      * @throws ProjectionException if the comparison failed.
      */
-    static boolean checkInverseTransform(final double[] expected, final int offset,
+    private static boolean checkInverseTransform(final double[] expected, final int offset,
             final double λ, final double φ, final double tolerance)
             throws ProjectionException
     {

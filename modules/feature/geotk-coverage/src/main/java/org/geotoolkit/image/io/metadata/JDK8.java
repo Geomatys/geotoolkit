@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geotoolkit.internal.jdk8;
+package org.geotoolkit.image.io.metadata;
 
 import java.util.Date;
 import java.util.Calendar;
@@ -34,7 +34,7 @@ import javax.xml.bind.DatatypeConverter;
  * @version 0.5
  * @module
  */
-public final class JDK8 {
+final class JDK8 {
     /**
      * A shared Gregorian calendar to use for {@link #printDateTime(Date)}.
      * We share a single instance instead than using {@link ThreadLocal} instances
