@@ -121,7 +121,7 @@ public class WKBRasterImageWriter extends ImageWriter {
             pluginClassName = "org.geotoolkit.coverage.wkb.WKBRasterImageWriter";
             vendorName      = "Geotoolkit.org";
             version         = Utilities.VERSION.toString();
-            readerSpiNames  = new String[] {"PostGISWKBraster"};
+            readerSpiNames  = new String[] {WKBRasterImageReader.Spi.class.getName()};
             outputTypes     = new Class[0];
             outputTypes     = ArraysExt.append(outputTypes, OutputStream.class);
             outputTypes     = ArraysExt.append(outputTypes, File.class);

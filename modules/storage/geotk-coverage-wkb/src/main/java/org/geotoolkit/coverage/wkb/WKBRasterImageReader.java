@@ -81,13 +81,8 @@ public final class WKBRasterImageReader extends ImageReader {
     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         final WKBRasterReader reader = new WKBRasterReader();
         if (input instanceof byte[]) {
-<<<<<<< Updated upstream
             return reader.read((byte[])input);
         } else if(input instanceof ImageInputStream) {
-=======
-            return reader.read((byte[]) input);
-        } else if (input instanceof ImageInputStream) {
->>>>>>> Stashed changes
             return reader.read(new InputStreamAdapter((ImageInputStream)input));
         } else {
             InputStream stream;
@@ -112,7 +107,7 @@ public final class WKBRasterImageReader extends ImageReader {
             pluginClassName = "org.geotoolkit.coverage.wkb.WKBRasterImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Utilities.VERSION.toString();
-            writerSpiNames  = new String[] {"PostGISWKBraster"};
+            writerSpiNames  = new String[] {WKBRasterImageWriter.Spi.class.getName()};
             inputTypes      = new Class[0];
             inputTypes      = ArraysExt.append(inputTypes, InputStream.class);
             inputTypes      = ArraysExt.append(inputTypes, ImageInputStream.class);

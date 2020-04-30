@@ -17,7 +17,14 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.geom.AffineTransform;
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferShort;
+import java.awt.image.DataBufferUShort;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -144,7 +151,13 @@ public class WKBRasterWriter {
      */
     public void write(final RenderedImage image, AffineTransform gridToCRS,
             final int srid, final OutputStream stream) throws IOException {
-        write(image.getData(), gridToCRS, srid, stream, true);
+        Raster raster;
+        if (image.getNumXTiles() == 1 && image.getNumYTiles() == 1) {
+            raster = image.getTile(image.getMinTileX(), image.getMinTileY());
+        } else {
+            raster = image.getData();
+        }
+        write(raster, gridToCRS, srid, stream, false);
     }
 
     /**
@@ -158,7 +171,7 @@ public class WKBRasterWriter {
      */
     public void write(final Raster image, AffineTransform gridToCRS,
             final int srid, final OutputStream stream) throws IOException {
-        write(image, gridToCRS, srid, stream, true);
+        write(image, gridToCRS, srid, stream, false);
     }
 
     /**
@@ -222,6 +235,62 @@ public class WKBRasterWriter {
         //width and height
         ds.writeShort(width);
         ds.writeShort(height);
+
+
+        if (!littleEndian && nbBand == 1 && sm instanceof ComponentSampleModel) {
+            DataBuffer dataBuffer = raster.getDataBuffer();
+            final byte flags = (byte) pixelType;
+
+            if (dataBuffer instanceof DataBufferByte) {
+                ds.write(flags);
+                ds.write(new byte[bytePerpixel]);
+                byte[] pixelData = ((DataBufferByte) dataBuffer).getData();
+                ds.write(pixelData);
+                stream.flush();
+                return;
+
+            } else if (dataBuffer instanceof DataBufferUShort) {
+                ds.write(flags);
+                ds.write(new byte[bytePerpixel]);
+                short[] pixelData = ((DataBufferUShort) dataBuffer).getData();
+                for (short p : pixelData) ds.writeShort(p);
+                stream.flush();
+                return;
+
+            } else if (dataBuffer instanceof DataBufferShort) {
+                ds.write(flags);
+                ds.write(new byte[bytePerpixel]);
+                short[] pixelData = ((DataBufferShort) dataBuffer).getData();
+                for (short p : pixelData) ds.writeShort(p);
+                stream.flush();
+                return;
+
+            } else if (dataBuffer instanceof DataBufferInt) {
+                ds.write(flags);
+                ds.write(new byte[bytePerpixel]);
+                int[] pixelData = ((DataBufferInt) dataBuffer).getData();
+                for (int p : pixelData) ds.writeInt(p);
+                stream.flush();
+                return;
+
+            } else if (dataBuffer instanceof DataBufferFloat) {
+                ds.write(flags);
+                ds.write(new byte[bytePerpixel]);
+                float[] pixelData = ((DataBufferFloat) dataBuffer).getData();
+                for (float p : pixelData) ds.writeFloat(p);
+                stream.flush();
+                return;
+
+            } else if (dataBuffer instanceof DataBufferDouble) {
+                ds.write(flags);
+                ds.write(new byte[bytePerpixel]);
+                double[] pixelData = ((DataBufferDouble) dataBuffer).getData();
+                for (double p : pixelData) ds.writeDouble(p);
+                stream.flush();
+                return;
+            }
+            // fallback on pixel by pixel writing
+        }
 
         //write each band
         for (int b = 0; b < nbBand; b++) {
