@@ -25,11 +25,12 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ImageProcessor;
+import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -38,19 +39,14 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.process.Process;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.util.NoSuchIdentifierException;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -153,17 +149,15 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         //if not, this means the source coverage has more dimensions then the pyramid
         //resample coverage to exact tile grid geometry
         try {
-            final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("geotoolkit", "coverage:resample");
-            final Parameters params = Parameters.castOrWrap(desc.getInputDescriptor().createValue());
-            params.parameter("Source").setValue(coverage);
-            params.parameter("GridGeometry").setValue(gridGeomNd);
-            params.parameter("Background").setValue(fillValues == null ? empty : fillValues);
-            params.parameter("InterpolationType").setValue(interpolation);
-
-            final Process process = desc.createProcess(params);
-            final ParameterValueGroup results = process.call();
-            coverage = (GridCoverage) results.parameter("result").getValue();
-        } catch (ProcessException | NoSuchIdentifierException ex) {
+            GridCoverageProcessor processor = new GridCoverageProcessor();
+            switch (interpolation) {
+                case NEIGHBOR : processor.setInterpolation(Interpolation.NEAREST);
+                case BILINEAR : processor.setInterpolation(Interpolation.BILINEAR);
+                case LANCZOS : processor.setInterpolation(Interpolation.LANCZOS);
+                default: processor.setInterpolation(Interpolation.BILINEAR);
+            }
+            coverage = processor.resample(coverage, gridGeomNd);
+        } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
