@@ -68,6 +68,10 @@ public class TileFormat {
         public static final Compression NONE = new Compression("NONE");
         public static final Compression ZIP = new Compression("ZIP");
         public static final Compression GZ = new Compression("GZ");
+        /**
+         * Provide less compression then GZ but greater input and output performances.
+         */
+        public static final Compression LZ4 = new Compression("LZ4");
 
 
         private Compression(final String name) {

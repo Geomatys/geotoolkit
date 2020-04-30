@@ -199,6 +199,10 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         } catch (FactoryException ex) {
             throw new DataStoreException(ex);
         }
+        if (pyramid == null) {
+            throw new NoSuchDataException("No data pyramids available in this resource.");
+        }
+
         crs = pyramid.getCoordinateReferenceSystem();
 
         GridGeometry canvas = getGridGeometry(pyramid);

@@ -91,7 +91,7 @@ public class Isoline extends AbstractProcess {
                 @Override
                 public synchronized boolean addAll(Collection<? extends Feature> c) {
                     boolean b = super.addAll(c);
-                    if (super.size() > 500) {
+                    if (super.size() > 200) {
                         try {
                             col.add(super.iterator());
                         } catch (DataStoreException ex) {
