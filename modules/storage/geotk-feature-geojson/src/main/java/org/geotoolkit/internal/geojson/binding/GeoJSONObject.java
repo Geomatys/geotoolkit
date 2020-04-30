@@ -19,6 +19,8 @@ package org.geotoolkit.internal.geojson.binding;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONGeometryCollection;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONLineString;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONMultiLineString;
@@ -78,4 +80,59 @@ public class GeoJSONObject implements Serializable {
     public void setCrs(GeoJSONCRS crs) {
         this.crs = crs;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 41 * hash + Objects.hashCode(this.type);
+        hash = 41 * hash + Arrays.hashCode(this.bbox);
+        hash = 41 * hash + Objects.hashCode(this.crs);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GeoJSONObject other = (GeoJSONObject) obj;
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
+        if (!Arrays.equals(this.bbox, other.bbox)) {
+            return false;
+        }
+        if (!Objects.equals(this.crs, other.crs)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        if (type != null) {
+            sb.append("type = ");
+            sb.append(type);
+            sb.append('\n');
+        }
+        if (bbox != null) {
+            sb.append("bbox = ");
+            sb.append(Arrays.toString(bbox));
+            sb.append('\n');
+        }
+        if (crs != null) {
+            sb.append("crs = ");
+            sb.append(crs);
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
 }

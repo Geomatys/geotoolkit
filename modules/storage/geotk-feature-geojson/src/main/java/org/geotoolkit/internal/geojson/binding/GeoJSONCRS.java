@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.internal.geojson.GeoJSONUtils;
@@ -90,4 +91,51 @@ public class GeoJSONCRS implements Serializable {
         GeoJSONUtils.toURN(crs)
                 .ifPresent(urn -> properties.put(NAME, urn));
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GeoJSONCRS other = (GeoJSONCRS) obj;
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
+        if (!Objects.equals(this.properties, other.properties)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.type);
+        hash = 31 * hash + Objects.hashCode(this.properties);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        if (type != null) {
+            sb.append("type = ");
+            sb.append(type);
+            sb.append('\n');
+        }
+        for (Map.Entry<String,String> entry : properties.entrySet()) {
+            sb.append(entry.getKey());
+            sb.append(" = ");
+            sb.append(entry.getValue());
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
 }

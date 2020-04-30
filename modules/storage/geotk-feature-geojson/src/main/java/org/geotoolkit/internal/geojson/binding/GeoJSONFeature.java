@@ -18,6 +18,8 @@ package org.geotoolkit.internal.geojson.binding;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import org.geotoolkit.storage.geojson.GeoJSONConstants;
 
 /**
@@ -63,5 +65,60 @@ public class GeoJSONFeature extends GeoJSONObject {
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + Objects.hashCode(this.geometry);
+        hash = 19 * hash + Objects.hashCode(this.id);
+        hash = 19 * hash + Objects.hashCode(this.properties);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GeoJSONFeature other = (GeoJSONFeature) obj;
+        if (!Objects.equals(this.geometry, other.geometry)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.properties, other.properties)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (id != null) {
+            sb.append("id = ");
+            sb.append(id);
+            sb.append('\n');
+        }
+        if (geometry != null) {
+            sb.append("geometry = ");
+            sb.append(geometry);
+            sb.append('\n');
+        }
+        for (Entry<String,Object> entry : properties.entrySet()) {
+            sb.append(entry.getKey());
+            sb.append(" = ");
+            sb.append(entry.getValue());
+            sb.append('\n');
+        }
+        return sb.toString();
     }
 }

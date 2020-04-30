@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.geotoolkit.storage.geojson.GeoJSONConstants;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
@@ -49,6 +50,17 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
     public GeoJSONGeometry() {
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+
     /**
      * POINT
      */
@@ -68,6 +80,26 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             this.coordinates = coordinates;
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONPoint other = (GeoJSONPoint) obj;
+            return Arrays.equals(this.coordinates, other.coordinates);
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            hash = 29 * hash + Arrays.hashCode(this.coordinates);
+            return hash;
+        }
+
+        @Override
+        public String toString() {
+            return toJTS(this, null).toText();
+        }
     }
 
     /**
@@ -87,6 +119,27 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
 
         public void setCoordinates(double[][] coordinates) {
             this.coordinates = coordinates;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            hash = 29 * hash + Arrays.hashCode(this.coordinates);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONMultiPoint other = (GeoJSONMultiPoint) obj;
+            return Arrays.deepEquals(this.coordinates, other.coordinates);
+        }
+
+        @Override
+        public String toString() {
+            return toJTS(this, null).toText();
         }
     }
 
@@ -108,6 +161,27 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
         public void setCoordinates(double[][] coordinates) {
             this.coordinates = coordinates;
         }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            hash = 29 * hash + Arrays.hashCode(this.coordinates);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONLineString other = (GeoJSONLineString) obj;
+            return Arrays.deepEquals(this.coordinates, other.coordinates);
+        }
+
+        @Override
+        public String toString() {
+            return toJTS(this, null).toText();
+        }
     }
 
     /**
@@ -127,6 +201,27 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
 
         public void setCoordinates(double[][][] coordinates) {
             this.coordinates = coordinates;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            hash = 29 * hash + Arrays.hashCode(this.coordinates);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONMultiLineString other = (GeoJSONMultiLineString) obj;
+            return Arrays.deepEquals(this.coordinates, other.coordinates);
+        }
+
+        @Override
+        public String toString() {
+            return toJTS(this, null).toText();
         }
     }
 
@@ -148,6 +243,27 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
         public void setCoordinates(double[][][] coordinates) {
             this.coordinates = coordinates;
         }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            hash = 29 * hash + Arrays.hashCode(this.coordinates);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONPolygon other = (GeoJSONPolygon) obj;
+            return Arrays.deepEquals(this.coordinates, other.coordinates);
+        }
+
+        @Override
+        public String toString() {
+            return toJTS(this, null).toText();
+        }
     }
 
     /**
@@ -168,6 +284,27 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
         public void setCoordinates(double[][][][] coordinates) {
             this.coordinates = coordinates;
         }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            hash = 29 * hash + Arrays.hashCode(this.coordinates);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONMultiPolygon other = (GeoJSONMultiPolygon) obj;
+            return Arrays.deepEquals(this.coordinates, other.coordinates);
+        }
+
+        @Override
+        public String toString() {
+            return toJTS(this, null).toText();
+        }
     }
 
     /**
@@ -187,6 +324,30 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
 
         public void setGeometries(List<GeoJSONGeometry> geometries) {
             this.geometries = geometries;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            hash = 97 * hash + Objects.hashCode(this.geometries);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONGeometryCollection other = (GeoJSONGeometryCollection) obj;
+            if (!Objects.equals(this.geometries, other.geometries)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return toJTS(this, null).toText();
         }
     }
 
