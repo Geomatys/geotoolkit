@@ -217,7 +217,12 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
                 //can happen if tile is really missing, the isMissing method is a best effort call
                 if (tile != null) {
                     final RenderedImage image = tile.getImage();
-                    Raster tileRaster = image.getData();
+                    Raster tileRaster;
+                    if (image instanceof BufferedImage) {
+                        tileRaster = ((BufferedImage) image).getRaster();
+                    } else {
+                        tileRaster = image.getData();
+                    }
                     tileRaster = makeConform(tileRaster);
                     buffer = tileRaster.getDataBuffer();
                 }
