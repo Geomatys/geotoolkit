@@ -19,7 +19,7 @@ package org.geotoolkit.processing.coverage.isoline;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -87,6 +87,22 @@ public class Isoline extends AbstractProcess {
         }
 
         try {
+            final List<Feature> batches = new ArrayList<Feature>() {
+                @Override
+                public synchronized boolean addAll(Collection<? extends Feature> c) {
+                    boolean b = super.addAll(c);
+                    if (super.size() > 500) {
+                        try {
+                            col.add(super.iterator());
+                        } catch (DataStoreException ex) {
+                            throw new BackingStoreException(ex);
+                        }
+                        clear();
+                    }
+                    return b;
+                }
+            };
+
             final GridCoverage coverage = resource.read(null);
             final RenderedImage image = coverage.render(null);
             final GridGeometry gridgeom = coverage.getGridGeometry();
@@ -96,7 +112,7 @@ public class Isoline extends AbstractProcess {
             col = (WritableFeatureSet) featureStore.findResource(type.getName().toString());
 
             final Stream<Rectangle> stream = BufferedImages.tileStream(image, 1, 1, 0, 0);
-            final Iterator<Feature> iterator = stream.map(new Function<Rectangle, List<Feature>>() {
+            stream.map(new Function<Rectangle, List<Feature>>() {
                 @Override
                 public List<Feature> apply(Rectangle r) {
                     final List<Feature> features = new ArrayList<>();
@@ -111,10 +127,12 @@ public class Isoline extends AbstractProcess {
                         }
                     }
                     return features;
-                }
-            }).flatMap(List::stream).parallel().iterator();
+            }
+            }).parallel().forEach(batches::addAll);
 
-            col.add(iterator);
+            if (!batches.isEmpty()) {
+                col.add(batches.iterator());
+            }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
