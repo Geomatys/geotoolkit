@@ -56,7 +56,7 @@ public final class WKBRasterConstants {
     public static final int BANDTYPE_FLAG_ISNODATA = 1<<5;
     public static final int BANDTYPE_FLAG_RESERVED3 =1<<4;
 
-    private WKBRasterConstants(){}
+    private WKBRasterConstants() {}
 
     public static int getNbBytePerPixel(int pixelType) {
         switch (pixelType) {
@@ -80,7 +80,7 @@ public final class WKBRasterConstants {
         }
     }
 
-    public static int getDataBufferType(int pixelType){
+    public static int getDataBufferType(int pixelType) {
         switch (pixelType) {
             case PT_1BB:
             case PT_2BUI:
@@ -105,7 +105,7 @@ public final class WKBRasterConstants {
         }
     }
 
-    public static int getPixelType(int dataBufferType){
+    public static int getPixelType(int dataBufferType) {
         switch (dataBufferType) {
             case DataBuffer.TYPE_BYTE:
                 return PT_8BUI;
