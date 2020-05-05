@@ -35,7 +35,6 @@ import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.LineReader;
 import org.geotoolkit.io.LineReaders;
-import org.geotoolkit.test.PlatformDependentTest;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.junit.*;
@@ -333,8 +332,6 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      *       class (nearest neighbor interpolation of floating point values).
      */
     @Test
-    @PlatformDependentTest
-    @org.junit.Ignore
     public void writeExpandedUpperLeftRegion() throws IOException, DataStoreException, ParseException {
         assumeTrue(OS.current() == OS.MAC_OS);
 
