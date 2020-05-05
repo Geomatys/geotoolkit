@@ -20,10 +20,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Locale;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
+import org.apache.sis.internal.storage.io.ChannelDataInput;
+import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 
 
 /**
@@ -45,22 +49,10 @@ public class ByteArrayImageInputStreamSpi extends ImageInputStreamSpi {
     @Override
     public ImageInputStream createInputStreamInstance(Object input, boolean useCache, File cacheDir) throws IOException {
         final byte[] data = (byte[]) input;
-        return new ClosingCachedImageStream(new ByteArrayInputStream(data));
+        final InputStream astream = new ByteArrayInputStream(data);
+        final ReadableByteChannel channel = Channels.newChannel(astream);
+        final ChannelDataInput cdi = new ChannelDataInput("in memory byte array", channel, ByteBuffer.wrap(data),true);
+        return new ChannelImageInputStream(cdi);
     }
 
-    private static class ClosingCachedImageStream extends MemoryCacheImageInputStream {
-
-        private final InputStream in;
-
-        public ClosingCachedImageStream(InputStream in) {
-            super(in);
-            this.in = in;
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            in.close();
-        }
-    }
 }
