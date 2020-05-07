@@ -18,19 +18,28 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.LongFunction;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -39,11 +48,18 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
+import org.geotoolkit.storage.multires.DefaultPyramid;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.util.Streams;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
@@ -59,6 +75,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     private InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
     private double[] fillValues;
+    private boolean coverageIsHomogeneous = true;
+    private boolean skipExistingTiles = false;
 
     public CoverageTileGenerator(GridCoverageResource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
@@ -87,6 +105,41 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     public InterpolationCase getInterpolation() {
         return interpolation;
+    }
+
+    /**
+     * Indicate if coverage is homogeneous, which is most of the time true.
+     * This allows the generator to start by generation the lowest level tiles
+     * and generate upper one based on the previous.
+     *
+     * If the source coverage is something starter composed of various coverages
+     * at different scales it is necessary to set this value to false.
+     *
+     * @return true if coverage is homogeneous.
+     */
+    public boolean isCoverageIsHomogeneous() {
+        return coverageIsHomogeneous;
+    }
+
+    /**
+     *
+     * @param coverageIsHomogeneous
+     */
+    public void setCoverageIsHomogeneous(boolean coverageIsHomogeneous) {
+        this.coverageIsHomogeneous = coverageIsHomogeneous;
+    }
+
+    public boolean isSkipExistingTiles() {
+        return skipExistingTiles;
+    }
+
+    /**
+     * Indicate if existing tiles should be regenerated.
+     *
+     * @param skipExistingTiles
+     */
+    public void setSkipExistingTiles(boolean skipExistingTiles) {
+        this.skipExistingTiles = skipExistingTiles;
     }
 
     public void setFillValues(double[] fillValues) {
@@ -119,7 +172,106 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
+    public void generate(Pyramid pyramid, Envelope env, NumberRange resolutions,
+            ProcessListener listener) throws DataStoreException, InterruptedException {
+        if (!coverageIsHomogeneous) {
+            super.generate(pyramid, env, resolutions, listener);
+            return;
+        }
+
+        /*
+        We can generate the pyramid starting from the lowest level then going up
+        using the previously generated level.
+        */
+        if (env != null) {
+            try {
+                env = Envelopes.transform(env, pyramid.getCoordinateReferenceSystem());
+            } catch (TransformException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
+
+        //generate lower level from data
+        final Mosaic[] mosaics = pyramid.getMosaics().toArray(new Mosaic[0]);
+        Arrays.sort(mosaics, (Mosaic o1, Mosaic o2) -> Double.compare(o1.getScale(), o2.getScale()));
+
+        final long total = countTiles(pyramid, env, resolutions);
+        final AtomicLong al = new AtomicLong();
+
+        GridCoverageResource resource = this.resource;
+
+        for (final Mosaic mosaic : mosaics) {
+            if (resolutions == null || resolutions.contains(mosaic.getScale())) {
+
+                final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
+
+                final long nbTile = ((long)rect.width) * ((long)rect.height);
+                final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
+                Stream<Tile> stream = LongStream.range(0, nbTile).parallel()
+                        .mapToObj(new LongFunction<Tile>() {
+                            @Override
+                            public Tile apply(long value) {
+                                final long x = rect.x + (value % rect.width);
+                                final long y = rect.y + (value / rect.width);
+
+                                Tile data = null;
+                                try {
+                                    if (skipExistingTiles && !mosaic.isMissing((int) x, (int) y)) {
+                                        //tile already exist
+                                        return null;
+                                    }
+
+                                    //do not regenerate existing tiles
+                                    //if (!mosaic.isMissing((int)x, (int)y)) return;
+
+                                    final Point coord = new Point((int)x, (int)y);
+                                    try {
+                                        data = generateTile(pyramid, mosaic, coord);
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                } finally {
+                                    long v = al.incrementAndGet();
+                                    if (listener != null & (v % eventstep == 0))  {
+                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                                    }
+                                }
+                                return data;
+                            }
+                        })
+                        .filter(this::emptyFilter);
+
+                Streams.batchExecute(stream, (Collection<Tile> t) -> {
+                    try {
+                        mosaic.writeTiles(t.stream(), null);
+                    } catch (DataStoreException ex) {
+                        ex.printStackTrace();
+                    }
+                }, 200);
+
+                long v = al.get();
+                if (listener != null) {
+                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                }
+
+                //modify context
+                final DefaultPyramid pm = new DefaultPyramid(pyramid.getCoordinateReferenceSystem());
+                pm.getMosaicsInternal().add(mosaic);
+                final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
+                r.setSampleDimensions(resource.getSampleDimensions());
+                r.getModels().add(pm);
+
+                resource = r;
+            }
+        }
+    }
+
+    @Override
     public Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord) throws DataStoreException {
+        return generateTile(pyramid, mosaic, tileCoord, resource);
+    }
+
+    private Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord, GridCoverageResource resource) throws DataStoreException {
         final Dimension tileSize = mosaic.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
         final LinearTransform gridToCrsNd = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
