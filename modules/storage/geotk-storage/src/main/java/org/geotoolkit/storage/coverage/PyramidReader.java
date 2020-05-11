@@ -152,14 +152,18 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         //-- size of internal pixel data recovered
         final GridExtent dataSize = mosaic.getDataExtent();
 
+        final long[] low  = new long[nbdim];
         final long[] high  = new long[nbdim];
 
         for (int i = 0; i < cs.getDimension(); i++) {
             if (i == minordi) {
-                high[i] = dataSize.getSize(0); //-- X horizontal 2D part
+                low[i] = dataSize.getLow(0); //-- X horizontal 2D part
+                high[i] = dataSize.getHigh(0) + 1; //-- X horizontal 2D part, +1 for exclusive
             } else if (i == minordi + 1) {
-                high[i] = dataSize.getSize(1); //-- Y horizontal 2D part
+                low[i] = dataSize.getLow(1); //-- Y horizontal 2D part
+                high[i] = dataSize.getHigh(1) + 1; //-- Y horizontal 2D part, +1 for exclusive
             } else if (i != minordi && i != minordi + 1) {
+                low[i] = 0;
                 high[i] = multiAxisValues.get(i).length; //-- other dimension grid high value = discret axis values number.
             } else {
                 //-- should never append
@@ -167,7 +171,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             }
         }
 
-        final GridExtent ge = new GridExtent(null, null, high, false);
+        final GridExtent ge = new GridExtent(null, low, high, false);
 
         // TODO : we should do the transform like this but the is an issue further with derivate transforms
         //convert to center

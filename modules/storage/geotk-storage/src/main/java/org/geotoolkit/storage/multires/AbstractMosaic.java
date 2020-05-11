@@ -163,10 +163,25 @@ public abstract class AbstractMosaic implements Mosaic {
             assert end.x >= start.x;
             assert end.y >= start.y;
 
+            //at this point we are sure of the Y range
+            //we still need to search for X
+            for (int y = start.y; y <= end.y; y++) {
+                for (int x = 0; x < start.x; x++) {
+                    if (!isMissing(x, y)) {
+                        start.x = x;
+                    }
+                }
+                for (int x = gridSize.width-1; x > end.x; x--) {
+                    if (!isMissing(x, y)) {
+                        end.x = x;
+                    }
+                }
+            }
+
             long sx = ((long) start.x) * tileSize.width;
             long sy = ((long) start.y) * tileSize.height;
-            long ex = (end.x - start.x + 1) * tileSize.width;
-            long ey = (end.y - start.y + 1) * tileSize.height;
+            long ex = ((long) end.x + 1) * tileSize.width;
+            long ey = ((long) end.y + 1) * tileSize.height;
             return new GridExtent(null, new long[]{sx,sy}, new long[]{ex,ey}, false);
         } else {
             //all mosaic tiles are missing

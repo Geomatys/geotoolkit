@@ -170,6 +170,8 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
      *
      * @param ref
      * @param crs
+     * @param width tile size
+     * @param height tile size
      * @param geovalues [0...n slices][Z coord, T coord, sample value]
      */
     private static void create4DPyramid(GridCoverageResource ref, CoordinateReferenceSystem crs,
