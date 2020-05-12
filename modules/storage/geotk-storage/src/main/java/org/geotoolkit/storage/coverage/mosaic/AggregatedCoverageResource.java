@@ -441,8 +441,21 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         int index = 0;
         double[] estimatedResolution = new double[outputCrs.getCoordinateSystem().getDimension()];
         Arrays.fill(estimatedResolution, Double.POSITIVE_INFINITY);
+
+        //if all coverage resources have the same grid geometry we can use it directly
+        GridGeometry sharedGrid = components.iterator().next().getGridGeometry();
+        if (!Utilities.equalsIgnoreMetadata(sharedGrid.getCoordinateReferenceSystem(), outputCrs)) {
+            sharedGrid = null;
+        }
+
         for (GridCoverageResource resource : components) {
             final GridGeometry componentGrid = resource.getGridGeometry();
+
+            if (sharedGrid != null && !sharedGrid.equals(componentGrid)) {
+                //this coverage has a different grid
+                sharedGrid = null;
+            }
+
             Envelope envelope = componentGrid.getEnvelope();
             try {
                 envelope = Envelopes.transform(envelope, outputCrs);
@@ -469,8 +482,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 env.add(envelope);
             }
         }
-
-        if (estimatedResolution != null) {
+        if (sharedGrid != null) {
+            cachedGridGeometry = sharedGrid;
+        } else if (estimatedResolution != null) {
             cachedGridGeometry = new EstimatedGridGeometry(env, estimatedResolution);
         } else {
             cachedGridGeometry = new GridGeometry(null, env);

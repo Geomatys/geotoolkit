@@ -129,6 +129,9 @@ public class AggregatedCoverageResourceTest {
         final double[] resolution = aggregate.getGridGeometry().getResolution(true);
         Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
+
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
@@ -237,6 +240,10 @@ public class AggregatedCoverageResourceTest {
         final double[] resolution = aggregate.getGridGeometry().getResolution(true);
         Assert.assertArrayEquals(new double[]{0.5,0.5}, resolution, 0.0);
 
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertTrue(!gridGeometry.isDefined(GridGeometry.EXTENT));
+        Assert.assertTrue(gridGeometry.isDefined(GridGeometry.ENVELOPE));
+        
         final GridCoverage coverage = aggregate.read(grid2);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
@@ -318,6 +325,9 @@ public class AggregatedCoverageResourceTest {
                 null, AggregatedCoverageResource.Mode.ORDER,
                 resource1, resource2, resource3);
         ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
@@ -449,6 +459,10 @@ public class AggregatedCoverageResourceTest {
                 resource1, resource2);
         ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
 
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertTrue(!gridGeometry.isDefined(GridGeometry.EXTENT));
+        Assert.assertTrue(gridGeometry.isDefined(GridGeometry.ENVELOPE));
+
         final GridCoverage coverage = aggregate.read(grid).forConvertedValues(true);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
@@ -526,6 +540,9 @@ public class AggregatedCoverageResourceTest {
 
         final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource(Arrays.asList(band0,band1,band2), AggregatedCoverageResource.Mode.ORDER, crs);
         aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
@@ -644,6 +661,9 @@ public class AggregatedCoverageResourceTest {
         final double[] resolution = aggregate.getGridGeometry().getResolution(true);
         Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
+
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
@@ -651,4 +671,71 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(1, 0); Assert.assertEquals(-3.0, reader.getSampleDouble(0), 0.0);
         reader.moveTo(2, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
     }
+
+    /**
+     * Test the grid geometry is preserved if all coverages have the same.
+     */
+    @Test
+    public void testSharedGridGeometry() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        | 1 | 2 | 3 |
+        +---+---+---+
+
+        Coverage 2
+        +---+---+---+
+        | 4 | 5 | 6 |
+        +---+---+---+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+
+        write1.moveTo(0, 0); write1.setPixel(new double[]{1});
+        write1.moveTo(1, 0); write1.setPixel(new double[]{2});
+        write1.moveTo(2, 0); write1.setPixel(new double[]{3});
+        write2.moveTo(0, 0); write2.setPixel(new double[]{4});
+        write2.moveTo(1, 0); write2.setPixel(new double[]{5});
+        write2.moveTo(2, 0); write2.setPixel(new double[]{6});
+
+
+        /*
+        We expect a final coverage with values [1:4,2:5,3:6] on a single row
+        +---+---+---+
+        |1:4|2:5|3:6|
+        +---+---+---+
+        */
+        final AggregatedCoverageResource.VirtualBand band0 = new AggregatedCoverageResource.VirtualBand();
+        band0.setSources(new AggregatedCoverageResource.Source(resource1, 0));
+        final AggregatedCoverageResource.VirtualBand band1 = new AggregatedCoverageResource.VirtualBand();
+        band1.setSources(new AggregatedCoverageResource.Source(resource2, 0));
+
+        final AggregatedCoverageResource aggregate = new AggregatedCoverageResource(Arrays.asList(band0, band1), AggregatedCoverageResource.Mode.ORDER, null);
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0)); Assert.assertEquals(4, reader.getSample(1));
+        reader.moveTo(1, 0); Assert.assertEquals(2, reader.getSample(0)); Assert.assertEquals(5, reader.getSample(1));
+        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0)); Assert.assertEquals(6, reader.getSample(1));
+    }
+
 }
