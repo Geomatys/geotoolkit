@@ -8,10 +8,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.logging.Level;
-
-import org.opengis.feature.Feature;
-
-import net.sf.marineapi.nmea.parser.ParseException;
+import net.sf.marineapi.nmea.parser.DataNotAvailableException;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.parser.UnsupportedSentenceException;
 import net.sf.marineapi.nmea.sentence.DateSentence;
@@ -25,11 +22,6 @@ import net.sf.marineapi.nmea.sentence.TimeSentence;
 import net.sf.marineapi.nmea.util.Date;
 import net.sf.marineapi.nmea.util.Position;
 import net.sf.marineapi.nmea.util.Time;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import reactor.core.publisher.Flux;
-
 import static org.geotoolkit.data.nmea.NMEAStore.ALT_NAME;
 import static org.geotoolkit.data.nmea.NMEAStore.DATE_NAME;
 import static org.geotoolkit.data.nmea.NMEAStore.DEPTH_NAME;
@@ -38,6 +30,11 @@ import static org.geotoolkit.data.nmea.NMEAStore.LOGGER;
 import static org.geotoolkit.data.nmea.NMEAStore.NMEA_TYPE;
 import static org.geotoolkit.data.nmea.NMEAStore.SPEED_NAME;
 import static org.geotoolkit.data.nmea.NMEAStore.TIME_NAME;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.opengis.feature.Feature;
+import reactor.core.publisher.Flux;
 
 /**
  * Helper class to map NMEA messages into SIS Feature API. The aim is to provide a high-level API capable of providing
@@ -128,15 +125,70 @@ class FeatureProcessor {
         return Double.doubleToLongBits(d1) == Double.doubleToLongBits(d2) || Math.abs(d1 - d2) < EPSI;
     }
 
-    private static OptionalDouble getAltitude(final Sentence source) {
+    private static OptionalDouble findAltitude(final Sentence source) {
         if (source instanceof GGASentence) {
             try {
                 return OptionalDouble.of(((GGASentence) source).getAltitude());
-            } catch (NullPointerException | ParseException e) {
+            } catch (NullPointerException | DataNotAvailableException e) {
                 LOGGER.log(Level.FINE, "Cannot decode altitude", e);
             }
         }
         return OptionalDouble.empty();
+    }
+
+    private static OptionalDouble findSpeed(final Sentence source) {
+        if (source instanceof RMCSentence) {
+            try {
+                return OptionalDouble.of(((RMCSentence) source).getSpeed());
+            } catch (NullPointerException | DataNotAvailableException e) {
+                LOGGER.log(Level.FINE, "Cannot decode speed", e);
+            }
+        }
+        return OptionalDouble.empty();
+    }
+
+    private static OptionalDouble findDepth(final Sentence source) {
+        if (source instanceof DepthSentence) {
+            try {
+                return OptionalDouble.of(((DepthSentence) source).getDepth());
+            } catch (NullPointerException | DataNotAvailableException e) {
+                LOGGER.log(Level.FINE, "Cannot decode depth", e);
+            }
+        }
+        return OptionalDouble.empty();
+    }
+
+    private static Optional<Position> findPosition(final Sentence source) {
+        if (source instanceof PositionSentence) {
+            try {
+                return Optional.of(((PositionSentence) source).getPosition());
+            } catch (NullPointerException | DataNotAvailableException e) {
+                LOGGER.log(Level.FINE, "Cannot decode position", e);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<Date> findDate(final Sentence source) {
+        if (source instanceof DateSentence) {
+            try {
+                return Optional.of(((DateSentence) source).getDate());
+            } catch (NullPointerException | DataNotAvailableException e) {
+                LOGGER.log(Level.FINE, "Cannot decode date", e);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<Time> findTime(final Sentence source) {
+        if (source instanceof TimeSentence) {
+            try {
+                return Optional.of(((TimeSentence) source).getTime());
+            } catch (NullPointerException | DataNotAvailableException e) {
+                LOGGER.log(Level.FINE, "Cannot decode time", e);
+            }
+        }
+        return Optional.empty();
     }
 
     private static class GlobalPositioningState {
@@ -164,10 +216,18 @@ class FeatureProcessor {
         private GlobalPositioningState(final GlobalPositioningState source, final Sentence newInfo) {
             final double[] value = Arrays.copyOf(source.encodedInfo, ENCODED_SIZE);
             boolean spaceTimeUpdate = false;
-            if (newInfo instanceof PositionSentence) {
+
+            final Optional<Position> position = findPosition(newInfo);
+            final OptionalDouble altitude = findAltitude(newInfo);
+            final Optional<Date> date = findDate(newInfo);
+            final Optional<Time> time = findTime(newInfo);
+            final OptionalDouble depth = findDepth(newInfo);
+            final OptionalDouble speed = findSpeed(newInfo);
+
+            if (position.isPresent()) {
                 // Note: Not all NMEA sentences provide elevation information. To avoid wrong updates, we only use
                 // altitude on compatible sentences.
-                final Position p = ((PositionSentence) newInfo).getPosition();
+                Position p = position.get();
                 final double lon = p.getLongitude();
                 final double lat = p.getLatitude();
                 if (!(eq(lon, value[LON]) && eq(lat, value[LAT]))) {
@@ -176,7 +236,7 @@ class FeatureProcessor {
                     value[LAT] = lat;
                 }
             }
-            final OptionalDouble altitude = getAltitude(newInfo);
+
             if (altitude.isPresent()) {
                 final double alt = altitude.getAsDouble();
                 if (!eq(alt, value[ALT])) {
@@ -184,24 +244,24 @@ class FeatureProcessor {
                     value[ALT] = alt;
                 }
             }
-            if (newInfo instanceof DepthSentence) {
-                value[DEPTH] = ((DepthSentence) newInfo).getDepth();
+            if (depth.isPresent()) {
+                value[DEPTH] = depth.getAsDouble();
             }
-            if (newInfo instanceof RMCSentence) {
-                value[SPEED] = ((RMCSentence) newInfo).getSpeed();
+            if (speed.isPresent()) {
+                value[SPEED] = speed.getAsDouble();
             }
-            if (newInfo instanceof DateSentence) {
-                final Date date = ((DateSentence) newInfo).getDate();
-                final long days = LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).toEpochDay();
+            if (date.isPresent()) {
+                final Date d = date.get();
+                final long days = LocalDate.of(d.getYear(), d.getMonth(), d.getDay()).toEpochDay();
                 if (!eq(value[DATE], days)) {
                     spaceTimeUpdate = true;
                     value[DATE] = days;
                 }
             }
-            if (newInfo instanceof TimeSentence) {
-                final OffsetTime time = convert(((TimeSentence) newInfo).getTime());
-                final long nano = time.toLocalTime().toNanoOfDay();
-                final int offset = time.getOffset().getTotalSeconds();
+            if (time.isPresent()) {
+                final OffsetTime t = convert(time.get());
+                final long nano = t.toLocalTime().toNanoOfDay();
+                final int offset = t.getOffset().getTotalSeconds();
                 if (!(eq(value[TIME], nano) && eq(value[ZONE], offset))) {
                     spaceTimeUpdate = true;
                     value[TIME] = nano;
