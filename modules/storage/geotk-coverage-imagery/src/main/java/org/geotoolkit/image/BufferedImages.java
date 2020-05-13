@@ -279,6 +279,19 @@ public class BufferedImages extends Static {
     }
 
     /**
+     * Create a stream of point in the rectangle.
+     * @param rectangle
+     * @return
+     */
+    public static Stream<Point> pointStream(Rectangle rectangle) {
+        return LongStream.range(0, rectangle.width * rectangle.height).mapToObj((long value) -> {
+            final int x = (int) (value % rectangle.width);
+            final int y = (int) (value / rectangle.width);
+            return new Point(rectangle.x + x, rectangle.y + y);
+        });
+    }
+
+    /**
      * Create a stream of rectangle covering each tile in the image.
      * <p>
      * A margin on each side can be defined to expend the rectangle in the limit of the image size.
