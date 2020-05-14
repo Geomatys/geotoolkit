@@ -206,5 +206,4 @@ public class InMemoryFeatureSetMultiResolution extends AbstractFeatureSet implem
         }
     }
 
-
 }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
@@ -132,6 +133,76 @@ public class GridCoverageFeatureSetTest {
         assertEquals(8.0,       r4.getPropertyValue("quality"));
         assertEquals(GF.createPolygon(new LiteCoordinateSequence(new double[]{32,12, 34,12, 34,14, 32,14, 32,12})), r4.getProperty("geometry").getValue());
 
+    }
+
+    /**
+     * Test coverage rgb mapped as a feature.
+     *
+     * @throws DataStoreException
+     */
+    @Test
+    public void coverageRecordRGBTest() throws DataStoreException {
+
+        //create coverage
+        final BufferedImage image = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+        image.setRGB(0, 0, Color.BLUE.getRGB());
+        image.setRGB(1, 0, Color.RED.getRGB());
+        image.setRGB(0, 1, Color.GREEN.getRGB());
+        image.setRGB(1, 1, Color.PINK.getRGB());
+
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setValues(image);
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CENTER, new AffineTransform2D(2, 0, 0, 2, 31, 11), CommonCRS.WGS84.normalizedGeographic()));
+        final GridCoverage coverage = gcb.build();
+
+        //test mapped feature type
+        final FeatureType coverageType = GridCoverageFeatureSet.createCoverageType(coverage);
+        final FeatureAssociationRole role = (FeatureAssociationRole) coverageType.getProperty(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
+        final FeatureType recordType = role.getValueType();
+
+        assertEquals("Coverage",coverageType.getName().toString());
+        assertTrue(TypeConventions.COVERAGE_TYPE.isAssignableFrom(coverageType));
+
+        assertEquals("Record",recordType.getName().toString());
+        assertTrue(TypeConventions.COVERAGE_RECORD_TYPE.isAssignableFrom(recordType));
+
+        //convert coverage to feature
+        final Feature feature = coverageType.newInstance();
+        feature.setProperty(GridCoverageFeatureSet.coverageRecords(coverage,role));
+
+        //check records
+        final Collection col = (Collection) feature.getPropertyValue(TypeConventions.RANGE_ELEMENTS_PROPERTY.toString());
+        assertEquals(4, col.size());
+        final Iterator<Feature> ite = col.iterator();
+        final Feature r1 = ite.next();
+        final Feature r2 = ite.next();
+        final Feature r3 = ite.next();
+        final Feature r4 = ite.next();
+        assertFalse(ite.hasNext());
+
+        assertEquals(0.0, r1.getPropertyValue("Red"));
+        assertEquals(0.0, r1.getPropertyValue("Green"));
+        assertEquals(255.0, r1.getPropertyValue("Blue"));
+        assertEquals(255.0, r1.getPropertyValue("Transparency"));
+        assertEquals(Color.BLUE, r1.getPropertyValue("color"));
+
+        assertEquals(255.0, r2.getPropertyValue("Red"));
+        assertEquals(0.0, r2.getPropertyValue("Green"));
+        assertEquals(0.0, r2.getPropertyValue("Blue"));
+        assertEquals(255.0, r2.getPropertyValue("Transparency"));
+        assertEquals(Color.RED, r2.getPropertyValue("color"));
+
+        assertEquals(0.0, r3.getPropertyValue("Red"));
+        assertEquals(255.0, r3.getPropertyValue("Green"));
+        assertEquals(0.0, r3.getPropertyValue("Blue"));
+        assertEquals(255.0, r3.getPropertyValue("Transparency"));
+        assertEquals(Color.GREEN, r3.getPropertyValue("color"));
+
+        assertEquals(255.0, r4.getPropertyValue("Red"));
+        assertEquals(175.0, r4.getPropertyValue("Green"));
+        assertEquals(175.0, r4.getPropertyValue("Blue"));
+        assertEquals(255.0, r4.getPropertyValue("Transparency"));
+        assertEquals(Color.PINK, r4.getPropertyValue("color"));
     }
 
     /**
