@@ -44,6 +44,7 @@ import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.coverage.j2d.ImageUtilities;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.provider.Affine;
@@ -65,7 +66,6 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.opengis.geometry.DirectPosition;
@@ -389,7 +389,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         if(change.isIdentity()) return;
         AffineTransform objToDisp = new AffineTransform(getObjectiveToDisplay());
         objToDisp.concatenate(change);
-        XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
+        ImageUtilities.roundIfAlmostInteger(objToDisp);
 
         setTransform(objToDisp);
     }
@@ -520,7 +520,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             change.translate(-centerX, -centerY);
 
             change.concatenate(objToDisp);
-            XAffineTransform.roundIfAlmostInteger(change, EPS);
+            ImageUtilities.roundIfAlmostInteger(change);
             objToDisp.concatenate(change);
         }
 
@@ -612,7 +612,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final AffineTransform change = AffineTransform.getTranslateInstance(dest.getCenterX(),dest.getCenterY());
         change.scale(sx,sy);
         change.translate(-source.getCenterX(), -source.getCenterY());
-        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        ImageUtilities.roundIfAlmostInteger(change);
         return change;
     }
 
@@ -777,7 +777,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
 
         change.concatenate(objToDisp);
-        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        ImageUtilities.roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -807,7 +807,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
 
         change.concatenate(objToDisp);
-        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        ImageUtilities.roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -823,7 +823,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final AffineTransform change = objToDisp.createInverse();
         change.translate(x, y);
         change.concatenate(objToDisp);
-        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        ImageUtilities.roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -856,7 +856,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             }
             logical.concatenate(change);
             logical.concatenate(objToDisp);
-            XAffineTransform.roundIfAlmostInteger(logical, EPS);
+            ImageUtilities.roundIfAlmostInteger(logical);
             applyTransform(logical);
         }
     }

@@ -28,6 +28,7 @@ import javax.media.jai.WarpAffine;
 import javax.media.jai.operator.WarpDescriptor;
 
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.coverage.j2d.ImageUtilities;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -36,7 +37,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.logging.Logging;
@@ -154,7 +154,7 @@ public class WarpFactory {
      */
     private static Warp create(final AffineTransform transform) {
         final AffineTransform tr = new AffineTransform(transform);
-        XAffineTransform.roundIfAlmostInteger(tr, EPS);
+        ImageUtilities.roundIfAlmostInteger(tr);
         return new WarpAffine(tr);
     }
 
@@ -325,7 +325,7 @@ public class WarpFactory {
              * the expected value is zero).
              */
             tr.translate(-xcnt, -ycnt);
-            XAffineTransform.roundIfAlmostInteger(tr, EPS);
+            ImageUtilities.roundIfAlmostInteger(tr);
             return new WarpAffine(tr);
         }
         /*

@@ -70,37 +70,4 @@ public final class XAffineTransform {
                abs(tr.getTranslateX()) <= tolerance &&
                abs(tr.getTranslateY()) <= tolerance;
     }
-
-    /**
-     * If scale and shear coefficients are close to integers, replaces their current values by their rounded values.
-     * The scale and shear coefficients are handled in a "all or nothing" way; either all of them or none are rounded.
-     * The translation terms are handled separately, provided that the scale and shear coefficients have been rounded.
-     *
-     * <p>This rounding up is useful for example in order to speedup image displays.</p>
-     *
-     * @param  tr  the transform to round. Rounding will be applied in place.
-     * @param  tolerance  the maximal departure from integers in order to allow rounding.
-     *         It is typically a small number like {@code 1E-6}.
-     */
-    // LGPL (only the 'tolerance' argument actually)
-    public static void roundIfAlmostInteger(final AffineTransform tr, final double tolerance) {
-        double r;
-        final double m00, m01, m10, m11;
-        if (abs((m00 = rint(r=tr.getScaleX())) - r) <= tolerance &&
-            abs((m01 = rint(r=tr.getShearX())) - r) <= tolerance &&
-            abs((m11 = rint(r=tr.getScaleY())) - r) <= tolerance &&
-            abs((m10 = rint(r=tr.getShearY())) - r) <= tolerance)
-        {
-            /*
-             * At this point the scale and shear coefficients can been rounded to integers.
-             * Continue only if this rounding does not make the transform non-invertible.
-             */
-            if ((m00!=0 || m01!=0) && (m10!=0 || m11!=0)) {
-                double m02, m12;
-                if (abs((r = rint(m02=tr.getTranslateX())) - m02) <= tolerance) m02=r;
-                if (abs((r = rint(m12=tr.getTranslateY())) - m12) <= tolerance) m12=r;
-                tr.setTransform(m00, m10, m01, m11, m02, m12);
-            }
-        }
-    }
 }
