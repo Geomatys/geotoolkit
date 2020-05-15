@@ -26,12 +26,22 @@ import java.util.NoSuchElementException;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.measure.Quantity;
+import javax.measure.Unit;
+import javax.measure.quantity.Length;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.DeferredTile;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
@@ -40,6 +50,11 @@ import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.filter.Filter;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * A utility class which is capable of reading features from a pyramid.
@@ -57,9 +72,6 @@ public class PyramidFeatureSetReader {
     }
 
     public Stream<Feature> features(SimpleQuery query, boolean bln) throws DataStoreException {
-        if (query != null) {
-            throw new DataStoreException("Queries not supported yet.");
-        }
 
         final List<Pyramid> pyramids = Pyramids.getPyramids(resource);
         if (pyramids.isEmpty()) {
@@ -67,22 +79,73 @@ public class PyramidFeatureSetReader {
         }
 
         final Pyramid pyramid = pyramids.get(0);
+        if (pyramid.getMosaics().isEmpty()) {
+            return Stream.empty();
+        }
+
+        Mosaic mosaic;
         final Collection<Mosaic> mosaics = pyramid.getMosaics(pyramid.getScales()[0]);
         if (mosaics.isEmpty()) {
             return Stream.empty();
         } else if (mosaics.size() != 1) {
             throw new DataStoreException("Only one mosaic for a given scale should exist.");
         }
+        mosaic = mosaics.iterator().next();
 
-        final Mosaic mosaic = mosaics.iterator().next();
+        Envelope env = null;
+        if (query != null && query.getLinearResolution() != null) {
+            final Quantity<Length> linearResolution = query.getLinearResolution();
+            try {
+                double mosaicLinearRes = getLinearResolution(mosaic, linearResolution.getUnit()).getValue().doubleValue();
+
+                for (Mosaic m : pyramid.getMosaics()) {
+                    Quantity<Length> mr = getLinearResolution(m, linearResolution.getUnit());
+                    if (mr.getValue().doubleValue() <= linearResolution.getValue().doubleValue()
+                        && mr.getValue().doubleValue() > mosaicLinearRes) {
+                        mosaic = m;
+                        mosaicLinearRes = mr.getValue().doubleValue();
+                    }
+                }
+            } catch (TransformException | FactoryException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+
+            Filter filter = query.getFilter();
+            if (filter != null) {
+                JTSEnvelope2D e = new JTSEnvelope2D();
+                filter.accept(ExtractBoundsFilterVisitor.BOUNDS_VISITOR, e);
+                if (!e.isEmpty() && !e.isNull()) {
+                    env = e;
+                }
+            }
+        }
+
         final Dimension gridSize = mosaic.getGridSize();
-        final Rectangle area = new Rectangle(gridSize);
+        final Rectangle area;
+        if (env != null) {
+            try {
+                env = Envelopes.transform(env, mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
+            } catch (TransformException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+            area = Pyramids.getTilesInEnvelope(mosaic, env);
+        } else {
+            area = new Rectangle(gridSize);
+        }
 
         final TileIterator iterator = new TileIterator(mosaic, area);
 
         final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
         stream.onClose(iterator::close);
         return stream;
+    }
+
+    private Quantity<Length> getLinearResolution(Mosaic mosaic, Unit<Length> unit) throws TransformException, FactoryException {
+        final double[] res = new double[]{mosaic.getScale(), mosaic.getScale()};
+        final double[] newRes = new double[2];
+        final CoordinateReferenceSystem target2DCRS = CRS.forCode("EPSG:3395");
+        ReferencingUtilities.convertResolution(mosaic.getEnvelope(), res, target2DCRS, newRes);
+        return Quantities.create(newRes[0], Units.METRE).to(unit);
     }
 
     private static class TileIterator implements Iterator<Feature> {
