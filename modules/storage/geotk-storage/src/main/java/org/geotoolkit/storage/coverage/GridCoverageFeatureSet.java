@@ -41,6 +41,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -77,7 +78,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
     private final org.apache.sis.storage.GridCoverageResource gcr;
 
     public GridCoverageFeatureSet(org.apache.sis.storage.GridCoverageResource gcr) throws DataStoreException {
-        identifier = NamedIdentifier.castOrCopy(gcr.getIdentifier().orElse(null));
+        identifier = NamedIdentifier.castOrCopy(gcr.getIdentifier().orElse(Names.createLocalName(null, null, "Voxel")));
         this.gcr = gcr;
     }
 
@@ -445,7 +446,11 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
                 if (colorModel != null) {
                     coloredPixelIterator.moveTo(x, y);
                     Object dataElement = coloredPixelIterator.getDataElements(null);
-                    color = new Color(colorModel.getRGB(dataElement), true);
+                    try {
+                        color = new Color(colorModel.getRGB(dataElement), true);
+                    } catch (Throwable ex) {
+                        color = Color.RED;
+                    }
                 }
 
                 final double[] poly = new double[]{
