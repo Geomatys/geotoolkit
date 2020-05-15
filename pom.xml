@@ -814,7 +814,7 @@
           <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
           <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
           <breakiterator>true</breakiterator>
-          <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.apache:org.opengis:com</excludePackageNames>
+          <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.apache:org.opengis:com</excludePackageNames>
           <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
 
           <!-- TODO : fix project javadoc -->
