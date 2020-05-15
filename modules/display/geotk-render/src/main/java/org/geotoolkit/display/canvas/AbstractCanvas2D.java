@@ -25,6 +25,8 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
+import static java.lang.Math.abs;
+import static java.lang.Math.rint;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,7 +46,6 @@ import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.coverage.j2d.ImageUtilities;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.referencing.provider.Affine;
@@ -389,7 +390,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         if(change.isIdentity()) return;
         AffineTransform objToDisp = new AffineTransform(getObjectiveToDisplay());
         objToDisp.concatenate(change);
-        ImageUtilities.roundIfAlmostInteger(objToDisp);
+        roundIfAlmostInteger(objToDisp);
 
         setTransform(objToDisp);
     }
@@ -520,7 +521,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             change.translate(-centerX, -centerY);
 
             change.concatenate(objToDisp);
-            ImageUtilities.roundIfAlmostInteger(change);
+            roundIfAlmostInteger(change);
             objToDisp.concatenate(change);
         }
 
@@ -612,7 +613,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final AffineTransform change = AffineTransform.getTranslateInstance(dest.getCenterX(),dest.getCenterY());
         change.scale(sx,sy);
         change.translate(-source.getCenterX(), -source.getCenterY());
-        ImageUtilities.roundIfAlmostInteger(change);
+        roundIfAlmostInteger(change);
         return change;
     }
 
@@ -777,7 +778,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
 
         change.concatenate(objToDisp);
-        ImageUtilities.roundIfAlmostInteger(change);
+        roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -807,7 +808,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
 
         change.concatenate(objToDisp);
-        ImageUtilities.roundIfAlmostInteger(change);
+        roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -823,7 +824,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final AffineTransform change = objToDisp.createInverse();
         change.translate(x, y);
         change.concatenate(objToDisp);
-        ImageUtilities.roundIfAlmostInteger(change);
+        roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -856,7 +857,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             }
             logical.concatenate(change);
             logical.concatenate(objToDisp);
-            ImageUtilities.roundIfAlmostInteger(logical);
+            roundIfAlmostInteger(logical);
             applyTransform(logical);
         }
     }
@@ -1270,5 +1271,35 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             index += crs.getCoordinateSystem().getDimension();
         }
         throw new RuntimeException("Coordinate system has no horizontal component");
+    }
+
+    /**
+     * If scale and shear coefficients are close to integers, replaces their current values by their rounded values.
+     * The scale and shear coefficients are handled in a "all or nothing" way; either all of them or none are rounded.
+     * The translation terms are handled separately, provided that the scale and shear coefficients have been rounded.
+     *
+     * <p>This rounding up is useful for example in order to speedup image displays.</p>
+     *
+     * @param  tr  the transform to round. Rounding will be applied in place.
+     */
+    private static void roundIfAlmostInteger(final AffineTransform tr) {
+        double r;
+        final double m00, m01, m10, m11;
+        if (abs((m00 = rint(r=tr.getScaleX())) - r) <= EPS &&
+            abs((m01 = rint(r=tr.getShearX())) - r) <= EPS &&
+            abs((m11 = rint(r=tr.getScaleY())) - r) <= EPS &&
+            abs((m10 = rint(r=tr.getShearY())) - r) <= EPS)
+        {
+            /*
+             * At this point the scale and shear coefficients can been rounded to integers.
+             * Continue only if this rounding does not make the transform non-invertible.
+             */
+            if ((m00!=0 || m01!=0) && (m10!=0 || m11!=0)) {
+                double m02, m12;
+                if (abs((r = rint(m02=tr.getTranslateX())) - m02) <= EPS) m02=r;
+                if (abs((r = rint(m12=tr.getTranslateY())) - m12) <= EPS) m12=r;
+                tr.setTransform(m00, m10, m01, m11, m02, m12);
+            }
+        }
     }
 }
