@@ -131,6 +131,7 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
                 geometry.setUserData(userData);
 
                 feature.setPropertyValue(AttributeConvention.GEOMETRY, geometry);
+                features.add(feature);
             }
         }
 
