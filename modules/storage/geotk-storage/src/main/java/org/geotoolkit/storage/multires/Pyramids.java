@@ -33,6 +33,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
@@ -41,12 +42,12 @@ import org.apache.sis.util.Static;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -197,7 +198,7 @@ public final class Pyramids extends Static {
             return trs2d;
         }else{
             final int dim = nbDim+1;
-            final GeneralMatrix gm = new GeneralMatrix(dim);
+            final Matrix gm = Matrices.createIdentity(dim);
             gm.setElement(0, 0, trs2d.getScaleX());
             gm.setElement(1, 1, trs2d.getScaleY());
             gm.setElement(0, dim-1, trs2d.getTranslateX());

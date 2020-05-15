@@ -1105,7 +1105,7 @@ public final class JTS {
      * @param ring The ring to test.
      * @return true if ring is CCW, false if ring is CW.
      */
-    public static boolean isCCW3D(Coordinate[] ring) {
+    static boolean isCCW3D(Coordinate[] ring) {
         final int nbCoords = ring.length - 1;
         double buff = 0.0;
         for (int i = 1; i < nbCoords; i++) {
