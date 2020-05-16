@@ -541,7 +541,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
         if ( (img.getWidth() * img.getHeight()) < 5000*5000) {
             ImageProcessor processor = new ImageProcessor();
             processor.setExecutionMode(ImageProcessor.Mode.PARALLEL);
-            img = processor.prefetch(img);
+            img = processor.prefetch(img, null);
         }
 
         if (monitor.stopRequested()) return false;
