@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.vecmath.Vector3d;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
@@ -43,6 +42,7 @@ import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.geometry.math.Vector3d;
 import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
@@ -1111,9 +1111,9 @@ public final class JTS {
         for (int i = 1; i < nbCoords; i++) {
             final Vector3d v1 = new Vector3d((ring[i].x - ring[i - 1].x), (ring[i].y - ring[i - 1].y), (ring[i].z - ring[i - 1].z));
             final Vector3d v2 = new Vector3d((ring[i + 1].x - ring[i].x), (ring[i + 1].y - ring[i].y), (ring[i + 1].z - ring[i].z));
-            v1.cross(v1, v2);
-            v1.normalize();
-            buff += (v1.x + v1.y + v1.z);
+            final Vector3d c = (Vector3d) v1.cross(v2);
+            c.normalize();
+            buff += (c.x + c.y + c.z);
         }
         if (buff > 0.0) {
             return true;
