@@ -3,10 +3,20 @@
  */
 package org.geotoolkit.processing.science.drift.v2;
 
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.logging.Level;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridGeometry;
+import static org.apache.sis.coverage.grid.GridRoundingMode.ENCLOSING;
 import org.apache.sis.geometry.DirectPosition1D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.AxisDirections;
@@ -17,6 +27,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.geotoolkit.geometry.math.Vector2d;
+import static org.geotoolkit.processing.science.drift.v2.Utilities.*;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -25,22 +37,12 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.*;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import javax.vecmath.Vector2d;
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.logging.Level;
-
-import static org.apache.sis.coverage.grid.GridRoundingMode.ENCLOSING;
-import static org.geotoolkit.processing.science.drift.v2.Utilities.*;
 
 /**
  * TODO : add logic to re-use previously queried Calibration2D and Snapshot objects when same slices are used multiple

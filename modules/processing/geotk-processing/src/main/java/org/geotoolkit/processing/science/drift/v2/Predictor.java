@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
-import javax.vecmath.Vector2d;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -30,26 +29,25 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.geotoolkit.geometry.math.Vector2d;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.science.drift.DriftPredictionDescriptor;
 import org.geotoolkit.processing.science.drift.DriftPredictor;
 import org.geotoolkit.processing.science.drift.Output;
+import org.geotoolkit.processing.science.drift.v2.PointBucket.PointReference;
+import static org.geotoolkit.processing.science.drift.v2.PredictorDescriptor.*;
+import static org.geotoolkit.processing.science.drift.v2.Utilities.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import org.geotoolkit.processing.science.drift.v2.PointBucket.PointReference;
-import org.opengis.referencing.datum.PixelInCell;
-
-import static org.geotoolkit.processing.science.drift.v2.Utilities.*;
-import static org.geotoolkit.processing.science.drift.v2.PredictorDescriptor.*;
 import ucar.ma2.InvalidRangeException;
 
 /**
@@ -332,7 +330,8 @@ public class Predictor extends AbstractProcess {
 
                 wind.scale(w.wind);
                 current.scale(w.current);
-                move.add(wind, current);
+                move.x = wind.x + current.x;
+                move.y = wind.y + current.y;
                 move.scale(ctx.timestep.getSeconds());
 
                 location.x += move.x;

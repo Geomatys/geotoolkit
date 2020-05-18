@@ -115,10 +115,6 @@
             <groupId>edu.ucar</groupId>
             <artifactId>cdm</artifactId>
         </dependency>
-        <dependency>
-          <groupId>javax.vecmath</groupId>
-          <artifactId>vecmath</artifactId>
-        </dependency>
 
 
         <dependency>

@@ -65,6 +65,15 @@ public class Vector3f implements Vector {
         z = (float) values[2];
     }
 
+    public void set(Tuple v) {
+        if (getDimension() != v.getDimension()) {
+            throw new IllegalArgumentException("Vectors size are different : "+getDimension()+" and "+v.getDimension());
+        }
+        x = (float) v.get(0);
+        y = (float) v.get(1);
+        z = (float) v.get(2);
+    }
+
     @Override
     public double length() {
         return Math.sqrt(x*x + y*y + z*z);
