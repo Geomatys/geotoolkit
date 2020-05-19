@@ -99,6 +99,26 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
         this.rwlock = rwLock;
     }
 
+    GeoJSONReader(GeoJSONObject jsonObj, FeatureType featureType, ReadWriteLock rwLock) {
+        hasIdentifier = GeoJSONUtils.hasIdentifier(featureType);
+        if (hasIdentifier) {
+            idConverter = GeoJSONUtils.getIdentifierConverter(featureType);
+        } else {
+            // It should not be used, but we don't set it to null in case someons use it by mistake.
+            idConverter = input -> input;
+        }
+
+        final PropertyType defaultGeometry = GeoJSONUtils.getDefaultGeometry(featureType);
+        crs = GeoJSONUtils.getCRS(defaultGeometry);
+        geometryName = defaultGeometry.getName().toString();
+
+        this.jsonFile = null;
+        this.jsonObj = jsonObj;
+        this.toRead = false;
+        this.featureType = featureType;
+        this.rwlock = rwLock;
+    }
+
     public FeatureType getFeatureType() {
         return featureType;
     }
@@ -142,7 +162,6 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
             try {
                 if (fc.hasNext()) {
                     current = toFeature(fc.next());
-                    currentFeatureIdx++;
                 }
             } finally {
                 rwlock.readLock().unlock();
@@ -163,7 +182,7 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
      * @param featureId
      * @return
      */
-    protected Feature toFeature(GeoJSONFeature jsonFeature) throws BackingStoreException {
+    Feature toFeature(GeoJSONFeature jsonFeature) throws BackingStoreException {
 
         //Build geometry
         final Geometry geom = GeoJSONGeometry.toJTS(jsonFeature.getGeometry(), crs);
@@ -183,6 +202,7 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
         final Map<String, Object> properties = jsonFeature.getProperties();
         fillFeature(feature, properties);
 
+        currentFeatureIdx++;
         return feature;
     }
 

@@ -239,7 +239,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
         }
     }
 
-    private void fillTypeFromFeature(FeatureTypeBuilder ftb, CoordinateReferenceSystem crs,
+    static void fillTypeFromFeature(FeatureTypeBuilder ftb, CoordinateReferenceSystem crs,
             GeoJSONFeature jsonFeature, boolean analyseGeometry) {
         if (analyseGeometry) {
             ftb.addAttribute(findBinding(jsonFeature.getGeometry())).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
@@ -257,7 +257,7 @@ public final class GeoJSONStore extends DataStore implements ResourceOnFileSyste
         }
     }
 
-    private Class<? extends Geometry> findBinding(GeoJSONGeometry jsonGeometry) {
+    private static Class<? extends Geometry> findBinding(GeoJSONGeometry jsonGeometry) {
 
         if (jsonGeometry instanceof GeoJSONPoint) {
             return Point.class;

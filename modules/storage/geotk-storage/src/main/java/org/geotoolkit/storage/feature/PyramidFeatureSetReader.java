@@ -112,7 +112,7 @@ public class PyramidFeatureSetReader {
 
             Filter filter = query.getFilter();
             if (filter != null) {
-                JTSEnvelope2D e = new JTSEnvelope2D();
+                JTSEnvelope2D e = new JTSEnvelope2D(pyramid.getCoordinateReferenceSystem());
                 filter.accept(ExtractBoundsFilterVisitor.BOUNDS_VISITOR, e);
                 if (!e.isEmpty() && !e.isNull()) {
                     env = e;
