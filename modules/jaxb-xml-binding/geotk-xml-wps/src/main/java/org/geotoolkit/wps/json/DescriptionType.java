@@ -29,7 +29,7 @@ import org.geotoolkit.ows.xml.AbstractMetadata;
 /**
  * DescriptionType
  */
-public class DescriptionType {
+public class DescriptionType implements WPSJSONResponse {
 
     private String id = null;
 

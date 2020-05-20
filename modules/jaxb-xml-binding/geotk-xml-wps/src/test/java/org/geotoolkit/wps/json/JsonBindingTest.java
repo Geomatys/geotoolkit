@@ -18,6 +18,7 @@ package org.geotoolkit.wps.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
@@ -46,7 +47,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testUnmarshallingExecute() throws JAXBException, IOException, URISyntaxException {
         URL url = ClassLoader.getSystemResource("json/executeRequest.json");
-        ObjectMapper m = new ObjectMapper();
+        ObjectMapper m = getMapper();
         final Object obj = m.readValue(url, Execute.class);
         Assert.assertTrue(obj instanceof Execute);
 
@@ -55,7 +56,12 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
 
         final Input in1 = request.getInputs().get(0);
 
-        Assert.assertNotNull(in1.getData());
+        Assert.assertNotNull(in1.getInput());
+        Assert.assertNotNull(in1.getInput() instanceof ComplexInput);
+        ComplexInput inData = (ComplexInput) in1.getInput();
+
+        Assert.assertNotNull(inData.getValue());
+        Assert.assertNotNull(inData.getValue().getInlineValue());
 
         assertEquals(org.geotoolkit.wps.xml.v200.Execute.Mode.sync, request.getMode());
         assertEquals(org.geotoolkit.wps.xml.v200.Execute.Response.raw, request.getResponse());
@@ -65,7 +71,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testUnmarshallingExecute2() throws JAXBException, IOException {
         URL url = ClassLoader.getSystemResource("json/executeRequest2.json");
-        ObjectMapper m = new ObjectMapper();
+        ObjectMapper m = getMapper();
         final Object obj = m.readValue(url, Execute.class);
         Assert.assertTrue(obj instanceof Execute);
 
@@ -74,14 +80,19 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
 
         final Input in1 = request.getInputs().get(0);
 
-        Assert.assertNotNull(in1.getData());
+        Assert.assertNotNull(in1.getInput());
+        Assert.assertNotNull(in1.getInput() instanceof ComplexInput);
+        ComplexInput inData = (ComplexInput) in1.getInput();
+
+        Assert.assertNotNull(inData.getValue());
+        Assert.assertNotNull(inData.getValue().getInlineValue());
 
     }
 
     @Test
     public void testUnmarshallingExecute3() throws JAXBException, IOException {
         URL url = ClassLoader.getSystemResource("json/executeRequest3.json");
-        ObjectMapper m = new ObjectMapper();
+        ObjectMapper m = getMapper();
         final Object obj = m.readValue(url, Execute.class);
         Assert.assertTrue(obj instanceof Execute);
 
@@ -90,14 +101,19 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
 
         final Input in1 = request.getInputs().get(0);
 
-        Assert.assertNotNull(in1.getData());
+        Assert.assertNotNull(in1.getInput());
+        Assert.assertNotNull(in1.getInput() instanceof ComplexInput);
+        ComplexInput inData = (ComplexInput) in1.getInput();
+
+        Assert.assertNotNull(inData.getValue());
+        Assert.assertNotNull(inData.getValue().getInlineValue());
 
     }
 
     @Test
     public void testUnmarshallingExecute4() throws JAXBException, IOException {
         URL url = ClassLoader.getSystemResource("json/executeRequest4.json");
-        ObjectMapper m = new ObjectMapper();
+        ObjectMapper m = getMapper();
         final Object obj = m.readValue(url, Execute.class);
         Assert.assertTrue(obj instanceof Execute);
 
@@ -106,7 +122,12 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
 
         final Input in1 = request.getInputs().get(0);
 
-        Assert.assertNotNull(in1.getData());
+        Assert.assertNotNull(in1.getInput());
+        Assert.assertNotNull(in1.getInput() instanceof ComplexInput);
+        ComplexInput inData = (ComplexInput) in1.getInput();
+
+        Assert.assertNotNull(inData.getValue());
+        Assert.assertNotNull(inData.getValue().getInlineValue());
 
     }
 
@@ -116,7 +137,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         final Execute executeRoot = new Execute();
         Input input = new Input();
         input.setId("inout-1");
-        input.setData("somevalue");
+        input.setInput(new LiteralInput("somevalue", new NameReferenceType("string", null), null));
         executeRoot.setInputs(Arrays.asList(input));
 
         Output output = new Output();
@@ -127,8 +148,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         executeRoot.setResponse(org.geotoolkit.wps.xml.v200.Execute.Response.raw);
 
 
-        ObjectMapper m = new ObjectMapper();
-        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper m = getMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, executeRoot);
         String expResult = IOUtilities.toString(IOUtilities.getResourceAsPath("json/executeRequest5.json"));
@@ -148,8 +168,9 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         Format format = new Format().encoding("UTF8").mimeType("text/xml").schema("http://kk.com");
 
         final Execute executeRoot = new Execute();
-        Input dataInput = (Input) new Input().id("input1").format(format);
-        dataInput.setData("not a point");
+        ComplexInput ci = new ComplexInput(format, new ValueType("not a point", null));
+
+        Input dataInput = new Input("input1", ci);
         executeRoot.addInputsItem(dataInput);
 
         Output output = new Output();
@@ -159,8 +180,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         executeRoot.setMode(org.geotoolkit.wps.xml.v200.Execute.Mode.async);
         executeRoot.setResponse(org.geotoolkit.wps.xml.v200.Execute.Response.document);
 
-        ObjectMapper m = new ObjectMapper();
-        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper m = getMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, executeRoot);
         String expResult = IOUtilities.toString(IOUtilities.getResourceAsPath("json/executeRequest6.json"));
@@ -181,8 +201,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         status.setProgress(50);
         status.setStatus(StatusInfo.StatusEnum.started);
 
-        ObjectMapper m = new ObjectMapper();
-        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper m = getMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, status);
 
@@ -197,7 +216,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
     public void testUnmarshallingStatus() throws JAXBException, IOException, URISyntaxException {
 
         String json = IOUtilities.toString(IOUtilities.getResourceAsPath("json/status1.json"));
-        ObjectMapper m = new ObjectMapper();
+        ObjectMapper m = getMapper();
         StatusInfo result = m.readValue(json, StatusInfo.class);
 
         final StatusInfo status = new StatusInfo();
@@ -235,8 +254,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         collec.addProcessesItem(summary2);
 
 
-        ObjectMapper m = new ObjectMapper();
-        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper m = getMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, collec);
         String expResult = "{\"processes\":["
@@ -281,32 +299,30 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         // inputs
         FormatDescription format = (FormatDescription) new FormatDescription()._default(true).encoding("UTF8").mimeType("text/xml").schema("http://kk.com");
         InputType input1 = new InputType();
-        input1.setAbstract("some input 1");
-        input1.setFormats(Arrays.asList(format));
+        input1.setDescription("some input 1");
         input1.setKeywords(Arrays.asList("in1"));
-        input1.setLiteralDataDomain(Arrays.asList(new LiteralDataDomain(new LiteralDataDomainTypeDataType("String", null))));
         input1.setMinOccurs("0");
         input1.setMaxOccurs("unbounded");
         input1.setTitle("in put 1 title");
         input1.setId("id1");
+        input1.setInput(new LiteralInputDescription(Arrays.asList(new LiteralDataDomain(new NameReferenceType("String", null)))));
         summary.addInputsItem(input1);
 
         InputType input2 = new InputType();
-        input2.setAbstract("some input 2");
-        input2.setFormats(Arrays.asList(format));
+        input2.setDescription("some input 2");
         input2.setKeywords(Arrays.asList("in2"));
-        input2.setFormats(Arrays.asList(format));
         input2.setMinOccurs("0");
         input2.setMaxOccurs("1");
         input2.setTitle("in put 2 title");
         input2.setId("id2");
+        input2.setInput(new ComplexInputDescription(Arrays.asList(format)));
         input2.setAdditionalParameters(Arrays.asList(new AdditionalParameters(null, Arrays.asList(new AdditionalParameter("EOImage", Arrays.asList("true"))))));
         summary.addInputsItem(input2);
 
         // outputs
         OutputDescription output = new OutputDescription();
         output.setAbstract("some output");
-        output.setFormats(Arrays.asList(format));
+        output.setOutput(new ComplexInputDescription(Arrays.asList(format)));
         output.setId("out-1");
         output.setKeywords(Arrays.asList("kw-out"));
         output.setTitle("out title");
@@ -314,10 +330,10 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
 
         collec.setProcess(summary);
 
-        ObjectMapper m = new ObjectMapper();
-        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper m = getMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, collec);
+
         String expResult = IOUtilities.toString(IOUtilities.getResourceAsPath("json/processOffering.json"));
         expResult = expResult.replace(" ", "");
         expResult = expResult.replace("\n", "");
@@ -330,17 +346,24 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
     public void testUnmarshallingProcesseOffering() throws JAXBException, IOException, URISyntaxException {
 
         String json = IOUtilities.toString(IOUtilities.getResourceAsPath("json/processOffering.json"));
-        ObjectMapper m = new ObjectMapper();
+        ObjectMapper m = getMapper();
         ProcessOffering result = m.readValue(json, ProcessOffering.class);
 
         Assert.assertNotNull(result.getProcess());
         Assert.assertNotNull(result.getProcess().getInputs());
         Assert.assertEquals(2, result.getProcess().getInputs().size());
 
-        Assert.assertTrue(result.getProcess().getInputs().get(0).getLiteralDataDomain() != null);
+        Assert.assertTrue(result.getProcess().getInputs().get(0).getInput() instanceof LiteralInputDescription);
 
-        Assert.assertTrue(result.getProcess().getInputs().get(1).getLiteralDataDomain() == null);
-        Assert.assertTrue(result.getProcess().getInputs().get(1).getSupportedCRS()== null);
+        LiteralInputDescription litDesc = (LiteralInputDescription) result.getProcess().getInputs().get(0).getInput();
+
+        Assert.assertTrue(litDesc.getLiteralDataDomains() != null);
+
+        Assert.assertTrue(result.getProcess().getInputs().get(1).getInput() instanceof ComplexInputDescription);
+
+        ComplexInputDescription compDesc = (ComplexInputDescription) result.getProcess().getInputs().get(1).getInput();
+
+        Assert.assertTrue(compDesc.getFormats().size() == 1);
 
         InputType lit = result.getProcess().getInputs().get(0);
         InputType comp = result.getProcess().getInputs().get(1);
@@ -366,10 +389,9 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         // inputs
         FormatDescription format = (FormatDescription) new FormatDescription()._default(true).encoding("UTF8").mimeType("text/xml").schema("http://kk.com");
         InputType input1 = new InputType();
-        input1.setAbstract("some input 1");
-        input1.setFormats(Arrays.asList(format));
+        input1.setDescription("some input 1");
         input1.setKeywords(Arrays.asList("in1"));
-        input1.setLiteralDataDomain(Arrays.asList(new LiteralDataDomain(new LiteralDataDomainTypeDataType("String", "http://www.w3.org/TR/xmlschema-2/#String"))));
+        input1.setInput(new LiteralInputDescription(Arrays.asList(new LiteralDataDomain(new NameReferenceType("String", "http://www.w3.org/TR/xmlschema-2/#String")))));
         input1.setMinOccurs("0");
         input1.setMaxOccurs("unbounded");
         input1.setTitle("in put 1 title");
@@ -378,10 +400,9 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         summary.addInputsItem(input1);
 
         InputType input2 = new InputType();
-        input2.setAbstract("some input 2");
-        input2.setFormats(Arrays.asList(format));
+        input2.setDescription("some input 2");
         input2.setKeywords(Arrays.asList("in2"));
-        input2.setFormats(Arrays.asList(format));
+        input2.setInput(new ComplexInputDescription(Arrays.asList(format)));
         input2.setMinOccurs("0");
         input2.setMaxOccurs("1");
         input2.setTitle("in put 2 title");
@@ -391,7 +412,7 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         // outputs
         OutputDescription output = new OutputDescription();
         output.setAbstract("some output");
-        output.setFormats(Arrays.asList(format));
+        output.setOutput(new ComplexInputDescription(Arrays.asList(format)));
         output.setId("out-1");
         output.setKeywords(Arrays.asList("kw-out"));
         output.setTitle("out title");
@@ -401,11 +422,10 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
         ExecutionUnit unit = new ExecutionUnit("http://test.cwl");
         Deploy deploy = new Deploy(process, Arrays.asList(unit), "deploy 1", true);
 
-        ObjectMapper m = new ObjectMapper();
-        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper m = getMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, deploy);
-        //System.out.println(sw.toString());
+
         String expResult = IOUtilities.toString(IOUtilities.getResourceAsPath("json/deploy.json"));
         expResult = expResult.replace(" ", "");
         expResult = expResult.replace("\n", "");
@@ -419,16 +439,25 @@ public class JsonBindingTest extends org.geotoolkit.test.TestBase {
     public void testMarshallingResult() throws JAXBException, IOException {
         final Result result = new Result();
         List<OutputInfo> outputs = new ArrayList<>();
-        outputs.add(new OutputInfo("out", "someValue"));
+        outputs.add(new OutputInfo("out", "someValue", null));
         result.setOutputs(outputs);
 
         result.setLinks(Arrays.asList(new JsonLink("http://localhost:9001/wps/default/bills/3b490bb5", "Bill", "application/json", "Associated Bill", null)));
 
-        ObjectMapper m = new ObjectMapper();
-        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectMapper m = getMapper();
         StringWriter sw = new StringWriter();
         m.writeValue(sw, result);
         System.out.println(sw.toString());
+    }
+
+    private ObjectMapper getMapper() {
+        ObjectMapper m = new ObjectMapper();
+        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(InputBase.class, new InputDeSerializer());
+        module.addDeserializer(InputDescriptionBase.class, new InputDescriptionDeserializer());
+        m.registerModule(module);
+        return m;
     }
 
 }

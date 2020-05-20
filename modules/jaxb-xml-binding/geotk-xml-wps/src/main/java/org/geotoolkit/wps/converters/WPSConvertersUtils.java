@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -61,6 +62,8 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.ZipUtilities;
@@ -862,6 +865,33 @@ public class WPSConvertersUtils {
         // Parse GeoJSON
         try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
             return GeoJSONParser.parse(inputStream);
+        }
+    }
+
+    /**
+     * Helper method which extracts the GML Geometry from a String.
+     *
+     * @param content content string containing a GML geometry
+     * @return a GeoJSONObject
+     * @throws java.io.IOException on reading errors
+     */
+    public static AbstractGeometry readGMLGeometryFromString(String content) throws IOException {
+        ArgumentChecks.ensureNonEmpty("content", content);
+
+        // Parse GeoJSON
+        try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
+            Unmarshaller um = GMLMarshallerPool.getInstance().acquireUnmarshaller();
+            Object obj = um.unmarshal(inputStream);
+            GMLMarshallerPool.getInstance().recycle(um);
+            if (obj instanceof JAXBElement) {
+                obj = ((JAXBElement)obj).getValue();
+            }
+            if (!(obj instanceof AbstractGeometry)) {
+                throw new IOException("XML don't contains GML geometry");
+            }
+            return (AbstractGeometry)obj;
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
         }
     }
 

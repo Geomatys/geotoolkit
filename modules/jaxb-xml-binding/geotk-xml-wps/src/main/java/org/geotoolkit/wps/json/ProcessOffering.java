@@ -25,6 +25,7 @@ import org.geotoolkit.wps.xml.v200.JobControlOptions;
 /**
  * ProcessOffering
  */
+@Deprecated
 public class ProcessOffering implements WPSJSONResponse {
 
     private Process process = null;
@@ -65,19 +66,6 @@ public class ProcessOffering implements WPSJSONResponse {
             }
             if (that.getOutputTransmission() != null && !that.getOutputTransmission().isEmpty()) {
                 this.outputTransmission = new ArrayList<>(that.getOutputTransmission());
-            }
-        }
-    }
-
-    public ProcessOffering(org.geotoolkit.wps.xml.v200.ProcessOffering offering) {
-        if (offering != null) {
-            this.process = new Process(offering.getProcess());
-            if (offering.getOutputTransmission() != null && !offering.getOutputTransmission().isEmpty()) {
-                this.outputTransmission =new ArrayList<>(offering.getOutputTransmission());
-            }
-            this.processVersion = offering.getProcessVersion();
-            if (offering.getJobControlOptions()!= null && !offering.getJobControlOptions().isEmpty()) {
-                this.jobControlOptions = new ArrayList<>(offering.getJobControlOptions());
             }
         }
     }

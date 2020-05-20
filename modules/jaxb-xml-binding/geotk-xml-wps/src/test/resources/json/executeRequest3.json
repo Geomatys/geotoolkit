@@ -1,21 +1,29 @@
 {
     "inputs": [{
             "id": "urn:ogc:cstl:wps:jts:intersection:input:geom1",
-            "format": {
-                "mimeType": "text/xml",
-                "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
-                "encoding": "UTF8"
-            },
-            "data" : "not a polygin"
+            "input": {
+                "format": {
+                    "mimeType": "text/xml",
+                    "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
+                    "encoding": "UTF8"
+                },
+                "value":  {
+                    "inlineValue": "not a polygon"
+                }
+            }
         },
-    {
+        {
             "id": "urn:ogc:cstl:wps:jts:intersection:input:geom2",
-            "format": {
-                "mimeType": "text/xml",
-                "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
-                "encoding": "UTF8"
-            },
-            "data" : "not a polygin"
+            "input": {
+                "format": {
+                    "mimeType": "text/xml",
+                    "schema": "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
+                    "encoding": "UTF8"
+                },
+                "value":  {
+                    "inlineValue": "not a polygon"
+                }
+            }
         }],
     "outputs": [{
             "id": "urn:ogc:cstl:wps:jts:intersection:output:result_geom",

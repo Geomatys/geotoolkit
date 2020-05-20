@@ -21,45 +21,63 @@ import java.util.Objects;
 /**
  * Input
  */
-public class Input extends DataType {
+public class Input extends InputBase {
 
-    private String data = null;
+    private String id = null;
 
-    private String href = null;
-
-    private String mimeType = null;
-
-    private String schema = null;
-
-    private String encoding = null;
+    private InputBase input = null;
 
     public Input() {
 
     }
 
     public Input(Input that) {
-        super(that);
         if (that != null) {
-            this.data = that.data;
-            this.encoding = that.encoding;
-            this.href = that.href;
-            this.mimeType = that.mimeType;
-            this.schema = that.schema;
+            this.id = that.id;
+            if (that.input instanceof LiteralInput) {
+                this.input = new LiteralInput((LiteralInput) that.input);
+            } else if (that.input instanceof ComplexInput) {
+                this.input = new ComplexInput((ComplexInput) that.input);
+            } else if (that.input instanceof BoundingBoxInput) {
+                this.input = new BoundingBoxInput((BoundingBoxInput) that.input);
+            } else if (that instanceof Input) {
+                this.input = new Input((Input)that.input);
+            }
         }
-
     }
 
-    public Input(String id, Format format, String data, String href) {
-        super(id, format);
-        this.data = data;
-        this.href = href;
+    public Input(String id, InputBase input) {
+        this.id = id;
+        this.input = input;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the input
+     */
+    public InputBase getInput() {
+        return input;
+    }
+
+    /**
+     * @param input the input to set
+     */
+    public void setInput(InputBase input) {
+        this.input = input;
     }
 
     /**
      * Get value
      *
      * @return value
-  *
+     *
      */
     @Override
     public boolean equals(java.lang.Object o) {
@@ -70,23 +88,21 @@ public class Input extends DataType {
             return false;
         }
         Input input = (Input) o;
-        return Objects.equals(this.data, input.data) &&
-                Objects.equals(this.href, input.href)
-                && super.equals(o);
+        return Objects.equals(this.id, input.id) &&
+               Objects.equals(this.input, input.input);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(data, href, super.hashCode());
+        return Objects.hash(id, input);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Input {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    data: ").append(toIndentedString(data)).append("\n");
-        sb.append("    href: ").append(toIndentedString(href)).append("\n");
+        sb.append("    id: ").append(toIndentedString(id)).append("\n");
+        sb.append("    input: ").append(toIndentedString(input)).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -101,75 +117,4 @@ public class Input extends DataType {
         }
         return o.toString().replace("\n", "\n    ");
     }
-
-    /**
-     * @return the data
-     */
-    public String getData() {
-        return data;
-    }
-
-    /**
-     * @param data the data to set
-     */
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    /**
-     * @return the href
-     */
-    public String getHref() {
-        return href;
-    }
-
-    /**
-     * @param href the href to set
-     */
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    /**
-     * @return the mimeType
-     */
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    /**
-     * @param mimeType the mimeType to set
-     */
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
-    /**
-     * @return the schema
-     */
-    public String getSchema() {
-        return schema;
-    }
-
-    /**
-     * @param schema the schema to set
-     */
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
-    /**
-     * @return the encoding
-     */
-    public String getEncoding() {
-        return encoding;
-    }
-
-    /**
-     * @param encoding the encoding to set
-     */
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
 }

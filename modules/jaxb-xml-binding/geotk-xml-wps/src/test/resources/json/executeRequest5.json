@@ -1,7 +1,12 @@
 {
     "inputs": [{
             "id": "inout-1",
-            "data": "somevalue"
+            "input": {
+                "dataType": {
+                    "name": "string"
+                },
+                "value": "somevalue"
+            }
         }],
     "outputs": [{
             "id": "out-1",

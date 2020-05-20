@@ -19,6 +19,7 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.geotoolkit.wps.xml.v200.Execute.Response;
 import org.geotoolkit.wps.xml.v200.Execute.Mode;
 
@@ -122,6 +123,19 @@ public class Execute implements WPSJSONResponse {
         List<Input> subInputs = new ArrayList<>();
         for (Input in : result.inputs) {
             if (stepInputs.contains(in.getId())) {
+                subInputs.add(in);
+            }
+        }
+        result.setInputs(subInputs);
+        return result;
+    }
+
+    public Execute subRequest(Map<String, String> stepInputs) {
+        Execute result = new Execute(this);
+        List<Input> subInputs = new ArrayList<>();
+        for (Input in : result.inputs) {
+            if (stepInputs.containsKey(in.getId())) {
+                in.setId(stepInputs.get(in.getId()));
                 subInputs.add(in);
             }
         }

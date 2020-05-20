@@ -22,29 +22,29 @@ import java.util.Objects;
 /**
  * LiteralDataDomainTypeDataType
  */
-public class LiteralDataDomainTypeDataType {
+public class NameReferenceType {
 
   private String name = null;
 
   private String reference = null;
 
-  public LiteralDataDomainTypeDataType() {
+  public NameReferenceType() {
 
   }
 
-  public LiteralDataDomainTypeDataType(LiteralDataDomainTypeDataType that) {
+  public NameReferenceType(NameReferenceType that) {
       if (that != null) {
         this.name = that.name;
         this.reference = that.reference;
       }
   }
 
-  public LiteralDataDomainTypeDataType(String name, String reference) {
+  public NameReferenceType(String name, String reference) {
       this.name = name;
       this.reference = reference;
   }
 
-  public LiteralDataDomainTypeDataType name(String name) {
+  public NameReferenceType name(String name) {
     this.name = name;
     return this;
   }
@@ -61,7 +61,7 @@ public class LiteralDataDomainTypeDataType {
     this.name = name;
   }
 
-  public LiteralDataDomainTypeDataType reference(String reference) {
+  public NameReferenceType reference(String reference) {
     this.reference = reference;
     return this;
   }
@@ -86,7 +86,7 @@ public class LiteralDataDomainTypeDataType {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    LiteralDataDomainTypeDataType literalDataDomainTypeDataType = (LiteralDataDomainTypeDataType) o;
+    NameReferenceType literalDataDomainTypeDataType = (NameReferenceType) o;
     return Objects.equals(this.name, literalDataDomainTypeDataType.name) &&
         Objects.equals(this.reference, literalDataDomainTypeDataType.reference);
   }

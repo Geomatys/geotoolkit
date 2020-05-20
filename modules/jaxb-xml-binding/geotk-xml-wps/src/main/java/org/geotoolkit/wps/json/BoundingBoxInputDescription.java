@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2018, Geomatys
+ *    (C) 2020, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,31 +19,54 @@ package org.geotoolkit.wps.json;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.geotoolkit.wps.xml.v200.BoundingBoxData;
+import org.geotoolkit.wps.xml.v200.SupportedCRS;
 
 /**
- * BoundingBoxInputType
+ *
+ * @author Guilhem Legal (Geomatys)
  */
-public class BoundingBoxInputType {
+public class BoundingBoxInputDescription extends InputDescriptionBase {
 
-    private List<SupportedCrs> supportedCRS = new ArrayList<>();
+    private List<SupportedCrs> supportedCRS;
 
-    public BoundingBoxInputType supportedCRS(List<SupportedCrs> supportedCRS) {
+    public BoundingBoxInputDescription() {
+
+    }
+
+    public BoundingBoxInputDescription(List<SupportedCrs> supportedCRS) {
+        this.supportedCRS = supportedCRS;
+    }
+
+    public BoundingBoxInputDescription(BoundingBoxInputDescription that) {
+        if (that != null && that.supportedCRS != null) {
+            this.supportedCRS = new ArrayList<>();
+            for (SupportedCrs c : that.supportedCRS) {
+                this.supportedCRS.add(new SupportedCrs(c));
+            }
+        }
+    }
+
+    public BoundingBoxInputDescription(BoundingBoxData bbox) {
+        if (bbox!= null && bbox.getSupportedCRS() != null && !bbox.getSupportedCRS().isEmpty()) {
+            List<SupportedCrs> crs = new ArrayList<>();
+            for (SupportedCRS c : bbox.getSupportedCRS()) {
+                crs.add(new SupportedCrs(c));
+            }
+            this.supportedCRS = crs;
+        }
+    }
+
+    public BoundingBoxInputDescription supportedCRS(List<SupportedCrs> supportedCRS) {
         this.supportedCRS = supportedCRS;
         return this;
     }
 
-    public BoundingBoxInputType addSupportedCRSItem(SupportedCrs supportedCRSItem) {
-
+    public BoundingBoxInputDescription addSupportedCRSItem(SupportedCrs supportedCRSItem) {
         this.supportedCRS.add(supportedCRSItem);
         return this;
     }
 
-    /**
-     * Get supportedCRS
-     *
-     * @return supportedCRS
-  *
-     */
     public List<SupportedCrs> getSupportedCRS() {
         return supportedCRS;
     }
@@ -60,8 +83,8 @@ public class BoundingBoxInputType {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        BoundingBoxInputType boundingBoxInputType = (BoundingBoxInputType) o;
-        return Objects.equals(this.supportedCRS, boundingBoxInputType.supportedCRS);
+        BoundingBoxInputDescription inputType = (BoundingBoxInputDescription) o;
+        return Objects.equals(this.supportedCRS, inputType.supportedCRS);
     }
 
     @Override
@@ -72,8 +95,7 @@ public class BoundingBoxInputType {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class BoundingBoxInputType {\n");
-
+        sb.append("class BoundingBoxInputDescription {\n");
         sb.append("    supportedCRS: ").append(toIndentedString(supportedCRS)).append("\n");
         sb.append("}");
         return sb.toString();
@@ -89,5 +111,4 @@ public class BoundingBoxInputType {
         }
         return o.toString().replace("\n", "\n    ");
     }
-
 }

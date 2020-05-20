@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v200;
 
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -90,6 +91,32 @@ public class LiteralDataDomain {
 
     public LiteralDataDomain() {
 
+    }
+
+    public LiteralDataDomain(org.geotoolkit.wps.json.LiteralDataDomain jLit) {
+        if (jLit != null) {
+            if (jLit.getAllowedValues() != null) {
+                this.allowedValues = new AllowedValues(jLit.getAllowedValues().getAllowedValues());
+            }
+            if (jLit.getAllowedRanges()!= null) {
+                // TODO this.allowedRanges = new AllowedRanges();
+            }
+            if (jLit.getAnyValue() != null && jLit.getAnyValue()) {
+                this.anyValue = new AnyValue();
+            }
+            if (jLit.getDataType() != null) {
+                this.dataType = new DomainMetadataType(jLit.getDataType().getName(), jLit.getDataType().getReference());
+            }
+            if (jLit.getUom()!= null) {
+                this.uom = new DomainMetadataType(jLit.getUom().getName(), jLit.getUom().getReference());
+            }
+            if (jLit.getValuesReference()!= null) {
+                this.valuesReference = new ValuesReference(jLit.getValuesReference(), null);
+            }
+            if (jLit.getDefaultValue() != null) {
+                this.defaultValue = new ValueType(jLit.getDefaultValue());
+            }
+        }
     }
 
     public LiteralDataDomain(AllowedValues allowedValues, AnyValue anyValue, ValuesReference valuesReference, DomainMetadataType dataType, DomainMetadataType uom,
@@ -321,6 +348,9 @@ public class LiteralDataDomain {
         if (_default != null) {
             sb.append("_default:").append(_default).append('\n');
         }
+        if (allowedRanges != null) {
+            sb.append("allowedRanges:").append(allowedRanges).append('\n');
+        }
 
         return sb.toString();
     }
@@ -337,6 +367,7 @@ public class LiteralDataDomain {
         if (object instanceof LiteralDataDomain) {
             final LiteralDataDomain that = (LiteralDataDomain) object;
             return Objects.equals(this.allowedValues, that.allowedValues) &&
+                   Objects.equals(this.allowedRanges, that.allowedRanges) &&
                    Objects.equals(this.anyValue, that.anyValue) &&
                    Objects.equals(this.dataType, that.dataType) &&
                    Objects.equals(this.defaultValue, that.defaultValue) &&
@@ -351,6 +382,7 @@ public class LiteralDataDomain {
     public int hashCode() {
         int hash = 7;
         hash = 11 * hash + Objects.hashCode(this.allowedValues);
+        hash = 11 * hash + Objects.hashCode(this.allowedRanges);
         hash = 11 * hash + Objects.hashCode(this.anyValue);
         hash = 11 * hash + Objects.hashCode(this.valuesReference);
         hash = 11 * hash + Objects.hashCode(this.dataType);

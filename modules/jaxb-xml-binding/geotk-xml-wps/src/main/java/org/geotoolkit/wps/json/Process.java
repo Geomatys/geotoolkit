@@ -19,14 +19,11 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.wps.xml.v200.DataTransmissionMode;
-import org.geotoolkit.wps.xml.v200.JobControlOptions;
-import org.geotoolkit.wps.xml.v200.ProcessDescription;
 
 /**
  * Process
  */
-public class Process extends DescriptionType {
+public class Process extends ProcessSummary {
 
     // literal / complex / boundingBox
     private List<InputType> inputs = null;
@@ -57,16 +54,16 @@ public class Process extends DescriptionType {
 
     }
 
-    public Process(org.geotoolkit.wps.xml.v200.ProcessDescription desc) {
+    public Process(org.geotoolkit.wps.xml.v200.ProcessOffering desc) {
         super(desc);
         this.executeEndpoint = null; // TODO
         if (desc != null) {
             this.inputs = new ArrayList<>();
-            for (org.geotoolkit.wps.xml.v200.InputDescription in : desc.getInputs()) {
+            for (org.geotoolkit.wps.xml.v200.InputDescription in : desc.getProcess().getInputs()) {
                 this.inputs.add(new InputType(in));
             }
             this.outputs = new ArrayList<>();
-            for (org.geotoolkit.wps.xml.v200.OutputDescription out : desc.getOutputs()) {
+            for (org.geotoolkit.wps.xml.v200.OutputDescription out : desc.getProcess().getOutputs()) {
                 this.outputs.add(new OutputDescription(out));
             }
         }

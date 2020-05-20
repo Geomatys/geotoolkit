@@ -22,12 +22,15 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ows.xml.v200.AdditionalParameter;
 import org.geotoolkit.ows.xml.v200.AdditionalParametersType;
 import org.geotoolkit.ows.xml.v200.CodeType;
 import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
+import org.geotoolkit.wps.json.BoundingBoxInputDescription;
+import org.geotoolkit.wps.json.ComplexInputDescription;
 import org.geotoolkit.wps.json.FormatDescription;
+import org.geotoolkit.wps.json.LiteralInputDescription;
+import org.geotoolkit.wps.json.SupportedCrs;
 
 
 /**
@@ -90,20 +93,30 @@ public class OutputDescription extends Description {
 
     public OutputDescription(org.geotoolkit.wps.json.OutputDescription out) {
         super(out);
-        // here we need to determine the kind of data we want from the format..
-        // we do a wild guess for now between complex / literal
-        List<Format> formats = new ArrayList<>();
-        boolean complex = true; // default choice
-        for (FormatDescription format : out.getFormats()) {
-            if ("text/plain".equals(format.getMimeType())) {
-                complex = false;
+
+        if (out.getOutput() instanceof ComplexInputDescription) {
+            ComplexInputDescription cid = (ComplexInputDescription) out.getOutput();
+            List<Format> formats = new ArrayList<>();
+            for (FormatDescription format : cid.getFormats()) {
+                formats.add(new Format(format));
             }
-            formats.add(new Format(format));
-        }
-        if (complex) {
             this.dataDescription = new ComplexData(formats);
-        } else {
-            this.dataDescription = new LiteralData(formats, null, null, null);
+
+        } else if (out.getOutput() instanceof LiteralInputDescription){
+            LiteralInputDescription cid = (LiteralInputDescription) out.getOutput();
+            List<LiteralDataDomain> lits = new ArrayList<>();
+            for (org.geotoolkit.wps.json.LiteralDataDomain lit : cid.getLiteralDataDomains()) {
+                lits.add(new LiteralDataDomain(lit));
+            }
+            this.dataDescription = new LiteralData(null, lits);
+
+        }else if (out.getOutput() instanceof BoundingBoxInputDescription){
+            BoundingBoxInputDescription cid = (BoundingBoxInputDescription) out.getOutput();
+            List<SupportedCRS> crss = new ArrayList<>();
+            for (SupportedCrs scrs : cid.getSupportedCRS()) {
+                crss.add(new SupportedCRS(scrs.getCrs(), scrs.isDefault()));
+            }
+            this.dataDescription = new BoundingBoxData(null, crss);
         }
     }
 

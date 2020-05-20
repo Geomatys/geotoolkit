@@ -426,6 +426,9 @@ public final class WPSIO {
      * @return true if supported, false otherwise.
      */
     public static boolean isSupportedOutputClass(final Class clazz) {
+        if(isSupportedBBoxOutputClass(clazz)) {
+            return true;
+        }
         return isSupportedClass(clazz, IOType.OUTPUT, FormChoice.ALL);
     }
 

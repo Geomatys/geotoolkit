@@ -34,7 +34,11 @@ import org.geotoolkit.ows.xml.v200.KeywordsType;
 import org.geotoolkit.ows.xml.v200.LanguageStringType;
 import org.geotoolkit.ows.xml.v200.ValueType;
 import org.geotoolkit.ows.xml.v200.ValuesReference;
+import org.geotoolkit.wps.json.BoundingBoxInputDescription;
+import org.geotoolkit.wps.json.ComplexInputDescription;
 import org.geotoolkit.wps.json.FormatDescription;
+import org.geotoolkit.wps.json.LiteralInputDescription;
+import org.geotoolkit.wps.json.SupportedCrs;
 
 
 /**
@@ -112,11 +116,6 @@ public class InputDescription extends Description {
     public InputDescription(org.geotoolkit.wps.json.InputType input) {
         super(input);
 
-        final List<Format> formats = new ArrayList<>();
-        for (FormatDescription f : input.getFormats()) {
-            formats.add(new Format(f.getEncoding(), f.getMimeType(), f.getSchema(), f.getMaximumMegabytes(), f.isDefault()));
-        }
-
         if (input.getMinOccurs() != null) {
             this.minOccurs = Integer.parseInt(input.getMinOccurs());
         }
@@ -124,37 +123,51 @@ public class InputDescription extends Description {
             this.maxOccurs = input.getMaxOccurs();
         }
 
-        if (input.getLiteralDataDomain() != null && !input.getLiteralDataDomain().isEmpty()) {
+        if (input.getInput() instanceof LiteralInputDescription) {
+            LiteralInputDescription litDesc = (LiteralInputDescription) input.getInput();
             final List<LiteralDataDomain> lits = new ArrayList<>();
-            for (org.geotoolkit.wps.json.LiteralDataDomain jsonLit : input.getLiteralDataDomain()) {
-                LiteralDataDomain lit = new LiteralDataDomain();
-                if (jsonLit.getDataType() != null) {
-                    String value = jsonLit.getDataType().getName();
-                    String reference = jsonLit.getDataType().getReference();
-                    lit.setDataType(new DomainMetadataType(value, reference));
+            if (litDesc.getLiteralDataDomains()!= null && !litDesc.getLiteralDataDomains().isEmpty()) {
+
+                for (org.geotoolkit.wps.json.LiteralDataDomain jsonLit : litDesc.getLiteralDataDomains()) {
+                    LiteralDataDomain lit = new LiteralDataDomain();
+                    if (jsonLit.getDataType() != null) {
+                        String value = jsonLit.getDataType().getName();
+                        String reference = jsonLit.getDataType().getReference();
+                        lit.setDataType(new DomainMetadataType(value, reference));
+                    }
+                    if (jsonLit.getAllowedValues()!= null) {
+                        lit.setAllowedValues(new AllowedValues(jsonLit.getAllowedValues().getAllowedValues()));
+                    }
+                    if (jsonLit.getAllowedRanges()!= null) {
+                        lit.setAllowedRanges(new AllowedValues(jsonLit.getAllowedRanges().getAllowedRanges()));
+                    }
+                    if (jsonLit.getDefaultValue()!= null) {
+                        lit.setDefaultValue(new ValueType(jsonLit.getDefaultValue()));
+                    }
+                    if (jsonLit.getValuesReference()!= null) {
+                        lit.setValuesReference(new ValuesReference(jsonLit.getValuesReference(), null));
+                    }
+                    lits.add(lit);
                 }
-                if (jsonLit.getAllowedValues()!= null) {
-                    lit.setAllowedValues(new AllowedValues(jsonLit.getAllowedValues().getAllowedValues()));
-                }
-                if (jsonLit.getAllowedRanges()!= null) {
-                    lit.setAllowedRanges(new AllowedValues(jsonLit.getAllowedRanges().getAllowedRanges()));
-                }
-                if (jsonLit.getDefaultValue()!= null) {
-                    lit.setDefaultValue(new ValueType(jsonLit.getDefaultValue()));
-                }
-                if (jsonLit.getValuesReference()!= null) {
-                    lit.setValuesReference(new ValuesReference(jsonLit.getValuesReference(), null));
-                }
-                lits.add(lit);
             }
-            this.dataDescription = new LiteralData(formats, lits);
-        } else if (input.getSupportedCRS() != null) {
+            this.dataDescription = new LiteralData(null, lits);
+
+        } else if (input.getInput() instanceof BoundingBoxInputDescription) {
+            BoundingBoxInputDescription bbDesc = (BoundingBoxInputDescription) input.getInput();
             List<SupportedCRS> suportedCrs = new ArrayList<>();
-            for (String crs : input.getSupportedCRS()) {
-                suportedCrs.add(new SupportedCRS(crs));
+            if (bbDesc.getSupportedCRS() != null) {
+                for (SupportedCrs crs : bbDesc.getSupportedCRS()) {
+                    suportedCrs.add(new SupportedCRS(crs.getCrs(), crs.isDefault()));
+                }
             }
-            this.dataDescription = new BoundingBoxData(formats, suportedCrs);
-        } else {
+            this.dataDescription = new BoundingBoxData(null, suportedCrs);
+        } else if (input.getInput() instanceof ComplexInputDescription) {
+            ComplexInputDescription cDesc = (ComplexInputDescription) input.getInput();
+
+            final List<Format> formats = new ArrayList<>();
+            for (FormatDescription f : cDesc.getFormats()) {
+                formats.add(new Format(f.getEncoding(), f.getMimeType(), f.getSchema(), f.getMaximumMegabytes(), f.isDefault()));
+            }
             this.dataDescription = new ComplexData(formats);
         }
     }

@@ -16,31 +16,58 @@
  */
 package org.geotoolkit.wps.json;
 
-/**
- * ComplexInputType unused anymore
- */
-public class ComplexInputType {
+import java.util.Objects;
 
-    public ComplexInputType() {
+public class ComplexInput extends InputBase {
 
-    }
+    private Format format;
 
-    /*public ComplexInputType(String id, String title, String _abstract, List<String> keywords,
-            List<Metadata> metadata, List<AdditionalParameters> additionalParameters,
-            List<FormatDescription> formats, Integer minOccurs, Object maxOccurs) {
-        super(id, title, _abstract, keywords, metadata, additionalParameters, formats);
-        this.minOccurs = minOccurs;
-        this.maxOccurs = maxOccurs;
+    private ValueType value;
+
+    public ComplexInput() {
 
     }
 
-    public ComplexInputType(InputDescription in) {
-        super(in);
-        if (in != null) {
-            this.minOccurs = in.getMinOccurs();
-            this.maxOccurs = in.getMaxOccurs();
+    public ComplexInput(Format format, ValueType value) {
+        this.format = format;
+        this.value = value;
+    }
+
+    public ComplexInput(ComplexInput that) {
+        if (that != null) {
+            this.format = new Format(that.format);
+            this.value = new ValueType(that.value);
         }
-    }*/
+    }
+
+    /**
+     * @return the format
+     */
+    public Format getFormat() {
+        return format;
+    }
+
+    /**
+     * @param format the format to set
+     */
+    public void setFormat(Format format) {
+        this.format = format;
+    }
+
+    /**
+     * @return the value
+     */
+    public ValueType getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(ValueType value) {
+        this.value = value;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -49,7 +76,9 @@ public class ComplexInputType {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        return true;
+        ComplexInput ci = (ComplexInput) o;
+        return Objects.equals(this.format, ci.format) &&
+               Objects.equals(this.value, ci.value);
     }
 
     @Override
@@ -60,8 +89,9 @@ public class ComplexInputType {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class ComplexInputType {\n");
-
+        sb.append("class ComplexInput {\n");
+        sb.append("    format: ").append(toIndentedString(format)).append("\n");
+        sb.append("    value: ").append(toIndentedString(value)).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -77,4 +107,6 @@ public class ComplexInputType {
         return o.toString().replace("\n", "\n    ");
 
     }
+
+
 }

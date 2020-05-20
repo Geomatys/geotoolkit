@@ -17,7 +17,6 @@
 package org.geotoolkit.wps.xml.v200;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
@@ -187,7 +186,7 @@ public class Description implements AbstractDescription {
     }
 
     public Description(org.geotoolkit.wps.json.InputType desc) {
-        this(new CodeType(desc.getId()), new LanguageStringType(desc.getTitle()), new LanguageStringType(desc.getAbstract()), new KeywordsType(desc.getKeywords()));
+        this(new CodeType(desc.getId()), new LanguageStringType(desc.getTitle()), new LanguageStringType(desc.getDescription()), new KeywordsType(desc.getKeywords()));
         if (desc.getAdditionalParameters() != null) {
             this.additionalParameters = new ArrayList<>();
             for (org.geotoolkit.wps.json.AdditionalParameters addParams : desc.getAdditionalParameters()) {

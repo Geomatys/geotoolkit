@@ -96,7 +96,14 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
                 if (value instanceof JAXBElement) {
                     value = ((JAXBElement) value).getValue();
                 }
-                AbstractGeometry abstractGeo = (AbstractGeometry) value;
+                AbstractGeometry abstractGeo;
+                if (value instanceof AbstractGeometry) {
+                    abstractGeo = (AbstractGeometry) value;
+                } else if (value instanceof String) {
+                    abstractGeo = WPSConvertersUtils.readGMLGeometryFromString((String) value);
+                } else {
+                    throw new UnconvertibleObjectException("Invalid data input content for " + dataMimeTypeIdentifier + " geometry.");
+                }
                 return GeometrytoJTS.toJTS(abstractGeo);
             } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(mimeType)) {
                 dataMimeTypeIdentifier = "GeoJSON";

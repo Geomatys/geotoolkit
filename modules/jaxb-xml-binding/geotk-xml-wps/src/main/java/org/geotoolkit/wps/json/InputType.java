@@ -27,27 +27,23 @@ import org.geotoolkit.wps.xml.v200.BoundingBoxData;
 import org.geotoolkit.wps.xml.v200.ComplexData;
 import org.geotoolkit.wps.xml.v200.InputDescription;
 import org.geotoolkit.wps.xml.v200.LiteralData;
-import org.geotoolkit.wps.xml.v200.SupportedCRS;
-import org.geotoolkit.wps.xml.v200.DataDescription;
 
 /**
  * InputType
  */
-public class InputType extends InputTypeChoice {
+public class InputType {
 
     private String id = null;
 
     private String title = null;
 
-    private List<String> keywords = null;
+    private String description = null;
 
-    private List<FormatDescription> formats = new ArrayList<>();
+    private List<String> keywords = null;
 
     private String minOccurs = null;
 
     private String maxOccurs = null;
-
-    private String _abstract = null;
 
     private DescriptionTypeOwsContext owsContext = null;
 
@@ -55,19 +51,18 @@ public class InputType extends InputTypeChoice {
 
     private List<AdditionalParameters> additionalParameters = null;
 
+    private InputDescriptionBase input;
+
     public InputType() {
 
     }
 
-    // literal
-    public InputType(String id, String title, String _abstract, List<String> keywords,
+    public InputType(String id, String title, String description, List<String> keywords,
             List<Metadata> metadata, List<AdditionalParameters> additionalParameters,
-            List<FormatDescription> formats, String minOccurs, String maxOccurs, DescriptionTypeOwsContext owsContext,
-            LiteralDataDomain literalDataDomain) {
-        super(literalDataDomain);
-        this._abstract = _abstract;
+            String minOccurs, String maxOccurs, DescriptionTypeOwsContext owsContext,
+            InputDescriptionBase input) {
+        this.description = description;
         this.additionalParameters = additionalParameters;
-        this.formats = formats;
         this.id = id;
         this.keywords = keywords;
         this.metadata = metadata;
@@ -75,50 +70,14 @@ public class InputType extends InputTypeChoice {
         this.title = title;
         this.minOccurs = minOccurs;
         this.maxOccurs = maxOccurs;
-
-    }
-
-    // bbox
-    public InputType(String id, String title, String _abstract, List<String> keywords,
-            List<Metadata> metadata, List<AdditionalParameters> additionalParameters,
-            List<FormatDescription> formats, String minOccurs, String maxOccurs, DescriptionTypeOwsContext owsContext,
-            List<String> supportedCRS) {
-        super(supportedCRS);
-        this._abstract = _abstract;
-        this.additionalParameters = additionalParameters;
-        this.formats = formats;
-        this.id = id;
-        this.keywords = keywords;
-        this.metadata = metadata;
-        this.owsContext = owsContext;
-        this.title = title;
-        this.minOccurs = minOccurs;
-        this.maxOccurs = maxOccurs;
-
-    }
-
-    // complex
-    public InputType(String id, String title, String _abstract, List<String> keywords,
-            List<Metadata> metadata, List<AdditionalParameters> additionalParameters,
-            List<FormatDescription> formats, String minOccurs, String maxOccurs, DescriptionTypeOwsContext owsContext) {
-        this._abstract = _abstract;
-        this.additionalParameters = additionalParameters;
-        this.formats = formats;
-        this.id = id;
-        this.keywords = keywords;
-        this.metadata = metadata;
-        this.owsContext = owsContext;
-        this.title = title;
-        this.minOccurs = minOccurs;
-        this.maxOccurs = maxOccurs;
-
+        this.input = input;
     }
 
 
     public InputType(InputDescription desc) {
         if (desc != null) {
             this.id = desc.getIdentifier().getValue();
-            this._abstract = desc.getFirstAbstract();
+            this.description = desc.getFirstAbstract();
             if (desc.getKeywords() != null && !desc.getKeywords().isEmpty()) {
                 this.keywords = new ArrayList<>();
                 for (AbstractKeywords kw : desc.getKeywords()) {
@@ -157,45 +116,21 @@ public class InputType extends InputTypeChoice {
                 }
             }
 
-            if (desc.getDataDescription() != null) {
-                DataDescription dataDesc = desc.getDataDescription();
-                if (dataDesc.getFormat() != null && !dataDesc.getFormat().isEmpty()) {
-                    this.formats = new ArrayList<>();
-                    for (org.geotoolkit.wps.xml.v200.Format f : dataDesc.getFormat()) {
-                        this.formats.add(new FormatDescription(f));
-                    }
-                }
-            }
-
             if (desc.getDataDescription() instanceof LiteralData) {
-                LiteralData lit = (LiteralData) desc.getDataDescription();
-                if (lit.getLiteralDataDomain() != null && !lit.getLiteralDataDomain().isEmpty()) {
-                    List<LiteralDataDomain> jsonLits = new ArrayList<>();
-                    for (org.geotoolkit.wps.xml.v200.LiteralDataDomain litDom : lit.getLiteralDataDomain()) {
-                        jsonLits.add(new LiteralDataDomain(litDom));
-                    }
-                    super.setLiteralDataDomain(jsonLits);
-                }
+                this.input = new LiteralInputDescription((LiteralData) desc.getDataDescription());
+
             } else if (desc.getDataDescription() instanceof ComplexData) {
-                // do nothing
+                this.input = new ComplexInputDescription((ComplexData)desc.getDataDescription());
+
             } else if (desc.getDataDescription() instanceof BoundingBoxData) {
-                BoundingBoxData bbox = (BoundingBoxData) desc.getDataDescription();
-                if (bbox.getSupportedCRS() != null && !bbox.getSupportedCRS().isEmpty()) {
-                    List<String> crs = new ArrayList<>();
-                    for (SupportedCRS c : bbox.getSupportedCRS()) {
-                        crs.add(c.getValue());
-                    }
-                    super.setSupportedCRS(crs);
-                }
+                this.input = new BoundingBoxInputDescription((BoundingBoxData)desc.getDataDescription());
             }
         }
-
     }
 
     public InputType(InputType that) {
-        super(that);
         if (that != null) {
-            this._abstract = that._abstract;
+            this.description = that.description;
             this.id = that.id;
             this.title = that.title;
             this.minOccurs = that.minOccurs;
@@ -215,19 +150,22 @@ public class InputType extends InputTypeChoice {
                     this.additionalParameters.add(new AdditionalParameters(param));
                 }
             }
-            if (that.formats != null && !that.formats.isEmpty()) {
-                this.formats = new ArrayList<>();
-                for (FormatDescription f : that.formats) {
-                    this.formats.add(new FormatDescription(f));
-                }
-            }
             if (that.owsContext != null) {
                 this.owsContext = new DescriptionTypeOwsContext(that.owsContext);
+            }
+
+            if (that.input instanceof LiteralInputDescription) {
+                this.input = new LiteralInputDescription((LiteralInputDescription) that.input);
+
+            } else if (that.input instanceof ComplexInputDescription) {
+                this.input = new ComplexInputDescription((ComplexInputDescription)that.input);
+
+            } else if (that.input instanceof BoundingBoxInputDescription) {
+                this.input = new BoundingBoxInputDescription((BoundingBoxInputDescription)that.input);
             }
         }
 
     }
-
 
     public InputType minOccurs(String minOccurs) {
         this.minOccurs = minOccurs;
@@ -238,7 +176,7 @@ public class InputType extends InputTypeChoice {
      * Get minOccurs
      *
      * @return minOccurs
-  *
+     *
      */
     public String getMinOccurs() {
         return minOccurs;
@@ -257,7 +195,7 @@ public class InputType extends InputTypeChoice {
      * Get maxOccurs
      *
      * @return maxOccurs
-  *
+     *
      */
     public String getMaxOccurs() {
         return maxOccurs;
@@ -265,31 +203,6 @@ public class InputType extends InputTypeChoice {
 
     public void setMaxOccurs(String maxOccurs) {
         this.maxOccurs = maxOccurs;
-    }
-
-    public InputType formats(List<FormatDescription> formats) {
-        this.formats = formats;
-        return this;
-    }
-
-    public InputType addFormatsItem(FormatDescription formatsItem) {
-
-        this.formats.add(formatsItem);
-        return this;
-    }
-
-    /**
-     * Get formats
-     *
-     * @return formats
-  *
-     */
-    public List<FormatDescription> getFormats() {
-        return formats;
-    }
-
-    public void setFormats(List<FormatDescription> formats) {
-        this.formats = formats;
     }
 
     public InputType id(String id) {
@@ -301,7 +214,7 @@ public class InputType extends InputTypeChoice {
      * Get id
      *
      * @return id
-  *
+     *
      */
     public String getId() {
         return id;
@@ -331,7 +244,7 @@ public class InputType extends InputTypeChoice {
     }
 
     public InputType _abstract(String _abstract) {
-        this._abstract = _abstract;
+        this.description = _abstract;
         return this;
     }
 
@@ -339,14 +252,14 @@ public class InputType extends InputTypeChoice {
      * Get _abstract
      *
      * @return _abstract
-  *
+     *
      */
-    public String getAbstract() {
-        return _abstract;
+    public String getDescription() {
+        return description;
     }
 
-    public void setAbstract(String _abstract) {
-        this._abstract = _abstract;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public InputType keywords(List<String> keywords) {
@@ -368,7 +281,7 @@ public class InputType extends InputTypeChoice {
      * Get keywords
      *
      * @return keywords
-  *
+     *
      */
     public List<String> getKeywords() {
         return keywords;
@@ -387,7 +300,7 @@ public class InputType extends InputTypeChoice {
      * Get owsContext
      *
      * @return owsContext
-  *
+     *
      */
     public DescriptionTypeOwsContext getOwsContext() {
         return owsContext;
@@ -405,7 +318,7 @@ public class InputType extends InputTypeChoice {
     public InputType addMetadataItem(Metadata metadataItem) {
 
         if (this.metadata == null) {
-            this.metadata = new ArrayList<Metadata>();
+            this.metadata = new ArrayList<>();
         }
 
         this.metadata.add(metadataItem);
@@ -416,7 +329,7 @@ public class InputType extends InputTypeChoice {
      * Get metadata
      *
      * @return metadata
-  *
+     *
      */
     public List<Metadata> getMetadata() {
         return metadata;
@@ -434,7 +347,7 @@ public class InputType extends InputTypeChoice {
     public InputType addAdditionalParametersItem(AdditionalParameters additionalParametersItem) {
 
         if (this.additionalParameters == null) {
-            this.additionalParameters = new ArrayList<AdditionalParameters>();
+            this.additionalParameters = new ArrayList<>();
         }
 
         this.additionalParameters.add(additionalParametersItem);
@@ -445,7 +358,7 @@ public class InputType extends InputTypeChoice {
      * Get additionalParameters
      *
      * @return additionalParameters
-  *
+     *
      */
     public List<AdditionalParameters> getAdditionalParameters() {
         return additionalParameters;
@@ -453,6 +366,20 @@ public class InputType extends InputTypeChoice {
 
     public void setAdditionalParameters(List<AdditionalParameters> additionalParameters) {
         this.additionalParameters = additionalParameters;
+    }
+
+    /**
+     * @return the input
+     */
+    public InputDescriptionBase getInput() {
+        return input;
+    }
+
+    /**
+     * @param input the input to set
+     */
+    public void setInput(InputDescriptionBase input) {
+        this.input = input;
     }
 
     @Override
@@ -466,37 +393,35 @@ public class InputType extends InputTypeChoice {
         InputType inputType = (InputType) o;
         return Objects.equals(this.minOccurs, inputType.minOccurs)
                 && Objects.equals(this.maxOccurs, inputType.maxOccurs)
-                && Objects.equals(this.formats, inputType.formats)
                 && Objects.equals(this.id, inputType.id)
                 && Objects.equals(this.title, inputType.title)
-                && Objects.equals(this._abstract, inputType._abstract)
+                && Objects.equals(this.description, inputType.description)
                 && Objects.equals(this.keywords, inputType.keywords)
                 && Objects.equals(this.owsContext, inputType.owsContext)
                 && Objects.equals(this.metadata, inputType.metadata)
-                && Objects.equals(this.additionalParameters, inputType.additionalParameters)
-                && super.equals(o);
+                && Objects.equals(this.input, inputType.input)
+                && Objects.equals(this.additionalParameters, inputType.additionalParameters);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(minOccurs, maxOccurs, formats, id, title, _abstract, keywords, owsContext, metadata, additionalParameters, super.hashCode());
+        return java.util.Objects.hash(minOccurs, maxOccurs, id, title, description, keywords, owsContext, metadata, additionalParameters, input);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class InputType {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    minOccurs: ").append(toIndentedString(minOccurs)).append("\n");
-        sb.append("    maxOccurs: ").append(toIndentedString(maxOccurs)).append("\n");
-        sb.append("    formats: ").append(toIndentedString(formats)).append("\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("    title: ").append(toIndentedString(title)).append("\n");
-        sb.append("    _abstract: ").append(toIndentedString(_abstract)).append("\n");
+        sb.append("    minOccurs: ").append(toIndentedString(minOccurs)).append("\n");
+        sb.append("    maxOccurs: ").append(toIndentedString(maxOccurs)).append("\n");
+        sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    keywords: ").append(toIndentedString(keywords)).append("\n");
         sb.append("    owsContext: ").append(toIndentedString(owsContext)).append("\n");
         sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
         sb.append("    additionalParameters: ").append(toIndentedString(additionalParameters)).append("\n");
+        sb.append("    input: ").append(toIndentedString(input)).append("\n");
         sb.append("}");
         return sb.toString();
     }

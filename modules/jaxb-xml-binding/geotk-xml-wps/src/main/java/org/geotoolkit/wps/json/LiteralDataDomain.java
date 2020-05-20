@@ -36,9 +36,9 @@ public class LiteralDataDomain {
 
     private String defaultValue = null;
 
-    private LiteralDataDomainTypeDataType dataType;
+    private NameReferenceType dataType;
 
-    private LiteralDataDomainTypeDataType uom;
+    private NameReferenceType uom;
 
     public LiteralDataDomain() {
 
@@ -63,10 +63,10 @@ public class LiteralDataDomain {
                 this.defaultValue = lit.getDefaultValue().getValue();
             }
             if (lit.getDataType()!= null) {
-                this.dataType = new LiteralDataDomainTypeDataType(lit.getDataType().getValue(), lit.getDataType().getReference());
+                this.dataType = new NameReferenceType(lit.getDataType().getValue(), lit.getDataType().getReference());
             }
             if (lit.getUOM()!= null) {
-                this.uom = new LiteralDataDomainTypeDataType(lit.getUOM().getValue(), lit.getUOM().getReference());
+                this.uom = new NameReferenceType(lit.getUOM().getValue(), lit.getUOM().getReference());
             }
             if (lit.getValuesReference() != null) {
                 if (lit.getValuesReference().getValue() != null) {
@@ -91,30 +91,30 @@ public class LiteralDataDomain {
             this.valuesReference = that.valuesReference;
             this.defaultValue = that.defaultValue;
             if (that.dataType != null) {
-                this.dataType = new LiteralDataDomainTypeDataType(that.dataType);
+                this.dataType = new NameReferenceType(that.dataType);
             }
             if (that.uom != null) {
-                this.uom = new LiteralDataDomainTypeDataType(that.uom);
+                this.uom = new NameReferenceType(that.uom);
             }
         }
 
     }
 
-    public LiteralDataDomain(LiteralDataDomainTypeDataType dataType) {
+    public LiteralDataDomain(NameReferenceType dataType) {
         this.dataType = dataType;
     }
 
     /**
      * @return the dataType
      */
-    public LiteralDataDomainTypeDataType getDataType() {
+    public NameReferenceType getDataType() {
         return dataType;
     }
 
     /**
      * @param dataType the dataType to set
      */
-    public void setDataType(LiteralDataDomainTypeDataType dataType) {
+    public void setDataType(NameReferenceType dataType) {
         this.dataType = dataType;
     }
 
@@ -191,14 +191,14 @@ public class LiteralDataDomain {
     /**
      * @return the uom
      */
-    public LiteralDataDomainTypeDataType getUom() {
+    public NameReferenceType getUom() {
         return uom;
     }
 
     /**
      * @param uom the uom to set
      */
-    public void setUom(LiteralDataDomainTypeDataType uom) {
+    public void setUom(NameReferenceType uom) {
         this.uom = uom;
     }
 

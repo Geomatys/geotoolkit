@@ -19,6 +19,7 @@ package org.geotoolkit.wps.json;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.wps.xml.v200.DataOutput;
 
 /**
  * Result
@@ -28,6 +29,19 @@ public class Result implements WPSJSONResponse {
     private List<OutputInfo> outputs = new ArrayList<>();
 
     private List<JsonLink> links;
+
+    public Result() {
+
+    }
+
+    public Result(org.geotoolkit.wps.xml.v200.Result that) {
+        if (that != null && that.getOutput() != null) {
+            this.outputs = new ArrayList<>();
+            for (DataOutput o : that.getOutput()) {
+                this.outputs.add(new OutputInfo(o));
+            }
+        }
+    }
 
     public Result outputs(List<OutputInfo> outputs) {
         this.outputs = outputs;
@@ -44,7 +58,7 @@ public class Result implements WPSJSONResponse {
      * Get outputs
      *
      * @return outputs
-  *
+     *
      */
     public List<OutputInfo> getOutputs() {
         return outputs;
@@ -71,8 +85,8 @@ public class Result implements WPSJSONResponse {
             return false;
         }
         Result result = (Result) o;
-        return Objects.equals(this.outputs, result.outputs) &&
-               Objects.equals(this.links, result.links);
+        return Objects.equals(this.outputs, result.outputs)
+                && Objects.equals(this.links, result.links);
     }
 
     @Override

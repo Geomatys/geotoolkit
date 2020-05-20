@@ -16,166 +16,155 @@
  */
 package org.geotoolkit.wps.json;
 
+import java.io.StringWriter;
 import java.util.Objects;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.GMLMarshallerPool;
+import org.geotoolkit.ows.xml.BoundingBox;
+import org.geotoolkit.ows.xml.OWSMarshallerPool;
+import org.geotoolkit.wps.xml.v200.DataOutput;
+import org.geotoolkit.wps.xml.v200.LiteralValue;
 
 /**
  * OutputInfo
  */
 public class OutputInfo {
 
-  private String id = null;
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.json");
 
-  private String data;
+    private String id = null;
 
-  private String href = null;
+    private ValueType value;
 
-  private String mimeType = null;
+    public OutputInfo() {
 
-  private String schema = null;
-
-  private String encoding = null;
-
-  public OutputInfo() {
-
-  }
-
-  public OutputInfo(String id, String data) {
-      this.id = id;
-      this.data = data;
-  }
-
-  public OutputInfo id(String id) {
-    this.id = id;
-    return this;
-  }
-
-
-  /**
-  * Get id
-  * @return id
-  **/
-  public String getId() {
-    return id;
-  }
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public OutputInfo data(String value) {
-    this.data = value;
-    return this;
-  }
-
-
-  /**
-  * Get value
-  * @return value
-  **/
-  public String getData() {
-    return data;
-  }
-  public void setData(String data) {
-    this.data = data;
-  }
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public OutputInfo(DataOutput that) {
+        if (that != null) {
+            this.id = that.getId();
+            if (that.getData() != null && !that.getData().getContent().isEmpty()) {
+                if (that.getData().getContent().size() > 1 ) {
+                    throw new IllegalArgumentException("Multiple result is not yet handle for json formats");
+                }
+                Object r = that.getData().getContent().get(0);
+                if (r instanceof LiteralValue) {
+                    r = ((LiteralValue)r).getValue();
+                } else if (r instanceof BoundingBox) {
+                    BoundingBox bbox = (BoundingBox) r;
+                    if ("text/xml".equals(that.getData().getMimeType()) || "application/xml".equals(that.getData().getMimeType())) {
+                        try {
+                            Marshaller m = OWSMarshallerPool.getInstance().acquireMarshaller();
+                            StringWriter sw = new StringWriter();
+                            m.marshal(r, sw);
+                            r = sw.toString();
+                            OWSMarshallerPool.getInstance().recycle(m);
+                        } catch (JAXBException ex) {
+                            LOGGER.warning("JAXB exception while marshalling OWS boundingBox into json output");
+                        }
+                    } else {
+                        r = new BoundingBoxInput(bbox);
+                    }
+
+                } else if (r instanceof AbstractGeometry) {
+                    if ("text/xml".equals(that.getData().getMimeType()) || "application/xml".equals(that.getData().getMimeType())) {
+                        try {
+                            Marshaller m = GMLMarshallerPool.getInstance().acquireMarshaller();
+                            StringWriter sw = new StringWriter();
+                            m.marshal(r, sw);
+                            r = sw.toString();
+                            GMLMarshallerPool.getInstance().recycle(m);
+                        } catch (JAXBException ex) {
+                            LOGGER.warning("JAXB exception while marshalling GML geomtry into json output");
+                        }
+                    }
+                }
+                this.value = new ValueType(r, null);
+            } else if (that.getReference() != null) {
+                this.value = new ValueType(null, that.getReference().getHref());
+            }
+        }
     }
-    OutputInfo outputInfo = (OutputInfo) o;
-    return Objects.equals(this.id, outputInfo.id) &&
-        Objects.equals(this.data, outputInfo.data);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, data);
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class OutputInfo {\n");
-
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    value: ").append(toIndentedString(data)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    public OutputInfo(String id, String inlineValue, String href) {
+        this.id = id;
+        this.value = new ValueType(inlineValue, href);
     }
-    return o.toString().replace("\n", "\n    ");
-  }
 
-    /**
-     * @return the href
-     */
-    public String getHref() {
-        return href;
+    public OutputInfo id(String id) {
+        this.id = id;
+        return this;
     }
 
     /**
-     * @param href the href to set
+     * Get id
+     *
+     * @return id
+  *
      */
-    public void setHref(String href) {
-        this.href = href;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
-     * @return the mimeType
+     * @return the value
      */
-    public String getMimeType() {
-        return mimeType;
+    public ValueType getValue() {
+        return value;
     }
 
     /**
-     * @param mimeType the mimeType to set
+     * @param value the value to set
      */
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
+    public void setValue(ValueType value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OutputInfo outputInfo = (OutputInfo) o;
+        return Objects.equals(this.id, outputInfo.id)
+                && Objects.equals(this.value, outputInfo.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, value);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class OutputInfo {\n");
+
+        sb.append("    id: ").append(toIndentedString(id)).append("\n");
+        sb.append("    value: ").append(toIndentedString(value)).append("\n");
+        sb.append("}");
+        return sb.toString();
     }
 
     /**
-     * @return the schema
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
      */
-    public String getSchema() {
-        return schema;
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
     }
-
-    /**
-     * @param schema the schema to set
-     */
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
-    /**
-     * @return the encoding
-     */
-    public String getEncoding() {
-        return encoding;
-    }
-
-    /**
-     * @param encoding the encoding to set
-     */
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
-
 }
-
-
-

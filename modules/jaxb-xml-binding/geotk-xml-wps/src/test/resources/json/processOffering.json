@@ -6,31 +6,22 @@
         "inputs": [{
                 "id": "id1",
                 "title": "in put 1 title",
+                "description": "some input 1",
                 "keywords": ["in1"],
-                "formats": [{
-                        "mimeType": "text/xml",
-                        "schema": "http://kk.com",
-                        "encoding": "UTF8",
-                        "default": true
-                    }],
                 "minOccurs": "0",
                 "maxOccurs": "unbounded",
-                "abstract": "some input 1",
-                "literalDataDomains": [{
-                    "dataType": {
-                        "name": "String"
-                    }
-                }]
+                "input": {
+                    "literalDataDomains": [{
+                            "dataType": {
+                                "name": "String"
+                            }
+                        }]
+                }
             }, {
                 "id": "id2",
                 "title": "in put 2 title",
+                "description": "some input 2",
                 "keywords": ["in2"],
-                "formats": [{
-                        "mimeType": "text/xml",
-                        "schema": "http://kk.com",
-                        "encoding": "UTF8",
-                        "default": true
-                    }],
                 "minOccurs": "0",
                 "maxOccurs": "1",
                 "additionalParameters": [{
@@ -39,18 +30,27 @@
                                 "values": ["true"]
                             }]
                     }],
-                "abstract": "some input 2"
+                "input": {
+                    "formats": [{
+                            "mimeType": "text/xml",
+                            "schema": "http://kk.com",
+                            "encoding": "UTF8",
+                            "default": true
+                        }]
+                }
             }],
         "outputs": [{
                 "id": "out-1",
                 "title": "out title",
                 "keywords": ["kw-out"],
-                "formats": [{
-                        "mimeType": "text/xml",
-                        "schema": "http://kk.com",
-                        "encoding": "UTF8",
-                        "default": true
-                    }],
+                "output": {
+                    "formats": [{
+                            "mimeType": "text/xml",
+                            "schema": "http://kk.com",
+                            "encoding": "UTF8",
+                            "default": true
+                        }]
+                },
                 "abstract": "some output"
             }],
         "executeEndpoint": "http://process/1",

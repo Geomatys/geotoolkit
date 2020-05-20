@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 
 // JAXB dependencies
@@ -58,19 +57,10 @@ import static org.apache.sis.test.MetadataAssert.*;
  */
 public class OWSXmlBindingTest extends org.geotoolkit.test.TestBase {
 
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ows.xml");
 
     private static final MarshallerPool pool = ExceptionReportMarshallerPool.getInstance();
-    private static final MarshallerPool owsPool;
-    static {
-        try {
-            owsPool = new MarshallerPool(JAXBContext.newInstance(
-                    org.geotoolkit.ows.xml.v100.ObjectFactory.class,
-                    org.geotoolkit.ows.xml.v200.ObjectFactory.class), null);
-        } catch (JAXBException ex) {
-            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
-        }
-    }
+    private static final MarshallerPool owsPool = OWSMarshallerPool.getInstance();
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;
 

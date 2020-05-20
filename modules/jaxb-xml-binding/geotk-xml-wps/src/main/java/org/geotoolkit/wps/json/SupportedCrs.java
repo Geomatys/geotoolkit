@@ -18,6 +18,7 @@
 package org.geotoolkit.wps.json;
 
 import java.util.Objects;
+import org.geotoolkit.wps.xml.v200.SupportedCRS;
 
 /**
  * SupportedCrs
@@ -27,6 +28,30 @@ public class SupportedCrs {
   private String crs = null;
 
   private Boolean _default = null;
+
+  public SupportedCrs() {
+
+  }
+
+  public SupportedCrs(String crs, Boolean _default) {
+      this._default = _default;
+      this.crs = crs;
+  }
+
+  public SupportedCrs(SupportedCRS crs) {
+      if (crs != null) {
+          this._default = crs.isDefault();
+          this.crs = crs.getValue();
+      }
+  }
+
+  public SupportedCrs(SupportedCrs crs) {
+      if (crs != null) {
+          this._default = crs.isDefault();
+          this.crs = crs.getCrs();
+      }
+  }
+
 
   public SupportedCrs crs(String crs) {
     this.crs = crs;

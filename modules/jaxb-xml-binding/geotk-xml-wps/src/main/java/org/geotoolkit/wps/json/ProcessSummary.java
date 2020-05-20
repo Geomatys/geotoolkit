@@ -39,6 +39,16 @@ public class ProcessSummary extends DescriptionType {
 
     }
 
+    public ProcessSummary(ProcessSummary summary) {
+        super(summary);
+        if (summary != null) {
+            this.version = summary.getVersion();
+            this.jobControlOptions = summary.getJobControlOptions();
+            this.outputTransmission = summary.getOutputTransmission();
+            this.processDescriptionURL = summary.getProcessDescriptionURL();
+        }
+    }
+
     public ProcessSummary(ProcessOffering offering) {
         super(offering.getProcess());
         if (offering != null) {
@@ -59,6 +69,16 @@ public class ProcessSummary extends DescriptionType {
 
     public ProcessSummary(org.geotoolkit.wps.xml.v200.ProcessSummary process) {
         super(process);
+        if (process != null) {
+            this.version = process.getProcessVersion();
+            this.jobControlOptions = new ArrayList<>(process.getJobControlOptions());
+            this.outputTransmission = new ArrayList<>(process.getOutputTransmission());
+            this.processDescriptionURL = null; //TODO
+        }
+    }
+
+    public ProcessSummary(org.geotoolkit.wps.xml.v200.ProcessOffering process) {
+        super(process.getProcess());
         if (process != null) {
             this.version = process.getProcessVersion();
             this.jobControlOptions = new ArrayList<>(process.getJobControlOptions());
