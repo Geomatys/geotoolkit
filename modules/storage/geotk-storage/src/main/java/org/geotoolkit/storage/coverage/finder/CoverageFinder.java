@@ -138,17 +138,23 @@ public abstract class CoverageFinder {
      * @return Pyramid, never null except if the pyramid set is empty
      */
     public final Pyramid findPyramid(final MultiResolutionResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
+        final List<Pyramid> pyramids = Pyramids.getPyramids(set);
+        if (pyramids.isEmpty()) {
+            return null;
+        } else if (pyramids.size() == 1) {
+            return pyramids.get(0);
+        }
+
         final CoordinateReferenceSystem crs2D = CRS.getHorizontalComponent(crs);
         final Envelope crsBound1 = CRS.getDomainOfValidity(crs2D);
         double ratio = Double.NEGATIVE_INFINITY;
         // envelope with crs geographic.
         final GeneralEnvelope intersection = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
-        final List<Pyramid> pyramids = Pyramids.getPyramids(set);
         final List<Pyramid> results = new ArrayList<>();
         if (crsBound1 != null) {
             final GeneralEnvelope crsBound = new GeneralEnvelope(crsBound1);
             noValidityDomainFound :
-            for(Pyramid pyramid : pyramids) {
+            for (Pyramid pyramid : pyramids) {
                 double ratioTemp = 0;
                 Envelope pyramidBound = CRS.getDomainOfValidity(
                         CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem()));
@@ -188,13 +194,17 @@ public abstract class CoverageFinder {
         //paranoiac test
         if (results.isEmpty()){
             //could not find any proper candidates
-            if(pyramids.isEmpty()){
+            if (pyramids.isEmpty()) {
                 return null;
-            }else{
+            } else {
                 return pyramids.iterator().next();
             }
         }
-        if (results.size() == 1) return results.get(0);
+
+        if (results.size() == 1) {
+            return results.get(0);
+        }
+
         // if several equal ratio.
         for (Pyramid pyramid : results) {
             final CoordinateReferenceSystem pyCrs = CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem());
@@ -204,6 +214,7 @@ public abstract class CoverageFinder {
                 return pyramid;
             }
         }
+
         // return first in list. impossible to define the most appropriate crs.
         return results.get(0);
     }
