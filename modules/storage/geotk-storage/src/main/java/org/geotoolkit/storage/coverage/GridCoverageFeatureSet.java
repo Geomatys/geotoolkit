@@ -45,12 +45,14 @@ import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -103,6 +105,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         if (envelope != null) {
             Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
             if (geom != null) {
+                geom = JTSMapping.convertType(geom, MultiPolygon.class);
                 JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
                 feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
             }
@@ -131,7 +134,8 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_TYPE);
         ftb.setName(resource.getIdentifier().orElse(null));
-        ftb.addAttribute(Polygon.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        // define the geometry as a MultiPolygon, it may happen when the pixel crosses the anti-meridian
+        ftb.addAttribute(MultiPolygon.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAssociation(createRecordType(resource)).setName(TypeConventions.RANGE_ELEMENTS_PROPERTY).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
 
         return ftb.build();
