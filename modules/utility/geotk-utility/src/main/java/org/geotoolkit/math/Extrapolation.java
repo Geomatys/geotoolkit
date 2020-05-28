@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.math;
 
-import javax.vecmath.MismatchedSizeException;
-
 /**
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -28,9 +26,9 @@ public interface Extrapolation {
 
     /**
      * Définies les vecteurs <var>x</var> et <var>y</var> de cette table.
-     * @throws MismatchedSizeException si les deux vecteurs n'ont pas la même longueur.
+     * @throws IllegalArgumentException si les deux vecteurs n'ont pas la même longueur.
      */
-    void setData(double[] x, double[] y) throws MismatchedSizeException;
+    void setData(double[] x, double[] y);
 
     /**
      * Oublie toutes références vers les données. Vous pouvez appeller cette méthode lorsque

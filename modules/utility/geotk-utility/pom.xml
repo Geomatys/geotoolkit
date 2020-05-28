@@ -93,10 +93,6 @@
       <version>${sis.version}</version>
     </dependency>
     <dependency>
-      <groupId>javax.vecmath</groupId>
-      <artifactId>vecmath</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.sis.non-free</groupId>
       <artifactId>sis-embedded-data</artifactId>
       <version>${sis.non-free.version}</version>

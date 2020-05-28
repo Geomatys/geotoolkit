@@ -814,8 +814,6 @@ public class MetadataHelper implements Localized {
      *
      * @param  value The value that we want to adjust.
      * @return The adjusted value, or the given value unchanged if no adjustment were found.
-     *
-     * @see XAffineTransform#roundIfAlmostInteger(AffineTransform, double)
      */
     public double adjustForRoundingError(final double value) {
         return InternalUtilities.adjustForRoundingError(value, 360, 16);

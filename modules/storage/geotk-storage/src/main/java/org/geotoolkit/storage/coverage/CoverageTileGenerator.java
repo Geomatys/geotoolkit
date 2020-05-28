@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRenderedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.Interpolation;
@@ -303,19 +305,25 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         try {
             GridCoverageProcessor processor = new GridCoverageProcessor();
             switch (interpolation) {
-                case NEIGHBOR : processor.setInterpolation(Interpolation.NEAREST);
-                case BILINEAR : processor.setInterpolation(Interpolation.BILINEAR);
-                case LANCZOS : processor.setInterpolation(Interpolation.LANCZOS);
-                default: processor.setInterpolation(Interpolation.BILINEAR);
+                case NEIGHBOR : processor.setInterpolation(Interpolation.NEAREST); break;
+                case BILINEAR : processor.setInterpolation(Interpolation.BILINEAR); break;
+                case LANCZOS : processor.setInterpolation(Interpolation.LANCZOS); break;
+                default: processor.setInterpolation(Interpolation.BILINEAR); break;
             }
             coverage = processor.resample(coverage, gridGeomNd);
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
+        } catch (IllegalGridGeometryException ex) {
+            //create an empty tile
+            RenderedImage image = coverage.render(null);
+            image = BufferedImages.createImage(image, tileSize.width, tileSize.height, null, null);
+            BufferedImages.setAll((WritableRenderedImage) image, empty);
+            return new DefaultImageTile(image, tileCoord);
         }
 
         RenderedImage image = coverage.render(null);
         ImageProcessor ip = new ImageProcessor();
-        image = ip.prefetch(image);
+        image = ip.prefetch(image, null);
         return new DefaultImageTile(image, tileCoord);
     }
 

@@ -21,8 +21,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -47,6 +51,85 @@ public class QueryUtilities {
                 && query.getLimit() == -1
                 && query.getSortBy() == null
                 && query.getOffset() == 0;
+    }
+
+    /**
+     * Combine two queries in the way that the resulting query act
+     * as if it was a sub query result.
+     * For example if the original query has a start index of 10 and the
+     * sub-query a start index of 5, the resulting startIndex will be 15.
+     *
+     * @param original
+     * @param second
+     * @return sub query
+     */
+    public static SimpleQuery subQuery(final SimpleQuery original, final SimpleQuery second) {
+        ArgumentChecks.ensureNonNull("original", original);
+        ArgumentChecks.ensureNonNull("second", second);
+
+        final SimpleQuery qb = new SimpleQuery();
+
+        //use the more restrictive max features field---------------------------
+        long max = original.getLimit();
+        if (second.getLimit() != -1) {
+            if (max == -1) {
+                max = second.getLimit();
+            } else {
+                max = Math.min(max, second.getLimit());
+            }
+        }
+        qb.setLimit(max);
+
+        //join attributes names-------------------------------------------------
+        final List<SimpleQuery.Column> columnsOrig = original.getColumns();
+        final List<SimpleQuery.Column> columnsSecond = original.getColumns();
+        if (columnsOrig == null) {
+            if (columnsSecond != null) {
+                qb.setColumns(columnsSecond.toArray(new SimpleQuery.Column[0]));
+            }
+        } else {
+            throw new UnsupportedOperationException();
+        }
+
+        //join filters----------------------------------------------------------
+        Filter filter = original.getFilter();
+        Filter filter2 = second.getFilter();
+
+        if ( filter.equals(Filter.INCLUDE) ){
+            filter = filter2;
+        } else if ( !filter2.equals(Filter.INCLUDE) ){
+            filter = FF.and(filter, filter2);
+        }
+        qb.setFilter(filter);
+
+        //group start index ----------------------------------------------------
+        long start = original.getOffset() + second.getOffset();
+        qb.setOffset(start);
+
+        //ordering -------------------------------------------------------------
+        final List<SortBy> sorts = new ArrayList<>();
+        SortBy[] sts = original.getSortBy();
+        if (sts != null) {
+            sorts.addAll(Arrays.asList(sts));
+        }
+
+        sts = second.getSortBy();
+        if (sts != null) {
+            sorts.addAll(Arrays.asList(sts));
+        }
+        qb.setSortBy(sorts.toArray(new SortBy[sorts.size()]));
+
+
+        //copy the resolution parameter-----------------------------------------
+        final Quantity<Length> resFirst = original.getLinearResolution();
+        final Quantity<Length> resSecond = second.getLinearResolution();
+        if (resFirst == null) {
+            qb.setLinearResolution(resSecond);
+        } else {
+            qb.setLinearResolution(resFirst);
+        }
+
+        return qb;
     }
 
     /**

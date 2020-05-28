@@ -22,7 +22,6 @@ import java.awt.image.RenderedImage;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.vecmath.Point3d;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
@@ -33,6 +32,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.geometry.math.Vector3d;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -185,7 +185,7 @@ public class KrigingProcess extends AbstractProcess {
 
         final IsolineCreator isolineCreator = new IsolineCreator(renderedImage, palier);
 
-        final Map<Point3d,List<Coordinate>> steps;
+        final Map<Vector3d,List<Coordinate>> steps;
         try {
 //            steps = ob.doContouring(cx, cy, computed, palier);
             steps = isolineCreator.createIsolines();
@@ -205,7 +205,7 @@ public class KrigingProcess extends AbstractProcess {
         final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
         int inc = 0;
 
-        for (final Point3d p : steps.keySet()) {
+        for (final Vector3d p : steps.keySet()) {
             final List<Coordinate> cshps = steps.get(p);
 
             if (cshps.get(0).x > cshps.get(cshps.size()-1).x) {

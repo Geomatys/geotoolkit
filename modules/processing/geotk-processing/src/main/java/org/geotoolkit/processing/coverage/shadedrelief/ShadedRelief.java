@@ -22,13 +22,14 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
-import javax.vecmath.Vector3f;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.geometry.math.Geometries;
+import org.geotoolkit.geometry.math.Vector3f;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
@@ -143,14 +144,17 @@ public class ShadedRelief extends AbstractProcess {
                     boolean invert = (flipx || flipy) && !(flipx && flipy);
 
                     //calculate average normal of the triangles
-                    v1.set(fa[0], fa[1], fa[2]);
-                    v2.set(fb[0], fb[1], fb[2]);
-                    v3.set(fc[0], fc[1], fc[2]);
-                    n1.set(calculateNormal(v1, v3, v2));
-                    v1.set(fb[0], fb[1], fb[2]);
-                    v2.set(fc[0], fc[1], fc[2]);
-                    v3.set(fd[0], fd[1], fd[2]);
-                    n2.set(calculateNormal(v1, v2, v3));
+                    v1.x = fa[0]; v1.y = fa[1]; v1.z = fa[2];
+                    v2.x = fb[0]; v2.y = fb[1]; v2.z = fb[2];
+                    v3.x = fc[0]; v3.y = fc[1]; v3.z = fc[2];
+
+                    n1.set(Geometries.calculateNormal(v1, v3, v2));
+
+                    v1.x = fb[0]; v1.y = fb[1]; v1.z = fb[2];
+                    v2.x = fc[0]; v2.y = fc[1]; v2.z = fc[2];
+                    v3.x = fd[0]; v3.y = fd[1]; v3.z = fd[2];
+
+                    n2.set(Geometries.calculateNormal(v1, v2, v3));
                     n.set(n1);
                     n.add(n2);
                     n.normalize();
@@ -170,7 +174,7 @@ public class ShadedRelief extends AbstractProcess {
                     //the elevation model has a hole in the grid
                     if(!Float.isNaN(n.x) && !Float.isNaN(n.y) && !Float.isNaN(n.z)){
                         //calculate shaded color
-                        ratio = Math.max(lightDirection.dot(n),0.0f);
+                        ratio = (float) Math.max(lightDirection.dot(n),0.0f);
                         //next line is to indensify average colors, lights darken flat areas so we compensate a little
                         ratio = ratio + (float) (Math.sin(ratio*Math.PI)*0.20);
                     }
@@ -195,17 +199,6 @@ public class ShadedRelief extends AbstractProcess {
         gcb.setValues(resImage);
         final GridCoverage result = gcb.build();
         outputParameters.getOrCreate(ShadedReliefDescriptor.OUTCOVERAGE).setValue(result);
-    }
-
-    private final Vector3f ab = new Vector3f();
-    private final Vector3f ac = new Vector3f();
-    private final Vector3f cross = new Vector3f();
-    private Vector3f calculateNormal(Vector3f a, Vector3f b, Vector3f c){
-        ab.sub(a,b);
-        ac.sub(a,c);
-        cross.cross(ab,ac);
-        //cross.normalize();
-        return cross;
     }
 
     private static int toARGB(int a, int r, int g, int b) {

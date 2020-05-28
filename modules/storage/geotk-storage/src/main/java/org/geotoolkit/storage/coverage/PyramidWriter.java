@@ -312,14 +312,13 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
 
             //find next tile to build
             loop:
-            while(true){
-                if(currentPyramid==null){
-                    if(pyramidsIte.hasNext()){
+            while (true) {
+                if (currentPyramid == null) {
+                    if (pyramidsIte.hasNext()) {
                         currentPyramid = pyramidsIte.next();
                         try {
                             final GeneralEnvelope tmpFilter = new GeneralEnvelope(
                                     ReferencingUtilities.transform(requestedEnvelope, currentPyramid.getCoordinateReferenceSystem()));
-
 
                             mosaics = CoverageUtilities.findMosaics(currentPyramid, tmpFilter, false).iterator();
 
@@ -334,19 +333,19 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
 
                         crsDestToSrcGrid = MathTransforms.concatenate(crsDestToCrsCoverage, srcCRSToGrid);
 
-                    }else{
+                    } else {
                         //we have finish
                         finished = true;
                         return null;
                     }
                 }
 
-                if(currentMosaic==null){
-                    if(mosaics != null && mosaics.hasNext()){
+                if (currentMosaic == null) {
+                    if (mosaics != null && mosaics.hasNext()) {
                         //next mosaic
                         currentMosaic = mosaics.next();
                         idx=-1;
-                    }else{
+                    } else {
                         //next pyramid
                         mosaics = null;
                         currentMosaic = null;
@@ -355,19 +354,19 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
                     }
                 }
 
-                if(idx==-1){
+                if (idx == -1) {
                     calculateMosaicRange(currentPyramid, currentMosaic, pyramidEnvelope);
                     idx = idminx-1;
                     idy = idminy;
                 }
 
-                while(true){
+                while (true) {
                     idx++;
-                    if(idx>=idmaxx){
+                    if (idx >= idmaxx) {
                         idy++;
                         idx = idminx;
                     }
-                    if(idy>=idmaxy){
+                    if (idy >= idmaxy) {
                         //finished thie mosaic
                         currentMosaic = null;
                         continue loop;

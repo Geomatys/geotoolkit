@@ -204,11 +204,11 @@ public final class WMTSUtilities {
     }
 
     /**
-     * Verify that {@code GeneralMatrix gM} don't contains :
+     * Verify that {@code Matrix gM} don't contains :
      *                                      - {@code NAN} value.
      *                                      - {@code NEGATIVE_INFINITY}.
      *                                      - {@code POSITIVE_INFINITY}.
-     * Moreover verify that {@code GeneralMatrix gM} not only contains 0 value.
+     * Moreover verify that {@code Matrix gM} not only contains 0 value.
      *
      * @return true if assertion is verified else false.
      */

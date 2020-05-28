@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.math;
 
-import javax.vecmath.MismatchedSizeException;
-
 /**
  * Classe de base pour les interpolations à une dimension.
  * Cette classe mémorisera un tableau de la forme:<p>
@@ -57,16 +55,16 @@ public abstract class Table1D implements Extrapolation{
     /**
      * Définies les vecteurs <var>x</var>
      * et <var>y</var> de cette table.
-     * @throws MismatchedSizeException si
+     * @throws IllegalArgumentException si
      *  les deux vecteurs n'ont pas la
      *  même longueur.
      */
     @Override
-    public void setData(final double[] x, final double[] y) throws MismatchedSizeException {
+    public void setData(final double[] x, final double[] y) {
         this.x = x;
         this.y = y;
         if (x.length != y.length) {
-            throw new MismatchedSizeException(); // TODO: Localize
+            throw new IllegalArgumentException("Mismatched array lengths.");
         }
         this.x = x;
         recompute();

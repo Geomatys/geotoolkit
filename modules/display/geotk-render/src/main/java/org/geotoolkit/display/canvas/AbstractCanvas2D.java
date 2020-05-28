@@ -25,6 +25,8 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
+import static java.lang.Math.abs;
+import static java.lang.Math.rint;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -67,7 +69,6 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.opengis.geometry.DirectPosition;
@@ -413,7 +414,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         if(change.isIdentity()) return;
         AffineTransform objToDisp = new AffineTransform(getObjectiveToDisplay());
         objToDisp.concatenate(change);
-        XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
+        roundIfAlmostInteger(objToDisp);
 
         setTransform(objToDisp);
     }
@@ -545,7 +546,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             change.translate(-centerX, -centerY);
 
             change.concatenate(objToDisp);
-            XAffineTransform.roundIfAlmostInteger(change, EPS);
+            roundIfAlmostInteger(change);
             objToDisp.concatenate(change);
         }
 
@@ -637,7 +638,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final AffineTransform change = AffineTransform.getTranslateInstance(dest.getCenterX(),dest.getCenterY());
         change.scale(sx,sy);
         change.translate(-source.getCenterX(), -source.getCenterY());
-        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        roundIfAlmostInteger(change);
         return change;
     }
 
@@ -787,7 +788,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
 
         change.concatenate(objToDisp);
-        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -817,7 +818,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
 
         change.concatenate(objToDisp);
-        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -833,7 +834,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final AffineTransform change = objToDisp.createInverse();
         change.translate(x, y);
         change.concatenate(objToDisp);
-        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        roundIfAlmostInteger(change);
         applyTransform(change);
     }
 
@@ -843,6 +844,32 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         Point2D objCenter = new Point2D.Double(center.getOrdinate(0) + x, center.getOrdinate(1) + y);
         objCenter = getObjectiveToDisplay().transform(objCenter, objCenter);
         translateDisplay(dispCenter.getX() - objCenter.getX(), dispCenter.getY() - objCenter.getY());
+    }
+
+    /**
+     * Changes the {@linkplain #AffineTransform} by applying an affine transform. The {@code change} transform
+     * must express a change in pixel units, for example, a scrolling of 6 pixels toward right.
+     *
+     * @param  change The zoom change, as an affine transform in pixel coordinates. If
+     *         {@code change} is the identity transform, then this method does nothing
+     *         and listeners are not notified.
+     *
+     * @since 2.1
+     */
+    public final void transformPixels(final AffineTransform change) {
+        if (!change.isIdentity()) {
+            final AffineTransform2D objToDisp = getObjectiveToDisplay();
+            final AffineTransform logical;
+            try {
+                logical = objToDisp.createInverse();
+            } catch (NoninvertibleTransformException exception) {
+                throw new IllegalStateException(exception);
+            }
+            logical.concatenate(change);
+            logical.concatenate(objToDisp);
+            roundIfAlmostInteger(logical);
+            applyTransform(logical);
+        }
     }
 
     public final void setRotation(final double r) throws NoninvertibleTransformException {
@@ -1165,5 +1192,35 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             index += crs.getCoordinateSystem().getDimension();
         }
         throw new RuntimeException("Coordinate system has no horizontal component");
+    }
+
+    /**
+     * If scale and shear coefficients are close to integers, replaces their current values by their rounded values.
+     * The scale and shear coefficients are handled in a "all or nothing" way; either all of them or none are rounded.
+     * The translation terms are handled separately, provided that the scale and shear coefficients have been rounded.
+     *
+     * <p>This rounding up is useful for example in order to speedup image displays.</p>
+     *
+     * @param  tr  the transform to round. Rounding will be applied in place.
+     */
+    private static void roundIfAlmostInteger(final AffineTransform tr) {
+        double r;
+        final double m00, m01, m10, m11;
+        if (abs((m00 = rint(r=tr.getScaleX())) - r) <= EPS &&
+            abs((m01 = rint(r=tr.getShearX())) - r) <= EPS &&
+            abs((m11 = rint(r=tr.getScaleY())) - r) <= EPS &&
+            abs((m10 = rint(r=tr.getShearY())) - r) <= EPS)
+        {
+            /*
+             * At this point the scale and shear coefficients can been rounded to integers.
+             * Continue only if this rounding does not make the transform non-invertible.
+             */
+            if ((m00!=0 || m01!=0) && (m10!=0 || m11!=0)) {
+                double m02, m12;
+                if (abs((r = rint(m02=tr.getTranslateX())) - m02) <= EPS) m02=r;
+                if (abs((r = rint(m12=tr.getTranslateY())) - m12) <= EPS) m12=r;
+                tr.setTransform(m00, m10, m01, m11, m02, m12);
+            }
+        }
     }
 }

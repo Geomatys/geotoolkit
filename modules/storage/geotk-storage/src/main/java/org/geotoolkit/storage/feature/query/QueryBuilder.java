@@ -20,6 +20,8 @@ package org.geotoolkit.storage.feature.query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -64,6 +66,7 @@ public final class QueryBuilder {
     private Hints hints = null;
     private double[] resolution = null;
     private Object version = null;
+    private Quantity<Length> linearResolution;
 
     public QueryBuilder(){
     }
@@ -163,12 +166,22 @@ public final class QueryBuilder {
         this.crs = crs;
     }
 
+    @Deprecated
     public void setResolution(final double[] resolution) {
         this.resolution = resolution;
     }
 
+    @Deprecated
     public double[] getResolution() {
         return resolution;
+    }
+
+    public Quantity<Length> getLinearResolution() {
+        return linearResolution;
+    }
+
+    public void setLinearResolution(Quantity<Length> linearResolution) {
+        this.linearResolution = linearResolution;
     }
 
     public void setVersionLabel(String label) {
@@ -202,7 +215,7 @@ public final class QueryBuilder {
     }
 
     public Query buildQuery(){
-        return new Query(typeName, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, version, hints);
+        return new Query(typeName, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, linearResolution, version, hints);
     }
 
     /**

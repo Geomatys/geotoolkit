@@ -20,6 +20,4 @@
 
     <xi:include href="./process-shell.xml"/>
 
-    <xi:include href="./process-xoffice.xml"/>
-
 </section>

@@ -75,7 +75,8 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.geometry.DirectPosition;
@@ -603,7 +604,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         protected RenderContext createRenderContext(final Rectangle2D gridBounds,
                                                     final RenderingHints hints)
         {
-            final GeneralMatrix matrix;
+            final MatrixSIS matrix;
             final GeneralEnvelope srcEnvelope = new GeneralEnvelope(
                     new double[] {bounds.getMinX(), bounds.getMinY()},
                     new double[] {bounds.getMaxX(), bounds.getMaxY()});
@@ -627,9 +628,9 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                     }
                 }
                 normalized[1] = AxisDirections.opposite(normalized[1]); // Image's Y axis is downward.
-                matrix = new GeneralMatrix(srcEnvelope, axis, dstEnvelope, normalized);
+                matrix = Matrices.createTransform(srcEnvelope, axis, dstEnvelope, normalized);
             } else {
-                matrix = new GeneralMatrix(srcEnvelope, dstEnvelope);
+                matrix = Matrices.createTransform(srcEnvelope, dstEnvelope);
             }
             return new RenderContext(AffineTransforms2D.castOrCopy(matrix), hints);
         }

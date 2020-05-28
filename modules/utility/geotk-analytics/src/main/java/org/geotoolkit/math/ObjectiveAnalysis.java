@@ -17,27 +17,26 @@
  */
 package org.geotoolkit.math;
 
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.awt.image.DataBufferFloat;
-import java.awt.image.ComponentColorModel;
-import java.awt.color.ColorSpace;
-import java.awt.Transparency;
 import java.awt.image.ColorModel;
-import javax.vecmath.GVector;
-import javax.vecmath.GMatrix;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
-
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.apache.sis.math.Plane;
-import org.geotoolkit.resources.Errors;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
-
+import org.apache.sis.math.Plane;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
 import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
+import org.geotoolkit.resources.Errors;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 
 /**
@@ -259,8 +258,8 @@ public class ObjectiveAnalysis {
          * Note: the object 'GMatrix' is provided with Java3D.
          */
         final int N = zp.length;
-        final GMatrix A = new GMatrix(N,N);
-        final GVector X = new GVector(N);
+        MatrixSIS A = Matrices.createIdentity(N);
+        double[] X = new double[N];
         /*
          * Set the matrix elements. The square part A(i,j) is
          * the matrix of correlations among observations.
@@ -275,13 +274,17 @@ public class ObjectiveAnalysis {
                 P2.y = yp[j];
                 A.setElement(i, j, correlation(P1, P2));
             }
-            X.setElement(i, zp[i] - P.z(P1.x, P1.y));
+            X[i] = zp[i] - P.z(P1.x, P1.y);
         }
-        /*
-         * Compute (A⁻¹) × (X) and stores the result into X.
-         */
-        A.invert(); // A = A⁻¹
-        X.mul(A,X); // X = A*X
+        try {
+            /*
+            * Compute (A⁻¹) × (X) and stores the result into X.
+            */
+            A = A.inverse(); // A = A⁻¹
+        } catch (NoninvertibleMatrixException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+        X = A.multiply(X); // X = A*X
         /*
          * Now compute values.
          */
@@ -293,7 +296,7 @@ public class ObjectiveAnalysis {
             for (int k=0; k<N; k++) {
                 P2.x = xp[k];
                 P2.y = yp[k];
-                double toAdd = X.getElement(k) * correlation(loc, P2);
+                double toAdd = X[k] * correlation(loc, P2);
                 /*
                  * Compute value += toAdd
                  * using Kahan summation algorithm.

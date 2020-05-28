@@ -19,7 +19,6 @@ package org.geotoolkit.math;
 
 import java.awt.geom.Line2D;
 import java.io.Serializable;
-import javax.vecmath.MismatchedSizeException;
 
 import org.apache.sis.math.Vector;
 import org.apache.sis.util.ArraysExt;
@@ -88,12 +87,12 @@ public class VectorPair implements Serializable {
      * have the same length.
      *
      * @return The vector length, which is the same for the two vectors.
-     * @throws MismatchedSizeException if the two vectors don't have the same length.
+     * @throws IllegalArgumentException if the two vectors don't have the same length.
      */
-    public int length() throws MismatchedSizeException {
+    public int length() {
         final int length = Y.size();
         if (length != X.size()) {
-            throw new MismatchedSizeException(Errors.format(Errors.Keys.MismatchedArrayLength));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedArrayLength));
         }
         return length;
     }
@@ -111,10 +110,10 @@ public class VectorPair implements Serializable {
      *         that a point lies on a line segment.
      * @param  yTolerance The maximal distance measured along the <var>y</var> axis to consider
      *         that a point lies on a line segment.
-     * @throws MismatchedSizeException If the <var>X</var> and <var>Y</var> vectors don't have
+     * @throws IllegalArgumentException If the <var>X</var> and <var>Y</var> vectors don't have
      *         the same length.
      */
-    public void omitColinearPoints(final double xTolerance, double yTolerance) throws MismatchedSizeException {
+    public void omitColinearPoints(final double xTolerance, double yTolerance) {
         final int length = length(); // Invoked first for forcing an inconditional check of vectors length.
         final double ratio = yTolerance / xTolerance;
         if (!Double.isNaN(ratio)) {
@@ -212,15 +211,15 @@ public class VectorPair implements Serializable {
      *         So +2 and -2 argument can be interpreted as shifting the main <var>y</var> value
      *         toward positive or negative infinity slightly more than what +1 or -1 does.</li>
      *   </ul>
-     * @throws MismatchedSizeException If the length of the <var>X</var> vector is not equal to
+     * @throws IllegalArgumentException If the length of the <var>X</var> vector is not equal to
      *         the length of the <var>Y</var> vector + 1.
      */
-    public void makeStepwise(int direction) throws MismatchedSizeException {
+    public void makeStepwise(int direction) {
         final Vector X = this.X;
         final Vector Y = this.Y;
         final int length = Y.size();
         if (length+1 != X.size()) {
-            throw new MismatchedSizeException();
+            throw new IllegalArgumentException("Mismatched vector lengths.");
         }
         int[] Xi = new int[length*2];
         int[] Yi = new int[length*2];

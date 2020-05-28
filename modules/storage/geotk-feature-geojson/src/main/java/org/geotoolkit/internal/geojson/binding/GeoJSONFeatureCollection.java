@@ -33,6 +33,8 @@ import org.geotoolkit.internal.geojson.LiteJsonLocation;
 import org.geotoolkit.storage.geojson.GeoJSONConstants;
 
 /**
+ * This is NOT a collection but an iterator, this must be renamed !
+ *
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @version 2.0

@@ -32,7 +32,6 @@ import javax.media.jai.PointOpImage;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
-import javax.vecmath.MismatchedSizeException;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.internal.ImageUtilities;
@@ -192,12 +191,11 @@ public class Combine extends PointOpImage {
      *                  or {@code null} if none.
      * @param hints     The rendering hints.
      *
-     * @throws MismatchedSizeException if some rows in the {@code matrix} argument doesn't
+     * @throws IllegalArgumentException if some rows in the {@code matrix} argument doesn't
      *         have the expected length.
      */
     public Combine(final Vector<? extends RenderedImage> images, double[][] matrix,
                    final Transform transform, final RenderingHints hints)
-                   throws MismatchedSizeException
     {
         super(images, ImageUtilities.createIntersection(
               (ImageLayout) hints.get(JAI.KEY_IMAGE_LAYOUT), images), hints, false);
@@ -216,7 +214,7 @@ public class Combine extends PointOpImage {
             final double[] row = matrix[j];
             final int numColumns = row.length;
             if (numColumns != numSamples+1) {
-                throw new MismatchedSizeException();
+                throw new IllegalArgumentException("Mismatched dimensions.");
             }
             int source   = -1;
             int band     = -1;
@@ -420,11 +418,11 @@ public class Combine extends PointOpImage {
          * @param matrix  The linear combination coefficients as a matrix.
          * @param hints   The rendering hints.
          *
-         * @throws MismatchedSizeException if some rows in the {@code matrix} argument doesn't
+         * @throws IllegalArgumentException if some rows in the {@code matrix} argument doesn't
          *         have the expected length.
          */
         public Dyadic(final Vector<? extends RenderedImage> images, final double[][] matrix,
-                      final RenderingHints hints) throws MismatchedSizeException
+                      final RenderingHints hints)
         {
             super(images, matrix, null, hints);
             if (getNumSources() != 2) {

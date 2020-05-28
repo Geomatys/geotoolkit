@@ -25,14 +25,7 @@
  */
 package org.geotoolkit.processing.coverage.kriging;
 
-import org.locationtech.jts.geom.Coordinate;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,14 +34,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.vecmath.GVector;
-import javax.vecmath.GMatrix;
-import javax.vecmath.Point3d;
 import org.apache.sis.math.Plane;
-import org.apache.sis.util.logging.Logging;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
+import org.geotoolkit.geometry.math.Vector3d;
+import org.locationtech.jts.geom.Coordinate;
 
 /**
  * <p align=justify>Classe ayant la charge d'interpoller sur une grille régulière des
@@ -216,7 +207,7 @@ public class ObjectiveAnalysis {
      * @return Tableau de valeurs des points interpollés. Ce tableau aurait la longueur
      *         retournée par {@link #getLength}.
      */
-    public double[] interpole(final double[] xp, final double[] yp, final double[] zp) {
+    public double[] interpole(final double[] xp, final double[] yp, final double[] zp) throws NoninvertibleMatrixException {
         /*
          * Compute a regression plane P of Z(x,y). The object P
          * will contains internaly the plane's coefficients.
@@ -228,8 +219,8 @@ public class ObjectiveAnalysis {
          * Note: the object 'GMatrix' is provided with Java3D.
          */
         final int N = xp.length;
-        GMatrix A = new GMatrix(N, N);
-        GVector X = new GVector(N);
+        MatrixSIS A = Matrices.createIdentity(N);
+        double[] X = new double[N];
         /*
          * Set the matrix elements. The square part A(i,j) is
          * the matrix of correlations among observations.
@@ -242,15 +233,15 @@ public class ObjectiveAnalysis {
                 final double dy = yi - yp[j];
                 A.setElement(i, j, correlation(Math.sqrt(dx * dx + dy * dy)));
             }
-            X.setElement(i, zp[i] - P.z(xi, yi));
+            X[i] = zp[i] - P.z(xi, yi);
         }
         /*
          * Invert the matrix, then multiply A by X.
          * This code compute in fact Y = A^-1 * X.
          * The result matrix is stored into A.
          */
-        A.invert(); // A = A^-1
-        X.mul(A, X); // X = A*X
+        A = A.inverse(); // A = A^-1
+        X = A.multiply(X); // X = A*X
         A = null;   // lets GC do his work
         /*
          * Now compute values.
@@ -263,7 +254,7 @@ public class ObjectiveAnalysis {
             for (int k = 0; k < N; k++) {
                 final double dx = xi - xp[k];
                 final double dy = yi - yp[k];
-                value += X.getElement(k) * correlation(Math.sqrt(dx * dx + dy * dy));
+                value += X[k] * correlation(Math.sqrt(dx * dx + dy * dy));
             }
             values[i] = value;
         }
@@ -323,8 +314,8 @@ public class ObjectiveAnalysis {
      *         may be throws if someone override {@link #computeGrid} and failed
      *         to provided a regular grid.
      */
-    public Map<Point3d,List<Coordinate>> doContouring(final double[] xp, final double[] yp, final double[] zp, final double[] lls) throws IllegalStateException {
-        final Map<Point3d,List<Coordinate>> cellMap = new HashMap<Point3d,List<Coordinate>>();
+    public Map<Vector3d,List<Coordinate>> doContouring(final double[] xp, final double[] yp, final double[] zp, final double[] lls) throws IllegalStateException {
+        final Map<Vector3d,List<Coordinate>> cellMap = new HashMap<Vector3d,List<Coordinate>>();
 
         if (xp == null || yp == null || zp == null) return cellMap;
 
@@ -468,8 +459,8 @@ public class ObjectiveAnalysis {
                              * d'autres plus tard. Note: La présence du (float) est une façon paresseuse
                              * d'arrondir les nombre de façon à éviter certaines erreurs d'arrondissements.
                              */
-                            final Point3d P0 = new Point3d((float) px0, (float) py0, zl);
-                            final Point3d P1 = new Point3d((float) px1, (float) py1, zl);
+                            final Vector3d P0 = new Vector3d((float) px0, (float) py0, zl);
+                            final Vector3d P1 = new Vector3d((float) px1, (float) py1, zl);
                             final List<Coordinate> I0 = cellMap.remove(P0);
                             final List<Coordinate> I1 = cellMap.remove(P1);
                             /*
@@ -509,10 +500,10 @@ public class ObjectiveAnalysis {
                                      */
                                     int checkRefCountI0 = 0;
                                     int checkRefCountI1 = 0;
-                                    final Iterator<Entry<Point3d,List<Coordinate>>> it = cellMap.entrySet().iterator();
+                                    final Iterator<Entry<Vector3d,List<Coordinate>>> it = cellMap.entrySet().iterator();
                                     if (it != null) {
                                         while (it.hasNext()) {
-                                            final Entry<Point3d,List<Coordinate>> entrie = it.next();
+                                            final Entry<Vector3d,List<Coordinate>> entrie = it.next();
                                             final Object I = entrie.getValue();
                                             if (I == I0) {
                                                 checkRefCountI0++;
@@ -627,79 +618,4 @@ public class ObjectiveAnalysis {
         return true;
     }
 
-    public static void main(final String[] args) {
-
-        if (true) {
-            final int s = 5;
-            final double[] x = new double[5];
-            final double[] y = new double[5];
-            final double[] z = new double[5];
-
-            x[0] = 0;
-            x[1] = 0;
-            x[2] = 10;
-            x[3] = 20;
-            x[4] = 20;
-
-            y[0] = 0;
-            y[1] = 20;
-            y[2] = 10;
-            y[3] = 0;
-            y[4] = 20;
-
-            z[0] = 1;
-            z[1] = 2;
-            z[2] = 50;
-            z[3] = 3;
-            z[4] = 4;
-
-            final ObjectiveAnalysis ob = new ObjectiveAnalysis(new Rectangle(0, 0, 20, 20), new Dimension(s, s));
-            Logging.getLogger("org.geotoolkit.processing.coverage.kriging").log(Level.INFO, "dx=" + ob.dx + "   dy=" + ob.dy);
-            final double[] computed = ob.interpole(x, y, z);
-            final double[] cx = ob.getXs();
-            final double[] cy = ob.getYs();
-
-            final Map<Point3d,List<Coordinate>> steps = ob.doContouring(cx, cy, computed, new double[]{-10,10,20,30,40,50});
-            final List<Shape> shapes = new ArrayList<Shape>();
-            for(final Point3d p : steps.keySet()){
-
-                final List<Coordinate> coords = steps.get(p);
-
-                GeneralPath isoline = null;
-                for(final Coordinate coord : coords){
-                    if(isoline == null){
-                        isoline = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-                        isoline.moveTo(coord.x*10, coord.y*10);
-                    }else{
-                        isoline.lineTo(coord.x*10, coord.y*10);
-                    }
-                }
-
-                shapes.add(isoline);
-            }
-
-            JFrame frm = new JFrame();
-            frm.setContentPane(new JPanel(){
-
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-
-                    Graphics2D g2 = (Graphics2D) g;
-                    g2.setColor(Color.BLACK);
-                    for(Shape shape : shapes){
-                        g2.draw(shape);
-                    }
-
-                }
-
-            });
-
-            frm.setSize(800, 600);
-            frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frm.setLocationRelativeTo(null);
-            frm.setVisible(true);
-
-        }
-    }
 }

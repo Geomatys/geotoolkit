@@ -32,6 +32,8 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -79,6 +81,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -386,7 +389,7 @@ public final class RenderingRoutines {
             Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
             if (!Boolean.FALSE.equals(resample)) {
                 //we only disable resampling if it is explictly specified
-                final double[] res = renderingContext.getResolution(layerCRS);
+                double[] res = renderingContext.getResolution(layerCRS);
 
                 //adjust with the generalization factor
                 final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
@@ -399,6 +402,16 @@ public final class RenderingRoutines {
                 res[0] *= factor;
                 res[1] *= factor;
                 qb.setResolution(res);
+
+                try {
+                    res = renderingContext.getResolution(CRS.forCode("EPSG:3395"));
+                    res[0] *= factor;
+                    res[1] *= factor;
+                    qb.setLinearResolution(Quantities.create(res[0], Units.METRE));
+                } catch (FactoryException ex) {
+                    throw new PortrayalException(ex.getMessage(), ex);
+                }
+
             }
 
             //add ignore flag ------------------------------------------------------
