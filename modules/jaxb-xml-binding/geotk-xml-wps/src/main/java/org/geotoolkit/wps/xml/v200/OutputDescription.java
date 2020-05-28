@@ -93,30 +93,31 @@ public class OutputDescription extends Description {
 
     public OutputDescription(org.geotoolkit.wps.json.OutputDescription out) {
         super(out);
+        if (out != null) {
+            if (out.getOutput() instanceof ComplexInputDescription) {
+                ComplexInputDescription cid = (ComplexInputDescription) out.getOutput();
+                List<Format> formats = new ArrayList<>();
+                for (FormatDescription format : cid.getFormats()) {
+                    formats.add(new Format(format));
+                }
+                this.dataDescription = new ComplexData(formats);
 
-        if (out.getOutput() instanceof ComplexInputDescription) {
-            ComplexInputDescription cid = (ComplexInputDescription) out.getOutput();
-            List<Format> formats = new ArrayList<>();
-            for (FormatDescription format : cid.getFormats()) {
-                formats.add(new Format(format));
-            }
-            this.dataDescription = new ComplexData(formats);
+            } else if (out.getOutput() instanceof LiteralInputDescription){
+                LiteralInputDescription cid = (LiteralInputDescription) out.getOutput();
+                List<LiteralDataDomain> lits = new ArrayList<>();
+                for (org.geotoolkit.wps.json.LiteralDataDomain lit : cid.getLiteralDataDomains()) {
+                    lits.add(new LiteralDataDomain(lit));
+                }
+                this.dataDescription = new LiteralData(null, lits);
 
-        } else if (out.getOutput() instanceof LiteralInputDescription){
-            LiteralInputDescription cid = (LiteralInputDescription) out.getOutput();
-            List<LiteralDataDomain> lits = new ArrayList<>();
-            for (org.geotoolkit.wps.json.LiteralDataDomain lit : cid.getLiteralDataDomains()) {
-                lits.add(new LiteralDataDomain(lit));
+            } else if (out.getOutput() instanceof BoundingBoxInputDescription){
+                BoundingBoxInputDescription cid = (BoundingBoxInputDescription) out.getOutput();
+                List<SupportedCRS> crss = new ArrayList<>();
+                for (SupportedCrs scrs : cid.getSupportedCRS()) {
+                    crss.add(new SupportedCRS(scrs.getCrs(), scrs.isDefault()));
+                }
+                this.dataDescription = new BoundingBoxData(null, crss);
             }
-            this.dataDescription = new LiteralData(null, lits);
-
-        }else if (out.getOutput() instanceof BoundingBoxInputDescription){
-            BoundingBoxInputDescription cid = (BoundingBoxInputDescription) out.getOutput();
-            List<SupportedCRS> crss = new ArrayList<>();
-            for (SupportedCrs scrs : cid.getSupportedCRS()) {
-                crss.add(new SupportedCRS(scrs.getCrs(), scrs.isDefault()));
-            }
-            this.dataDescription = new BoundingBoxData(null, crss);
         }
     }
 

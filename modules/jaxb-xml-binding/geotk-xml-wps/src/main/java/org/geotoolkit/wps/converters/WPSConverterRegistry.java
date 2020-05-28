@@ -86,6 +86,7 @@ public class WPSConverterRegistry {
         register(ReferenceToStringConverter                 .getInstance());
         register(ReferenceToGeometryArrayConverter          .getInstance());
         register(ReferenceToUrlConverter                    .getInstance());
+        register(ReferenceToUriConverter                    .getInstance());
         register(ReferenceToUrlConnectionConverter          .getInstance());
 
         //Object -> ComplexData converters
@@ -114,6 +115,7 @@ public class WPSConverterRegistry {
         register(GeometryArrayToReferenceConverter          .getInstance());
         register(StyledLayerDescriptorToReferenceConverter  .getInstance());
         register(UrlToReferenceConverter                    .getInstance());
+        register(UriToReferenceConverter                    .getInstance());
         register(UrlConnectionToReferenceConverter          .getInstance());
 
         //String -> Object converters

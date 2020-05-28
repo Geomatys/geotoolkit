@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Deploy
  */
-public class Deploy {
+public class Deploy implements WPSJSONResponse {
 
     private Boolean immediateDeployment = true;
 
