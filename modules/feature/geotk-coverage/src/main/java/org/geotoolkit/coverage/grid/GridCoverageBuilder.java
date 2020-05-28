@@ -267,6 +267,7 @@ import org.opengis.util.GenericName;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  */
+@Deprecated
 public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * The coverage name, or {@code null} if unspecified. This field is non-null only if the name
