@@ -140,16 +140,14 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
                 Runtime.getRuntime().availableProcessors(),
                 1, TimeUnit.MINUTES, tileQueue);
         service.prestartAllCoreThreads();
-        service.shutdown();
-        while(true){
-            try {
-                if(service.awaitTermination(1, TimeUnit.DAYS)){
-                    break;
-                }
-            } catch (InterruptedException ex) {
-                Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.SEVERE, null, ex);
+        try {
+            while (!tileQueue.isEmpty()) {
+                Thread.sleep(2000);             // Ugly hack, we should not use executor pool that way!
             }
+        } catch (InterruptedException ex) {
+            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.SEVERE, null, ex);
         }
+        service.shutdown();
     }
 
     private static class ByTileQueue <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {
