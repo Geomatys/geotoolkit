@@ -254,21 +254,21 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         FeatureSet fcoll = session.getFeatureCollection(QueryBuilder.all(name.toString()));
         assertEquals(2, fcoll.features(false).count());
 
-        Double[][] array1 = new Double[5][5];
-        Double[][] array2 = new Double[5][5];
+        double[][] array1 = new double[5][5];
+        double[][] array2 = new double[5][5];
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                array1[i][j] = (double) (i + j);
-                array2[i][j] = (double) (i - j);
+                array1[i][j] = i + j;
+                array2[i][j] = i - j;
             }
         }
 
         Iterator<Feature> ite = fcoll.features(false).iterator();
         Feature feat1 = ite.next();
-        assertArrayEquals(array1, (Double[][]) feat1.getProperty("array").getValue());
+        assertArrayEquals(array1, (double[][]) feat1.getProperty("array").getValue());
 
         Feature feat2 = ite.next();
-        assertArrayEquals(array2, (Double[][]) feat2.getProperty("array").getValue());
+        assertArrayEquals(array2, (double[][]) feat2.getProperty("array").getValue());
 
     }
 
@@ -401,7 +401,7 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
     private FeatureType buildPropertyArrayFeatureType(String name, Class geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.addAttribute(Double[][].class).setName("array");
+        ftb.addAttribute(double[][].class).setName("array");
         ftb.addAttribute(geomClass).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         return ftb.build();
     }
