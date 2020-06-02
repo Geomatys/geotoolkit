@@ -18,6 +18,7 @@ package org.geotoolkit.storage.memory;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -38,6 +39,7 @@ import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
@@ -145,6 +147,13 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
             env = Envelopes.transform(env, sourceCrs);
         }
         return FF.intersects(FF.property(AttributeConvention.GEOMETRY), FF.literal(env));
+    }
+
+    @Override
+    public String toString() {
+        final List<String> elements = new ArrayList<>();
+        elements.add("origin : " + source.toString());
+        return StringUtilities.toStringTree(this.getClass().getSimpleName(), elements);
     }
 
 }

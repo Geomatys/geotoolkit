@@ -54,6 +54,8 @@ import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.PyramidReader;
+import org.geotoolkit.storage.multires.AbstractMosaic;
+import org.geotoolkit.storage.multires.AbstractPyramid;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
@@ -298,6 +300,10 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             return parent.getFormat();
         }
 
+        @Override
+        public String toString(){
+            return AbstractPyramid.toString(this);
+        }
     }
 
     private class CacheMosaic implements Mosaic {
@@ -493,6 +499,10 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             return parent.anyTile();
         }
 
+        @Override
+        public String toString() {
+            return AbstractMosaic.toString(this);
+        }
     }
 
     private final class CacheTile extends AbstractResource implements ImageTile{
