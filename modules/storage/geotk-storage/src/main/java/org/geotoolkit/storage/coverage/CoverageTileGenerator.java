@@ -291,7 +291,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         GridCoverage coverage;
         try {
             //add a margin for resample operations
-            coverage = resource.read(gridGeomNd.derive().margin(2).build());
+            final int[] margins = new int[extent.getDimension()];
+            Arrays.fill(margins, 2);
+            coverage = resource.read(gridGeomNd.derive().margin(margins).build());
         } catch (NoSuchDataException ex) {
             //create an empty tile
             final BufferedImage img = BufferedImages.createImage(tileSize.width, tileSize.height, empty.length, DataBuffer.TYPE_DOUBLE);
