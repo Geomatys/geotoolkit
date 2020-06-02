@@ -492,7 +492,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<height;y++){
             for(int x=0;x<width;x++){
                 data.getPixel(x, y, buffer);
-                assertArrayEquals(color, buffer);
+                assertArrayEquals("at ["+x+","+y+"]", color, buffer);
             }
         }
 
