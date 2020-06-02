@@ -104,4 +104,8 @@ public class DefiningPyramid implements Pyramid {
         mosaics.remove(mosaicId);
     }
 
+    @Override
+    public String toString(){
+        return AbstractPyramid.toString(this);
+    }
 }

@@ -29,6 +29,8 @@ public interface ProgressiveResource extends MultiResolutionResource {
 
     void setGenerator(TileGenerator generator) throws DataStoreException;
 
+    TileGenerator getGenerator();
+
     void clear(Envelope env, NumberRange resolutions) throws DataStoreException;
 
     void generate(Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException;

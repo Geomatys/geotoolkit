@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -219,10 +220,20 @@ public abstract class AbstractMosaic implements Mosaic {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
-        sb.append("   scale = ").append(getScale());
-        sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
-        sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
+        return toString(this);
+    }
+
+    /**
+     * Pretty print outut of given mosaic.
+     * @param mosaic not null
+     */
+    public static String toString(Mosaic mosaic) {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(mosaic));
+        sb.append("   id = ").append(mosaic.getIdentifier());
+        sb.append("   scale = ").append(mosaic.getScale());
+        sb.append("   gridSize[").append(mosaic.getGridSize().width).append(',').append(mosaic.getGridSize().height).append(']');
+        sb.append("   tileSize[").append(mosaic.getTileSize().width).append(',').append(mosaic.getTileSize().height).append(']');
+        sb.append("   bbox = ").append(new GeneralEnvelope(mosaic.getEnvelope()).toString());
         return sb.toString();
     }
 
