@@ -20,6 +20,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -75,7 +77,6 @@ import org.opengis.util.FactoryException;
 public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
 
     private final T ref;
-    private final CoverageFinder coverageFinder = new DefaultCoverageFinder();
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
@@ -192,90 +193,19 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
 
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
 
-        //choose the most appropriate pyramid based on requested CRS
-        if (domain == null) {
-            domain = getGridGeometry();
-        }
-
-        CoordinateReferenceSystem crs = domain.getCoordinateReferenceSystem();
-        Pyramid pyramid;
-        try {
-             pyramid = coverageFinder.findPyramid(ref, crs);
-        } catch (FactoryException ex) {
-            throw new DataStoreException(ex);
-        }
-        if (pyramid == null) {
-            throw new NoSuchDataException("No data pyramids available in this resource.");
-        }
-
-        crs = pyramid.getCoordinateReferenceSystem();
-
-        GridGeometry canvas = getGridGeometry(pyramid);
-        try {
-            canvas = canvas.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(domain).build();
-        } catch (IllegalArgumentException ex) {
-            throw new NoSuchDataException(ex.getMessage(), ex);
-        }
-
         if (range != null) {
             LOGGER.log(Level.FINE, "Source or destination bands can not be used on pyramidal coverages."
                                     + " Continue Coverage reading without sources and destinations bands interpretations.");
         }
 
-        Envelope paramEnv = canvas.getEnvelope();
-        double[] resolution = canvas.getResolution(true);
-
-        //-- estimate resolution if not given
-        if (resolution == null) {
-            //-- set resolution to infinite, will select the last mosaic level
-            resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
+        //choose the most appropriate pyramid based on requested CRS
+        if (domain == null) {
+            domain = getGridGeometry();
         }
 
-        //-- no reliable pyramid
-        if (pyramid == null)
-            throw new DataStoreException("No pyramid defined.");
-
-        /*
-         * We will transform the input envelope to found pyramid CRS.
-         */
-        final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
-        GeneralEnvelope wantedEnv;
-        try {
-            wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(paramEnv, pyramidCRS));
-        } catch (TransformException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
-        }
-
-        //the wanted image resolution
-        double wantedResolution = resolution[0];
-        final double tolerance  = 0.1d;
-
-        //-- transform resolution into pyramid crs
-        if (!(crs.equals(pyramidCRS))) {
-            final int displayBoundX = (int) ((paramEnv.getSpan(0) + wantedResolution - 1) / wantedResolution); //-- to force minimum mosaic resolution
-            wantedResolution = wantedEnv.getSpan(0) / displayBoundX;
-        }
-        //----------------------------------------
-
-        List<Mosaic> mosaics;
-        try {
-            mosaics = coverageFinder.findMosaics(pyramid, wantedResolution, tolerance, wantedEnv);
-        } catch (MismatchedDimensionException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
-        }
-
-        if (mosaics.isEmpty())
-            throw new IllegalStateException("Unexpected comportement an error should be precedently occurs.");
-
-        //-- we definitely do not want some NaN values
-        for (int i = 0 ; i < wantedEnv.getDimension(); i++) {
-
-            if (Double.isNaN(wantedEnv.getMinimum(i)))
-                wantedEnv.setRange(i, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(i));
-
-            if (Double.isNaN(wantedEnv.getMaximum(i)))
-                wantedEnv.setRange(i, wantedEnv.getMinimum(i),  Double.POSITIVE_INFINITY);
-        }
+        final Entry<Envelope, List<Mosaic>> intersect = intersect(ref, domain);
+        final List<Mosaic> mosaics = intersect.getValue();
+        final Envelope wantedEnv = intersect.getKey();
 
         //-- features the data
         if (mosaics.size() == 1) {
@@ -444,4 +374,94 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         }
     }
 
+    /**
+     * Intersect given resource with domain and return the most appropriate mosaics.
+     *
+     * @param mrr, not null
+     * @param domain, not null
+     */
+    public static Entry<Envelope,List<Mosaic>> intersect(MultiResolutionResource mrr, GridGeometry domain) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("mrr", mrr);
+        ArgumentChecks.ensureNonNull("domain", domain);
+
+        final DefaultCoverageFinder coverageFinder = new DefaultCoverageFinder();
+
+        CoordinateReferenceSystem crs = domain.getCoordinateReferenceSystem();
+        Pyramid pyramid;
+        try {
+             pyramid = coverageFinder.findPyramid(mrr, crs);
+        } catch (FactoryException ex) {
+            throw new DataStoreException(ex);
+        }
+        if (pyramid == null) {
+            throw new NoSuchDataException("No data pyramids available in this resource.");
+        }
+
+        crs = pyramid.getCoordinateReferenceSystem();
+
+        GridGeometry canvas = getGridGeometry(pyramid);
+        try {
+            canvas = canvas.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(domain).build();
+        } catch (IllegalArgumentException ex) {
+            throw new NoSuchDataException(ex.getMessage(), ex);
+        }
+
+        Envelope paramEnv = canvas.getEnvelope();
+        double[] resolution = canvas.getResolution(true);
+
+        //-- estimate resolution if not given
+        if (resolution == null) {
+            //-- set resolution to infinite, will select the last mosaic level
+            resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
+        }
+
+        //-- no reliable pyramid
+        if (pyramid == null) {
+            throw new DataStoreException("No pyramid defined.");
+        }
+
+        /*
+         * We will transform the input envelope to found pyramid CRS.
+         */
+        final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
+        GeneralEnvelope wantedEnv;
+        try {
+            wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(paramEnv, pyramidCRS));
+        } catch (TransformException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+
+        //the wanted image resolution
+        double wantedResolution = resolution[0];
+        final double tolerance  = 0.1d;
+
+        //-- transform resolution into pyramid crs
+        if (!(crs.equals(pyramidCRS))) {
+            final int displayBoundX = (int) ((paramEnv.getSpan(0) + wantedResolution - 1) / wantedResolution); //-- to force minimum mosaic resolution
+            wantedResolution = wantedEnv.getSpan(0) / displayBoundX;
+        }
+        //----------------------------------------
+
+        List<Mosaic> mosaics;
+        try {
+            mosaics = coverageFinder.findMosaics(pyramid, wantedResolution, tolerance, wantedEnv);
+        } catch (MismatchedDimensionException ex) {
+            throw new DataStoreException(ex.getMessage(),ex);
+        }
+
+        if (mosaics.isEmpty())
+            throw new IllegalStateException("Unexpected comportement an error should be precedently occurs.");
+
+        //-- we definitely do not want some NaN values
+        for (int i = 0 ; i < wantedEnv.getDimension(); i++) {
+
+            if (Double.isNaN(wantedEnv.getMinimum(i)))
+                wantedEnv.setRange(i, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(i));
+
+            if (Double.isNaN(wantedEnv.getMaximum(i)))
+                wantedEnv.setRange(i, wantedEnv.getMinimum(i),  Double.POSITIVE_INFINITY);
+        }
+
+        return new AbstractMap.SimpleImmutableEntry<>(wantedEnv, mosaics);
+    }
 }
