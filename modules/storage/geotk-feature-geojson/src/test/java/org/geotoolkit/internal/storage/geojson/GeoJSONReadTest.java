@@ -17,11 +17,13 @@
 package org.geotoolkit.internal.storage.geojson;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.Map;
 import org.apache.sis.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -32,7 +34,9 @@ import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.test.TestCase;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.internal.geojson.GeoJSONParser;
+import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeatureCollection;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -214,21 +218,21 @@ public class GeoJSONReadTest extends TestCase {
 
         assertEquals(2l, store.features(false).count());
 
-        Double[][] array1 = new Double[5][5];
-        Double[][] array2 = new Double[5][5];
+        double[][] array1 = new double[5][5];
+        double[][] array2 = new double[5][5];
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                array1[i][j] = (double) (i + j);
-                array2[i][j] = (double) (i - j);
+                array1[i][j] = i + j;
+                array2[i][j] = i - j;
             }
         }
 
         Iterator<Feature> ite = store.features(false).iterator();
         Feature feat1 = ite.next();
-        assertArrayEquals(array1, (Double[][]) feat1.getProperty("array").getValue());
+        assertArrayEquals(array1, (double[][]) feat1.getProperty("array").getValue());
 
         Feature feat2 = ite.next();
-        assertArrayEquals(array2, (Double[][]) feat2.getProperty("array").getValue());
+        assertArrayEquals(array2, (double[][]) feat2.getProperty("array").getValue());
 
     }
 
@@ -302,6 +306,52 @@ public class GeoJSONReadTest extends TestCase {
         }
         assertFalse(geojsonFC.hasNext()); //end of collection
 
+    }
+
+    @Test
+    public void mixed_arrays() throws Exception {
+        try (final InputStream resource = GeoJSONReadTest.class.getResourceAsStream("/org/apache/sis/internal/storage/geojson/mixed_arrays.json")) {
+            if (resource == null) throw new IllegalStateException("Cannot find a test resource");
+            final GeoJSONObject readValue = GeoJSONParser.parse(resource);
+            assertNotNull(readValue);
+            assertTrue(readValue instanceof GeoJSONFeature);
+            final GeoJSONFeature feature = (GeoJSONFeature) readValue;
+            // Ensure no side-effect would break other parts of the feature reading
+            final GeoJSONGeometry geom = feature.getGeometry();
+            assertTrue("Read feature should contain a point, but we've read: "+geom, geom instanceof GeoJSONGeometry.GeoJSONPoint);
+
+            // Now, we can check our arrays have been well-parsed
+            final Map<String, Object> properties = feature.getProperties();
+            assertPropertyIs(new double[]{2., 3., 4.}, "numberMix1", properties);
+            assertPropertyIs(new double[]{2., 3., 4.}, "numberMix2", properties);
+            assertPropertyIs(new int[]{42, 51}, "intArray", properties);
+            assertPropertyIs(new long[]{1, 7_000_000_000l}, "longArray", properties);
+            assertPropertyIs(new Double[]{2., null, 4.}, "numbersWithNullValues", properties);
+            assertPropertyIs(new Object[]{null, null}, "onlyNullValues", properties);
+            assertPropertyIs(new Object[0], "emptyArray", properties);
+            assertPropertyIs(new Object[]{2.0, "I'm a text", null}, "arbitraryMix", properties);
+        }
+    }
+
+    private static void assertPropertyIs(final Object expectedValue, final String propertyName, final Map<String, Object> properties) {
+        final Object value = properties.get(propertyName);
+        if (expectedValue == null) assertNull(value);
+        else {
+            assertNotNull(value);
+            final String msg = "Property %s should contain %s, but we read: %s";
+            final Class<?> expectedType = expectedValue.getClass();
+            final Class<?> valueClass = value.getClass();
+            assertTrue(String.format(msg, propertyName, expectedType, valueClass), expectedType.isAssignableFrom(valueClass));
+            if (double[].class.equals(expectedType)) {
+                assertArrayEquals((double[])expectedValue, (double[]) value, 1e-2);
+            } else if (int[].class.equals(expectedType)) {
+                assertArrayEquals((int[])expectedValue, (int[]) value);
+            } else if (long[].class.equals(expectedType)) {
+                assertArrayEquals((long[])expectedValue, (long[]) value);
+            } else if (expectedType.isArray()) {
+                assertArrayEquals((Object[]) expectedValue, (Object[]) value);
+            } else assertEquals(expectedValue, value);
+        }
     }
 
     private FeatureType buildPropertyArrayFeatureType(String name, Class<?> geomClass) {
