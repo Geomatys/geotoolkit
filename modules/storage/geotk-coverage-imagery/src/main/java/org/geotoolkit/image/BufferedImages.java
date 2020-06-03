@@ -312,6 +312,8 @@ public class BufferedImages extends Static {
         final int numYTiles = image.getNumYTiles();
         final int minTileX = image.getMinTileX();
         final int minTileY = image.getMinTileY();
+        final int tileGridXOffset = image.getTileGridXOffset();
+        final int tileGridYOffset = image.getTileGridYOffset();
         final long nbTile = (long)numXTiles * numYTiles;
         final Rectangle imageBounds = new Rectangle(image.getMinX(), image.getMinY(), image.getWidth(), image.getHeight());
 
@@ -324,8 +326,8 @@ public class BufferedImages extends Static {
                     public Rectangle apply(long value) {
                         final int tileX = (int) (value % numXTiles);
                         final int tileY = (int) (value / numXTiles);
-                        int rectX = (minTileX + tileX) * tileWidth;
-                        int rectY = (minTileY + tileY) * tileHeight;
+                        final int rectX = (minTileX + tileX) * tileWidth + tileGridXOffset;
+                        final int rectY = (minTileY + tileY) * tileHeight + tileGridYOffset;
                         return new Rectangle(rectX - left,rectY - bottom,rectWidth,rectHeight).intersection(imageBounds);
                     }
                 });
