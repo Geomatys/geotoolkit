@@ -111,8 +111,8 @@ public class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolizerRende
 
                             final String mosaicId = "Z: " + mid;
                             final String mosaicScale = "S: " + new DecimalFormat("#0.00000").format(m.getScale());
-                            final String strX = "X: "+rectangle.x+x;
-                            final String strY = "Y: "+rectangle.y+y;
+                            final String strX = "X: " + (rectangle.x+x);
+                            final String strY = "Y: " + (rectangle.y+y);
 
                             String longest = mosaicId;
                             if (mosaicScale.length() > longest.length()) longest = mosaicScale;
