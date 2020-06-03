@@ -3,3 +3,4 @@ org.geotoolkit.display2d.ext.cellular.CellSymbolizer
 org.geotoolkit.display2d.ext.pie.PieSymbolizer
 org.geotoolkit.display2d.ext.graduation.GraduationSymbolizer
 org.geotoolkit.display2d.ext.isoline.symbolizer.IsolineSymbolizer
+org.geotoolkit.display2d.ext.tiledebug.TileDebugSymbolizer
