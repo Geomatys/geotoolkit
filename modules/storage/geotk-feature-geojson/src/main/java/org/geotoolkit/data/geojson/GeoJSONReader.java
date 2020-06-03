@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.geojson;
 
+import org.apache.sis.util.Numbers;
 import org.locationtech.jts.geom.Geometry;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.FeatureReader;
@@ -291,9 +292,9 @@ public class GeoJSONReader implements FeatureReader {
                 Array.set(rarray, k, rebuildArray(Array.get(candidate, k), componentType, depth));
             }
             return rarray;
-        }else{
-            return convert(candidate, componentType);
-        }
+        } else if (componentType.isInstance(candidate)) {
+            return candidate;
+        } else return convert(candidate, componentType);
     }
 
     /**
@@ -304,11 +305,13 @@ public class GeoJSONReader implements FeatureReader {
      * @throws UnconvertibleObjectException
      */
     private Object convert(Object value, Class binding) throws UnconvertibleObjectException {
-        AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<>(value.getClass(), binding);
+        final Class<?> valueClass = Numbers.primitiveToWrapper(value.getClass());
+        binding = Numbers.primitiveToWrapper(binding);
+        AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<>(valueClass, binding);
         ObjectConverter converter = convertersCache.get(key);
 
         if (converter == null) {
-            converter = ObjectConverters.find(value.getClass(), binding);
+            converter = ObjectConverters.find(valueClass, binding);
             convertersCache.put(key, converter);
         }
         return converter.apply(value);
