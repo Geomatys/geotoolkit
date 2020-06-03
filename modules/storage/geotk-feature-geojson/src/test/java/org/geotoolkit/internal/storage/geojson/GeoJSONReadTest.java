@@ -23,7 +23,10 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.sis.feature.FeatureComparator;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -38,12 +41,27 @@ import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeatureCollection;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
-import static org.junit.Assert.*;
+import org.geotoolkit.storage.geojson.GeoJSONProvider;
+import org.geotoolkit.storage.geojson.GeoJSONStore;
 import org.junit.Test;
-import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -354,6 +372,85 @@ public class GeoJSONReadTest extends TestCase {
         }
     }
 
+    /**
+     * Same as {@link #readFeatureExtraAttibuteTest3()}, but for an array at the end of the feature.
+     */
+    @Test
+    public void readFeatureExtraAttibuteTest() throws DataStoreException, URISyntaxException {
+        try (GeoJSONStore store = fromResource("/org/apache/sis/internal/storage/geojson/extraAttribute.json")) {
+            GenericName name = store.getIdentifier().orElseThrow(() -> new AssertionError("An identifier was expected for input file"));
+            assertEquals(Names.createLocalName(null, ":", "extraAttribute"), name);
+
+            FeatureType ft = store.getType();
+            testFeatureTypes(buildSimpleFeatureType("extraAttribute", Point.class), ft);
+
+            final List<Feature> content;
+            try (Stream<Feature> features = store.features(false)) {
+                content = features.collect(Collectors.toList());
+            }
+            assertEquals(1, content.size());
+            final Feature first = content.get(0);
+            assertNotNull(first);
+            assertEquals("Plaza Road Park", first.getPropertyValue("name"));
+        }
+    }
+
+    /**
+     * Same as {@link #readFeatureExtraAttibuteTest3()}, but for an array in the middle of the feature.
+     */
+    @Test
+    public void readFeatureExtraAttibute2Test() throws DataStoreException, URISyntaxException {
+        try (GeoJSONStore store = fromResource("/org/apache/sis/internal/storage/geojson/extraAttribute2.json")) {
+            GenericName name = store.getIdentifier().orElseThrow(() -> new AssertionError("An identifier was expected for input file"));
+            assertEquals(Names.createLocalName(null, ":", "extraAttribute2"), name);
+
+            FeatureType ft = store.getType();
+            testFeatureTypes(buildSimpleFeatureType("extraAttribute2", Point.class), ft);
+
+            final List<Feature> content;
+            try (Stream<Feature> features = store.features(false)) {
+                content = features.collect(Collectors.toList());
+            }
+            assertEquals(1, content.size());
+            final Feature first = content.get(0);
+            assertNotNull(first);
+            assertEquals("Plaza Road Park", first.getPropertyValue("name"));
+        }
+    }
+
+    /**
+     * When GeoJSON feature contains json attributes not defined in the standard, ensure we ignore them by default, and
+     * proceed to the proper reading of the feature.
+     *
+     * This method ensure that any additional json object is ignored.
+     */
+    @Test
+    public void readFeatureExtraAttibuteTest3() throws Exception {
+        try (GeoJSONStore store = fromResource("/org/apache/sis/internal/storage/geojson/extraAttribute3.json")) {
+            GenericName name = store.getIdentifier().orElseThrow(() -> new AssertionError("An identifier was expected for input file"));
+            assertEquals(Names.createLocalName(null, ":", "extraAttribute3"), name);
+
+            FeatureType ft = store.getType();
+            testFeatureTypes(buildSimpleFeatureType("extraAttribute3", Point.class), ft);
+
+            final List<Feature> content;
+            try (Stream<Feature> features = store.features(false)) {
+                content = features.collect(Collectors.toList());
+            }
+            assertEquals(1, content.size());
+            final Feature first = content.get(0);
+            assertNotNull(first);
+            assertEquals("Plaza Road Park", first.getPropertyValue("name"));
+        }
+    }
+
+    private GeoJSONStore fromResource(final String resourcePath) throws URISyntaxException, DataStoreException {
+        URL pointFile = GeoJSONReadTest.class.getResource(resourcePath);
+        assertNotNull("Bad test resource location");
+
+        return new GeoJSONStore(new GeoJSONProvider(), pointFile.toURI(), null);
+    }
+
     private FeatureType buildPropertyArrayFeatureType(String name, Class<?> geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
@@ -371,9 +468,13 @@ public class GeoJSONReadTest extends TestCase {
     }
 
     private FeatureType buildSimpleFeatureType(String name) {
+        return buildSimpleFeatureType(name, Polygon.class);
+    }
+
+    private FeatureType buildSimpleFeatureType(String name, Class<? extends Geometry> geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.addAttribute(Polygon.class).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(geomClass).setName("geometry").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(String.class).setName("name");
         return ftb.build();
     }
