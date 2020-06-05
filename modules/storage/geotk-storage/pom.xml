@@ -49,6 +49,11 @@
         <artifactId>junit</artifactId>
         <scope>test</scope>
     </dependency>
+    <dependency>
+        <groupId>org.apache.sis.non-free</groupId>
+        <artifactId>sis-embedded-data</artifactId>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>
