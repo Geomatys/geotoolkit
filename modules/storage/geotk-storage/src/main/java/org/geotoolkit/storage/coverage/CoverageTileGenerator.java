@@ -24,6 +24,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -40,7 +41,6 @@ import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.Interpolation;
-import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
@@ -61,12 +61,14 @@ import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.Streams;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * Tile generator splitting a coverage in tiles.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -82,22 +84,25 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     public CoverageTileGenerator(GridCoverageResource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
-
         this.resource = resource;
 
-        try {
-            List<SampleDimension> sampleDimensions = resource.getSampleDimensions();
-            if (sampleDimensions == null || sampleDimensions.isEmpty()) {
-                throw new DataStoreException("Base resource sample dimensions are undefined");
-            }
-            empty = new double[sampleDimensions.size()];
-            for (int i=0;i<empty.length;i++) {
-                empty[i] = getEmptyValue(sampleDimensions.get(i));
-            }
-
-        } catch (DataStoreException ex) {
-            throw ex;
+        final List<SampleDimension> sampleDimensions = resource.getSampleDimensions();
+        if (sampleDimensions == null || sampleDimensions.isEmpty()) {
+            throw new DataStoreException("Base resource sample dimensions are undefined");
         }
+        empty = new double[sampleDimensions.size()];
+        for (int i = 0; i < empty.length; i++) {
+            empty[i] = getEmptyValue(sampleDimensions.get(i));
+        }
+    }
+
+    /**
+     * Retrns the resource used to generate tiles.
+     *
+     * @return resource, not null
+     */
+    public GridCoverageResource getOrigin() {
+        return resource;
     }
 
     public void setInterpolation(InterpolationCase interpolation) {
@@ -285,15 +290,14 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         GridCoverage coverage;
         try {
-            coverage = resource.read(gridGeomNd);
+            //add a margin for resample operations
+            final int[] margins = new int[extent.getDimension()];
+            Arrays.fill(margins, 2);
+            coverage = resource.read(gridGeomNd.derive().margin(margins).build());
         } catch (NoSuchDataException ex) {
             //create an empty tile
             final BufferedImage img = BufferedImages.createImage(tileSize.width, tileSize.height, empty.length, DataBuffer.TYPE_DOUBLE);
-            final WritablePixelIterator ite = WritablePixelIterator.create(img);
-            while (ite.next()) {
-                ite.setPixel(fillValues == null ? empty : fillValues);
-            }
-            ite.close();
+            BufferedImages.setAll(img, fillValues == null ? empty : fillValues);
             return new DefaultImageTile(img, tileCoord);
         } catch (DataStoreException ex) {
             throw ex;
@@ -317,7 +321,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             //create an empty tile
             RenderedImage image = coverage.render(null);
             image = BufferedImages.createImage(image, tileSize.width, tileSize.height, null, null);
-            BufferedImages.setAll((WritableRenderedImage) image, empty);
+            BufferedImages.setAll((WritableRenderedImage) image, fillValues == null ? empty : fillValues);
             return new DefaultImageTile(image, tileCoord);
         }
 
@@ -325,6 +329,18 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         ImageProcessor ip = new ImageProcessor();
         image = ip.prefetch(image, null);
         return new DefaultImageTile(image, tileCoord);
+    }
+
+    @Override
+    public String toString() {
+        final List<String> elements = new ArrayList<>();
+        elements.add("interpolation : " + interpolation.name());
+        elements.add("coverage is homogeneous : " + coverageIsHomogeneous);
+        elements.add("skip existing tiles : " + skipExistingTiles);
+        elements.add("empty : " + Arrays.toString(empty));
+        elements.add("fillValues : " + Arrays.toString(fillValues));
+        elements.add("origin : " + resource.toString());
+        return StringUtilities.toStringTree(this.getClass().getSimpleName(), elements);
     }
 
 }

@@ -39,6 +39,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
@@ -211,7 +212,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
 
         GridGeometry canvas = getGridGeometry(pyramid);
         try {
-            canvas = canvas.derive().subgrid(domain).build();
+            canvas = canvas.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(domain).build();
         } catch (IllegalArgumentException ex) {
             throw new NoSuchDataException(ex.getMessage(), ex);
         }

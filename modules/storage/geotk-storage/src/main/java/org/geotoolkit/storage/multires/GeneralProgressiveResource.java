@@ -32,8 +32,10 @@ import org.apache.sis.internal.storage.AbstractResource;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -71,6 +73,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         return base.getIdentifier();
     }
 
+    @Override
     public TileGenerator getGenerator() {
         return generator;
     }
@@ -148,6 +151,19 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
     }
 
+    @Override
+    public String toString() {
+        final String name = Classes.getShortClassName(this);
+        final List<String> elements = new ArrayList<>();
+        try {
+            elements.add("id : "+ getIdentifier().orElse(null));
+        } catch (DataStoreException ex) {
+            elements.add("id : ERROR");
+        }
+        elements.add("generator : "+ String.valueOf(generator));
+        return StringUtilities.toStringTree(name, elements);
+    }
+
     private final class ProgressivePyramid implements Pyramid {
 
         final Pyramid parent;
@@ -201,6 +217,10 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
             parent.deleteMosaic(mosaicId);
         }
 
+        @Override
+        public String toString(){
+            return AbstractPyramid.toString(this);
+        }
     }
 
     final class ProgressiveMosaic implements Mosaic {
@@ -299,6 +319,10 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
             return getTile(0, 0, null);
         }
 
+        @Override
+        public String toString() {
+            return AbstractMosaic.toString(this);
+        }
     }
 
 }

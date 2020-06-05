@@ -34,14 +34,12 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.io.wkt.*;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.multires.AbstractPyramid;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -216,10 +214,7 @@ public class XMLPyramid implements Pyramid {
 
     @Override
     public String toString(){
-        return StringUtilities.toStringTree(Classes.getShortClassName(this)
-                +" "+IdentifiedObjects.getIdentifierOrName(getCoordinateReferenceSystem())
-                +" "+getIdentifier(),
-                mosaics());
+        return AbstractPyramid.toString(this);
     }
 
     /**

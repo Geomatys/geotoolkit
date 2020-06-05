@@ -40,6 +40,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -766,6 +767,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 GridGeometry coverageGridGeometry = source.resource.getGridGeometry();
                 if (coverageGridGeometry.isDefined(GridGeometry.EXTENT)) {
                     readGridGeom = coverageGridGeometry.derive()
+                            .rounding(GridRoundingMode.ENCLOSING)
                             .margin(5,5)
                             .subgrid(maskGrid)
                             .build();

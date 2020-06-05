@@ -27,9 +27,9 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.Classes;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.multires.AbstractMosaic;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
@@ -45,7 +45,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSMosaic implements Mosaic{
+public class WMTSMosaic implements Mosaic {
 
     private final String id = UUID.randomUUID().toString();
     private final WMTSPyramid pyramid;
@@ -140,16 +140,6 @@ public class WMTSMosaic implements Mosaic{
     }
 
     @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
-        sb.append("   scale = ").append(getScale());
-        sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
-        sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
-        sb.append("   ").append(getEnvelope());
-        return sb.toString();
-    }
-
-    @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         if(hints==null) hints = new HashMap();
         if(!hints.containsKey(Pyramids.HINT_FORMAT)){
@@ -187,5 +177,10 @@ public class WMTSMosaic implements Mosaic{
             }
         }
         return anyTile;
+    }
+
+    @Override
+    public String toString() {
+        return AbstractMosaic.toString(this);
     }
 }

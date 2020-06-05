@@ -113,4 +113,9 @@ public class DefiningMosaic implements Mosaic {
     public Tile anyTile() throws DataStoreException {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return AbstractMosaic.toString(this);
+    }
 }

@@ -27,6 +27,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.multires.AbstractMosaic;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Tile;
@@ -155,5 +156,10 @@ public class WMSCMosaic implements Mosaic {
             anyTile = getTile(0, 0, null);
         }
         return anyTile;
+    }
+
+    @Override
+    public String toString() {
+        return AbstractMosaic.toString(this);
     }
 }
