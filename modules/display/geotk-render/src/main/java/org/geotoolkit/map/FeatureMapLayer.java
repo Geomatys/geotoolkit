@@ -60,7 +60,6 @@ public final class FeatureMapLayer extends AbstractMapLayer {
 
     public static final String PROP_EXTRA_DIMENSIONS = "extra_dims";
 
-    private final FeatureSet collection;
     protected Id selectionFilter = null;
     private Query query = null;
 
@@ -99,10 +98,9 @@ public final class FeatureMapLayer extends AbstractMapLayer {
      * @param style : the style used to represent this layer
      */
     FeatureMapLayer(final FeatureSet collection, final MutableStyle style) {
-        super(style);
+        super(collection);
         ArgumentChecks.ensureNonNull("FeatureSet", collection);
-        this.collection = collection;
-
+        setStyle(style);
         trySetName(collection);
     }
 
@@ -169,7 +167,7 @@ public final class FeatureMapLayer extends AbstractMapLayer {
      */
     @Override
     public FeatureSet getResource() {
-        return collection;
+        return (FeatureSet) resource;
     }
 
     /**
