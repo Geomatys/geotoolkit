@@ -33,7 +33,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.internal.storage.io.ChannelImageInputStream;
 import org.apache.sis.internal.storage.io.HyperRectangleReader;
@@ -55,7 +55,8 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.GenericName;
 
 /**
@@ -75,7 +76,7 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
     static {
         SAMPLE_DIMENSION = new SampleDimension.Builder()
                 .addQuantitative("data", Short.MIN_VALUE + 1, Short.MAX_VALUE, Units.METRE)
-                .addQualitative(null, Short.MIN_VALUE)
+                .setBackground("No measure", Short.MIN_VALUE)
                 .build();
     }
 
@@ -119,16 +120,15 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
     }
 
     @Override
-    public void close() throws DataStoreException {
-    }
+    public void close() {}
 
     @Override
-    public GridGeometry getGridGeometry() throws DataStoreException {
+    public GridGeometry getGridGeometry() {
         return resource.getGridGeometry();
     }
 
     @Override
-    public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+    public List<SampleDimension> getSampleDimensions() {
         return resource.getSampleDimensions();
     }
 
@@ -146,46 +146,43 @@ public class HGTStore extends DataStore implements GridCoverageResource, Resourc
     private final class Res extends GeoreferencedGridCoverageResource {
 
         private final GenericName name;
-        private GridGeometry grid;
+        private final GridGeometry grid;
 
-        private Res() {
+        private Res() throws DataStoreException {
             super(HGTStore.this);
-            name = NamesExt.create(IOUtilities.filenameWithoutExtension(fileInput));
+            final String name = IOUtilities.filenameWithoutExtension(fileInput);
+            this.name = NamesExt.create(name);
+
+            final Matcher matcher = FILENAME_PATTERN.matcher(name);
+            matcher.find();
+            final int latitude = matcher.group(1).toLowerCase().startsWith("n")?
+                    Integer.parseInt(matcher.group(2)) : -Integer.parseInt(matcher.group(2));
+            final int longitude = matcher.group(3).toLowerCase().startsWith("e")?
+                    Integer.parseInt(matcher.group(4)) : -Integer.parseInt(matcher.group(4));
+
+            final long size;
+            try {
+                size = Math.round(Math.sqrt(Files.size(fileInput) / Short.BYTES));
+            } catch (IOException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+
+            final MathTransform gridToCrsCorner = new AffineTransform2D(1d/size, 0, 0, -1d/size, longitude, latitude+1);
+            grid = new GridGeometry(new GridExtent(size, size), PixelInCell.CELL_CORNER, gridToCrsCorner, CommonCRS.defaultGeographic());
         }
 
         @Override
-        public Optional<GenericName> getIdentifier() throws DataStoreException {
+        public Optional<GenericName> getIdentifier() {
             return Optional.of(name);
         }
 
         @Override
-        public synchronized GridGeometry getGridGeometry() throws DataStoreException {
-            if (grid == null) {
-                try {
-                    final Matcher matcher = FILENAME_PATTERN.matcher(org.geotoolkit.nio.IOUtilities.filenameWithoutExtension(fileInput));
-                    matcher.find();
-
-                    final int size = (int) Math.round(Math.sqrt(Files.size(fileInput) / (Short.SIZE / Byte.SIZE)));
-                    final GridExtent extent = new GridExtent(size, size);
-                    final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
-                    final GeneralEnvelope envelope = new GeneralEnvelope(crs);
-                    final int latitude = matcher.group(1).toLowerCase().startsWith("n")?
-                            Integer.parseInt(matcher.group(2)) : -Integer.parseInt(matcher.group(2));
-                    final int longitude = matcher.group(3).toLowerCase().startsWith("e")?
-                            Integer.parseInt(matcher.group(4)) : -Integer.parseInt(matcher.group(4));
-                    envelope.setRange(0, longitude, longitude+1);
-                    envelope.setRange(1, latitude, latitude+1);
-
-                    grid = new GridGeometry(extent, envelope);
-                } catch (IOException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
-                }
-            }
+        public GridGeometry getGridGeometry() {
             return grid;
         }
 
         @Override
-        public List<SampleDimension> getSampleDimensions() throws DataStoreException {
+        public List<SampleDimension> getSampleDimensions() {
             return Collections.singletonList(SAMPLE_DIMENSION);
         }
 

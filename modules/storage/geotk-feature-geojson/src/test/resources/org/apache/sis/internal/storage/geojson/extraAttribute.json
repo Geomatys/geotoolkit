@@ -1,0 +1,21 @@
+{
+    "type": "Feature",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-105.0162, 39.5742]
+    },
+    "properties": {
+        "name": "Plaza Road Park"
+    },
+    "data": [
+        {
+            "identifier": "L_amadjuak",
+            "time": 1992.734999241,
+            "datetime": "1992/09/26 00:14",
+            "water_surface_height_above_reference_datum": 111.92,
+            "water_surface_height_uncertainty": 0.07,
+            "area": 9999.999,
+            "volume": 9999.999
+        }
+    ]
+}

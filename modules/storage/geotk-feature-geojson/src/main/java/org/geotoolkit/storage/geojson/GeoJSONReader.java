@@ -30,6 +30,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.util.Numbers;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -320,9 +321,9 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
                 Array.set(rarray, k, rebuildArray(Array.get(candidate, k), componentType, depth));
             }
             return rarray;
-        } else {
-            return convert(candidate, componentType);
-        }
+        } else if (componentType.isInstance(candidate)) {
+            return candidate;
+        } else return convert(candidate, componentType);
     }
 
     /**
@@ -334,11 +335,13 @@ class GeoJSONReader implements Iterator<Feature>, AutoCloseable {
      * @throws UnconvertibleObjectException
      */
     private Object convert(Object value, Class binding) throws UnconvertibleObjectException {
-        AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<>(value.getClass(), binding);
+        final Class<?> valueClass = Numbers.primitiveToWrapper(value.getClass());
+        binding = Numbers.primitiveToWrapper(binding);
+        AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<>(valueClass, binding);
         ObjectConverter converter = convertersCache.get(key);
 
         if (converter == null) {
-            converter = ObjectConverters.find(value.getClass(), binding);
+            converter = ObjectConverters.find(valueClass, binding);
             convertersCache.put(key, converter);
         }
         return converter.apply(value);

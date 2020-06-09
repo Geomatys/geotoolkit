@@ -17,6 +17,7 @@
 package org.geotoolkit.internal.geojson;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
@@ -29,6 +30,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.internal.storage.io.IOUtilities;
+import org.apache.sis.util.Numbers;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.geojson.binding.GeoJSONCRS;
 import org.geotoolkit.internal.geojson.binding.GeoJSONFeature;
@@ -236,11 +238,7 @@ public final class GeoJSONParser {
                     }
                     break;
                 default:
-                    if (p.getCurrentToken() == JsonToken.START_OBJECT) {
-                        //skip any unknown properties
-                        parseGeoJSONObject(p, lazy, source);
-                    }
-                    break;
+                    p.skipChildren();
             }
         }
         return object;
@@ -293,44 +291,66 @@ public final class GeoJSONParser {
      * token.
      *
      * @param p parser jackson parser with current token on a START_ARRAY.
-     * @return List of Objects
-     * @throws IOException
-     */
-    private static List<Object> parseArray(JsonParser p) throws IOException {
-        assert (p.getCurrentToken() == JsonToken.START_ARRAY);
-        List<Object> list = new ArrayList<>();
-        while (p.nextToken() != JsonToken.END_ARRAY) {
-            list.add(getValue(p.getCurrentToken(), p));
-        }
-        return list;
-    }
-
-    /**
-     * Parse a List of Objects. JsonParser location MUST be on a START_ARRAY
-     * token.
-     *
-     * @param p parser jackson parser with current token on a START_ARRAY.
      * @return array object typed after first element class
      * @throws IOException
      */
     private static Object parseArray2(JsonParser p) throws IOException {
         assert (p.getCurrentToken() == JsonToken.START_ARRAY);
         List<Object> list = new ArrayList<>();
-        while (p.nextToken() != JsonToken.END_ARRAY) {
-            list.add(getValue(p.getCurrentToken(), p));
+        Set<Class> valueTypes = new HashSet<>();
+        boolean nullFound = false;
+        JsonToken token;
+        while ((token = p.nextToken()) != JsonToken.END_ARRAY) {
+            final Object value = getValue(token, p);
+            if (value == null) nullFound = true;
+            else valueTypes.add(value.getClass());
+            list.add(value);
         }
 
         if (list.isEmpty()) {
             return new Object[0];
+        } else if (valueTypes.isEmpty()) {
+            assert nullFound;
+            return new Object[list.size()];
         }
 
-        Class binding = list.get(0).getClass();
-        Object newArray = Array.newInstance(binding, list.size());
-        for (int i = 0; i < list.size(); i++) {
-            Array.set(newArray, i, list.get(i));
+        final Class valueType = valueTypes.stream()
+                .reduce(GeoJSONParser::findCommonType)
+                .orElseThrow(() -> new JsonParseException(p, "Cannot properly resolve array type"));
+        if (!nullFound && Numbers.isFloat(valueType)) {
+            return list.stream().mapToDouble(value -> ((Number)value).doubleValue()).toArray();
+        } else if (!nullFound && Integer.class.isAssignableFrom(valueType)) {
+            return list.stream().mapToInt(value -> ((Number)value).intValue()).toArray();
+        } else if (!nullFound && Long.class.isAssignableFrom(valueType)) {
+            return list.stream().mapToLong(value -> ((Number)value).longValue()).toArray();
+        } else if (Object.class.equals(valueType)) {
+            // Short-circuit: Optimized array transformation
+            return list.toArray();
+        } else {
+            Object newArray = Array.newInstance(valueType, list.size());
+            for (int i = 0; i < list.size(); i++) {
+                Array.set(newArray, i, list.get(i));
+            }
+            return newArray;
+        }
+    }
+
+    private static Class findCommonType(Class c1, Class c2) {
+        if (c1.isAssignableFrom(c2)) return c1;
+        else if (c2.isAssignableFrom(c1)) return c2;
+        if (Number.class.isAssignableFrom(c1) && Number.class.isAssignableFrom(c2)) {
+            if (Numbers.isFloat(c1) || Numbers.isFloat(c2)) return Double.class;
+
+            c1 = Numbers.primitiveToWrapper(c1);
+            c2 = Numbers.primitiveToWrapper(c2);
+            if (Long.class.isAssignableFrom(c1) || Long.class.isAssignableFrom(c2)) return Long.class;
+
+            assert Integer.class.equals(c1)|| Integer.class.equals(c2);
+            return Integer.class;
         }
 
-        return newArray;
+        // We could try to find a common parent, however it would be an arbitrary and possibly bad choice.
+        return Object.class;
     }
 
     /**

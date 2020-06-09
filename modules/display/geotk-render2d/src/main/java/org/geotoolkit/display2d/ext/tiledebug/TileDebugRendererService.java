@@ -26,10 +26,11 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.MapLayer;
 
 /**
+ * Rendering service for Tile debug symbolizer.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class TileDebugRendererService extends AbstractSymbolizerRendererService<TileDebugSymbolizer,CachedTileDebugSymbolizer>{
+public final class TileDebugRendererService extends AbstractSymbolizerRendererService<TileDebugSymbolizer,CachedTileDebugSymbolizer>{
 
     @Override
     public boolean isGroupSymbolizer() {

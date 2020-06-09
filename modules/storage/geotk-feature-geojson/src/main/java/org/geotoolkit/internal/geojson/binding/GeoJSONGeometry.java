@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.geojson.GeoJSONConstants;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
@@ -60,6 +61,10 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
         return super.equals(obj);
     }
 
+    @Override
+    public String toString() {
+        return toJTS(this, CommonCRS.defaultGeographic()).toText();
+    }
 
     /**
      * POINT
@@ -94,11 +99,6 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             int hash = super.hashCode();
             hash = 29 * hash + Arrays.hashCode(this.coordinates);
             return hash;
-        }
-
-        @Override
-        public String toString() {
-            return toJTS(this, null).toText();
         }
     }
 
@@ -136,11 +136,6 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             final GeoJSONMultiPoint other = (GeoJSONMultiPoint) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
         }
-
-        @Override
-        public String toString() {
-            return toJTS(this, null).toText();
-        }
     }
 
     /**
@@ -176,11 +171,6 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             }
             final GeoJSONLineString other = (GeoJSONLineString) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
-        }
-
-        @Override
-        public String toString() {
-            return toJTS(this, null).toText();
         }
     }
 
@@ -218,11 +208,6 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             final GeoJSONMultiLineString other = (GeoJSONMultiLineString) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
         }
-
-        @Override
-        public String toString() {
-            return toJTS(this, null).toText();
-        }
     }
 
     /**
@@ -259,11 +244,6 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             final GeoJSONPolygon other = (GeoJSONPolygon) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
         }
-
-        @Override
-        public String toString() {
-            return toJTS(this, null).toText();
-        }
     }
 
     /**
@@ -299,11 +279,6 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             }
             final GeoJSONMultiPolygon other = (GeoJSONMultiPolygon) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
-        }
-
-        @Override
-        public String toString() {
-            return toJTS(this, null).toText();
         }
     }
 
@@ -343,11 +318,6 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
                 return false;
             }
             return true;
-        }
-
-        @Override
-        public String toString() {
-            return toJTS(this, null).toText();
         }
     }
 

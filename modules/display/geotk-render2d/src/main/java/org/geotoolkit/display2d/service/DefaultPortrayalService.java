@@ -37,6 +37,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +57,13 @@ import javax.imageio.spi.ImageWriterSpi;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
@@ -72,7 +78,6 @@ import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
-import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -103,11 +108,15 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 import org.opengis.util.FactoryException;
+
+import static org.geotoolkit.display2d.GO2Utilities.mergeColors;
 
 /**
  * Default implementation of portrayal service.
@@ -270,13 +279,57 @@ public final class DefaultPortrayalService implements PortrayalService{
 
             //we specifically say to not repect X/Y proportions
             canvas.setAxisProportions(!canvasDef.isStretchImage());
-            try {
-                canvas.setVisibleArea(contextEnv);
-                if (canvasDef.getAzimuth() != 0) {
-                    canvas.rotate( -Math.toRadians(canvasDef.getAzimuth()) );
+            // Note : that's a ugly hack to prevent weird override of gridgeometry caused by following method chain:
+            // setVisibleArea -> setAxisRange -> setRange.
+            if (contextEnv != null) {
+                try {
+                    final int x, y;
+                    final int east = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), AxisDirection.EAST);
+                    if (east < 0) {
+                        x = 0;
+                        y = 1;
+                    } else {
+                        final int north = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), AxisDirection.NORTH);
+                        x = Math.min(east, north);
+                        y = Math.max(east, north);
+                    }
+
+                    final int dimension = contextEnv.getDimension();
+                    final long[] lowGrid = new long[dimension];
+                    final long[] highGrid = new long[lowGrid.length];
+                    final Dimension canvasDim = canvasDef.getDimension();
+                    Arrays.fill(highGrid, 1);
+                    highGrid[x] = canvasDim.width;
+                    highGrid[y] = canvasDim.height;
+                    final GridExtent displayExtent = new GridExtent(null, lowGrid, highGrid, false);
+                    final MatrixSIS gridToCrs = Matrices.createIdentity(dimension + 1);
+                    // init translations for each dimension
+                    for (int i = 0 ; i < dimension ; i++) {
+                        gridToCrs.setElement(i, dimension, contextEnv.getMinimum(i));
+                    }
+                    // Initialize display scales, inverting y to represent image space where origin is upper-left.
+                    gridToCrs.setElement(x, x, contextEnv.getSpan(x)/canvasDim.width);
+                    gridToCrs.setElement(y, y, -contextEnv.getSpan(y)/canvasDim.height);
+                    // As y is inverted, its translation must also be reversed
+                    gridToCrs.setElement(y, dimension, contextEnv.getMaximum(y));
+                    final GridGeometry displayGeom = new GridGeometry(
+                            displayExtent, PixelInCell.CELL_CORNER,
+                            MathTransforms.linear(gridToCrs),
+                            contextEnv.getCoordinateReferenceSystem()
+                    );
+                    canvas.setGridGeometry(displayGeom);
+                } catch (Exception e) {
+                // Rollback to previous behavior
+                try {
+                    canvas.setVisibleArea(contextEnv);
+                    if (canvasDef.getAzimuth() != 0) {
+                        canvas.rotate( -Math.toRadians(canvasDef.getAzimuth()) );
+                    }
+                } catch (NoninvertibleTransformException | TransformException ex) {
+                    ex.addSuppressed(e);
+                    throw new PortrayalException(ex);
                 }
-            } catch (NoninvertibleTransformException | TransformException ex) {
-                throw new PortrayalException(ex);
+            }
             }
         }
 

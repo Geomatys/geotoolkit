@@ -21,12 +21,13 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
 /**
+ * Cached version of the Tile debug symbolizer.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CachedTileDebugSymbolizer extends CachedSymbolizer<TileDebugSymbolizer>{
+final class CachedTileDebugSymbolizer extends CachedSymbolizer<TileDebugSymbolizer>{
 
-    public CachedTileDebugSymbolizer(TileDebugSymbolizer styleElement, SymbolizerRendererService<TileDebugSymbolizer, ? extends CachedSymbolizer<TileDebugSymbolizer>> renderer) {
+    CachedTileDebugSymbolizer(TileDebugSymbolizer styleElement, SymbolizerRendererService<TileDebugSymbolizer, ? extends CachedSymbolizer<TileDebugSymbolizer>> renderer) {
         super(styleElement, renderer);
     }
 

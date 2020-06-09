@@ -53,12 +53,13 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
+ * Renderer for Tile debug symbolizer.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedTileDebugSymbolizer>{
+public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedTileDebugSymbolizer>{
 
-    public TileDebugSymbolizerRenderer(SymbolizerRendererService service, CachedTileDebugSymbolizer symbol, RenderingContext2D context) {
+    TileDebugSymbolizerRenderer(SymbolizerRendererService service, CachedTileDebugSymbolizer symbol, RenderingContext2D context) {
         super(service, symbol, context);
     }
 
@@ -90,8 +91,8 @@ public class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolizerRende
 
                     final Rectangle rectangle = Pyramids.getTilesInEnvelope(m, wantedEnv);
 
-                    for (int x=0;x<rectangle.width;x++) {
-                        for (int y=0;y<rectangle.height;y++) {
+                    for (int x = 0; x < rectangle.width; x++) {
+                        for (int y = 0;y < rectangle.height; y++) {
                             final GridGeometry gridgeom = Pyramids.getTileGridGeometry2D(m, new Point(rectangle.x+x, rectangle.y+y), crs2d);
                             Geometry geom = GeometricUtilities.toJTSGeometry(gridgeom.getEnvelope(), GeometricUtilities.WrapResolution.NONE);
                             geom.setUserData(crs2d);
@@ -134,40 +135,41 @@ public class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolizerRende
                             g2d.setColor(textColor);
 
                             {
-                                AttributedString as1 = new AttributedString(mosaicId);
-                                as1.addAttribute(TextAttribute.FONT, ft);
-                                as1.addAttribute(TextAttribute.BACKGROUND, bgColor);
-                                g2d.drawString(as1.getIterator(), (float)(centerX - txtbbox.getWidth()/2.0), (float)(centerY - fntHeight));
+                                final AttributedString as = new AttributedString(mosaicId);
+                                as.addAttribute(TextAttribute.FONT, ft);
+                                as.addAttribute(TextAttribute.BACKGROUND, bgColor);
+                                g2d.drawString(as.getIterator(), (float)(centerX - txtbbox.getWidth()/2.0), (float)(centerY - fntHeight));
                             }
 
                             {
-                                AttributedString as1 = new AttributedString(mosaicScale);
-                                as1.addAttribute(TextAttribute.FONT, ft);
-                                as1.addAttribute(TextAttribute.BACKGROUND, bgColor);
+                                final AttributedString as = new AttributedString(mosaicScale);
+                                as.addAttribute(TextAttribute.FONT, ft);
+                                as.addAttribute(TextAttribute.BACKGROUND, bgColor);
                                 txtbbox = fm.getStringBounds(mosaicScale, g2d);
-                                g2d.drawString(as1.getIterator(), (float)(centerX - txtbbox.getWidth()/2.0), (float)(centerY));
+                                g2d.drawString(as.getIterator(), (float)(centerX - txtbbox.getWidth()/2.0), (float)(centerY));
                             }
 
                             {
-                                AttributedString as1 = new AttributedString(strX);
-                                as1.addAttribute(TextAttribute.FONT, ft);
-                                as1.addAttribute(TextAttribute.BACKGROUND, bgColor);
+                                final AttributedString as = new AttributedString(strX);
+                                as.addAttribute(TextAttribute.FONT, ft);
+                                as.addAttribute(TextAttribute.BACKGROUND, bgColor);
                                 txtbbox = fm.getStringBounds(strX, g2d);
-                                g2d.drawString(as1.getIterator(), (float)(centerX - txtbbox.getWidth()/2.0), (float)(centerY + fntHeight));
+                                g2d.drawString(as.getIterator(), (float)(centerX - txtbbox.getWidth()/2.0), (float)(centerY + fntHeight));
                             }
 
                             {
-                                AttributedString as1 = new AttributedString(strY);
-                                as1.addAttribute(TextAttribute.FONT, ft);
-                                as1.addAttribute(TextAttribute.BACKGROUND, bgColor);
+                                final AttributedString as = new AttributedString(strY);
+                                as.addAttribute(TextAttribute.FONT, ft);
+                                as.addAttribute(TextAttribute.BACKGROUND, bgColor);
                                 txtbbox = fm.getStringBounds(strY, g2d);
-                                g2d.drawString(as1.getIterator(), (float)(centerX - txtbbox.getWidth()/2.0), (float)(centerY + 2*fntHeight));
+                                g2d.drawString(as.getIterator(), (float)(centerX - txtbbox.getWidth()/2.0), (float)(centerY + 2*fntHeight));
                             }
 
 
                         }
                     }
                 }
+                return true;
 
             } catch (DataStoreException | TransformException | FactoryException ex) {
                 throw new PortrayalException(ex.getMessage(), ex);

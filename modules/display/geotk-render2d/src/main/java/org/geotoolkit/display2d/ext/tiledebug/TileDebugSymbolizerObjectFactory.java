@@ -22,11 +22,12 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 /**
+ * JAXB extension for Tile debug symbolizer.
  *
  * @author Johann Sorel (Geomatys)
  */
 @XmlRegistry
-public class TileDebugSymbolizerObjectFactory {
+public final class TileDebugSymbolizerObjectFactory {
 
     private static final QName _TileDebugSymbolizer_QNAME = new QName("http://geotoolkit.org", "TileDebugSymbolizer");
 

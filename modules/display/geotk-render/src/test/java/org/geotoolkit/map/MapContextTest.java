@@ -70,12 +70,12 @@ public class MapContextTest {
         GeneralEnvelope envWGS84 = new GeneralEnvelope(CommonCRS.WGS84.defaultGeographic());
         envWGS84.setRange(0, -10, 10);
         envWGS84.setRange(1, -10, 10);
-        context.layers().add(new EmptyMapLayer(defaultStyle, envWGS84));
+        context.layers().add(new EmptyLayer(envWGS84));
 
         GeneralEnvelope envWGS842 = new GeneralEnvelope(CommonCRS.WGS84.defaultGeographic());
         envWGS842.setRange(0, 10, 20);
         envWGS842.setRange(1, 10, 20);
-        EmptyMapLayer layer = new EmptyMapLayer(defaultStyle, envWGS842);
+        EmptyLayer layer = new EmptyLayer(envWGS842);
         layer.setVisible(false);
         context.layers().add(layer);
 
@@ -123,7 +123,7 @@ public class MapContextTest {
         GeneralEnvelope env1 = new GeneralEnvelope(mercator);
         env1.setRange(0, -10000, 10000);
         env1.setRange(1, -10000, 10000);
-        context.layers().add(new EmptyMapLayer(defaultStyle, env1));
+        context.layers().add(new EmptyLayer(env1));
 
         CoordinateReferenceSystem lambert = CRS.fromWKT(
                 "PROJCS[“NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001”,\n" +
@@ -148,7 +148,7 @@ public class MapContextTest {
         GeneralEnvelope env2 = new GeneralEnvelope(lambert);
         env2.setRange(0, -10, 10);
         env2.setRange(1, -10, 10);
-        context.layers().add(new EmptyMapLayer(defaultStyle, env2));
+        context.layers().add(new EmptyLayer(env2));
 
         ctxBounds = context.getBounds(true);
         assertNotNull(ctxBounds);
@@ -164,6 +164,21 @@ public class MapContextTest {
         expected = new GeneralEnvelope(CRS.getDomainOfValidity(CommonCRS.WGS84.defaultGeographic()));
         assertTrue(expected.equals(ctxBounds, 0.0000001, true));
 
+    }
+
+    private static class EmptyLayer extends AbstractMapLayer{
+
+        private final Envelope env;
+
+        public EmptyLayer(Envelope env) {
+            super(null);
+            this.env = env;
+        }
+
+        @Override
+        public Envelope getBounds() {
+            return env;
+        }
     }
 
 }

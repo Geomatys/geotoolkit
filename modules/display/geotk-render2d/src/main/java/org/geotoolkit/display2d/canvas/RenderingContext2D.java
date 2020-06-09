@@ -257,7 +257,7 @@ public class RenderingContext2D implements RenderingContext{
         this.displayCRS         = canvas.getDisplayCRS();
         this.objectiveToDisplay = objToDisp;
         try {
-            this.displayToObjective = (AffineTransform2D) objToDisp.inverse();
+            this.displayToObjective = objToDisp.inverse();
         } catch (NoninvertibleTransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }

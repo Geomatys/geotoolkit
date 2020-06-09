@@ -33,13 +33,15 @@ import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
 
 /**
+ * Display pyramid and mosaic tiles informations and boundaries.
+ * This symbolizer is for debugging purposed.
  *
  * @author Johann Sorel (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TileDebugSymbolizerType")
 @XmlRootElement(name="TileDebugSymbolizer",namespace="http://geotoolkit.org")
-public class TileDebugSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
+public final class TileDebugSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
 
     public static final String NAME = "TileDebug";
     @XmlElement(name = "Geometry")

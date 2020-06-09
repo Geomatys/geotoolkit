@@ -19,18 +19,13 @@ package org.geotoolkit.display2d.style;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
-
-import org.opengis.filter.FilterFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.util.FactoryException;
-
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
@@ -41,7 +36,6 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -49,6 +43,7 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -56,10 +51,16 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.style.ColorMap;
+import org.opengis.style.RasterSymbolizer;
+import org.opengis.util.FactoryException;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -303,5 +304,67 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         assertTrue(nearestRgb != bicubicRgb);
         assertTrue(bicubicRgb != naczosRgb);
+    }
+
+    /**
+     * Source coverage will be a matrix <em>with origin lower-left</em>:
+     * <table>
+     *     <tr><td>4</td><td>3</td></tr>
+     *     <tr><td>1</td><td>2</td></tr>
+     * </table>
+     * @throws PortrayalException
+     */
+    @Test
+    public void coverage_whose_grid_origin_is_lower_left_should_be_flipped() throws PortrayalException {
+        final BufferedImage image = new BufferedImage(2, 2, BufferedImage.TYPE_BYTE_GRAY);
+        image.getRaster().setSample(0, 0, 0, 1);
+        image.getRaster().setSample(1, 0, 0, 2);
+        image.getRaster().setSample(1, 1, 0, 3);
+        image.getRaster().setSample(0, 1, 0, 4);
+
+        final GridGeometry geom = new GridGeometry(
+                new GridExtent(2, 2),
+                PixelInCell.CELL_CENTER,
+                new AffineTransform2D(1, 0, 0,1, 10, 10),
+                CommonCRS.defaultGeographic()
+        );
+        final GridCoverage baseData = new GridCoverage2D(geom, null, image);
+
+        CoverageMapLayer layer = MapBuilder.createCoverageLayer(baseData);
+        final MapContext ctx = MapBuilder.createContext();
+        ctx.items().add(layer);
+        BufferedImage rendering = DefaultPortrayalService.portray(
+                new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),
+                new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
+        );
+
+        // As display is oriented upper-left, output should be flipped on y axis. Also, the renderer will stretch values
+        // along 256 colors, so we have to adapt comparison.
+        final int[] pixels = rendering.getRaster().getPixels(0, 0, 2, 2, (int[]) null);
+        final int[] expected = {
+                255, 255, 255, 255,  165, 165, 165, 255,
+                  0,   0,   0, 255,   88,  88,  88, 255
+        };
+        assertArrayEquals(expected, pixels);
+
+        final ColorMap colorMap = SF.colorMap(SF.interpolateFunction(null,
+                Arrays.asList(
+                        SF.interpolationPoint(1, FF.literal(Color.RED)),
+                        SF.interpolationPoint(2, FF.literal(Color.GREEN)),
+                        SF.interpolationPoint(3, FF.literal(Color.BLUE)),
+                        SF.interpolationPoint(4, FF.literal(Color.WHITE))
+                ),
+                null, null, FF.literal(Color.BLACK)));
+        final RasterSymbolizer symbol = SF.rasterSymbolizer(null, null, null, null, colorMap, null, null, null);
+        ctx.items().set(0, MapBuilder.createCoverageLayer(baseData, SF.style(symbol), "test"));
+        rendering = DefaultPortrayalService.portray(
+                new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),
+                new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
+        );
+
+        assertEquals(Color.WHITE.getRGB(), rendering.getRGB(0, 0));
+        assertEquals(Color.BLUE.getRGB(), rendering.getRGB(1, 0));
+        assertEquals(Color.RED.getRGB(), rendering.getRGB(0, 1));
+        assertEquals(Color.GREEN.getRGB(), rendering.getRGB(1, 1));
     }
 }

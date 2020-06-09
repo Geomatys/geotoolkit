@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -62,7 +61,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.display.PortrayalException;
@@ -70,7 +68,9 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
@@ -95,8 +95,6 @@ import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.InterpolationPoint;
@@ -127,6 +125,10 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.util.FactoryException;
 import org.opengis.util.LocalName;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -452,10 +454,19 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
             final Optional<MutableStyle> styleFromStats = GO2Utilities.inferStyle(analyse, riColorModel.hasAlpha());
             if (styleFromStats.isPresent()) {
+                /* WARNING: That's neither optimal nor stable. However, do not know any other way to override style on
+                 * the fly.
+                 *
+                 * !!! IMPORTANT !!!
+                 * The canvas here is created with the geometry of input coverage, because otherwise, we would apply
+                 * two times the affine transform to display system.
+                 */
                 final MapContext subCtx = MapBuilder.createContext();
                 subCtx.items().add(MapBuilder.createCoverageLayer(coverage, styleFromStats.get()));
-                final Dimension renderingDimension = new Dimension(resultImage.getWidth(), resultImage.getHeight());
-                resultImage = DefaultPortrayalService.portray(subCtx, coverage.getGridGeometry().getEnvelope(), renderingDimension, false);
+                resultImage = DefaultPortrayalService.portray(
+                        new CanvasDef(coverage.getGridGeometry()),
+                        new SceneDef(subCtx)
+                );
             }
 
         } else {

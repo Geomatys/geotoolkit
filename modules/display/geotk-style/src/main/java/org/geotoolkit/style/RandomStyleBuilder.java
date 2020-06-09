@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.function.Supplier;
 import javax.measure.Unit;
 import org.apache.sis.feature.Features;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.feature.FeatureExt;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
@@ -39,19 +39,7 @@ import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
-import org.opengis.style.AnchorPoint;
-import org.opengis.style.Displacement;
-import org.opengis.style.Fill;
-import org.opengis.style.Graphic;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.LineSymbolizer;
-import org.opengis.style.Mark;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.PolygonSymbolizer;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.Stroke;
-import org.opengis.style.StyleFactory;
-import org.opengis.style.Symbolizer;
+import org.opengis.style.*;
 
 /**
  * Random style builder. This is a convini class if you dont need special styles.
@@ -155,9 +143,9 @@ public class RandomStyleBuilder {
     public  static MutableStyle createVectorStyle(final FeatureType typ, Supplier<PolygonSymbolizer> polygonSymbol, Supplier<PointSymbolizer> pointSymbol, Supplier<LineSymbolizer> lineSymbol) {
         final Symbolizer ps;
         final PropertyType defAtt;
-        try{
-            defAtt = typ.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
-        }catch(PropertyNotFoundException ex){
+        try {
+            defAtt = FeatureExt.getDefaultGeometry(typ);
+        } catch(PropertyNotFoundException | IllegalStateException ex) {
             return SF.style();
         }
         final AttributeType type = Features.toAttribute(defAtt)
