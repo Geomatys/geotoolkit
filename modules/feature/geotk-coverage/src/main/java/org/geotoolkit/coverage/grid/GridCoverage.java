@@ -58,6 +58,7 @@ import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 import javax.media.jai.operator.ImageFunctionDescriptor;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.Evaluator;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -539,9 +540,9 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                         gridBounds.width, gridBounds.height, 0, 0, sampleModel, colorModel);
                 final Point2D.Double point2D = new Point2D.Double();
                 final int numBands = tiled.getNumBands();
-                final double[] samples = new double[numBands];
                 final double[] padNaNs = new double[numBands];
                 Arrays.fill(padNaNs, Double.NaN);
+                final Evaluator evaluator = evaluator();
                 final WritableRectIter iterator = RectIterFactory.createWritable(tiled, gridBounds);
                 if (!iterator.finishedLines()) try {
                     int y = gridBounds.y;
@@ -556,7 +557,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                                 if (area == null || area.contains(point2D)) {
                                     coordinate.coordinates[xAxis] = point2D.x;
                                     coordinate.coordinates[yAxis] = point2D.y;
-                                    iterator.setPixel(evaluate(coordinate, samples));
+                                    iterator.setPixel(evaluator.apply(coordinate));
                                 } else {
                                     iterator.setPixel(padNaNs);
                                 }
@@ -701,15 +702,15 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                                 final int    countX, final int    countY, final int dim,
                                 final double[] real, final double[] imag)
         {
+            final Evaluator evaluator = evaluator();
             int index = 0;
-            double[] buffer = null;
             // Clones the coordinate point in order to allow multi-thread invocation.
             final GeneralDirectPosition coordinate = new GeneralDirectPosition(this.coordinate);
             coordinate.coordinates[1] = startY;
             for (int j=0; j<countY; j++) {
                 coordinate.coordinates[0] = startX;
                 for (int i=0; i<countX; i++) {
-                    buffer = evaluate(coordinate, buffer);
+                    final double[] buffer = evaluator.apply(coordinate);
                     real[index++] = buffer[dim];
                     coordinate.coordinates[0] += deltaX;
                 }

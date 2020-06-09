@@ -336,7 +336,6 @@ public class GridCoverage2D extends GridCoverage {
      *         More specifically, {@link PointOutsideCoverageException} is thrown if the evaluation
      *         failed because the input point has invalid coordinates.
      */
-    @Override
     public double[] evaluate(final DirectPosition coord, final double[] dest)
             throws CannotEvaluateException
     {

@@ -170,8 +170,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         DirectPosition2D point2d = new DirectPosition2D();
         point2d.setLocation(pt2[0], pt2[1]);
 
-        double[] infoBand = new double[nbBand];
-        coverage.evaluate(point2d, infoBand);
+        double[] infoBand = coverage.evaluator().apply(point2d);
 
         final double[] resolution = gridGeom.getResolution(true);
         double gapX = resolution[0];

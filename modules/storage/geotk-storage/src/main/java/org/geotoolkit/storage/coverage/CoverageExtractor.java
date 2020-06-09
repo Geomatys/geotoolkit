@@ -98,7 +98,7 @@ public class CoverageExtractor extends Static {
             }
         } else if (coverage instanceof GridCoverage) {
             final GridCoverage coverage2D = coverage;
-            double[] values = new double[coverage2D.getSampleDimensions().size()];
+            double[] values;
 
             //place directPos to a pixel center
             GridGeometry gg2D = coverage2D.getGridGeometry();
@@ -111,7 +111,7 @@ public class CoverageExtractor extends Static {
 
             gridToCRS.transform(directPos, directPos);
 
-            coverage2D.evaluate(directPos, values);
+            values = coverage2D.evaluator().apply(directPos);
 
             final CoordinateReferenceSystem crs = gg2D.getCoordinateReferenceSystem();
             int dimension = crs.getCoordinateSystem().getDimension();
