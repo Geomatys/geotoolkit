@@ -79,11 +79,10 @@ public final class MapBuilder {
      * Create an empty map layer without any datas. It can be useful in different
      * kind of applications, like holding a space in the map context for a layer
      * when a featurestore is unavailable.
-     * @return EmptyMapLayer
+     * @return MapLayer
      */
-    public static EmptyMapLayer createEmptyMapLayer(){
-        final MutableStyleFactory factory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-        return new EmptyMapLayer(factory.style());
+    public static MapLayer createEmptyMapLayer(){
+        return new AbstractMapLayer(null);
     }
 
     /**

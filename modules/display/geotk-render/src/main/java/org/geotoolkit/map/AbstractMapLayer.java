@@ -20,14 +20,25 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
+import java.util.logging.Level;
+import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataSet;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
+import org.opengis.style.StyleFactory;
 
 /**
  * Abstract implementation of the MapLayer.
@@ -35,11 +46,16 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractMapLayer extends AbstractMapItem implements MapLayer,StyleListener {
+public class AbstractMapLayer extends AbstractMapItem implements MapLayer,StyleListener {
+
+    private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(
+            new double[] {-180, -90}, new double[] {180, 90}, CommonCRS.WGS84.normalizedGeographic());
 
     private final List<GraphicBuilder> builders = new CheckedArrayList<GraphicBuilder>(GraphicBuilder.class);
 
     private final StyleListener.Weak styleListener = new StyleListener.Weak(null,this);
+
+    protected Resource resource;
 
     protected MutableStyle style;
 
@@ -52,11 +68,47 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
     /**
      * Constructor that can used by subclass only.
      */
-    protected AbstractMapLayer(final MutableStyle style){
-        setStyle(style);
+    protected AbstractMapLayer(final Resource resource){
+        this.resource = resource;
         this.desc = StyleConstants.DEFAULT_DESCRIPTION;
         this.selectionStyle = null;
+        final MutableStyleFactory factory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
+        setStyle(factory.style());
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Envelope getBounds() {
+        final Resource ref = getResource();
+
+        Envelope env = null;
+        if (ref instanceof DataSet) {
+            try {
+                env = FeatureStoreUtilities.getEnvelope((DataSet) ref);
+            } catch (DataStoreException e) {
+                LOGGER.log(Level.WARNING, "Cannot access resource envelope. " + e.getMessage(), e);
+            }
+        }
+
+        if (env == null) {
+            //same strategy as coverage map layer
+            //this approach is removed in Apache SIS
+            env = INFINITE;
+        }
+
+        return env;
+    }
+
 
     @Override
     public List<MapItem> items() {

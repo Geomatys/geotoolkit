@@ -44,6 +44,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
@@ -140,12 +141,12 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
     }
 
     private KMLGraphicBuilder() throws IOException {
-        ICON_FOLDER = ImageIO.read(KmlMapLayer.class.getResourceAsStream("folder.png"));
-        ICON_PLACEMARK = ImageIO.read(KmlMapLayer.class.getResourceAsStream("flag.png"));
-        ICON_PLACEMARK_LINE_STRING = ImageIO.read(KmlMapLayer.class.getResourceAsStream("lineString.png"));
-        ICON_PLACEMARK_LINEAR_RING = ImageIO.read(KmlMapLayer.class.getResourceAsStream("linearRing.png"));
-        ICON_PLACEMARK_POLYGON = ImageIO.read(KmlMapLayer.class.getResourceAsStream("polygon.png"));
-        ICON_OVERLAY = ImageIO.read(KmlMapLayer.class.getResourceAsStream("overlay.png"));
+        ICON_FOLDER = ImageIO.read(KMLGraphicBuilder.class.getResourceAsStream("folder.png"));
+        ICON_PLACEMARK = ImageIO.read(KMLGraphicBuilder.class.getResourceAsStream("flag.png"));
+        ICON_PLACEMARK_LINE_STRING = ImageIO.read(KMLGraphicBuilder.class.getResourceAsStream("lineString.png"));
+        ICON_PLACEMARK_LINEAR_RING = ImageIO.read(KMLGraphicBuilder.class.getResourceAsStream("linearRing.png"));
+        ICON_PLACEMARK_POLYGON = ImageIO.read(KMLGraphicBuilder.class.getResourceAsStream("polygon.png"));
+        ICON_OVERLAY = ImageIO.read(KMLGraphicBuilder.class.getResourceAsStream("overlay.png"));
 
         // Font metrics initialization.
         final Graphics2D g = (Graphics2D) new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getGraphics();
@@ -155,8 +156,9 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
 
     @Override
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
-        if (layer instanceof KmlMapLayer && canvas instanceof AbstractCanvas2D) {
-            return Collections.singleton((GraphicJ2D) new KMLGraphic((J2DCanvas) canvas, (KmlMapLayer) layer));
+        Resource resource = layer.getResource();
+        if (resource instanceof Kml && canvas instanceof AbstractCanvas2D) {
+            return Collections.singleton((GraphicJ2D) new KMLGraphic((J2DCanvas) canvas, (Kml) resource));
         } else {
             return Collections.emptyList();
         }
@@ -169,14 +171,14 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
 
     @Override
     public Image getLegend(MapLayer layer) throws PortrayalException {
-        final KmlMapLayer kmllayer = (KmlMapLayer) layer;
-        final KmlCache cache = new KmlCache(kmllayer.kml);
+        Kml kml = (Kml) layer.getResource();
+        final KmlCache cache = new KmlCache(kml);
 
         int width = 0, height = 0, y = 0;
         final List<Image> images = new ArrayList<>();
 
         try {
-            images.add(legendFeature(kmllayer.kml.getAbstractFeature(),cache));
+            images.add(legendFeature(kml.getAbstractFeature(),cache));
         } catch (IOException ex) {
             throw new PortrayalException(ex);
         }
@@ -495,9 +497,9 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         private final KmlCache cache;
         private RenderingContext2D context2d;
 
-        private KMLGraphic(J2DCanvas canvas, KmlMapLayer layer) {
+        private KMLGraphic(J2DCanvas canvas, Kml kml) {
             super(canvas);
-            cache = new KmlCache(layer.kml);
+            cache = new KmlCache(kml);
         }
 
         @Override
