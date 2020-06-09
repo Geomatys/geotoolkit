@@ -973,7 +973,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
             {
                 // A transformation is required. Reuse the previous operation if possible.
                 if (operation==null || !equalsIgnoreMetadata(sourceCRS, operation.getSourceCRS())) {
-                    CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
+                    CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory();
                     try {
                         try {
                             // Try a transformation to the full target CRS including z dimension.

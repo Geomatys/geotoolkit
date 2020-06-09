@@ -321,7 +321,6 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
      * @throws TransformException if problem during apply shaded relief style.
      * @throws PortrayalException if problem during apply contrast enhancement style.
      * @throws java.io.IOException if problem during style application
-     * @see #applyColorMapStyle(CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
      * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)
      */
     public static GridCoverage2D applyStyle(GridCoverageResource ref, GridCoverage coverage,

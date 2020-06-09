@@ -33,7 +33,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import static org.apache.sis.measure.Units.*;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.test.Assert;
 import org.geotoolkit.test.image.ImageTestBase;
 import static org.junit.Assert.*;
@@ -139,9 +138,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
             final double min = 10 * i;
             envelope.setRange(i, min, min + 5);
         }
-        final Hints hints = new Hints(Hints.TILE_ENCODING, "raw");
-
-        final GridCoverageBuilder gcb = new GridCoverageBuilder(hints);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder(null);
         gcb.setName("Test");
         gcb.setValues(image);
         gcb.setEnvelope(envelope);

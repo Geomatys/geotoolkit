@@ -20,7 +20,6 @@ package org.geotoolkit.pending.demo.clients.wps;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.util.NullProgressListener;
@@ -74,9 +73,6 @@ public class WPSClientDemo {
     }
 
     public static void main(String[] args) throws Exception {
-
-        //allow reprojection even if grid or bursawolf parameters are missing
-        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
         //force loading all image readers/writers
         ImageIO.scanForPlugins();

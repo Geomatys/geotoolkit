@@ -18,15 +18,10 @@
 package org.geotoolkit.factory;
 
 import java.util.Iterator;
-import java.awt.RenderingHints; // For javadoc
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.factory.MultiAuthoritiesFactory;
 
-import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.internal.Listeners;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
@@ -34,19 +29,7 @@ import org.opengis.util.FactoryException;
 
 
 /**
- * Static methods relative to the factories. There are many aspects in the way Geotk manages
- * factories on a system-wide basis:
- *
- * <ul>
- *   <li><p><b>Default settings:</b> They are handled as the default hint values set on a system-wide
- *   basis by {@link Hints#getSystemDefault Hints.get}/{@link Hints#putSystemDefault put}/{@link
- *   Hints#removeSystemDefault removeSystemDefault} methods. The default values can be provided
- *   in application code.</p></li>
- *
- *   <li><p><b>Integration plugins:</b> If hosting Geotk in a alternate plugin system such as
- *   Spring or OSGi, application may needs to register additional "Factory Iterators" for Geotk
- *   to search using the {@link #addFactoryIteratorProvider addFactoryIteratorProvider} method.</p></li>
- * </ul>
+ * Static methods relative to the factories.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
@@ -60,61 +43,9 @@ import org.opengis.util.FactoryException;
 @Deprecated
 public final class Factories extends Static {
     /**
-     * Object to inform about hints changes.
-     * We use the Swing utility listener list since it is lightweight and thread-safe.
-     * Note that it doesn't involve any dependency to the remaining of Swing library.
-     * (Note: this assumption may change with JDK8 modularization)
-     */
-    private static ChangeListener[] listeners;
-
-    /**
      * Do not allow instantiation of this class.
      */
     private Factories() {
-    }
-
-    /**
-     * Adds the specified listener to the list of objects to inform when a
-     * system-wide configuration changed. The methods which may fire a
-     * {@linkplain ChangeEvent change event} are:
-     * <p>
-     * <ul>
-     *   <li>{@link Hints#putSystemDefault(RenderingHints.Key, Object)}</li>
-     *   <li>{@link Hints#removeSystemDefault(RenderingHints.Key)}</li>
-     *   <li>{@link #addFactoryIteratorProvider(FactoryIteratorProvider)}</li>
-     *   <li>{@link #removeFactoryIteratorProvider(FactoryIteratorProvider)}</li>
-     * </ul>
-     *
-     * @param listener The listener to add.
-     */
-    public static synchronized void addChangeListener(final ChangeListener listener) {
-        listeners = Listeners.addListener(listener, listeners);
-    }
-
-    /**
-     * Removes the specified listener from the list of objects to inform when a system-wide
-     * configuration changed.
-     *
-     * @param listener The listener to remove.
-     */
-    public static synchronized void removeChangeListener(final ChangeListener listener) {
-        listeners = Listeners.removeListener(listener, listeners);
-    }
-
-    /**
-     * Informs every listeners that a system-wide configuration changed.
-     * This method is invoked by the static methods that are annotated
-     * with {@link Configuration}. Users should not need to invoke this
-     * method themselves.
-     *
-     * @param source The source of this event.
-     */
-    static void fireConfigurationChanged(final Class<?> source) {
-        final ChangeListener[] list;
-        synchronized (Factories.class) {
-            list = listeners;
-        }
-        Listeners.fireChanged(source, list);
     }
 
     /**
@@ -161,12 +92,6 @@ public final class Factories extends Static {
      * thrown otherwise. If more than one implementation is registered and an
      * {@linkplain #setVendorOrdering ordering is set}, then the preferred
      * implementation is returned. Otherwise an arbitrary one is selected.
-     * <p>
-     * Hints that may be understood includes
-     * {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER FORCE_LONGITUDE_FIRST_AXIS_ORDER},
-     * {@link Hints#FORCE_STANDARD_AXIS_UNITS        FORCE_STANDARD_AXIS_UNITS},
-     * {@link Hints#FORCE_STANDARD_AXIS_DIRECTIONS   FORCE_STANDARD_AXIS_DIRECTIONS} and
-     * {@link Hints#VERSION                          VERSION}.
      * <p>
      * <b>TIP:</b> The EPSG official factory and the EPSG extensions (additional CRS provided by
      * ESRI and others) are two distinct factories. Call to {@code getCRSAuthorityFactory("EPSG",

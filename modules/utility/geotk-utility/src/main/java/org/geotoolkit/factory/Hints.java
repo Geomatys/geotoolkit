@@ -29,27 +29,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.naming.Name;
-import javax.sql.DataSource;
-import javax.swing.event.ChangeListener;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.resources.Errors;
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CSAuthorityFactory;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.InternationalString;
 
 
@@ -59,14 +43,6 @@ import org.opengis.util.InternationalString;
  * factory registry} (the Geotk service discovery mechanism), we have the complete Geotk
  * plugin system. By using hints to allow application code to effect service discovery,
  * we allow client code to retarget the Geotk library for their needs.
- * <p>
- * The following example fetch a {@linkplain CoordinateOperationFactory coordinate operation factory}
- * which is tolerant to the lack of Bursa-Wolf parameters:
- *
- * {@preformat java
- *     Hints hints = new Hints(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
- *     CoordinateOperationFactory factory = FactoryFinder.getCoordinateOperationFactory(hints);
- * }
  *
  * Hints may be ignored if they do not apply to the object to be instantiated.
  *
@@ -81,43 +57,6 @@ import org.opengis.util.InternationalString;
  * @module
  */
 public class Hints extends RenderingHints {
-    /**
-     * A set of system-wide hints to use by default. Only one thread is expected to write
-     * (while more are allowed).
-     */
-    private static final Map<RenderingHints.Key,Object> GLOBAL = new ConcurrentHashMap<>(8, 0.75f, 1);
-
-
-
-    ////////////////////////////////////////////////////////////////////////
-    ////////                                                        ////////
-    ////////                      Metadata                          ////////
-    ////////                                                        ////////
-    ////////////////////////////////////////////////////////////////////////
-
-    /**
-     * The {@link org.opengis.util.NameFactory} instance to use.
-     *
-     * @see FactoryFinder#getNameFactory(Hints)
-     *
-     * @since 3.00
-     * @category Metadata
-     */
-    public static final ClassKey NAME_FACTORY = new ClassKey(
-            "org.opengis.util.NameFactory");
-
-    /**
-     * The {@link org.opengis.metadata.citation.CitationFactory} instance to use.
-     *
-     * @see FactoryFinder#getCitationFactory(Hints)
-     *
-     * @since 3.00
-     * @category Metadata
-     */
-    public static final ClassKey CITATION_FACTORY = new ClassKey(
-            "org.opengis.metadata.citation.CitationFactory");
-
-
 
     ////////////////////////////////////////////////////////////////////////
     ////////                                                        ////////
@@ -133,24 +72,6 @@ public class Hints extends RenderingHints {
      */
     public static final ClassKey CRS_AUTHORITY_FACTORY = new ClassKey(
             "org.opengis.referencing.crs.CRSAuthorityFactory");
-
-    /**
-     * The {@link org.opengis.referencing.cs.CSAuthorityFactory} instance to use.
-     *
-     * @see AuthorityFactoryFinder#getCSAuthorityFactory(String, Hints)
-     * @category Referencing
-     */
-    public static final ClassKey CS_AUTHORITY_FACTORY = new ClassKey(
-            "org.opengis.referencing.cs.CSAuthorityFactory");
-
-    /**
-     * The {@link org.opengis.referencing.datum.DatumAuthorityFactory} instance to use.
-     *
-     * @see AuthorityFactoryFinder#getDatumAuthorityFactory(String, Hints)
-     * @category Referencing
-     */
-    public static final ClassKey DATUM_AUTHORITY_FACTORY = new ClassKey(
-            "org.opengis.referencing.datum.DatumAuthorityFactory");
 
     /**
      * The {@link org.opengis.referencing.crs.CRSFactory} instance to use.
@@ -178,15 +99,6 @@ public class Hints extends RenderingHints {
      */
     public static final ClassKey DATUM_FACTORY = new ClassKey(
             "org.opengis.referencing.datum.DatumFactory");
-
-    /**
-     * The {@link org.opengis.referencing.operation.CoordinateOperationFactory} instance to use.
-     *
-     * @see FactoryFinder#getCoordinateOperationFactory(Hints)
-     * @category Referencing
-     */
-    public static final ClassKey COORDINATE_OPERATION_FACTORY = new ClassKey(
-            "org.opengis.referencing.operation.CoordinateOperationFactory");
 
     /**
      * The {@link org.opengis.referencing.operation.CoordinateOperationAuthorityFactory} instance
@@ -234,182 +146,6 @@ public class Hints extends RenderingHints {
      */
     public static final FileKey CRS_AUTHORITY_EXTRA_DIRECTORY = new FileKey(false);
 
-    /**
-     * The {@linkplain javax.sql.DataSource data source} name to lookup from JNDI when
-     * initializing the {@linkplain org.geotoolkit.referencing.factory.epsg EPSG factory}.
-     * Possible values:
-     * <p>
-     * <ul>
-     *   <li>{@link javax.sql.DataSource} - used as is.</li>
-     *   <li>{@link javax.naming.Name} - used with JNDI to locate data source. This hint has no
-     *       effect if there is no {@linkplain javax.naming.InitialContext JNDI initial context}
-     *       setup.</li>
-     *   <li>{@link String} - used with JNDI to locate data source. This hint has no effect if
-     *       there is no {@linkplain javax.naming.InitialContext JNDI initial context} setup.</li>
-     * </ul>
-     *
-     * @since 2.4
-     * @category Referencing
-     */
-    public static final Key EPSG_DATA_SOURCE = new DataSourceKey();
-
-    /**
-     * The preferred datum shift method to use for {@linkplain CoordinateOperation coordinate operations}.
-     * Valid values include {@code "Molodensky"}, {@code "Abridged Molodensky"} and {@code "Geocentric"}.
-     * Other values may be supplied if a {@linkplain MathTransform math transform} exists for that
-     * name, but this is not guaranteed to work.
-     *
-     * @see FactoryFinder#getCoordinateOperationFactory(Hints)
-     * @category Referencing
-     */
-    public static final OptionKey DATUM_SHIFT_METHOD = new OptionKey(
-            "Molodensky", "Abridged Molodensky", // EPSG names
-            "Molodenski", "Abridged_Molodenski", // OGC names
-            "Geocentric", "*");
-
-    /**
-     * Tells if {@linkplain CoordinateOperation coordinate operations} should be allowed even when
-     * a datum shift is required while no method is found applicable. It may be for example that no
-     * {@linkplain org.apache.sis.referencing.datum.BursaWolfParameters Bursa Wolf parameters} were
-     * found for a datum shift. The default value is {@link Boolean#FALSE FALSE}, which means
-     * that {@linkplain org.geotoolkit.referencing.operation.DefaultCoordinateOperationFactory
-     * coordinate operation factory} throws an exception if such a case occurs.
-     * <p>
-     * If this hint is set to {@code TRUE}, then the users are encouraged to check the
-     * {@linkplain CoordinateOperation#getCoordinateOperationAccuracy coordinate operation accuracy}
-     * for every transformation created. If the set of operation accuracy contains
-     * {@link org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
-     * DATUM_SHIFT_OMITTED}, this means that an "ellipsoid shift" were applied without real datum
-     * shift method available, and the transformed coordinates may have one kilometer error. The
-     * application should warn the user (e.g. popup a message dialog box) in such case.
-     *
-     * @see FactoryFinder#getCoordinateOperationFactory(Hints)
-     * @category Referencing
-     */
-    public static final Key LENIENT_DATUM_SHIFT = new Key(Boolean.class);
-
-    /**
-     * Tells if the {@linkplain CoordinateSystem coordinate systems} created by
-     * an {@linkplain CSAuthorityFactory authority factory} should be forced to
-     * (<var>longitude</var>, <var>latitude</var>) axis order. This hint is especially useful
-     * for creating {@linkplain CoordinateReferenceSystem coordinate reference system} objects
-     * from <A HREF="http://www.epsg.org">EPSG</A> codes. Most {@linkplain GeographicCRS geographic
-     * CRS} defined in the EPSG database use (<var>latitude</var>, <var>longitude</var>) axis order.
-     * Unfortunately, many data sources available in the world use the opposite axis order and still
-     * claim to use a CRS described by an EPSG code. This hint allows to handle such data.
-     * <p>
-     * This hint can be passed to the <code>{@linkplain AuthorityFactoryFinder#getCRSAuthorityFactory
-     * AuthorityFactoryFinder.getCRSAuthorityFactory}(...)</code> method. Whatever this hint is
-     * supported or not is authority dependent. In the default Geotk configuration, this hint
-     * is honored for codes in the {@code "EPSG"} namespace but ignored for codes in the
-     * {@code "urn:ogc"} namespace. See {@link #FORCE_AXIS_ORDER_HONORING} for changing this
-     * behavior.
-     *
-     * {@note
-     * The documentation saids "<cite>longitude first</cite>" for simplicity, because the axes
-     * reordering apply mostly to geographic CRS (in contrast, most projected CRS already have
-     * (<var>x</var>, <var>y</var>) axis order, in which case this hint has no effect). However,
-     * what Geotk actually does is to force a <cite>right-handed</cite> coordinate system. This
-     * approach works for projected CRS as well as geographic CRS ("<cite>longitude first</cite>"
-     * is an inappropriate expression for projected CRS). It even works in cases like stereographic
-     * projections, where the axes names look like (<var>South along 180°</var>, <var>South along 90°E</var>).
-     * In such cases, aiming for "<cite>longitude first</cite>" would not make sense.}
-     *
-     * @see AuthorityFactoryFinder#getCSAuthorityFactory(String, Hints)
-     * @see AuthorityFactoryFinder#getCRSAuthorityFactory(String, Hints)
-     * @see org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory
-     * @see org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory
-     *
-     * @since 2.3
-     * @category Referencing
-     */
-    public static final Key FORCE_LONGITUDE_FIRST_AXIS_ORDER = new Key(Boolean.class);
-
-    /**
-     * Applies the {@link #FORCE_LONGITUDE_FIRST_AXIS_ORDER} hint to some factories that usually
-     * ignore it. The <cite>axis order</cite> issue is of concern mostly to the {@code "EPSG"} name
-     * space. Codes in the {@value org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory#BASE_URL}
-     * or {@code "urn:ogc"} name space usually ignore the axis order hint, especially the later
-     * which is clearly defined by international standards and does <strong>not</strong> allow
-     * the {@code FORCE_LONGITUDE_FIRST_AXIS_ORDER} behavior in standard-compliant application.
-     * <p>
-     * If nevertheless a user really wants the {@code FORCE_LONGITUDE_FIRST_AXIS_ORDER} behavior
-     * despite the violation of standards, then he must explicitly assigns a comma separated list
-     * of authorities to this {@code FORCE_AXIS_ORDER_HONORING} hint. For example in order to apply
-     * the (<var>longitude</var>, <var>latitude</var>) axis order to {@code "http://www.opengis.net/"}
-     * and {@code "urn:ogc"} name spaces in addition of EPSG, use the following hints:
-     *
-     * {@preformat java
-     *     hints.put(FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-     *     hints.put(FORCE_AXIS_ORDER_HONORING, "epsg, http, urn");
-     * }
-     *
-     * Let stress again that the application of (<var>longitude</var>, <var>latitude</var>) axis
-     * order to the {@code "urn:ogc"} name space is a clear violation of OGC specification, which
-     * is why Geotk wants you to provide this additional hint meaning "I'm really sure". Note
-     * also that {@code "epsg"} is implicit and doesn't need to be included in the above list,
-     * but this example does so as a matter of principle.
-     *
-     * @since 2.4
-     * @category Referencing
-     */
-    public static final Key FORCE_AXIS_ORDER_HONORING = new Key(String.class);
-
-    /**
-     * Tells if the {@linkplain CoordinateSystem coordinate systems} created by an
-     * {@linkplain CSAuthorityFactory authority factory} should be forced to standard
-     * {@linkplain CoordinateSystemAxis#getDirection axis directions}. If {@code true},
-     * then {@linkplain AxisDirection#SOUTH South} axis directions are forced to
-     * {@linkplain AxisDirection#NORTH North}, {@linkplain AxisDirection#WEST West} axis
-     * directions are forced to {@linkplain AxisDirection#EAST East}, <i>etc.</i>
-     * If {@code false}, then the axis directions are left unchanged.
-     * <p>
-     * This hint shall be passed to the
-     * <code>{@linkplain AuthorityFactoryFinder#getCRSAuthorityFactory
-     * AuthorityFactoryFinder.getCRSAuthorityFactory}(...)</code>
-     * method. Whatever this hint is supported or not is authority dependent.
-     *
-     * @see FactoryFinder#getCSFactory(Hints)
-     * @see FactoryFinder#getCRSFactory(Hints)
-     * @see org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory
-     *
-     * @since 2.3
-     * @category Referencing
-     */
-    public static final Key FORCE_STANDARD_AXIS_DIRECTIONS = new Key(Boolean.class);
-
-    /**
-     * Tells if the {@linkplain CoordinateSystem coordinate systems} created by an
-     * {@linkplain CSAuthorityFactory authority factory} should be forced to standard
-     * {@linkplain CoordinateSystemAxis#getUnit axis units}. If {@code true}, then all
-     * angular units are forced to degrees and linear units to meters. If {@code false},
-     * then the axis units are left unchanged.
-     * <p>
-     * This hint shall be passed to the
-     * <code>{@linkplain AuthorityFactoryFinder#getCRSAuthorityFactory
-     * AuthorityFactoryFinder.getCRSAuthorityFactory}(...)</code> method. Whatever this hint is
-     * supported or not is authority dependent.
-     *
-     * @see FactoryFinder#getCSFactory(Hints)
-     * @see FactoryFinder#getCRSFactory(Hints)
-     * @see org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory
-     *
-     * @since 2.3
-     * @category Referencing
-     */
-    public static final Key FORCE_STANDARD_AXIS_UNITS = new Key(Boolean.class);
-
-    /**
-     * Version number of the requested service. This hint is used for example in order to get
-     * a {@linkplain org.opengis.referencing.crs.CRSAuthorityFactory CRS authority factory}
-     * backed by a particular version of EPSG database. The value should be an instance of
-     * {@link org.apache.sis.util.Version}.
-     *
-     * @since 2.4
-     * @category Referencing
-     */
-    public static final Key VERSION = new Key("org.apache.sis.util.Version");
-
 
 
     ////////////////////////////////////////////////////////////////////////
@@ -417,28 +153,6 @@ public class Hints extends RenderingHints {
     ////////                     Grid Coverages                     ////////
     ////////                                                        ////////
     ////////////////////////////////////////////////////////////////////////
-
-    /**
-     * The {@link javax.media.jai.JAI} instance to use.
-     */
-    public static final Key JAI_INSTANCE = new Key("javax.media.jai.JAI");
-
-    /**
-     * The {@linkplain javax.media.jai.tilecodec.TileEncoder tile encoder} name
-     * (as a {@link String} value) to use during serialization of image data in
-     * a {@link org.geotoolkit.coverage.grid.GridCoverage2D} object. This encoding
-     * is given to the {@link javax.media.jai.remote.SerializableRenderedImage}
-     * constructor. Valid values include (but is not limited to) {@code "raw"},
-     * {@code "gzip"} and {@code "jpeg"}.
-     *
-     * {@note We recommend to avoid the <code>"jpeg"</code> codec for grid coverages.}
-     *
-     * @see org.geotoolkit.coverage.CoverageFactoryFinder#getGridCoverageFactory(Hints)
-     *
-     * @since 2.3
-     * @category Coverage
-     */
-    public static final Key TILE_ENCODING = new Key(String.class);
 
     /**
      * The {@link org.geotoolkit.coverage.SampleDimensionType} to use.
@@ -451,113 +165,9 @@ public class Hints extends RenderingHints {
 
     ////////////////////////////////////////////////////////////////////////
     ////////                                                        ////////
-    ////////                        Temporal                        ////////
-    ////////                                                        ////////
-    ////////////////////////////////////////////////////////////////////////
-
-    /**
-     * The {@link org.opengis.temporal.TemporalFactory} instance to use.
-     *
-     * @see FactoryFinder#getTemporalFactory(Hints)
-     *
-     * @category Temporal
-     *
-     * @since 3.18
-     */
-    public static final ClassKey TEMPORAL_FACTORY = new ClassKey("org.opengis.temporal.TemporalFactory");
-
-
-
-    ////////////////////////////////////////////////////////////////////////
-    ////////                                                        ////////
-    ////////                        Geometry                        ////////
-    ////////                                                        ////////
-    ////////////////////////////////////////////////////////////////////////
-
-    /**
-     * The {@link org.opengis.geometry.PositionFactory} instance to use.
-     *
-     * @see FactoryFinder#getPositionFactory(Hints)
-     *
-     * @category Geometry
-     *
-     * @since 3.01
-     */
-    public static final ClassKey POSITION_FACTORY = new ClassKey("org.opengis.geometry.PositionFactory");
-
-    /**
-     * The {@link org.opengis.geometry.primitive.PrimitiveFactory} instance to use.
-     *
-     * @see FactoryFinder#getPrimitiveFactory(Hints)
-     *
-     * @category Geometry
-     *
-     * @since 3.01
-     */
-    public static final ClassKey PRIMITIVE_FACTORY = new ClassKey("org.opengis.geometry.primitive.PrimitiveFactory");
-
-    /**
-     * The {@link org.opengis.geometry.coordinate.GeometryFactory} instance to use.
-     *
-     * @see FactoryFinder#getGeometryFactory(Hints)
-     *
-     * @category Geometry
-     *
-     * @since 3.01
-     */
-    public static final ClassKey GEOMETRY_FACTORY = new ClassKey("org.opengis.geometry.coordinate.GeometryFactory");
-
-    /**
-     * The {@link org.opengis.geometry.complex.ComplexFactory} instance to use.
-     *
-     * @see FactoryFinder#getComplexFactory(Hints)
-     *
-     * @category Geometry
-     *
-     * @since 3.01
-     */
-    public static final ClassKey COMPLEX_FACTORY = new ClassKey("org.opengis.geometry.complex.ComplexFactory");
-
-    /**
-     * The {@link org.opengis.geometry.aggregate.AggregateFactory} instance to use.
-     *
-     * @see FactoryFinder#getAggregateFactory(Hints)
-     *
-     * @category Geometry
-     *
-     * @since 3.01
-     */
-    public static final ClassKey AGGREGATE_FACTORY = new ClassKey("org.opengis.geometry.aggregate.AggregateFactory");
-
-
-
-    ////////////////////////////////////////////////////////////////////////
-    ////////                                                        ////////
     ////////               Feature, Filter and Style                ////////
     ////////                                                        ////////
     ////////////////////////////////////////////////////////////////////////
-
-    /**
-     * The {@link org.geotoolkit.feature.type.FeatureTypeFactory} instance to use.
-     *
-     * @see FactoryFinder#getFeatureTypeFactory(Hints)
-     *
-     * @category Feature
-     *
-     * @since 3.15
-     */
-    public static final ClassKey FEATURE_TYPE_FACTORY = new ClassKey("org.geotoolkit.feature.type.FeatureTypeFactory");
-
-    /**
-     * The {@link org.geotoolkit.feature.FeatureFactory} instance to use.
-     *
-     * @see FactoryFinder#getFeatureFactory(Hints)
-     *
-     * @category Feature
-     *
-     * @since 3.01
-     */
-    public static final ClassKey FEATURE_FACTORY = new ClassKey("org.geotoolkit.feature.FeatureFactory");
 
     /**
      * The {@link org.opengis.filter.FilterFactory} instance to use.
@@ -582,25 +192,12 @@ public class Hints extends RenderingHints {
     public static final ClassKey STYLE_FACTORY = new ClassKey("org.opengis.style.StyleFactory");
 
     /**
-     * Creates an empty set of hints. This constructor is for {@link EmptyHints} usage only.
-     * All public constructors are expected to create hints initialized to the system-wide
-     * default. If an empty set of hints is really needed, use {@link EmptyHints#clone()}.
-     *
-     * @param dummy Ignored.
-     */
-    Hints(final boolean dummy) {
-        super(null);
-    }
-
-    /**
-     * Constructs a map of hints initialized with the system-wide default values. The default
-     * values are those that were given to {@link #putSystemDefault putSystemDefault} and not
-     * yet removed with {@link #removeSystemDefault removeSystemDefault}.
+     * Constructs a map of hints initialized with the system-wide default values.
      *
      * @since 2.5
      */
     public Hints() {
-        super(GLOBAL);
+        super(null);
     }
 
     /**
@@ -636,34 +233,6 @@ public class Hints extends RenderingHints {
     {
         this(key1, value1);
         put (key2, value2);
-    }
-
-    /**
-     * Constructs a new map of hints from key/value pairs. First, an initial map is created
-     * as with the {@linkplain #Hints() no-argument constructor}. This map may not be empty.
-     * Then, the given key-value pairs are added. If a default value was present for a given
-     * key, then the given value replaces the default one.
-     *
-     * @param key1   The key for the first pair.
-     * @param value1 The value for the first pair.
-     * @param key2   The key2 for the second pair.
-     * @param value2 The value2 for the second pair.
-     * @param pairs  Additional pairs of keys and values.
-     *
-     * @since 2.4
-     */
-    public Hints(final RenderingHints.Key key1, final Object value1,
-                 final RenderingHints.Key key2, final Object value2,
-                 final Object... pairs)
-    {
-        this(key1, value1, key2, value2);
-        if ((pairs.length & 1) != 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.OddArrayLength_1, pairs.length));
-        }
-        for (int i=0; i<pairs.length;) {
-            put(pairs[i++], pairs[i++]);
-        }
     }
 
     /**
@@ -709,73 +278,6 @@ public class Hints extends RenderingHints {
     }
 
     /**
-     * Returns the system-wide default value for the given key. The Geotk library
-     * initially contains no system default, so {@code getSystemDefault(key)} returns
-     * null for all keys. Users can add default values using {@link #putSystemDefault
-     * putSystemDefault}.
-     * <p>
-     * To get a map of all system defaults, use {@code new Hints()}.
-     *
-     * @param  key The hints key.
-     * @return The system-wide default value for the given key,
-     *         or {@code null} if the key did not have a mapping.
-     *
-     * @since 2.4
-     */
-    public static Object getSystemDefault(final RenderingHints.Key key) {
-        return GLOBAL.get(key);
-    }
-
-    /**
-     * Adds or modifies a system-wide default value. {@code Hints} instances created after
-     * this method call will be initialized to the union of all values specified with
-     * {@code putSystemDefault} and not yet {@linkplain #removeSystemDefault removed}.
-     * <p>
-     * If the given value is different than the previous one, then this method notifies
-     * every listeners registered with {@link Factories#addChangeListener(ChangeListener)}.
-     *
-     * @param  key   The hint key.
-     * @param  value The hint value to be used as the system-wide default for the given key.
-     * @return The previous value for the given key, or {@code null} if none.
-     * @throws IllegalArgumentException if {@link Hints.Key#isCompatibleValue(Object)}
-     *         returns {@code false} for the given value.
-     *
-     * @since 2.4
-     */
-    @Configuration
-    public static Object putSystemDefault(final RenderingHints.Key key, final Object value) {
-        if (!key.isCompatibleValue(value)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.IllegalArgument_2, nameOf(key), value));
-        }
-        final Object old = GLOBAL.put(key, value);
-        if (!Objects.equals(value, old)) {
-            Factories.fireConfigurationChanged(Hints.class);
-        }
-        return old;
-    }
-
-    /**
-     * Removes the specified hints from the set of system default values.
-     * If the a value was present for the given key, then this method notifies
-     * every listeners registered with {@link Factories#addChangeListener(ChangeListener)}.
-     *
-     * @param  key The hints key that needs to be removed.
-     * @return The value to which the key had previously been mapped,
-     *         or {@code null} if the key did not have a mapping.
-     *
-     * @since 2.4
-     */
-    @Configuration
-    public static Object removeSystemDefault(final RenderingHints.Key key) {
-        final Object old = GLOBAL.remove(key);
-        if (old != null) {
-            Factories.fireConfigurationChanged(Hints.class);
-        }
-        return old;
-    }
-
-    /**
      * Returns a string representation of the hints. The default implementation formats
      * the set of hints as a tree.
      *
@@ -785,7 +287,6 @@ public class Hints extends RenderingHints {
     public String toString() {
         return toString(this);
     }
-
 
     /**
      * Returns a string representation of the specified hints. This is used by
@@ -955,9 +456,7 @@ public class Hints extends RenderingHints {
 
         /**
          * Base class of all values for this key. Will be created from {@link #className} only when
-         * first required, in order to avoid too early class loading. This is significant for the
-         * {@link #JAI_INSTANCE} key for example, in order to avoid JAI dependencies in applications
-         * that do not need it.
+         * first required, in order to avoid too early class loading.
          */
         private transient Class<?> valueClass;
 
@@ -1301,8 +800,7 @@ public class Hints extends RenderingHints {
 
     /**
      * Key that allows the choice of several options. The special value {@code "*"} can be used
-     * as a wildcard to indicate that undocumented options may be supported (but there is no
-     * assurances - see {@link Hints#DATUM_SHIFT_METHOD} for example).
+     * as a wildcard to indicate that undocumented options may be supported.
      *
      * @author Jody Garnett (Refractions)
      * @version 3.00
@@ -1351,42 +849,6 @@ public class Hints extends RenderingHints {
         @Override
         public boolean isCompatibleValue(final Object value) {
             return wildcard ? (value instanceof String) : options.contains(value);
-        }
-    }
-
-    /**
-     * Key for hints to be specified as a {@link javax.sql.DataSource}. The file may also be
-     * specified as a {@link String} or {@link Name} object. This key also allows null value,
-     * which explicitly means "<cite>no data source provided</cite>".
-     *
-     * {@note Different JNDI implementations build up their name differently, so we may need
-     *        to look for <code>"jdbc:EPSG"</code> in JBoss and <code>"jdbc/EPSG"</code> in
-     *        Websphere.}
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.4
-     * @module
-     */
-    @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
-    static final class DataSourceKey extends Key {
-        /**
-         * Creates a new key for {@link javax.sql.DataSource} value.
-         */
-        public DataSourceKey() {
-            super(DataSource.class);
-        }
-
-        /**
-         * Returns {@code true} if the specified object is a data source or data source name.
-         * The {@code null} value is also accepted, which explicitly means "<cite>no data source
-         * provided</cite>".
-         */
-        @Override
-        public boolean isCompatibleValue(final Object value) {
-            return (value == null) || (value instanceof DataSource) ||
-                    (value instanceof String) || (value instanceof Name);
         }
     }
 }

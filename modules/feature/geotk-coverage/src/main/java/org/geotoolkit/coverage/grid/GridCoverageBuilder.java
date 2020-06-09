@@ -535,8 +535,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *   <li>{@link Hints#SAMPLE_DIMENSION_TYPE} - specifies the {@link SampleDimensionType} to be
      *       used at rendering time, which can be one of {@link SampleDimensionType#UNSIGNED_8BITS
      *       UNSIGNED_8BITS} or {@link SampleDimensionType#UNSIGNED_16BITS UNSIGNED_16BITS}.</li>
-     *   <li>{@link Hints#TILE_ENCODING} - controls the compression to use for the serialization
-     *       of {@link GridCoverage2D} instances.</li>
      * </ul>
      *
      * @param hints Optional hints for fetching factories, or {@code null} if none.

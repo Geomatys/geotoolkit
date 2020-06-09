@@ -432,10 +432,9 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @since 2.4
      */
-    public BoundingBox toBounds(final CoordinateReferenceSystem targetCRS)
-            throws TransformException {
+    public BoundingBox toBounds(final CoordinateReferenceSystem targetCRS) throws TransformException {
         try {
-            return new BoundingBox(transform(targetCRS, true));
+            return new BoundingBox(transform(targetCRS));
         } catch (FactoryException e) {
             throw new TransformException(e.getLocalizedMessage(), e);
         }
@@ -448,16 +447,14 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * or when it cross the &plusmn;180ï¿½ longitude.
      *
      * @param targetCRS The target coordinate reference system.
-     * @param lenient   {@code true} if datum shift should be applied even if there is
-     *                  insuffisient information. Otherwise (if {@code false}), an
-     *                  exception is thrown in such case.
      * @return The transformed envelope.
      * @throws FactoryException if the math transform can't be determined.
      * @throws TransformException if at least one coordinate can't be transformed.
      */
-    public JTSEnvelope2D transform(final CoordinateReferenceSystem targetCRS, final boolean lenient)
-            throws TransformException, FactoryException {
-        return transform(targetCRS, lenient, 5);
+    public JTSEnvelope2D transform(final CoordinateReferenceSystem targetCRS)
+            throws TransformException, FactoryException
+    {
+        return transform(targetCRS, 5);
     }
 
     /**
@@ -468,19 +465,14 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * or when it cross the &plusmn;180ï¿½ longitude.
      *
      * @param targetCRS The target coordinate reference system.
-     * @param lenient   {@code true} if datum shift should be applied even if there is
-     *                  insuffisient information. Otherwise (if {@code false}), an
-     *                  exception is thrown in such case.
      * @param numPointsForTransformation The number of points to use for sampling the envelope.
      * @return The transformed envelope.
      * @throws FactoryException if the math transform can't be determined.
      * @throws TransformException if at least one coordinate can't be transformed.
-     *
-     * @since 2.3
      */
-    public JTSEnvelope2D transform(final CoordinateReferenceSystem targetCRS,
-            final boolean lenient, final int numPointsForTransformation)
-            throws TransformException, FactoryException {
+    public JTSEnvelope2D transform(final CoordinateReferenceSystem targetCRS, final int numPointsForTransformation)
+            throws TransformException, FactoryException
+    {
         if (crs == null) {
             if (isEmpty()) {
                 // We don't have a CRS yet because we are still empty, being empty is
@@ -496,7 +488,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
          * Gets a first estimation using an algorithm capable to take singularity in account
          * (North pole, South pole, 180ï¿½ longitude). We will expand this initial box later.
          */
-        CoordinateOperationFactory coordinateOperationFactory = CRS.getCoordinateOperationFactory(lenient);
+        CoordinateOperationFactory coordinateOperationFactory = CRS.getCoordinateOperationFactory();
 
         final CoordinateOperation operation = coordinateOperationFactory.createOperation(crs, targetCRS);
         final GeneralEnvelope transformed = Envelopes.transform(operation, this);

@@ -859,9 +859,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final CoordinateReferenceSystem sourceCRS,
             final CoordinateReferenceSystem targetCRS) throws FactoryException
     {
-        return CRS.getCoordinateOperationFactory(
-                Boolean.TRUE.equals(hints.get(Hints.LENIENT_DATUM_SHIFT)))
-                .createOperation(sourceCRS, targetCRS);
+        return CRS.getCoordinateOperationFactory().createOperation(sourceCRS, targetCRS);
     }
 
     /**

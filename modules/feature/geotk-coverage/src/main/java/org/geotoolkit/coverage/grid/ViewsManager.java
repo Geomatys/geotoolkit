@@ -580,8 +580,7 @@ testLinear: for (int i=0; i<numBands; i++) {
             if (canRescale && scales!=null && (!conditional || isZeroExcluded(image, scales, offsets))) {
                 /*
                  * TODO: JAI BUG? If the type is TYPE_USHORT, its look like that JAI interpret
-                 * 256 as 0 (and same for all value above 256). In order to check if this issue
-                 * still exists, see SampleTranscoderTest.testTypeUShort().
+                 * 256 as 0 (and same for all value above 256).
                  */
                 if (sourceModel.getDataType() != DataBuffer.TYPE_USHORT) {
                     operation = "Rescale";

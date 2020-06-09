@@ -86,14 +86,13 @@ public final class CRS extends Static {
      * {@link #findMathTransform(CoordinateReferenceSystem, CoordinateReferenceSystem)
      * findMathTransform} convenience methods.
      *
-     * @param lenient ignored.
      * @return The coordinate operation factory used for finding math transform in this class.
      *
      * @category factory
      * @since 2.4
      */
     @Deprecated
-    public static CoordinateOperationFactory getCoordinateOperationFactory(final boolean lenient) {
+    public static CoordinateOperationFactory getCoordinateOperationFactory() {
         return DefaultFactories.forBuildin(CoordinateOperationFactory.class);
     }
 

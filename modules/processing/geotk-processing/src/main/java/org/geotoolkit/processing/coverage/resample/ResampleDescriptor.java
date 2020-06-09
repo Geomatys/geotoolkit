@@ -70,7 +70,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *   </tr>
  *   <tr>
  *     <td>{@code "Source"}</td>
- *     <td>{@link org.geotoolkit.coverage.grid.GridCoverage2D}</td>
+ *     <td>{@code GridCoverage2D}</td>
  *     <td align="center">N/A</td>
  *     <td align="center">N/A</td>
  *     <td align="center">N/A</td>
@@ -109,8 +109,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * The {@code "Resample"} operation use the default
  * {@link org.opengis.referencing.operation.CoordinateOperationFactory} for creating a
  * transformation from the source to the destination coordinate reference systems.
- * If a custom factory is desired, it may be supplied as a rendering hint with the
- * {@link org.geotoolkit.factory.Hints#COORDINATE_OPERATION_FACTORY} key. Rendering
+ * Rendering
  * hints can be supplied to {@link org.geotoolkit.coverage.processing.DefaultCoverageProcessor}
  * at construction time.
  * <p>
@@ -127,6 +126,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @module
  */
+@Deprecated
 public class ResampleDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "coverage:resample";

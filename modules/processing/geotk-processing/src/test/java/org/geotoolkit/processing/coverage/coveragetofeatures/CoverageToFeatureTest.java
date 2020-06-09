@@ -37,7 +37,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -89,8 +88,6 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
      */
     @Test
     public void coverageToFeatureTestPixelCenter() throws NoSuchAuthorityCodeException, FactoryException, ProcessException {
-
-        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
         final PixelInCell pixPos = PixelInCell.CELL_CENTER;
         final GridCoverageResource reader = buildResource(pixPos);

@@ -49,8 +49,7 @@ import org.geotoolkit.resources.Vocabulary;
  * <ol>
  *   <li><p>If a value for {@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY} exists in the hints map
  *       given at construction time, then that value will be used as the directory where to
- *       search for the {@value #FILENAME} file. Reminder: such hint can be
- *       {@linkplain Hints#putSystemDefault defined system-wide} for convenience.</p></li>
+ *       search for the {@value #FILENAME} file.</p></li>
  *   <li><p>The {@value #FILENAME} files found in all {@code org/geotoolkit/referencing/factory/epsg}
  *       directories on the classpath are merged with the values found in previous step, if any.
  *       If the same value is defined twice, the value of previous step have precedence.</p></li>
@@ -97,13 +96,6 @@ import org.geotoolkit.resources.Vocabulary;
  *         Logging.GEOTOOLKIT.forceMonolineConsoleOutput(Level.CONFIG);
  *       }
  *       </p></li>
- *
- *   <li><p>Force the system to ignore any factory other than {@code PropertyEpsgFactory}:
- *
- *       {@preformat java
- *         Hints.putSystemDefault(Hints.CRS_AUTHORITY_FACTORY, PropertyEpsgFactory.class);
- *       }
- *       </p></li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
@@ -142,7 +134,6 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      * <p>
      * <ul>
      *   <li>{@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY}</li>
-     *   <li>{@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER}</li>
      * </ul>
      * <p>
      * This constructor recognizes also {@link Hints#CRS_FACTORY CRS}, {@link Hints#CS_FACTORY CS},

@@ -34,7 +34,6 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
@@ -126,8 +125,6 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
      */
     @Test
     public void testSystemPropertyToForceXY() throws FactoryException {
-        assertNull(Hints.getSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
-        assertNull(Hints.putSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
         final CoordinateReferenceSystem crs;
         try {
             crs = CommonCRS.WGS84.geographic();
@@ -144,8 +141,6 @@ public final strictfp class CRS_WithEpsgTest extends TestBase {
             // A debugging help in case of test failure.
             System.err.println(">>> INFORMATION ON TEST FAILURE");
             throw failure;
-        } finally {
-            assertEquals(Boolean.TRUE, Hints.removeSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
         }
     }
 

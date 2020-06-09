@@ -2,7 +2,6 @@
 package org.geotoolkit.pending.demo;
 
 import javax.imageio.ImageIO;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Setup;
 
 /**
@@ -12,10 +11,7 @@ public final class Demos {
 
     private Demos(){}
 
-    public static void init(){
-
-        //allow reprojection even if grid or bursawolf parameters are missing
-        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+    public static void init() {
 
         //force loading all image readers/writers
         ImageIO.scanForPlugins();
