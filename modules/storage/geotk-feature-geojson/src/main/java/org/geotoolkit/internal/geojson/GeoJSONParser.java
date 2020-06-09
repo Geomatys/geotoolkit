@@ -238,11 +238,7 @@ public final class GeoJSONParser {
                     }
                     break;
                 default:
-                    if (p.getCurrentToken() == JsonToken.START_OBJECT) {
-                        //skip any unknown properties
-                        parseGeoJSONObject(p, lazy, source);
-                    }
-                    break;
+                    p.skipChildren();
             }
         }
         return object;
