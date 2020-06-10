@@ -29,7 +29,7 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.coverage.j2d.BufferedGridCoverage;
+import org.apache.sis.coverage.grid.BufferedGridCoverage;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
@@ -243,7 +243,7 @@ public class AggregatedCoverageResourceTest {
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
         Assert.assertTrue(!gridGeometry.isDefined(GridGeometry.EXTENT));
         Assert.assertTrue(gridGeometry.isDefined(GridGeometry.ENVELOPE));
-        
+
         final GridCoverage coverage = aggregate.read(grid2);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
