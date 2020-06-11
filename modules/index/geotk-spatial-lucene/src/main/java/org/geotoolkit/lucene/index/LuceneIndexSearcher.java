@@ -267,16 +267,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             final String idField = getIdentifierSearchField();
             final TermQuery query = new TermQuery(new Term(idField, id));
             final Set<String> results = new LinkedHashSet<>();
-            int maxRecords = 0;
-            CollectionStatistics cs = searcher.collectionStatistics(idField); // contains deleted document
-            if (cs != null) {
-               maxRecords = (int) cs.maxDoc();
-            }
-            if (maxRecords == 0) {
-                LOGGER.warning("There is no document in the index");
-                return null;
-            }
-            final TopDocs hits = searcher.search(query, maxRecords);
+            final TopDocs hits = searcher.search(query, 2);
             for (ScoreDoc doc : hits.scoreDocs) {
                 final Set<String> fieldsToLoad = Collections.singleton(idField);
                 results.add(searcher.doc(doc.doc, fieldsToLoad).get(idField));
@@ -396,7 +387,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             }
             String operatorValue = "";
             if (!(operator == LogicalFilterType.AND || (operator == LogicalFilterType.OR && filter == null))) {
-                operatorValue = '\n' + operator.valueOf();
+                operatorValue = '\n' + operator.name();
             }
             LOGGER.log(logLevel, "Searching for: " + (query != null ? query.toString(field) : "") + operatorValue +  f + sorted + "\nmax records: " + maxRecords);
 

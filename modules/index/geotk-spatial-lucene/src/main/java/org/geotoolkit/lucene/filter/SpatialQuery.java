@@ -34,8 +34,9 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * A Spatial query use to perform search request on elasticsearch datasource.
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @module
  */
@@ -68,7 +69,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     private Sort sort;
 
     /**
-     * Build a new Simple Text Query.
+     * Build a new simple textual lucene Query.
      *
      * @param textQuery  A well-formed Lucene query.
      */
@@ -90,21 +91,35 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     }
 
     /**
-     * Build a new Query combinating a lucene query and a lucene filter.
+     * Build a new Query combinating a lucene text query and a lucene Query.
      *
      * @param textQuery  A well-formed Lucene query.
-     * @param query A lucene Query Object
-     * @param logicalOperator The logical operator to apply between the query and the spatialFilter.
+     * @param query A lucene Query Object.
+     * @param logicalOperator The logical operator to apply between the textual query and the query object.
      */
     public SpatialQuery(final String textQuery, final Query query, final LogicalFilterType logicalOperator) {
         this(textQuery,query,logicalOperator,null);
     }
 
+    /**
+     * Build a new simple textual lucene Query with a logical operator (should be an unary operator).
+     *
+     * @param textQuery A well-formed Lucene query.
+     * @param logicalOperator The logical operator to apply to the textual query (should be an unary operator).
+     */
     public SpatialQuery(final String textQuery, final LogicalFilterType logicalOperator) {
         this(textQuery,null,logicalOperator,null);
     }
 
 
+    /**
+     * Build a new Query combinating a lucene text query and a lucene Query.
+     *
+     * @param textQuery A well-formed Lucene query.
+     * @param query A lucene Query Object
+     * @param logicalOperator The logical operator to apply between the textual query and the query object.
+     * @param sub a list of subQueries.
+     */
     private SpatialQuery(final String textQuery, final Query query, final LogicalFilterType logicalOperator, final List<SpatialQuery> sub){
         if (textQuery != null) {
             this.textQuery = new StringBuilder();
@@ -124,7 +139,8 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
 
 
     /**
-     * Return the spatial filter (it can be a SerialChainFilter) to add to the lucene query.
+     * Return a lucene {@link Query} object.
+     * can be {@code null}.
      */
     @Override
     public Query getQuery() {
@@ -132,7 +148,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     }
 
     /**
-     * Return the lucene query associated with the filter.
+     * Return the lucene text query (Using lucene syntax).
      */
     @Override
     public String getTextQuery() {
@@ -266,7 +282,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
         }
 
         if (query != null && !textQuery.toString().equals("")) {
-            s.append(logicalOperator.valueOf()).append('\n');
+            s.append(logicalOperator.name()).append('\n');
         }
 
         if (query != null) {

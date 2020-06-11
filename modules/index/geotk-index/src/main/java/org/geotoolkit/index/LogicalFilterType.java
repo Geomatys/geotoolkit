@@ -26,51 +26,5 @@ public enum LogicalFilterType {
     AND,
     OR,
     NOT,
-    XOR,
-    DEFAULT;
-
-    /**
-     * Return the filterName correspounding to the specified flag.
-     *
-     * @param flag an int flag.
-     *
-     * @return A filter name : And, Or, Xor or Not.
-     */
-    public String valueOf() {
-        switch (this) {
-            case AND:
-                return "AND";
-            case OR:
-                return "OR";
-            case NOT:
-                return "NOT";
-            case XOR:
-                return "XOR";
-            default:
-               return "unknow";
-        }
-    }
-
-    /**
-     * Return the flag correspounding to the specified filterName.
-     *
-     * @param filterName A filter name : And, Or, Xor or Not.
-     *
-     * @return an int flag.
-     */
-    public static LogicalFilterType valueOfIgnoreCase(final String filterName) {
-
-        if (filterName.equalsIgnoreCase("AND")) {
-            return AND;
-        } else if (filterName.equalsIgnoreCase("OR")) {
-            return OR;
-        } else if (filterName.equalsIgnoreCase("XOR")) {
-            return XOR;
-        } else if (filterName.equalsIgnoreCase("NOT")) {
-            return NOT;
-        } else {
-            return DEFAULT;
-        }
-    }
-
+    XOR;
 }

@@ -23,6 +23,7 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.Tree;
 import static org.geotoolkit.lucene.LuceneUtils.*;
 import org.opengis.filter.Filter;
@@ -49,6 +50,7 @@ public class LuceneOGCSpatialQuery extends org.apache.lucene.search.Query implem
     private boolean envelopeOnly = false;
 
     private LuceneOGCSpatialQuery(final Filter filter){
+        ArgumentChecks.ensureNonNull("Filter", filter);
         this.filter = filter;
         this.filterType = getSpatialFilterType(filter);
     }

@@ -95,14 +95,12 @@ public class LuceneOGCWeight extends Weight {
 
     @Override
     public void extractTerms(Set<Term> terms) {
-        for (Term t : terms) {
-            System.out.println("TERM: " + t);
-        }
+        // do nothing
     }
 
     @Override
     public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
