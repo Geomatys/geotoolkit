@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
@@ -52,6 +53,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.finder.CoverageFinder;
 import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
+import org.geotoolkit.storage.multires.GeneralProgressiveResource;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
@@ -229,12 +231,55 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
      */
     private GridCoverage readSlice(Mosaic mosaic, Envelope wantedEnv) throws DataStoreException {
 
+        final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
         final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
+        final Dimension tileSize = mosaic.getTileSize();
+
         final Rectangle tilesInEnvelope = Pyramids.getTilesInEnvelope(mosaic, wantedEnv);
         final int tileMinCol = tilesInEnvelope.x;
         final int tileMinRow = tilesInEnvelope.y;
 
-        final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
+        if (mosaic instanceof GeneralProgressiveResource.ProgressiveMosaic) {
+
+            final RenderedImage image = ((GeneralProgressiveResource.ProgressiveMosaic) mosaic).asImage();
+
+            final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
+            Arrays.fill(high, 1);
+            high[0] = image.getWidth();
+            high[1] = image.getHeight();
+
+            final GridExtent ge = new GridExtent(null, null, high, false);
+            final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
+                    new Point(0,0),wantedCRS.getCoordinateSystem().getDimension(),
+                    PixelInCell.CELL_CENTER);
+            final GridGeometry gridgeo = new GridGeometry(ge, PixelInCell.CELL_CENTER, gtc, wantedCRS);
+
+            final GridCoverage2D coverage = new GridCoverage2D(gridgeo, sampleDimensions, image);
+
+            { //reduce area
+                final long[] l = new long[high.length];
+                final long[] h = new long[high.length];
+                l[0] = tilesInEnvelope.x * tileSize.width;
+                l[1] = tilesInEnvelope.y * tileSize.height;
+                h[0] = (tilesInEnvelope.x+tilesInEnvelope.width) * tileSize.width;
+                h[1] = (tilesInEnvelope.y+tilesInEnvelope.height) * tileSize.height;
+                GridExtent crop = new GridExtent(null, l, h, false);
+                RenderedImage subImage = coverage.render(crop);
+                l[0] = 0;
+                l[1] = 0;
+                h[0] = (tilesInEnvelope.width) * tileSize.width;
+                h[1] = (tilesInEnvelope.height) * tileSize.height;
+                crop = new GridExtent(null, l, h, false);
+                final MathTransform gtcr = Pyramids.getTileGridToCRSND(mosaic,
+                        new Point(tilesInEnvelope.x,tilesInEnvelope.y),wantedCRS.getCoordinateSystem().getDimension(),
+                        PixelInCell.CELL_CENTER);
+                final GridGeometry cropped = new GridGeometry(crop, PixelInCell.CELL_CENTER, gtcr, wantedCRS);
+
+                return new GridCoverage2D(cropped, sampleDimensions, subImage);
+            }
+        }
+
+
         final RenderedImage image =  MosaicImage.create(mosaic, tilesInEnvelope, sampleDimensions);
 
         final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];

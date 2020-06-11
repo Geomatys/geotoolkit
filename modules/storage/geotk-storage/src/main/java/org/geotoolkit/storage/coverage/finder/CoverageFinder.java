@@ -37,6 +37,7 @@ import org.geotoolkit.storage.multires.Pyramids;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -192,27 +193,32 @@ public abstract class CoverageFinder {
         }
 
         //paranoiac test
-        if (results.isEmpty()){
+        if (results.isEmpty()) {
             //could not find any proper candidates
-            if (pyramids.isEmpty()) {
-                return null;
-            } else {
-                return pyramids.iterator().next();
-            }
+            results.addAll(pyramids);
         }
 
         if (results.size() == 1) {
             return results.get(0);
         }
 
-        // if several equal ratio.
+        // if several search for an equal ratio.
+        Pyramid latlonPyramid = null;
         for (Pyramid pyramid : results) {
             final CoordinateReferenceSystem pyCrs = CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem());
-            if (CRS.findOperation(pyCrs, crs2D, null).getMathTransform().isIdentity()
+            final MathTransform trs = CRS.findOperation(pyCrs, crs2D, null).getMathTransform();
+            if (trs.isIdentity()
                     || Utilities.equalsIgnoreMetadata(crs2D, pyCrs)
                     || Utilities.equalsApproximately(crs2D, pyCrs)) {
                 return pyramid;
+            } else if (Utilities.equalsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), pyCrs) ||
+                       Utilities.equalsIgnoreMetadata(CommonCRS.WGS84.geographic(), pyCrs) ){
+                latlonPyramid = pyramid;
             }
+        }
+
+        if (latlonPyramid != null) {
+            return latlonPyramid;
         }
 
         // return first in list. impossible to define the most appropriate crs.
