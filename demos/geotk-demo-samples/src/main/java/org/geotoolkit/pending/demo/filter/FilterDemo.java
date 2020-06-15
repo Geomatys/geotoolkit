@@ -11,7 +11,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -65,8 +64,8 @@ public class FilterDemo {
 
     private static Filter idFilter(){
         final Set<Identifier> ids = new HashSet<Identifier>();
-        ids.add(new DefaultFeatureId("id-1"));
-        ids.add(new DefaultFeatureId("id-4"));
+        ids.add(FF.featureId("id-1"));
+        ids.add(FF.featureId("id-4"));
         final Filter filter = FF.id(ids);
         return filter;
     }

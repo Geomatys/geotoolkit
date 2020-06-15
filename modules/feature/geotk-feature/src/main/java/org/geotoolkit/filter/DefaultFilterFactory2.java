@@ -17,16 +17,9 @@
  */
 package org.geotoolkit.filter;
 
-import java.util.List;
 import java.util.Set;
 import org.apache.sis.filter.DefaultFilterFactory;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.filter.binaryexpression.DefaultAdd;
-import org.geotoolkit.filter.binaryexpression.DefaultDivide;
-import org.geotoolkit.filter.binaryexpression.DefaultMultiply;
-import org.geotoolkit.filter.binaryexpression.DefaultSubtract;
-import org.geotoolkit.filter.binarylogic.DefaultAnd;
-import org.geotoolkit.filter.binarylogic.DefaultOr;
 import org.geotoolkit.filter.binaryspatial.DefaultBBox;
 import org.geotoolkit.filter.binaryspatial.DefaultBeyond;
 import org.geotoolkit.filter.binaryspatial.DefaultContains;
@@ -49,16 +42,8 @@ import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.filter.identity.DefaultGmlObjectId;
 import org.geotoolkit.geometry.BoundingBox;
-import org.opengis.filter.And;
-import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.capability.ArithmeticOperators;
@@ -76,15 +61,9 @@ import org.opengis.filter.capability.SpatialOperators;
 import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.capability.TemporalOperand;
 import org.opengis.filter.capability.TemporalOperators;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.GmlObjectId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
@@ -391,71 +370,9 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  IDENTIFIERS
-//
-////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureId featureId(final String id) {
-        return new DefaultFeatureId(id);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public GmlObjectId gmlObjectId(final String id) {
-        return new DefaultGmlObjectId(id);
-    }
-
-////////////////////////////////////////////////////////////////////////////////
-//
 //  FILTERS
 //
 ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public And and(final Filter filter1, final Filter filter2) {
-        return new DefaultAnd(filter1, filter2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public And and(final List<Filter> filters) {
-        return new DefaultAnd(filters);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Or or(final Filter filter1, final Filter filter2) {
-        return new DefaultOr(filter1, filter2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Or or(final List<Filter> filters) {
-        return new DefaultOr(filters);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Not not(final Filter filter) {
-        return new DefaultNot(filter);
-    }
 
     /**
      * {@inheritDoc }
@@ -485,42 +402,6 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsBetween between(final Expression expr,
-            final Expression lower, final Expression upper) {
-        return new DefaultPropertyIsBetween(expr, lower, upper);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLike like(final Expression expr, final String pattern) {
-        return like(expr,pattern,"*","?","\\");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLike like(final Expression expr, final String pattern,
-            final String wildcard, final String singleChar, final String escape) {
-        return like(expr,pattern,wildcard,singleChar,escape,false);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PropertyIsLike like(final Expression expr, final String pattern,
-            final String wildcard, final String singleChar,
-            final String escape, final boolean matchCase) {
-        return new DefaultPropertyIsLike(expr, pattern, wildcard, singleChar, escape, matchCase);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public PropertyIsNull isNull(final Expression expr) {
         return new DefaultPropertyIsNull(expr);
     }
@@ -538,38 +419,6 @@ public class DefaultFilterFactory2 extends DefaultFilterFactory {
 //  EXPRESSIONS
 //
 ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Add add(final Expression expr1, final Expression expr2) {
-        return new DefaultAdd(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Divide divide(final Expression expr1, final Expression expr2) {
-        return new DefaultDivide(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Multiply multiply(final Expression expr1, final Expression expr2) {
-        return new DefaultMultiply(expr1, expr2);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Subtract subtract(final Expression expr1, final Expression expr2) {
-        return new DefaultSubtract(expr1, expr2);
-    }
 
     /**
      * {@inheritDoc }

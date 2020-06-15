@@ -48,7 +48,6 @@ import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.locationtech.jts.geom.Geometry;
@@ -346,7 +345,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
                     }
                 }
                 f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), candidateId);
-                addedIds.add(new DefaultFeatureId(String.valueOf(candidateId)));
+                addedIds.add(FF.featureId(String.valueOf(candidateId)));
             }
 
             //copy the feature

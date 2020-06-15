@@ -72,7 +72,7 @@ public class ExpressionOperationTest {
         sf.setPropertyValue("att1", 45);
         sf.setPropertyValue("att2", 12);
 
-        assertEquals(57.0, (Double)sf.getPropertyValue("calc"), 0.0);
+        assertEquals(57, (Long)sf.getPropertyValue("calc"), 0.0);
     }
 
 

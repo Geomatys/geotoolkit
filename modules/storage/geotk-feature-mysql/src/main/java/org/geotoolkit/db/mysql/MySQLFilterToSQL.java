@@ -29,12 +29,12 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Version;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.cql.FilterToCQLVisitor;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -478,7 +478,7 @@ public class MySQLFilterToSQL implements FilterToSQL {
         final Expression expression = candidate.getExpression();
 
         final String literal = candidate.getLiteral();
-        String pattern = DefaultPropertyIsLike.convertToSQL92(escape, wildCard, single, literal);
+        String pattern = FilterToCQLVisitor.convertToSQL92(escape, wildCard, single, literal);
 
         if(!matchingCase){
             pattern = pattern.toUpperCase();

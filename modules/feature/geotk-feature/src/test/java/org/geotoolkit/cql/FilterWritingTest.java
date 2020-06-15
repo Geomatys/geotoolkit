@@ -21,7 +21,6 @@ import java.util.Collections;
 import org.apache.sis.cql.CQLException;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -96,7 +95,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testId() throws CQLException {
-        final Filter filter = FF.id(Collections.singleton(new DefaultFeatureId("test-1")));
+        final Filter filter = FF.id(Collections.singleton(FF.featureId("test-1")));
         try{
             final String cql = CQL.write(filter);
             fail("ID filter does not exist in CQL");
@@ -171,7 +170,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testPropertyIsLike() throws CQLException {
-        final Filter filter = FF.like(FF.property("att"),"%hello");
+        final Filter filter = FF.like(FF.property("att"),"%hello", "%", "?", "\\", false);
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("att ILIKE '%hello'", cql);

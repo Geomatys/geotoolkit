@@ -78,7 +78,7 @@ public class ExpressionOperation extends AbstractOperation {
     @Override
     public Property apply(Feature feature, ParameterValueGroup parameters) {
         final Attribute<Object> att = TYPE.newInstance();
-        att.setValue(expression.evaluate(feature, null));
+        att.setValue(expression.evaluate(feature));
         return att;
     }
 }

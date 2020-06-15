@@ -48,10 +48,8 @@ import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.db.JDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.version.VersionControl;
@@ -64,12 +62,12 @@ import org.junit.Test;
 import org.opengis.util.GenericName;
 
 import static org.geotoolkit.db.postgres.PostgresProvider.*;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import static org.junit.Assert.*;
 import org.geotoolkit.storage.DataStores;
 import org.junit.After;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.storage.feature.query.SQLQuery;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -79,6 +77,7 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
 
 /**
  *
@@ -86,6 +85,8 @@ import org.opengis.feature.PropertyType;
  */
 @Ignore
 public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
+
+    private final FilterFactory FF = new DefaultFilterFactory2();
 
     /** driver types */
     private static final FeatureType FTYPE_DRIVER;
@@ -393,7 +394,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(voyage));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("Voyage.1"), addedIds.get(0));
+        assertEquals(FF.featureId("Voyage.1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -473,7 +474,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         List<FeatureId> addedIds = store.addFeatures(soundingType.getName().toString(), Collections.singleton(sounding));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("Sounding.1"), addedIds.get(0));
+        assertEquals(FF.featureId("Sounding.1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName().toString()));
@@ -565,7 +566,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         List<FeatureId> addedIds = store.addFeatures(recordType.getName().toString(), Collections.singleton(record));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("Record.1"), addedIds.get(0));
+        assertEquals(FF.featureId("Record.1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(recordType.getName().toString()));
@@ -626,7 +627,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(voyage));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("Voyage.1"), addedIds.get(0));
+        assertEquals(FF.featureId("Voyage.1"), addedIds.get(0));
 
         final org.apache.sis.storage.Query query = new SQLQuery("SELECT * FROM \"Stop\"", "s1");
         final FeatureReader ite = store.getFeatureReader(query);

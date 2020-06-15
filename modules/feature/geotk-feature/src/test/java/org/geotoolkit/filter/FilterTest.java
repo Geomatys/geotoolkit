@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.filter;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -28,7 +26,6 @@ import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.Not;
-import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -125,68 +122,6 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
 
         //test serialize
         assertSerializedEquals(not);
-    }
-
-    @Test
-    public void testIsBetween(){
-
-        PropertyName property = FF.property("testInteger");
-
-        int ibefore = 12;
-        int iafter = 250;
-        PropertyIsBetween between = FF.between(property, FF.literal(ibefore), FF.literal(iafter));
-        assertTrue(between.evaluate(CANDIDATE_1));
-        assertSerializedEquals(between); //test serialize
-
-        ibefore = 112;
-        iafter = 360;
-        between = FF.between(property, FF.literal(ibefore), FF.literal(iafter));
-        assertFalse(between.evaluate(CANDIDATE_1));
-
-        property = FF.property("date");
-
-        Date dbefore = new Date(DATE.getTime()-360000);
-        Date dafter = new Date(DATE.getTime()+360000);
-
-        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-        assertTrue(between.evaluate(CANDIDATE_1));
-
-        dbefore = new Date(DATE.getTime()+10000);
-        dafter = new Date(DATE.getTime()+360000);
-
-        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-        assertFalse(between.evaluate(CANDIDATE_1));
-        assertSerializedEquals(between); //test serialize
-
-        //test against strings
-        between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
-        assertTrue(between.evaluate(CANDIDATE_1));
-
-        between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
-        assertFalse(between.evaluate(CANDIDATE_1));
-
-        //test against timestamp
-        dbefore = new Timestamp(DATE.getTime()+10000);
-        dafter = new Timestamp(DATE.getTime()+360000);
-
-        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-        assertFalse(between.evaluate(CANDIDATE_1));
-
-        dbefore = new Timestamp(DATE.getTime()-360000);
-        dafter = new Timestamp(DATE.getTime()+360000);
-
-        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-        assertTrue(between.evaluate(CANDIDATE_1));
-        assertSerializedEquals(between); //test serialize
-
-        //test timestamp against string
-        property = FF.property("datetime2");
-        between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
-        assertTrue(between.evaluate(CANDIDATE_1));
-        assertSerializedEquals(between); //test serialize
-
-        between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
-        assertFalse(between.evaluate(CANDIDATE_1));
     }
 
     @Test
