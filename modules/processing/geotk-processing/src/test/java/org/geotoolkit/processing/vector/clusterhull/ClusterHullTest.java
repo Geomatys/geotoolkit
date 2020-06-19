@@ -1,11 +1,9 @@
 package org.geotoolkit.processing.vector.clusterhull;
 
-import com.fasterxml.jackson.core.JsonEncoding;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -15,7 +13,6 @@ import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.geotoolkit.storage.DataStores;
 import org.junit.Test;
 import org.locationtech.jts.geom.*;
-import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -23,15 +20,10 @@ import org.opengis.util.NoSuchIdentifierException;
 
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
 import static org.junit.Assert.*;
