@@ -575,6 +575,34 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
     }
 
+    private double extractNoData(SampleDimension baseDim) {
+        Set<Number> noData = baseDim.getNoDataValues();
+        Optional<Number> background = baseDim.getBackground();
+        if (noData.isEmpty() && !background.isPresent()) {
+            baseDim = baseDim.forConvertedValues(true);
+            final SampleDimension.Builder builder = new SampleDimension.Builder();
+            final Unit<?> unit = baseDim.getUnits().orElse(null);
+
+            for (Category c : baseDim.getCategories()) {
+                if (c.isQuantitative()) {
+                    builder.addQuantitative(c.getName(), c.getSampleRange(), c.getTransferFunction().orElse(null), unit);
+                } else {
+                    builder.addQualitative(c.getName(), c.getSampleRange());
+                }
+            }
+            builder.setBackground(null, Double.NaN);
+            baseDim = builder.build();
+            noData = baseDim.getNoDataValues();
+            background = baseDim.getBackground();
+        }
+
+        if (background.isPresent()) {
+            return background.get().doubleValue();
+        } else {
+            return noData.iterator().next().doubleValue();
+        }
+    }
+
     private void eraseCaches() {
         cachedGridGeometry = null;
         for (VirtualBand vb : bands) {
@@ -775,10 +803,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     readGridGeom = maskGrid.derive().margin(5,5).build();
                 }
 
-                GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(forceTransformedValues);
-                if (coverage.getSampleDimensions().size() != 1) {
+                final GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(forceTransformedValues);
+                final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
+                if (sampleDimensions.size() != 1) {
                     throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
                 }
+                final double[] coverageNoData = new double[]{extractNoData(sampleDimensions.get(0))};
                 final RenderedImage tileImage = coverage.render(null);
 
                 final BufferedImage workImage;
@@ -812,7 +842,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                         if (source.sampleTransform != null) {
                             pixelr[0] = source.sampleTransform.transform(pixelr[0]);
                         }
-                        if (noData[0] == pixelr[0] || Double.isNaN(pixelr[0])) continue;
+                        if (noData[0] == pixelr[0] || Double.isNaN(pixelr[0]) || coverageNoData[0] == pixelr[0]) {
+                            continue;
+                        }
                         write.getPixel(pixelw);
                         if (noData[0] == pixelw[0] || Double.isNaN(pixelw[0])) {
                             write.setPixel(pixelr);
@@ -832,7 +864,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                             pixelr[0] = source.sampleTransform.transform(pixelr[0]);
                             read.setPixel(pixelr);
                         }
-                        if (!(noData[0] == pixelr[0] || Double.isNaN(pixelr[0]))) {
+                        if (!(noData[0] == pixelr[0] || Double.isNaN(pixelr[0]) || coverageNoData[0] == pixelr[0])) {
                             Point pt = read.getPosition();
                             mask.set2D(pt.x, pt.y);
                         }

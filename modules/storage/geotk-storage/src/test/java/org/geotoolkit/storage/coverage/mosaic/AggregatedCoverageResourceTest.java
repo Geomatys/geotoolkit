@@ -31,11 +31,13 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.coverage.grid.BufferedGridCoverage;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.storage.StorageCountListener;
@@ -736,6 +738,152 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0)); Assert.assertEquals(4, reader.getSample(1));
         reader.moveTo(1, 0); Assert.assertEquals(2, reader.getSample(0)); Assert.assertEquals(5, reader.getSample(1));
         reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0)); Assert.assertEquals(6, reader.getSample(1));
+    }
+
+
+    /**
+     * Test aggregation generates a NaN between coverages
+     *
+     * @throws DataStoreException
+     * @throws TransformException
+     */
+    @Test
+    public void testNaNAdded() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+
+        | 1 |
+        +---+
+
+        Coverage 3
+                +---+
+                | 3 |
+                +---+
+        */
+
+        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid3 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_INT);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid3, bands, DataBuffer.TYPE_INT);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setSample(0, 1);
+        write3.moveTo(0, 0); write3.setSample(0, 3);
+
+
+        /*
+        We expect a final coverage with values [1,2,3] on a single row
+        +---+---+---+
+        | 1 |NaN| 3 |
+        +---+---+---+
+        */
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);;
+        aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.add(resource1);
+        aggregate.add(resource3);
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+
+        final GridCoverage coverage = aggregate.read(grid);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+
+    }
+
+    /**
+     * Test aggregation generates a NaN between coverages.
+     * One coverage has a special no data value.
+     *
+     * @throws DataStoreException
+     * @throws TransformException
+     */
+    @Test
+    public void testDefinedNaNAdded() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final SampleDimension sd1 = new SampleDimension.Builder().setName("data").build();
+        final Collection<SampleDimension> bands1 = Arrays.asList(sd1);
+
+        final SampleDimension sd3 = new SampleDimension.Builder()
+                .setName("data")
+                .addQualitative(null, -1)
+                .addQuantitative("data", 0, 10, 1, 0, Units.UNITY)
+                .build();
+        final Collection<SampleDimension> bands3 = Arrays.asList(sd3);
+
+        /*
+        Coverage 1
+        +---+
+        | 1 |
+        +---+
+
+        Coverage 3
+            +---+---+
+            |-1 | 3 |
+            +---+---+
+        */
+
+        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid3 = new GridGeometry(new GridExtent(2, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 1, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands1, DataBuffer.TYPE_INT);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid3, bands3, DataBuffer.TYPE_INT);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(Names.createLocalName(null, null, "Coverage1"), coverage1);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(Names.createLocalName(null, null, "Coverage3"), coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setSample(0, 1);
+        write3.moveTo(0, 0); write3.setSample(0, -1);
+        write3.moveTo(1, 0); write3.setSample(0, 3);
+
+
+        /*
+        We expect a final coverage with values [1,NaN,3] on a single row
+        +---+---+---+
+        | 1 |NaN| 3 |
+        +---+---+---+
+        */
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);;
+        aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.add(resource1);
+        aggregate.add(resource3);
+        aggregate.setSampleDimensions(Collections.singletonList(sd));
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+
+        final GridCoverage coverage = aggregate.read(grid);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+
     }
 
 }
