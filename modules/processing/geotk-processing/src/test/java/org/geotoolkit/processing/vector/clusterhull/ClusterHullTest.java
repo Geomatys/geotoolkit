@@ -1,9 +1,11 @@
 package org.geotoolkit.processing.vector.clusterhull;
 
+import com.fasterxml.jackson.core.JsonEncoding;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -12,9 +14,8 @@ import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.geotoolkit.storage.DataStores;
 import org.junit.Test;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.*;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -22,14 +23,18 @@ import org.opengis.util.NoSuchIdentifierException;
 
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * JUnit test of ClusterHull process
@@ -143,7 +148,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         GeometryCollection gc1 = extractGeometryCollectionFromFeatureSet(out);
         GeometryCollection gc2 = extractGeometryCollectionFromFeatureSet(expected);
         // is same geometry
-        assertTrue(gc1.equalsNorm(gc2));
+        assertTrue(gc1.equalsExact(gc2, 0.0001));
         FeatureType type1 = out.getType();
         FeatureType type2 = expected.getType();
         // is same feature
@@ -172,7 +177,6 @@ public class ClusterHullTest extends AbstractProcessTest {
         final DataStore store = DataStores.open(param);
         GenericName types = DataStores.getNames(store, true, FeatureSet.class).iterator().next();
         FeatureSet target = (FeatureSet) store.findResource(types.toString());
-
         return target;
     }
 }

@@ -65,6 +65,12 @@ public class ClusterHullProcess extends AbstractProcess {
     private GeometryCSTransformer trs;
 
     /**
+     * Geometric transformer update at each cluster hull computing,
+     * according with central meridian and origin of latitude for the inverse of Lambert CRS projection
+     */
+    private GeometryCSTransformer inv;
+
+    /**
      * Used to build the featureSet result
      */
     private static GeometryFactory geometryFactory = new GeometryFactory();
@@ -117,7 +123,7 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private void initTransformation(final FeatureSet inputFeatureSet) throws FactoryException, DataStoreException {
+    private void initTransformation(final FeatureSet inputFeatureSet) throws FactoryException, DataStoreException, NoninvertibleTransformException {
         Double[] median = getMedianPoint(inputFeatureSet);
         final FeatureType type = inputFeatureSet.getType();
         CoordinateReferenceSystem crs1 = FeatureExt.getCRS(type);
@@ -126,9 +132,12 @@ public class ClusterHullProcess extends AbstractProcess {
             crs1 = CommonCRS.WGS84.normalizedGeographic();
         }
         final CoordinateReferenceSystem crs2 = getLocalLambertCRS(median[0], median[1]);
-        final MathTransform mt = CRS.findOperation(crs1, crs2, null).getMathTransform();
+        final MathTransform mt  = CRS.findOperation(crs1, crs2, null).getMathTransform();
+        final MathTransform mtInv = mt.inverse();
         final CoordinateSequenceTransformer cst = new CoordinateSequenceMathTransformer(mt);
+        final CoordinateSequenceTransformer cstInv = new CoordinateSequenceMathTransformer(mtInv);
         trs = new GeometryCSTransformer(cst);
+        inv = new GeometryCSTransformer(cstInv);
     }
 
     private Set<Geometry> extractGeometrySet(final FeatureSet fs) throws DataStoreException {
@@ -180,14 +189,14 @@ public class ClusterHullProcess extends AbstractProcess {
     private Set<Geometry> applyClusterHull(Set<Geometry> in, Set<Geometry> out, Set<Geometry> current, Set<Geometry> store, final Double tolerance) throws TransformException {
         if (in.isEmpty()) {
             current.addAll(store);
-            out.add(applyOnSetConvexHull(current));
+            out.add(applyOnSetBuffer(current, tolerance));
             return out;
         } else {
             Set<Geometry> K = neighborhood(in, current, tolerance);
             if (K.isEmpty()) {
                 in.removeAll(current);
                 current.addAll(store);
-                out.add(applyOnSetConvexHull(current));
+                out.add(applyOnSetBuffer(current, tolerance));
                 if (in.isEmpty()) {
                     return out;
                 } else {
@@ -220,13 +229,15 @@ public class ClusterHullProcess extends AbstractProcess {
         return target;
     }
 
-    private Geometry applyOnSetConvexHull(Set<Geometry> geometries) {
+    private Geometry applyOnSetBuffer(Set<Geometry> geometries, double tolerance) throws TransformException {
         Geometry target = geometries.iterator().next();
 
         for (Geometry geom: geometries) {
             target = target.union(geom);
-            target = target.convexHull();
         }
+        target = trs.transform(target);
+        target = target.buffer(tolerance);
+        target = inv.transform(target);
         return target;
     }
 
