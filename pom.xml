@@ -999,5 +999,6 @@
   <modules>
     <module>modules</module>
     <module>demos</module>
+    <module>buildset</module>
   </modules>
 </project>
