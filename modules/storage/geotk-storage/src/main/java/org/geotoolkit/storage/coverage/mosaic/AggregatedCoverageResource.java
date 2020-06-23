@@ -864,7 +864,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                             pixelr[0] = source.sampleTransform.transform(pixelr[0]);
                             read.setPixel(pixelr);
                         }
-                        if (!(noData[0] == pixelr[0] || Double.isNaN(pixelr[0]) || coverageNoData[0] == pixelr[0])) {
+                        if ((coverageNoData[0] == pixelr[0]) && (noData[0] != coverageNoData[0])) {
+                            //we must replace the coverage no data by the target sample dimension one.
+                            pixelr[0] = noData[0];
+                            read.setPixel(pixelr);
+                        }
+                        if (!(noData[0] == pixelr[0] || Double.isNaN(pixelr[0]))) {
                             Point pt = read.getPosition();
                             mask.set2D(pt.x, pt.y);
                         }
