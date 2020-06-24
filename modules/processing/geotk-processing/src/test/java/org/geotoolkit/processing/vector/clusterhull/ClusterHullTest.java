@@ -27,21 +27,11 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 import org.opengis.util.NoSuchIdentifierException;
 
-import javax.measure.Unit;
-import javax.measure.quantity.Length;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
-import static org.junit.Assert.*;
-
 
 /**
  * JUnit test of ClusterHull process
  *
- * @author Maxime Gavens - décembre 2019
+ * @author Maxime Gavens - juin 2019
  * @module
  */
 public class ClusterHullTest extends AbstractProcessTest {
