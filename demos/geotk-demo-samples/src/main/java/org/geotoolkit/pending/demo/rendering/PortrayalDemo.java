@@ -64,7 +64,8 @@ public class PortrayalDemo {
         //create a feature layer
         final FeatureSet features = openShapeFile();
         final MutableStyle featureStyle = SF.style(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
-        final MapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
+        final MapLayer featureLayer = MapBuilder.createLayer(features);
+        featureLayer.setStyle(featureStyle);
 
         //create a coverage layer
 //        final GridCoverageResource reader = openWorldFile();

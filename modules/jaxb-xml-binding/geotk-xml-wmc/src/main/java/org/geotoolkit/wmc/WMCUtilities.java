@@ -176,7 +176,8 @@ public class WMCUtilities {
                 if (resource instanceof FeatureSet) {
                     final FeatureSet featureSet = (FeatureSet) resource;
                     final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(featureSet.getType());
-                    final MapLayer layer = MapBuilder.createFeatureLayer(featureSet, style);
+                    final MapLayer layer = MapBuilder.createLayer(featureSet);
+                    layer.setStyle(style);
                     context.layers().add(layer);
                 } else if (resource instanceof GridCoverageResource) {
                     final MapLayer mapLayer = MapBuilder.createCoverageLayer((GridCoverageResource) resource);

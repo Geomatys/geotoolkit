@@ -73,7 +73,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
         f.setPropertyValue("geom", new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(0, 0), new Coordinate(100, 0)}));
 
 
-        final MapLayer layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection(f));
+        final MapLayer layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(f));
         layer.setStyle(style);
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);

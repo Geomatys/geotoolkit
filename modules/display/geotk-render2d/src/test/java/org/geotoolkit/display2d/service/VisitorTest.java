@@ -108,7 +108,8 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         collection.add(Arrays.asList(f).iterator());
 
 
-        MapLayer layer = MapBuilder.createFeatureLayer(collection, sf.style(sf.polygonSymbolizer()));
+        MapLayer layer = MapBuilder.createLayer(collection);
+        layer.setStyle(sf.style(sf.polygonSymbolizer()));
         layer.setSelectable(true);
         layer.setVisible(true);
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());

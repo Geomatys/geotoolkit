@@ -45,7 +45,8 @@ public class MapContextDemo {
         //create a feature layer
         final FeatureSet features = openShapeFile();
         final MutableStyle featureStyle = SF.style(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
-        final MapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
+        final MapLayer featureLayer = MapBuilder.createLayer(features);
+        featureLayer.setStyle(featureStyle);
 
         //create a coverage layer
         File cloudFile = new File(MapContextDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
