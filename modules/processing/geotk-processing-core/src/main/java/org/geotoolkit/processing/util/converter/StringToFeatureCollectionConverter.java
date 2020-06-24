@@ -16,19 +16,18 @@
  */
 package org.geotoolkit.processing.util.converter;
 
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
-import org.geotoolkit.feature.util.converter.SimpleConverter;
-import org.geotoolkit.storage.DataStores;
-
 import java.io.Serializable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
 
 /**
  * Implementation of ObjectConverter to convert a path to a file in a String to a
@@ -72,7 +71,7 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
             }
 
             final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
-            parameters.put(AbstractFileFeatureStoreFactory.PATH.getName().getCode(), URI.create(url));
+            parameters.put(DataStoreProvider.LOCATION, URI.create(url));
 
             final FeatureStore store = (FeatureStore) DataStores.open(parameters);
 

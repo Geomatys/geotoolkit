@@ -60,4 +60,13 @@ public interface MultiResolutionResource extends Resource {
      */
     void removeModel(String identifier) throws DataStoreException;
 
+    /**
+     * Get a description of the inner storage of tiles.
+     *
+     * @return Tile format description, never null but may not contain any useful information.
+     */
+    default TileFormat getTileFormat() {
+        return TileFormat.UNDEFINED;
+    }
+
 }

@@ -16,20 +16,21 @@
  */
 package org.geotoolkit.processing.coverage.straighten;
 
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcessTest;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.PixelInCell;
 
@@ -54,12 +55,13 @@ public class StraightenProcessTest extends AbstractProcessTest {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(matrix);
+        gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,-1,20,30);
         final GridExtent gridEnv = new GridExtent(60, 40);
-        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
-        gcb.setGridGeometry(gridGeom);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        final GridGeometry gridGeom = new GridGeometry(gridEnv, PixelInCell.CELL_CORNER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
+        gcb.setDomain(gridGeom);
+        final GridCoverage coverage = gcb.build();
 
 
         final ProcessDescriptor desc = StraightenDescriptor.INSTANCE;
@@ -92,12 +94,13 @@ public class StraightenProcessTest extends AbstractProcessTest {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(matrix);
+        gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,1,20,30);
         final GridExtent gridEnv = new GridExtent(60, 40);
-        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
-        gcb.setGridGeometry(gridGeom);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        final GridGeometry gridGeom = new GridGeometry(gridEnv, PixelInCell.CELL_CORNER, gridToCrs, CommonCRS.WGS84.normalizedGeographic());
+        gcb.setDomain(gridGeom);
+        final GridCoverage coverage = gcb.build();
 
         final ProcessDescriptor desc = StraightenDescriptor.INSTANCE;
         final Parameters in = Parameters.castOrWrap(desc.getInputDescriptor().createValue());

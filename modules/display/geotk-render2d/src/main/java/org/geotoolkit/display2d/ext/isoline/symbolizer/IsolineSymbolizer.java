@@ -20,7 +20,7 @@ package org.geotoolkit.display2d.ext.isoline.symbolizer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
-import org.geotoolkit.processing.coverage.isoline2.Isoline2;
+import org.geotoolkit.processing.coverage.isoline.Isoline;
 import org.geotoolkit.se.xml.v110.*;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.StyleConstants;
@@ -255,6 +255,6 @@ public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbol
      * Get Isoline FeatureType
      */
     public static FeatureType buildIsolineType() throws DataStoreException {
-        return Isoline2.buildIsolineFeatureType(null,null);
+        return Isoline.buildIsolineFeatureType(null,null);
     }
 }

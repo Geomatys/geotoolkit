@@ -41,9 +41,9 @@ import org.geotoolkit.util.Utilities;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class WKBRasterImageReader extends ImageReader{
+public final class WKBRasterImageReader extends ImageReader {
 
-    public WKBRasterImageReader(ImageReaderSpi spi){
+    public WKBRasterImageReader(ImageReaderSpi spi) {
         super(spi);
     }
 
@@ -80,15 +80,15 @@ public class WKBRasterImageReader extends ImageReader{
     @Override
     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         final WKBRasterReader reader = new WKBRasterReader();
-        if(input instanceof byte[]){
+        if (input instanceof byte[]) {
             return reader.read((byte[])input);
-        }else if(input instanceof ImageInputStream){
+        } else if(input instanceof ImageInputStream) {
             return reader.read(new InputStreamAdapter((ImageInputStream)input));
-        }else{
+        } else {
             InputStream stream;
-            if(input instanceof InputStream){
+            if (input instanceof InputStream) {
                 stream = (InputStream) input;
-            }else{
+            } else {
                 stream = IOUtilities.open(input);
                 stream = new BufferedInputStream(stream);
             }
@@ -107,8 +107,9 @@ public class WKBRasterImageReader extends ImageReader{
             pluginClassName = "org.geotoolkit.coverage.wkb.WKBRasterImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Utilities.VERSION.toString();
-            writerSpiNames  = new String[] {"PostGISWKBraster"};
+            writerSpiNames  = new String[] {WKBRasterImageWriter.Spi.class.getName()};
             inputTypes      = new Class[0];
+            inputTypes      = ArraysExt.append(inputTypes, InputStream.class);
             inputTypes      = ArraysExt.append(inputTypes, ImageInputStream.class);
             inputTypes      = ArraysExt.append(inputTypes, File.class);
             inputTypes      = ArraysExt.append(inputTypes, URL.class);
@@ -158,98 +159,98 @@ public class WKBRasterImageReader extends ImageReader{
     }
 
     final class InputStreamAdapter extends InputStream {
-    /**
-     * The wrapped image input stream.
-     */
-    private final ImageInputStream input;
+        /**
+         * The wrapped image input stream.
+         */
+        private final ImageInputStream input;
 
-    /**
-     * Constructs a new input stream.
-     */
-    public InputStreamAdapter(final ImageInputStream input) {
-        this.input = input;
-    }
+        /**
+         * Constructs a new input stream.
+         */
+        public InputStreamAdapter(final ImageInputStream input) {
+            this.input = input;
+        }
 
-    /**
-     * Reads the next byte of data from the input stream.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Override
-    public int read() throws IOException {
-        return input.read();
-    }
+        /**
+         * Reads the next byte of data from the input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public int read() throws IOException {
+            return input.read();
+        }
 
-    /**
-     * Reads some number of bytes from the input stream.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Override
-    public int read(final byte[] b) throws IOException {
-        return input.read(b);
-    }
+        /**
+         * Reads some number of bytes from the input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public int read(final byte[] b) throws IOException {
+            return input.read(b);
+        }
 
-    /**
-     * Reads up to {@code len} bytes of data from the input stream.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Override
-    public int read(final byte[] b, final int off, final int len) throws IOException {
-        return input.read(b, off, len);
-    }
+        /**
+         * Reads up to {@code len} bytes of data from the input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public int read(final byte[] b, final int off, final int len) throws IOException {
+            return input.read(b, off, len);
+        }
 
-    /**
-     * Skips over and discards {@code n} bytes of data from this input stream.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Override
-    public long skip(final long n) throws IOException {
-        return input.skipBytes(n);
-    }
+        /**
+         * Skips over and discards {@code n} bytes of data from this input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public long skip(final long n) throws IOException {
+            return input.skipBytes(n);
+        }
 
-    /**
-     * Returns always {@code true}.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Override
-    public boolean markSupported() {
-        return true;
-    }
+        /**
+         * Returns always {@code true}.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public boolean markSupported() {
+            return true;
+        }
 
-    /**
-     * Marks the current position in this input stream.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Override
-    public void mark(final int readlimit) {
-        input.mark();
-    }
+        /**
+         * Marks the current position in this input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public void mark(final int readlimit) {
+            input.mark();
+        }
 
-    /**
-     * Repositions this stream to the position at the time
-     * the {@code mark} method was last called.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Override
-    public void reset() throws IOException {
-        input.reset();
-    }
+        /**
+         * Repositions this stream to the position at the time
+         * the {@code mark} method was last called.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public void reset() throws IOException {
+            input.reset();
+        }
 
-    /**
-     * Closes this input stream.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Override
-    public void close() throws IOException {
-        input.close();
-    }
+        /**
+         * Closes this input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public void close() throws IOException {
+            input.close();
+        }
     }
 
 }

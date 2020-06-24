@@ -22,14 +22,9 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.Collections;
 import java.util.stream.IntStream;
-
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.PixelTranslation;
@@ -40,9 +35,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
-
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.Process;
@@ -51,13 +43,15 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.AbstractProcessTest;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-
-import org.junit.Test;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  *
@@ -90,9 +84,10 @@ public class ResampleTest extends AbstractProcessTest {
         env.setRange(0, -180, +180);
         env.setRange(1, -80, +80);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(matrix);
-        gcb.setEnvelope(env);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        gcb.setValues(BufferedImages.toDataBuffer1D(matrix), null);
+        gcb.setDomain(new GridGeometry(new GridExtent(4, 4), env));
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+        final GridCoverage coverage = gcb.build();
 
 
         //get the description of the process we want
@@ -131,11 +126,10 @@ public class ResampleTest extends AbstractProcessTest {
         MathTransform gridToCrs = new AffineTransform2D(1,0,0,-1,20,60);
         gridToCrs = PixelTranslation.translate(gridToCrs, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("test");
-        gcb.setCoordinateReferenceSystem(crs);
-        gcb.setGridToCRS(gridToCrs);
-        gcb.setRenderedImage(array);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        gcb.setDomain(new GridGeometry(new GridExtent(3, 3), PixelInCell.CELL_CENTER, gridToCrs, crs));
+        gcb.setValues(BufferedImages.toDataBuffer1D(array), null);
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+        final GridCoverage coverage = gcb.build();
 
 
         //output layout
@@ -143,7 +137,7 @@ public class ResampleTest extends AbstractProcessTest {
         gridToCrsOut = PixelTranslation.translate(gridToCrsOut, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridExtent gridenv = new GridExtent(60, 60);
         final GridGeometry outGridGeom = new GridGeometry(gridenv, PixelInCell.CELL_CENTER, gridToCrsOut, crs);
-        GridCoverage result = new ResampleProcess(coverage, crs, new GridGeometry2D(outGridGeom), InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
+        GridCoverage result = new ResampleProcess(coverage, crs, outGridGeom, InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
 
         RenderedImage res = result.render(null);
         final Raster raster = res.getData();
@@ -170,11 +164,10 @@ public class ResampleTest extends AbstractProcessTest {
         MathTransform gridToCrs = new AffineTransform2D(1,0,0,-1,20,60);
         gridToCrs = PixelTranslation.translate(gridToCrs, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("test");
-        gcb.setCoordinateReferenceSystem(crs);
-        gcb.setGridToCRS(gridToCrs);
-        gcb.setRenderedImage(array);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        gcb.setDomain(new GridGeometry(new GridExtent(3, 3), PixelInCell.CELL_CENTER, gridToCrs, crs));
+        gcb.setValues(BufferedImages.toDataBuffer1D(array), null);
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+        final GridCoverage coverage = gcb.build();
 
 
         //output layout
@@ -183,7 +176,7 @@ public class ResampleTest extends AbstractProcessTest {
         final GridExtent gridenv = new GridExtent(60, 60);
         final GridGeometry outGridGeom = new GridGeometry(gridenv, PixelInCell.CELL_CENTER, gridToCrsOut, crs);
 
-        GridCoverage result = new ResampleProcess(coverage, crs, new GridGeometry2D(outGridGeom), InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
+        GridCoverage result = new ResampleProcess(coverage, crs, outGridGeom, InterpolationCase.NEIGHBOR, new double[]{Double.NaN}).executeNow();
 
         RenderedImage res = result.render(null);
         final Raster raster = res.getData();

@@ -37,7 +37,7 @@ import org.opengis.feature.Feature;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MapFieldRenderer implements JRFieldRenderer{
+public class MapFieldRenderer implements JRFieldRenderer {
 
     @Override
     public boolean canHandle(final JRField field) {

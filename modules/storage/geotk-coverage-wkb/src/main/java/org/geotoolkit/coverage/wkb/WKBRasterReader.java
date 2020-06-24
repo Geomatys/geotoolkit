@@ -17,11 +17,8 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.Point;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.SampleModel;
@@ -34,15 +31,17 @@ import java.io.InputStream;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
 import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 
 /**
@@ -107,14 +106,15 @@ public class WKBRasterReader {
         final BufferedImage image = read(stream);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         final String epsgCode = "EPSG:"+srid;
-        if(authorityFactory != null){
-            gcb.setCoordinateReferenceSystem(authorityFactory.createCoordinateReferenceSystem(epsgCode));
-        }else{
-            gcb.setCoordinateReferenceSystem(CRS.forCode(epsgCode));
+        final CoordinateReferenceSystem crs;
+        if (authorityFactory != null) {
+            crs = authorityFactory.createCoordinateReferenceSystem(epsgCode);
+        } else {
+            crs = CRS.forCode(epsgCode);
         }
-        gcb.setGridToCRS((MathTransform)getGridToCRS());
-        gcb.setRenderedImage(image);
-        return gcb.getGridCoverage2D();
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CENTER, getGridToCRS(), crs));
+        gcb.setValues(image);
+        return gcb.build();
     }
 
     /**
@@ -140,10 +140,10 @@ public class WKBRasterReader {
 
         final DataInput ds;
         final boolean littleEndian = stream.read() == 1;
-        if(littleEndian){
+        if (littleEndian) {
             //big endian
             ds = new LEDataInputStream(stream);
-        }else{
+        } else {
             //little endian
             ds = new DataInputStream(stream);
         }
@@ -164,14 +164,14 @@ public class WKBRasterReader {
         final int width = ds.readUnsignedShort();
         final int height = ds.readUnsignedShort();
 
-        if(nbBand == 0){
+        if (nbBand == 0) {
             //possible for empty raster
             return null;
         }
 
         final WKBRasterBand[] bands = new WKBRasterBand[nbBand];
 
-        for(int i=0;i<nbBand;i++){
+        for (int i=0;i<nbBand;i++) {
             final WKBRasterBand band = new WKBRasterBand();
 
             final byte b = ds.readByte();
@@ -214,20 +214,20 @@ public class WKBRasterReader {
                     throw new IOException("unknowned pixel type : "+band.getPixelType());
             }
 
-            if(band.isOffDatabase()){
+            if (band.isOffDatabase()) {
                 throw new IOException("can not access data which are off database");
-            }else{
+            } else {
                 //read values
                 final int nbBytePerPixel = band.getNbBytePerPixel();
-                final byte[] datas = new byte[width*height*band.getNbBytePerPixel()];
+                final byte[] datas = new byte[width * height * band.getNbBytePerPixel()];
                 ds.readFully(datas);
-                if(littleEndian && nbBytePerPixel > 1){
+                if (littleEndian && nbBytePerPixel > 1) {
                     //image databank expect values in big endian so we must flip bytes
                     byte temp;
-                    for(int k=0;k<datas.length;k+=nbBytePerPixel){
-                        for(int p=0,n=nbBytePerPixel/2; p<n ;p++){
-                            final int index1 = k+p;
-                            final int index2 = k+(nbBytePerPixel-p-1);
+                    for (int k = 0; k < datas.length; k += nbBytePerPixel) {
+                        for (int p = 0, n = nbBytePerPixel / 2; p < n; p++) {
+                            final int index1 = k + p;
+                            final int index2 = k + (nbBytePerPixel - p - 1);
                             temp = datas[index1];
                             datas[index1] = datas[index2];
                             datas[index2] = temp;
@@ -248,18 +248,18 @@ public class WKBRasterReader {
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
 
-        if(dataBufferType == DataBuffer.TYPE_BYTE){
+        if (dataBufferType == DataBuffer.TYPE_BYTE) {
             //more efficient but only works for byte type bands
             //check all band have the same sample model and rebuild data buffer
             Integer dataType = null;
             final byte[][] dataArray = new byte[nbBand][0];
             final int[] bankIndices = new int[nbBand];
             final int[] bankOffsets = new int[nbBand];
-            for(int i=0;i<bands.length;i++){
+            for (int i = 0 ; i < bands.length; i++) {
                 final WKBRasterBand band = bands[i];
-                if(dataType == null){
+                if (dataType == null) {
                     dataType = band.getDataBufferType();
-                }else if(dataType != band.getDataBufferType()){
+                } else if (dataType != band.getDataBufferType()) {
                     throw new IOException("Band type differ, can not be mapped to java image.");
                 }
                 dataArray[i] = band.getDatas();
@@ -276,13 +276,13 @@ public class WKBRasterReader {
             raster = RasterFactory.createBandedRaster(
                     db, width, height, scanlineStride, bankIndices, bankOffsets, new Point(0,0));
 
-        }else{
+        } else {
             raster = RasterFactory.createBandedRaster(dataBufferType,width,height,nbBand,new Point(0,0));
-            for(int i=0;i<bands.length;i++){
+            for (int i = 0;i < bands.length; i++) {
                 final byte[] datas = bands[i].getDatas();
                 final DataInputStream dds = new DataInputStream(new ByteArrayInputStream(datas));
-                for(int y=0;y<height;y++){
-                    for(int x=0;x<width;x++){
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
                         switch (dataBufferType) {
                             case DataBuffer.TYPE_SHORT:
                                 short d1 = dds.readShort();
@@ -325,19 +325,10 @@ public class WKBRasterReader {
         //rebuild image
         final SampleModel sm = raster.getSampleModel();
         ColorModel cm = PlanarImage.getDefaultColorModel(sm.getDataType(), raster.getNumBands());
-        if(cm==null){
+        if (cm == null) {
             //fallback
-            cm = createGrayScaleColorModel(sm.getDataType(), raster.getNumBands(), 0, min, max);
+            cm = ColorModelFactory.createGrayScale(sm.getDataType(), raster.getNumBands(), 0, min, max);
         }
-
         return new BufferedImage(cm, raster, false, null);
     }
-
-
-    private static ColorModel createGrayScaleColorModel(int dataType, int nbBand, int visibleBand, double min, double max) {
-        final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, visibleBand, min, max);
-        final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
-        return cm;
-    }
-
 }

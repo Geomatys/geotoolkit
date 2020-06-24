@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -61,7 +61,7 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
     private final InMemoryStore store;
     private final GenericName identifier;
-    private final List<Pyramid> pyramids = new ArrayList<>();
+    private final List<Pyramid> pyramids = new CopyOnWriteArrayList<>();
     private List<SampleDimension> dimensions;
 
     public InMemoryPyramidResource(final GenericName name) {
@@ -154,7 +154,7 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
     private final class InMemoryPyramid extends AbstractPyramid {
 
-        private final List<InMemoryMosaic> mosaics = new ArrayList<>();
+        private final List<InMemoryMosaic> mosaics = new CopyOnWriteArrayList<>();
 
         public InMemoryPyramid(String id, CoordinateReferenceSystem crs) {
             super(id, crs);
@@ -241,12 +241,12 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
         }
 
         @Override
-        public Optional<Tile> anyTile() throws DataStoreException {
+        public Tile anyTile() throws DataStoreException {
             final Iterator<InMemoryTile> iterator = mpTileReference.values().iterator();
             if (iterator.hasNext()) {
-                return Optional.of(iterator.next());
+                return iterator.next();
             }
-            return Optional.empty();
+            throw new DataStoreException("No tiles in mosaic");
         }
     }
 

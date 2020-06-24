@@ -24,8 +24,9 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
@@ -94,10 +95,12 @@ public class BandCombineTest extends org.geotoolkit.test.TestBase {
         g.setColor(color2);
         g.fillRect(0, 50, 100, 50);
 
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        env.setRange(0, 0, 500);
+        env.setRange(1, 0, 30);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(inputImage);
-        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
-        gcb.setEnvelope(0,0,500,30);
+        gcb.setValues(inputImage);
+        gcb.setDomain(env);
         return gcb.build();
     }
 

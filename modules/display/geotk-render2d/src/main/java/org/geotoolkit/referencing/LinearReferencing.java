@@ -16,6 +16,21 @@
  */
 package org.geotoolkit.referencing;
 
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Static;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.style.j2d.PathWalker;
+import org.geotoolkit.geometry.jts.awt.JTSLineIterator;
+import org.geotoolkit.geometry.math.Vector2d;
+import org.geotoolkit.gml.xml.MultiGeometry;
+import org.geotoolkit.math.XMath;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -24,23 +39,6 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.distance.DistanceOp;
-
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import javax.vecmath.Vector2d;
-
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Static;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.geometry.jts.awt.JTSLineIterator;
-import org.geotoolkit.display2d.style.j2d.PathWalker;
-import org.geotoolkit.gml.xml.MultiGeometry;
-import org.geotoolkit.math.XMath;
 
 /**
  * Linear referencing utilities.
@@ -60,10 +58,10 @@ public class LinearReferencing extends Static{
         public Vector2d right;
 
         public Coordinate getPoint(double distanceAlongLinear, double distancePerpendicular){
-            final Vector2d tempForward = new Vector2d();
-            final Vector2d tempPerpendicular = new Vector2d();
-            tempForward.scale(distanceAlongLinear, forward);
-            tempPerpendicular.scale(distancePerpendicular, right);
+            final Vector2d tempForward = new Vector2d(forward.x, forward.y);
+            final Vector2d tempPerpendicular = new Vector2d(right.x, right.y);
+            tempForward.scale(distanceAlongLinear);
+            tempPerpendicular.scale(distancePerpendicular);
             return new Coordinate(
                 segmentCoords[0].x+tempForward.x+tempPerpendicular.x,
                 segmentCoords[0].y+tempForward.y+tempPerpendicular.y);

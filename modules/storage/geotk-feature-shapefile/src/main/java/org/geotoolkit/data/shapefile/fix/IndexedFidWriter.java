@@ -30,7 +30,7 @@ import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
-import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
+import static org.geotoolkit.data.shapefile.ShapefileProvider.*;
 import org.geotoolkit.data.dbf.Closeable;
 
 /**

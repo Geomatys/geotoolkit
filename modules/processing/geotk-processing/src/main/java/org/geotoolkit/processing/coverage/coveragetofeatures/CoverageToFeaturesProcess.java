@@ -16,18 +16,17 @@
  */
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
-import java.awt.geom.Point2D;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.storage.feature.FeatureCollection;
@@ -142,7 +141,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage2D coverage, GridCoverageResource resource,
+    static Feature convertToFeature(FeatureType type, long x, long y, GridCoverage coverage, GridCoverageResource resource,
             GridGeometry gridGeom) throws DataStoreException, TransformException {
 
         final GeometryFactory geomFac = new GeometryFactory();
@@ -168,7 +167,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
         transfo.transform(pt1, 0, pt2, 0, 1);
 
         //make a Point2D with transformed coordinates in order to get cell bands
-        Point2D point2d = new Point2D.Double();
+        DirectPosition2D point2d = new DirectPosition2D();
         point2d.setLocation(pt2[0], pt2[1]);
 
         double[] infoBand = new double[nbBand];

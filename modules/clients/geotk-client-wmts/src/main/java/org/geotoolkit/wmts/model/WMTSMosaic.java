@@ -20,7 +20,6 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
@@ -28,9 +27,9 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.Classes;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.multires.AbstractMosaic;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
@@ -46,13 +45,14 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSMosaic implements Mosaic{
+public class WMTSMosaic implements Mosaic {
 
     private final String id = UUID.randomUUID().toString();
     private final WMTSPyramid pyramid;
     private final TileMatrix matrix;
     private final TileMatrixLimits limit;
     private final double scale;
+    private Tile anyTile = null;
 
     public WMTSMosaic(final WMTSPyramid pyramid, final TileMatrix matrix, final TileMatrixLimits limits) {
         this.pyramid = pyramid;
@@ -133,20 +133,10 @@ public class WMTSMosaic implements Mosaic{
 
     @Override
     public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
-        if(hints==null) hints = new HashMap();
-        if(!hints.containsKey(Pyramids.HINT_FORMAT)) hints.put(Pyramids.HINT_FORMAT,"image/png");
+        if (hints == null) hints = new HashMap();
+        if (!hints.containsKey(Pyramids.HINT_FORMAT)) hints.put(Pyramids.HINT_FORMAT,"image/png");
 
         return pyramid.getPyramidSet().getTile(pyramid, this, col, row, hints);
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
-        sb.append("   scale = ").append(getScale());
-        sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
-        sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
-        sb.append("   ").append(getEnvelope());
-        return sb.toString();
     }
 
     @Override
@@ -178,11 +168,19 @@ public class WMTSMosaic implements Mosaic{
     }
 
     @Override
-    public Optional<Tile> anyTile() throws DataStoreException {
-        if (limit == null) {
-            return Optional.ofNullable(getTile(0, 0, null));
-        } else {
-            return Optional.ofNullable(getTile(limit.getMinTileCol(), limit.getMinTileRow(), null));
+    public synchronized Tile anyTile() throws DataStoreException {
+        if (anyTile == null) {
+            if (limit == null) {
+                anyTile = getTile(0, 0, null);
+            } else {
+                anyTile = getTile(limit.getMinTileCol(), limit.getMinTileRow(), null);
+            }
         }
+        return anyTile;
+    }
+
+    @Override
+    public String toString() {
+        return AbstractMosaic.toString(this);
     }
 }

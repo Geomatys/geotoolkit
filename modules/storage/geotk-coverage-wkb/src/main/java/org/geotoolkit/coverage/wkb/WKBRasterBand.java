@@ -21,7 +21,7 @@ package org.geotoolkit.coverage.wkb;
  *
  * @author Johann Sorel (Geomatys)
  */
-class WKBRasterBand {
+final class WKBRasterBand {
 
     private int pixelType;
     private boolean offdatabase;
@@ -94,7 +94,7 @@ class WKBRasterBand {
         return WKBRasterConstants.getNbBytePerPixel(pixelType);
     }
 
-    public int getDataBufferType(){
+    public int getDataBufferType() {
         return WKBRasterConstants.getDataBufferType(pixelType);
     }
 

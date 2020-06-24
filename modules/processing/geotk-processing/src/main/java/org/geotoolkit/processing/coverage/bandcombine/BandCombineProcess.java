@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -121,11 +121,10 @@ public class BandCombineProcess extends AbstractProcess {
 
         // REBUILD COVERAGE ////////////////////////////////////////////////////
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("Concatenation: "+ inputCoverage.length+" inputs");
-        gcb.setRenderedImage(resultImage);
-        gcb.setGridGeometry(outputGeom);
-        gcb.setSampleDimensions(sds);
-        final GridCoverage resultCoverage = gcb.getGridCoverage2D();
+        gcb.setValues(resultImage);
+        gcb.setDomain(outputGeom);
+        gcb.setRanges(sds);
+        final GridCoverage resultCoverage = gcb.build();
 
         outputParameters.getOrCreate(OUT_COVERAGE).setValue(resultCoverage);
     }

@@ -43,6 +43,7 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
@@ -161,7 +162,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
                     final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                     if (!mosaics.isEmpty()) {
                         Mosaic mosaic = mosaics.iterator().next();
-                        dataRenderedImage = new MosaicImage(mosaic, ((GridCoverageResource) coverageRef).getSampleDimensions());
+                        dataRenderedImage = MosaicImage.create(mosaic, null, ((GridCoverageResource) coverageRef).getSampleDimensions());
                     } else {
                         dataRenderedImage = null;
                         return null;
@@ -171,7 +172,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
                 final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
                     Mosaic mosaic = mosaics.iterator().next();
-                    dataRenderedImage = new MosaicImage(mosaic, ((GridCoverageResource) coverageRef).getSampleDimensions());
+                    dataRenderedImage = MosaicImage.create(mosaic, null, ((GridCoverageResource) coverageRef).getSampleDimensions());
                 } else {
                     dataRenderedImage = null;
                     return null;
@@ -219,7 +220,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         Arrays.fill(fillValue, Double.NaN);
         final PixelIterator it = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(dataRenderedImage);
         final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
-        final Resample resampler = new Resample(sourceToTarget, targetImage, interpol, fillValue);
+        final Resample resampler = new Resample(sourceToTarget, targetImage, null, interpol, fillValue, ResampleBorderComportement.EXTRAPOLATION);
         resampler.fillImage();
 
         return targetImage;

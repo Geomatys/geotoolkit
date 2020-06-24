@@ -24,17 +24,19 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.process.ProcessDescriptor;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
-import org.junit.Test;
-import org.opengis.util.NoSuchIdentifierException;
 import static org.junit.Assert.*;
+import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.NoSuchIdentifierException;
 
 
 /**
@@ -62,9 +64,10 @@ public class ReformatTest extends org.geotoolkit.test.TestBase {
 
         final SampleModel inSampleModel = inputImage.getSampleModel();
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(inputImage);
-        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
-        gcb.setEnvelope(0,0,500,30);
+        gcb.setValues(inputImage);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
+        env.setEnvelope(0,0,500,30);
+        gcb.setDomain(new GridGeometry(null, env));
         final GridCoverage inCoverage = gcb.build();
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME, ReformatDescriptor.NAME);

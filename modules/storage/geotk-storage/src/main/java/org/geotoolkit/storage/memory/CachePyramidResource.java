@@ -18,12 +18,9 @@ package org.geotoolkit.storage.memory;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -42,36 +39,31 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.MosaicImage;
 import org.geotoolkit.storage.coverage.PyramidReader;
-import org.geotoolkit.storage.coverage.mosaic.MosaicedCoverageResource;
+import org.geotoolkit.storage.multires.AbstractMosaic;
+import org.geotoolkit.storage.multires.AbstractPyramid;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
@@ -84,11 +76,16 @@ import org.opengis.util.GenericName;
  */
 public class CachePyramidResource <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractGridResource implements MultiResolutionResource, GridCoverageResource {
 
-    private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors()*200);
-    private static final ThreadPoolExecutor EXEC = new ThreadPoolExecutor(
-            0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, IMAGEQUEUE,
+    private static final BlockingQueue IMAGEQUEUE = new PriorityBlockingQueue(Runtime.getRuntime().availableProcessors()*200);
+    private static final ThreadPoolExecutor EXEC;
+    static {
+        final int nbLoader = Runtime.getRuntime().availableProcessors();
+        EXEC = new ThreadPoolExecutor(
+            nbLoader, nbLoader, 1, TimeUnit.MINUTES, IMAGEQUEUE,
             Threads.createThreadFactory("Cached pyramid tile loader thread "),
             new ThreadPoolExecutor.CallerRunsPolicy());
+        EXEC.prestartAllCoreThreads();
+    }
 
 
     private final T parent;
@@ -161,22 +158,26 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
     public Collection<Pyramid> getModels() throws DataStoreException {
         final Collection<Pyramid> parentPyramids = (Collection<Pyramid>) parent.getModels();
 
-        //check cached pyramids, we need to do this until an event system is created
+        final List<Pyramid> pyramids;
+        synchronized (cacheMap) {
+            //check cached pyramids, we need to do this until an event system is created
 
-        //add missing pyramids in the cache view
-        final Set<String> keys = new HashSet<>();
-        for (Pyramid candidate : parentPyramids) {
-            if (!cacheMap.containsKey(candidate.getIdentifier())) {
-                cacheMap.put(candidate.getIdentifier(), new CachePyramid(candidate));
+            //add missing pyramids in the cache view
+            final Set<String> keys = new HashSet<>();
+            for (Pyramid candidate : parentPyramids) {
+                if (!cacheMap.containsKey(candidate.getIdentifier())) {
+                    cacheMap.put(candidate.getIdentifier(), new CachePyramid(candidate));
+                }
+                keys.add(candidate.getIdentifier());
             }
-            keys.add(candidate.getIdentifier());
-        }
-        if (cacheMap.size() != parentPyramids.size()) {
-            //some pyramids have been deleted from parent
-            cacheMap.keySet().retainAll(keys);
+            if (cacheMap.size() != parentPyramids.size()) {
+                //some pyramids have been deleted from parent
+                cacheMap.keySet().retainAll(keys);
+            }
+            pyramids = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new Pyramid[0]));
         }
 
-        return Collections.unmodifiableCollection(cacheMap.values());
+        return pyramids;
     }
 
     /**
@@ -197,16 +198,20 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
      */
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        final MultiResolutionModel newParentPyramid = parent.createModel(template);
-        final CachePyramid cached = new CachePyramid((Pyramid) newParentPyramid);
-        cacheMap.put(cached.getIdentifier(), cached);
-        return cached;
+        synchronized (cacheMap) {
+            final MultiResolutionModel newParentPyramid = parent.createModel(template);
+            final CachePyramid cached = new CachePyramid((Pyramid) newParentPyramid);
+            cacheMap.put(cached.getIdentifier(), cached);
+            return cached;
+        }
     }
 
     @Override
     public void removeModel(String identifier) throws DataStoreException {
-        parent.removeModel(identifier);
-        cacheMap.remove(identifier);
+        synchronized (cacheMap) {
+            parent.removeModel(identifier);
+            cacheMap.remove(identifier);
+        }
     }
 
     @Override
@@ -238,33 +243,41 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             //check cached mosaics, we need to do this until an event system is created
 
             //add missing mosaics in the cache view
-            final Set<String> keys = new HashSet<>();
-            for (Mosaic m : parentMosaics) {
-                if (!cacheMap.containsKey(m.getIdentifier())) {
-                    cacheMap.put(m.getIdentifier(), new CacheMosaic(this, parent.getIdentifier(), m));
+            final List<Mosaic> mosaics;
+            synchronized (cacheMap) {
+                final Set<String> keys = new HashSet<>();
+                for (Mosaic m : parentMosaics) {
+                    if (!cacheMap.containsKey(m.getIdentifier())) {
+                        cacheMap.put(m.getIdentifier(), new CacheMosaic(this, parent.getIdentifier(), m));
+                    }
+                    keys.add(m.getIdentifier());
                 }
-                keys.add(m.getIdentifier());
-            }
-            if (cacheMap.size() != parentMosaics.size()) {
-                //some mosaics have been deleted from parent
-                cacheMap.keySet().retainAll(keys);
+                if (cacheMap.size() != parentMosaics.size()) {
+                    //some mosaics have been deleted from parent
+                    cacheMap.keySet().retainAll(keys);
+                }
+                mosaics = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new Mosaic[0]));
             }
 
-            return Collections.unmodifiableCollection(cacheMap.values());
+            return mosaics;
         }
 
         @Override
         public Mosaic createMosaic(Mosaic template) throws DataStoreException {
-            final Mosaic newParentMosaic = parent.createMosaic(template);
-            final CacheMosaic cached = new CacheMosaic(this, parent.getIdentifier(), newParentMosaic);
-            cacheMap.put(cached.getIdentifier(), cached);
-            return cached;
+            synchronized (cacheMap) {
+                final Mosaic newParentMosaic = parent.createMosaic(template);
+                final CacheMosaic cached = new CacheMosaic(this, parent.getIdentifier(), newParentMosaic);
+                cacheMap.put(cached.getIdentifier(), cached);
+                return cached;
+            }
         }
 
         @Override
         public void deleteMosaic(String mosaicId) throws DataStoreException {
-            parent.deleteMosaic(mosaicId);
-            cacheMap.remove(mosaicId);
+            synchronized (cacheMap) {
+                parent.deleteMosaic(mosaicId);
+                cacheMap.remove(mosaicId);
+            }
         }
 
         @Override
@@ -287,6 +300,10 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             return parent.getFormat();
         }
 
+        @Override
+        public String toString(){
+            return AbstractPyramid.toString(this);
+        }
     }
 
     private class CacheMosaic implements Mosaic {
@@ -359,18 +376,8 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             if (value == null) {
                 if (noblocking) {
                     if (tilesInProcess.add(key)) {
-                        //TODO replace by a thread poll or an executor
                         //loadUpperTile(col, row);
-                        EXEC.submit(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    loadTile(col, row, hints);
-                                } catch (DataStoreException ex) {
-                                    Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
-                                }
-                            }
-                        });
+                        IMAGEQUEUE.add(new TileLoader(CacheMosaic.this, col, row, hints));
                     }
                 } else {
                     value = loadTile(col, row, hints);
@@ -412,65 +419,69 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
             return value;
         }
 
-        private void loadUpperTile(long col, long row) throws DataStoreException {
-
-            //find closest mosaic with a lower resolution
-            CacheMosaic candidate = null;
-            for (CacheMosaic m : (Collection<CacheMosaic>) pyramid.getMosaics()) {
-                if (m.getScale() > parent.getScale()) {
-                    if (candidate == null) {
-                        candidate = m;
-                    } else if (m.getScale() < candidate.getScale()) {
-                        candidate = m;
-                    }
-                }
-            }
-
-            if (candidate == null) return;
-
-            //compute wanted tile grid geometry
-            final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
-            final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
-            final List<SampleDimension> sds = getSampleDimensions();
-            final GridGeometry tileGridGeometry = Pyramids.getTileGridGeometry2D(this, coord, crs);
-
-            //check parent tiles are available in the cache
-            final Rectangle rectangle = Pyramids.getTilesInEnvelope(candidate, tileGridGeometry.getEnvelope());
-            for (int x=0;x<rectangle.width;x++) {
-                for (int y=0;y<rectangle.height;y++) {
-                    if (!candidate.isInCache(rectangle.x+x, rectangle.y+y)) {
-                        return;
-                    }
-                }
-            }
-
-            //compute candidate mosaic
-            final MosaicImage image = new MosaicImage(candidate, rectangle, sds);
-            final GridGeometry aboveGridGeometry = Pyramids.getTileGridGeometry2D(candidate, rectangle, crs);
-            final GridCoverage coverage = new GridCoverage2D(aboveGridGeometry, sds, image);
-
-            //resample tile
-            CacheTile tile;
-            try {
-                BufferedImage img = BufferedImages.createImage(image, null, null, null, null);
-                MosaicedCoverageResource.resample(coverage, image, InterpolationCase.NEIGHBOR, tileGridGeometry, img);
-                tile = new CacheTile(img, coord, false);
-            } catch (TransformException | FactoryException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
-            }
-
-            final String key = tileId(col, row);
-            CacheTile value = null;
-            final Cache.Handler<CacheTile> handler = tiles.lock(key);
-            try {
-                value = handler.peek();
-                if (value == null) {
-                    value = tile;
-                }
-            } finally {
-                handler.putAndUnlock(value);
-            }
-        }
+        /**
+         * Following is an experimental tile generation from available upper level tiles.
+         * Should be nice to reactive when coverage and mosaic API has moved to SIS.
+         */
+//        private void loadUpperTile(long col, long row) throws DataStoreException {
+//
+//            //find closest mosaic with a lower resolution
+//            CacheMosaic candidate = null;
+//            for (CacheMosaic m : (Collection<CacheMosaic>) pyramid.getMosaics()) {
+//                if (m.getScale() > parent.getScale()) {
+//                    if (candidate == null) {
+//                        candidate = m;
+//                    } else if (m.getScale() < candidate.getScale()) {
+//                        candidate = m;
+//                    }
+//                }
+//            }
+//
+//            if (candidate == null) return;
+//
+//            //compute wanted tile grid geometry
+//            final Point coord = new Point(Math.toIntExact(col), Math.toIntExact(row));
+//            final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
+//            final List<SampleDimension> sds = getSampleDimensions();
+//            final GridGeometry tileGridGeometry = Pyramids.getTileGridGeometry2D(this, coord, crs);
+//
+//            //check parent tiles are available in the cache
+//            final Rectangle rectangle = Pyramids.getTilesInEnvelope(candidate, tileGridGeometry.getEnvelope());
+//            for (int x=0;x<rectangle.width;x++) {
+//                for (int y=0;y<rectangle.height;y++) {
+//                    if (!candidate.isInCache(rectangle.x+x, rectangle.y+y)) {
+//                        return;
+//                    }
+//                }
+//            }
+//
+//            //compute candidate mosaic
+//            final MosaicImage image = new MosaicImage(candidate, rectangle, sds);
+//            final GridGeometry aboveGridGeometry = Pyramids.getTileGridGeometry2D(candidate, rectangle, crs);
+//            final GridCoverage coverage = new GridCoverage2D(aboveGridGeometry, sds, image);
+//
+//            //resample tile
+//            CacheTile tile;
+//            try {
+//                BufferedImage img = BufferedImages.createImage(image, null, null, null, null);
+//                MosaicedCoverageResource.resample(coverage, image, InterpolationCase.NEIGHBOR, tileGridGeometry, img);
+//                tile = new CacheTile(img, coord, false);
+//            } catch (TransformException | FactoryException ex) {
+//                throw new DataStoreException(ex.getMessage(), ex);
+//            }
+//
+//            final String key = tileId(col, row);
+//            CacheTile value = null;
+//            final Cache.Handler<CacheTile> handler = tiles.lock(key);
+//            try {
+//                value = handler.peek();
+//                if (value == null) {
+//                    value = tile;
+//                }
+//            } finally {
+//                handler.putAndUnlock(value);
+//            }
+//        }
 
         @Override
         public void deleteTile(int tileX, int tileY) throws DataStoreException {
@@ -479,15 +490,19 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         }
 
         @Override
-        public Optional<Tile> anyTile() throws DataStoreException {
+        public Tile anyTile() throws DataStoreException {
             Iterator<Map.Entry<String, CacheTile>> ite = tiles.entrySet().iterator();
             if (ite.hasNext()) {
                 CacheTile value = ite.next().getValue();
-                return Optional.of(value);
+                return value;
             }
             return parent.anyTile();
         }
 
+        @Override
+        public String toString() {
+            return AbstractMosaic.toString(this);
+        }
     }
 
     private final class CacheTile extends AbstractResource implements ImageTile{
@@ -557,4 +572,35 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         }
     }
 
+    private class TileLoader implements Runnable, Comparable<TileLoader> {
+
+        private final long creationTime;
+        private final CacheMosaic mosaic;
+        private final long col;
+        private final long row;
+        private final Map hints;
+
+        private TileLoader(CacheMosaic mosaic, long col, long row, Map hints) {
+            this.mosaic = mosaic;
+            this.col = col;
+            this.row = row;
+            this.hints = hints;
+            this.creationTime = System.nanoTime();
+        }
+
+        @Override
+        public void run() {
+            try {
+                mosaic.loadTile(col, row, hints);
+            } catch (DataStoreException ex) {
+                Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+
+        @Override
+        public int compareTo(TileLoader o) {
+            return Long.compare(creationTime, o.creationTime);
+        }
+
+    }
 }

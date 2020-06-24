@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -28,13 +27,14 @@ import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.measure.Units;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -620,11 +620,8 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setCoordinateReferenceSystem(env.getCoordinateReferenceSystem());
-        gcb.setRenderedImage(image);
-        gcb.setGridToCRS(new AffineTransform(1, 0, 0, -1, env.getMinimum(0), env.getMaximum(1)));
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setSampleDimensions(new double[]{0, 0, 0}, new double[]{255, 255, 255}, Units.UNITY, null);
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, -1, env.getMinimum(0), env.getMaximum(1)), env.getCoordinateReferenceSystem()));
+        gcb.setValues(image);
         final GridCoverage coverage = gcb.build();
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer();

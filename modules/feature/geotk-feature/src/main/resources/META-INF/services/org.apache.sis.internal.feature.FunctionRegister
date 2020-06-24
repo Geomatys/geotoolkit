@@ -5,3 +5,4 @@ org.geotoolkit.filter.function.string.StringFunctionFactory
 org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory
 org.geotoolkit.filter.function.groovy.GroovyFunctionFactory
 org.geotoolkit.filter.function.lua.LuaFunctionFactory
+org.geotoolkit.filter.function.feature.FeatureFunctionFactory

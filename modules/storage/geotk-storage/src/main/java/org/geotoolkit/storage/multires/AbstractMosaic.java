@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -163,10 +164,25 @@ public abstract class AbstractMosaic implements Mosaic {
             assert end.x >= start.x;
             assert end.y >= start.y;
 
+            //at this point we are sure of the Y range
+            //we still need to search for X
+            for (int y = start.y; y <= end.y; y++) {
+                for (int x = 0; x < start.x; x++) {
+                    if (!isMissing(x, y)) {
+                        start.x = x;
+                    }
+                }
+                for (int x = gridSize.width-1; x > end.x; x--) {
+                    if (!isMissing(x, y)) {
+                        end.x = x;
+                    }
+                }
+            }
+
             long sx = ((long) start.x) * tileSize.width;
             long sy = ((long) start.y) * tileSize.height;
-            long ex = (end.x - start.x + 1) * tileSize.width;
-            long ey = (end.y - start.y + 1) * tileSize.height;
+            long ex = ((long) end.x + 1) * tileSize.width;
+            long ey = ((long) end.y + 1) * tileSize.height;
             return new GridExtent(null, new long[]{sx,sy}, new long[]{ex,ey}, false);
         } else {
             //all mosaic tiles are missing
@@ -204,10 +220,20 @@ public abstract class AbstractMosaic implements Mosaic {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
-        sb.append("   scale = ").append(getScale());
-        sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
-        sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
+        return toString(this);
+    }
+
+    /**
+     * Pretty print outut of given mosaic.
+     * @param mosaic not null
+     */
+    public static String toString(Mosaic mosaic) {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(mosaic));
+        sb.append("   id = ").append(mosaic.getIdentifier());
+        sb.append("   scale = ").append(mosaic.getScale());
+        sb.append("   gridSize[").append(mosaic.getGridSize().width).append(',').append(mosaic.getGridSize().height).append(']');
+        sb.append("   tileSize[").append(mosaic.getTileSize().width).append(',').append(mosaic.getTileSize().height).append(']');
+        sb.append("   bbox = ").append(new GeneralEnvelope(mosaic.getEnvelope()).toString());
         return sb.toString();
     }
 

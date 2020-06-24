@@ -495,7 +495,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                                                         // seems to fail in the
                                                         // URL point into the
                                                         // JAR file.
-        ShapefileFeatureStore store = (ShapefileFeatureStore) new ShapefileFeatureStoreFactory()
+        ShapefileFeatureStore store = (ShapefileFeatureStore) new ShapefileProvider()
                 .createDataStore(TestData.url(AbstractTestCaseSupport.class, STREAM).toURI());
         int count = 0;
         try (FeatureReader reader = store.getFeatureReader(QueryBuilder.all(store.getNames().iterator().next()))) {

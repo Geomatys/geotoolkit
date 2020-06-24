@@ -53,7 +53,6 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Strings;
 
 
 /**
@@ -1187,7 +1186,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                 final boolean[] replaced = new boolean[(MIMETypes != null) ? MIMETypes.length : 0];
                 for (int i=0; i<names.length; i++) {
                     final String oldName = names[i];
-                    final String newName = oldName.concat(Strings.isUpperCase(oldName) ? upper : suffix);
+                    final String newName = oldName.concat(isUpperCase(oldName) ? upper : suffix);
                     for (int j=0; j<replaced.length; j++) {
                         if (!replaced[j]) {
                             MIMETypes[j] = MIMETypes[j].replace(oldName, newName);
@@ -1197,6 +1196,28 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                     names[i] = newName;
                 }
             }
+        }
+
+        /**
+         * Returns {@code true} if every characters in the given character sequence are
+         * {@linkplain Character#isUpperCase(int) upper-case}.
+         *
+         * @param  text The character sequence to test.
+         * @return {@code true} if every character are upper-case.
+         * @throws NullPointerException if the argument is null.
+         *
+         * @see String#toUpperCase()
+         */
+        private static boolean isUpperCase(final String text) {
+            int i = 0;
+            while (i < text.length()) {
+                final int c = text.codePointAt(i);
+                if (!Character.isUpperCase(c)) {
+                    return false;
+                }
+                i += Character.charCount(c);
+            }
+            return true;
         }
 
         /**

@@ -8,7 +8,6 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -29,7 +28,7 @@ public class TMSClientDemo {
 
         final MapContext context = createOSMTMSContext();
 
-        FXMapFrame.show(context,false,null);
+//        FXMapFrame.show(context,false,null);
 
     }
 

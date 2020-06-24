@@ -27,8 +27,8 @@ import org.apache.sis.setup.OptionKey;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.storage.coverage.DefaultImageTile;
 
 /**
  *
@@ -42,7 +42,6 @@ public class RequestImageTile extends DefaultImageTile {
 
     @Override
     public ImageReader getImageReader() throws IOException {
-
 
         if(spi == null){
             //try to find reader

@@ -32,6 +32,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.storage.MetadataBuilder;
@@ -40,8 +41,6 @@ import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import static org.geotoolkit.coverage.tiff.LandsatConstants.*;
 import org.geotoolkit.coverage.tiff.LandsatConstants.CoverageGroup;
@@ -164,7 +163,7 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
         } catch (Exception ex) {
             throw new DataStoreException(ex);
         }
-        return new GridGeometry2D(gridExtent, PixelInCell.CELL_CORNER, gridToCRS, crs);
+        return new GridGeometry(gridExtent, PixelInCell.CELL_CORNER, gridToCRS, crs);
     }
 
     /**
@@ -260,10 +259,8 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
             final RenderedImage outImage =  (RenderedImage) result.parameter("result").getValue();
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setRenderedImage(outImage);
-            gcb.setGridGeometry(geometry);
-            gcb.setName(getCoverageName().toString());
-
+            gcb.setValues(outImage);
+            gcb.setDomain(geometry);
             return gcb.build();
 
         } catch (IOException | NoSuchIdentifierException | ProcessException ex) {

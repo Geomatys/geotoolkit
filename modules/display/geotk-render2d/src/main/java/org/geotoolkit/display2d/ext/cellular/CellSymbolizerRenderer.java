@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.ext.cellular;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,8 +30,10 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -51,7 +52,6 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -73,7 +73,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedCellSymbolizer>{
+public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedCellSymbolizer> {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -90,28 +90,28 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         }
         final FeatureSet fs = (FeatureSet) resource;
 
-        if(symbol.getCachedRule() == null){
+        if (symbol.getCachedRule() == null) {
             return false;
         }
         //calculate the cells
         final int cellSize = symbol.getSource().getCellSize();
         final AffineTransform trs = renderingContext.getDisplayToObjective();
-        final double objCellSize = XAffineTransform.getScale(trs) * cellSize;
+        final double objCellSize = AffineTransforms2D.getScale(trs) * cellSize;
 
         //find min and max cols/rows
         final Envelope env = renderingContext.getCanvasObjectiveBounds2D();
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-        final int minCol = (int)(env.getMinimum(0) / objCellSize);
-        final int maxCol = (int)((env.getMaximum(0) / objCellSize)+0.5);
-        final int minRow = (int)(env.getMinimum(1) / objCellSize);
-        final int maxRow = (int)((env.getMaximum(1) / objCellSize)+0.5);
+        final int minCol = (int) (env.getMinimum(0) / objCellSize);
+        final int maxCol = (int) ((env.getMaximum(0) / objCellSize) + 0.5);
+        final int minRow = (int) (env.getMinimum(1) / objCellSize);
+        final int maxRow = (int) ((env.getMaximum(1) / objCellSize) + 0.5);
         final int nbRow = maxRow - minRow;
         final int nbCol = maxCol - minCol;
 
         //create all cell contours
         final Polygon[][] contours = new Polygon[nbRow][nbCol];
-        for(int r=0; r<nbRow; r++){
-            for(int c=0; c<nbCol; c++){
+        for (int r = 0; r < nbRow; r++) {
+            for (int c = 0; c < nbCol; c++) {
                 final double minx = (minCol+c) * objCellSize;
                 final double maxx = minx + objCellSize;
                 final double miny = (minRow+r) * objCellSize;
@@ -134,29 +134,29 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         Statistics[][][] stats = null;
 
         try (final RenderingRoutines.GraphicIterator graphics = RenderingRoutines.getIterator(fs, renderingContext)) {
-            while(graphics.hasNext()){
+            while (graphics.hasNext()) {
                 final ProjectedObject obj = graphics.next();
                 final ProjectedFeature projFeature = (ProjectedFeature) obj;
-                if(baseType==null){
+                if (baseType == null) {
                     //we expect all features to have the same type
                     baseType = projFeature.getCandidate().getType();
                     cellType = CellSymbolizer.buildCellType(baseType,crs);
 
                     final List<String> props = new ArrayList<>();
-                    for(PropertyType desc : baseType.getProperties(true)){
-                        if(desc instanceof AttributeType){
+                    for (PropertyType desc : baseType.getProperties(true)) {
+                        if (desc instanceof AttributeType) {
                             final AttributeType att = (AttributeType) desc;
                             final Class binding = att.getValueClass();
-                            if(Number.class.isAssignableFrom(binding) || String.class.isAssignableFrom(binding)){
+                            if (Number.class.isAssignableFrom(binding) || String.class.isAssignableFrom(binding)) {
                                 props.add(att.getName().toString());
                             }
                         }
                     }
                     numericProperties = props.toArray(new String[props.size()]);
                     stats = new Statistics[numericProperties.length][nbRow][nbCol];
-                    for(int i=0;i<numericProperties.length;i++){
-                        for(int j=0;j<nbRow;j++){
-                            for(int k=0;k<nbCol;k++){
+                    for (int i = 0; i < numericProperties.length; i++) {
+                        for (int j = 0; j < nbRow; j++) {
+                            for (int k = 0; k < nbCol; k++) {
                                 stats[i][j][k] = new Statistics("");
                             }
                         }
@@ -169,11 +169,11 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 int row=-1;
                 int col=-1;
                 loop:
-                for(Geometry g : geoms){
-                    if(g==null) continue;
-                    for(int r=0;r<nbRow;r++){
-                        for(int c=0;c<nbCol;c++){
-                            if (contours[r][c].intersects(g)){
+                for (Geometry g : geoms) {
+                    if (g == null) continue;
+                    for (int r = 0; r < nbRow; r++) {
+                        for (int c = 0; c < nbCol; c++) {
+                            if (contours[r][c].intersects(g)) {
                                 row = r;
                                 col = c;
                                 break loop;
@@ -183,9 +183,9 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 }
 
                 //fill stats
-                if(row!=-1){
+                if (row != -1) {
                     final Feature feature = projFeature.getCandidate();
-                    for(int i=0;i<numericProperties.length;i++){
+                    for (int i = 0; i < numericProperties.length; i++) {
                         final Object value = feature.getProperty(numericProperties[i]).getValue();
                         try {
                             final Number num = ObjectConverters.convert(value, Number.class);
@@ -203,13 +203,13 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             throw new PortrayalException(ex);
         }
 
-        if(numericProperties==null){
+        if (numericProperties == null) {
             //nothing in the iterator
             return false;
         }
 
         //render the cell features
-        final Object[] values = new Object[2+7*numericProperties.length];
+        final Object[] values = new Object[2 + 7 * numericProperties.length];
         final Feature feature = cellType.newInstance();
         feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
         final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
@@ -218,17 +218,17 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         //expand the search area by the maximum symbol size
         float symbolsMargin = renderers.getMargin(null, renderingContext);
-        if(symbolsMargin==0) symbolsMargin = 300f;
+        if (symbolsMargin == 0) symbolsMargin = 300f;
 
-        for(int r=0;r<nbRow;r++){
-            for(int c=0;c<nbCol;c++){
+        for (int r = 0; r < nbRow; r++) {
+            for (int c = 0; c < nbCol; c++) {
                 pf.setCandidate(feature);
 
                 values[0] = contours[r][c].getCentroid();
                 JTS.setCRS( ((Geometry)values[0]), crs);
                 values[1] = contours[r][c];
                 int k=1;
-                for(int b=0,n=numericProperties.length;b<n;b++){
+                for (int b = 0, n = numericProperties.length; b < n; b++) {
                     values[++k] = stats[b][r][c].count();
                     values[++k] = stats[b][r][c].minimum();
                     values[++k] = stats[b][r][c].mean();
@@ -248,7 +248,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
     @Override
     public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
-        if(symbol.getCachedRule() == null){
+        if (symbol.getCachedRule() == null) {
             return false;
         }
 
@@ -256,7 +256,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //when building tiles
         final int cellSize = symbol.getSource().getCellSize();
         final AffineTransform2D displayToObjective = renderingContext.getDisplayToObjective();
-        double objCellSize = XAffineTransform.getScale(displayToObjective) * cellSize;
+        double objCellSize = AffineTransforms2D.getScale(displayToObjective) * cellSize;
         final GeneralEnvelope env = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         final int hidx = CRSUtilities.firstHorizontalAxis(env.getCoordinateReferenceSystem());
         //round under and above to match cell size
@@ -268,13 +268,16 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         try {
             coverage = getObjectiveCoverage(projectedCoverage,
                     renderingContext.getGridGeometry(),false);
+        } catch (NoSuchDataException ex) {
+            //no data on requested area
+            return false;
         } catch (Exception ex) {
             throw new PortrayalException(ex);
         }
-        if(coverage!=null){
+        if (coverage != null) {
             coverage = coverage.forConvertedValues(true);
         }
-        if(coverage == null){
+        if (coverage == null) {
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
             return false;
         }
@@ -299,8 +302,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final double[] gridCoord = new double[gridToCRS.getSourceDimensions()];
         final double[] crsCoord = new double[gridToCRS.getTargetDimensions()];
         final double[] pixel = new double[nbBand];
-        try{
-            while(ite.next()){
+        try {
+            while (ite.next()) {
                 Point position = ite.getPosition();
                 gridCoord[0] = position.getX();
                 gridCoord[1] = position.getY();
@@ -310,14 +313,14 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 x = (int) crsCoord[0];
                 y = (int) crsCoord[1];
                 ite.getPixel(pixel);
-                for (i=0;i<nbBand;i++) {
+                for (i = 0; i < nbBand; i++) {
                     if (stats[i][y][x] == null) stats[i][y][x] = new Statistics("");
                     if (!Double.isNaN(pixel[i])) {
                         stats[i][y][x].accept(pixel[i]);
                     }
                 }
             }
-        }catch(TransformException ex){
+        } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
 
@@ -335,11 +338,12 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         renderingContext.getRenderingHints().put(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
 
-        for(y=0;y<nby;y++){
-            for(x=0;x<nbx;x++){
-                if(stats[0][y][x]==null){
-                    for(i=0;i<nbBand;i++)
-                    stats[i][y][x] = new Statistics("");
+        for (y = 0; y < nby; y++) {
+            for (x = 0; x < nbx; x++) {
+                if (stats[0][y][x] == null) {
+                    for (i = 0; i < nbBand; i++) {
+                        stats[i][y][x] = new Statistics("");
+                    }
                 }
                 pf.clearDataCache();
                 double cx = area.getMinimum(0) + (0.5+x)*objCellSize;
@@ -347,7 +351,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
                 feature.setPropertyValue(CellSymbolizer.PROPERY_GEOM_CENTER, GF.createPoint(new Coordinate(cx,cy)));
                 int k=0;
-                for(int b=0,n=nbBand;b<n;b++){
+                for (int b = 0, n = nbBand; b < n; b++) {
                     feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_COUNT,(double)stats[b][y][x].count());
                     feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_MIN,stats[b][y][x].minimum());
                     feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_MEAN,stats[b][y][x].mean());
@@ -367,9 +371,9 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         return true;
     }
 
-    private void renderCellFeature(Feature feature, final ProjectedFeature pf, RenderingRules renderers) throws PortrayalException{
+    private void renderCellFeature(Feature feature, final ProjectedFeature pf, RenderingRules renderers) throws PortrayalException {
         boolean painted = false;
-        for(int i=0; i<renderers.elseRuleIndex; i++){
+        for (int i = 0; i < renderers.elseRuleIndex; i++) {
             final CachedRule rule = renderers.rules[i];
             final Filter ruleFilter = rule.getFilter();
             //test if the rule is valid for this feature
@@ -382,8 +386,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         }
 
         //the feature hasn't been painted, paint it with the 'else' rules
-        if(!painted){
-            for(int i=renderers.elseRuleIndex; i<renderers.rules.length; i++){
+        if (!painted) {
+            for (int i = renderers.elseRuleIndex; i < renderers.rules.length; i++) {
                 final CachedRule rule = renderers.rules[i];
                 final Filter ruleFilter = rule.getFilter();
                 //test if the rule is valid for this feature
@@ -396,13 +400,4 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         }
     }
 
-    /**
-     * Evaluate the length of the given vector.
-     *
-     * @param delta  vector to evaluate
-     * @return integer  length of the vector rounded at the above integer
-     */
-    private static int length(final Point2D delta) {
-        return Math.max(1, (int) Math.ceil(Math.hypot(delta.getX(), delta.getY())));
-    }
 }

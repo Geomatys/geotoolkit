@@ -72,7 +72,7 @@ public class GML2_1_2Test {
             new Coordinate(1, 2),
             new Coordinate(3, 4),
             new Coordinate(5, 6)}, ml1.getCoordinates());
-        assertEquals(CommonCRS.WGS84.normalizedGeographic(), ml1.getUserData());
+        assertEquals(CommonCRS.WGS84.geographic(), ml1.getUserData());
         assertEquals("I0245000",f1.getPropertyValue("CdEntiteHydrographique"));
         assertEquals("Ruisseau de la Boulaie",f1.getPropertyValue("NomEntiteHydrographique"));
         assertEquals("6",f1.getPropertyValue("Classe"));
@@ -83,7 +83,7 @@ public class GML2_1_2Test {
         assertArrayEquals(new Coordinate[]{
             new Coordinate(7, 8),
             new Coordinate(9, 10)}, ml2.getCoordinates());
-        assertEquals(CommonCRS.WGS84.normalizedGeographic(), ml1.getUserData());
+        assertEquals(CommonCRS.WGS84.geographic(), ml1.getUserData());
         assertEquals("M03-4002",f2.getPropertyValue("CdEntiteHydrographique"));
         assertEquals("canal de l'Arcisses",f2.getPropertyValue("NomEntiteHydrographique"));
         assertEquals("7",f2.getPropertyValue("Classe"));

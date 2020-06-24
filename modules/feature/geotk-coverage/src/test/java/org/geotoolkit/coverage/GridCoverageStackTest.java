@@ -29,13 +29,14 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -182,8 +183,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
     private static GridCoverage2D createSlice3D(int width, int height, double z, CoordinateReferenceSystem crs) throws FactoryException{
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-        final GeneralMatrix matrix = new GeneralMatrix(4);
-        matrix.setIdentity();
+        final Matrix matrix = Matrices.createIdentity(4);
         matrix.setElement(2, 3, z);
 
         final MathTransformFactory mf = DefaultFactories.forBuildin(MathTransformFactory.class);
@@ -194,7 +194,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setGridToCRS(gridtoCrs);
-        gcb.setRenderedImage(image);
+        gcb.setValues(image);
 
         return gcb.getGridCoverage2D();
     }
@@ -202,8 +202,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
     private static GridCoverage2D createSlice4D(int width, int height, double z, double t, CoordinateReferenceSystem crs) throws FactoryException{
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-        final GeneralMatrix matrix = new GeneralMatrix(5);
-        matrix.setIdentity();
+        final Matrix matrix = Matrices.createIdentity(5);
         matrix.setElement(2, 4, z);
         matrix.setElement(3, 4, t);
 
@@ -215,7 +214,7 @@ public class GridCoverageStackTest extends org.geotoolkit.test.TestBase {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setGridToCRS(gridtoCrs);
-        gcb.setRenderedImage(image);
+        gcb.setValues(image);
 
         return gcb.getGridCoverage2D();
     }

@@ -29,6 +29,7 @@ import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInput;
 import org.geotoolkit.wps.xml.v200.Format;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTWriter;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -40,10 +41,10 @@ import org.opengis.util.FactoryException;
  */
 public class WKTAdaptor extends ComplexAdaptor {
 
-    private static final String ENC_UTF8 = "UTF-8";
-    private static final String ENC_BASE64 = "base64";
+    static final String ENC_UTF8 = "UTF-8";
+    static final String ENC_BASE64 = "base64";
 
-    private static final String MIME_TYPE = "application/ewkt";
+    static final String MIME_TYPE = "application/ewkt";
 
     private final String mimeType;
     private final String encoding;
@@ -83,10 +84,14 @@ public class WKTAdaptor extends ComplexAdaptor {
         Geometry geom = (Geometry) candidate;
 
         int srid = 0;
+        int dimension = 2;
         try {
             CoordinateReferenceSystem crs = Geometries.wrap(geom).get().getCoordinateReferenceSystem();
             if (crs != null) {
+                dimension = crs.getCoordinateSystem().getDimension();
                 final IdentifiedObjectFinder finder = IdentifiedObjects.newFinder("EPSG");
+                // TODO: Ensure no project strongly rely on that, then remove. It's pure non-sense/madness.
+                // Note: If you read this after march 2020: do not ask : delete.
                 finder.setIgnoringAxes(true);
                 final CoordinateReferenceSystem epsgcrs = (CoordinateReferenceSystem) finder.findSingleton(crs);
                 if (epsgcrs != null) {
@@ -97,13 +102,18 @@ public class WKTAdaptor extends ComplexAdaptor {
                     if (crs2 != crs) {
                         geom = JTS.transform(geom, crs2);
                     }
+                    if (crs2 != null)
+                        dimension = crs2.getCoordinateSystem().getDimension();
                 }
             }
         } catch (FactoryException | MismatchedDimensionException | TransformException ex) {
             throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
 
-        String wkt = geom.toText();
+//        String wkt = geom.toText();
+
+        WKTWriter writer = new WKTWriter(dimension);
+        String wkt = writer.write(geom);
         if (srid > 0) {
             wkt = "SRID="+srid+";"+wkt;
         }

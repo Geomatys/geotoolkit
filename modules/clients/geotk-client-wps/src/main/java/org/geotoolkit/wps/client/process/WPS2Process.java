@@ -221,7 +221,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
     private StatusInfo getStatus() throws ProcessException, JAXBException, IOException {
         if (jobId==null) throw new ProcessException("Process is not started.", this);
 
-        if (isCanceled()) {
+        if (isDimissed()) {
             throw new DismissProcessException("Process already dismissed", this);
         }
 
@@ -247,10 +247,10 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
      * This request has no effect if the process has not start or is already finished or canceled.
      */
     @Override
-    public void cancelProcess() {
-        if (isCanceled() || jobId == null)
+    public void dismissProcess() {
+        if (isDimissed() || jobId == null)
             return;
-        super.cancelProcess();
+        super.dismissProcess();
 
         //send a stop request
         final DismissRequest request = registry.getClient().createDismiss(jobId);
@@ -294,7 +294,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
             throw new DismissProcessException("Process interrupted while executing", this, e);
         }
 
-        if (!isCanceled()) {
+        if (!isDimissed()) {
             fillOutputs(result);
         }
     }
@@ -363,9 +363,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
             //and may not offer the result file right from the start
             int failCount = 0;
             while (true) {
-                if (isCanceled()) {
-                    throw new DismissProcessException("Process cancelled", this);
-                }
+                stopIfDismissed();
                 synchronized (this) {
                     wait(timeLapse);
                 }
@@ -374,10 +372,10 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
                     tmpResponse = getStatus();
                     failCount = 0;
                 }catch(UnmarshalException | IOException ex){
-                    if(failCount<5 && !isCanceled()){
+                    if(failCount<5 && !isDimissed()){
                         failCount++;
                         continue;
-                    } else if (isCanceled()) {
+                    } else if (isDimissed()) {
                         throw new DismissProcessException("WPS remote process has been canceled",this);
                     } else {
                         //server seems to have a issue or can't provide status

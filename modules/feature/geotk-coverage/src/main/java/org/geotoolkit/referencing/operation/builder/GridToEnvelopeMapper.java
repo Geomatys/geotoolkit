@@ -91,7 +91,10 @@ import org.opengis.referencing.operation.Matrix;
  *
  * @since 2.3
  * @module
+ *
+ * @deprecated Not used anymore.
  */
+@Deprecated
 public class GridToEnvelopeMapper {
     /**
      * A bit mask for the {@link #setSwapXY swapXY} property.

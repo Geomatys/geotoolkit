@@ -42,9 +42,9 @@ import org.geotoolkit.util.Utilities;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class WKBRasterImageWriter extends ImageWriter{
+public class WKBRasterImageWriter extends ImageWriter {
 
-    public WKBRasterImageWriter(ImageWriterSpi spi){
+    public WKBRasterImageWriter(ImageWriterSpi spi) {
         super(spi);
     }
 
@@ -79,12 +79,12 @@ public class WKBRasterImageWriter extends ImageWriter{
         final WKBRasterWriter writer = new WKBRasterWriter();
 
         final Object out = getOutput();
-        if(out instanceof ImageOutputStream){
+        if (out instanceof ImageOutputStream) {
             final ImageOutputStream stream = (ImageOutputStream) out;
             final byte[] data = writer.write(ri, new AffineTransform(), 0);
             stream.write(data);
 
-        }else{
+        } else {
             final OutputStream stream = IOUtilities.openWrite(getOutput());
             writer.write(ri, new AffineTransform(), 0, stream);
             stream.flush();
@@ -98,12 +98,12 @@ public class WKBRasterImageWriter extends ImageWriter{
         final WKBRasterWriter writer = new WKBRasterWriter();
 
         final Object out = getOutput();
-        if(out instanceof ImageOutputStream){
+        if (out instanceof ImageOutputStream) {
             final ImageOutputStream stream = (ImageOutputStream) out;
             final byte[] data = writer.write(ri, new AffineTransform(), 0);
             stream.write(data);
 
-        }else{
+        } else {
             final OutputStream stream = IOUtilities.openWrite(getOutput());
             writer.write(ri, new AffineTransform(), 0, stream);
             stream.flush();
@@ -121,7 +121,7 @@ public class WKBRasterImageWriter extends ImageWriter{
             pluginClassName = "org.geotoolkit.coverage.wkb.WKBRasterImageWriter";
             vendorName      = "Geotoolkit.org";
             version         = Utilities.VERSION.toString();
-            readerSpiNames  = new String[] {"PostGISWKBraster"};
+            readerSpiNames  = new String[] {WKBRasterImageReader.Spi.class.getName()};
             outputTypes     = new Class[0];
             outputTypes     = ArraysExt.append(outputTypes, OutputStream.class);
             outputTypes     = ArraysExt.append(outputTypes, File.class);

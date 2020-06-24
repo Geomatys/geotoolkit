@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.statistics;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -36,8 +34,6 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
 import org.geotoolkit.storage.coverage.ImageStatistics;
-import org.geotoolkit.storage.coverage.MosaicImage;
-import org.geotoolkit.storage.multires.Mosaic;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -51,8 +47,9 @@ import org.opengis.parameter.ParameterValueGroup;
  * <code>ImageStatistics stats = Statistics.analyse(myCoverage, true);</code><br/>
  * <code>Long[] distribution = stats.getBand(0).tightenHistogram(50);</code><br/>s
  *
- * @author bgarcia
+ * @author Benjamin Garcia (Geomatys)
  * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class Statistics extends AbstractProcess {
 
@@ -125,7 +122,7 @@ public class Statistics extends AbstractProcess {
 
     /**
      * Run Statistics process with a CoverageResource and return ImageStatistics
- the process is run on a reduced version of the data to avoid consuming to much resources.
+     * the process is run on a reduced version of the data to avoid consuming to much resources.
      *
      * @param ref CoverageResource
      * @param excludeNoData exclude no-data flag
@@ -149,7 +146,7 @@ public class Statistics extends AbstractProcess {
 
 
         final GridGeometry query = gridGeom.derive().subgrid(env, res).sliceByRatio(0.5, 0, 1).build();
-        GridCoverage coverage = org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(ref.read(query));
+        GridCoverage coverage = ref.read(query);
         //we want the statistics on the real data values
         coverage = coverage.forConvertedValues(true);
         org.geotoolkit.process.Process process = new Statistics(coverage, excludeNoData);
@@ -223,94 +220,32 @@ public class Statistics extends AbstractProcess {
 
         //optimization for GridMosaicRenderedImage impl
         NumericHistogram[] histo = new NumericHistogram[nbBands];
-        if (image instanceof MosaicImage) {
-            final MosaicImage mosaicImage = (MosaicImage) image;
-            final Mosaic gridMosaic = mosaicImage.getGridMosaic();
-            final Rectangle gridRange = mosaicImage.getGridRange();
-            final Dimension gridSize = gridMosaic.getGridSize();
 
-            long startX = gridRange.x;
-            long startY = gridRange.y;
-            long endX = gridRange.x + gridRange.width;
-            long endY = gridRange.y + gridRange.height;
-            long totalTiles = gridSize.width * gridSize.height;
+        final int startX = image.getMinTileX();
+        final int startY = image.getMinTileY();
+        final int endX = startX + image.getNumXTiles();
+        final int endY = startY + image.getNumYTiles();
 
-            //analyse each tiles of GridMosaicRenderedImage
-            Raster tile;
-            PixelIterator pix;
-            int step = 1;
-            for (long y = startY; y < endY; y++) {
-                for (long x = startX; x < endX; x++) {
-                    if (!gridMosaic.isMissing(x,y)) {
-                        tile = mosaicImage.getTile(Math.toIntExact(x-startX), Math.toIntExact(y-startY));
-                        pix = new PixelIterator.Builder().create(tile);
+        long totalTiles = image.getNumXTiles() * image.getNumYTiles();
 
-                        analyseRange(pix, stats, bands, excludeNoData);
-                        pix.rewind();
+        //analyse each tiles
+        //todo make this parallel
+        Raster tile;
+        PixelIterator pix;
+        int step = 1;
+        for (long y = startY; y < endY; y++) {
+            for (long x = startX; x < endX; x++) {
+                tile = image.getTile(Math.toIntExact(x-startX), Math.toIntExact(y-startY));
+                pix = new PixelIterator.Builder().create(tile);
 
-                        mergeHistograms(histo, analyseHistogram(pix, bands, stats, excludeNoData));
+                analyseRange(pix, stats, bands, excludeNoData);
+                pix.rewind();
 
-                        updateBands(bands, histo);
-                        fireProgressing("Histogram progressing", (step/totalTiles)*0.9f, true);
-                    }
-                    step++;
-                }
-            }
+                mergeHistograms(histo, analyseHistogram(pix, bands, stats, excludeNoData));
 
-        } else {
-            //-- this code replace more global case define after this code block.
-            //-- an error from JAI is occured when PixelIterator request getTile of JAI RenderedOP.
-            //-- To avoid exception we perform statistic after tile request and tile per tile.
-            //-- Moreover if tile request fail pass to the next tile.
-
-            {
-                final int tileGridXOffset = image.getTileGridXOffset();
-                final int tileGridYOffset = image.getTileGridYOffset();
-                final int numXTiles       = image.getNumXTiles();
-                final int numYTiles       = image.getNumYTiles();
-                final int indexXmax       = tileGridXOffset + numXTiles;
-                final int indexYmax       = tileGridYOffset + numYTiles;
-                int step = 0;
-                final int totalTiles = numXTiles * numYTiles;
-                for (int y = tileGridYOffset; y < indexYmax; y++) {
-                    for (int x = tileGridXOffset; x < indexXmax; x++) {
-                        ++step;
-                        try {
-                            final Raster tile       = image.getTile(x, y);
-                            final PixelIterator pix = new PixelIterator.Builder().create(tile);
-                            analyseRange(pix, stats, bands, excludeNoData);
-                            pix.rewind();
-
-                            mergeHistograms(histo, analyseHistogram(pix, bands, stats, excludeNoData));
-
-                            updateBands(bands, histo);
-                            fireProgressing("Start histogram computing", (step/totalTiles)*0.9f, true);
-                        } catch (ArrayIndexOutOfBoundsException ex) {
-                            // when error is occured from JAI RenderedOP pass to the next tile
-                            continue;
-                        }
-                    }
-                }
-            }
-
-
-            //-- code in comment to avoid JAI tiles problems.
-            //-- when JAI problems will be resolved or JAI not used
-            //-- this code will be decommented and precedently code block should be deleted.
-            {
-    //            //standard image
-    //            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
-    //
-    //            //get min/max
-    //            analyseRange(pix, stats, bands, excludeNoData);
-    //            fireProgressing("Start histogram computing", 55f, true);
-    //
-    //            //reset iterator
-    //            pix.rewind();
-
-                //compute histogram
-    //            histo = analyseHistogram(pix, bands, stats, excludeNoData);
-    //            updateBands(bands, histo);
+                updateBands(bands, histo);
+                fireProgressing("Histogram progressing", (step/totalTiles)*0.9f, true);
+                step++;
             }
         }
 
@@ -460,7 +395,7 @@ public class Statistics extends AbstractProcess {
      */
     private GridCoverage getCoverage(GridCoverageResource ref) throws ProcessException {
         try {
-            return org.geotoolkit.internal.coverage.CoverageUtilities.toGeotk(ref.read(null, null));
+            return ref.read(null, null);
         } catch (DataStoreException e) {
             throw new ProcessException(e.getMessage(), this, e);
         }

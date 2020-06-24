@@ -110,9 +110,9 @@ public strictfp enum SampleCoverage {
 
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName("Float coverage");
-            gcb.setRenderedImage(raster());
+            gcb.setValues(raster());
             gcb.setEnvelope( new Envelope2D(this.crs, this.bounds));
-            gcb.setSampleDimensions(null, null, null, colors);
+            gcb.setRanges(null, null, null, colors);
             return gcb.getGridCoverage2D();
         }
     };
@@ -198,9 +198,9 @@ public strictfp enum SampleCoverage {
         envelope.setCoordinateReferenceSystem(crs);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(this.image.filename);
-        gcb.setRenderedImage(image);
+        gcb.setValues(image);
         gcb.setEnvelope(envelope);
-        gcb.setSampleDimensions(bands);
+        gcb.setRanges(bands);
         return gcb.getGridCoverage2D();
     }
 

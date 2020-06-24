@@ -35,7 +35,6 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.internal.image.io.CheckedImageOutputStream;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -182,71 +181,6 @@ public final class CoverageIO extends Static {
         final ImageCoverageWriter writer = new ImageCoverageWriter();
         writer.setOutput(output);
         return writer;
-    }
-
-    /**
-     * Creates a mosaic reader using the given tiles, which must exist. The input argument can
-     * be an instance of {@link org.geotoolkit.image.io.mosaic.TileManager}, a {@link File} to
-     * a serialized instance of {@code TileManager}, a directory, or an array or collection of
-     * {@link org.geotoolkit.image.io.mosaic.Tile} instances.
-     * <p>
-     * The {@code crs} argument is optional if the input is a {@link File}, in which case this
-     * method will attempt to parse a file of the same name with the {@code ".prj"} extension
-     * using {@link org.geotoolkit.io.wkt.PrjFiles}. For all other cases, the CRS argument is
-     * mandatory.
-     *
-     * @param  input The file, tiles or tile manager to use a input.
-     * @param  crs The coordinate reference system of the mosaic image.
-     * @return A mosaic reader for the given tiles and CRS.
-     * @throws DataStoreException If the reader can not be created for the given tiles.
-     */
-    public static ImageCoverageReader createMosaicReader(final Object input,
-            final CoordinateReferenceSystem crs) throws DataStoreException
-    {
-        ensureNonNull("input", input);
-        if (crs == null && (input instanceof File || input instanceof Path)) {
-            final Path path = (input instanceof File) ? ((File) input).toPath() : (Path) input;
-            return new MosaicCoverageReader(path, false);
-        }
-        ensureNonNull("crs", crs);
-        return new MosaicCoverageReader(input, crs);
-    }
-
-    /**
-     * Creates a mosaic reader using a cache of tiles at different resolutions. Tiles will be
-     * created the first time this method is invoked for a given input. The tiles creation time
-     * depends on the available memory, the image size and its format. The creation time can
-     * range from a few seconds to several minutes or even hours if the given image is very large.
-     * <p>
-     * The tiles will be created in a sub-directory having the same name than the given input,
-     * with an additional {@code ".tiles"} extension.
-     *
-     * @param  input The input to read.
-     * @return A coverage reader for the given file.
-     * @throws DataStoreException If the reader can not be created for the given file.
-     * @deprecated use {@link #writeOrReuseMosaic(Path)} instead
-     */
-    @Deprecated
-    public static ImageCoverageReader writeOrReuseMosaic(final File input) throws DataStoreException {
-       return writeOrReuseMosaic(input.toPath());
-    }
-
-    /**
-     * Creates a mosaic reader using a cache of tiles at different resolutions. Tiles will be
-     * created the first time this method is invoked for a given input. The tiles creation time
-     * depends on the available memory, the image size and its format. The creation time can
-     * range from a few seconds to several minutes or even hours if the given image is very large.
-     * <p>
-     * The tiles will be created in a sub-directory having the same name than the given input,
-     * with an additional {@code ".tiles"} extension.
-     *
-     * @param  input The input to read.
-     * @return A coverage reader for the given file.
-     * @throws DataStoreException If the reader can not be created for the given file.
-     */
-    public static ImageCoverageReader writeOrReuseMosaic(final Path input) throws DataStoreException {
-        ensureNonNull("input", input);
-        return new MosaicCoverageReader(input, true);
     }
 
     /**

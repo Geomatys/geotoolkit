@@ -18,13 +18,11 @@ package org.geotoolkit.processing.coverage.merge;
 
 import java.awt.image.DataBuffer;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;

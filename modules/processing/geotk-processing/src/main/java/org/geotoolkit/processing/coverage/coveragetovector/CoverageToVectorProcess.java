@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.coveragetovector;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
-
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -31,18 +26,19 @@ import java.util.Map;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 import org.apache.sis.coverage.grid.GridCoverage;
-
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessException;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.parameter.Parameters;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 
@@ -101,7 +97,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
         return outputParameters.getValue(CoverageToVectorDescriptor.GEOMETRIES);
     }
 
-    public Geometry[] toPolygon(GridCoverage2D coverage, final NumberRange[] ranges, final int band)
+    public Geometry[] toPolygon(GridCoverage coverage, final NumberRange[] ranges, final int band)
             throws IOException, TransformException {
         coverage = coverage.forConvertedValues(true);
 
@@ -115,7 +111,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
         final RenderedImage image = coverage.render(null);
         final RectIter iter = RectIterFactory.create(image, null);
-        final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
+        final MathTransform gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
         final Point gridPosition = new Point(0, 0);
 
         buffers = new Boundary[2][image.getWidth()];
@@ -429,7 +425,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
     protected void execute() throws ProcessException{
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final GridCoverage2D coverage = CoverageUtilities.toGeotk(inputParameters.getValue(CoverageToVectorDescriptor.COVERAGE));
+        final GridCoverage coverage = inputParameters.getValue(CoverageToVectorDescriptor.COVERAGE);
         final NumberRange[] ranges = inputParameters.getValue(CoverageToVectorDescriptor.RANGES);
         Integer band = inputParameters.getValue(CoverageToVectorDescriptor.BAND);
         if(band == null) {

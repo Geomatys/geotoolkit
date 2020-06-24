@@ -19,19 +19,22 @@ package org.geotoolkit.storage.multires;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.util.Streams;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.parameter.ParameterValueGroup;
@@ -107,38 +110,47 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         mosaics.sort((Mosaic o1, Mosaic o2) -> Double.compare(o2.getScale(), o1.getScale()));
         for (final Mosaic mosaic : mosaics) {
-            if (resolutions == null || resolutions.contains(mosaic.getScale())) {
+            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
                 final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
-                LongStream.range(0, nbTile).parallel().forEach(new LongConsumer() {
-                    @Override
-                    public void accept(long value) {
-                        final long x = rect.x + (value % rect.width);
-                        final long y = rect.y + (value / rect.width);
+                Stream<Tile> stream = LongStream.range(0, nbTile).parallel()
+                        .mapToObj(new LongFunction<Tile>() {
+                            @Override
+                            public Tile apply(long value) {
+                                final long x = rect.x + (value % rect.width);
+                                final long y = rect.y + (value / rect.width);
 
-                        try {
-                            //do not regenerate existing tiles
-                            //if (!mosaic.isMissing((int)x, (int)y)) return;
+                                Tile data = null;
+                                try {
+                                    //do not regenerate existing tiles
+                                    //if (!mosaic.isMissing((int)x, (int)y)) return;
 
-                            final Point coord = new Point((int)x, (int)y);
-                            try {
-                                final Tile data = generateTile(pyramid, mosaic, coord);
-                                if (!skipEmptyTiles || (skipEmptyTiles && !isEmpty(data))) {
-                                    mosaic.writeTiles(Stream.of(data), null);
+                                    final Point coord = new Point((int)x, (int)y);
+                                    try {
+                                        data = generateTile(pyramid, mosaic, coord);
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                } finally {
+                                    long v = al.incrementAndGet();
+                                    if (listener != null & (v % eventstep == 0))  {
+                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                                    }
                                 }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
+                                return data;
                             }
-                        } finally {
-                            long v = al.incrementAndGet();
-                            if (listener != null & (v % eventstep == 0))  {
-                                listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
-                            }
-                        }
+                        })
+                        .filter(this::emptyFilter);
+
+                Streams.batchExecute(stream, (Collection<Tile> t) -> {
+                    try {
+                        mosaic.writeTiles(t.stream(), null);
+                    } catch (DataStoreException ex) {
+                        ex.printStackTrace();
                     }
-                });
+                }, 200);
 
                 long v = al.get();
                 if (listener != null) {
@@ -149,12 +161,46 @@ public abstract class AbstractTileGenerator implements TileGenerator {
 
     }
 
+    protected final boolean emptyFilter(Tile data) {
+        if (data == null) return false;
+        try {
+            return !(skipEmptyTiles && isEmpty(data));
+        } catch (DataStoreException ex) {
+            throw new BackingStoreException(ex.getMessage(), ex);
+        }
+    }
+
+//    private void Tile generateTile(Rectangle rect, long value) {
+//        final long x = rect.x + (value % rect.width);
+//        final long y = rect.y + (value / rect.width);
+//
+//        try {
+//            //do not regenerate existing tiles
+//            //if (!mosaic.isMissing((int)x, (int)y)) return;
+//
+//            final Point coord = new Point((int)x, (int)y);
+//            try {
+//                final Tile data = generateTile(pyramid, mosaic, coord);
+//                if (!skipEmptyTiles || (skipEmptyTiles && !isEmpty(data))) {
+//                    mosaic.writeTiles(Stream.of(data), null);
+//                }
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        } finally {
+//            long v = al.incrementAndGet();
+//            if (listener != null & (v % eventstep == 0))  {
+//                listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+//            }
+//        }
+//    }
+
     protected long countTiles(Pyramid pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
 
         long count = 0;
         for (Mosaic mosaic : pyramid.getMosaics()) {
             final Mosaic m = mosaic;
-            if (resolutions == null || resolutions.contains(mosaic.getScale())) {
+            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
                 if (env == null) {
                     count += ((long) m.getGridSize().width) * ((long) m.getGridSize().height);
                 } else {

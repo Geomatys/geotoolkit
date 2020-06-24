@@ -18,22 +18,21 @@ package org.geotoolkit.wps.converters.outputs.complex;
 
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import org.locationtech.jts.geom.Geometry;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
-import org.geotoolkit.data.geojson.utils.GeometryUtils;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -116,7 +115,7 @@ public final class GeometryArrayToComplexConverter extends AbstractComplexOutput
         else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {
             GeoJSONGeometry.GeoJSONGeometryCollection geometryCollection = new GeoJSONGeometry.GeoJSONGeometryCollection();
             for (Geometry geometry : source)
-                geometryCollection.getGeometries().add(GeometryUtils.toGeoJSONGeometry(geometry));
+                geometryCollection.getGeometries().add(GeoJSONGeometry.toGeoJSONGeometry(geometry));
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

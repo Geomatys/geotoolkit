@@ -35,7 +35,7 @@ import org.apache.sis.storage.event.StoreListeners;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.event.AggregationEvent;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.coverage.DefiningPyramidResource;
+import org.geotoolkit.storage.coverage.DefiningMultiResolutionResource;
 import org.opengis.feature.Feature;
 import org.opengis.util.GenericName;
 
@@ -80,8 +80,8 @@ public class InMemoryAggregate extends AbstractResource implements WritableAggre
             }
             newr = newres;
 
-        } else if (resource instanceof DefiningPyramidResource) {
-            final DefiningPyramidResource cr = (DefiningPyramidResource) resource;
+        } else if (resource instanceof DefiningMultiResolutionResource) {
+            final DefiningMultiResolutionResource cr = (DefiningMultiResolutionResource) resource;
             final GenericName name = cr.getIdentifier().orElse(null);
             newr = new InMemoryPyramidResource(name);
 

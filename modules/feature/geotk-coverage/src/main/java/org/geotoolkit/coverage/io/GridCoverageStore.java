@@ -70,10 +70,10 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LogProducer;
 
+import static java.lang.Math.abs;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
@@ -888,7 +888,41 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     static boolean isIdentity(final MathTransform2D transform) {
         return (transform == null) || transform.isIdentity() ||
                 (transform instanceof AffineTransform &&
-                 XAffineTransform.isIdentity((AffineTransform) transform, EPS));
+                 isIdentity((AffineTransform) transform));
+    }
+
+    /**
+     * Returns {@code true} if the specified affine transform is an identity transform up to the
+     * specified tolerance. This method is equivalent to computing the difference between this
+     * matrix and an identity matrix (as created by {@link AffineTransform#AffineTransform()
+     * new AffineTransform()}) and returning {@code true} if and only if all differences are
+     * smaller than or equal to {@code tolerance}.
+     *
+     * <p>This method is used for working around rounding error in affine transforms resulting
+     * from a computation, as in the example below:</p>
+     *
+     * {@preformat text
+     *     ┌                                                     ┐
+     *     │ 1.0000000000000000001  0.0                      0.0 │
+     *     │ 0.0                    0.999999999999999999999  0.0 │
+     *     │ 0.0                    0.0                      1.0 │
+     *     └                                                     ┘
+     * }
+     *
+     * @param tr The affine transform to be checked for identity.
+     * @return {@code true} if this transformation is close enough to the
+     *         identity, {@code false} otherwise.
+     */
+    private static boolean isIdentity(final AffineTransform tr) {
+        if (tr.isIdentity()) {
+            return true;
+        }
+        return abs(tr.getScaleX() - 1) <= EPS &&
+               abs(tr.getScaleY() - 1) <= EPS &&
+               abs(tr.getShearX())     <= EPS &&
+               abs(tr.getShearY())     <= EPS &&
+               abs(tr.getTranslateX()) <= EPS &&
+               abs(tr.getTranslateY()) <= EPS;
     }
 
     /**

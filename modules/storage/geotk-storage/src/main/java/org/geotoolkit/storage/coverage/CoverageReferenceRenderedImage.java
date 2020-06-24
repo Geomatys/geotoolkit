@@ -38,6 +38,7 @@ import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.Mosaic;
@@ -286,7 +287,7 @@ public class CoverageReferenceRenderedImage extends PlanarImage {
             final MathTransform destImgToCrsCoverage = MathTransforms.concatenate(destImgToCRSDest, crsDestToSrcGrid);
 
             try {
-                final Resample resample = new Resample(destImgToCrsCoverage, workTile, interpolation, fillValue);
+                final Resample resample = new Resample(destImgToCrsCoverage, workTile, null, interpolation, fillValue, ResampleBorderComportement.EXTRAPOLATION);
                 resample.fillImage();
             } catch (Exception ex) {
                 throw new RuntimeException(ex);

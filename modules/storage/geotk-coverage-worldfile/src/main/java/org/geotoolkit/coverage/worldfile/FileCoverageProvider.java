@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -44,6 +45,7 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.storage.Bundle;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.ParameterDescriptor;
@@ -176,46 +178,58 @@ public class FileCoverageProvider extends DataStoreProvider {
         final ImageInputStream in = connector.getStorageAs(ImageInputStream.class);
         if (in == null) return ProbeResult.UNSUPPORTED_STORAGE;
 
-        for (Entry<ImageReaderSpi,Boolean> entry : SPIS.entrySet()) {
-            final ImageReaderSpi spi = entry.getKey();
-            try {
-                //Special case for TextImageReaders, waiting for fix : GEOTK-688
-                Object input = in;
-                if (spi.getClass().getName().contains("Text") || spi.getClass().getName().contains("AsciiGrid")) {
-                    input = connector.getStorageAs(File.class);
-                    if (input == null) continue;
-                }
-                //Special case for JP2K, this decoder is close to useless
-                //it work on a very limited number of cases
-                //this decoder is not present by default, added by third-party jars.
-                if (spi.getClass().getName().contains("J2KImageReaderSpi")) {
+        try {
+
+            final Path path = connector.getStorageAs(Path.class);
+            boolean hasPrj = path != null;
+            if (hasPrj) {
+                final Object prj = SupportFiles.changeExtension(path, "prj");
+                if (prj == null || !Files.exists((Path)prj)) hasPrj = false;
+                final Object tfw = SupportFiles.changeExtension(path, "tfw");
+                if (tfw == null || !Files.exists((Path)tfw)) hasPrj = false;
+            }
+
+            in.mark();
+            for (Entry<ImageReaderSpi,Boolean> entry : SPIS.entrySet()) {
+                if (!hasPrj && entry.getValue()) {
                     continue;
                 }
-
-                if (canDecode(spi, connector, input)) {
-                    if (Boolean.TRUE.equals(entry.getValue())) {
-                        //special case for world files, verify tfw and prj files
-                        final Path path = connector.getStorageAs(Path.class);
-                        if (path == null) continue;
-                        Object prj = SupportFiles.changeExtension(path, "prj");
-                        if (prj == null || !Files.exists((Path)prj)) continue;
-                        Object tfw = SupportFiles.changeExtension(path, "tfw");
-                        if (tfw == null || !Files.exists((Path)tfw)) continue;
+                final ImageReaderSpi spi = entry.getKey();
+                try {
+                    //Special case for TextImageReaders, waiting for fix : GEOTK-688
+                    Object input = in;
+                    if (spi.getClass().getName().contains("Text") || spi.getClass().getName().contains("AsciiGrid")) {
+                        input = connector.getStorageAs(File.class);
+                        if (input == null) continue;
+                    }
+                    //Special case for JP2K, this decoder is close to useless
+                    //it work on a very limited number of cases
+                    //this decoder is not present by default, added by third-party jars.
+                    if (spi.getClass().getName().contains("J2KImageReaderSpi")) {
+                        continue;
                     }
 
-                    final String[] mimeTypes = spi.getMIMETypes();
-                    if (mimeTypes != null) {
-                        return new ProbeResult(true, mimeTypes[0], null);
-                    } else {
-                        //no defined mime-type
-                        return new ProbeResult(true, "image", null);
+                    if (canDecode(spi, connector, input)) {
+                        final String[] mimeTypes = spi.getMIMETypes();
+                        if (mimeTypes != null) {
+                            in.reset();
+                            return new ProbeResult(true, mimeTypes[0], null);
+                        } else {
+                            //no defined mime-type
+                            in.reset();
+                            return new ProbeResult(true, "image", null);
+                        }
                     }
+                } catch (EOFException ex) {
+                    //reached an EOF while testing file, test next spi
+                } catch (IOException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
                 }
-            } catch (EOFException ex) {
-                //reached an EOF while testing file, test next spi
-            } catch (IOException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
             }
+
+            in.reset();
+        } catch (IOException ex) {
+           throw new DataStoreException(ex.getMessage(), ex);
         }
         return ProbeResult.UNSUPPORTED_STORAGE;
     }
@@ -262,5 +276,19 @@ public class FileCoverageProvider extends DataStoreProvider {
         }
 
         return formatsDone;
+    }
+
+    public static GridCoverageResource open(Path file, String format) throws DataStoreException {
+        if (Files.isRegularFile(file)) {
+            FileCoverageStore store = new FileCoverageStore(file, format);
+            Collection<GridCoverageResource> list = DataStores.flatten(store, true, GridCoverageResource.class);
+            if (list.isEmpty()) {
+                throw new DataStoreException(file.toUri() + " contains no coverage resource.");
+            } else {
+                return list.iterator().next();
+            }
+        } else {
+            throw new DataStoreException(file.toUri() + " is not a regular file.");
+        }
     }
 }

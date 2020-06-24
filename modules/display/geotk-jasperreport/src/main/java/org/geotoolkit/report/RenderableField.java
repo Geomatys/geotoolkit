@@ -18,11 +18,12 @@
 package org.geotoolkit.report;
 
 import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.atomic.AtomicLong;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRRenderable;
+import net.sf.jasperreports.engine.JasperReportsContext;
+import net.sf.jasperreports.renderers.Graphics2DRenderable;
+import net.sf.jasperreports.renderers.Renderable;
 
 /**
  * Field
@@ -30,66 +31,34 @@ import net.sf.jasperreports.engine.JRRenderable;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class RenderableField implements JRRenderable {
+public class RenderableField implements Graphics2DRenderable, Renderable {
 
     private static final String ERROR_MSG = "Should not have been called. Check that the "
                                           + "appropriate JRFieldRenderer is registered for class ";
     private static final AtomicLong INC = new AtomicLong(0);
 
     private final String id = "RenderableField-"+INC.incrementAndGet();
-    private JRRenderable delegate = null;
+    private Graphics2DRenderable delegate = null;
 
     @Override
     public String getId() {
         return id;
     }
 
-    public void setDelegate(final JRRenderable delegate) {
+    public void setDelegate(final Graphics2DRenderable delegate) {
         this.delegate = delegate;
     }
 
-    public JRRenderable getDelegate() {
+    public Graphics2DRenderable getDelegate() {
         return delegate;
     }
 
     @Override
-    public byte getType() {
-        if(delegate == null){
+    public void render(JasperReportsContext jrc, Graphics2D gd, Rectangle2D rd) throws JRException {
+        if (delegate == null) {
             throw new IllegalStateException(ERROR_MSG + this.getClass());
         }
-        return delegate.getType();
-    }
-
-    @Override
-    public byte getImageType() {
-        if(delegate == null){
-            throw new IllegalStateException(ERROR_MSG + this.getClass());
-        }
-        return delegate.getImageType();
-    }
-
-    @Override
-    public Dimension2D getDimension() throws JRException {
-        if(delegate == null){
-            throw new IllegalStateException(ERROR_MSG + this.getClass());
-        }
-        return delegate.getDimension();
-    }
-
-    @Override
-    public byte[] getImageData() throws JRException {
-        if(delegate == null){
-            throw new IllegalStateException(ERROR_MSG + this.getClass());
-        }
-        return delegate.getImageData();
-    }
-
-    @Override
-    public void render(final Graphics2D gd, final Rectangle2D rd) throws JRException {
-        if(delegate == null){
-            throw new IllegalStateException(ERROR_MSG + this.getClass());
-        }
-        delegate.render(gd, rd);
+        delegate.render(jrc, gd, rd);
     }
 
 }

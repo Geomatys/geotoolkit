@@ -17,6 +17,7 @@
 package org.geotoolkit.image;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -32,6 +33,9 @@ import java.awt.image.WritableRenderedImage;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.function.LongFunction;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
@@ -191,6 +195,62 @@ public class BufferedImages extends Static {
         }
     }
 
+    public static DataBuffer toDataBuffer1D(Object data) throws ArithmeticException {
+        if (data instanceof byte[][]) {
+            final byte[][] matrix = (byte[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final byte[] datas = new byte[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferByte(datas, datas.length);
+        } else if (data instanceof short[][]) {
+            final short[][] matrix = (short[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final short[] datas = new short[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferShort(datas, datas.length);
+        } else if (data instanceof int[][]) {
+            final int[][] matrix = (int[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final int[] datas = new int[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferInt(datas, datas.length);
+        } else if (data instanceof float[][]) {
+            final float[][] matrix = (float[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final float[] datas = new float[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferFloat(datas, datas.length);
+        } else if (data instanceof double[][]) {
+            final double[][] matrix = (double[][]) data;
+            final int height = matrix.length;
+            final int width = matrix[0].length;
+            final int size = Math.multiplyExact(height,width);
+            final double[] datas = new double[size];
+            for (int i = 0, offset=0; i < matrix.length; i++,offset+=width) {
+                System.arraycopy(matrix[i], 0, datas, offset, width);
+            }
+            return new DataBufferDouble(datas, datas.length);
+        } else {
+            throw new IllegalArgumentException("Unexpected array type "+data.getClass());
+        }
+    }
+
     /**
      * Compare the pixles of given image to reference pixel and return true
      * if all pixels share those same samples.
@@ -216,5 +276,60 @@ public class BufferedImages extends Static {
         while (ite.next()) {
             ite.setPixel(pixel);
         }
+    }
+
+    /**
+     * Create a stream of point in the rectangle.
+     * @param rectangle
+     * @return
+     */
+    public static Stream<Point> pointStream(Rectangle rectangle) {
+        return LongStream.range(0, rectangle.width * rectangle.height).mapToObj((long value) -> {
+            final int x = (int) (value % rectangle.width);
+            final int y = (int) (value / rectangle.width);
+            return new Point(rectangle.x + x, rectangle.y + y);
+        });
+    }
+
+    /**
+     * Create a stream of rectangle covering each tile in the image.
+     * <p>
+     * A margin on each side can be defined to expend the rectangle in the limit of the image size.
+     * This behavior allows to overlaps tile border in case the algorithm requires it.
+     * </p>
+     *
+     * @param image
+     * @param top top tile margin
+     * @param right right tile margin
+     * @param bottom bottom tile margin
+     * @param left  left tile margin
+     * @return Stram of Rectangle for each tile in the image.
+     */
+    public static Stream<Rectangle> tileStream(RenderedImage image, int top, int right, int bottom, int left) {
+        final int tileWidth = image.getTileWidth();
+        final int tileHeight = image.getTileHeight();
+        final int numXTiles = image.getNumXTiles();
+        final int numYTiles = image.getNumYTiles();
+        final int minTileX = image.getMinTileX();
+        final int minTileY = image.getMinTileY();
+        final int tileGridXOffset = image.getTileGridXOffset();
+        final int tileGridYOffset = image.getTileGridYOffset();
+        final long nbTile = (long)numXTiles * numYTiles;
+        final Rectangle imageBounds = new Rectangle(image.getMinX(), image.getMinY(), image.getWidth(), image.getHeight());
+
+        final int rectWidth = tileWidth + right + left;
+        final int rectHeight = tileHeight + top + bottom;
+
+        return LongStream.range(0, nbTile)
+                .mapToObj(new LongFunction<Rectangle>() {
+                    @Override
+                    public Rectangle apply(long value) {
+                        final int tileX = (int) (value % numXTiles);
+                        final int tileY = (int) (value / numXTiles);
+                        final int rectX = (minTileX + tileX) * tileWidth + tileGridXOffset;
+                        final int rectY = (minTileY + tileY) * tileHeight + tileGridYOffset;
+                        return new Rectangle(rectX - left,rectY - bottom,rectWidth,rectHeight).intersection(imageBounds);
+                    }
+                });
     }
 }

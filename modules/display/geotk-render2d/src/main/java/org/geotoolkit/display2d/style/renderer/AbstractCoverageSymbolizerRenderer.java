@@ -18,14 +18,24 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.apache.sis.coverage.grid.*;
+import org.apache.sis.coverage.grid.DisjointExtentException;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridDerivation;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -626,4 +636,42 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         return coverageSource;
     }
 
+    /**
+     * Useful in IntelliJ: allow to display input image in debugger: Add a new watch calling this method on wanted image.
+     * <em>WARNINGS:</em>
+     * <ul>
+     *     <li>if given image color-model is null, we assume 3 byte/RGB image.</li>
+     *     <li>Works only with single-tile images.</li>
+     * </ul>
+     *
+     * @param source The image to display.
+     * @param queriedRendering If non-null, we restrict rendering to the rectangle defined to given extent, assuming
+     *                         extent low coordinate matches source image (0, 0) coordinate.
+     * @return The image directly displayable through debugger.
+     */
+    public static BufferedImage debug(final RenderedImage source, GridExtent queriedRendering) {
+        Raster tile = source.getTile(source.getMinTileX(), source.getMinTileY());
+        final int width, height;
+        if (queriedRendering == null) {
+            tile = tile.createTranslatedChild(0, 0);
+            width = tile.getWidth();
+            height = tile.getHeight();
+        } else {
+            width = Math.toIntExact(queriedRendering.getSize(0));
+            height = Math.toIntExact(queriedRendering.getSize(1));
+            tile = tile.createChild(0, 0, width, height, 0, 0, null);
+        }
+
+        final BufferedImage view;
+        if (source.getColorModel() == null) {
+            view = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+            view.getRaster().setRect(tile);
+        } else {
+            final WritableRaster wr = tile.createCompatibleWritableRaster(0, 0, width, height);
+            wr.setRect(tile);
+            view = new BufferedImage(source.getColorModel(), wr, false, new Hashtable<>());
+        }
+
+        return view;
+    }
 }

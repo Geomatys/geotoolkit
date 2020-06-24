@@ -1,2 +1,2 @@
- org.geotoolkit.db.oracle.OracleFeatureStoreFactory
+ org.geotoolkit.db.oracle.OracleProvider
 

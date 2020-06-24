@@ -6,6 +6,7 @@ import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
@@ -19,7 +20,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridGeometryIterator;
@@ -139,9 +139,8 @@ public class Categorize extends AbstractProcess {
                 final RenderedImage slice = categorize(source2D.render(null));
 
                 final GridCoverageBuilder builder = new GridCoverageBuilder();
-                builder.setSources(sourceCvg);
-                builder.setGridGeometry(source2D.getGridGeometry());
-                builder.setRenderedImage(slice);
+                builder.setDomain(source2D.getGridGeometry());
+                builder.setValues(slice);
 
                 final GridCoverage resultCoverage = builder.build();
 

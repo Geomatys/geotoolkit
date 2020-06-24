@@ -22,20 +22,38 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.Set;
+import org.apache.sis.coverage.Category;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.storage.WritableAggregate;
+import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores.ResourceWalker.VisitOption;
+import org.geotoolkit.storage.multires.MultiResolutionModel;
+import org.geotoolkit.storage.multires.MultiResolutionResource;
+import org.geotoolkit.storage.multires.ProgressiveResource;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.TileFormat;
+import org.geotoolkit.util.StringUtilities;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -289,6 +307,179 @@ public final class DataStores extends Static {
     }
 
     /**
+     * Produce a string representation of given resource.
+     *
+     * @param rs
+     * @return analyze resource interfaces and extract a tree representation of the resource.
+     */
+    public static String prettyPrint(Resource rs) {
+        return toRawModel(rs);
+    }
+
+    private static List<String> toList(Map<?,?> map) {
+
+        final List<String> lst = new ArrayList<>();
+        for (Entry<?,?> entry : map.entrySet()) {
+            final String key = String.valueOf(entry.getKey());
+            Object value = entry.getValue();
+            if (value instanceof Map) {
+                value = toList((Map<?, ?>) value);
+            }
+            if (value instanceof Iterable) {
+                final List l = new ArrayList();
+                for (Object o : (Iterable)l ) {
+                    if (o instanceof Map) {
+
+                    }
+                }
+
+                lst.add(StringUtilities.toStringTree(key, (Iterable) value));
+            } else {
+                lst.add(key +" : " + value);
+            }
+        }
+        return lst;
+    }
+
+    private static String toRawModel(Resource rs) {
+
+        final Map<String,Object> mp = new LinkedHashMap<>();
+        try {
+            final GenericName identifier = rs.getIdentifier().orElse(null);
+            if (identifier != null) {
+                mp.put("identifier", identifier.toString());
+            }
+        } catch (DataStoreException ex) {
+            mp.put("identifier", "ERROR (" + ex.getMessage() + ")");
+        }
+
+        if (rs instanceof FeatureSet) {
+            final FeatureSet cdt = (FeatureSet) rs;
+
+            final Map<String,Object> map = new LinkedHashMap<>();
+            mp.put("FeatureSet", map);
+
+            try {
+                final FeatureType type = cdt.getType();
+                map.put("type name", type.getName().toString());
+
+                if (cdt instanceof WritableFeatureSet) {
+                    map.put("writable", Boolean.TRUE);
+                } else {
+                    map.put("writable", Boolean.FALSE);
+                }
+
+                map.put("type", type.toString());
+            } catch (DataStoreException ex) {
+                map.put("type", "ERROR (" + ex.getMessage() + ")");
+            }
+        }
+
+        if (rs instanceof GridCoverageResource) {
+            final GridCoverageResource cdt = (GridCoverageResource) rs;
+
+            final Map<String,Object> map = new LinkedHashMap<>();
+            mp.put("GridCoverageResource", map);
+
+            try {
+                final GridGeometry gridGeometry = cdt.getGridGeometry();
+                map.put("grid geometry", gridGeometry);
+            } catch (DataStoreException ex) {
+                map.put("grid geometry", "ERROR (" + ex.getMessage() + ")");
+            }
+
+            try {
+                final List<SampleDimension> sampleDimensions = cdt.getSampleDimensions();
+                final List<Map> sds = new ArrayList<>();
+                for (SampleDimension sd : sampleDimensions) {
+                    final Map<String,Object> tf = new LinkedHashMap<>();
+                    tf.put("name", String.valueOf(sd.getName()));
+                    tf.put("unit", String.valueOf(sd.getUnits().orElse(Units.UNITY).getSymbol()));
+                    tf.put("background", String.valueOf(sd.getBackground().orElse(null)));
+
+                    final List<Map> cats = new ArrayList<>();
+                    for (Category cat : sd.getCategories()) {
+                        final Map<String,Object> cf = new LinkedHashMap<>();
+                        cf.put("name", cat.getName().toString());
+                        cf.put("quantitative", cat.isQuantitative());
+                        cats.add(cf);
+                    }
+                    tf.put("categories", cats);
+                    sds.add(tf);
+                }
+                map.put("sample dimensions", StringUtilities.toStringTree("", sampleDimensions));
+            } catch (DataStoreException ex) {
+                map.put("sample dimensions", "ERROR (" + ex.getMessage() + ")");
+            }
+        }
+
+        if (rs instanceof MultiResolutionResource) {
+            final MultiResolutionResource cdt = (MultiResolutionResource) rs;
+            final TileFormat tileFormat = cdt.getTileFormat();
+
+            final Map<String,Object> map = new LinkedHashMap<>();
+            mp.put("MultiResolutionResource", map);
+
+            if (tileFormat != null) {
+                final Map<String,Object> tf = new LinkedHashMap<>();
+                map.put("tile format", tf);
+                tf.put("mime type", tileFormat.getMimeType());
+                tf.put("provider id", tileFormat.getProviderId());
+                tf.put("compression", tileFormat.getCompression().name());
+            }
+
+            try {
+                final Collection<? extends MultiResolutionModel> models = cdt.getModels();
+                final List<String> mms = new ArrayList<>();
+                for (MultiResolutionModel mrm : models) {
+                    if (mrm instanceof Pyramid) {
+                        mms.add(mrm.toString());
+                    } else {
+                        //todo : do a better print ?
+                        mms.add(mrm.toString());
+                    }
+                }
+                map.put("models", StringUtilities.toStringTree("", mms));
+            } catch (DataStoreException ex) {
+                map.put("models", "ERROR (" + ex.getMessage() + ")");
+            }
+        }
+
+        if (rs instanceof Aggregate) {
+            final Aggregate cdt = (Aggregate) rs;
+
+            final Map<String,Object> map = new LinkedHashMap<>();
+            mp.put("Aggregate", map);
+
+
+            if (cdt instanceof WritableAggregate) {
+                map.put("writable", Boolean.TRUE);
+            } else {
+                map.put("writable", Boolean.FALSE);
+            }
+
+            try {
+                final Collection<? extends Resource> components = cdt.components();
+                map.put("nb components", components.size());
+                int i = 0;
+                for (Resource r : components) {
+                    map.put("component[" + i++ + "]", toRawModel(r));
+                }
+            } catch (DataStoreException ex) {
+                map.put("models", "ERROR (" + ex.getMessage() + ")");
+            }
+        }
+
+        if (rs instanceof ProgressiveResource) {
+            final ProgressiveResource pr = (ProgressiveResource) rs;
+            mp.put("ProgressiveResource", pr.toString());
+        }
+
+        return StringUtilities.toStringTree(Classes.getShortClassName(rs), toList(mp));
+    }
+
+
+    /**
      * Implementation of the public {@code open} method. Exactly one of the {@code parameters}
      * and {@code asMap} arguments shall be non-null.
      */
@@ -346,23 +537,6 @@ public final class DataStores extends Static {
             throw new DataStoreException(ex);
         }
         return open(prm);
-    }
-
-    /**
-     * @see DataStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
-     */
-    public static org.apache.sis.storage.DataStore create(DataStoreProvider factory, Map<String, ? extends Serializable> params) throws DataStoreException {
-        final ParameterValueGroup prm;
-        try {
-            prm = Parameters.toParameter(DataStores.forceIdentifier(factory, params), factory.getOpenParameters());
-        } catch(IllegalArgumentException ex) {
-            throw new DataStoreException(ex);
-        }
-        if (factory instanceof DataStoreFactory) {
-            return ((DataStoreFactory) factory).create(prm);
-        } else {
-            return factory.open(prm);
-        }
     }
 
     /**

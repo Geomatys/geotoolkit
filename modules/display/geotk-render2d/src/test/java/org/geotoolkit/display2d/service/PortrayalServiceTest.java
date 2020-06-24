@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
@@ -34,6 +33,7 @@ import javax.measure.Unit;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
@@ -50,7 +50,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -104,7 +103,6 @@ import static org.junit.Assert.assertNull;
 public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final GridCoverageBuilder GCF = new GridCoverageBuilder();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final List<FeatureSet> featureColls = new ArrayList<>();
@@ -190,10 +188,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         Graphics2D g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        GCF.reset();
-        GCF.setEnvelope(env);
-        GCF.setRenderedImage(img);
-        GridCoverage coverage = GCF.getGridCoverage2D();
+        GridCoverageBuilder GCF = new GridCoverageBuilder();
+        GCF.setDomain(env);
+        GCF.setValues(img);
+        GridCoverage coverage = GCF.build();
         coverages.add(coverage);
 
         env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -203,10 +201,10 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        GCF.reset();
-        GCF.setEnvelope(env);
-        GCF.setRenderedImage(img);
-        coverage = GCF.getGridCoverage2D();
+        GCF = new GridCoverageBuilder();
+        GCF.setDomain(env);
+        GCF.setValues(img);
+        coverage = GCF.build();
         coverages.add(coverage);
 
     }
@@ -276,13 +274,11 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         g.dispose();
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("propcov");
-        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
-        gcb.setGridToCRS(1, 0, 0, 1, 0.5, 0.5);
-        gcb.setRenderedImage(img);
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0.5, 0.5), CommonCRS.WGS84.normalizedGeographic()));
+        gcb.setValues(img);
 
         final Feature f = ft.newInstance();
-        f.setPropertyValue("coverage",gcb.getGridCoverage2D());
+        f.setPropertyValue("coverage",gcb.build());
         final FeatureSet collection = new InMemoryFeatureSet(ft, Arrays.asList(f));
 
 
@@ -348,7 +344,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     public void testCoverageOutofValidityArea() throws FactoryException, PortrayalException {
 
         final double scale = 360.0 / 4320.0;
-        final AffineTransform gridToCRS = new AffineTransform(scale, 0, 0, -scale, -180, 90);
+        final AffineTransform2D gridToCRS = new AffineTransform2D(scale, 0, 0, -scale, -180, 90);
         final BufferedImage img = new BufferedImage(4320, 2160, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = img.createGraphics();
         g.setColor(Color.BLUE);
@@ -356,11 +352,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         g.dispose();
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("world");
-        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
-        gcb.setGridToCRS(gridToCRS);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setRenderedImage(img);
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, gridToCRS, CommonCRS.WGS84.normalizedGeographic()));
+        gcb.setValues(img);
         final GridCoverage coverage = gcb.build();
 
         final MapContext context = MapBuilder.createContext();
@@ -476,9 +469,9 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        gcb.setDomain(env);
+        gcb.setValues(img);
+        final GridCoverage coverage = gcb.build();
 
         //display it
         final MapContext context = MapBuilder.createContext();
@@ -557,10 +550,9 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final GridExtent extent = new GridExtent(350, 180);
         final GridGeometry gg = new GridGeometry(extent, PixelInCell.CELL_CORNER, gridToCrs, crs);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(img);
-        gcb.setName("coverage");
-        gcb.setGridGeometry(gg);
-        final GridCoverage coverage = gcb.getGridCoverage2D();
+        gcb.setValues(img);
+        gcb.setDomain(gg);
+        final GridCoverage coverage = gcb.build();
 
         final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
         final MapLayer layer = MapBuilder.createCoverageLayer(gcr);

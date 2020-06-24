@@ -15,22 +15,22 @@
  */
 package org.geotoolkit.processing.coverage.kriging;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
-import javax.vecmath.Point3d;
-import org.opengis.coverage.grid.SequenceType;
-import org.apache.sis.util.ArgumentChecks;
+import static java.lang.Double.isNaN;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.geometry.math.Vector3d;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
-import static java.lang.Double.isNaN;
+import org.opengis.coverage.grid.SequenceType;
 
 
 /**
@@ -250,12 +250,14 @@ public class IsolineCreator {
      */
     public CoordinateSequence[][] createPolylines() {
         calculateIntersectionGrids();
-        final CoordinateSequence[][] polylines = new CoordinateSequence[intersections.length][];
+        final CoordinateSequence[][] polylines = new CoordinateSequence[intersections.length][0];
         for (int i=0; i<intersections.length; i++) {
-            final Collection<Polyline> p = intersections[i].createPolylines();
-            polylines[i] = p.toArray(new CoordinateSequence[p.size()]);
-            // We convert to array in order to allow the garbage collector to collect
-            // the map entries, since the key values are not of interest to the user.
+            if (intersections[i] != null) {
+                final Collection<Polyline> p = intersections[i].createPolylines();
+                polylines[i] = p.toArray(new CoordinateSequence[p.size()]);
+                // We convert to array in order to allow the garbage collector to collect
+                // the map entries, since the key values are not of interest to the user.
+            }
         }
         return polylines;
     }
@@ -268,9 +270,9 @@ public class IsolineCreator {
      * @deprecated Use {@link #createPolylines()} instead.
      */
     @Deprecated
-    public Map<Point3d, List<Coordinate>> createIsolines() {
+    public Map<Vector3d, List<Coordinate>> createIsolines() {
         final CoordinateSequence[][] polylines = createPolylines();
-        final Map<Point3d,List<Coordinate>> cellMapResult = new HashMap<Point3d,List<Coordinate>>();
+        final Map<Vector3d,List<Coordinate>> cellMapResult = new HashMap<Vector3d,List<Coordinate>>();
         for (int i=0; i<polylines.length; i++) {
             int n = 0;
             for (final CoordinateSequence polyline : polylines[i]) {
@@ -280,7 +282,7 @@ public class IsolineCreator {
                     coord.y += yMin;
                 }
                 // The (i,j) coordinates below are totally arbitrary; only the z one is significant.
-                cellMapResult.put(new Point3d(i, n++, levels[i]), Arrays.asList(coords));
+                cellMapResult.put(new Vector3d(i, n++, levels[i]), Arrays.asList(coords));
             }
         }
         return cellMapResult;

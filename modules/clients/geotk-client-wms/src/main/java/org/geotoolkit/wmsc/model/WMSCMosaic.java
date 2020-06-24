@@ -19,7 +19,6 @@ package org.geotoolkit.wmsc.model;
 import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
@@ -28,6 +27,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.multires.AbstractMosaic;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Tile;
@@ -50,6 +50,7 @@ public class WMSCMosaic implements Mosaic {
     private final Dimension gridSize = new Dimension();
     private final double tileSpanX;
     private final double tileSpanY;
+    private Tile anyTile = null;
 
     public WMSCMosaic(final WMSCPyramid pyramid, final double scaleLevel) {
         this.pyramid = pyramid;
@@ -150,7 +151,15 @@ public class WMSCMosaic implements Mosaic {
     }
 
     @Override
-    public Optional<Tile> anyTile() throws DataStoreException {
-        return Optional.of(getTile(0, 0, null));
+    public synchronized Tile anyTile() throws DataStoreException {
+        if (anyTile == null) {
+            anyTile = getTile(0, 0, null);
+        }
+        return anyTile;
+    }
+
+    @Override
+    public String toString() {
+        return AbstractMosaic.toString(this);
     }
 }

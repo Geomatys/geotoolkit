@@ -39,7 +39,6 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -65,7 +64,6 @@ import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
@@ -78,6 +76,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
+import org.geotoolkit.storage.multires.AbstractMosaic;
 import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -142,6 +141,7 @@ public class XMLMosaic implements Mosaic {
     Boolean cacheTileState;
 
     Path folder;
+    private Tile anyTile = null;
 
     final ReentrantReadWriteLock bitsetLock = new ReentrantReadWriteLock();
 
@@ -529,11 +529,7 @@ public class XMLMosaic implements Mosaic {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
-        sb.append("   scale = ").append(getScale());
-        sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
-        sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
-        return sb.toString();
+        return AbstractMosaic.toString(this);
     }
 
     /**
@@ -818,9 +814,11 @@ public class XMLMosaic implements Mosaic {
     }
 
     @Override
-    public Optional<Tile> anyTile() throws DataStoreException {
-        //it will create a valid tile with correct sample model
-        return Optional.ofNullable(getTile(0, 0, null));
+    public synchronized Tile anyTile() throws DataStoreException {
+        if (anyTile == null) {
+            anyTile = getTile(0, 0, null);
+        }
+        return anyTile;
     }
 
     private class TileWriter implements Runnable{

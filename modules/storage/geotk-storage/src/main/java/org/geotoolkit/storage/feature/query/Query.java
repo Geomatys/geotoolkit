@@ -20,6 +20,8 @@ package org.geotoolkit.storage.feature.query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -94,12 +96,13 @@ public final class Query extends SimpleQuery {
                 -1,
                 null,
                 null,
+                null,
                 null);
     }
 
     Query(final String typeName, final Filter filter, final String[] attributs, final SortBy[] sort,
             final CoordinateReferenceSystem crs, final long startIndex, final long MaxFeature,
-            final double[] resolution, final Object version, final Hints hints){
+            final double[] resolution, Quantity<Length> linearResolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", typeName);
         if (filter == null) {
@@ -110,6 +113,7 @@ public final class Query extends SimpleQuery {
         setOffset(startIndex);
         setLimit(MaxFeature);
         setSortBy(sort);
+        setLinearResolution(linearResolution);
 
         if (attributs != null && attributs.length > 0) {
             final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
@@ -125,9 +129,9 @@ public final class Query extends SimpleQuery {
         this.resolution = resolution;
         this.version = version;
 
-        if(hints == null){
+        if (hints == null) {
             this.hints = new Hints();
-        }else{
+        } else {
             this.hints = hints;
         }
 
@@ -146,6 +150,7 @@ public final class Query extends SimpleQuery {
              query.getOffset(),
              query.getLimit(),
              (query.getResolution()==null)?null:query.getResolution().clone(),
+             query.getLinearResolution(),
              (query.getVersionDate()!=null)? query.getVersionDate() : query.getVersionLabel(),
              query.getHints());
     }

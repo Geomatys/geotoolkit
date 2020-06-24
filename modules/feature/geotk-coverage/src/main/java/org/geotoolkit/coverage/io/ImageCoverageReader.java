@@ -47,7 +47,56 @@ import javax.imageio.stream.ImageInputStream;
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
 import javax.measure.Unit;
-
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.storage.MetadataBuilder;
+import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.measure.Units;
+import org.apache.sis.metadata.ModifiableMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultResolution;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.collection.BackingStoreException;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.apache.sis.util.iso.Names;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.resources.Vocabulary;
+import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GridGeometryIterator;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.io.DimensionSlice;
+import org.geotoolkit.image.io.ImageMetadataException;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
+import org.geotoolkit.image.io.SampleConversionType;
+import org.geotoolkit.image.io.SpatialImageReadParam;
+import org.geotoolkit.image.io.SpatialImageReader;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.large.LargeRenderedImage;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.collection.XCollections;
+import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
@@ -72,64 +121,8 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
-
-import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.GridCoverage2D;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.storage.MetadataBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.measure.Units;
-import org.apache.sis.metadata.ModifiableMetadata;
-import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
-import org.apache.sis.metadata.iso.extent.DefaultExtent;
-import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
-import org.apache.sis.metadata.iso.identification.DefaultResolution;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.collection.BackingStoreException;
-import org.apache.sis.util.iso.Names;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.util.resources.Vocabulary;
-
-import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.GridGeometryIterator;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.image.io.DimensionSlice;
-import org.geotoolkit.image.io.ImageMetadataException;
-import org.geotoolkit.image.io.SampleConversionType;
-import org.geotoolkit.image.io.SpatialImageReadParam;
-import org.geotoolkit.image.io.SpatialImageReader;
-import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.large.LargeRenderedImage;
-import org.geotoolkit.image.io.metadata.MetadataHelper;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
-import org.geotoolkit.image.io.mosaic.MosaicImageReader;
-import org.geotoolkit.internal.image.io.CheckedImageInputStream;
-import org.geotoolkit.internal.image.io.DimensionAccessor;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.XCollections;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
-import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 
 
 /**
@@ -1407,18 +1400,6 @@ public class ImageCoverageReader extends GridCoverageStore {
             dstBands = null;
         }
         /*
-         * At this point, the standard parameters (source region, source bands) are set.
-         * The following is Geotk-specific. First, allow MosaicImageReader to use a different
-         * resolution than the requested one. This is crucial from a performance point of view.
-         * Since the GridCoverageReader contract does not guarantee that the grid geometry of the
-         * returned coverage is the requested geometry, we are allowed to do that.
-         */
-        if (imageParam instanceof MosaicImageReadParam) {
-            // Note: we don't create a new ImageReadParam if it is null
-            // since we would be reading the image at full resolution anyway.
-            ((MosaicImageReadParam) imageParam).setSubsamplingChangeAllowed(true);
-        }
-        /*
          * Next, check if we should allow the image reader to add an offset to signed intergers
          * in order to make them unsigned. We will allow such offset if the SampleDimensions
          * declare unsigned range of sample values.
@@ -1513,7 +1494,7 @@ public class ImageCoverageReader extends GridCoverageStore {
                 ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
             }
             if (param != null && param.isDeferred()) {
-                image = new LargeRenderedImage(imageReader.getOriginatingProvider(), imageParam, imageReader.getInput(), index, null, null);
+                image = new LargeRenderedImage(imageReader.getOriginatingProvider(), imageParam, imageReader.getInput(), index, null);
             } else {
                 image = imageReader.read(index, imageParam);
             }

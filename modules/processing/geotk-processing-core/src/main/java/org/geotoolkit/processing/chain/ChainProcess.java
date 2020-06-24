@@ -167,9 +167,7 @@ public class ChainProcess extends AbstractProcess {
 
                 } else if(obj instanceof ElementProcess) {
                     // handle process cancel
-                    if (isCanceled()) {
-                       throw new ProcessException("Process Canceled by user", this, null);
-                    }
+                    stopIfDismissed();
                     // handle process pause
                     if (isPaused()) {
                         fireProcessPaused(descriptor.getIdentifier().getCode() + " paused", currentProgress);
@@ -322,10 +320,10 @@ public class ChainProcess extends AbstractProcess {
     }
 
     @Override
-    public void cancelProcess() {
-        super.cancelProcess();
+    public void dismissProcess() {
+        super.dismissProcess();
         if (currentProcess instanceof AbstractProcess) {
-            ((AbstractProcess)currentProcess).cancelProcess();
+            ((AbstractProcess)currentProcess).dismissProcess();
         }
     }
 

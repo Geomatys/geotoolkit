@@ -19,12 +19,12 @@ package org.geotoolkit.display2d.canvas;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -46,6 +46,8 @@ import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 /**
  *
@@ -130,6 +132,12 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
                 canvasObjectShape,
                 dpi.doubleValue());
         if (output != null) context.initGraphic(output);
+
+        try {
+            setVisibleArea(getVisibleEnvelope());
+        } catch (NoninvertibleTransformException | TransformException e) {
+            // TODO : log warning
+        }
 
         return context;
     }

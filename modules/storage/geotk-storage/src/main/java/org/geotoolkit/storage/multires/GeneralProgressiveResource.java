@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,10 +29,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.storage.AbstractResource;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -71,6 +73,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         return base.getIdentifier();
     }
 
+    @Override
     public TileGenerator getGenerator() {
         return generator;
     }
@@ -87,22 +90,26 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     public Collection<Pyramid> getModels() throws DataStoreException {
         final Collection<Pyramid> parentPyramids = (Collection<Pyramid>) base.getModels();
 
-        //check pyramids, we need to do this until an event system is created
+        final List<Pyramid> pyramids;
+        synchronized (cacheMap) {
+            //check pyramids, we need to do this until an event system is created
 
-        //add missing pyramids in the view
-        final Set<String> keys = new HashSet<>();
-        for (Pyramid candidate : parentPyramids) {
-            if (!cacheMap.containsKey(candidate.getIdentifier())) {
-                cacheMap.put(candidate.getIdentifier(), new ProgressivePyramid(candidate));
+            //add missing pyramids in the view
+            final Set<String> keys = new HashSet<>();
+            for (Pyramid candidate : parentPyramids) {
+                if (!cacheMap.containsKey(candidate.getIdentifier())) {
+                    cacheMap.put(candidate.getIdentifier(), new ProgressivePyramid(candidate));
+                }
+                keys.add(candidate.getIdentifier());
             }
-            keys.add(candidate.getIdentifier());
-        }
-        if (cacheMap.size() != parentPyramids.size()) {
-            //some pyramids have been deleted from parent
-            cacheMap.keySet().retainAll(keys);
+            if (cacheMap.size() != parentPyramids.size()) {
+                //some pyramids have been deleted from parent
+                cacheMap.keySet().retainAll(keys);
+            }
+            pyramids = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new Pyramid[0]));
         }
 
-        return Collections.unmodifiableCollection(cacheMap.values());
+        return pyramids;
     }
 
     /**
@@ -110,16 +117,20 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
      */
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        final MultiResolutionModel newParentPyramid = base.createModel(template);
-        final ProgressivePyramid cached = new ProgressivePyramid((Pyramid) newParentPyramid);
-        cacheMap.put(cached.getIdentifier(), cached);
-        return cached;
+        synchronized (cacheMap) {
+            final MultiResolutionModel newParentPyramid = base.createModel(template);
+            final ProgressivePyramid cached = new ProgressivePyramid((Pyramid) newParentPyramid);
+            cacheMap.put(cached.getIdentifier(), cached);
+            return cached;
+        }
     }
 
     @Override
     public void removeModel(String identifier) throws DataStoreException {
-        base.removeModel(identifier);
-        cacheMap.remove(identifier);
+        synchronized (cacheMap) {
+            base.removeModel(identifier);
+            cacheMap.remove(identifier);
+        }
     }
 
     @Override
@@ -138,6 +149,19 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         } catch (InterruptedException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
+    }
+
+    @Override
+    public String toString() {
+        final String name = Classes.getShortClassName(this);
+        final List<String> elements = new ArrayList<>();
+        try {
+            elements.add("id : "+ getIdentifier().orElse(null));
+        } catch (DataStoreException ex) {
+            elements.add("id : ERROR");
+        }
+        elements.add("generator : "+ String.valueOf(generator));
+        return StringUtilities.toStringTree(name, elements);
     }
 
     private final class ProgressivePyramid implements Pyramid {
@@ -193,6 +217,10 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
             parent.deleteMosaic(mosaicId);
         }
 
+        @Override
+        public String toString(){
+            return AbstractPyramid.toString(this);
+        }
     }
 
     final class ProgressiveMosaic implements Mosaic {
@@ -282,14 +310,19 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
 
         @Override
-        public Optional<Tile> anyTile() throws DataStoreException {
-            final Optional<Tile> anyTile = base.anyTile();
-            if (anyTile.isPresent()) {
-                return anyTile;
+        public Tile anyTile() throws DataStoreException {
+            try {
+                return base.anyTile();
+            } catch (DataStoreException ex) {
+                //may be empty
             }
-            return Optional.ofNullable(getTile(0, 0, null));
+            return getTile(0, 0, null);
         }
 
+        @Override
+        public String toString() {
+            return AbstractMosaic.toString(this);
+        }
     }
 
 }

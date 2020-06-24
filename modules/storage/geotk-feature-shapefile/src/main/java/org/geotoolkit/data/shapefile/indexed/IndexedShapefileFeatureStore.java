@@ -42,7 +42,7 @@ import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileProvider;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
@@ -148,7 +148,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             }
         } catch (IOException e) {
             this.treeType = IndexType.NONE;
-            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e
+            ShapefileProvider.LOGGER.log(Level.WARNING, e
                     .getLocalizedMessage());
         }
         try {
@@ -157,7 +157,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                 IndexedFidWriter.generate(shpFiles);
             }
         } catch (IOException e) {
-            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e
+            ShapefileProvider.LOGGER.log(Level.WARNING, e
                     .getLocalizedMessage());
         }
 
@@ -678,7 +678,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             }
         } catch (IOException e) {
             this.treeType = IndexType.NONE;
-            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e.getLocalizedMessage());
+            ShapefileProvider.LOGGER.log(Level.WARNING, e.getLocalizedMessage());
         }
         try {
             if (shpFiles.isWritable() && needsGeneration(FIX)) {
@@ -686,7 +686,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                 IndexedFidWriter.generate(shpFiles);
             }
         } catch (IOException e) {
-            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e.getLocalizedMessage());
+            ShapefileProvider.LOGGER.log(Level.WARNING, e.getLocalizedMessage());
         }
 
     }

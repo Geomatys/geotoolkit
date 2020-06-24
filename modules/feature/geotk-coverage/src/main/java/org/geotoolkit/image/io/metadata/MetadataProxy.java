@@ -42,7 +42,6 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.grid.RectifiedGrid;
@@ -448,10 +447,6 @@ final class MetadataProxy<T> implements InvocationHandler {
             if (targetType.isAssignableFrom(GeneralDirectPosition.class)) {
                 final double[] coordinates = accessor.getAttributeAsDoubles(name, false);
                 return (coordinates != null) ? new GeneralDirectPosition(coordinates) : null;
-            }
-            if (targetType.isAssignableFrom(GeneralGridCoordinates.class)) {
-                final int[] coordinates = accessor.getAttributeAsIntegers(name, false);
-                return (coordinates != null) ? new GeneralGridCoordinates(coordinates) : null;
             }
         }
         if (targetType.isAssignableFrom(List.class)) {

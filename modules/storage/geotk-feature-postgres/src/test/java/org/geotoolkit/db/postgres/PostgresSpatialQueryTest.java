@@ -37,7 +37,7 @@ import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 
 
-import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
+import static org.geotoolkit.db.postgres.PostgresProvider.*;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
 import org.opengis.feature.FeatureType;
@@ -49,7 +49,7 @@ import org.opengis.feature.FeatureType;
 public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
 
 
-    private PostgresFeatureStore store;
+    private PostgresStore store;
 
     public PostgresSpatialQueryTest(){
     }
@@ -89,8 +89,8 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         }
 
         //open in complex type to delete all types
-        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(false);
-        store = (PostgresFeatureStore) DataStores.open(params);
+        params.getOrCreate(PostgresProvider.SIMPLETYPE).setValue(false);
+        store = (PostgresStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n.toString());
             vc.dropVersioning();
@@ -100,8 +100,8 @@ public class PostgresSpatialQueryTest extends org.geotoolkit.test.TestBase {
         store.close();
 
         //reopen the way it was asked
-        params.getOrCreate(PostgresFeatureStoreFactory.SIMPLETYPE).setValue(simpleType);
-        store = (PostgresFeatureStore) DataStores.open(params);
+        params.getOrCreate(PostgresProvider.SIMPLETYPE).setValue(simpleType);
+        store = (PostgresStore) DataStores.open(params);
         assertTrue(store.getNames().isEmpty());
     }
 

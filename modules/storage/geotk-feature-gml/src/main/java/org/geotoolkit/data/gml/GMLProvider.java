@@ -31,11 +31,10 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -71,7 +70,10 @@ public class GMLProvider extends DataStoreProvider implements ProviderOnFileSyst
     public static final String NAME = "gml";
     public static final String MIME_TYPE = "application/gml+xml";
 
-    public static final ParameterDescriptor<URI> PATH = AbstractFileFeatureStoreFactory.PATH;
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
+            .addName(LOCATION)
+            .setRequired(true)
+            .create(URI.class, null);
 
     /**
      * Open a folder of sparsed features

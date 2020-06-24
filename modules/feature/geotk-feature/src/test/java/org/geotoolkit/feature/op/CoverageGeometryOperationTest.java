@@ -19,10 +19,10 @@ package org.geotoolkit.feature.op;
 
 import java.awt.image.BufferedImage;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -68,8 +68,8 @@ public class CoverageGeometryOperationTest {
         env.setRange(0, 10, 20);
         env.setRange(1, 20, 30);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+        gcb.setDomain(env);
+        gcb.setValues(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
         final GridCoverage coverage = gcb.build();
 
         //create feature

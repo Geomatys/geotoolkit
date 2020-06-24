@@ -17,22 +17,22 @@
 package org.geotoolkit.display2d.service;
 
 import java.awt.Dimension;
-import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
@@ -142,7 +142,7 @@ final class PortrayalCoverageResource extends AbstractGridResource {
         }
 
         //calculate final grid to crs transform
-        final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, paramEnv);
+        final AffineTransform2D gridToCRS = new AffineTransform2D(ReferencingUtilities.toAffine(dim, paramEnv));
 
 
         final CanvasDef canvas = new CanvasDef(dim, null);
@@ -157,11 +157,8 @@ final class PortrayalCoverageResource extends AbstractGridResource {
 
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName(contextName);
-        gcb.setRenderedImage(image);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setGridToCRS(gridToCRS);
-        gcb.setCoordinateReferenceSystem(crs);
+        gcb.setValues(image);
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, gridToCRS, crs));
         return gcb.build();
     }
 

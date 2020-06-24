@@ -4,16 +4,16 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.Collections;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.sampleclassifier.SampleClassifierTest;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.test.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -54,10 +54,11 @@ public class CategorizeTest {
             };
         }
 
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
+        env.setEnvelope(-20,-20,10,10);
         final GridCoverageBuilder builder = new GridCoverageBuilder();
-        builder.setRenderedImage(inputImage);
-        builder.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
-        builder.setEnvelope(-20, -20, 10, 10);
+        builder.setValues(inputImage);
+        builder.setDomain(env);
         final GridCoverage sourceCvg = builder.build();
 
         WritableGridCoverageResource input = new InMemoryGridCoverageResource(sourceCvg);
@@ -139,10 +140,12 @@ public class CategorizeTest {
         WritableGridCoverageResource output = new InMemoryGridCoverageResource();
 
         for (int i = 0; i < inputs.length; i++) {
+
+            final GeneralEnvelope env = new GeneralEnvelope(inputCrs);
+            env.setEnvelope(-10, -10, i, 10, 10, i);
             final GridCoverageBuilder builder = new GridCoverageBuilder();
-            builder.setRenderedImage(SampleClassifierTest.createGrayScale(3, 3, inputs[i]));
-            builder.setCoordinateReferenceSystem(inputCrs);
-            builder.setEnvelope(-10, -10, i, 10, 10, i);
+            builder.setValues(SampleClassifierTest.createGrayScale(3, 3, inputs[i]));
+            builder.setDomain(env);
             final GridCoverage sourceCvg = builder.build();
             input.write(sourceCvg, WritableGridCoverageResource.CommonOption.UPDATE);
         }

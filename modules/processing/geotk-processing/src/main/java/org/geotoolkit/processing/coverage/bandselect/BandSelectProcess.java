@@ -19,13 +19,13 @@ package org.geotoolkit.processing.coverage.bandselect;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.util.Hashtable;
-import org.apache.sis.parameter.Parameters;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -99,9 +99,9 @@ public class BandSelectProcess extends AbstractProcess {
 
         // REBUILD COVERAGE ////////////////////////////////////////////////////
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(resultImage);
-        gcb.setGridGeometry(inputCoverage.getGridGeometry());
-        final GridCoverage resultCoverage = gcb.getGridCoverage2D();
+        gcb.setValues(resultImage);
+        gcb.setDomain(inputCoverage.getGridGeometry());
+        final GridCoverage resultCoverage = gcb.build();
 
         outputParameters.getOrCreate(BandSelectDescriptor.OUT_COVERAGE).setValue(resultCoverage);
     }

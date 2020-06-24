@@ -26,7 +26,6 @@ import javax.measure.Unit;
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.GeodeticCalculator;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.opengis.geometry.Envelope;
@@ -138,7 +137,7 @@ public final class CanvasUtilities {
         final int width = dispBounds.width;
 
         if (AffineTransforms2D.getRotation(objToDisp) != 0.0) {
-            final double scale = XAffineTransform.getScale(objToDisp);
+            final double scale = AffineTransforms2D.getScale(objToDisp);
             if(objCRS instanceof GeographicCRS) {
                 return (SE_DEGREE_TO_METERS*DEFAULT_DPI) / (scale*PIXEL_SIZE);
             } else {

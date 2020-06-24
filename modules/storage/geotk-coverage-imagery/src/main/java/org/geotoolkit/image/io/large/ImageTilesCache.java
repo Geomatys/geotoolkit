@@ -17,11 +17,6 @@
 package org.geotoolkit.image.io.large;
 
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import javax.media.jai.RasterFactory;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
@@ -37,10 +32,15 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageOutputStream;
+import javax.media.jai.RasterFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.WeakValueHashMap;
 import org.apache.sis.util.logging.Logging;
@@ -165,10 +165,6 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
         this.cache = cache;
         this.isWritableRenderedImage = ri instanceof WritableRenderedImage;
 
-        if (ri instanceof WritableLargeRenderedImage ) {
-            if (!cache.isEnableSwap())
-                throw new IllegalArgumentException("With WritableRenderedImage LargeCache must swap.");
-        }
         //image owner properties.
         this.cm            = ri.getColorModel();
         this.numTilesX     = ri.getNumXTiles();

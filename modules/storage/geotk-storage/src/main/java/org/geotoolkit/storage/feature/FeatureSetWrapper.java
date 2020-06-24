@@ -28,19 +28,19 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
-
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import org.geotoolkit.storage.memory.WrapFeatureIterator;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.session.DefaultSession;
 import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.memory.WrapFeatureIterator;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -59,8 +59,20 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
     private final FeatureSet featureSet;
     private final DataStore store;
 
+    /**
+     *
+     * @param featureSet
+     * @param store, may be null if featureSet is a DataStore or a StoreResource.
+     */
     public FeatureSetWrapper(FeatureSet featureSet, DataStore store) {
         this.featureSet = featureSet;
+        if (store == null) {
+            if (featureSet instanceof StoreResource) {
+                store = ((StoreResource) featureSet).getOriginator();
+            } else if (featureSet instanceof DataStore) {
+                store = (DataStore) featureSet;
+            }
+        }
         this.store = store;
     }
 

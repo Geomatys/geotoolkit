@@ -21,15 +21,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.util.AbstractQueue;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.concurrent.BlockingQueue;
+import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -42,11 +40,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.Mosaic;
@@ -125,33 +123,23 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
         //to fill value table : see resample.
         final int nbBand = image.getSampleModel().getNumBands();
 
-        final BlockingQueue<Runnable> tileQueue;
+        final Iterator<Runnable> tileQueue;
         try {
             //extract the 2D part of the gridtocrs transform
             final TransformSeparator filter = new TransformSeparator(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
-            tileQueue = new ByTileQueue(reference, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
+            tileQueue = new Ite(reference, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
         } catch (FactoryException ex) {
             throw new DataStoreException(ex);
         }
-        final ThreadPoolExecutor service = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors(),
-                Runtime.getRuntime().availableProcessors(),
-                1, TimeUnit.MINUTES, tileQueue);
-        service.prestartAllCoreThreads();
-        service.shutdown();
-        while(true){
-            try {
-                if(service.awaitTermination(1, TimeUnit.DAYS)){
-                    break;
-                }
-            } catch (InterruptedException ex) {
-                Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.SEVERE, null, ex);
-            }
-        }
+
+        final Spliterator<Runnable> spliterator = Spliterators.spliteratorUnknownSize(tileQueue, Spliterator.ORDERED);
+        final Stream<Runnable> stream = StreamSupport.stream(spliterator, false);
+
+        stream.parallel().forEach(Runnable::run);
     }
 
-    private static class ByTileQueue <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {
+    private static class Ite <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> implements Iterator<Runnable> {
 
         private final T model;
         private final Envelope requestedEnvelope;
@@ -187,7 +175,9 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
         private int idx = -1;
         private int idy = -1;
 
-        private ByTileQueue(T model, Envelope requestedEnvelope,
+        private Runnable next = null;
+
+        private Ite(T model, Envelope requestedEnvelope,
                 CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand,
                 MathTransform srcCRSToGrid, InterpolationCase interpolation) throws DataStoreException{
             this.model = model;
@@ -198,69 +188,6 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
             this.srcCRSToGrid = srcCRSToGrid;
             this.interpolation = interpolation;
             pyramidsIte = Pyramids.getPyramids(model).iterator();
-        }
-
-        @Override
-        public Iterator<Runnable> iterator() {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public boolean isEmpty() {
-            //we don't know the size, just give a value to indicate there are more.
-            return finished;
-        }
-
-        @Override
-        public int size() {
-            throw new UnsupportedOperationException("Not supported.");
-//            //we don't know the size, just give a value to indicate there are more.
-//            return finished ? 0 : 100;
-        }
-
-        @Override
-        public boolean offer(Runnable e) {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public Runnable peek() {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public void put(Runnable e) throws InterruptedException {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public boolean offer(Runnable e, long timeout, TimeUnit unit) throws InterruptedException {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public Runnable take() throws InterruptedException {
-            return poll();
-        }
-
-        @Override
-        public Runnable poll(long timeout, TimeUnit unit) throws InterruptedException {
-            return poll();
-        }
-
-        @Override
-        public int remainingCapacity() {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public int drainTo(Collection<? super Runnable> c) {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public int drainTo(Collection<? super Runnable> c, int maxElements) {
-            throw new UnsupportedOperationException("Not supported.");
         }
 
         private boolean calculateMosaicRange(final Pyramid pyramid, final Mosaic mosaic, Envelope pyramidEnvelope){
@@ -307,18 +234,41 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
         }
 
         @Override
+        public Runnable next() {
+            findNext();
+            Runnable r = next;
+            next = null;
+            if (r == null) {
+                throw new NoSuchElementException();
+            }
+            return r;
+        }
+
+        @Override
+        public boolean hasNext() {
+            findNext();
+            return next != null;
+        }
+
+        private void findNext() {
+            if (next != null) {
+                return;
+            }
+            next = poll();
+        }
+
         public synchronized Runnable poll() {
+            if (finished) return null;
 
             //find next tile to build
             loop:
-            while(true){
-                if(currentPyramid==null){
-                    if(pyramidsIte.hasNext()){
+            while (true) {
+                if (currentPyramid == null) {
+                    if (pyramidsIte.hasNext()) {
                         currentPyramid = pyramidsIte.next();
                         try {
                             final GeneralEnvelope tmpFilter = new GeneralEnvelope(
                                     ReferencingUtilities.transform(requestedEnvelope, currentPyramid.getCoordinateReferenceSystem()));
-
 
                             mosaics = CoverageUtilities.findMosaics(currentPyramid, tmpFilter, false).iterator();
 
@@ -333,19 +283,19 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
 
                         crsDestToSrcGrid = MathTransforms.concatenate(crsDestToCrsCoverage, srcCRSToGrid);
 
-                    }else{
+                    } else {
                         //we have finish
                         finished = true;
                         return null;
                     }
                 }
 
-                if(currentMosaic==null){
-                    if(mosaics != null && mosaics.hasNext()){
+                if (currentMosaic == null) {
+                    if (mosaics != null && mosaics.hasNext()) {
                         //next mosaic
                         currentMosaic = mosaics.next();
                         idx=-1;
-                    }else{
+                    } else {
                         //next pyramid
                         mosaics = null;
                         currentMosaic = null;
@@ -354,19 +304,19 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
                     }
                 }
 
-                if(idx==-1){
+                if (idx == -1) {
                     calculateMosaicRange(currentPyramid, currentMosaic, pyramidEnvelope);
                     idx = idminx-1;
                     idy = idminy;
                 }
 
-                while(true){
+                while (true) {
                     idx++;
-                    if(idx>=idmaxx){
+                    if (idx >= idmaxx) {
                         idy++;
                         idx = idminx;
                     }
-                    if(idy>=idmaxy){
+                    if (idy >= idmaxy) {
                         //finished thie mosaic
                         currentMosaic = null;
                         continue loop;
@@ -468,7 +418,7 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
             if(tminx==tmaxx || tminy==tmaxy) return;
 
             try {
-                final Resample resample = new Resample(destImgToCrsCoverage, currentlyTile, tileAreaWork, interpolation, new double[nbBand]);
+                final Resample resample = new Resample(destImgToCrsCoverage, currentlyTile, tileAreaWork, interpolation, new double[nbBand], ResampleBorderComportement.EXTRAPOLATION);
                 resample.fillImage();
                 mosaic.writeTiles(Stream.of(new DefaultImageTile(currentlyTile, new Point(idx, idy))), null);
             } catch (Exception ex) {

@@ -23,21 +23,26 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.WritableFeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.AfterClass;
@@ -51,6 +56,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  *
@@ -143,11 +149,10 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         for(int i=0;i<180;i++)Arrays.fill(data[i], 15f);
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("coverage");
-        gcb.setRenderedImage(data);
-        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
+        gcb.setValues(BufferedImages.toDataBuffer(data), null);
         final AffineTransform trs = new AffineTransform(1,0,0,-1,-180,90);
-        gcb.setGridToCRS(trs);
+        gcb.setDomain(new GridGeometry(new GridExtent(360, 180), PixelInCell.CELL_CENTER, new AffineTransform2D(trs), CommonCRS.WGS84.normalizedGeographic()));
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
 
 
         final MapLayer cml = MapBuilder.createCoverageLayer(gcb.build());

@@ -27,15 +27,15 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.UnconvertibleObjectException;
-import static org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory.PATH;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import static org.geotoolkit.data.geojson.GeoJSONProvider.PARAMETERS_DESCRIPTOR;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import static org.geotoolkit.storage.geojson.GeoJSONProvider.PARAMETERS_DESCRIPTOR;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v200.Reference;
@@ -104,7 +104,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
         } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
             ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
             try {
-                param.parameter(PATH.getName().getCode()).setValue(URI.create(source.getHref()));
+                param.parameter(DataStoreProvider.LOCATION).setValue(URI.create(source.getHref()));
                 DataStore store = DataStores.open(param);
 
                 List<FeatureSet> featureSets = new ArrayList<>(DataStores.flatten(store, true, FeatureSet.class));

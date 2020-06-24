@@ -57,6 +57,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Or;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.PropertyName;
 
 /**
@@ -281,7 +282,14 @@ public final class CQL {
             if(exp.NAME()!=null){
                 final String name = exp.NAME().getText();
                 final ExpressionFctParamContext prm = exp.expressionFctParam();
-                if(prm==null){
+                if (prm == null) {
+                    //try to find a function with this name
+                    try {
+                        Function fct = ff.function(name, new Expression[0]);
+                        if (fct != null) return fct;
+                    } catch (IllegalArgumentException ex) {
+                        //we have try
+                    }
                     //handle as property name
                     return ff.property(name);
                 }

@@ -10,7 +10,6 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -32,7 +31,7 @@ public class GraphicBuilderDemo {
 
         final MapContext context = createContext();
 
-        FXMapFrame.show(context);
+//        FXMapFrame.show(context);
 
     }
 

@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
@@ -41,11 +42,13 @@ import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Utilities;
+
 import static org.geotoolkit.display2d.GO2Utilities.ALPHA_COMPOSITE_1F;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import static org.geotoolkit.display2d.GO2Utilities.STYLE_FACTORY;
 import static org.geotoolkit.display2d.GO2Utilities.getCached;
 import static org.geotoolkit.display2d.GO2Utilities.propertiesNames;
+
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
@@ -63,7 +66,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.style.MutableRule;
@@ -176,7 +178,7 @@ public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements Sto
                 symbolsMargin = 300f;
             }
             if (symbolsMargin > 0) {
-                final double scale = XAffineTransform.getScale(renderingContext.getDisplayToObjective());
+                final double scale = AffineTransforms2D.getScale(renderingContext.getDisplayToObjective());
                 symbolsMargin = scale * symbolsMargin;
             }
 

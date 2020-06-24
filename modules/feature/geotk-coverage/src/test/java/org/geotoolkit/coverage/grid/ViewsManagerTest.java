@@ -54,7 +54,7 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
      * @param random The random number generator to use for generating pixel values.
      */
     private static void setBufferedImage(final GridCoverageBuilder builder, final Random random) {
-        builder.setRenderedImage((BufferedImage) null); // Will forces the creation of a new BufferedImage.
+        builder.setValues((BufferedImage) null); // Will forces the creation of a new BufferedImage.
         final BufferedImage image = (BufferedImage) builder.getRenderedImage();
         final WritableRaster raster = image.getRaster();
         final ColorModel model = image.getColorModel();

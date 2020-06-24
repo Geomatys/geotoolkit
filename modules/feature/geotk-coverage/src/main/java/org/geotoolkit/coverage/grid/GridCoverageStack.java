@@ -335,7 +335,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         /**
          * Returns the coverage name. The default implementation delegates to the
          * {@linkplain #getCoverage underlying coverage} if it is an instance of
-         * {@link AbstractCoverage}.
+         * {@link org.geotoolkit.coverage.grid.GridCoverage}.
          */
         @Override
         public String getName() throws IOException {
@@ -397,15 +397,11 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         }
 
         /**
-         * Returns the coverage grid geometry. The default implementation delegates to the
-         * {@linkplain #getCoverage underlying coverage} if it is an instance of
-         * {@link GridCoverage}.
+         * Returns the coverage grid geometry.
          */
         @Override
         public GridGeometry getGridGeometry() throws IOException {
-            final GridCoverage coverage = getCoverage(null);
-            return (coverage instanceof GridCoverage) ?
-                    ((GridCoverage) coverage).getGridGeometry() : null;
+            return coverage.getGridGeometry();
         }
 
         /**
@@ -414,8 +410,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
          */
         @Override
         public SampleDimension[] getSampleDimensions() throws IOException {
-            final GridCoverage coverage = getCoverage(null);
-            return coverage.getSampleDimensions().toArray(new SampleDimension[0]);
+            return getCoverage(null).getSampleDimensions().toArray(new SampleDimension[0]);
         }
 
         /**
@@ -493,14 +488,14 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
      * If possible, this class will tries to select a coverage with a middle value (not just the
      * minimum value) lower than the requested <var>z</var> value.
      */
-    private transient org.geotoolkit.coverage.grid.GridCoverage lower;
+    private transient GridCoverage lower;
 
     /**
      * Coverage with a maximum z-value higher than or equals to the requested <var>z</var> value.
      * If possible, this class will tries to select a coverage with a middle value (not just the
      * maximum value) higher than the requested <var>z</var> value.
      */
-    private transient org.geotoolkit.coverage.grid.GridCoverage upper;
+    private transient GridCoverage upper;
 
     /**
      * <var>Z</var> values in the middle of {@link #lower} and {@link #upper} envelope.
@@ -689,8 +684,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                     envelope.getCoordinateReferenceSystem(),
                     zDimension != null ? zDimension  : envelope.getDimension() - 1
                 ),
-                buildSampleDimensions(elements),
-                null);
+                buildSampleDimensions(elements));
         assert ArraysExt.isSorted(elements, COMPARATOR, false);
         this.elements = elements;
         this.envelope = envelope;
@@ -756,15 +750,14 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         if (elements.length == 0)
             throw new IOException("Coverages list is empty");
 
-
-        //build the grid geometry
+        // build the grid geometry
         final long[] gridLower = new long[nbDim];
         final long[] gridUpper = new long[nbDim];
         final double[] zAxisSteps = new double[elements.length];
         MathTransform baseGridToCRS = null;
         int k=0;
         for (Element element : elements) {
-            final GridCoverage coverage = (GridCoverage) element.getCoverage(null);
+            final GridCoverage coverage = element.getCoverage(null);
 
             final GridGeometry gg = coverage.getGridGeometry();
             final GridExtent ext = gg.getExtent();
@@ -1200,7 +1193,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
      * @return The loaded coverage.
      * @throws IOException if an error occurred while loading image.
      */
-    private org.geotoolkit.coverage.grid.GridCoverage load(final Element element) throws IOException {
+    private GridCoverage load(final Element element) throws IOException {
         assert Thread.holdsLock(this);
         GridCoverage coverage = element.getCoverage(listeners);
         if (coverage instanceof GridCoverage2D) {
@@ -1217,7 +1210,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         final CoordinateReferenceSystem sourceCRS;
         assert debugEquals((sourceCRS = coverage.getCoordinateReferenceSystem()),
                 CRS.getOrCreateSubCRS(getCoordinateReferenceSystem(), 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
-        return (org.geotoolkit.coverage.grid.GridCoverage) coverage;
+        return coverage;
     }
 
     /**
@@ -1247,8 +1240,8 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         });
         final NumberRange<?> lowerRange = lowerElement.getZRange();
         final NumberRange<?> upperRange = upperElement.getZRange();
-        final org.geotoolkit.coverage.grid.GridCoverage lower = load(lowerElement);
-        final org.geotoolkit.coverage.grid.GridCoverage upper = load(upperElement);
+        final GridCoverage lower = load(lowerElement);
+        final GridCoverage upper = load(upperElement);
 
         this.lower      = lower; // Set only when BOTH images are OK.
         this.upper      = upper;
@@ -1392,180 +1385,6 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
             assert debugEquals(getCoordinateReferenceSystem(), targetCRS) : targetCRS;
         }
         return coord;
-    }
-
-    /**
-     * Returns a sequence of values for a given point in the coverage. The default implementation
-     * delegates to the {@link #evaluate(DirectPosition, double[])} method.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @return The value at the specified point.
-     * @throws PointOutsideCoverageException if {@code coord} is outside coverage.
-     * @throws CannotEvaluateException if the computation failed for some other reason.
-     */
-    @Override
-    public Object evaluate(final DirectPosition coord)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        return evaluate(coord, (double[]) null);
-    }
-
-    /**
-     * Returns a sequence of boolean values for a given point in the coverage.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest  An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if {@code coord} is outside coverage.
-     * @throws CannotEvaluateException if the computation failed for some other reason.
-     */
-    @Override
-    public synchronized boolean[] evaluate(final DirectPosition coord, boolean[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final double z = coord.getOrdinate(zDimension);
-        if (!seek(z)) {
-            // Missing data
-            final int numSampleDimensions = getSampleDimensions().size();
-            if (dest == null) {
-                dest = new boolean[numSampleDimensions];
-            } else {
-                Arrays.fill(dest, 0, numSampleDimensions, false);
-            }
-            return dest;
-        }
-        if (lower == upper) {
-            return lower.evaluate(reduce(coord, lower), dest);
-        }
-        assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final org.geotoolkit.coverage.grid.GridCoverage coverage = (z >= 0.5*(lowerZ + upperZ)) ? upper : lower;
-        return coverage.evaluate(reduce(coord, coverage), dest);
-    }
-
-    /**
-     * Returns a sequence of byte values for a given point in the coverage.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest  An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if {@code coord} is outside coverage.
-     * @throws CannotEvaluateException if the computation failed for some other reason.
-     */
-    @Override
-    public synchronized byte[] evaluate(final DirectPosition coord, byte[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final double z = coord.getOrdinate(zDimension);
-        if (!seek(z)) {
-            // Missing data
-            final int numSampleDimensions = getSampleDimensions().size();
-            if (dest == null) {
-                dest = new byte[numSampleDimensions];
-            } else {
-                Arrays.fill(dest, 0, numSampleDimensions, (byte) 0);
-            }
-            return dest;
-        }
-        if (lower == upper) {
-            return lower.evaluate(reduce(coord, lower), dest);
-        }
-        byteBuffer = upper.evaluate(reduce(coord, upper), byteBuffer);
-        dest       = lower.evaluate(reduce(coord, lower), dest);
-        assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final double ratio = (z - lowerZ) / (upperZ - lowerZ);
-        for (int i=0; i<byteBuffer.length; i++) {
-            dest[i] = (byte) Math.round(dest[i] + ratio*(byteBuffer[i] - dest[i]));
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of integer values for a given point in the coverage.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest  An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if {@code coord} is outside coverage.
-     * @throws CannotEvaluateException if the computation failed for some other reason.
-     */
-    @Override
-    public synchronized int[] evaluate(final DirectPosition coord, int[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final double z = coord.getOrdinate(zDimension);
-        if (!seek(z)) {
-            // Missing data
-            final int numSampleDimensions = getSampleDimensions().size();
-            if (dest == null) {
-                dest = new int[numSampleDimensions];
-            } else {
-                Arrays.fill(dest, 0, numSampleDimensions, 0);
-            }
-            return dest;
-        }
-        if (lower == upper) {
-            return lower.evaluate(reduce(coord, lower), dest);
-        }
-        intBuffer = upper.evaluate(reduce(coord, upper), intBuffer);
-        dest      = lower.evaluate(reduce(coord, lower), dest);
-        assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final double ratio = (z - lowerZ) / (upperZ - lowerZ);
-        for (int i=0; i<intBuffer.length; i++) {
-            dest[i] = (int) Math.round(dest[i] + ratio*(intBuffer[i] - dest[i]));
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of float values for a given point in the coverage.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest  An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if {@code coord} is outside coverage.
-     * @throws CannotEvaluateException if the computation failed for some other reason.
-     */
-    @Override
-    public synchronized float[] evaluate(final DirectPosition coord, float[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final double z = coord.getOrdinate(zDimension);
-        if (!seek(z)) {
-            // Missing data
-            final int numSampleDimensions = getSampleDimensions().size();
-            if (dest == null) {
-                dest = new float[numSampleDimensions];
-            }
-            Arrays.fill(dest, 0, numSampleDimensions, Float.NaN);
-            return dest;
-        }
-        if (lower == upper) {
-            return lower.evaluate(reduce(coord, lower), dest);
-        }
-        floatBuffer = upper.evaluate(reduce(coord, upper), floatBuffer);
-        dest        = lower.evaluate(reduce(coord, lower), dest);
-        assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final double ratio = (z - lowerZ) / (upperZ - lowerZ);
-        for (int i=0; i<floatBuffer.length; i++) {
-            final float lower = dest[i];
-            final float upper = floatBuffer[i];
-            float value = (float) (lower + ratio*(upper - lower));
-            if (Float.isNaN(value)) {
-                if (!Float.isNaN(lower)) {
-                    assert Float.isNaN(upper) : upper;
-                    if (contains(lowerRange, z)) {
-                        value = lower;
-                    }
-                } else if (!Float.isNaN(upper)) {
-                    assert Float.isNaN(lower) : lower;
-                    if (contains(upperRange, z)) {
-                        value = upper;
-                    }
-                }
-            }
-            dest[i] = value;
-        }
-        return dest;
     }
 
     /**

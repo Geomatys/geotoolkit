@@ -18,7 +18,6 @@ package org.geotoolkit.storage.multires;
 
 import java.awt.Dimension;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -111,7 +110,12 @@ public class DefiningMosaic implements Mosaic {
     }
 
     @Override
-    public Optional<Tile> anyTile() throws DataStoreException {
-        return Optional.empty();
+    public Tile anyTile() throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return AbstractMosaic.toString(this);
     }
 }

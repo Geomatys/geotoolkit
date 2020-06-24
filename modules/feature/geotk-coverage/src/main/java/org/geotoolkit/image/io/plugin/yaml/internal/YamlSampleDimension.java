@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.image.io.plugin.yaml.internal;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import javax.measure.Unit;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-import org.geotoolkit.coverage.SampleDimensionUtils;
+import org.apache.sis.measure.Units;
 
 /**
  * Equivalent class of {@link SampleDimension} use during Yaml binding.
@@ -29,7 +31,8 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
  * @author Remi Marechal (Geomatys).
  * @since 4.0
  */
-public class YamlSampleDimension {
+@JsonInclude(Include.NON_NULL)
+public final class YamlSampleDimension {
 
     /**
      * Description or "name" of this current {@link YamlSampleDimension}.
@@ -37,6 +40,11 @@ public class YamlSampleDimension {
      * @see SampleDimension#getDescription()
      */
     private String description;
+
+    /**
+     * Sample dimension unit.
+     */
+    private String unit;
 
     /**
      * Internal {@link YamlCategory} which compose this {@link SampleDimension}.
@@ -58,12 +66,13 @@ public class YamlSampleDimension {
      */
     public YamlSampleDimension(final SampleDimension sampleDimension) {
         description = sampleDimension.getName().toString();
+        sampleDimension.getUnits().ifPresent((Unit<?> t) -> {
+            unit = t.getSymbol();
+        });
 
         categories  = new ArrayList<YamlCategory>();
         for (final Category cat : sampleDimension.getCategories()) {
-            categories.add(SampleDimensionUtils.NODATA_CATEGORY_NAME.toString(Locale.ENGLISH).equalsIgnoreCase(cat.getName().toString(Locale.ENGLISH))
-                           ? new YamlCategory(cat)
-                           : new YamlSampleCategory(cat));
+            categories.add(new YamlCategory(cat));
         }
     }
 
@@ -78,6 +87,24 @@ public class YamlSampleDimension {
     }
 
     /**
+     * Set description of this current {@link YamlSampleDimension}.
+     *
+     * @param description
+     * @see #description
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    /**
      * Internal {@link YamlCategory} which compose this {@link YamlSampleDimension}.
      *
      * @return categories
@@ -88,16 +115,6 @@ public class YamlSampleDimension {
     }
 
     /**
-     * Set description of this current {@link YamlSampleDimension}.
-     *
-     * @param description
-     * @see #description
-     */
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    /**
      * Set internal {@link YamlCategory} which compose this {@link YamlSampleDimension}.
      *
      * @param categories
@@ -105,5 +122,25 @@ public class YamlSampleDimension {
      */
     public void setCategories(final List<YamlCategory> categories) {
         this.categories = categories;
+    }
+
+    public SampleDimension toSampleDimension(Class dataType) {
+        Unit unit = Units.UNITY;
+        if (this.unit != null && !this.unit.isEmpty()) {
+            unit = Units.valueOf(this.unit);
+        }
+
+        final SampleDimension.Builder builder = new SampleDimension.Builder();
+        builder.setName(description);
+        for (YamlCategory cat : categories) {
+            final Category c = cat.toCategory(dataType);
+            if (c.isQuantitative()) {
+                builder.addQuantitative(c.getName(), c.getSampleRange(), c.getTransferFunction().orElse(null), unit);
+            } else {
+                builder.addQualitative(c.getName(), c.getSampleRange());
+            }
+        }
+
+        return builder.build();
     }
 }

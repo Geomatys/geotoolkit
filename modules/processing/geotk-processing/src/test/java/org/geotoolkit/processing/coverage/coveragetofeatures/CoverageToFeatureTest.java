@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.processing.coverage.coveragetofeatures;
 
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -37,7 +37,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -154,10 +153,9 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
             gridToCRS = new AffineTransform2D(1, 0, 0, 1, 0.5, 1.5);
         }
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setCoordinateReferenceSystem(crs2d);
-        gcb.setGridToCRS((AffineTransform)gridToCRS);
-        gcb.setRenderedImage(image);
-        return new SimpleCoverageReader(gcb.getGridCoverage2D(), pixPos);
+        gcb.setDomain(new GridGeometry(null , PixelInCell.CELL_CENTER, gridToCRS, crs2d));
+        gcb.setValues(image);
+        return new SimpleCoverageReader(gcb.build(), pixPos);
     }
 
     private FeatureType buildFeatureType() throws NoSuchAuthorityCodeException, FactoryException {

@@ -17,9 +17,7 @@
  */
 package org.geotoolkit.math;
 
-import org.apache.sis.util.Numbers;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -37,78 +35,6 @@ public final class XMath extends Static {
      * Do not allow instantiation of this class.
      */
     private XMath() {
-    }
-
-    /**
-     * Returns the number adjacent to the given value, as one of the nearest representable numbers
-     * of the given type. First this method selects the nearest adjacent value in the direction of
-     * positive infinity if {@code amount} is positive, or in the direction of negative infinity if
-     * {@code amount} is negative. Then this operation is repeated as many time as the absolute value
-     * of {@code amount}. More specifically:
-     *
-     * <ul>
-     *   <li><p>If {@code type} is an integer type ({@link Integer}, {@link Short}, <i>etc.</i>),
-     *       then this method returns {@code value + amount}. If {@code value} had a fractional part,
-     *       then this part is truncated before the addition is performed.</p></li>
-     *
-     *   <li><p>If {@code type} is {@link Double}, then this method is equivalent to invoking
-     *       <code>{@linkplain Math#nextUp(double) Math.nextUp}(value)</code> if {@code amount}
-     *       is positive, or {@code -Math.nextUp(-value)} if {@code amount} is negative, and to
-     *       repeat this operation {@code abs(amount)} times.</p></li>
-     *
-     *   <li><p>If {@code type} is {@link Float}, then this method is equivalent to invoking
-     *       <code>{@linkplain Math#nextUp(float) Math.nextUp}((float) value)</code> if {@code amount}
-     *       is positive, or {@code -Math.nextUp((float) -value)} if {@code amount} is negative,
-     *       and to repeat this operation {@code abs(amount)} times.</p></li>
-     * </ul>
-     *
-     * @param type    The type. Should be the class of {@link Double}, {@link Float},
-     *                {@link Long}, {@link Integer}, {@link Short} or {@link Byte}.
-     * @param value   The number for which to find an adjacent number.
-     * @param amount  -1 to return the previous representable number,
-     *                +1 to return the next representable number,
-     *                or a multiple of the above.
-     * @return One of previous or next representable number as a {@code double}.
-     * @throws IllegalArgumentException if {@code type} is not one of supported types.
-     *
-     * @deprecated Not used anymore after removal of {@link org.geotoolkit.coverage.Category} class.
-     */
-    @Deprecated
-    public static double adjacentForType(final Class<? extends Number> type, double value, int amount)
-            throws IllegalArgumentException
-    {
-        if (Numbers.isInteger(type)) {
-            if (amount == 0) {
-                return Math.rint(value);
-            } else if (amount > 0) {
-                value = Math.floor(value);
-            } else {
-                value = Math.ceil(value);
-            }
-            return value + amount;
-        }
-        final boolean down = amount < 0;
-        if (down) {
-            amount = -amount;
-            value  = -value;
-        }
-        if (type == Double.class) {
-            while (--amount >= 0) {
-                value = Math.nextUp(value);
-            }
-        } else if (type == Float.class) {
-            float vf = (float) value;
-            while (--amount >= 0) {
-                vf = Math.nextUp(vf);
-            }
-            value = vf;
-        } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UnsupportedDataType_1, type));
-        }
-        if (down) {
-            value = -value;
-        }
-        return value;
     }
 
     /**

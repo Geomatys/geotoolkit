@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- =======================================================================
-        User Prototype Configuration File
-     ======================================================================= -->
+   User Prototype Configuration File
+======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,9 +11,9 @@
     </parent>
 
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+    <!-- =========================================================== -->
+    <!--     Module Description                                      -->
+    <!-- =========================================================== -->
     <artifactId>geotk-feature-geojson</artifactId>
     <packaging>jar</packaging>
     <name>FeatureStore GeoJSON</name>
@@ -25,9 +25,9 @@
         </license>
     </licenses>
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+    <!-- =========================================================== -->
+    <!--     Developers and Contributors                             -->
+    <!-- =========================================================== -->
     <developers>
         <developer>
             <name>Alexis Manin</name>
@@ -54,21 +54,36 @@
     </developers>
 
 
-  <!-- =========================================================== -->
-  <!--     Dependencies                                            -->
-  <!-- =========================================================== -->
+    <!-- =========================================================== -->
+    <!--     Dependencies                                            -->
+    <!-- =========================================================== -->
     <dependencies>
         <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-storage</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-storage</artifactId>
+            <version>${sis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sis.core</groupId>
+            <artifactId>sis-feature</artifactId>
+            <version>${sis.version}</version>
+            <type>test-jar</type>
         </dependency>
 
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- for CBOR binary compression -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-cbor</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

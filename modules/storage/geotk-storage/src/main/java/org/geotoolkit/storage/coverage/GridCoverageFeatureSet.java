@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.storage.coverage;
 
+import java.awt.Color;
+import java.awt.image.ColorModel;
+import java.awt.image.RenderedImage;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,17 +41,18 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.internal.feature.TypeConventions;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -59,13 +63,8 @@ import org.opengis.feature.InvalidPropertyValueException;
 import org.opengis.feature.MultiValuedPropertyException;
 import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.content.AttributeGroup;
-import org.opengis.metadata.content.ContentInformation;
-import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.metadata.content.RangeDimension;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -76,10 +75,12 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class GridCoverageFeatureSet extends AbstractResource implements FeatureSet {
 
+    private static final String ATT_COLOR = "color";
+
     private final org.apache.sis.storage.GridCoverageResource gcr;
 
     public GridCoverageFeatureSet(org.apache.sis.storage.GridCoverageResource gcr) throws DataStoreException {
-        identifier = NamedIdentifier.castOrCopy(gcr.getIdentifier().orElse(null));
+        identifier = NamedIdentifier.castOrCopy(gcr.getIdentifier().orElse(Names.createLocalName(null, null, "Voxel")));
         this.gcr = gcr;
     }
 
@@ -104,6 +105,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         if (envelope != null) {
             Geometry geom = GeometricUtilities.toJTSGeometry(envelope, GeometricUtilities.WrapResolution.SPLIT);
             if (geom != null) {
+                geom = JTSMapping.convertType(geom, MultiPolygon.class);
                 JTS.setCRS(geom, gridGeom.getCoordinateReferenceSystem());
                 feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
             }
@@ -132,7 +134,8 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperTypes(TypeConventions.COVERAGE_TYPE);
         ftb.setName(resource.getIdentifier().orElse(null));
-        ftb.addAttribute(Polygon.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        // define the geometry as a MultiPolygon, it may happen when the pixel crosses the anti-meridian
+        ftb.addAttribute(MultiPolygon.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAssociation(createRecordType(resource)).setName(TypeConventions.RANGE_ELEMENTS_PROPERTY).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
 
         return ftb.build();
@@ -154,26 +157,13 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
 
         //use existing sample dimensions
         final List<SampleDimension> dims = coverage.getSampleDimensions();
-        if (dims != null && !dims.isEmpty()) {
-            for (int i=0,n=dims.size();i<n;i++) {
-                final SampleDimension gsd = dims.get(i);
-                final String name = gsd.getName() == null ? ""+i : gsd.getName().toString();
-                ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
-            }
-            return ftb.build();
+        for (int i=0,n=dims.size();i<n;i++) {
+            final SampleDimension gsd = dims.get(i);
+            final String name = gsd.getName() == null ? ""+i : gsd.getName().toString();
+            ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
         }
-
-        //in case of Nd Coverage unstack them.
-        while (coverage instanceof GridCoverageStack) {
-            coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
-        }
-
-        final int nbBand = coverage.render(null).getSampleModel().getNumBands();
-        for (int i=0;i<nbBand;i++) {
-            ftb.addAttribute(Double.class).setName(""+i).setMinimumOccurs(1).setMaximumOccurs(1);
-        }
+        ftb.addAttribute(Color.class).setName(ATT_COLOR);
         return ftb.build();
-
     }
 
     public static FeatureType createRecordType(org.apache.sis.storage.GridCoverageResource resource) throws DataStoreException {
@@ -195,67 +185,13 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
 
         //use existing sample dimensions
         final List<SampleDimension> samples = resource.getSampleDimensions();
-        if (samples!=null) {
-            for (int i=0,n=samples.size();i<n;i++) {
-                final SampleDimension gsd = samples.get(i);
-                final String name = gsd.getName() == null ? ""+i : gsd.getName().toString();
-                ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
-            }
-            return ftb.build();
+        for (int i=0,n=samples.size();i<n;i++) {
+            final SampleDimension gsd = samples.get(i);
+            final String name = gsd.getName() == null ? ""+i : gsd.getName().toString();
+            ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
         }
-
-        //extract dimensions from metadatas
-        final Metadata metadata = resource.getMetadata();
-        if (metadata != null && !metadata.getContentInfo().isEmpty()) {
-            final ContentInformation contentInfo = metadata.getContentInfo().iterator().next();
-            if (contentInfo instanceof CoverageDescription) {
-                final Collection<? extends AttributeGroup> groups = ((CoverageDescription)contentInfo).getAttributeGroups();
-                if (!groups.isEmpty()) {
-                    final AttributeGroup attGroup = groups.iterator().next();
-                    final Collection<? extends RangeDimension> sampleDims = attGroup.getAttributes();
-                    if (!sampleDims.isEmpty()) {
-                        final Iterator<? extends RangeDimension> ite = sampleDims.iterator();
-                        int i=0;
-                        while (ite.hasNext()) {
-                            final RangeDimension rd = ite.next();
-                            String name;
-                            if (rd.getSequenceIdentifier()!=null) {
-                                name = rd.getSequenceIdentifier().toString();
-                            } else if (!rd.getNames().isEmpty()) {
-                                name = rd.getNames().iterator().next().getCode();
-                            } else {
-                                name = ""+i;
-                            }
-                            ftb.addAttribute(Double.class).setName(name).setMinimumOccurs(1).setMaximumOccurs(1);
-                            i++;
-                        }
-                        return ftb.build();
-                    }
-                }
-            }
-        }
-
-        //read a single pixel coverage
-        final GridGeometry gridGeom = resource.getGridGeometry();
-        final GridExtent extent = gridGeom.getExtent();
-        final int[] subsampling = new int[extent.getDimension()];
-        for (int i=0; i<subsampling.length; i++) {
-            subsampling[i] = (int) extent.getSize(i);
-        }
-
-        GridCoverage coverage = resource.read(gridGeom.derive().subsample(subsampling).build());
-
-        //in case of Nd Coverage unstack them.
-        while (coverage instanceof GridCoverageStack) {
-            coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
-        }
-
-        final int nbBand = coverage.render(null).getSampleModel().getNumBands();
-        for (int i=0;i<nbBand;i++) {
-            ftb.addAttribute(Double.class).setName(""+i).setMinimumOccurs(1).setMaximumOccurs(1);
-        }
+        ftb.addAttribute(Color.class).setName(ATT_COLOR);
         return ftb.build();
-
     }
 
     public static FeatureAssociation coverageRecords(final org.apache.sis.storage.GridCoverageResource res, final FeatureAssociationRole role) {
@@ -369,10 +305,10 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
     }
 
     private static Iterator<Feature> create(FeatureType recordType, GridCoverage coverage) {
-        if (coverage instanceof GridCoverage2D) {
-            return new GridCoverage2DRecordIterator(recordType, (GridCoverage2D) coverage);
-        } else if (coverage instanceof GridCoverageStack) {
+        if (coverage instanceof GridCoverageStack) {
             return new GridCoverageRecordIterator(recordType, (GridCoverageStack) coverage);
+        } else if (coverage instanceof GridCoverage) {
+            return new GridCoverage2DRecordIterator(recordType, coverage);
         } else {
             throw new UnsupportedOperationException("Unsupported coverage type "+coverage.getClass().getName());
         }
@@ -390,7 +326,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
             this.recordType = recordType;
             final int nb = coverage.getStackSize();
             final List<GridCoverage> stack = new ArrayList<>(nb);
-            for (int i=0;i<nb;i++) {
+            for (int i = 0; i < nb; i++) {
                 stack.add((GridCoverage) coverage.coverageAtIndex(i));
             }
             this.coverageIte = stack.iterator();
@@ -405,7 +341,7 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         @Override
         public Feature next() {
             findNext();
-            if(next == null){
+            if (next == null) {
                 throw new NoSuchElementException("No more features.");
             }
             final Feature candidate = next;
@@ -421,8 +357,8 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         private void findNext(){
             if (next != null) return;
 
-            while (next==null) {
-                if (subIte==null) {
+            while (next == null) {
+                if (subIte == null) {
                     if (coverageIte.hasNext()) {
                         subIte = create(recordType, coverageIte.next());
                     } else {
@@ -442,9 +378,12 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
 
         private final GeometryFactory GF = new GeometryFactory();
         private final FeatureType recordType;
-        private final GridCoverage2D coverage;
+        private final GridCoverage coverage;
         private final String[] properties;
-        private final PixelIterator pixelIterator;
+        private final PixelIterator geophysicPixelIterator;
+        private final RenderedImage colorImg;
+        private final ColorModel colorModel;
+        private final PixelIterator coloredPixelIterator;
         private final MathTransform gridToCrs2D;
         private final CoordinateReferenceSystem crs;
         private final CoordinateReferenceSystem crs2D;
@@ -452,25 +391,27 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         private boolean iteNext;
         private Feature next = null;
 
-        private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage2D coverage) {
+        private GridCoverage2DRecordIterator(FeatureType recordType, GridCoverage coverage) {
             this.recordType = recordType;
             this.coverage = coverage.forConvertedValues(true);
-            this.pixelIterator = new PixelIterator.Builder().create(this.coverage.getRenderedImage());
-            final GridGeometry2D gridGeometry = this.coverage.getGridGeometry();
-            this.gridToCrs2D = gridGeometry.getGridToCRS2D(PixelOrientation.LOWER_LEFT);
+            this.geophysicPixelIterator = new PixelIterator.Builder().create(this.coverage.forConvertedValues(true).render(null));
+            this.colorImg = this.coverage.forConvertedValues(false).render(null);
+            this.colorModel = colorImg.getColorModel();
+            this.coloredPixelIterator = new PixelIterator.Builder().create(colorImg);
+            final GridGeometry gridGeometry = this.coverage.getGridGeometry();
+            this.gridToCrs2D = gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
             this.envelope = gridGeometry.getEnvelope();
             this.crs = gridGeometry.getCoordinateReferenceSystem();
-            this.crs2D = gridGeometry.getCoordinateReferenceSystem2D();
+            this.crs2D = CRS.getHorizontalComponent(crs);
 
             //list properties
             final List<String> properties = new ArrayList<>();
             for (PropertyType pt : recordType.getProperties(true)) {
-                if (pt instanceof AttributeType && !AttributeConvention.contains(pt.getName())) {
+                if (pt instanceof AttributeType && !AttributeConvention.contains(pt.getName()) && !ATT_COLOR.equals(pt.getName().tip().toString())) {
                     properties.add(pt.getName().toString());
                 }
             }
             this.properties = properties.toArray(new String[properties.size()]);
-
         }
 
         @Override
@@ -498,18 +439,30 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
         private void findNext(){
             if(next != null) return;
 
-            while (next == null && pixelIterator.next()) {
+            while (next == null && geophysicPixelIterator.next()) {
                 next = recordType.newInstance();
                 //build geometry
-                final int x = pixelIterator.getPosition().x;
-                final int y = pixelIterator.getPosition().y;
+                final int x = geophysicPixelIterator.getPosition().x;
+                final int y = geophysicPixelIterator.getPosition().y;
+
+                //extract color
+                Color color = Color.WHITE;
+                if (colorModel != null) {
+                    coloredPixelIterator.moveTo(x, y);
+                    Object dataElement = coloredPixelIterator.getDataElements(null);
+                    try {
+                        color = new Color(colorModel.getRGB(dataElement), true);
+                    } catch (Throwable ex) {
+                        color = Color.RED;
+                    }
+                }
 
                 final double[] poly = new double[]{
-                    x  ,y,
-                    x+1,y,
-                    x+1,y+1,
-                    x  ,y+1,
-                    x  ,y
+                    x-0.5, y-0.5,
+                    x+0.5, y-0.5,
+                    x+0.5, y+0.5,
+                    x-0.5, y+0.5,
+                    x-0.5, y-0.5
                 };
                 try {
                     gridToCrs2D.transform(poly, 0, poly, 0, 5);
@@ -522,8 +475,10 @@ public class GridCoverageFeatureSet extends AbstractResource implements FeatureS
                 next.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
                 //read sample values
                 for (int i=0;i<properties.length;i++) {
-                    next.setPropertyValue(properties[i], pixelIterator.getSampleDouble(i));
+                    next.setPropertyValue(properties[i], geophysicPixelIterator.getSampleDouble(i));
                 }
+
+                next.setPropertyValue(ATT_COLOR, color);
 
                 //if the CRS has more the 2 dimensions, we convert the envelope operation
                 //has been converted to an attribute, the envelope will be N dimesion, and the geometry 2D

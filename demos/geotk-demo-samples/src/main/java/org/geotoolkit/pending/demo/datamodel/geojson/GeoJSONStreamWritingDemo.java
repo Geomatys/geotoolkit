@@ -1,19 +1,17 @@
 package org.geotoolkit.pending.demo.datamodel.geojson;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.feature.FeatureWriter;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.referencing.CommonCRS;
-import org.opengis.feature.Feature;
-
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.pending.demo.Demos;
+import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
 /**
@@ -35,7 +33,7 @@ public class GeoJSONStreamWritingDemo {
         final FeatureType type = ftb.build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final FeatureWriter writer = new GeoJSONStreamWriter(baos, type, 7);
+        final GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, type, 7);
         Feature feature = writer.next();
         feature.setPropertyValue("name","sam");
         feature.setPropertyValue("length",30);

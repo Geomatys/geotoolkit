@@ -49,26 +49,25 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.data.geojson.GeoJSONProvider;
-import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
-import org.geotoolkit.data.geojson.binding.GeoJSONObject;
-import org.geotoolkit.data.geojson.utils.GeoJSONParser;
-import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
+import org.geotoolkit.internal.geojson.GeoJSONParser;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.internal.geojson.binding.GeoJSONObject;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.ows.xml.v200.DomainMetadataType;
 import org.geotoolkit.storage.DataStores;
-import static org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory.PATH;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.util.NamesExt;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
@@ -798,7 +797,7 @@ public class WPSConvertersUtils {
      */
     public static final Feature readFeatureFromJson(final URI uri) throws DataStoreException, URISyntaxException, IOException {
         ParameterValueGroup param = GeoJSONProvider.PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(uri));
+        param.parameter(DataStoreProvider.LOCATION).setValue(makeLocalURL(uri));
         DataStore store = DataStores.open(param);
 
         if (store == null)
@@ -833,7 +832,7 @@ public class WPSConvertersUtils {
      */
     public static final FeatureSet readFeatureCollectionFromJson(final URI url) throws DataStoreException, URISyntaxException, IOException {
         final ParameterValueGroup param = GeoJSONProvider.PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(PATH.getName().getCode()).setValue(makeLocalURL(url));
+        param.parameter(DataStoreProvider.LOCATION).setValue(makeLocalURL(url));
         final DataStore store = DataStores.open(param);
 
         if (store == null)
@@ -886,7 +885,7 @@ public class WPSConvertersUtils {
         else
             crs = CommonCRS.WGS84.normalizedGeographic();
 
-        return GeometryUtils.toJTS(jsonGeometry, crs);
+        return GeoJSONGeometry.toJTS(jsonGeometry, crs);
     }
 
     /**

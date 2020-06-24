@@ -17,25 +17,18 @@
 package org.geotoolkit.processing.image.bandcombine;
 
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.awt.image.WritableRenderedImage;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
-import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.image.internal.PlanarConfiguration;
-import org.geotoolkit.image.internal.SampleType;
-import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
-import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Process to combine some source image into same result image.<br><br>
@@ -49,8 +42,6 @@ import org.geotoolkit.process.ProcessException;
  *
  * On the other side source images may have different upper left corner coordinates,
  * and also internal differents tiles size.<br><br>
- *
- * To improve performance ouput image is {@link WritableLargeRenderedImage} type.<br><br>
  *
  * Moreover, new adapted {@link ColorModel} and {@link SampleModel} are computed.
  *
@@ -129,144 +120,36 @@ public class BandCombineProcess extends AbstractProcess {
             nbtotalbands  += sm.getNumBands();
         }
 
-        if (width*height <= 2000*2000) {
-            //image fit in memory
-            final BufferedImage img = BufferedImages.createImage(width, height, nbtotalbands, sampleType);
+        //TODO : use a subclass of computed image.
+        final BufferedImage img = BufferedImages.createImage(width, height, nbtotalbands, sampleType);
 
-            final org.apache.sis.image.PixelIterator[] ins = new org.apache.sis.image.PixelIterator[inputImages.length];
-            for (int i=0;i<inputImages.length;i++) {
-                ins[i] = org.apache.sis.image.PixelIterator.create(inputImages[i]);
-            }
-
-            final org.apache.sis.image.WritablePixelIterator out = WritablePixelIterator.create(img);
-
-            final double[] sample = new double[nbtotalbands];
-            int y,x,i,b;
-            for (y=0;y<height;y++) {
-                for (x=0;x<width;x++) {
-                    out.moveTo(x, y);
-                    for (i=0;i<inputImages.length;i++) {
-                        ins[i].moveTo(x, y);
-                        if (nbBands[i]==1) {
-                            sample[nbBandIndex[i]] = ins[i].getSampleDouble(0);
-                        } else {
-                            for (b=0;b<nbBands[i];b++) {
-                                sample[nbBandIndex[i]+b] = ins[i].getSampleDouble(b);
-                            }
-                        }
-                    }
-                    out.setPixel(sample);
-                }
-            }
-
-            outputParameters.getOrCreate(BandCombineDescriptor.OUT_IMAGE).setValue(img);
-        } else {
-            combineUsingLargeimage();
-        }
-    }
-
-    private void combineUsingLargeimage() {
-
-        //-- try to reuse a java color model for better performances
-        final ColorModel cm  = ColorModelFactory.createGrayScale(sampleType,nbtotalbands, 0, 0, 10);
-        final SampleModel sm = ImageUtils.createSampleModel(PlanarConfiguration.INTERLEAVED, SampleType.valueOf(sampleType), width, height, nbtotalbands);
-
-
-        //-- destination Images Dimensions
-        boolean sameTileSize = sameTileSize(tilesSize);
-        final Dimension destTileSize;
-        //-- if all srcTiles dimensions are equals keep same tiles sizes.
-        if (sameTileSize) {
-            if (tilesSize[0].width >= 64
-                && tilesSize[0].width <= 256
-                && tilesSize[0].height >= 64
-                && tilesSize[0].height <= 256 ) {
-                //-- keep control to destination tile size to avoid giant destination tile size.
-                destTileSize = new Dimension(tilesSize[0]);
-            } else {
-                sameTileSize = false;
-                destTileSize = new Dimension(256, 256);
-            }
-
-        } else {
-        //-- else destination tile size (256 * 256).
-            destTileSize = new Dimension(256, 256);
+        final org.apache.sis.image.PixelIterator[] ins = new org.apache.sis.image.PixelIterator[inputImages.length];
+        for (int i=0;i<inputImages.length;i++) {
+            ins[i] = org.apache.sis.image.PixelIterator.create(inputImages[i]);
         }
 
-        final WritableRenderedImage resultImage = new WritableLargeRenderedImage(0, 0, width, height, destTileSize, 0, 0, cm, sm);
+        final org.apache.sis.image.WritablePixelIterator out = WritablePixelIterator.create(img);
 
-        //-- 2 cases
-        //-- SrcTiles dimensions and src dest Dimension are equals
-        if (sameTileSize) {
-
-            final WritablePixelIterator destPix = new PixelIterator.Builder().createWritable(resultImage);
-
-            int itId = -1;
-            while (destPix.next()) {
-
-                //-- when a dest sample is completely filled
-                //-- rewind to first destination sample
-                if (++itId >= inputImages.length)
-                    itId = 0;
-
-                final PixelIterator srcPix = readItes[itId];
-                srcPix.next();
-
-                //-- current src iterator coordinates
-                final Point position = srcPix.getPosition();
-                final int srcPX = position.x;
-                final int srcPY = position.y;
-
-                //-- current destination iterator coordinates
-                final int dstPX = srcPX - minXYs[itId][0];
-                final int dstPY = srcPY - minXYs[itId][1];
-
-                for (int b = 0; b < nbBands[itId]; b++) {
-                    assert checkPositions("Src Pix Iterator for image "+itId+" at band index : "+nbBandIndex[itId] + b, srcPix,  srcPX, srcPY);
-                    assert checkPositions("Dest Pix at Band index : "+nbBandIndex[itId] + b, destPix, dstPX, dstPY);
-                    destPix.setSample(b, srcPix.getSampleDouble(b));
-                }
-            }
-
-        } else {
-            for (int i = 0; i < inputImages.length; i++) {
-                final RenderedImage srcImage = inputImages[i];
-                final int srcMinX = srcImage.getMinX();
-                final int srcMinY = srcImage.getMinY();
-                //-- travel all source image tile to read tile once a time
-                for (int ty = 0; ty < srcImage.getNumYTiles(); ty++) {
-                    for (int tx = 0; tx < srcImage.getNumXTiles(); tx++) {
-                        final Rectangle srcArea = new Rectangle(srcMinX + tx * tilesSize[i].width, srcMinY + ty * tilesSize[i].height,
-                                                                               tilesSize[i].width, tilesSize[i].height);
-
-                        final PixelIterator srcPix = new PixelIterator.Builder().setRegionOfInterest(srcArea).create(srcImage);
-
-                        //-- dest image begin (0, 0)
-                        final Rectangle destArea = new Rectangle(tx * tilesSize[i].width, ty * tilesSize[i].height,
-                                                                      tilesSize[i].width, tilesSize[i].height);
-
-                        final WritablePixelIterator destPix = new PixelIterator.Builder().setRegionOfInterest(destArea).createWritable(resultImage);
-
-                        while (srcPix.next()) {
-                            //-- current src iterator coordinates
-                            final int srcPX = srcPix.getPosition().x;
-                            final int srcPY = srcPix.getPosition().y;
-
-                            //-- current destination iterator coordinates
-                            final int dstPX = srcPX - srcMinX;
-                            final int dstPY = srcPY - srcMinY;
-
-                            for (int b = 0; b < nbBands[i]; b++) {
-                                assert checkPositions("Src Pix Iterator for image "+i+" at band index : "+nbBandIndex[i] + b, srcPix,  srcPX, srcPY);
-                                assert checkPositions("Dest Pix at Band index : "+nbBandIndex[i] + b, destPix, dstPX, dstPY);
-                                destPix.setSample(nbBandIndex[i]+b, srcPix.getSampleDouble(b));
-                            }
+        final double[] sample = new double[nbtotalbands];
+        int y,x,i,b;
+        for (y=0;y<height;y++) {
+            for (x=0;x<width;x++) {
+                out.moveTo(x, y);
+                for (i=0;i<inputImages.length;i++) {
+                    ins[i].moveTo(x, y);
+                    if (nbBands[i]==1) {
+                        sample[nbBandIndex[i]] = ins[i].getSampleDouble(0);
+                    } else {
+                        for (b=0;b<nbBands[i];b++) {
+                            sample[nbBandIndex[i]+b] = ins[i].getSampleDouble(b);
                         }
                     }
                 }
+                out.setPixel(sample);
             }
         }
-        outputParameters.getOrCreate(BandCombineDescriptor.OUT_IMAGE).setValue(resultImage);
+
+        outputParameters.getOrCreate(BandCombineDescriptor.OUT_IMAGE).setValue(img);
     }
 
     /**

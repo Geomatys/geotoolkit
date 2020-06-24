@@ -16,34 +16,33 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.junit.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.storage.feature.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
+import org.geotoolkit.data.shapefile.ShapefileProvider;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.test.TestData;
-
-import org.junit.Before;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @module
  */
 public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSupport {
 
-    private ShapefileFeatureStoreFactory factory;
+    private ShapefileProvider factory;
 
     @Before
     public void setUp() throws Exception {
-        factory = new ShapefileFeatureStoreFactory();
+        factory = new ShapefileProvider();
     }
 
     /*
@@ -73,16 +72,16 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
 
         Map map = new HashMap();
-        map.put(ShapefileFeatureStoreFactory.PATH.getName().toString(), TestData.url(AbstractTestCaseSupport.class,
+        map.put(ShapefileProvider.PATH.getName().toString(), TestData.url(AbstractTestCaseSupport.class,
                 IndexedShapefileDataStoreTest.STATE_POP));
-        map.put(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(),
+        map.put(ShapefileProvider.CREATE_SPATIAL_INDEX.getName().toString(),
                 createIndex ? Boolean.TRUE : Boolean.FALSE);
 
         ShapefileFeatureStore ds;
 
         if (newDS) {
             // This may provided a warning if the file already is created
-            ds = (ShapefileFeatureStore) DataStores.create(factory,map);
+            ds = (ShapefileFeatureStore) factory.create(Parameters.toParameter(map, factory.getOpenParameters()));
         } else {
             ds = (ShapefileFeatureStore) DataStores.open(factory,map);
         }
@@ -120,8 +119,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     @Test
     public void testGetParametersInfo() {
         //check that we have those two parameters descriptors.
-        factory.getOpenParameters().descriptor(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString());
-        factory.getOpenParameters().descriptor(ShapefileFeatureStoreFactory.PATH.getName().toString());
+        factory.getOpenParameters().descriptor(ShapefileProvider.CREATE_SPATIAL_INDEX.getName().toString());
+        factory.getOpenParameters().descriptor(ShapefileProvider.PATH.getName().toString());
     }
 
     /*

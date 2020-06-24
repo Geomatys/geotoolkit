@@ -26,7 +26,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.measure.Unit;
@@ -40,7 +39,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.referencing.PositionTransformer;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.resources.Errors;
@@ -103,12 +101,6 @@ public class GridCoverage2D extends GridCoverage {
     protected final transient RenderedImage image;
 
     /**
-     * The serialized image, as an instance of {@link SerializableRenderedImage}.
-     * This image will be created only when first needed during serialization.
-     */
-    private RenderedImage serializedImage;
-
-    /**
      * The views returned by {@link #views}. Constructed when first needed.
      * Note that some views may appear in the {@link #sources} list.
      */
@@ -122,13 +114,6 @@ public class GridCoverage2D extends GridCoverage {
     private transient PositionTransformer arbitraryToInternal;
 
     /**
-     * The preferred encoding to use for serialization using the {@code writeObject} method,
-     * or {@code null} for the default encoding. This value is set by {@link GridCoverageFactory}
-     * according the hints provided to the factory.
-     */
-    transient String tileEncoding;
-
-    /**
      * Constructs a new grid coverage with the same parameter than the specified
      * coverage. This constructor is useful when creating a coverage with
      * identical data, but in which some method has been overridden in order to
@@ -139,8 +124,7 @@ public class GridCoverage2D extends GridCoverage {
      */
     GridCoverage2D(final CharSequence name, final GridCoverage2D coverage) {
         super(name, coverage);
-        image            = coverage.image;
-        tileEncoding     = coverage.tileEncoding;
+        image = coverage.image;
         // Do not share the views, since subclasses will create different instances.
     }
 
@@ -172,29 +156,18 @@ public class GridCoverage2D extends GridCoverage {
      *          If non-null, then this array length must matches the number of bands in {@code image}.
      * @param sources
      *          The sources for this grid coverage, or {@code null} if none.
-     * @param properties
-     *          The set of properties for this coverage, or {@code null} none.
-     * @param hints
-     *          An optional set of hints, or {@code null} if none.
      * @throws IllegalArgumentException
      *          If the number of bands differs from the number of sample dimensions.
-     *
-     * @since 2.5
      */
     public GridCoverage2D(final CharSequence             name,
                           final RenderedImage           image,
                                 GridGeometry2D   gridGeometry,
                           final SampleDimension[]       bands,
-                          final GridCoverage[]        sources,
-                          final Map<?,?>           properties,
-                          final Hints                   hints)
+                          final GridCoverage[]        sources)
             throws IllegalArgumentException
     {
-        super(name, fillGridGeometry(image, gridGeometry), fillSampleDimensions(name, image, bands), sources, properties);
+        super(name, fillGridGeometry(image, gridGeometry), fillSampleDimensions(name, image, bands), sources);
         this.image = image;
-        if (hints != null) {
-            tileEncoding = (String) hints.get(Hints.TILE_ENCODING);
-        }
     }
 
     /**
@@ -351,82 +324,6 @@ public class GridCoverage2D extends GridCoverage {
      */
     public Interpolation getInterpolation() {
         return Interpolation.getInstance(Interpolation.INTERP_NEAREST);
-    }
-
-    /**
-     * Returns the value vector for a given point in the coverage.
-     * A value for each sample dimension is included in the vector.
-     */
-    @Override
-    public Object evaluate(final DirectPosition point) throws CannotEvaluateException {
-        final int dataType = image.getSampleModel().getDataType();
-        switch (dataType) {
-            case DataBuffer.TYPE_BYTE:   return evaluate(point, (byte  []) null);
-            case DataBuffer.TYPE_SHORT:  // Fall through
-            case DataBuffer.TYPE_USHORT: // Fall through
-            case DataBuffer.TYPE_INT:    return evaluate(point, (int   []) null);
-            case DataBuffer.TYPE_FLOAT:  return evaluate(point, (float []) null);
-            case DataBuffer.TYPE_DOUBLE: return evaluate(point, (double[]) null);
-            default: throw new CannotEvaluateException();
-        }
-    }
-
-    /**
-     * Returns a sequence of byte values for a given point in the coverage.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest  An array in which to store values, or {@code null}.
-     * @return An array containing values.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate.
-     *         More specifically, {@link PointOutsideCoverageException} is thrown if the evaluation
-     *         failed because the input point has invalid coordinates.
-     */
-    @Override
-    public byte[] evaluate(final DirectPosition coord, byte[] dest)
-            throws CannotEvaluateException
-    {
-        final int[] array = evaluate(coord, (int[]) null);
-        if (dest == null) {
-            dest = new byte[array.length];
-        }
-        for (int i=0; i<array.length; i++) {
-            dest[i] = (byte) array[i];
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of integer values for a given point in the coverage.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest  An array in which to store values, or {@code null}.
-     * @return An array containing values.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate.
-     *         More specifically, {@link PointOutsideCoverageException} is thrown if the evaluation
-     *         failed because the input point has invalid coordinates.
-     */
-    @Override
-    public int[] evaluate(final DirectPosition coord, final int[] dest)
-            throws CannotEvaluateException
-    {
-        return evaluate(toPoint2D(coord), dest);
-    }
-
-    /**
-     * Returns a sequence of float values for a given point in the coverage.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest  An array in which to store values, or {@code null}.
-     * @return An array containing values.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate.
-     *         More specifically, {@link PointOutsideCoverageException} is thrown if the evaluation
-     *         failed because the input point has invalid coordinates.
-     */
-    @Override
-    public float[] evaluate(final DirectPosition coord, final float[] dest)
-            throws CannotEvaluateException
-    {
-        return evaluate(toPoint2D(coord), dest);
     }
 
     /**
@@ -847,8 +744,7 @@ public class GridCoverage2D extends GridCoverage {
         // Do not synchronize past this point, because ViewsManager.get is already
         // synchronized. We need to rely on ViewsManager locking because the views
         // are shared among many GridCoverage2D instances.
-        final Hints hints = null; // We may revisit that later.
-        return views.get(this, type, hints);
+        return views.get(this, type);
     }
 
     @Override

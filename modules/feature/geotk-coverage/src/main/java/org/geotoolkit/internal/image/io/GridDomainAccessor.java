@@ -32,7 +32,6 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.resources.Errors;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -185,7 +184,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                 if (pixelInCell == null || pixelInCell.equals(PixelInCell.CELL_CENTER)) {
                     span--;
                 }
-                Matrices.reverseAxisDirection(matrix, axisToReverse, span);
+                reverseAxisDirection(matrix, axisToReverse, span);
             }
             final int gridDimension = matrix.getNumCol() - 1;
             final int crsDimension  = matrix.getNumRow() - 1;
@@ -533,4 +532,30 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
         return gridToCRS;
     }
 
+    /**
+     * Modifies the given matrix in order to reverse the direction of the axis at the given
+     * dimension. The matrix is assumed affine, but this is not verified.
+     *
+     * @param matrix    The matrix to modify.
+     * @param dimension The dimension of the axis to reverse.
+     * @param span      The envelope span at the dimension of the axis to be reversed,
+     *                  in units of the source coordinate system.
+     *
+     * @deprecated No replacement, since experience has shown that this operation causes more problems
+     *             than solutions.
+     */
+    @Deprecated
+    private static void reverseAxisDirection(final Matrix matrix, final int dimension, final double span) {
+        final int numRows = matrix.getNumRow();
+        final int lastCol = matrix.getNumCol() - 1;
+        for (int j=0; j<numRows; j++) {
+            final double scale = matrix.getElement(j, dimension);
+            if (scale != 0) {
+                // The formula below still work with scale=0, but we don't want
+                // to change the scale sign from positive zero to negative zero.
+                matrix.setElement(j, dimension, -scale);
+                matrix.setElement(j, lastCol, matrix.getElement(j, lastCol) + scale*span);
+            }
+        }
+    }
 }

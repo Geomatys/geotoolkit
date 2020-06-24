@@ -42,15 +42,15 @@ public final class CoverageMapLayer extends AbstractMapLayer {
     private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(
             new double[] {-180, -90}, new double[] {180, 90}, CommonCRS.WGS84.normalizedGeographic());
 
-    private final GridCoverageResource ref;
     private Query query = null;
 
     protected CoverageMapLayer(final GridCoverageResource ref, final MutableStyle style){
-        super(style);
+        super(ref);
         if(ref == null){
             throw new NullArgumentException("Coverage reference can not be null.");
         }
-        this.ref = ref;
+        this.resource = ref;
+        setStyle(style);
 
         trySetName(ref);
     }
@@ -60,7 +60,7 @@ public final class CoverageMapLayer extends AbstractMapLayer {
      */
     @Override
     public GridCoverageResource getResource() {
-        return ref;
+        return (GridCoverageResource) resource;
     }
 
     /**

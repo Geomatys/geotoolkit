@@ -17,51 +17,43 @@
  */
 package org.geotoolkit.image.io;
 
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
-import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
-import java.io.File;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
-import javax.imageio.IIOException;
-import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import java.awt.image.RenderedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.apache.sis.internal.storage.io.ChannelDataInput;
-import org.apache.sis.internal.storage.io.ChannelImageInputStream;
-import org.apache.sis.storage.StorageConnector;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.lang.Static;
-import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.collection.DeferringIterator;
-import org.apache.sis.util.collection.FrequencySortedSet;
-import org.geotoolkit.image.io.mosaic.MosaicImageReader;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.factory.Factories;
-import org.geotoolkit.resources.Errors;
-
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
-
+import org.geotoolkit.coverage.io.CoverageIO;
+import org.geotoolkit.factory.Factories;
+import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.collection.DeferringIterator;
 
 /**
  * Extensions to the set of static methods provided in the standard {@link ImageIO} class.
@@ -504,9 +496,6 @@ public final class XImageIO extends Static {
             final Boolean seekForwardOnly, final Boolean ignoreMetadata) throws IOException
     {
         ensureNonNull("input", input);
-        if (MosaicImageReader.Spi.DEFAULT.canDecodeInput(input)) {
-            return createReaderInstance(MosaicImageReader.Spi.DEFAULT, input, seekForwardOnly, ignoreMetadata);
-        }
         return getReader(0, null, input, seekForwardOnly, ignoreMetadata);
     }
 

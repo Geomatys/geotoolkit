@@ -79,7 +79,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         final int width = 28;
         final int height = 13;
 
-        final InMemoryPyramidResource ref1 = (InMemoryPyramidResource) store.add(new DefiningPyramidResource(NamesExt.create("test1")));
+        final InMemoryPyramidResource ref1 = (InMemoryPyramidResource) store.add(new DefiningMultiResolutionResource(NamesExt.create("test1")));
         ref1.setSampleDimensions(Collections.singletonList(new SampleDimension.Builder().setName(0).build()));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
@@ -170,6 +170,8 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
      *
      * @param ref
      * @param crs
+     * @param width tile size
+     * @param height tile size
      * @param geovalues [0...n slices][Z coord, T coord, sample value]
      */
     private static void create4DPyramid(GridCoverageResource ref, CoordinateReferenceSystem crs,

@@ -19,19 +19,14 @@ package org.geotoolkit.image.io.plugin.yaml;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.geotoolkit.image.io.plugin.yaml.internal.YamlBuilder;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlCategory;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlImageInfo;
-import org.geotoolkit.image.io.plugin.yaml.internal.YamlReaderBuilder;
-import org.geotoolkit.image.io.plugin.yaml.internal.YamlSampleCategory;
 import org.geotoolkit.image.io.plugin.yaml.internal.YamlSampleDimension;
-import org.geotoolkit.image.io.plugin.yaml.internal.YamlWriterBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -61,19 +56,20 @@ public class YamlUtilsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void oneSampleDimensionTest() throws IOException {
 
-        final String dumpResult = "version: '1.0'\n" +
-"sampleDimension:\n" +
-"- description: band_0\n" +
-"  categories:\n" +
-"  - name: No data\n" +
-"    value: 0.0\n" +
-"  - name: data\n" +
-"    minSampleValue: 1.0\n" +
-"    isMinInclusive: true\n" +
-"    maxSampleValue: 255.0\n" +
-"    isMaxInclusive: true\n" +
-"    scale: 1.0\n" +
-"    offset: 0.0\n";
+        final String dumpResult =   "---\n"+
+                                    "version: \"1.0\"\n" +
+                                    "sampleDimension:\n" +
+                                    "- description: \"band_0\"\n" +
+                                    "  categories:\n" +
+                                    "  - name: \"No data\"\n" +
+                                    "    value: 0.0\n" +
+                                    "  - name: \"data\"\n" +
+                                    "    minSampleValue: 1.0\n" +
+                                    "    isMinInclusive: true\n" +
+                                    "    maxSampleValue: 255.0\n" +
+                                    "    isMaxInclusive: true\n" +
+                                    "    scale: 1.0\n" +
+                                    "    offset: 0.0\n";
 
 
         final File fil = File.createTempFile("yamlTest", "txt");
@@ -83,15 +79,12 @@ public class YamlUtilsTest extends org.geotoolkit.test.TestBase {
         b.addQuantitative("data", NumberRange.create(1d, true, 255d, true), (MathTransform1D) MathTransforms.identity(1), null);
         final SampleDimension sampDimb0 = b.setName("band_0").build();
 
-        YamlWriterBuilder yamBuild = YamlFiles.getBuilder();
+        final List<SampleDimension> dims = new ArrayList<>();
+        dims.add(sampDimb0);
 
-        yamBuild.setSampleDimensions(Collections.singletonList(sampDimb0));
+        Assert.assertEquals(dumpResult, YamlFiles.write(dims));
 
-//        System.out.println(YamlFiles.dump(yamBuild));
-
-        Assert.assertEquals(dumpResult, YamlFiles.dump(yamBuild));
-
-        YamlFiles.write(fil, yamBuild);
+        YamlFiles.write(dims, fil.toPath());
 
         List<SampleDimension> lsd = YamlFiles.read(fil, Double.class);
         Assert.assertEquals(lsd.get(0), sampDimb0);
@@ -107,52 +100,53 @@ public class YamlUtilsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void multiSampleDimensionTest() throws IOException {
 
-        final String dumpResult = "version: '1.0'\n" +
-"sampleDimension:\n" +
-"- description: band_0\n" +
-"  categories:\n" +
-"  - name: No data\n" +
-"    value: 0.0\n" +
-"  - name: data\n" +
-"    minSampleValue: 1.0\n" +
-"    isMinInclusive: true\n" +
-"    maxSampleValue: 255.0\n" +
-"    isMaxInclusive: true\n" +
-"    scale: 1.0\n" +
-"    offset: 0.0\n" +
-"- description: band_1\n" +
-"  categories:\n" +
-"  - name: data\n" +
-"    minSampleValue: 0.0\n" +
-"    isMinInclusive: true\n" +
-"    maxSampleValue: 125.0\n" +
-"    isMaxInclusive: true\n" +
-"    scale: 1.0\n" +
-"    offset: 0.0\n" +
-"  - name: No data\n" +
-"    minSampleValue: 125.0\n" +
-"    isMinInclusive: false\n" +
-"    maxSampleValue: 254.0\n" +
-"    isMaxInclusive: true\n" +
-"  - name: data\n" +
-"    value: 255.0\n" +
-"    scale: 1.0\n" +
-"    offset: 0.0\n" +
-"- description: band_2\n" +
-"  categories:\n" +
-"  - name: data\n" +
-"    minSampleValue: 0.0\n" +
-"    isMinInclusive: true\n" +
-"    maxSampleValue: 254.0\n" +
-"    isMaxInclusive: false\n" +
-"    scale: 1.0\n" +
-"    offset: 0.0\n" +
-"  - name: No data\n" +
-"    value: 254.0\n" +
-"  - name: data\n" +
-"    value: 255.0\n" +
-"    scale: 1.0\n" +
-"    offset: 0.0\n";
+        final String dumpResult =   "---\n" +
+                                    "version: \"1.0\"\n" +
+                                    "sampleDimension:\n" +
+                                    "- description: \"band_0\"\n" +
+                                    "  categories:\n" +
+                                    "  - name: \"No data\"\n" +
+                                    "    value: 0.0\n" +
+                                    "  - name: \"data\"\n" +
+                                    "    minSampleValue: 1.0\n" +
+                                    "    isMinInclusive: true\n" +
+                                    "    maxSampleValue: 255.0\n" +
+                                    "    isMaxInclusive: true\n" +
+                                    "    scale: 1.0\n" +
+                                    "    offset: 0.0\n" +
+                                    "- description: \"band_1\"\n" +
+                                    "  categories:\n" +
+                                    "  - name: \"data\"\n" +
+                                    "    minSampleValue: 0.0\n" +
+                                    "    isMinInclusive: true\n" +
+                                    "    maxSampleValue: 125.0\n" +
+                                    "    isMaxInclusive: true\n" +
+                                    "    scale: 1.0\n" +
+                                    "    offset: 0.0\n" +
+                                    "  - name: \"No data\"\n" +
+                                    "    minSampleValue: 125.0\n" +
+                                    "    isMinInclusive: false\n" +
+                                    "    maxSampleValue: 254.0\n" +
+                                    "    isMaxInclusive: true\n" +
+                                    "  - name: \"data\"\n" +
+                                    "    value: 255.0\n" +
+                                    "    scale: 1.0\n" +
+                                    "    offset: 0.0\n" +
+                                    "- description: \"band_2\"\n" +
+                                    "  categories:\n" +
+                                    "  - name: \"data\"\n" +
+                                    "    minSampleValue: 0.0\n" +
+                                    "    isMinInclusive: true\n" +
+                                    "    maxSampleValue: 254.0\n" +
+                                    "    isMaxInclusive: false\n" +
+                                    "    scale: 1.0\n" +
+                                    "    offset: 0.0\n" +
+                                    "  - name: \"No data\"\n" +
+                                    "    value: 254.0\n" +
+                                    "  - name: \"data\"\n" +
+                                    "    value: 255.0\n" +
+                                    "    scale: 1.0\n" +
+                                    "    offset: 0.0\n";
 
         final File fil = File.createTempFile("yamlTest", "txt");
         final MathTransform1D identity = (MathTransform1D) MathTransforms.identity(1);
@@ -182,13 +176,10 @@ public class YamlUtilsTest extends org.geotoolkit.test.TestBase {
         sampDims.add(sampDimb1);
         sampDims.add(sampDimb2);
 
-        final YamlWriterBuilder yamBuild = YamlFiles.getBuilder();
-        yamBuild.setSampleDimensions(sampDims);
-
-        YamlFiles.write(fil, yamBuild);
+        YamlFiles.write(sampDims, fil.toPath());
 //        System.out.println(YamlFiles.dump(yamBuild));
 
-        Assert.assertEquals(dumpResult, YamlFiles.dump(yamBuild));
+        Assert.assertEquals(dumpResult, YamlFiles.write(sampDims));
 
         List<SampleDimension> lsd = YamlFiles.read(fil, Double.class);
         int i = 0;
@@ -206,22 +197,22 @@ public class YamlUtilsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void badVersionTest() throws IOException {
 
-        final String dumpResult = "version: '2.0'\n" +
-"sampleDimension:\n" +
-"- description: band_0\n" +
-"  categories:\n" +
-"  - name: No data\n" +
-"    value: 0.0\n" +
-"  - name: data\n" +
-"    minSampleValue: 1.0\n" +
-"    isMinInclusive: true\n" +
-"    maxSampleValue: 255.0\n" +
-"    isMaxInclusive: true\n" +
-"    scale: 1.0\n" +
-"    offset: 0.0\n";
+        final String dumpResult =   "version: \"2.0\"\n" +
+                                    "sampleDimension:\n" +
+                                    "- description: \"band_0\"\n" +
+                                    "  categories:\n" +
+                                    "  - name: \"No data\"\n" +
+                                    "    value: 0.0\n" +
+                                    "  - name: \"data\"\n" +
+                                    "    minSampleValue: 1.0\n" +
+                                    "    isMinInclusive: true\n" +
+                                    "    maxSampleValue: 255.0\n" +
+                                    "    isMaxInclusive: true\n" +
+                                    "    scale: 1.0\n" +
+                                    "    offset: 0.0\n";
 
         try {
-            final List<SampleDimension> sDim = YamlFiles.load(dumpResult, Double.class);
+            final List<SampleDimension> sDim = YamlFiles.read(dumpResult, Double.class);
             Assert.fail("test should have fail for bad version reason.");
         } catch (IllegalStateException ex) {
             //-- expected comportement

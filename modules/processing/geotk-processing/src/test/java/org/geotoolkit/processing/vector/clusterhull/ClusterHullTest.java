@@ -1,5 +1,11 @@
 package org.geotoolkit.processing.vector.clusterhull;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.measure.Unit;
+import javax.measure.quantity.Length;
 import org.apache.sis.measure.Units;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -11,6 +17,9 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.geotoolkit.storage.DataStores;
+import static org.geotoolkit.storage.geojson.GeoJSONProvider.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.locationtech.jts.geom.*;
 import org.opengis.feature.FeatureType;
@@ -27,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static org.geotoolkit.data.geojson.GeoJSONProvider.*;
 import static org.junit.Assert.*;
+
 
 /**
  * JUnit test of ClusterHull process

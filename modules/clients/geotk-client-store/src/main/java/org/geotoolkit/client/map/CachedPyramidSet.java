@@ -47,12 +47,12 @@ import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.coverage.*;
+import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.Pyramids;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -121,9 +121,9 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     public abstract Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException;
 
     public ImageTile getTile(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
-        final String formatmime = (hints==null) ? null : (String) hints.get(Pyramids.HINT_FORMAT);
+        final String formatmime = (hints == null) ? null : (String) hints.get(Pyramids.HINT_FORMAT);
         ImageReaderSpi spi = null;
-        if(formatmime!=null){
+        if (formatmime != null) {
             try {
                 spi = XImageIO.getReaderByMIMEType(formatmime, null, false, false).getOriginatingProvider();
             } catch (IOException ex) {

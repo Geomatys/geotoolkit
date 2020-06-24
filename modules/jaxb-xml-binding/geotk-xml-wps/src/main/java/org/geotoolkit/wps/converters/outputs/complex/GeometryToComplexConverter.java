@@ -27,12 +27,11 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
-import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
-import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v200.Data;
@@ -124,7 +123,7 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
                 throw new UnconvertibleObjectException(ex);
             }
         } else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(mimeType)) {
-            GeoJSONGeometry jsonGeometry = GeometryUtils.toGeoJSONGeometry(source);
+            GeoJSONGeometry jsonGeometry = GeoJSONGeometry.toGeoJSONGeometry(source);
 
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {

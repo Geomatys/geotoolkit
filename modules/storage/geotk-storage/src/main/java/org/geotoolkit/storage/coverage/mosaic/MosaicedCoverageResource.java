@@ -17,11 +17,14 @@
 package org.geotoolkit.storage.coverage.mosaic;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +37,13 @@ import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.Tile;
+import org.apache.sis.internal.referencing.j2d.TileOrganizer;
 import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -46,7 +52,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
@@ -54,6 +59,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -70,7 +76,7 @@ import org.opengis.util.GenericName;
 public class MosaicedCoverageResource extends AbstractGridResource {
 
     private final GridGeometry gridGeometry;
-    private final Tile[] tiles;
+    private final ResourceTile[] tiles;
     private final Quadtree tree = new Quadtree();
 
     private List<SampleDimension> sampleDimensions;
@@ -80,9 +86,9 @@ public class MosaicedCoverageResource extends AbstractGridResource {
     private MosaicedCoverageResource(GridGeometry gridGeometry, Tile[] tiles) throws DataStoreException {
         super(null);
         this.gridGeometry = gridGeometry;
-        this.tiles = tiles;
+        this.tiles = Arrays.copyOf(tiles, tiles.length, ResourceTile[].class);
 
-        for (Tile tile : tiles) {
+        for (ResourceTile tile : this.tiles) {
             GridCoverageResource resource = tile.getResource();
             Envelope envelope = resource.getGridGeometry().getEnvelope();
             tree.insert(new JTSEnvelope2D(envelope), tile);
@@ -91,7 +97,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         //add a no-data category
         //the no-data is needed to fill possible gaps between coverages
         //TODO need to improve detection cases to avoid switching to transformed values all the time
-        sampleDimensions = new ArrayList<>(tiles[0].getResource().getSampleDimensions());
+        sampleDimensions = new ArrayList<>(this.tiles[0].getResource().getSampleDimensions());
         forceTransformedValues = false;
         noData = new double[sampleDimensions.size()];
         for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
@@ -167,7 +173,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         canvas = CoverageUtilities.forceLowerToZero(canvas);
 
         final Envelope envelope = canvas.getEnvelope();
-        final List<Tile> results = tree.query(new JTSEnvelope2D(envelope));
+        final List<ResourceTile> results = tree.query(new JTSEnvelope2D(envelope));
 
         //single result
         if (results.size() == 1) {
@@ -177,7 +183,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
 
         //aggregate tiles
         BufferedImage buffer = null;
-        for (Tile tile : results) {
+        for (ResourceTile tile : results) {
             final GridCoverageResource resource = tile.getResource();
             try {
                 GridCoverage coverage = resource.read(canvas, range);
@@ -220,13 +226,15 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         }
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("Mosaic");
-        gcb.setGridGeometry(canvas);
-        gcb.setSampleDimensions(getSampleDimensions());
-        gcb.setRenderedImage(buffer);
+        gcb.setDomain(canvas);
+        gcb.setRanges(getSampleDimensions());
+        gcb.setValues(buffer);
         return gcb.build();
     }
 
+    /**
+     * TODO, FIXME : the canvas grid extent offset is ignored.
+     */
     public static void resample(GridCoverage coverage, RenderedImage coverageImage, InterpolationCase interpolation,
             GridGeometry canvasGridGeometry, WritableRenderedImage canvasImage) throws TransformException, FactoryException {
 
@@ -251,7 +259,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
 
         final Resample resample = new Resample(targetToSource, canvasImage, coverageImage,
                 interpolation, ResampleBorderComportement.FILL_VALUE, null);
-        resample.fillImage(true);
+        resample.fillImage();
     }
 
     static boolean isAllZero(double[] array) {
@@ -269,16 +277,27 @@ public class MosaicedCoverageResource extends AbstractGridResource {
     public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
     }
 
+    @Override
+    public String toString() {
+        final List<String> texts = new ArrayList<>();
+        int i=0;
+        for (Tile vb : tiles) {
+            texts.add(((ResourceTile) vb).getResource().toString());
+            i++;
+            if (i>10) {
+                texts.add("... ("+tiles.length+" entries) ...");
+                break;
+            }
+        }
+        return StringUtilities.toStringTree("Mosaiced coverage resource", texts);
+    }
+
     /**
      * Try to create mosaics of the different provided coverages.
-     *
-     * @param resources
-     * @return
-     * @throws DataStoreException
      */
-    public static List<GridCoverageResource> create(GridCoverageResource ... resources) throws DataStoreException {
+    public static List<GridCoverageResource> create(GridCoverageResource... resources) throws IOException, DataStoreException {
 
-        final RegionCalculator calculator = new RegionCalculator();
+        final TileOrganizer calculator = new TileOrganizer(null);
         final List<GridCoverageResource> mosaics = new ArrayList<>();
 
         for (GridCoverageResource resource : resources) {
@@ -291,7 +310,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
             }
         }
 
-        for (Entry<GridGeometry,Tile[]> entry : calculator.tiles().entrySet()) {
+        for (Entry<Tile,Tile[]> entry : calculator.tiles().entrySet()) {
 
             final Tile[] tiles = entry.getValue();
 
@@ -305,7 +324,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
                     lst = new ArrayList<>();
                     groups.put(tile.getSubsampling(), lst);
                 }
-                lst.add(tile.getResource());
+                lst.add(((ResourceTile) tile).getResource());
             }
 
             for (List<GridCoverageResource> lst : groups.values()) {
@@ -313,16 +332,20 @@ public class MosaicedCoverageResource extends AbstractGridResource {
 //                   mosaics.add(lst.get(0));
 //                } else {
 
-                    final RegionCalculator calculator2 = new RegionCalculator();
+                    final TileOrganizer calculator2 = new TileOrganizer(null);
                     for (GridCoverageResource resource : lst) {
                         append(resource, calculator2);
                     }
-                    Entry<GridGeometry, Tile[]> next = calculator2.tiles().entrySet().iterator().next();
-                    GridGeometry grid = next.getKey();
+                    Entry<Tile,Tile[]> next = calculator2.tiles().entrySet().iterator().next();
+                    Tile group = next.getKey();
 
                     //set the crs which is missing from the grid geometry
-                    CoordinateReferenceSystem crs = next.getValue()[0].getResource().getGridGeometry().getCoordinateReferenceSystem();
-                    grid = new GridGeometry(grid.getExtent(), PixelInCell.CELL_CENTER, grid.getGridToCRS(PixelInCell.CELL_CENTER), crs);
+                    CoordinateReferenceSystem crs = ((ResourceTile) next.getValue()[0]).getResource().getGridGeometry().getCoordinateReferenceSystem();
+                    final Rectangle r = group.getRegion();
+                    GridGeometry grid = new GridGeometry(new GridExtent(null,
+                            new long[] {r.x, r.y},
+                            new long[] {r.x + r.width, r.y + r.height}, false),
+                            PixelInCell.CELL_CENTER, group.getGridToCRS(), crs);
 
                     mosaics.add(new MosaicedCoverageResource(grid, next.getValue()));
 //                }
@@ -331,14 +354,14 @@ public class MosaicedCoverageResource extends AbstractGridResource {
         return mosaics;
     }
 
-    private static void append(GridCoverageResource r, RegionCalculator c) throws DataStoreException {
+    private static void append(GridCoverageResource r, TileOrganizer c) throws DataStoreException {
         if (r instanceof MosaicedCoverageResource) {
             MosaicedCoverageResource mcr = (MosaicedCoverageResource) r;
-            for (Tile t : mcr.tiles) {
-                c.add(new Tile(t.getResource()));
+            for (ResourceTile t : mcr.tiles) {
+                c.add(new ResourceTile(t.getResource()));
             }
         } else {
-            c.add(new Tile(r));
+            c.add(new ResourceTile(r));
         }
     }
 

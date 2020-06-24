@@ -23,8 +23,6 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
@@ -34,7 +32,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -42,7 +39,6 @@ import java.awt.image.renderable.RenderContext;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -57,7 +53,6 @@ import javax.media.jai.ImageFunction;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.PropertySourceImpl;
 import javax.media.jai.TiledImage;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
@@ -80,10 +75,10 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.CannotEvaluateException;
-import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -154,8 +149,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      */
     private final InternationalString name;
 
-    protected transient Map properties;
-
     /**
      * Constructs a coverage using the specified coordinate reference system. If the coordinate
      * reference system is {@code null}, then the subclasses must override {@link #getDimension()}.
@@ -164,18 +157,12 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      *          The coverage name, or {@code null} if none.
      * @param grid   the grid extent, CRS and conversion from cell indices to CRS.
      * @param bands  sample dimensions for each image band.
-     * @param properties
-     *          The set of properties for this coverage, or {@code null} if there is none.
-     *          Keys are {@link String} objects ({@link javax.media.jai.util.CaselessStringKey}
-     *          are accepted as well), while values may be any {@link Object}.
      */
     protected GridCoverage(final CharSequence name,
                            final GridGeometry grid,
-                           final Collection<? extends SampleDimension> bands,
-                           final Map<?,?>     properties)
+                           final Collection<? extends SampleDimension> bands)
     {
         super(grid, bands);
-        this.properties = properties;
         this.name = Types.toInternationalString(name);
         this.sources = null;
     }
@@ -206,17 +193,13 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * @param bands  sample dimensions for each image band.
      * @param sources
      *          The {@linkplain #getSources sources} for a grid coverage, or {@code null} if none.
-     * @param properties
-     *          Set of additional properties for this coverage, or {@code null} if there is none.
      */
-    protected GridCoverage(final CharSequence             name,
+    protected GridCoverage(final CharSequence name,
                            final GridGeometry grid,
                            final Collection<? extends SampleDimension> bands,
-                           final GridCoverage[]        sources,
-                           final Map<?,?>           properties)
+                           final GridCoverage[] sources)
     {
         super(grid, bands);
-        this.properties = properties;
         this.name = Types.toInternationalString(name);
         if (sources != null) {
             switch (sources.length) {
@@ -259,210 +242,8 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         return getGridGeometry().getEnvelope();
     }
 
-    /**
-     * Returns a localized error message for the specified array.
-     */
-    private static String formatErrorMessage(final Object array) {
-        Class<?> type = null;
-        if (array != null) {
-            type = array.getClass();
-            if (type.isArray()) {
-                type = type.getComponentType();
-            }
-        }
-        return Errors.format(Errors.Keys.CantConvertFromType_1, type);
-    }
-
-    public abstract Object evaluate(final DirectPosition point) throws CannotEvaluateException;
-
-    /**
-     * Returns a sequence of boolean values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code boolean} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public boolean[] evaluate(final DirectPosition coord, boolean[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new boolean[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getBoolean(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of byte values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code byte} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public byte[] evaluate(final DirectPosition coord, byte[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new byte[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getByte(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of integer values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code int} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public int[] evaluate(final DirectPosition coord, int[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new int[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getInt(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of float values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code float} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public float[] evaluate(final DirectPosition coord, float[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new float[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getFloat(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
-    /**
-     * Returns a sequence of double values for a given point in the coverage. A value for each
-     * {@linkplain SampleDimension sample dimension} is included in the sequence. The default
-     * interpolation type used when accessing grid values for points which fall between grid cells
-     * is {@linkplain javax.media.jai.InterpolationNearest nearest neighbor}, but it can be changed
-     * by some {@linkplain org.geotoolkit.coverage.grid.Interpolator2D subclasses}. The CRS of the
-     * point is the same as the grid coverage {@linkplain #getCoordinateReferenceSystem coordinate
-     * reference system}.
-     *
-     * @param  coord The coordinate point where to evaluate.
-     * @param  dest An array in which to store values, or {@code null} to create a new array.
-     * @return The {@code dest} array, or a newly created array if {@code dest} was null.
-     * @throws PointOutsideCoverageException if the evaluation failed because the input point
-     *         has invalid coordinates.
-     * @throws CannotEvaluateException if the values can't be computed at the specified coordinate
-     *         for an other reason. It may be thrown if the coverage data type can't be converted
-     *         to {@code double} by an identity or widening conversion. Subclasses may relax this
-     *         constraint if appropriate.
-     */
-    public double[] evaluate(final DirectPosition coord, double[] dest)
-            throws PointOutsideCoverageException, CannotEvaluateException
-    {
-        final Object array = evaluate(coord);
-        try {
-            final int length = Array.getLength(array);
-            if (dest == null) {
-                dest = new double[length];
-            }
-            for (int i=0; i<length; i++) {
-                dest[i] = Array.getDouble(array, i);
-            }
-        } catch (IllegalArgumentException exception) {
-            throw new CannotEvaluateException(formatErrorMessage(array), exception);
-        }
-        return dest;
-    }
-
     @Override
     public RenderedImage render(GridExtent sliceExtent) throws CannotEvaluateException {
-
         final int[] indices = sliceExtent.getSubspaceDimensions(2);
         final int xAxis = indices[0];
         final int yAxis = indices[1];
@@ -503,10 +284,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         return new Renderable(xAxis, yAxis);
     }
 
-    public Map getProperties() {
-        return properties;
-    }
-
     /////////////////////////////////////////////////////////////////////////
     ////////////////                                         ////////////////
     ////////////////     RenderableImage / ImageFunction     ////////////////
@@ -520,19 +297,8 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      * {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid coverage}).
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @see AbstractCoverage#getRenderableImage
-     *
-     * @since 2.0
-     * @module
      */
-    protected class Renderable extends PropertySourceImpl implements RenderableImage, ImageFunction {
-        /**
-         * For compatibility during cross-version serialization.
-         */
-        private static final long serialVersionUID = -6661389795161502552L;
-
+    protected class Renderable implements RenderableImage, ImageFunction {
         /**
          * The two dimensional view of the coverage's envelope.
          */
@@ -567,7 +333,6 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
          * @param yAxis Dimension to use for <var>y</var> axis.
          */
         public Renderable(final int xAxis, final int yAxis) {
-            super(GridCoverage.this.properties, null);
             this.xAxis = xAxis;
             this.yAxis = yAxis;
             final Envelope envelope = getEnvelope();
@@ -735,8 +500,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                 sampleModel = colorModel.createCompatibleSampleModel(tileSize.width, tileSize.height);
             } else {
                 sampleModel = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, tileSize.width, tileSize.height, nbBand);
-                final ColorSpace colors = ColorModelFactory.createColorSpace(nbBand, 0, 0, 1);
-                colorModel = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, DataBuffer.TYPE_DOUBLE);
+                colorModel = ColorModelFactory.createGrayScale(DataBuffer.TYPE_DOUBLE, nbBand, 0, 0, 1);
             }
 
             /*
@@ -840,7 +604,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
         protected RenderContext createRenderContext(final Rectangle2D gridBounds,
                                                     final RenderingHints hints)
         {
-            final GeneralMatrix matrix;
+            final MatrixSIS matrix;
             final GeneralEnvelope srcEnvelope = new GeneralEnvelope(
                     new double[] {bounds.getMinX(), bounds.getMinY()},
                     new double[] {bounds.getMaxX(), bounds.getMaxY()});
@@ -864,9 +628,9 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                     }
                 }
                 normalized[1] = AxisDirections.opposite(normalized[1]); // Image's Y axis is downward.
-                matrix = new GeneralMatrix(srcEnvelope, axis, dstEnvelope, normalized);
+                matrix = Matrices.createTransform(srcEnvelope, axis, dstEnvelope, normalized);
             } else {
-                matrix = new GeneralMatrix(srcEnvelope, dstEnvelope);
+                matrix = Matrices.createTransform(srcEnvelope, dstEnvelope);
             }
             return new RenderContext(AffineTransforms2D.castOrCopy(matrix), hints);
         }
@@ -908,20 +672,9 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                                 final int   countX, final int   countY, final int dim,
                                 final float[] real, final float[] imag)
         {
-            int index = 0;
-            float[] buffer = null;
-            // Clones the coordinate point in order to allow multi-thread invocation.
-            final GeneralDirectPosition coordinate = new GeneralDirectPosition(this.coordinate);
-            coordinate.coordinates[1] = startY;
-            for (int j=0; j<countY; j++) {
-                coordinate.coordinates[0] = startX;
-                for (int i=0; i<countX; i++) {
-                    buffer = evaluate(coordinate, buffer);
-                    real[index++] = buffer[dim];
-                    coordinate.coordinates[0] += deltaX;
-                }
-                coordinate.coordinates[1] += deltaY;
-            }
+            final double[] tmp = new double[real.length];
+            getElements(startX, startY, deltaX, deltaY, countX, countY, dim, tmp, null);
+            for (int i=0; i<real.length; i++) real[i] = (float) tmp[i];
         }
 
         /**
@@ -962,6 +715,16 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                 }
                 coordinate.coordinates[1] += deltaY;
             }
+        }
+
+        @Override
+        public Object getProperty(String name) {
+            return java.awt.Image.UndefinedProperty;
+        }
+
+        @Override
+        public String[] getPropertyNames() {
+            return new String[0];
         }
     }
 

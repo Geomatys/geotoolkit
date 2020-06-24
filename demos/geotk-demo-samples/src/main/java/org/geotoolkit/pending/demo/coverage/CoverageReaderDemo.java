@@ -11,7 +11,6 @@ import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-import org.geotoolkit.gui.javafx.render2d.FXMapFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -93,7 +92,7 @@ public class CoverageReaderDemo {
         context.layers().add(cl);
 
         //display it
-        FXMapFrame.show(context);
+//        FXMapFrame.show(context);
 
     }
 

@@ -28,7 +28,7 @@ import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileProvider;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
@@ -95,28 +95,28 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     @Test
     public void testWriteTwice() throws Exception {
         copyShapefiles("shapes/stream.shp");
-        ShapefileFeatureStoreFactory fac = new ShapefileFeatureStoreFactory();
+        ShapefileProvider fac = new ShapefileProvider();
         FeatureStore s1 = createDataStore(fac, TestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
         GenericName typeName = s1.getNames().iterator().next();
         FeatureType type = s1.getFeatureType(typeName.toString());
         FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
 
-        ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
+        ShapefileProvider maker = new ShapefileProvider();
 
          doubleWrite(type, one, getTempFile(), maker, false);
          doubleWrite(type, one, getTempFile(), maker, true);
     }
 
-    private FeatureStore createDataStore( final ShapefileFeatureStoreFactory fac, final URL url, final boolean memoryMapped )
+    private FeatureStore createDataStore( final ShapefileProvider fac, final URL url, final boolean memoryMapped )
             throws IOException, DataStoreException, URISyntaxException {
         final ParameterValueGroup params = fac.getOpenParameters().createValue();
-        params.parameter(ShapefileFeatureStoreFactory.LOCATION).setValue(url.toURI());
-        params.parameter(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
+        params.parameter(ShapefileProvider.LOCATION).setValue(url.toURI());
+        params.parameter(ShapefileProvider.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
         return fac.open(params);
     }
 
     private void doubleWrite( final FeatureType type, final FeatureCollection one, final File tmp,
-            final ShapefileFeatureStoreFactory maker, final boolean memorymapped ) throws IOException,
+            final ShapefileProvider maker, final boolean memorymapped ) throws IOException,
             MalformedURLException,
             DataStoreException, URISyntaxException {
         FeatureStore s;
@@ -137,18 +137,18 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 //        ShapeTestData.url(f)
 //        File file = copyShapefiles(f); // Work on File rather than URL from
 //        // JAR.
-        FeatureStore s = createDataStore(new ShapefileFeatureStoreFactory(), ShapeTestData.url(f), true);
+        FeatureStore s = createDataStore(new ShapefileProvider(), ShapeTestData.url(f), true);
         GenericName typeName = s.getNames().iterator().next();
         FeatureType type = s.getFeatureType(typeName.toString());
         FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
 
-        ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
+        ShapefileProvider maker = new ShapefileProvider();
         test(type, one, getTempFile(), maker, false);
         test(type, one, getTempFile(), maker, true);
     }
 
     private void test( final FeatureType type, final FeatureCollection one, final File tmp,
-            final ShapefileFeatureStoreFactory maker, final boolean memorymapped ) throws IOException,
+            final ShapefileProvider maker, final boolean memorymapped ) throws IOException,
             MalformedURLException, Exception {
         FeatureStore s;
         s = createDataStore(maker, tmp.toURI().toURL(), memorymapped);
@@ -159,7 +159,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         session.addFeatures(type.getName().toString(),one);
         session.commit();
 
-        s = createDataStore(new ShapefileFeatureStoreFactory(), tmp.toURI().toURL(), true);
+        s = createDataStore(new ShapefileProvider(), tmp.toURI().toURL(), true);
         GenericName typeName = s.getNames().iterator().next();
 
         FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
@@ -197,11 +197,11 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     public void testGetBoundsQuery() throws Exception {
         File file = copyShapefiles("shapes/streams.shp");
 
-        ShapefileFeatureStoreFactory fac = new ShapefileFeatureStoreFactory();
+        ShapefileProvider fac = new ShapefileProvider();
 
         final ParameterValueGroup params = fac.getOpenParameters().createValue();
-        params.parameter(ShapefileFeatureStoreFactory.LOCATION).setValue(file.toURI());
-        params.parameter(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
+        params.parameter(ShapefileProvider.LOCATION).setValue(file.toURI());
+        params.parameter(ShapefileProvider.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
         IndexedShapefileFeatureStore ds = (IndexedShapefileFeatureStore) fac.open(params);
 
         FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);

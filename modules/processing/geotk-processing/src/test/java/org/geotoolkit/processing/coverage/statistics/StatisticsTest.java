@@ -16,16 +16,20 @@
  */
 package org.geotoolkit.processing.coverage.statistics;
 
+import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.geotoolkit.storage.coverage.ImageStatistics;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
+import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +43,6 @@ import org.opengis.util.NoSuchIdentifierException;
 public class StatisticsTest extends org.geotoolkit.test.TestBase {
 
     private GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
-    private GridCoverageBuilder gcb = new GridCoverageBuilder();
     private GridCoverage coverage;
 
     @Before
@@ -47,13 +50,15 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
         env.setRange(0, 0, 3);
         env.setRange(1, 0, 3);
 
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(new float[][]{
+        GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setDomain(new GridGeometry(new GridExtent(3, 3), env));
+        gcb.setValues(BufferedImages.toDataBuffer1D(new float[][]{
                 {100,100,100},
                 {100,200,100},
                 {100,100,100}
-        });
-        coverage = gcb.getGridCoverage2D();
+        }), null);
+        gcb.setRanges(new SampleDimension.Builder().setName(0).build());
+        coverage = gcb.build();
     }
 
     @Test

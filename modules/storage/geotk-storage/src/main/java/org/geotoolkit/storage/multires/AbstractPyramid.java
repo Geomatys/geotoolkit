@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.storage.multires;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -66,10 +68,7 @@ public abstract class AbstractPyramid implements Pyramid {
 
     @Override
     public String toString(){
-        return StringUtilities.toStringTree(Classes.getShortClassName(this)
-                +" "+IdentifiedObjects.getIdentifierOrName(getCoordinateReferenceSystem())
-                +" "+getIdentifier(),
-                getMosaics());
+        return toString(this);
     }
 
     @Override
@@ -85,4 +84,16 @@ public abstract class AbstractPyramid implements Pyramid {
         return env;
     }
 
+    /**
+     * Pretty print output of given pyramid.
+     * @param pyramid not null
+     */
+    public static String toString(Pyramid pyramid) {
+        final List<String> elements = new ArrayList<>();
+        elements.add("id : " + pyramid.getIdentifier());
+        elements.add("format : " + pyramid.getFormat());
+        elements.add("crs : " + IdentifiedObjects.getIdentifierOrName(pyramid.getCoordinateReferenceSystem()));
+        elements.add(StringUtilities.toStringTree("mosaics", pyramid.getMosaics()));
+        return StringUtilities.toStringTree(Classes.getShortClassName(pyramid), elements);
+    }
 }

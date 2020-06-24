@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2020, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,12 +16,13 @@
  */
 package org.geotoolkit.processing.coverage.isoline;
 
-import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.processing.AbstractProcessDescriptor;
+import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.parameter.ParameterDescriptor;
@@ -30,9 +31,10 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
 /**
- * Create a FeatureCollection of isoline from a GridCoverage2D and an array of intervals.
+ * Create a FeatureSet of isoline from a GridCoverageResource and an array of intervals.
  *
  * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class IsolineDescriptor extends AbstractProcessDescriptor {
 
@@ -42,43 +44,59 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
     /*
      * Coverage
      */
-    public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
-    public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inCoverage);
-    public static final ParameterDescriptor<GridCoverage> COVERAGE = new ParameterBuilder()
-            .addName(IN_COVERAGE_PARAM_NAME)
-            .setRemarks(IN_COVERAGE_PARAM_REMARKS)
+    public static final InternationalString IN_COVERAGE_REF_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inCoverageRef);
+    public static final ParameterDescriptor<GridCoverageResource> COVERAGE_REF = new ParameterBuilder()
+            .addName("inCoverageRef")
+            .setRemarks(IN_COVERAGE_REF_PARAM_REMARKS)
             .setRequired(true)
-            .create(GridCoverage.class, null);
+            .create(GridCoverageResource.class, null);
+
+    /*
+     * Output FeatureStore
+     */
+    public static final InternationalString IN_FEATURE_STORE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inFeatureStore);
+    public static final ParameterDescriptor<DataStore> FEATURE_STORE = new ParameterBuilder()
+            .addName("inFeatureStore")
+            .setRemarks(IN_FEATURE_STORE_PARAM_REMARKS)
+            .setRequired(false)
+            .create(DataStore.class, null);
+
+    /*
+     * Output FeatureType name
+     */
+    public static final InternationalString IN_FEATURE_NAME_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inFeatureTypeName);
+    public static final ParameterDescriptor<String> FEATURE_NAME = new ParameterBuilder()
+            .addName("inFeatureTypeName")
+            .setRemarks(IN_FEATURE_NAME_PARAM_REMARKS)
+            .setRequired(false)
+            .create(String.class, null);
 
     /*
      * Intervals
      */
-    public static final String IN_INTERVAL_PARAM_NAME = "inIntervals";
     public static final InternationalString IN_INTERVAL_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inIntervals);
     public static final ParameterDescriptor<double[]> INTERVALS = new ParameterBuilder()
-            .addName(IN_INTERVAL_PARAM_NAME)
+            .addName("inIntervals")
             .setRemarks(IN_INTERVAL_PARAM_REMARKS)
             .setRequired(true)
             .create(double[].class, null);
 
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE, INTERVALS);
+            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE_REF, FEATURE_STORE, FEATURE_NAME, INTERVALS);
 
     /*
      * FeatureCollection of isoline
      */
-    public static final String OUT_FCOLL_PARAM_NAME = "outFeatureCollection";
     public static final InternationalString OUT_FCOLL_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_outFeatureCollection);
-    public static final ParameterDescriptor<FeatureCollection> FCOLL = new ParameterBuilder()
-            .addName(OUT_FCOLL_PARAM_NAME)
+    public static final ParameterDescriptor<FeatureSet> FCOLL = new ParameterBuilder()
+            .addName("outFeatureCollection")
             .setRemarks(OUT_FCOLL_PARAM_REMARKS)
             .setRequired(true)
-            .create(FeatureCollection.class, null);
+            .create(FeatureSet.class, null);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName(
-            "OutputParameters").createGroup(FCOLL);
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters").createGroup(FCOLL);
 
 
     public static final ProcessDescriptor INSTANCE = new IsolineDescriptor();

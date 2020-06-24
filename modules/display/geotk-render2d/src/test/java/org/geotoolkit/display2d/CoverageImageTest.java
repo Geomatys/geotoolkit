@@ -26,10 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.display.PortrayalException;
@@ -98,10 +98,11 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      */
     private GridCoverage createCoverage(RenderedImage image, CoordinateReferenceSystem crs, double...coordinates) {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setCoordinateReferenceSystem(crs);
-        gcb.setRenderedImage(image);
-        gcb.setEnvelope(coordinates);
-        return gcb.getGridCoverage2D();
+        final GeneralEnvelope env = new GeneralEnvelope(crs);
+        env.setEnvelope(coordinates);
+        gcb.setValues(image);
+        gcb.setDomain(env);
+        return gcb.build();
     }
 
     /**

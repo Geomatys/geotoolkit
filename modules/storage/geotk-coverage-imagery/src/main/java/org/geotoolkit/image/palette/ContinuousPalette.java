@@ -104,7 +104,7 @@ final class ContinuousPalette extends Palette {
     protected ImageTypeSpecifier createImageTypeSpecifier() throws IOException {
         final ColorSpace colorSpace;
         if (minimum < maximum && !Float.isInfinite(minimum) && !Float.isInfinite(maximum)) {
-            colorSpace = ColorModelFactory.createColorSpace(numBands, visibleBand, minimum, maximum);
+            colorSpace = ColorModelFactory.createGrayScale(DataBuffer.TYPE_FLOAT, numBands, visibleBand, minimum, maximum).getColorSpace();
         } else {
             colorSpace = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         }

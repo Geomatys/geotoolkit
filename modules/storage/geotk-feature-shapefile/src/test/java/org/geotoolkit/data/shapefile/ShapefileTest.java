@@ -16,35 +16,32 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.junit.Test;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
-import org.geotoolkit.storage.feature.FeatureStore;
-import org.geotoolkit.data.shapefile.shx.ShxReader;
-import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.shp.ShapefileReader;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.feature.FeatureCollection;
+import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.test.TestData;
-import org.opengis.util.GenericName;
-
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
-import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.geotoolkit.storage.DataStores;
-
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -154,9 +151,9 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         tmpFile.delete();
 
         // write features
-        ShapefileFeatureStoreFactory make = new ShapefileFeatureStoreFactory();
-        String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
-        FeatureStore s = (FeatureStore) DataStores.create(make,Collections.singletonMap(pathId, tmpFile.toURI().toURL()));
+        ShapefileProvider make = new ShapefileProvider();
+        String pathId = ShapefileProvider.PATH.getName().getCode();
+        FeatureStore s = (FeatureStore) make.create(Parameters.toParameter(Collections.singletonMap(pathId, tmpFile.toURI().toURL()), make.getOpenParameters()));
         s.createFeatureType(type);
         GenericName typeName = type.getName();
 

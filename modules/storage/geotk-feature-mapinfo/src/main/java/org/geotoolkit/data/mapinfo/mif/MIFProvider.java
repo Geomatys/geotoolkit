@@ -30,11 +30,10 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.geotoolkit.storage.ProviderOnFileSystem;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.feature.FileFeatureStoreFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -72,7 +71,10 @@ public class MIFProvider extends DataStoreProvider implements ProviderOnFileSyst
     public static final String NAME = "MIF-MID";
     public static final String MIME_TYPE = "application/x-mifmid";
 
-    public static final ParameterDescriptor<URI> PATH = AbstractFileFeatureStoreFactory.PATH;
+    public static final ParameterDescriptor<URI> PATH = new ParameterBuilder()
+            .addName(LOCATION)
+            .setRequired(true)
+            .create(URI.class, null);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName(NAME).addName("MIFParameters").createGroup(PATH);

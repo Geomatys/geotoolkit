@@ -45,13 +45,13 @@ import org.opengis.feature.PropertyType;
  */
 public class PostgresVersionControl extends AbstractVersionControl{
 
-    private final PostgresFeatureStore featureStore;
+    private final PostgresStore featureStore;
     private final FeatureType featureType;
     private final SQLDialect dialect;
     private Boolean isVersioned = null;
 
 
-    public PostgresVersionControl(PostgresFeatureStore featureStore, FeatureType featureType) {
+    public PostgresVersionControl(PostgresStore featureStore, FeatureType featureType) {
         this.featureStore = featureStore;
         this.featureType = featureType;
         this.dialect = featureStore.getDialect();

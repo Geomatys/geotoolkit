@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -37,7 +38,6 @@ import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 
 /**
@@ -107,7 +107,7 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
             coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
             final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
-            coeff *= Math.abs(XAffineTransform.getScale(inverse));
+            coeff *= Math.abs(AffineTransforms2D.getScale(inverse));
         }
 
 

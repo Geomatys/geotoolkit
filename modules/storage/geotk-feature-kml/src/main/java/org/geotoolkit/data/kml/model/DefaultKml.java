@@ -16,19 +16,29 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
+import java.util.Optional;
+import org.apache.sis.internal.storage.AbstractResource;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.geometry.Envelope;
 
 /**
  *
  * @author Samuel Andrés
  * @module
  */
-public class DefaultKml implements Kml {
+public class DefaultKml extends AbstractResource implements Kml {
 
     private final Extensions extensions = new Extensions();
     private String version = URI_KML_2_2;
@@ -40,6 +50,7 @@ public class DefaultKml implements Kml {
      *
      */
     public DefaultKml() {
+        super(null);
     }
 
     /**
@@ -53,6 +64,7 @@ public class DefaultKml implements Kml {
             Feature abstractFeature,
             List<SimpleTypeContainer> kmlSimpleExtensions,
             List<Object> kmlObjectExtensions) {
+        super(null);
         this.networkLinkControl = networkLinkControl;
         this.abstractFeature = abstractFeature;
         if (kmlSimpleExtensions != null) {
@@ -162,5 +174,61 @@ public class DefaultKml implements Kml {
         String resultat = "KML DEFAULT : "
                 + "AbstractFeature : " + this.abstractFeature;
         return resultat;
+    }
+
+    @Override
+    public Optional<Envelope> getEnvelope() {
+        final JTSEnvelope2D envelope = new JTSEnvelope2D(CommonCRS.WGS84.normalizedGeographic());
+        return Optional.ofNullable(getFeatureEnvelope(getAbstractFeature(), envelope));
+    }
+
+    /**
+     * This method extends envelope with feature contents.
+     */
+    private JTSEnvelope2D getFeatureEnvelope(Feature feature, JTSEnvelope2D envelope) {
+
+        final FeatureType featureType = feature.getType();
+
+        if (featureType.equals(KmlModelConstants.TYPE_PLACEMARK)) {
+            envelope = getAbstractGeometryEnvelope((AbstractGeometry) feature.getPropertyValue(KmlConstants.TAG_GEOMETRY), envelope);
+        } else if (KmlModelConstants.TYPE_CONTAINER.isAssignableFrom(featureType)) {
+            Collection<?> properties = null;
+            if (featureType.equals(KmlModelConstants.TYPE_DOCUMENT)) {
+                properties = (Collection<?>) feature.getPropertyValue(KmlConstants.TAG_FEATURES);
+            } else if (featureType.equals(KmlModelConstants.TYPE_FOLDER)) {
+                properties = (Collection<?>) feature.getPropertyValue(KmlConstants.TAG_FEATURES);
+            }
+            if (properties != null) {
+                Iterator<?> i = properties.iterator();
+                while (i.hasNext()) {
+                    envelope = getFeatureEnvelope((Feature) i.next(), envelope);
+                }
+            }
+        } else if (KmlModelConstants.TYPE_OVERLAY.isAssignableFrom(featureType)) {
+            if (featureType.equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
+                final LatLonBox latLonBox = (LatLonBox) feature.getPropertyValue(KmlConstants.TAG_LAT_LON_BOX);
+                envelope.expandToInclude(
+                        new JTSEnvelope2D(
+                        latLonBox.getWest(), latLonBox.getEast(),
+                        latLonBox.getSouth(), latLonBox.getNorth(),
+                        CommonCRS.WGS84.normalizedGeographic()));
+            }
+        }
+        return envelope;
+    }
+
+    /**
+     * This method extends envelope with Geometry content.
+     */
+    private JTSEnvelope2D getAbstractGeometryEnvelope(AbstractGeometry geometry, JTSEnvelope2D envelope) {
+        if (geometry instanceof Geometry) {
+            envelope.expandToInclude(new JTSEnvelope2D(((Geometry) geometry).getEnvelopeInternal(),
+                    CommonCRS.WGS84.normalizedGeographic()));
+        } else if (geometry instanceof MultiGeometry) {
+            for (AbstractGeometry geom : ((MultiGeometry) geometry).getGeometries()) {
+                envelope = getAbstractGeometryEnvelope(geom, envelope);
+            }
+        }
+        return envelope;
     }
 }

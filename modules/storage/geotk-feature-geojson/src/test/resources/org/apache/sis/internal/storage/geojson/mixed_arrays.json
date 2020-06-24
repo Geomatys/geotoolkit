@@ -1,0 +1,20 @@
+ {
+    "type": "Feature",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            -105.01621,
+            39.57422
+        ]
+    },
+    "properties": {
+        "numberMix1": [ 2.0, 3  , 4.0 ],
+        "numberMix2": [ 2  , 3.0, 4   ],
+        "intArray": [42, 51],
+        "longArray": [1, 7000000000],
+        "numbersWithNullValues": [2.0, null, 4.0],
+        "onlyNullValues": [ null, null],
+        "emptyArray": [],
+        "arbitraryMix": [2.0, "I'm a text", null]
+    }
+}
