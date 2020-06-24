@@ -11,12 +11,11 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.db.postgres.PostgresStore;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureStore;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.feature.Feature;
@@ -36,7 +35,7 @@ public class PostgisRasterDemo {
         final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
 
         //connect to postgres feature store
-        final FeatureStore store = new PostgresStore("localhost", 5432, "table", "public", "user", "password");
+        final PostgresStore store = new PostgresStore("localhost", 5432, "table", "public", "user", "password");
 
         //create a feature type with a coverage attribute type
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -74,8 +73,9 @@ public class PostgisRasterDemo {
         store.addFeatures(type.getName().toString(), Collections.singletonList(feature));
 
         //Display it
-        final FeatureCollection col = store.createSession(false).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
-        final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createDefaultRasterStyle());
+        final FeatureSet col = store.createSession(false).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
+        final MapLayer layer = MapBuilder.createLayer(col);
+        layer.setStyle(RandomStyleBuilder.createDefaultRasterStyle());
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
 //        FXMapFrame.show(context);

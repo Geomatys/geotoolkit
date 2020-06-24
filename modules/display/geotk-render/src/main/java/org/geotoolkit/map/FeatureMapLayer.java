@@ -55,7 +55,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module
+ * @deprecated use MapLayer interface instead
  */
+@Deprecated
 public final class FeatureMapLayer extends AbstractMapLayer {
 
     public static final String PROP_EXTRA_DIMENSIONS = "extra_dims";

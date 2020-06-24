@@ -33,6 +33,7 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -99,7 +100,9 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         col.add(Arrays.asList(sf1,sf2,sf3,sf4,sf5).iterator());
 
-        context.layers().add(MapBuilder.createFeatureLayer(col, SF.style(new MokSymbolizer())));
+        final MapLayer layer = MapBuilder.createFeatureLayer(col);
+        layer.setStyle(SF.style(new MokSymbolizer()));
+        context.layers().add(layer);
 
     }
 

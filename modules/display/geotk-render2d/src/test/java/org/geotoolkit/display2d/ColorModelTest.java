@@ -487,7 +487,9 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     }
 
     private MapLayer createLayer(final Color ... colors){
-        return MapBuilder.createFeatureLayer(featureColls.get(0), createStyle(colors));
+        MapLayer layer = MapBuilder.createLayer(featureColls.get(0));
+        layer.setStyle(createStyle(colors));
+        return layer;
     }
 
     private static MutableStyle createStyle(final Color ... colors){

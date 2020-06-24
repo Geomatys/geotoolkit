@@ -252,7 +252,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFeatureRendering() throws Exception {
         for(FeatureSet col : featureColls){
-            final MapLayer layer = MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer()));
+            final MapLayer layer = MapBuilder.createLayer(col);
+            layer.setStyle(SF.style(SF.pointSymbolizer()));
             testRendering(layer);
         }
     }
@@ -299,7 +300,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
                 channels,overlap,colormap,enhance,relief,outline);
         final MutableStyle style = SF.style(symbol);
 
-        final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
+        final MapLayer layer = MapBuilder.createLayer(collection);
+        layer.setStyle(style);
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
 
@@ -516,7 +518,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         feature.setPropertyValue("geom", pt);
 
         final FeatureSet col = new InMemoryFeatureSet(ft, Arrays.asList(feature));
-        final MapLayer layer = MapBuilder.createFeatureLayer(col,SF.style(symbolizer));
+        final MapLayer layer = MapBuilder.createLayer(col);
+        layer.setStyle(SF.style(symbolizer));
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
 

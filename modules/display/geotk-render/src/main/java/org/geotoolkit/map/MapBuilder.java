@@ -25,6 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultDescription;
@@ -86,10 +87,27 @@ public final class MapBuilder {
     }
 
     /**
+     * Create a map layer with a resource.
+     * @param resource layer resource
+     * @return MapLayer
+     */
+    public static MapLayer createLayer(final Resource resource){
+        if (resource instanceof FeatureSet) {
+            return createFeatureLayer((FeatureSet) resource);
+        } else if (resource instanceof GridCoverageResource) {
+            return createCoverageLayer((GridCoverageResource) resource);
+        } else {
+            throw new IllegalArgumentException("Unsupported resource");
+        }
+    }
+
+    /**
      * Create a default feature map layer with a feature collection and a style.
      * @param collection layer data collection
      * @return FeatureMapLayer
+     * @deprecated use createLayer method instead
      */
+    @Deprecated
     public static FeatureMapLayer createFeatureLayer(final FeatureSet collection){
         MutableStyle style;
         String name = "";
@@ -115,7 +133,9 @@ public final class MapBuilder {
      * @param collection layer data collection
      * @param style layer style
      * @return FeatureMapLayer
+     * @deprecated use createLayer method instead
      */
+    @Deprecated
     public static FeatureMapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style) {
         return new FeatureMapLayer(collection, style);
     }
@@ -125,7 +145,9 @@ public final class MapBuilder {
      * @param grid GridCoverage2D
      * @param style layer style
      * @return  CoverageMapLayer
+     * @deprecated use createLayer method instead
      */
+    @Deprecated
     public static CoverageMapLayer createCoverageLayer(final GridCoverage grid, final MutableStyle style, final String name) {
         final GridCoverageResource ref = new InMemoryGridCoverageResource(NamesExt.create(name), grid);
         return createCoverageLayer(ref, style);
@@ -137,7 +159,9 @@ public final class MapBuilder {
      *
      * @param ref input
      * @return  CoverageMapLayer
+     * @deprecated use createLayer method instead
      */
+    @Deprecated
     public static CoverageMapLayer createCoverageLayer(final Object input) {
         final GridCoverageResource resource;
         if (input instanceof GridCoverageResource) {
@@ -166,7 +190,9 @@ public final class MapBuilder {
      *
      * @param ref CoverageResource
      * @return  CoverageMapLayer
+     * @deprecated use createLayer method instead
      */
+    @Deprecated
     public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref){
         return new CoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
     }
@@ -176,7 +202,9 @@ public final class MapBuilder {
      * @param ref CoverageResource
      * @param style layer style
      * @return  CoverageMapLayer
+     * @deprecated use createLayer method instead
      */
+    @Deprecated
     public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref, final MutableStyle style){
         return new CoverageMapLayer(ref, style);
     }
@@ -186,7 +214,9 @@ public final class MapBuilder {
      * @param input CoverageResource or input
      * @param style layer style
      * @return  CoverageMapLayer
+     * @deprecated use createLayer method instead
      */
+    @Deprecated
     public static CoverageMapLayer createCoverageLayer(final Object input, final MutableStyle style){
         CoverageMapLayer layer = createCoverageLayer(input);
         if (style != null) layer.setStyle(style);

@@ -718,9 +718,10 @@ public class Styles {
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));
         }
-        MapLayer layer = MapBuilder.createFeatureLayer(fs, style);
-        layer.setDescription(SF.description("world background", ""));
-        layer.setName("world background");
+        MapLayer layer = MapBuilder.createLayer(fs);
+        layer.setStyle(style);
+        layer.setAbstract("world background");
+        layer.setTitle("world background");
         context.layers().add(layer);
 
         return context;
@@ -739,9 +740,10 @@ public class Styles {
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));
         }
-        MapLayer layer = MapBuilder.createFeatureLayer(fs, style);
-        layer.setDescription(SF.description("city", ""));
-        layer.setName("city");
+        MapLayer layer = MapBuilder.createLayer(fs);
+        layer.setStyle(style);
+        layer.setAbstract("city");
+        layer.setTitle("city");
         context.layers().add(layer);
 
         return context;

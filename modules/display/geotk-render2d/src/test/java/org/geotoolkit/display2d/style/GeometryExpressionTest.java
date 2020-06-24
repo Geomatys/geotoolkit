@@ -34,9 +34,9 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -90,7 +90,8 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final MutableStyle style = SF.style(symbolizer);
 
         final MapContext context = MapBuilder.createContext();
-        final FeatureMapLayer fml = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection(feature), style);
+        final MapLayer fml = MapBuilder.createLayer(FeatureStoreUtilities.collection(feature));
+        fml.setStyle(style);
         context.layers().add(fml);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
@@ -153,7 +154,8 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final MutableStyle style = SF.style(symbolizer);
 
         final MapContext context = MapBuilder.createContext();
-        final FeatureMapLayer fml = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection(feature), style);
+        final MapLayer fml = MapBuilder.createLayer(FeatureStoreUtilities.collection(feature));
+        fml.setStyle(style);
         context.layers().add(fml);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs3857);

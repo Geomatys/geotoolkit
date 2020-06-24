@@ -175,7 +175,8 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
          if (layer instanceof FeatureMapLayer) {
             try {
                 final FeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getResource().getType(),null);
-                layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection(new NamedIdentifier(sft.getName()), sft), GO2Utilities.STYLE_FACTORY.style());
+                layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(new NamedIdentifier(sft.getName()), sft));
+                layer.setStyle(GO2Utilities.STYLE_FACTORY.style());
             } catch (DataStoreException ex) {
                 //not important
                 LOGGER.log(Level.FINE, "Cannot adapt map layer for cell rendering", ex);
@@ -183,7 +184,8 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         } else if(layer instanceof CoverageMapLayer) {
             try {
                 final FeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)layer);
-                layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection(new NamedIdentifier(sft.getName()), sft), GO2Utilities.STYLE_FACTORY.style());
+                layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(new NamedIdentifier(sft.getName()), sft));
+                layer.setStyle(GO2Utilities.STYLE_FACTORY.style());
             } catch (DataStoreException ex) {
                 //not important
                 LOGGER.log(Level.FINE, "Cannot adapt map layer for cell rendering", ex);

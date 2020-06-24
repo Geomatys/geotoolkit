@@ -2,12 +2,13 @@ package org.geotoolkit.pending.demo.datamodel.postgis;
 
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.db.postgres.PostgresProvider;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -34,8 +35,10 @@ public class PostgisDemo {
         for(GenericName n : store.getNames()){
             System.out.println(store.getFeatureType(n.toString()));
 
-            final FeatureCollection col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n.toString()));
-            context.layers().add(MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createRandomVectorStyle(col.getType())));
+            final FeatureSet col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n.toString()));
+            final MapLayer layer = MapBuilder.createLayer(col);
+            layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(col.getType()));
+            context.layers().add(layer);
         }
 
 
