@@ -30,6 +30,7 @@ import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.report.CollectionDataSource;
 import org.geotoolkit.report.JasperReportService;
@@ -102,7 +103,9 @@ public class ReportDemo {
                 final FeatureCollection col = FeatureStoreUtilities.collection(feature);
                 final MapContext context = MapBuilder.createContext();
                 final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getType());
-                context.layers().add(MapBuilder.createFeatureLayer(col, style));
+                final MapLayer layer = MapBuilder.createLayer(col);
+                layer.setStyle(style);
+                context.layers().add(layer);
 
 
                 try{

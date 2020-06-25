@@ -21,18 +21,17 @@ import static org.geotoolkit.storage.geojson.GeoJSONProvider.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.*;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 import org.opengis.util.NoSuchIdentifierException;
 
+
 /**
  * JUnit test of ClusterHull process
  *
- * @author Maxime Gavens - décembre 2019
+ * @author Maxime Gavens - juin 2019
  * @module
  */
 public class ClusterHullTest extends AbstractProcessTest {
@@ -141,7 +140,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         GeometryCollection gc1 = extractGeometryCollectionFromFeatureSet(out);
         GeometryCollection gc2 = extractGeometryCollectionFromFeatureSet(expected);
         // is same geometry
-        assertTrue(gc1.equalsNorm(gc2));
+        assertTrue(gc1.equalsExact(gc2, 0.0001));
         FeatureType type1 = out.getType();
         FeatureType type2 = expected.getType();
         // is same feature
@@ -170,7 +169,6 @@ public class ClusterHullTest extends AbstractProcessTest {
         final DataStore store = DataStores.open(param);
         GenericName types = DataStores.getNames(store, true, FeatureSet.class).iterator().next();
         FeatureSet target = (FeatureSet) store.findResource(types.toString());
-
         return target;
     }
 }

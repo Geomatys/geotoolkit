@@ -580,7 +580,8 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
         final PolygonSymbolizer symbol = SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0), SF.fill(Color.RED), null);
         final MutableStyle style = SF.style(symbol);
-        final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
+        final MapLayer layer = MapBuilder.createLayer(col);
+        layer.setStyle(style);
 
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
@@ -605,7 +606,8 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final PointSymbolizer ps = SF.pointSymbolizer(graphic, null);
 
         final MutableStyle style = SF.style(ps);
-        final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
+        final MapLayer layer = MapBuilder.createLayer(col);
+        layer.setStyle(style);
 
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);

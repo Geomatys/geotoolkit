@@ -36,7 +36,9 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module
+ * @deprecated use MapLayer interface instead
  */
+@Deprecated
 public final class CoverageMapLayer extends AbstractMapLayer {
 
     private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(

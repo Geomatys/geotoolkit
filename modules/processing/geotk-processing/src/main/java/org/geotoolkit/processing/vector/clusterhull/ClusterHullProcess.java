@@ -46,31 +46,37 @@ import javax.measure.quantity.Length;
  * according to tolerance distance.
  * The algorithm takes as input a geometry set and a tolerance parameter. It's about gradually building a clustered geometry set.
  * At the start we consider a current geometry and the result of the process is the empty set.
- * During each iteration, we found the neighbors geometry and we add them in a separate package.
+ * During each iteration, we found the neighbors geometry and we add them in a separate bundle.
  * Then we find the neighboring geometries of the previous neighboring geometries.
  * The update takes place as follows:
  *      - the current geometry become the neighbors found.
  *      - the current geometry is store in a separate package and removed from the starting package
- * When no more neighbors are found, we apply the clusterhull process in all geometry found, and store the result in a output package
- * we continue until the original package is empty.
+ * When no more neighbors are found, we apply the buffer process in all geometry found, and store the result in a output bundle
+ * we continue until the original bundle is empty.
  *
- * @author Maxime Gavens - décembre 2019
+ * @author Maxime Gavens - juin 2019
  */
 public class ClusterHullProcess extends AbstractProcess {
 
     /**
      * Geometric transformer update at each cluster hull computing,
-     * according with central meridian and origin of latitude for the Lambert CRS projection
+     * according with central meridian and origin of latitude for the Lambert CRS projection.
      */
     private GeometryCSTransformer trs;
 
     /**
-     * Used to build the featureSet result
+     * Geometric transformer update at each cluster hull computing,
+     * according with central meridian and origin of latitude for the inverse of Lambert CRS projection.
+     */
+    private GeometryCSTransformer inv;
+
+    /**
+     * Used to build the featureSet result.
      */
     private static GeometryFactory geometryFactory = new GeometryFactory();
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public ClusterHullProcess(final ParameterValueGroup input) {
         super(ClusterHullDescriptor.INSTANCE,input);
@@ -117,7 +123,7 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private void initTransformation(final FeatureSet inputFeatureSet) throws FactoryException, DataStoreException {
+    private void initTransformation(final FeatureSet inputFeatureSet) throws FactoryException, DataStoreException, NoninvertibleTransformException {
         Double[] median = getMedianPoint(inputFeatureSet);
         final FeatureType type = inputFeatureSet.getType();
         CoordinateReferenceSystem crs1 = FeatureExt.getCRS(type);
@@ -126,9 +132,12 @@ public class ClusterHullProcess extends AbstractProcess {
             crs1 = CommonCRS.WGS84.normalizedGeographic();
         }
         final CoordinateReferenceSystem crs2 = getLocalLambertCRS(median[0], median[1]);
-        final MathTransform mt = CRS.findOperation(crs1, crs2, null).getMathTransform();
+        final MathTransform mt  = CRS.findOperation(crs1, crs2, null).getMathTransform();
+        final MathTransform mtInv = mt.inverse();
         final CoordinateSequenceTransformer cst = new CoordinateSequenceMathTransformer(mt);
+        final CoordinateSequenceTransformer cstInv = new CoordinateSequenceMathTransformer(mtInv);
         trs = new GeometryCSTransformer(cst);
+        inv = new GeometryCSTransformer(cstInv);
     }
 
     private Set<Geometry> extractGeometrySet(final FeatureSet fs) throws DataStoreException {
@@ -158,36 +167,38 @@ public class ClusterHullProcess extends AbstractProcess {
 
     /**
      * On each recurrence:
-     *      - we are looking for the neighbors of "CURRENT" in "IN" (if "IN" is empty stop the process)
-     *      - If neighbors is not empty:
-     *          - Remove geometries found from "IN"
-     *          - Put the contain of "CURRENT" in "STORE"
-     *          - "CURRENT" become the geometries found
-     *      - If neighbors is empty:
-     *          - Remove geometries found from "IN"
-     *          - Put the contain of "STORE" in "CURRENT" and apply the convexhull process on it
-     *          - Put the result in "OUT"
-     *          - Empty the "STORE", get a new random geometry from "IN" in "CURRENT"
-     *
-     * @param in        Initial bundle of geometry, while this is not empty, the algorithm continue to process.
-     * @param out       Contains the process result.
-     * @param current   Contains geometries used to find neighboring geometries
-     * @param store     Contains geometries belonging to the same cluster
+     *      - We are looking for the neighbors of a geometry chosen randomly ("CURRENT" bundle). These neighbors
+     *      are researched in "IN" bundle. If there is no more geometry in "IN", put the contain of "STORE" in
+     *      "CURRENT", apply the buffer process on it, put the result in "OUT", and return "OUT" bundle.
+     *      - If neighbors are found:
+     *          - Remove geometries found from "IN".
+     *          - Transfer the contents of the "CURRENT" bundle to the "STORE" bundle.
+     *          - Transfer the geometries found to the "CURRENT" bundle.
+     *      - If neighbors are not found:
+     *          - Remove geometries found from "IN".
+     *          - Put the contents of "STORE" in "CURRENT" and apply the buffer process on it.
+     *          - Put the result in "OUT".
+     *          - Empty the "STORE".
+     *          - Empty the "CURRENT".
+     *          - Put a new random geometry in "CURRENT" from "IN" bundle.
+     * @param in        Initial bundle of geometries on which the process is applied.
+     * @param out       Process result.
+     * @param current   Bundle of geometries used to find neighboring geometries
+     * @param store     Bundle of geometries belonging to the same cluster
      * @param tolerance Define the distance which will determine if the geometries are in the same cluster.
-     * @return
      * @throws TransformException
      */
     private Set<Geometry> applyClusterHull(Set<Geometry> in, Set<Geometry> out, Set<Geometry> current, Set<Geometry> store, final Double tolerance) throws TransformException {
         if (in.isEmpty()) {
             current.addAll(store);
-            out.add(applyOnSetConvexHull(current));
+            out.add(applyOnSetBuffer(current, tolerance));
             return out;
         } else {
             Set<Geometry> K = neighborhood(in, current, tolerance);
             if (K.isEmpty()) {
                 in.removeAll(current);
                 current.addAll(store);
-                out.add(applyOnSetConvexHull(current));
+                out.add(applyOnSetBuffer(current, tolerance));
                 if (in.isEmpty()) {
                     return out;
                 } else {
@@ -220,13 +231,15 @@ public class ClusterHullProcess extends AbstractProcess {
         return target;
     }
 
-    private Geometry applyOnSetConvexHull(Set<Geometry> geometries) {
+    private Geometry applyOnSetBuffer(Set<Geometry> geometries, double tolerance) throws TransformException {
         Geometry target = geometries.iterator().next();
 
         for (Geometry geom: geometries) {
             target = target.union(geom);
-            target = target.convexHull();
         }
+        target = trs.transform(target);
+        target = target.buffer(tolerance);
+        target = inv.transform(target);
         return target;
     }
 

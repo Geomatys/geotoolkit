@@ -101,9 +101,9 @@ public class OwcDataStoreExtension extends OwcExtension {
             final DataStore store = DataStores.open(ff,params);
             Resource resource = store.findResource(NamesExt.valueOf(typeName).toString());
             if (resource instanceof FeatureSet) {
-                return MapBuilder.createFeatureLayer((FeatureSet) resource);
+                return MapBuilder.createLayer(resource);
             } else if (resource instanceof GridCoverageResource) {
-                return MapBuilder.createCoverageLayer((GridCoverageResource) resource);
+                return MapBuilder.createLayer(resource);
             }
         }
 

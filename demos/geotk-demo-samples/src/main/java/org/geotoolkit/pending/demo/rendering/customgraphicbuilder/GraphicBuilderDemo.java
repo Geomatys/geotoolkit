@@ -47,9 +47,10 @@ public class GraphicBuilderDemo {
         DataStore store = DataStores.open(params);
         FeatureSet fs = (FeatureSet) store.findResource("stations2");
         MutableStyle style = SF.style();
-        MapLayer layer = MapBuilder.createFeatureLayer(fs, style);
-        layer.setDescription(SF.description("stations", ""));
-        layer.setName("stations");
+        MapLayer layer = MapBuilder.createLayer(fs);
+        layer.setStyle(style);
+        layer.setAbstract("stations");
+        layer.setTitle("stations");
 
         //create a coverage layer
         File cloudFile = new File(GraphicBuilderDemo.class.getResource("/data/coverage/clouds.jpg").toURI());

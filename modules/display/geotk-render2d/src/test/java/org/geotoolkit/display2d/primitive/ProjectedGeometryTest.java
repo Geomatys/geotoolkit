@@ -255,7 +255,8 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
         final PointSymbolizer ps = SF.pointSymbolizer(graphic, null);
 
         final MutableStyle style = SF.style(ps);
-        final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
+        final MapLayer layer = MapBuilder.createLayer(col);
+        layer.setStyle(style);
 
         //build a rendering canvas
         final J2DCanvasBuffered canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(canvasWidth, canvasHeight));

@@ -103,7 +103,8 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final TextSymbolizer symbol = SF.textSymbolizer(name, geometry, desc, unit, label, font, placement, halo, fill);
         final MutableStyle style = SF.style(symbol);
-        final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
+        final MapLayer layer = MapBuilder.createLayer(collection);
+        layer.setStyle(style);
 
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
