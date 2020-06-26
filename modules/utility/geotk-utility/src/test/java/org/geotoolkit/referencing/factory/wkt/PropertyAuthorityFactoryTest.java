@@ -30,7 +30,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.factory.Hints;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -55,8 +54,7 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
     private static final String FILENAME_XY = "epsg-xy.properties";
 
     /**
-     * Tests the value of {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER} when the
-     * factory is created with the default set of hints.
+     * Tests factory created with the default set of hints.
      *
      * @throws IOException Should never happen.
      * @throws FactoryException Should never happen.
@@ -78,8 +76,7 @@ public final strictfp class PropertyAuthorityFactoryTest extends org.geotoolkit.
     }
 
     /**
-     * Tests the value of {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER} when the factory
-     * is created with the default set of hints and the CRS contains axis declarations.
+     * Tests factory created with the default set of hints and the CRS contains axis declarations.
      *
      * @throws IOException Should never happen.
      * @throws FactoryException Should never happen.

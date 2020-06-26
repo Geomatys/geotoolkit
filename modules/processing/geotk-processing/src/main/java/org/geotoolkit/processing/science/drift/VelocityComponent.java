@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.Evaluator;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.operation.builder.LocalizationGridBuilder;
 import org.apache.sis.storage.DataStoreException;
@@ -174,25 +174,19 @@ abstract class VelocityComponent {
         /**
          * The data.
          */
-        private final GridCoverage coverage;
+        private final Evaluator coverage;
 
         /**
          * Temporary object for evaluating velocity component.
          */
         private final DirectPosition2D position;
 
-        /**
-         * Temporary object for evaluating velocity component.
-         */
-        private final double[] samples;
-
         MeteoFrance(final URI file) throws DataStoreException, IOException, URISyntaxException {
             try (FileCoverageStore store = new FileCoverageStore(file, "geotiff")) {
                 final GridCoverageResource ref = DataStores.flatten(store, true, GridCoverageResource.class).iterator().next();;
-                coverage = ref.read(null);
+                coverage = ref.read(null).evaluator();
             }
             position = new DirectPosition2D();
-            samples = new double[1];
         }
 
         /**
@@ -202,7 +196,7 @@ abstract class VelocityComponent {
         double valueAt(final double x, final double y) {
             position.x = x;
             position.y = y;
-            return coverage.evaluate(position, samples)[0];
+            return coverage.apply(position)[0];
         }
     }
 

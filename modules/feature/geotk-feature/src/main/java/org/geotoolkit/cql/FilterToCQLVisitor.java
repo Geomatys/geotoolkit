@@ -24,7 +24,6 @@ import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
-import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
@@ -250,7 +249,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         final char singleChar = filter.getSingleChar().charAt(0);
         final boolean matchingCase = filter.isMatchingCase();
         final String literal = filter.getLiteral();
-        final String pattern = DefaultPropertyIsLike.convertToSQL92(escape, wildCard, singleChar, literal);
+        final String pattern = convertToSQL92(escape, wildCard, singleChar, literal);
 
         filter.getExpression().accept(this,sb);
 
@@ -263,6 +262,73 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         sb.append(pattern);
         sb.append('\'');
         return sb;
+    }
+
+    /**
+     * Given OGC PropertyIsLike Filter information, construct
+     * an SQL-compatible 'like' pattern.
+     *
+     *   SQL   % --> match any number of characters
+     *         _ --> match a single character
+     *
+     *    NOTE; the SQL command is 'string LIKE pattern [ESCAPE escape-character]'
+     *    We could re-define the escape character, but I'm not doing to do that in this code
+     *    since some databases will not handle this case.
+     *
+     *   Method:
+     *     1.
+     *
+     *  Examples: ( escape ='!',  multi='*',    single='.'  )
+     *    broadway*  -> 'broadway%'
+     *    broad_ay   -> 'broad_ay'
+     *    broadway   -> 'broadway'
+     *
+     *    broadway!* -> 'broadway*'  (* has no significance and is escaped)
+     *    can't      -> 'can''t'     ( ' escaped for SQL compliance)
+     *
+     *
+     *  NOTE: we also handle "'" characters as special because they are
+     *        end-of-string characters.  SQL will convert ' to '' (double single quote).
+     *
+     *  NOTE: we dont handle "'" as a 'special' character because it would be
+     *        too confusing to have a special char as another special char.
+     *        Using this will throw an error  (IllegalArgumentException).
+     *
+     * @param escape
+     * @param multi
+     * @param single
+     * @param pattern
+     *
+     * @author Rob Hranac, Vision for New York
+     */
+    public static String convertToSQL92(final char escape, final char multi, final char single, final String pattern)
+            throws IllegalArgumentException {
+        if ((escape == '\'') || (multi == '\'') || (single == '\'')) {
+            throw new IllegalArgumentException("do not use single quote (') as special char!");
+        }
+
+        final StringBuffer result = new StringBuffer(pattern.length() + 5);
+        for (int i = 0; i < pattern.length(); i++) {
+            final char chr = pattern.charAt(i);
+            if (chr == escape) {
+                // emit the next char and skip it
+                if (i != (pattern.length() - 1)) {
+                    result.append(pattern.charAt(i + 1));//
+                }
+                i++; // skip next char
+            } else if (chr == single) {
+                result.append('_');
+            } else if (chr == multi) {
+                result.append('%');
+            } else if (chr == '\'') {
+                result.append('\'');
+                result.append('\'');
+            } else {
+                result.append(chr);
+            }
+        }
+
+        return result.toString();
     }
 
     @Override

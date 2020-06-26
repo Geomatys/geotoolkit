@@ -46,7 +46,7 @@ public class CoverageReaderDemo {
         // Ok, so how to use it now ?
 
         // You can get pixel values directly.
-        coverage.evaluate(new GeneralDirectPosition(-100, 10, 0), null);
+        coverage.evaluator().apply(new GeneralDirectPosition(-100, 10, 0));
 
         // But in most cases ...
         // ... You will acquire iterator for fast and safe browsing.

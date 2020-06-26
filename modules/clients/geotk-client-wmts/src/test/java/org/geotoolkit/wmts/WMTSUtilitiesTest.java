@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
@@ -66,7 +65,6 @@ public class WMTSUtilitiesTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGetAppropriateCRS1() throws TransformException, FactoryException {
         final List<CoordinateReferenceSystem> listCrs = new ArrayList<CoordinateReferenceSystem>();
-        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
         listCrs.add(crs1);
         listCrs.add(crs2);
         listCrs.add(crs3);
@@ -107,7 +105,6 @@ public class WMTSUtilitiesTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGetAppropriateCRS2() throws FactoryException, TransformException {
         final List<CoordinateReferenceSystem> listCrs = new ArrayList<CoordinateReferenceSystem>();
-        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
         listCrs.add(crs1);
         listCrs.add(crs2);
         listCrs.add(crs3);

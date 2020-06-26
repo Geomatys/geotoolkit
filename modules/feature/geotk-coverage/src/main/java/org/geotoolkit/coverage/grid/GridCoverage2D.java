@@ -85,7 +85,9 @@ import org.opengis.referencing.operation.TransformException;
  * @see GridGeometry2D
  * @see SampleDimension
  * @see GridCoverageBuilder
+ * @deprecated Use Apache SIS equivalent instead: {@link org.apache.sis.coverage.grid.GridCoverage2D} and its {@link org.apache.sis.coverage.grid.GridCoverageBuilder builder}.
  */
+@Deprecated
 public class GridCoverage2D extends GridCoverage {
 
     /**
@@ -336,7 +338,6 @@ public class GridCoverage2D extends GridCoverage {
      *         More specifically, {@link PointOutsideCoverageException} is thrown if the evaluation
      *         failed because the input point has invalid coordinates.
      */
-    @Override
     public double[] evaluate(final DirectPosition coord, final double[] dest)
             throws CannotEvaluateException
     {

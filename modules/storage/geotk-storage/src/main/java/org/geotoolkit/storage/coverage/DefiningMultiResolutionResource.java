@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.multires.DefiningPyramid;
@@ -53,6 +54,15 @@ public class DefiningMultiResolutionResource extends DefiningCoverageResource im
     @Override
     public TileFormat getTileFormat() {
         return tileFormat;
+    }
+
+    @Override
+    public GridGeometry getGridGeometry() throws DataStoreException {
+        GridGeometry gridGeometry = super.getGridGeometry();
+        if (gridGeometry == null) {
+            gridGeometry = new PyramidReader(this).getGridGeometry();
+        }
+        return gridGeometry;
     }
 
     @Override

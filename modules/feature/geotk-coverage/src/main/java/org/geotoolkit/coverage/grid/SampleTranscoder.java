@@ -68,8 +68,6 @@ import org.apache.sis.util.Classes;
 final class SampleTranscoder extends PointOpImage {
     /**
      * The operation name.
-     * <strong>NOTE:</strong> Class {@link org.geotoolkit.coverage.grid.GridCoverage2D}
-     * uses this name, but can't refer to this constant since it is in an other package.
      */
     public static final String OPERATION_NAME = "org.geotoolkit.SampleTranscode";
 

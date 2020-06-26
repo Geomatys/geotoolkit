@@ -458,7 +458,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
                         JTSEnvelope2D transformedBounds;
                         if (crs != null) {
                             try {
-                                transformedBounds = env.transform(crs, true);
+                                transformedBounds = env.transform(crs);
                             } catch (Exception t) {
                                 getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
                                 // It can happen for local projections :

@@ -18,7 +18,7 @@
 
 /**
  * Provides {@link org.geotoolkit.coverage.io.GridCoverageReader} implementations for creating
- * {@link org.geotoolkit.coverage.grid.GridCoverage2D} instances from a datasource. The main
+ * {@code GridCoverage2D} instances from a datasource. The main
  * implementation is {@link org.geotoolkit.coverage.io.ImageCoverageReader}, which read the
  * sample values using an {@link javax.imageio.ImageReader} from the standard Java library.
  * <p>

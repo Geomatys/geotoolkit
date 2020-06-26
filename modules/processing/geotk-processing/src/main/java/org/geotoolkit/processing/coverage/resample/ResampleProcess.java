@@ -32,7 +32,6 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
@@ -108,7 +107,7 @@ public class ResampleProcess extends AbstractProcess {
         final GridCoverage target;
 
         try {
-            target = reproject(source, targetCRS, targetGG, interpolation, border, background, null);
+            target = reproject(source, targetCRS, targetGG, interpolation, border, background);
         } catch (FactoryException exception) {
             throw new CannotReprojectException(Errors.format(
                     Errors.Keys.CantReprojectCoverage_1, CoverageUtilities.getName(source)), exception);
@@ -129,10 +128,6 @@ public class ResampleProcess extends AbstractProcess {
      * @param targetGG       The target grid geometry, or {@code null} for default.
      * @param background     The background values, or {@code null} for default.
      * @param interpolationType  The interpolation to use, or {@code null} if none.
-     * @param hints
-     *          The rendering hints. This is usually provided by {@link AbstractCoverageProcessor}.
-     *          This method will looks for {@link Hints#COORDINATE_OPERATION_FACTORY} and
-     *          {@link Hints#JAI_INSTANCE} keys.
      * @return  The new grid coverage, or {@code sourceCoverage} if no resampling was needed.
      * @throws  FactoryException If a transformation step can't be created.
      * @throws TransformException If a transformation failed.
@@ -141,12 +136,10 @@ public class ResampleProcess extends AbstractProcess {
                                            CoordinateReferenceSystem targetCRS,
                                            GridGeometry              targetGG,
                                            InterpolationCase         interpolationType,
-                                           double[]                  background,
-                                           final Hints               hints)
+                                           double[]                  background)
             throws FactoryException, TransformException
     {
-        return reproject(sourceCoverage, targetCRS, targetGG, interpolationType,
-                null, background, hints);
+        return reproject(sourceCoverage, targetCRS, targetGG, interpolationType, null, background);
     }
 
     /**
@@ -161,10 +154,6 @@ public class ResampleProcess extends AbstractProcess {
      * @param borderComportement The comportement used when points are outside of the source coverage,
      *          or {@code null} for default. Default is EXTRAPOLATION.
      * @param interpolationType  The interpolation to use, or {@code null} if none.
-     * @param hints
-     *          The rendering hints. This is usually provided by {@link AbstractCoverageProcessor}.
-     *          This method will looks for {@link Hints#COORDINATE_OPERATION_FACTORY} and
-     *          {@link Hints#JAI_INSTANCE} keys.
      * @return  The new grid coverage, or {@code sourceCoverage} if no resampling was needed.
      * @throws  FactoryException If a transformation step can't be created.
      * @throws TransformException If a transformation failed.
@@ -174,8 +163,7 @@ public class ResampleProcess extends AbstractProcess {
                                            GridGeometry              targetGG,
                                            InterpolationCase         interpolationType,
                                            ResampleBorderComportement borderComportement,
-                                           double[]                  background,
-                                           final Hints               hints)
+                                           double[]                  background)
             throws FactoryException, TransformException
     {
         //set default values

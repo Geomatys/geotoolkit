@@ -93,7 +93,7 @@ public class QuadTree {
                 final MathTransformFactory mathTransformFactory = DefaultFactories.forBuildin(MathTransformFactory.class);
                 final ParameterValueGroup plate_carree = mathTransformFactory.getDefaultParameters("Plate_Carree");
 
-                final CoordinateOperationFactory coordinateOperationFactory = org.geotoolkit.referencing.CRS.getCoordinateOperationFactory(true);
+                final CoordinateOperationFactory coordinateOperationFactory = org.geotoolkit.referencing.CRS.getCoordinateOperationFactory();
                 final OperationMethod operationMethod = coordinateOperationFactory.getOperationMethod("Plate_Carree");
 
                 final Map<String, Object> params = new HashMap<String, Object>();

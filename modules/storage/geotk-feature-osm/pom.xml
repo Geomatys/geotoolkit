@@ -59,15 +59,6 @@
           <artifactId>geotk-feature-postgres</artifactId>
           <version>${project.version}</version>
       </dependency>
-
-      <dependency>
-          <groupId>org.swinglabs</groupId>
-          <artifactId>jxlayer</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.swinglabs</groupId>
-          <artifactId>swingx</artifactId>
-      </dependency>
   </dependencies>
 
 </project>

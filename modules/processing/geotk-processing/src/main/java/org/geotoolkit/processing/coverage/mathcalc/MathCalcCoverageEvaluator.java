@@ -20,6 +20,7 @@ package org.geotoolkit.processing.coverage.mathcalc;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.coverage.grid.Evaluator;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
@@ -69,17 +70,20 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
     private static class DynamicPick extends AbstractMap{
 
         private final GridCoverage[] coverages;
+        private final Evaluator[] evaluators;
         private final String[] mapping;
         private final MathTransform[] baseToCoverage;
         private final GeneralDirectPosition[] coverageCoord;
         private final DirectPosition coord;
-        private final double[] sampleBuffer;
 
-        private DynamicPick(GridCoverage[] coverages, String[] mapping, DirectPosition coord) throws FactoryException{
+        private DynamicPick(GridCoverage[] coverages, String[] mapping, DirectPosition coord) throws FactoryException {
             this.coverages = coverages;
+            evaluators = new Evaluator[coverages.length];
+            for (int i=0; i<coverages.length; i++) {
+                evaluators[i] = coverages[i].evaluator();
+            }
             this.mapping = mapping;
             this.coord = coord;
-            this.sampleBuffer = new double[coverages[0].getSampleDimensions().size()];
             baseToCoverage = new MathTransform[coverages.length];
             coverageCoord = new GeneralDirectPosition[coverages.length];
             for(int i=0;i<coverages.length;i++){
@@ -112,8 +116,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
             }
 
             //find value at given coordinate
-            coverages[index].evaluate(coverageCoord[index],sampleBuffer);
-            return sampleBuffer[0];
+            return evaluators[index].apply(coverageCoord[index])[0];
         }
 
         @Override

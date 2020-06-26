@@ -973,7 +973,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
             {
                 // A transformation is required. Reuse the previous operation if possible.
                 if (operation==null || !equalsIgnoreMetadata(sourceCRS, operation.getSourceCRS())) {
-                    CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
+                    CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory();
                     try {
                         try {
                             // Try a transformation to the full target CRS including z dimension.
@@ -1395,8 +1395,10 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
      * @return The {@code dest} array, or a newly created array if {@code dest} was null.
      * @throws PointOutsideCoverageException if {@code coord} is outside coverage.
      * @throws CannotEvaluateException if the computation failed for some other reason.
+     *
+     * @deprecated Unmaintained.
      */
-    @Override
+    @Deprecated
     public synchronized double[] evaluate(final DirectPosition coord, double[] dest)
             throws PointOutsideCoverageException, CannotEvaluateException
     {
@@ -1411,10 +1413,10 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
             return dest;
         }
         if (lower == upper) {
-            return lower.evaluate(reduce(coord, lower), dest);
+            return lower.evaluator().apply(reduce(coord, lower));
         }
-        doubleBuffer = upper.evaluate(reduce(coord, upper), doubleBuffer);
-        dest         = lower.evaluate(reduce(coord, lower), dest);
+        doubleBuffer = upper.evaluator().apply(reduce(coord, upper));
+        dest         = lower.evaluator().apply(reduce(coord, lower));
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
         final double ratio = (z - lowerZ) / (upperZ - lowerZ);
         for (int i=0; i<doubleBuffer.length; i++) {

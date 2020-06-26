@@ -643,9 +643,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     /**
-     * Constructs a transform between two coordinate reference systems. If a
-     * {@link Hints#COORDINATE_OPERATION_FACTORY} has been provided, then the specified
-     * {@linkplain CoordinateOperationFactory coordinate operation factory} will be used.
+     * Constructs a transform between two coordinate reference systems.
      *
      * @param  sourceCRS The source coordinate reference system.
      * @param  targetCRS The target coordinate reference system.
@@ -656,7 +654,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      *
      * @see DisplayObject#getRenderingHint(java.awt.RenderingHints.Key)
      * @see DisplayObject#setRenderingHint(java.awt.RenderingHints.Key, java.lang.Object)
-     * @see Hints#COORDINATE_OPERATION_FACTORY
      */
     public final synchronized MathTransform getMathTransform(final CoordinateReferenceSystem sourceCRS,
                                                       final CoordinateReferenceSystem targetCRS,

@@ -65,7 +65,6 @@ import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
  *
  * @since 3.10 (derived from 2.1)
  * @module
@@ -73,14 +72,6 @@ import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
         implements CRSAuthorityFactory, CSAuthorityFactory, DatumAuthorityFactory
 {
-    /*
-     * It is technically possible to add or remove elements after they have been
-     * loaded by the constructor. However if such modification are made, then we
-     * should update {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER} accordingly.
-     * It may be an issue since hints are supposed to be immutable after factory
-     * construction. For now, this class does not allow addition of elements.
-     */
-
     /**
      * Creates a factory for the specified authorities using the definitions declared in the given
      * property file. There is usually only one authority, but more can be given when the objects

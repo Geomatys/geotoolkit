@@ -20,9 +20,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.Date;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.factory.Hints;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -124,17 +122,14 @@ public interface RenderingContext {
      *
      * @see #getMathTransform
      * @see BufferedCanvas2D#getImplHint
-     * @see Hints#COORDINATE_OPERATION_FACTORY
      */
     AffineTransform getAffineTransform(final CoordinateReferenceSystem sourceCRS,
                                               final CoordinateReferenceSystem targetCRS)
                                               throws FactoryException;
 
     /**
-     * Returns a transform between two coordinate systems. If a {@link
-     * Hints#COORDINATE_OPERATION_FACTORY} has been provided to the {@link BufferedCanvas2D},
-     * then the specified {@linkplain CoordinateOperationFactory coordinate operation factory}
-     * will be used. The arguments are usually (but not necessarily) one of the following pairs:
+     * Returns a transform between two coordinate systems.
+     * The arguments are usually (but not necessarily) one of the following pairs:
      *
      * <ul>
      *   <li><p><b>({@code graphicCRS}, {@linkplain #objectiveCRS}):</b><br>
@@ -154,7 +149,6 @@ public interface RenderingContext {
      *
      * @see #getAffineTransform
      * @see BufferedCanvas2D#getImplHint
-     * @see Hints#COORDINATE_OPERATION_FACTORY
      */
     MathTransform getMathTransform(final CoordinateReferenceSystem sourceCRS,
                                           final CoordinateReferenceSystem targetCRS)

@@ -50,7 +50,6 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.referencing.operation.DefaultConversion;
-import org.geotoolkit.factory.EmptyHints;
 import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 
 
@@ -276,7 +275,7 @@ public class ReferencingFactoryContainer implements Factory {
      * do not force fetching of factories that were not already obtained.
      */
     private Hints getCurrentHints() {
-        final Hints completed = EmptyHints.INSTANCE.clone();
+        final Hints completed = new Hints();
         assert Thread.holdsLock(this);
         completed.putAll(hints);
         declaredFactoryHints(completed);

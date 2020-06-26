@@ -31,7 +31,6 @@ import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
@@ -64,7 +63,6 @@ public class ReprojectTest extends AbstractProcessTest {
 
     @Test
     public void testReprojection() throws FactoryException, ProcessException, NoSuchIdentifierException {
-        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
         // Inputs
         final FeatureCollection featureList = buildFeatureList();
         // Process

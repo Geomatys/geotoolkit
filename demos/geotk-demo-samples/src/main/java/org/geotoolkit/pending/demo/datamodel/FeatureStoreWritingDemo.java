@@ -14,7 +14,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryStore;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -74,7 +73,7 @@ public class FeatureStoreWritingDemo {
 
         //on the featurestore ------------------------------------------------------------
         Set<Identifier> ids = new HashSet<Identifier>();
-        ids.add(new DefaultFeatureId("Fish.1"));
+        ids.add(FF.featureId("Fish.1"));
         resource.removeIf(FF.id(ids)::evaluate);
 
         //same thing on the session and normal java way on the collection.

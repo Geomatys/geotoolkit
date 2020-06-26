@@ -62,23 +62,25 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresProvider.*;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import static org.junit.Assert.*;
 import org.geotoolkit.storage.DataStores;
 import org.junit.After;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.FilterFactory;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
+
+    private final FilterFactory FF = new DefaultFilterFactory2();
 
     /** driver types */
     private static final FeatureType FTYPE_DRIVER;
@@ -485,7 +487,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("1"), addedIds.get(0));
+        assertEquals(FF.featureId("1"), addedIds.get(0));
 
         Session session = store.createSession(false);
         FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -527,7 +529,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("1"), addedIds.get(0));
+        assertEquals(FF.featureId("1"), addedIds.get(0));
 
         session = store.createSession(false);
         col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -574,7 +576,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
          List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("1"), addedIds.get(0));
+        assertEquals(FF.featureId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -620,7 +622,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("1"), addedIds.get(0));
+        assertEquals(FF.featureId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -707,7 +709,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("1"), addedIds.get(0));
+        assertEquals(FF.featureId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -772,7 +774,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(record));
 
         assertEquals(1, addedIds.size());
-        assertEquals(new DefaultFeatureId("1"), addedIds.get(0));
+        assertEquals(FF.featureId("1"), addedIds.get(0));
 
         final Query query = QueryBuilder.all(resType.getName().toString());
         final FeatureReader ite = store.getFeatureReader(query);

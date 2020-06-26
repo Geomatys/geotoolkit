@@ -47,7 +47,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -77,6 +76,7 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.filter.FilterFactory;
 import org.opengis.util.FactoryException;
 
 /**
@@ -155,7 +155,7 @@ public final class FeatureExt extends Static {
      * @return FeatureId
      */
     public static FeatureId getId(Feature feature) {
-        return new DefaultFeatureId(String.valueOf(feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString())));
+        return DefaultFactories.forBuildin(FilterFactory.class).featureId(String.valueOf(feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString())));
     }
 
     public static void setId(Feature feature, FeatureId id) {

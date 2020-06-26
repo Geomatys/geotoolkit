@@ -47,6 +47,7 @@
     <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>cdm</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
         <groupId>junit</groupId>

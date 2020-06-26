@@ -335,7 +335,8 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         ctx.items().add(layer);
         BufferedImage rendering = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),
-                new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
+                new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR,
+                        RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
         );
 
         // As display is oriented upper-left, output should be flipped on y axis. Also, the renderer will stretch values
@@ -359,7 +360,8 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         ctx.items().set(0, MapBuilder.createCoverageLayer(baseData, SF.style(symbol), "test"));
         rendering = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),
-                new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR, RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
+                new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR,
+                        RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR))
         );
 
         assertEquals(Color.WHITE.getRGB(), rendering.getRGB(0, 0));

@@ -429,7 +429,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             try {
 
                 for (Identifier identifier : idsSet) {
-                    String fid = identifier.toString();
+                    String fid = String.valueOf(identifier.getID());
                     long recno = reader.findFid(fid);
                     if (recno == -1){
                         if(getLogger().isLoggable(Level.FINEST)){

@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -23,8 +24,6 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.jdesktop.swingx.JXErrorPane;
-import org.jdesktop.swingx.JXTree;
 
 /**
  *
@@ -32,7 +31,7 @@ import org.jdesktop.swingx.JXTree;
  */
 public class DemoFrame extends JFrame {
 
-    private final JXTree guiTree = new JXTree();
+    private final JTree guiTree = new JTree();
     private final JPanel mainPane = new JPanel(new BorderLayout());
 
     public DemoFrame() throws DataStoreException, MalformedURLException{
@@ -49,7 +48,6 @@ public class DemoFrame extends JFrame {
             return;
         }
         guiTree.setRootVisible(false);
-        guiTree.expandAll();
         guiTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         guiTree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -179,7 +177,6 @@ public class DemoFrame extends JFrame {
                 return candidate.newInstance();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                JXErrorPane.showDialog(ex);
                 return null;
             }
         }

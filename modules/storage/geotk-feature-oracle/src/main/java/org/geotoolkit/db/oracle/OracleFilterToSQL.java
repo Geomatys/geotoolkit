@@ -27,12 +27,12 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.cql.FilterToCQLVisitor;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -485,7 +485,7 @@ public class OracleFilterToSQL implements FilterToSQL {
         final Expression expression = candidate.getExpression();
 
         final String literal = candidate.getLiteral();
-        String pattern = DefaultPropertyIsLike.convertToSQL92(escape, wildCard, single, literal);
+        String pattern = FilterToCQLVisitor.convertToSQL92(escape, wildCard, single, literal);
 
         if(!matchingCase){
             pattern = pattern.toUpperCase();

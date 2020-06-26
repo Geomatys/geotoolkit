@@ -59,8 +59,8 @@ public class CoverageExtractor extends Static {
     }
 
     /**
-     * Call {@link org.geotoolkit.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
-     * {@link org.geotoolkit.coverage.grid.GridCoverage2D} slices returned by reader.
+     * Evaluate sample values on all
+     * {@code GridCoverage2D} slices returned by reader.
      *
      * TODO: Find a way to simulate a deferred mechanism, to allow loading of only required data.
      *
@@ -79,7 +79,7 @@ public class CoverageExtractor extends Static {
 
     /**
      * Call {@link org.geotoolkit.coverage.grid.GridCoverage#evaluate(org.opengis.geometry.DirectPosition, double[])} on all
-     * {@link org.geotoolkit.coverage.grid.GridCoverage2D slices}.
+     * slices.
      *
      * @param directPos position given to evaluate function.
      * @param coverage GridCoverage2D or GridCoverageStack coverage.
@@ -98,7 +98,7 @@ public class CoverageExtractor extends Static {
             }
         } else if (coverage instanceof GridCoverage) {
             final GridCoverage coverage2D = coverage;
-            double[] values = new double[coverage2D.getSampleDimensions().size()];
+            double[] values;
 
             //place directPos to a pixel center
             GridGeometry gg2D = coverage2D.getGridGeometry();
@@ -111,7 +111,7 @@ public class CoverageExtractor extends Static {
 
             gridToCRS.transform(directPos, directPos);
 
-            coverage2D.evaluate(directPos, values);
+            values = coverage2D.evaluator().apply(directPos);
 
             final CoordinateReferenceSystem crs = gg2D.getCoordinateReferenceSystem();
             int dimension = crs.getCoordinateSystem().getDimension();

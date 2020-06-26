@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.measure.NumberRange;
 
 import org.junit.Test;
@@ -253,7 +252,7 @@ public class ListenerTest extends org.geotoolkit.test.TestBase {
         fts.setName("currentName");
         fts.setDescription(SF.description("title", "abstract"));
         fts.setOnlineResource(SF.onlineResource(new URI("http://test.com")));
-        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(new DefaultFeatureId("id1"))));
+        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(FF.featureId("id1"))));
         propEvents.clear();
 
         //ensure that no events are fired when the new value is the same
@@ -263,7 +262,7 @@ public class ListenerTest extends org.geotoolkit.test.TestBase {
         assertEquals(0, propEvents.size());
         fts.setOnlineResource(SF.onlineResource(new URI("http://test.com")));
         assertEquals(0, propEvents.size());
-        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(new DefaultFeatureId("id1"))));
+        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(FF.featureId("id1"))));
         assertEquals(0, propEvents.size());
 
         //ensure that event are correctly send
@@ -286,10 +285,10 @@ public class ListenerTest extends org.geotoolkit.test.TestBase {
         assertEquals(propEvents.get(0).getNewValue(), SF.onlineResource(new URI("http://test2.com")));
 
         propEvents.clear();
-        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(new DefaultFeatureId("id2"))));
+        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(FF.featureId("id2"))));
         assertEquals(1, propEvents.size());
-        assertEquals(propEvents.get(0).getOldValue(), FF.id(Collections.singleton(new DefaultFeatureId("id1"))));
-        assertEquals(propEvents.get(0).getNewValue(), FF.id(Collections.singleton(new DefaultFeatureId("id2"))));
+        assertEquals(propEvents.get(0).getOldValue(), FF.id(Collections.singleton(FF.featureId("id1"))));
+        assertEquals(propEvents.get(0).getNewValue(), FF.id(Collections.singleton(FF.featureId("id2"))));
 
     }
 
