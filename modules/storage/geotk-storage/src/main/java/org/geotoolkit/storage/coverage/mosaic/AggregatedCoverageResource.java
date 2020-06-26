@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -576,31 +577,13 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     private double extractNoData(SampleDimension baseDim) {
-        Set<Number> noData = baseDim.getNoDataValues();
-        Optional<Number> background = baseDim.getBackground();
-        if (noData.isEmpty() && !background.isPresent()) {
-            baseDim = baseDim.forConvertedValues(true);
-            final SampleDimension.Builder builder = new SampleDimension.Builder();
-            final Unit<?> unit = baseDim.getUnits().orElse(null);
+        final Optional<Number> background = baseDim.getBackground();
+        if (background.isPresent()) return background.get().doubleValue();
 
-            for (Category c : baseDim.getCategories()) {
-                if (c.isQuantitative()) {
-                    builder.addQuantitative(c.getName(), c.getSampleRange(), c.getTransferFunction().orElse(null), unit);
-                } else {
-                    builder.addQualitative(c.getName(), c.getSampleRange());
-                }
-            }
-            builder.setBackground(null, Double.NaN);
-            baseDim = builder.build();
-            noData = baseDim.getNoDataValues();
-            background = baseDim.getBackground();
-        }
+        final Iterator<Number> noData = baseDim.getNoDataValues().iterator();
+        if (noData.hasNext()) return noData.next().doubleValue();
 
-        if (background.isPresent()) {
-            return background.get().doubleValue();
-        } else {
-            return noData.iterator().next().doubleValue();
-        }
+        return Double.NaN;
     }
 
     private void eraseCaches() {
