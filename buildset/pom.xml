@@ -26,4 +26,80 @@
         </dependencies>
     </dependencyManagement>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>       <!-- The -source argument for the Java compiler.   -->
+                    <target>1.8</target>       <!-- The -target argument for the Java compiler.   -->
+                    <debug>true</debug>        <!-- Whether to include debugging information.     -->
+                    <optimize>false</optimize> <!-- Whether to optimize the compiled code.        -->
+                    <encoding>UTF-8</encoding>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                    <useIncrementalCompilation>false</useIncrementalCompilation> <!-- https://jira.codehaus.org/browse/MCOMPILER-209 -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <!-- ====================================================
+        Deployment to public servers
+    ==================================================== -->
+    <distributionManagement>
+        <site>
+            <id>geotoolkit</id>
+            <name>Geotoolkit.org web site</name>
+            <url>file:///var/www/www.geotoolkit.org</url>
+        </site>
+        <repository>
+            <id>geotoolkit</id>
+            <name>Geotoolkit.org binaries</name>
+            <url>https://nexus.geomatys.com/repository/geotoolkit</url>
+        </repository>
+    </distributionManagement>
+
 </project>
