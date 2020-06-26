@@ -124,7 +124,9 @@ import org.opengis.util.InternationalString;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
+ * @deprecated Use Apache SIS equivalent instead: {@link org.apache.sis.coverage.grid.GridCoverage} and its {@link org.apache.sis.coverage.grid.GridCoverageBuilder builder}.
  */
+@Deprecated
 public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCoverage implements Localized {
 
     /**
