@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.container;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.container.DefaultGraphicContainer;
 import org.geotoolkit.display.container.MapContextContainer;
 import org.geotoolkit.display.primitive.SceneNode;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -139,30 +137,6 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
         if(root!=null){
             root.dispose();
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public Rectangle2D getGraphicsEnvelope2D() {
-        CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
-        try {
-            final MapContext context = getContext();
-            if(context != null){
-                final Envelope env = context.getBounds(true);
-                if( Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
-                    return new Rectangle2D.Double(env.getMinimum(0), env.getMinimum(1), env.getSpan(0), env.getSpan(1));
-                }else{
-                    final Envelope genv = Envelopes.transform(env, crs);
-                    return new Rectangle2D.Double(genv.getMinimum(0), genv.getMinimum(1), genv.getSpan(0), genv.getSpan(1));
-                }
-            }
-
-        } catch (IOException | TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-
-        return XRectangle2D.INFINITY;
     }
 
     /**
