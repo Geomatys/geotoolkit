@@ -27,6 +27,8 @@ import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
@@ -38,6 +40,7 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 
@@ -46,7 +49,7 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> {
+public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> implements StoreListener<StoreEvent> {
 
     private final LayerListener ll = new LayerListener() {
 
@@ -78,20 +81,22 @@ public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> {
         }
     };
 
-    private final LayerListener.Weak weakListener = new LayerListener.Weak(ll);
+    private final LayerListener.Weak weakLayerListener = new LayerListener.Weak(ll);
+    private final StorageListener.Weak weakResourceListener = new StorageListener.Weak(this);
     private SoftReference<Collection<? extends GraphicJ2D>> weakGraphic = null;
 
 
-    public MapLayerJ2D(final J2DCanvas canvas, final T layer, boolean allowChildren){
+    public MapLayerJ2D(final J2DCanvas canvas, final T layer){
         //do not use layer crs here, to long to calculate
-        super(canvas, layer, allowChildren);
-        weakListener.registerSource(layer);
+        super(canvas, layer, false);
+        weakLayerListener.registerSource(layer);
+        weakResourceListener.registerSource(layer.getResource());
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        weakListener.dispose();
+        weakLayerListener.dispose();
     }
 
     @Override
@@ -176,6 +181,14 @@ public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> {
             //since this is a custom layer, we have no way to find a child graphic.
             graphics.add(this);
             return graphics;
+        }
+    }
+
+    @Override
+    public void eventOccured(StoreEvent event) {
+        if (item.isVisible() && getCanvas().isAutoRepaint()) {
+            //TODO should call a repaint only on this graphic
+            getCanvas().repaint();
         }
     }
 
