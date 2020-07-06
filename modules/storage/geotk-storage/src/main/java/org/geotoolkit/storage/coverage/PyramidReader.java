@@ -154,7 +154,11 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         }
 
         //-- size of internal pixel data recovered
-        final GridExtent dataSize = mosaic.getDataExtent();
+        final Dimension gridSize = mosaic.getGridSize();
+        final Dimension tileSize = mosaic.getTileSize();
+        final GridExtent dataSize = new GridExtent(
+                    ((long) gridSize.width) * tileSize.width,
+                    ((long) gridSize.height) * tileSize.height);
 
         final long[] low  = new long[nbdim];
         final long[] high  = new long[nbdim];

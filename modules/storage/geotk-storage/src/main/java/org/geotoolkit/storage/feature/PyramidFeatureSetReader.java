@@ -30,6 +30,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.storage.AbstractFeatureSet;
 import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
@@ -135,9 +136,21 @@ public class PyramidFeatureSetReader {
 
         final TileIterator iterator = new TileIterator(mosaic, area);
 
-        final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
-        stream.onClose(iterator::close);
-        return stream;
+        //create a fake subset
+        final FeatureSet subfs = new AbstractFeatureSet(null) {
+            @Override
+            public FeatureType getType() throws DataStoreException {
+                return type;
+            }
+            @Override
+            public Stream<Feature> features(boolean parallel) throws DataStoreException {
+                final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
+                stream.onClose(iterator::close);
+                return stream;
+            }
+        };
+
+        return subfs.subset(query).features(bln);
     }
 
     private Quantity<Length> getLinearResolution(Mosaic mosaic, Unit<Length> unit) throws TransformException, FactoryException {
