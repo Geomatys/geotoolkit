@@ -21,7 +21,7 @@ package org.geotoolkit.geometry.jts.coordinatesequence;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.CoordinateSequenceFactory;
-import org.locationtech.jts.geom.DefaultCoordinateSequenceFactory;
+import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 
 /**
  * A CSBuilder that generates DefaultCoordinateSequence objects, that is,
@@ -32,7 +32,7 @@ import org.locationtech.jts.geom.DefaultCoordinateSequenceFactory;
 public class DefaultCSBuilder implements CSBuilder {
 
     private Coordinate[] coordinateArray;
-    private CoordinateSequenceFactory factory = DefaultCoordinateSequenceFactory.instance();
+    private CoordinateSequenceFactory factory = CoordinateArraySequenceFactory.instance();
 
     /**
      * {@inheritDoc }
