@@ -29,11 +29,11 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidReader;
-import org.geotoolkit.wmts.model.WMTSPyramidSet;
+import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.wmts.model.WMTSTileMatrixSets;
 import org.geotoolkit.wmts.xml.v100.LayerType;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  * WMTS Coverage Reference.
@@ -45,13 +45,13 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
 
     private final WebMapTileClient server;
     private final GenericName name;
-    private final WMTSPyramidSet set;
+    private final WMTSTileMatrixSets set;
 
     WMTSResource(WebMapTileClient server, GenericName name, boolean cacheImage){
         super(null);
         this.server = server;
         this.name = name;
-        set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
+        set = new WMTSTileMatrixSets(server, name.tip().toString(), cacheImage);
     }
 
     @Override
@@ -64,13 +64,13 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
         return Optional.of(name);
     }
 
-    public WMTSPyramidSet getPyramidSet() {
+    public WMTSTileMatrixSets getPyramidSet() {
         return set;
     }
 
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
-        return set.getPyramids();
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+        return set.getTileMatrixSets();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidReader<>(this).getGridGeometry();
+        return new TileMatrixSetCoverageReader<>(this).getGridGeometry();
     }
 
     @Override
@@ -93,7 +93,7 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
         final List<SampleDimension> sd = new ArrayList<>();
 
         String format = null;
-        final WMTSPyramidSet ps = getPyramidSet();
+        final WMTSTileMatrixSets ps = getPyramidSet();
         final List<LayerType> layers = ps.getCapabilities().getContents().getLayers();
         for(LayerType lt : layers){
             final String name = lt.getIdentifier().getValue();
@@ -131,7 +131,7 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidReader<>(this).read(domain, range);
+        return new TileMatrixSetCoverageReader<>(this).read(domain, range);
     }
 
 }

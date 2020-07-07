@@ -47,10 +47,8 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -60,6 +58,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 
 /**
@@ -67,7 +67,7 @@ import org.opengis.util.FactoryException;
  * @author Cédric Briançon (Geomatys)
  * @author Rémi Maréchal (Geomatys)
  */
-public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
+public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
 
     private final T reference;
 
@@ -79,7 +79,7 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
      * @throws IllegalArgumentException if the given {@link GridCoverageResource coverage reference}
      *                                  is not an instance of {@link PyramidalModel}.
      */
-    public PyramidWriter(final T reference) {
+    public TileMatrixSetCoverageWriter(final T reference) {
         this.reference = reference;
     }
 
@@ -151,11 +151,11 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
         private volatile boolean finished = false;
 
         //iteration state informations
-        private final Iterator<Pyramid> pyramidsIte;
-        private Iterator<Mosaic> mosaics;
-        private Pyramid currentPyramid = null;
+        private final Iterator<TileMatrixSet> pyramidsIte;
+        private Iterator<TileMatrix> mosaics;
+        private TileMatrixSet currentPyramid = null;
         private MathTransform crsDestToSrcGrid;
-        private Mosaic currentMosaic = null;
+        private TileMatrix currentMosaic = null;
         private CoordinateReferenceSystem destCrs2D;
         private MathTransform crsDestToCrsCoverage;
         private Envelope pyramidEnvelope;
@@ -187,10 +187,10 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
             this.nbBand = nbBand;
             this.srcCRSToGrid = srcCRSToGrid;
             this.interpolation = interpolation;
-            pyramidsIte = Pyramids.getPyramids(model).iterator();
+            pyramidsIte = TileMatrices.getTileMatrixSets(model).iterator();
         }
 
-        private boolean calculateMosaicRange(final Pyramid pyramid, final Mosaic mosaic, Envelope pyramidEnvelope){
+        private boolean calculateMosaicRange(final TileMatrixSet pyramid, final TileMatrix mosaic, Envelope pyramidEnvelope){
 
             res = mosaic.getScale();
             final DirectPosition moUpperLeft = mosaic.getUpperLeftCorner();
@@ -340,8 +340,8 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
     private static class TileUpdater <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> implements Runnable{
 
         private final T pm;
-        private final Pyramid pyramid;
-        private final Mosaic mosaic;
+        private final TileMatrixSet pyramid;
+        private final TileMatrix mosaic;
         private final int idx;
         private final int idy;
         private final int mosAreaX;
@@ -359,7 +359,7 @@ public class PyramidWriter <T extends MultiResolutionResource & org.apache.sis.s
         private final int tileWidth;
         private final int tileHeight;
 
-        public TileUpdater(T pm, Pyramid pyramid, Mosaic mosaic, int idx, int idy,
+        public TileUpdater(T pm, TileMatrixSet pyramid, TileMatrix mosaic, int idx, int idy,
                 int mosAreaX, int mosAreaY, int mosAreaMaxX, int mosAreaMaxY,
                 double mosULX, double mosULY, MathTransform crsDestToSrcGrid,
                 RenderedImage image, int nbBand, double res, InterpolationCase interpolation) {

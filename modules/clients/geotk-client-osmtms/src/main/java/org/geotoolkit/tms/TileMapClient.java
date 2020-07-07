@@ -26,7 +26,7 @@ import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.tms.model.TMSPyramidSet;
+import org.geotoolkit.tms.model.TMSTileMatrixSets;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -39,7 +39,7 @@ import org.opengis.util.GenericName;
  */
 public class TileMapClient extends AbstractCoverageClient implements Client, Aggregate {
 
-    private final TMSPyramidSet pyramidSet;
+    private final TMSTileMatrixSets pyramidSet;
     private final TMSResource resource;
 
     /**
@@ -80,7 +80,7 @@ public class TileMapClient extends AbstractCoverageClient implements Client, Agg
     public TileMapClient(ParameterValueGroup params){
         super(params);
         final GenericName name = NamesExt.create(serverURL.toString(), "main");
-        pyramidSet = new TMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
+        pyramidSet = new TMSTileMatrixSets(this,getMaxZoomLevel(),getCacheImage());
         resource = new TMSResource(this,name);
     }
 
@@ -107,7 +107,7 @@ public class TileMapClient extends AbstractCoverageClient implements Client, Agg
         return parameters.getValue(TMSProvider.IMAGE_CACHE);
     }
 
-    public TMSPyramidSet getPyramidSet(){
+    public TMSTileMatrixSets getPyramidSet(){
         return pyramidSet;
     }
 

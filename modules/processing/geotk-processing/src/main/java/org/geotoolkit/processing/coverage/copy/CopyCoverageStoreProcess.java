@@ -44,16 +44,16 @@ import org.geotoolkit.processing.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
-import org.geotoolkit.storage.multires.DefiningMosaic;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.DefiningTileMatrix;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Copy a {@linkplain CoverageStore coverage store} into another one, that supports
@@ -348,17 +348,17 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     }
 
     /**
-     * Save a {@linkplain Pyramid mosaic} via its {@linkplain PyramidalModel model}.
+     * Save a {@link TileMatrixSet mosaic} via its {@linkplain PyramidalModel model}.
      *
      * @param pm The {@linkplain PyramidalModel model} of this pyramid. Must not be {@code null}.
-     * @param pyramid {@link Pyramid} to store. Must not be {@code null}.
+     * @param pyramid {@link TileMatrixSet} to store. Must not be {@code null}.
      * @param reader {@linplain GridCoverageResource reader} of the input coverage. Must not be {@code null}.
      * @param imageIndex Index of the image to features in the reader.
      * @param env {@link Envelope} of the pyramid.
      * @throws DataStoreException
      * @throws TransformException
      */
-    private void saveMosaic(final MultiResolutionResource pm, final Pyramid pyramid, final GridCoverageResource inRes,
+    private void saveMosaic(final MultiResolutionResource pm, final TileMatrixSet pyramid, final GridCoverageResource inRes,
             Envelope env, boolean reduce) throws DataStoreException, TransformException, ProcessException {
 
         GridCoverage coverage;
@@ -412,8 +412,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         for (int i = 2, n = env.getDimension(); i < n; i++) {
             upperleft.setOrdinate(i, env.getMedian(i));
         }
-        final Mosaic mosaic = pyramid.createMosaic(
-                new DefiningMosaic(null, upperleft, scale, TileSize, gridSize));
+        final TileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, upperleft, scale, TileSize, gridSize));
         mosaic.writeTiles(Stream.of(new DefaultImageTile(img, new Point(0, 0))), null);
     }
 }

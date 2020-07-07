@@ -25,27 +25,26 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.multires.AbstractPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.wmts.xml.v100.*;
+import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSPyramid extends AbstractPyramid {
+public class WMTSTileMatrixSet extends AbstractTileMatrixSet {
 
-    private final WMTSPyramidSet set;
-    private final TileMatrixSetLink link;
-    private final TileMatrixSet matrixset;
+    private final WMTSTileMatrixSets set;
+    private final org.geotoolkit.wmts.xml.v100.TileMatrixSetLink link;
+    private final org.geotoolkit.wmts.xml.v100.TileMatrixSet matrixset;
     private CoordinateReferenceSystem crs;
-    private final List<Mosaic> mosaics;
+    private final List<TileMatrix> mosaics;
 
-    public WMTSPyramid(final WMTSPyramidSet set, final TileMatrixSetLink link){
+    public WMTSTileMatrixSet(final WMTSTileMatrixSets set, final org.geotoolkit.wmts.xml.v100.TileMatrixSetLink link){
         super(null);
         this.set = set;
         this.link = link;
@@ -67,30 +66,30 @@ public class WMTSPyramid extends AbstractPyramid {
             Logging.getLogger("org.geotoolkit.wmts.model").log(Level.WARNING, null, ex);
         }
 
-        final TileMatrixSetLimits limits = link.getTileMatrixSetLimits();
+        final org.geotoolkit.wmts.xml.v100.TileMatrixSetLimits limits = link.getTileMatrixSetLimits();
 
-        final Mosaic[] mosaics = new Mosaic[matrixset.getTileMatrix().size()];
+        final TileMatrix[] mosaics = new TileMatrix[matrixset.getTileMatrix().size()];
         for (int i=0;i<mosaics.length;i++) {
-            final TileMatrix matrix = matrixset.getTileMatrix().get(i);
-            TileMatrixLimits limit = null;
+            final org.geotoolkit.wmts.xml.v100.TileMatrix matrix = matrixset.getTileMatrix().get(i);
+            org.geotoolkit.wmts.xml.v100.TileMatrixLimits limit = null;
             if(limits != null){
-                for(TileMatrixLimits li : limits.getTileMatrixLimits()){
+                for(org.geotoolkit.wmts.xml.v100.TileMatrixLimits li : limits.getTileMatrixLimits()){
                     if(li.getTileMatrix().equals(matrix.getIdentifier().getValue())){
                         limit = li;
                         break;
                     }
                 }
             }
-            mosaics[i] = new WMTSMosaic(this, matrix, limit);
+            mosaics[i] = new WMTSTileMatrix(this, matrix, limit);
         }
         this.mosaics = UnmodifiableArrayList.wrap(mosaics);
     }
 
-    public TileMatrixSet getMatrixset() {
+    public org.geotoolkit.wmts.xml.v100.TileMatrixSet getMatrixset() {
         return matrixset;
     }
 
-    public WMTSPyramidSet getPyramidSet() {
+    public WMTSTileMatrixSets getPyramidSet() {
         return set;
     }
 
@@ -100,17 +99,17 @@ public class WMTSPyramid extends AbstractPyramid {
     }
 
     @Override
-    public Collection<? extends Mosaic> getMosaics() {
+    public Collection<? extends TileMatrix> getTileMatrices() {
         return mosaics;
     }
 
     @Override
-    public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void deleteMosaic(String mosaicId) throws DataStoreException {
+    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

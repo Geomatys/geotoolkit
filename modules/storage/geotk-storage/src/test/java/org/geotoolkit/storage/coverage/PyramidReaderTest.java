@@ -39,17 +39,17 @@ import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.memory.InMemoryStore;
-import org.geotoolkit.storage.multires.DefiningMosaic;
-import org.geotoolkit.storage.multires.DefiningPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.DefiningTileMatrix;
+import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 
 /**
@@ -177,7 +177,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
     private static void create4DPyramid(GridCoverageResource ref, CoordinateReferenceSystem crs,
             int width, int height, double[][] geovalues) throws DataStoreException{
 
-        final Pyramid pyramid = (Pyramid) ((MultiResolutionResource) ref).createModel(new DefiningPyramid(crs));
+        final TileMatrixSet pyramid = (TileMatrixSet) ((MultiResolutionResource) ref).createModel(new DefiningTileMatrixSet(crs));
 
         final Dimension gridSize = new Dimension(4, 3);
         final Dimension tilePixelSize = new Dimension(width, height);
@@ -185,7 +185,7 @@ public class PyramidReaderTest extends org.geotoolkit.test.TestBase {
         for(double[] slice : geovalues){
             final GeneralDirectPosition upperLeft = new GeneralDirectPosition(crs);
             upperLeft.setCoordinate(-50,60,slice[0],slice[1]);
-            final Mosaic mosaic = pyramid.createMosaic(new DefiningMosaic(null, upperLeft, 1, tilePixelSize, gridSize));
+            final TileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, upperLeft, 1, tilePixelSize, gridSize));
 
             final float sample = (float)slice[2];
             for(int x=0;x<gridSize.width;x++){

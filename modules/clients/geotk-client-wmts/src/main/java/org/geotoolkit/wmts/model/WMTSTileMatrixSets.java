@@ -20,20 +20,20 @@ import java.util.*;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.client.map.CachedTileMatrixSets;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.wmts.GetTileRequest;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.v100.*;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSPyramidSet extends CachedPyramidSet{
+public class WMTSTileMatrixSets extends CachedTileMatrixSets {
 
     /**
      * Additional hint : to specify the style.
@@ -42,9 +42,9 @@ public class WMTSPyramidSet extends CachedPyramidSet{
 
     private final String layerName;
     private LayerType wmtsLayer;
-    private Collection<Pyramid> pyramids;
+    private Collection<TileMatrixSet> pyramids;
 
-    public WMTSPyramidSet(final WebMapTileClient server, final String layerName, boolean cacheImage){
+    public WMTSTileMatrixSets(final WebMapTileClient server, final String layerName, boolean cacheImage){
         super(server,true,cacheImage);
         ArgumentChecks.ensureNonNull("layer name", layerName);
         this.layerName = layerName;
@@ -74,9 +74,9 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public synchronized Collection<Pyramid> getPyramids() {
+    public synchronized Collection<TileMatrixSet> getTileMatrixSets() {
         if(pyramids == null){
-            final List<Pyramid> pyramids = new ArrayList<>();
+            final List<TileMatrixSet> pyramids = new ArrayList<>();
             final ContentsType contents = getServer().getServiceCapabilities().getContents();
 
             //first find the layer
@@ -91,7 +91,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
             if(layer != null){
                 //layer found
                 for(TileMatrixSetLink lk : layer.getTileMatrixSetLink()){
-                    pyramids.add(new WMTSPyramid(this,lk));
+                    pyramids.add(new WMTSTileMatrixSet(this,lk));
                 }
             }
             this.pyramids = pyramids;
@@ -101,19 +101,19 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
-        final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
+    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
+        final WMTSTileMatrix wmtsMosaic = (WMTSTileMatrix) mosaic;
 
         if(hints == null) hints = new HashMap();
 
         final GetTileRequest request = getServer().createGetTile();
 
         //set the format
-        Object format = hints.get(Pyramids.HINT_FORMAT);
+        Object format = hints.get(TileMatrices.HINT_FORMAT);
 
         //extract the default format from server
         if(format == null){
-            final WMTSPyramidSet ps = ((WMTSPyramid) pyramid).getPyramidSet();
+            final WMTSTileMatrixSets ps = ((WMTSTileMatrixSet) pyramid).getPyramidSet();
             final List<LayerType> layers = ps.getCapabilities().getContents().getLayers();
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();

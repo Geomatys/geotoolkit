@@ -27,24 +27,24 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.multires.AbstractMosaic;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCMosaic implements Mosaic {
+public class WMSCTileMatrix implements TileMatrix {
 
     private final String id = UUID.randomUUID().toString();
-    private final WMSCPyramid pyramid;
+    private final WMSCTileMatrixSet pyramid;
     private final double scale;
 
     private final Dimension gridSize = new Dimension();
@@ -52,7 +52,7 @@ public class WMSCMosaic implements Mosaic {
     private final double tileSpanY;
     private Tile anyTile = null;
 
-    public WMSCMosaic(final WMSCPyramid pyramid, final double scaleLevel) {
+    public WMSCTileMatrix(final WMSCTileMatrixSet pyramid, final double scaleLevel) {
         this.pyramid = pyramid;
         this.scale = scaleLevel;
 
@@ -75,7 +75,7 @@ public class WMSCMosaic implements Mosaic {
         return id;
     }
 
-    public Pyramid getPyramid() {
+    public TileMatrixSet getPyramid() {
         return pyramid;
     }
 
@@ -160,6 +160,6 @@ public class WMSCMosaic implements Mosaic {
 
     @Override
     public String toString() {
-        return AbstractMosaic.toString(this);
+        return AbstractTileMatrix.toString(this);
     }
 }

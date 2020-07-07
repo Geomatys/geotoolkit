@@ -31,26 +31,26 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
- * Abstract mosaic grid.
+ * Abstract TileMatrix.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractMosaic implements Mosaic {
+public abstract class AbstractTileMatrix implements TileMatrix {
 
     private final String id;
-    private final Pyramid pyramid;
+    private final TileMatrixSet pyramid;
     private final DirectPosition upperLeft;
     private final Dimension gridSize;
     private final Dimension tileSize;
     private final double scale;
 
-    public AbstractMosaic(Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
+    public AbstractTileMatrix(TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale) {
         this(null,pyramid,upperLeft,gridSize,tileSize,scale);
     }
 
-    public AbstractMosaic(String id, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
+    public AbstractTileMatrix(String id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale) {
         this.pyramid = pyramid;
         this.upperLeft = new GeneralDirectPosition(upperLeft);
@@ -80,7 +80,7 @@ public abstract class AbstractMosaic implements Mosaic {
     /**
      * {@inheritDoc}
      */
-    public Pyramid getPyramid() {
+    public TileMatrixSet getTileMatrixSet() {
         return pyramid;
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractMosaic implements Mosaic {
      */
     @Override
     public Envelope getEnvelope() {
-        return Pyramids.computeMosaicEnvelope(this);
+        return TileMatrices.computeMosaicEnvelope(this);
     }
 
     /**
@@ -227,7 +227,7 @@ public abstract class AbstractMosaic implements Mosaic {
      * Pretty print outut of given mosaic.
      * @param mosaic not null
      */
-    public static String toString(Mosaic mosaic) {
+    public static String toString(TileMatrix mosaic) {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(mosaic));
         sb.append("   id = ").append(mosaic.getIdentifier());
         sb.append("   scale = ").append(mosaic.getScale());

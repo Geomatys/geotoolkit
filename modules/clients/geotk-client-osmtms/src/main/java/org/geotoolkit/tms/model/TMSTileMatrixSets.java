@@ -23,23 +23,23 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.multires.DefaultPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.client.map.CachedTileMatrixSets;
+import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
 import org.geotoolkit.tms.GetTileRequest;
 import org.geotoolkit.tms.TileMapClient;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class TMSPyramidSet extends CachedPyramidSet {
+public class TMSTileMatrixSets extends CachedTileMatrixSets {
 
     public static final double BASE_TILE_SIZE = 256d;
     public static final CoordinateReferenceSystem GOOGLE_MERCATOR;
@@ -62,10 +62,10 @@ public class TMSPyramidSet extends CachedPyramidSet {
         }
     }
 
-    public TMSPyramidSet(final TileMapClient server, final int maxScale, boolean cacheImage) {
+    public TMSTileMatrixSets(final TileMapClient server, final int maxScale, boolean cacheImage) {
         super(server, true, cacheImage);
 
-        final DefaultPyramid pyramid = new DefaultPyramid(GOOGLE_MERCATOR);
+        final DefaultTileMatrixSet pyramid = new DefaultTileMatrixSet(GOOGLE_MERCATOR);
 
         final int tileWidth = (int) BASE_TILE_SIZE;
         final int tileHeight = (int) BASE_TILE_SIZE;
@@ -82,7 +82,7 @@ public class TMSPyramidSet extends CachedPyramidSet {
             final int size = (int) Math.pow(2, i);
             final double scale = scale0Resolution / size;
 
-            final TMSMosaic mosaic = new TMSMosaic(
+            final TMSTileMatrix mosaic = new TMSTileMatrix(
                     this, pyramid, upperLeft,
                     new Dimension(size, size),
                     new Dimension(tileWidth, tileHeight),
@@ -92,7 +92,7 @@ public class TMSPyramidSet extends CachedPyramidSet {
             pyramid.getMosaicsInternal().add(mosaic);
         }
 
-        getPyramids().add(pyramid);
+        getTileMatrixSets().add(pyramid);
     }
 
     @Override
@@ -101,9 +101,9 @@ public class TMSPyramidSet extends CachedPyramidSet {
     }
 
     @Override
-    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
+    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
         final GetTileRequest request = getServer().createGetTile();
-        request.setScaleLevel(((TMSMosaic) mosaic).getScaleLevel());
+        request.setScaleLevel(((TMSTileMatrix) mosaic).getScaleLevel());
         request.setTileCol(col);
         request.setTileRow(row);
         return request;

@@ -42,15 +42,15 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.geotoolkit.storage.coverage.PyramidReader;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Renderer for Tile debug symbolizer.
@@ -81,19 +81,19 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
             FontMetrics fontMetrics = graphics.getFontMetrics(font);
 
             try {
-                final Map.Entry<Envelope, List<Mosaic>> intersect = PyramidReader.intersect(mrm, getRenderingContext().getGridGeometry());
-                final List<Mosaic> mosaics = intersect.getValue();
+                final Map.Entry<Envelope, List<TileMatrix>> intersect = TileMatrixSetCoverageReader.intersect(mrm, getRenderingContext().getGridGeometry());
+                final List<TileMatrix> mosaics = intersect.getValue();
                 final Envelope wantedEnv = intersect.getKey();
 
-                for (Mosaic m : mosaics) {
+                for (TileMatrix m : mosaics) {
                     final CoordinateReferenceSystem crs = m.getUpperLeftCorner().getCoordinateReferenceSystem();
                     final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
 
-                    final Rectangle rectangle = Pyramids.getTilesInEnvelope(m, wantedEnv);
+                    final Rectangle rectangle = TileMatrices.getTilesInEnvelope(m, wantedEnv);
 
                     for (int x = 0; x < rectangle.width; x++) {
                         for (int y = 0;y < rectangle.height; y++) {
-                            final GridGeometry gridgeom = Pyramids.getTileGridGeometry2D(m, new Point(rectangle.x+x, rectangle.y+y), crs2d);
+                            final GridGeometry gridgeom = TileMatrices.getTileGridGeometry2D(m, new Point(rectangle.x+x, rectangle.y+y), crs2d);
                             Geometry geom = GeometricUtilities.toJTSGeometry(gridgeom.getEnvelope(), GeometricUtilities.WrapResolution.NONE);
                             geom.setUserData(crs2d);
                             geom = JTS.transform(geom, renderingContext.getDisplayCRS());

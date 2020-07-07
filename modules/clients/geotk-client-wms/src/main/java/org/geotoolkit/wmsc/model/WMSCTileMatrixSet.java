@@ -23,26 +23,26 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.multires.AbstractPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCPyramid extends AbstractPyramid {
+public class WMSCTileMatrixSet extends AbstractTileMatrixSet {
 
     private final TileSet tileset;
     private final GeneralDirectPosition upperleft;
-    private final WMSCPyramidSet set;
-    private final List<Mosaic> mosaics;
+    private final WMSCTileMatrixSets set;
+    private final List<TileMatrix> mosaics;
 
-    public WMSCPyramid(final WMSCPyramidSet set, final TileSet tileset) throws NoSuchAuthorityCodeException, FactoryException{
+    public WMSCTileMatrixSet(final WMSCTileMatrixSets set, final TileSet tileset) throws NoSuchAuthorityCodeException, FactoryException{
         super(CRS.forCode(tileset.getSRS()));
         this.set = set;
         this.tileset = tileset;
@@ -54,14 +54,14 @@ public class WMSCPyramid extends AbstractPyramid {
         List<Double> ress = tileset.getResolutions();
         if (ress == null) ress = Collections.EMPTY_LIST;
 
-        final Mosaic[] mosaics = new Mosaic[ress.size()];
+        final TileMatrix[] mosaics = new TileMatrix[ress.size()];
         for (int i=0; i<mosaics.length; i++){
-            mosaics[i] = new WMSCMosaic(this, tileset.getResolutions().get(i));
+            mosaics[i] = new WMSCTileMatrix(this, tileset.getResolutions().get(i));
         }
         this.mosaics = UnmodifiableArrayList.wrap(mosaics);
     }
 
-    public WMSCPyramidSet getPyramidSet() {
+    public WMSCTileMatrixSets getPyramidSet() {
         return set;
     }
 
@@ -74,17 +74,17 @@ public class WMSCPyramid extends AbstractPyramid {
     }
 
     @Override
-    public Collection<? extends Mosaic> getMosaics() {
+    public Collection<? extends TileMatrix> getTileMatrices() {
         return mosaics;
     }
 
     @Override
-    public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void deleteMosaic(String mosaicId) throws DataStoreException {
+    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

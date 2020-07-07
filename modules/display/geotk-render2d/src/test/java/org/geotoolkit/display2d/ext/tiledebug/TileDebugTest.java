@@ -31,7 +31,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.style.MutableStyle;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public class TileDebugTest extends org.geotoolkit.test.TestBase {
 
 
         final InMemoryPyramidResource resource = new InMemoryPyramidResource(Names.createLocalName(null, null, "test"));
-        resource.createModel(Pyramids.createWorldWGS84Template(12));
+        resource.createModel(TileMatrices.createWorldWGS84Template(12));
         
 
         final MapLayer layer = MapBuilder.createCoverageLayer(resource);

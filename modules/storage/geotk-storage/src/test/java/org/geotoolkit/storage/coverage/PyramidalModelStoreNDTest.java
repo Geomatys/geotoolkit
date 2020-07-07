@@ -35,12 +35,10 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.WritableAggregate;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.storage.multires.DefiningMosaic;
-import org.geotoolkit.storage.multires.DefiningPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.DefiningTileMatrix;
+import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
 import org.geotoolkit.util.NamesExt;
@@ -49,6 +47,8 @@ import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Abstract pyramid store test.
@@ -112,13 +112,11 @@ public abstract class PyramidalModelStoreNDTest <T extends MultiResolutionResour
             colors[v][1][3][2] = color++;
         }
 
-        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(crs));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(crs));
         for(int v=0;v<CORNER_V.length;v++){
-            final Mosaic mosaic_s0 = pyramid.createMosaic(
-                    new DefiningMosaic(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 1,
+            final TileMatrix mosaic_s0 = pyramid.createTileMatrix(new DefiningTileMatrix(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 1,
                             new Dimension(10, 10), new Dimension(2, 2)));
-            final Mosaic mosaic_s1 = pyramid.createMosaic(
-                    new DefiningMosaic(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 0.5,
+            final TileMatrix mosaic_s1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, createCorner(CORNER_LONG,CORNER_LAT,CORNER_V[v]), 0.5,
                             new Dimension(10, 10), new Dimension(4, 3)));
 
             //insert tiles
@@ -195,7 +193,7 @@ public abstract class PyramidalModelStoreNDTest <T extends MultiResolutionResour
         assertEquals( 0, gridEnv.getLow(2));
         assertEquals( 1, gridEnv.getHigh(2));
 
-        final Envelope env = Pyramids.getEnvelope(ref);
+        final Envelope env = TileMatrices.getEnvelope(ref);
         assertEquals(-180, env.getMinimum(0), DELTA);
         assertEquals(-180 +(4*10)*0.5, env.getMaximum(0), DELTA);
         assertEquals(  90, env.getMaximum(1), DELTA);

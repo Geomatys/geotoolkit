@@ -28,15 +28,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPyramid extends AbstractPyramid {
+public class DefaultTileMatrixSet extends AbstractTileMatrixSet {
 
-    private final List<Mosaic> mosaics = new ArrayList<>();
+    private final List<TileMatrix> mosaics = new ArrayList<>();
 
-    public DefaultPyramid(CoordinateReferenceSystem crs) {
+    public DefaultTileMatrixSet(CoordinateReferenceSystem crs) {
         this(null,crs);
     }
 
-    public DefaultPyramid(String id, CoordinateReferenceSystem crs) {
+    public DefaultTileMatrixSet(String id, CoordinateReferenceSystem crs) {
         super(id,crs);
     }
 
@@ -47,22 +47,22 @@ public class DefaultPyramid extends AbstractPyramid {
     /**
      * Internal list of pyramids, modify with causion.
      */
-    public List<Mosaic> getMosaicsInternal() {
+    public List<TileMatrix> getMosaicsInternal() {
         return mosaics;
     }
 
     @Override
-    public List<Mosaic> getMosaics() {
+    public List<TileMatrix> getTileMatrices() {
         return Collections.unmodifiableList(mosaics);
     }
 
     @Override
-    public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
-    public void deleteMosaic(String mosaicId) throws DataStoreException {
+    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported.");
     }
 

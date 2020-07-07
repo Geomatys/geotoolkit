@@ -29,10 +29,10 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidReader;
-import org.geotoolkit.tms.model.TMSPyramidSet;
+import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.tms.model.TMSTileMatrixSets;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  * Tile Map Server client.
@@ -61,13 +61,13 @@ public class TMSResource extends AbstractGridResource implements MultiResolution
         return Optional.of(name);
     }
 
-    public TMSPyramidSet getPyramidSet() {
+    public TMSTileMatrixSets getPyramidSet() {
         return ((TileMapClient)client).getPyramidSet();
     }
 
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
-        return ((TileMapClient)client).getPyramidSet().getPyramids();
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+        return ((TileMapClient)client).getPyramidSet().getTileMatrixSets();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class TMSResource extends AbstractGridResource implements MultiResolution
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidReader(this).getGridGeometry();
+        return new TileMatrixSetCoverageReader(this).getGridGeometry();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class TMSResource extends AbstractGridResource implements MultiResolution
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidReader(this).read(domain, range);
+        return new TileMatrixSetCoverageReader(this).read(domain, range);
     }
 
 }

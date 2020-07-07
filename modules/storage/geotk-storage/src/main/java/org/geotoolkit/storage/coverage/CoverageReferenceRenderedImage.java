@@ -41,14 +41,14 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * On the fly calculated tiled image for a Coverage reference and grid definition.
@@ -59,7 +59,7 @@ import org.opengis.referencing.operation.TransformException;
 public class CoverageReferenceRenderedImage extends PlanarImage {
 
     private final GridCoverageResource ref;
-    private final Mosaic mosaic;
+    private final TileMatrix mosaic;
 
     private final ColorModel colorModel;
     private final SampleModel sampleModel;
@@ -68,7 +68,7 @@ public class CoverageReferenceRenderedImage extends PlanarImage {
     /** listener support */
     private final EventListenerList listeners = new EventListenerList();
 
-    public CoverageReferenceRenderedImage(GridCoverageResource ref, Mosaic mosaic) throws DataStoreException,
+    public CoverageReferenceRenderedImage(GridCoverageResource ref, TileMatrix mosaic) throws DataStoreException,
             IOException, TransformException {
         this.ref = ref;
         this.mosaic = mosaic;
@@ -231,7 +231,7 @@ public class CoverageReferenceRenderedImage extends PlanarImage {
     }
 
     public GridCoverage getTileCoverage(int idx, int idy) throws DataStoreException, TransformException {
-        Envelope tenv = Pyramids.computeTileEnvelope(mosaic, idx, idy);
+        Envelope tenv = TileMatrices.computeTileEnvelope(mosaic, idx, idy);
         final GeneralEnvelope genv = new GeneralEnvelope(tenv);
         genv.setRange(0, tenv.getMinimum(0) - mosaic.getScale(), tenv.getMaximum(0) + mosaic.getScale());
         genv.setRange(1, tenv.getMinimum(1) - mosaic.getScale(), tenv.getMaximum(1) + mosaic.getScale());

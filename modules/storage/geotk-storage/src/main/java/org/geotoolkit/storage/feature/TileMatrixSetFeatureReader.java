@@ -44,10 +44,8 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.DeferredTile;
-import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -56,36 +54,38 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * A utility class which is capable of reading features from a pyramid.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidFeatureSetReader {
+public class TileMatrixSetFeatureReader {
 
     private final MultiResolutionResource resource;
     private final FeatureType type;
 
-    public PyramidFeatureSetReader(MultiResolutionResource resource, FeatureType type) {
+    public TileMatrixSetFeatureReader(MultiResolutionResource resource, FeatureType type) {
         this.resource = resource;
         this.type = type;
     }
 
     public Stream<Feature> features(SimpleQuery query, boolean bln) throws DataStoreException {
 
-        final List<Pyramid> pyramids = Pyramids.getPyramids(resource);
+        final List<TileMatrixSet> pyramids = TileMatrices.getTileMatrixSets(resource);
         if (pyramids.isEmpty()) {
             return Stream.empty();
         }
 
-        final Pyramid pyramid = pyramids.get(0);
-        if (pyramid.getMosaics().isEmpty()) {
+        final TileMatrixSet pyramid = pyramids.get(0);
+        if (pyramid.getTileMatrices().isEmpty()) {
             return Stream.empty();
         }
 
-        Mosaic mosaic;
-        final Collection<Mosaic> mosaics = pyramid.getMosaics(pyramid.getScales()[0]);
+        TileMatrix mosaic;
+        final Collection<TileMatrix> mosaics = pyramid.getTileMatrices(pyramid.getScales()[0]);
         if (mosaics.isEmpty()) {
             return Stream.empty();
         } else if (mosaics.size() != 1) {
@@ -99,7 +99,7 @@ public class PyramidFeatureSetReader {
             try {
                 double mosaicLinearRes = getLinearResolution(mosaic, linearResolution.getUnit()).getValue().doubleValue();
 
-                for (Mosaic m : pyramid.getMosaics()) {
+                for (TileMatrix m : pyramid.getTileMatrices()) {
                     Quantity<Length> mr = getLinearResolution(m, linearResolution.getUnit());
                     if (mr.getValue().doubleValue() <= linearResolution.getValue().doubleValue()
                         && mr.getValue().doubleValue() > mosaicLinearRes) {
@@ -129,7 +129,7 @@ public class PyramidFeatureSetReader {
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
-            area = Pyramids.getTilesInEnvelope(mosaic, env);
+            area = TileMatrices.getTilesInEnvelope(mosaic, env);
         } else {
             area = new Rectangle(gridSize);
         }
@@ -158,7 +158,7 @@ public class PyramidFeatureSetReader {
         }
     }
 
-    private Quantity<Length> getLinearResolution(Mosaic mosaic, Unit<Length> unit) throws TransformException, FactoryException {
+    private Quantity<Length> getLinearResolution(TileMatrix mosaic, Unit<Length> unit) throws TransformException, FactoryException {
         final double[] res = new double[]{mosaic.getScale(), mosaic.getScale()};
         final double[] newRes = new double[2];
         final CoordinateReferenceSystem target2DCRS = CRS.forCode("EPSG:3395");
@@ -168,14 +168,14 @@ public class PyramidFeatureSetReader {
 
     private static class TileIterator implements Iterator<Feature> {
 
-        private final Mosaic mosaic;
+        private final TileMatrix mosaic;
         private final Iterator<Point> pointIte;
         private Stream<Feature> subStream;
         private Iterator<Feature> subIte;
         private Feature next;
 
 
-        public TileIterator(Mosaic mosaic, Rectangle rectangle) {
+        public TileIterator(TileMatrix mosaic, Rectangle rectangle) {
             this.mosaic = mosaic;
             pointIte = BufferedImages.pointStream(rectangle).iterator();
         }

@@ -23,23 +23,23 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.multires.AbstractMosaic;
-import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.geometry.DirectPosition;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class TMSMosaic extends AbstractMosaic {
+public class TMSTileMatrix extends AbstractTileMatrix {
 
-    private final TMSPyramidSet set;
+    private final TMSTileMatrixSets set;
     private final int scaleLevel;
     private Tile anyTile = null;
 
-    public TMSMosaic(TMSPyramidSet set, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
+    public TMSTileMatrix(TMSTileMatrixSets set, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
         super(pyramid,upperLeft,gridSize,tileSize,scale);
         this.scaleLevel = scaleLevel;
@@ -57,12 +57,12 @@ public class TMSMosaic extends AbstractMosaic {
 
     @Override
     public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
-        return set.getTile(getPyramid(), this, col, row, hints);
+        return set.getTile(getTileMatrixSet(), this, col, row, hints);
     }
 
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
-        return set.getTiles(getPyramid(), this, positions, hints);
+        return set.getTiles(getTileMatrixSet(), this, positions, hints);
     }
 
     @Override

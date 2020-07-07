@@ -32,23 +32,23 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel
  */
-public class DefiningPyramid implements Pyramid {
+public class DefiningTileMatrixSet implements TileMatrixSet {
 
     private final String identifier;
     private final String format;
     private final CoordinateReferenceSystem crs;
-    private final Map<String,Mosaic> mosaics = new HashMap<>();
+    private final Map<String,TileMatrix> mosaics = new HashMap<>();
 
-    public DefiningPyramid(CoordinateReferenceSystem crs) {
+    public DefiningTileMatrixSet(CoordinateReferenceSystem crs) {
         this(null,null,crs,new ArrayList());
     }
 
-    public DefiningPyramid(String identifier, String format, CoordinateReferenceSystem crs, List<Mosaic> mosaics) {
+    public DefiningTileMatrixSet(String identifier, String format, CoordinateReferenceSystem crs, List<TileMatrix> mosaics) {
         this.identifier = identifier;
         this.format = format;
         this.crs = crs;
 
-        for (Mosaic m : mosaics) {
+        for (TileMatrix m : mosaics) {
             this.mosaics.put(m.getIdentifier(), m);
         }
     }
@@ -59,14 +59,14 @@ public class DefiningPyramid implements Pyramid {
     }
 
     @Override
-    public Collection<Mosaic> getMosaics() {
+    public Collection<TileMatrix> getTileMatrices() {
         return Collections.unmodifiableCollection(mosaics.values());
     }
 
     @Override
     public Envelope getEnvelope() {
         GeneralEnvelope env = null;
-        for(Mosaic mosaic : getMosaics()){
+        for(TileMatrix mosaic : getTileMatrices()){
             if(env==null){
                 env = new GeneralEnvelope(mosaic.getEnvelope());
             }else{
@@ -87,25 +87,25 @@ public class DefiningPyramid implements Pyramid {
     }
 
     @Override
-    public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
         String uid = template.getIdentifier();
         if (mosaics.containsKey(uid)) {
             uid = UUID.randomUUID().toString();
         }
 
-        final DefiningMosaic m2 = new DefiningMosaic(uid, template.getUpperLeftCorner(),
+        final DefiningTileMatrix m2 = new DefiningTileMatrix(uid, template.getUpperLeftCorner(),
                 template.getScale(), template.getTileSize(), template.getGridSize());
         mosaics.put(m2.getIdentifier(), m2);
         return m2;
     }
 
     @Override
-    public void deleteMosaic(String mosaicId) throws DataStoreException {
+    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
         mosaics.remove(mosaicId);
     }
 
     @Override
     public String toString(){
-        return AbstractPyramid.toString(this);
+        return AbstractTileMatrixSet.toString(this);
     }
 }

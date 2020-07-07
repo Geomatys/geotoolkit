@@ -50,9 +50,7 @@ import org.geotoolkit.client.Request;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.coverage.*;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -61,13 +59,15 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.http.*;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class CachedPyramidSet extends DefaultPyramidSet {
+public abstract class CachedTileMatrixSets extends DefaultTileMatrixSets {
 
     /**
      * Boolean property used on tiled servers to force using NIO connections.
@@ -103,7 +103,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     protected final boolean useURLQueries;
     protected final boolean cacheImages;
 
-    public CachedPyramidSet(Client server, boolean useURLQueries, boolean cacheImages) {
+    public CachedTileMatrixSets(Client server, boolean useURLQueries, boolean cacheImages) {
         this.server = server;
         this.useURLQueries = useURLQueries;
         this.cacheImages = cacheImages;
@@ -118,10 +118,10 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         return server;
     }
 
-    public abstract Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException;
+    public abstract Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException;
 
-    public ImageTile getTile(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
-        final String formatmime = (hints == null) ? null : (String) hints.get(Pyramids.HINT_FORMAT);
+    public ImageTile getTile(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
+        final String formatmime = (hints == null) ? null : (String) hints.get(TileMatrices.HINT_FORMAT);
         ImageReaderSpi spi = null;
         if (formatmime != null) {
             try {
@@ -138,7 +138,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }
     }
 
-    private static String toId(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) {
+    private static String toId(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) {
         final String pyramidId = pyramid.getIdentifier();
         final String mosaicId = mosaic.getIdentifier();
 
@@ -147,7 +147,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         return sb.toString();
     }
 
-    private RenderedImage getTileImage(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
+    private RenderedImage getTileImage(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
 
         final String tileId = toId(pyramid, mosaic, col, row, hints);
 
@@ -191,7 +191,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         return value;
     }
 
-    public BlockingQueue<Object> getTiles(Pyramid pyramid, Mosaic mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException {
+    public BlockingQueue<Object> getTiles(TileMatrixSet pyramid, TileMatrix mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException {
 
         if (!cacheImages || !useURLQueries) {
             //can not optimize a non url server
@@ -233,7 +233,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             final RenderedImage image = tileCache.get(tid);
 
             if (queue.isCancelled()) {
-                queue.offer(Mosaic.END_OF_QUEUE); //end sentinel
+                queue.offer(TileMatrix.END_OF_QUEUE); //end sentinel
                 return queue;
             }
 
@@ -258,7 +258,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
         //nothing to download, everything was in cache.
         if (downloadList.isEmpty()) {
-            queue.offer(Mosaic.END_OF_QUEUE); //end sentinel
+            queue.offer(TileMatrix.END_OF_QUEUE); //end sentinel
             return queue;
         }
 
@@ -288,7 +288,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                     try {
                         //put a custom object, this is used in the iterator
                         //to detect the end.
-                        queue.put(Mosaic.END_OF_QUEUE);
+                        queue.put(TileMatrix.END_OF_QUEUE);
                     } catch (InterruptedException ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     }
@@ -353,7 +353,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                     try {
                         //put a custom object, this is used in the iterator
                         //to detect the end.
-                        queue.put(Mosaic.END_OF_QUEUE);
+                        queue.put(TileMatrix.END_OF_QUEUE);
                     } catch (InterruptedException ex) {
                         LOGGER.log(Level.INFO, ex.getMessage(), ex);
                     }
@@ -395,7 +395,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     /**
      * When service is secured or has other constraints we can only use standard IO.
      */
-    private CancellableQueue queryUnoptimizedIO(Pyramid pyramid, Mosaic mosaic, Collection<? extends Point> locations, Map hints){
+    private CancellableQueue queryUnoptimizedIO(TileMatrixSet pyramid, TileMatrix mosaic, Collection<? extends Point> locations, Map hints){
 
         final CancellableQueue<Object> queue = new CancellableQueue<Object>(1000);
 
@@ -410,7 +410,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             }
 
             if (queue.isCancelled()) {
-                queue.offer(Mosaic.END_OF_QUEUE); //end sentinel
+                queue.offer(TileMatrix.END_OF_QUEUE); //end sentinel
                 return queue;
             }
 
@@ -427,7 +427,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
         //nothing to download, everything was in cache.
         if (downloadList.isEmpty()) {
-            queue.offer(Mosaic.END_OF_QUEUE); //end sentinel
+            queue.offer(TileMatrix.END_OF_QUEUE); //end sentinel
             return queue;
         }
 
@@ -441,14 +441,14 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     private class ImagePack {
 
         private final String requestPath;
-        private final Pyramid pyramid;
-        private final Mosaic mosaic;
+        private final TileMatrixSet pyramid;
+        private final TileMatrix mosaic;
         private final Point pt;
         private final ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
         private final Map hints;
         private RenderedImage img;
 
-        public ImagePack(String requestPath, Pyramid pyramid, Mosaic mosaic, Point pt, Map hints) {
+        public ImagePack(String requestPath, TileMatrixSet pyramid, TileMatrix mosaic, Point pt, Map hints) {
             this.requestPath = requestPath;
             this.pyramid = pyramid;
             this.mosaic = mosaic;
@@ -456,7 +456,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             this.hints = hints;
         }
 
-        public ImagePack(Pyramid pyramid, Mosaic mosaic, Point pt, Map hints) {
+        public ImagePack(TileMatrixSet pyramid, TileMatrix mosaic, Point pt, Map hints) {
             this.requestPath = null;
             this.pyramid = pyramid;
             this.mosaic = mosaic;
