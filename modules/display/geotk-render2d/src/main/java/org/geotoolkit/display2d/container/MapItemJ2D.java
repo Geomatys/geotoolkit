@@ -144,7 +144,7 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
             final CoverageMapLayer layer = (CoverageMapLayer) child;
             g2d = new CoverageLayerJ2D(getCanvas(), layer);
         } else if (child instanceof MapLayer) {
-            g2d = new MapLayerJ2D(getCanvas(), (MapLayer)child, false);
+            g2d = new MapLayerJ2D(getCanvas(), (MapLayer) child);
         } else {
             g2d = new MapItemJ2D(getCanvas(), child, true);
         }

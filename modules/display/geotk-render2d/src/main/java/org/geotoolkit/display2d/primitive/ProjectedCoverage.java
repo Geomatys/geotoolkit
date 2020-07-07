@@ -43,18 +43,15 @@ import org.opengis.geometry.Envelope;
 public class ProjectedCoverage implements ProjectedObject<MapLayer> {
 
     private final MapLayer layer;
-    private ProjectedGeometry border;
 
     public ProjectedCoverage(final MapLayer layer) {
         this.layer = layer;
     }
 
     public void clearObjectiveCache(){
-        border = null;
     }
 
     public void clearDisplayCache(){
-        border = null;
     }
 
     /**
@@ -106,7 +103,7 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
     public ProjectedGeometry getEnvelopeGeometry(RenderingContext2D context) {
         final Envelope env = layer.getBounds();
         final Geometry jtsBounds = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
-        border = new ProjectedGeometry(context);
+        final ProjectedGeometry border = new ProjectedGeometry(context);
         border.setDataGeometry(jtsBounds,CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
         return border;
     }

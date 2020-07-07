@@ -34,8 +34,6 @@ import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
-import org.apache.sis.storage.event.StoreEvent;
-import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
@@ -66,7 +64,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -90,26 +87,11 @@ import org.opengis.util.GenericName;
  * @author johann sorel (Geomatys)
  * @module
  */
-public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> implements StoreListener<StoreEvent> {
-
-    protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
+public class FeatureLayerJ2D extends MapLayerJ2D<FeatureMapLayer> {
 
 
     public FeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
-        super(canvas, layer, false);
-
-        final FeatureSet resource = layer.getResource();
-        if (resource instanceof FeatureSet) {
-            weakSessionListener.registerSource(resource);
-        }
-    }
-
-    @Override
-    public void eventOccured(StoreEvent event) {
-        if (item.isVisible() && getCanvas().isAutoRepaint()) {
-            //TODO should call a repaint only on this graphic
-            getCanvas().repaint();
-        }
+        super(canvas, layer);
     }
 
     /**
