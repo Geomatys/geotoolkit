@@ -28,12 +28,12 @@ import org.apache.sis.storage.UnsupportedQueryException;
 import org.geotoolkit.storage.multires.GeneralProgressiveResource;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.TileGenerator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  *
@@ -55,8 +55,8 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutio
         //search for a pyramid
         //-- we use the first pyramid as default
         for (MultiResolutionModel model : models) {
-            if (model instanceof org.geotoolkit.storage.multires.Pyramid) {
-                org.geotoolkit.storage.multires.Pyramid pyramid = (org.geotoolkit.storage.multires.Pyramid) model;
+            if (model instanceof org.geotoolkit.storage.multires.TileMatrixSet) {
+                org.geotoolkit.storage.multires.TileMatrixSet pyramid = (org.geotoolkit.storage.multires.TileMatrixSet) model;
                 return Optional.ofNullable(pyramid.getEnvelope());
             }
         }
@@ -64,8 +64,8 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutio
     }
 
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
-        return (Collection<Pyramid>) super.getModels();
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+        return (Collection<TileMatrixSet>) super.getModels();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutio
 
     @Override
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
-        return new PyramidFeatureSetReader(this, getType()).features(null, parallel);
+        return new TileMatrixSetFeatureReader(this, getType()).features(null, parallel);
     }
 
     private final class SubSet extends AbstractFeatureSet {
@@ -113,7 +113,7 @@ public class ProgressiveFeatureSetResource<T extends FeatureSet & MultiResolutio
 
         @Override
         public Stream<Feature> features(boolean parallel) throws DataStoreException {
-            return new PyramidFeatureSetReader(ProgressiveFeatureSetResource.this, getType()).features(this.query, parallel);
+            return new TileMatrixSetFeatureReader(ProgressiveFeatureSetResource.this, getType()).features(this.query, parallel);
         }
 
     }

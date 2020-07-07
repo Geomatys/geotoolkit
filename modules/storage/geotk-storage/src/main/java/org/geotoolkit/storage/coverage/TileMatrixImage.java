@@ -31,8 +31,8 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -43,35 +43,35 @@ import org.geotoolkit.storage.multires.Tile;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MosaicImage extends ComputedImage implements RenderedImage {
+public class TileMatrixImage extends ComputedImage implements RenderedImage {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
     /**
-     * The original mosaic to read
+     * The original TileMatrix to read
      */
-    private final Mosaic mosaic;
+    private final TileMatrix matrix;
     /**
-     * Tile range to map as a rendered image in the mosaic
+     * Tile range to map as a rendered image in the TileMatrix
      */
     private final Rectangle gridRange;
 
     /**
-     * The color model of the mosaic rendered image
+     * The color model of the TileMatrix rendered image
      */
     private final ColorModel colorModel;
     /**
-     * The sample model of the mosaic rendered image
+     * The sample model of the TileMatrix rendered image
      */
     private final SampleModel sampleModel;
     /**
-     * The raster model of the mosaic rendered image
+     * The raster model of the TileMatrix rendered image
      */
     private final Raster rasterModel;
 
-    public static MosaicImage create(Mosaic mosaic, Rectangle gridRange, final List<SampleDimension> sampleDimensions) throws DataStoreException {
+    public static TileMatrixImage create(TileMatrix matrix, Rectangle gridRange, final List<SampleDimension> sampleDimensions) throws DataStoreException {
         if (gridRange == null) {
-            gridRange = new Rectangle(mosaic.getGridSize());
+            gridRange = new Rectangle(matrix.getGridSize());
         }
 
         if (gridRange.width == 0 || gridRange.height == 0) {
@@ -80,7 +80,7 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
 
         RenderedImage sample;
         try {
-            Tile tile = mosaic.anyTile();
+            Tile tile = matrix.anyTile();
             if (tile instanceof ImageTile) {
                 sample = ((ImageTile) tile).getImage();
             } else {
@@ -89,7 +89,7 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
         } catch (DataStoreException | IOException ex) {
             if (sampleDimensions != null) {
                 //use a fake tile created from sample dimensions
-                final Dimension tileSize = mosaic.getTileSize();
+                final Dimension tileSize = matrix.getTileSize();
                 sample = BufferedImages.createImage(tileSize.width, tileSize.height, sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
             } else if (ex instanceof DataStoreException) {
                 throw (DataStoreException) ex;
@@ -101,18 +101,18 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
         final SampleModel sm = sample.getSampleModel();
         final ColorModel cm = sample.getColorModel();
         final Raster rm = sample.getTile(sample.getMinTileX(), sample.getMinTileY());
-        return new MosaicImage(mosaic, gridRange, sm, cm, rm);
+        return new TileMatrixImage(matrix, gridRange, sm, cm, rm);
     }
 
     /**
      * Constructor
-     * @param mosaic the mosaic to read as a rendered image
+     * @param matrix the TileMatrix to read as a rendered image
      * @param gridRange the tile to include in the rendered image.
      *        rectangle max max values are exclusive.
      */
-    private MosaicImage(final Mosaic mosaic, Rectangle gridRange, SampleModel sampleModel, ColorModel colorModel, Raster rasterModel){
+    private TileMatrixImage(final TileMatrix matrix, Rectangle gridRange, SampleModel sampleModel, ColorModel colorModel, Raster rasterModel){
         super(sampleModel);
-        this.mosaic = mosaic;
+        this.matrix = matrix;
         this.gridRange = gridRange;
         this.sampleModel = sampleModel;
         this.colorModel = colorModel;
@@ -123,8 +123,8 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
      * Return intern GridMosaic
      * @return GridMosaic
      */
-    public Mosaic getGridMosaic(){
-        return this.mosaic;
+    public TileMatrix getTileMatrix(){
+        return this.matrix;
     }
 
     /**
@@ -156,7 +156,7 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getWidth() {
-        return gridRange.width * this.mosaic.getTileSize().width;
+        return gridRange.width * this.matrix.getTileSize().width;
     }
 
     /**
@@ -164,7 +164,7 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getHeight() {
-        return gridRange.height * this.mosaic.getTileSize().height;
+        return gridRange.height * this.matrix.getTileSize().height;
     }
 
     /**
@@ -188,7 +188,7 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getTileWidth() {
-        return this.mosaic.getTileSize().width;
+        return this.matrix.getTileSize().width;
     }
 
     /**
@@ -196,7 +196,7 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
      */
     @Override
     public int getTileHeight() {
-        return this.mosaic.getTileSize().height;
+        return this.matrix.getTileSize().height;
     }
 
     @Override
@@ -212,8 +212,8 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
         try {
             DataBuffer buffer = null;
 
-            if (!mosaic.isMissing(mosaictileX,mosaictileY)) {
-                final ImageTile tile = (ImageTile) mosaic.getTile(mosaictileX,mosaictileY);
+            if (!matrix.isMissing(mosaictileX,mosaictileY)) {
+                final ImageTile tile = (ImageTile) matrix.getTile(mosaictileX,mosaictileY);
                 //can happen if tile is really missing, the isMissing method is a best effort call
                 if (tile != null) {
                     final RenderedImage image = tile.getImage();
@@ -259,7 +259,7 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
     }
 
     private boolean isTileMissing(int x, int y) throws DataStoreException{
-        return mosaic.isMissing(x+gridRange.x, y+gridRange.y);
+        return matrix.isMissing(x+gridRange.x, y+gridRange.y);
     }
 
     /**
@@ -273,7 +273,7 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
             //this is a severe issue, the mosaic to no respect it's own sample dimension definition
             throw new BackingStoreException("Mosaic tile image declares " + inNumBands
                     + " bands, but sample dimensions have " + outNumBands
-                    + ", please fix mosaic implementation " + mosaic.getClass().getName());
+                    + ", please fix mosaic implementation " + matrix.getClass().getName());
         }
 
         final int inDataType = in.getDataBuffer().getDataType();
@@ -402,9 +402,9 @@ public class MosaicImage extends ComputedImage implements RenderedImage {
      * @param y
      * @return
      */
-    private Point getPositionOf(int x, int y){
-        final int posX = (int)(Math.floor(x/this.getTileWidth()));
-        final int posY = (int)(Math.floor(y/this.getTileHeight()));
+    private Point getPositionOf (int x, int y) {
+        final int posX = (int) (Math.floor(x / this.getTileWidth()));
+        final int posY = (int) (Math.floor(y / this.getTileHeight()));
         return new Point(posX, posY);
     }
 

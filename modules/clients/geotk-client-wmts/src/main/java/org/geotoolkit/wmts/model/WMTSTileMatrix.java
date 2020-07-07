@@ -29,39 +29,38 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.multires.AbstractMosaic;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.AbstractTileMatrix;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.wmts.WMTSUtilities;
-import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSMosaic implements Mosaic {
+public class WMTSTileMatrix implements TileMatrix {
 
     private final String id = UUID.randomUUID().toString();
-    private final WMTSPyramid pyramid;
-    private final TileMatrix matrix;
+    private final WMTSTileMatrixSet pyramid;
+    private final org.geotoolkit.wmts.xml.v100.TileMatrix matrix;
     private final TileMatrixLimits limit;
     private final double scale;
     private Tile anyTile = null;
 
-    public WMTSMosaic(final WMTSPyramid pyramid, final TileMatrix matrix, final TileMatrixLimits limits) {
+    public WMTSTileMatrix(final WMTSTileMatrixSet pyramid, final org.geotoolkit.wmts.xml.v100.TileMatrix matrix, final TileMatrixLimits limits) {
         this.pyramid = pyramid;
         this.matrix = matrix;
         this.limit = limits;
         this.scale = WMTSUtilities.unitsByPixel(pyramid.getMatrixset(), pyramid.getCoordinateReferenceSystem(), matrix);
     }
 
-    public TileMatrix getMatrix() {
+    public org.geotoolkit.wmts.xml.v100.TileMatrix getMatrix() {
         return matrix;
     }
 
@@ -70,7 +69,7 @@ public class WMTSMosaic implements Mosaic {
         return id;
     }
 
-    public WMTSPyramid getPyramid() {
+    public WMTSTileMatrixSet getPyramid() {
         return pyramid;
     }
 
@@ -134,7 +133,7 @@ public class WMTSMosaic implements Mosaic {
     @Override
     public ImageTile getTile(long col, long row, Map hints) throws DataStoreException {
         if (hints == null) hints = new HashMap();
-        if (!hints.containsKey(Pyramids.HINT_FORMAT)) hints.put(Pyramids.HINT_FORMAT,"image/png");
+        if (!hints.containsKey(TileMatrices.HINT_FORMAT)) hints.put(TileMatrices.HINT_FORMAT,"image/png");
 
         return pyramid.getPyramidSet().getTile(pyramid, this, col, row, hints);
     }
@@ -142,9 +141,9 @@ public class WMTSMosaic implements Mosaic {
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         if(hints==null) hints = new HashMap();
-        if(!hints.containsKey(Pyramids.HINT_FORMAT)){
+        if(!hints.containsKey(TileMatrices.HINT_FORMAT)){
             hints = new HashMap(hints);
-            hints.put(Pyramids.HINT_FORMAT,"image/png");
+            hints.put(TileMatrices.HINT_FORMAT,"image/png");
         }
         return pyramid.getPyramidSet().getTiles(pyramid, this, positions, hints);
     }
@@ -181,6 +180,6 @@ public class WMTSMosaic implements Mosaic {
 
     @Override
     public String toString() {
-        return AbstractMosaic.toString(this);
+        return AbstractTileMatrix.toString(this);
     }
 }

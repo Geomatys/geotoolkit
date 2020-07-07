@@ -35,9 +35,7 @@ import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DeferredTile;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Geometry;
@@ -50,6 +48,8 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Generate tiles with a FeatureSet resource.
@@ -87,9 +87,9 @@ public class FeatureSetTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord) throws DataStoreException {
+    public Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord) throws DataStoreException {
 
-        final Envelope tileEnv = Pyramids.computeTileEnvelope(mosaic, tileCoord.x, tileCoord.y);
+        final Envelope tileEnv = TileMatrices.computeTileEnvelope(mosaic, tileCoord.x, tileCoord.y);
         final CoordinateReferenceSystem tileCrs = tileEnv.getCoordinateReferenceSystem();
         final Filter filter;
         try {

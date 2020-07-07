@@ -26,30 +26,30 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * A Pyramid is a collection of mosaic in the same CRS but at different
+ * A TileMatrixSet is a collection of TileMatrix in the same CRS but at different
  * scale levels.
  * <p>
- * Note : if the {@linkplain CoordinateReferenceSystem } of the pyramid has more
- * then two dimensions, it is possible to find multiple mosaics at the same scale.
- * Each mosaic been located on a different slice in one of the {@linkplain CoordinateReferenceSystem }
+ * Note : if the {@linkplain CoordinateReferenceSystem } of the TileMatrixSet has more
+ * then two dimensions, it is possible to find TileMatrix at the same scale.
+ * Each TileMatrix been located on a different slice in one of the {@linkplain CoordinateReferenceSystem }
  * axis.
  * </p>
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Pyramid extends MultiResolutionModel {
+public interface TileMatrixSet extends MultiResolutionModel {
 
     /**
-     * @return the crs used for all mosaics in the pyramid.
+     * @return the crs used for all tiles in the pyramid.
      */
     CoordinateReferenceSystem getCoordinateReferenceSystem();
 
     /**
-     * @return unmodifiable collection of all mosaics.
-     * Waring : in multidimensional pyramids, multiple mosaic at the same scale
+     * @return unmodifiable collection of all TileMatrix.
+     * Waring : in multidimensional pyramids, multiple TileMatrix at the same scale
      * may exist.
      */
-    Collection<? extends Mosaic> getMosaics();
+    Collection<? extends TileMatrix> getTileMatrices();
 
     /**
      * @return the different scales available in the pyramid.
@@ -59,7 +59,7 @@ public interface Pyramid extends MultiResolutionModel {
     default double[] getScales() {
         final SortedSet<Double> scaleSet = new TreeSet<Double>();
 
-        for(Mosaic m : getMosaics()){
+        for(TileMatrix m : TileMatrixSet.this.getTileMatrices()){
             scaleSet.add(m.getScale());
         }
 
@@ -76,13 +76,13 @@ public interface Pyramid extends MultiResolutionModel {
 
     /**
      * @param scale the wanted scale, must match an available scale of the scales table.
-     * @return Collection<GridMosaic> available mosaics at this scale.
-     * Waring : in multidimensional pyramids, multiple mosaic at the same scale
+     * @return Collection<TileMatrix> available TileMatrix at this scale.
+     * Waring : in multidimensional pyramids, multiple TileMatrix at the same scale
      * may exist.
      */
-    default Collection<Mosaic> getMosaics(double scale) {
-        final List<Mosaic> candidates = new ArrayList<>();
-        for (Mosaic m : getMosaics()) {
+    default Collection<TileMatrix> getTileMatrices(double scale) {
+        final List<TileMatrix> candidates = new ArrayList<>();
+        for (TileMatrix m : TileMatrixSet.this.getTileMatrices()) {
             if (m.getScale() == scale) {
                 candidates.add(m);
             }
@@ -92,27 +92,27 @@ public interface Pyramid extends MultiResolutionModel {
 
     /**
      * Get pyramid envelope.
-     * This is the aggregation of all mosaic envelopes.
+     * This is the aggregation of all TileMatrix envelopes.
      *
      * @return Envelope
      */
     Envelope getEnvelope();
 
     /**
-     * Create new mosaic copied properties from template.
+     * Create new TileMatrix copied properties from template.
      *
-     * @param template mosaic model
-     * @return created mosaic
+     * @param template TileMatrix model
+     * @return created TileMatrix
      * @throws DataStoreException
      */
-    Mosaic createMosaic(Mosaic template) throws DataStoreException;
+    TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException;
 
     /**
-     * Delete given mosaic.
+     * Delete given TileMatrix.
      *
-     * @param mosaicId
+     * @param tileMatrixId
      * @throws DataStoreException
      */
-    void deleteMosaic(String mosaicId) throws DataStoreException;
+    void deleteTileMatrix(String tileMatrixId) throws DataStoreException;
 
 }

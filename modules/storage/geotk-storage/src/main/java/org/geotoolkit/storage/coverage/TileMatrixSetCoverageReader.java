@@ -54,11 +54,9 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.finder.CoverageFinder;
 import org.geotoolkit.storage.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.storage.multires.GeneralProgressiveResource;
-import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -68,6 +66,8 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * GridCoverage reader on top of a Pyramidal object.
@@ -76,13 +76,13 @@ import org.opengis.util.FactoryException;
  * @param <T>
  * @module
  */
-public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
+public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> {
 
     private final T ref;
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
-    public PyramidReader(T ref) {
+    public TileMatrixSetCoverageReader(T ref) {
         this.ref = ref;
     }
 
@@ -91,10 +91,10 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
 
         //search for a pyramid
         //-- we use the first pyramid as default
-        org.geotoolkit.storage.multires.Pyramid pyramid = null;
+        org.geotoolkit.storage.multires.TileMatrixSet pyramid = null;
         for (MultiResolutionModel model : models) {
-            if (model instanceof org.geotoolkit.storage.multires.Pyramid) {
-                pyramid = (org.geotoolkit.storage.multires.Pyramid) model;
+            if (model instanceof org.geotoolkit.storage.multires.TileMatrixSet) {
+                pyramid = (org.geotoolkit.storage.multires.TileMatrixSet) model;
                 break;
             }
         }
@@ -102,14 +102,14 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         return getGridGeometry(pyramid);
     }
 
-    private static GridGeometry getGridGeometry(Pyramid pyramid) {
+    private static GridGeometry getGridGeometry(TileMatrixSet pyramid) {
 
         if (pyramid == null) {
             //-- empty pyramid set
             return GridGeometry.UNDEFINED;
         }
 
-        final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
+        final List<TileMatrix> mosaics = new ArrayList<>(pyramid.getTileMatrices());
         if (mosaics.isEmpty()) {
             //no mosaics
             return GridGeometry.UNDEFINED;
@@ -123,10 +123,10 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         final int nbdim                     = cs.getDimension();
 
         //-- use the first mosaic informations, most accurate
-        final Mosaic mosaic  = mosaics.get(0);
+        final TileMatrix mosaic  = mosaics.get(0);
 
         //-- we expect no rotation
-        final MathTransform gridToCRS = Pyramids.getTileGridToCRS2D(mosaic, new Point(0, 0), PixelInCell.CELL_CORNER);
+        final MathTransform gridToCRS = TileMatrices.getTileGridToCRS2D(mosaic, new Point(0, 0), PixelInCell.CELL_CORNER);
 
         //-- get all mosaics with same scale
         final double scal = mosaic.getScale();
@@ -141,7 +141,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             if (i != minordi && i!= minordi + 1) {
                 //-- pass by TreeSet to avoid duplicate
                 final SortedSet<Double> axisValues = new TreeSet();
-                for (final Mosaic gridMos : mosaics) {
+                for (final TileMatrix gridMos : mosaics) {
                    axisValues.add(gridMos.getUpperLeftCorner().getOrdinate(i));
                 }
                 //-- convert Double[] -> double[]
@@ -209,8 +209,8 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             domain = getGridGeometry();
         }
 
-        final Entry<Envelope, List<Mosaic>> intersect = intersect(ref, domain);
-        final List<Mosaic> mosaics = intersect.getValue();
+        final Entry<Envelope, List<TileMatrix>> intersect = intersect(ref, domain);
+        final List<TileMatrix> mosaics = intersect.getValue();
         final Envelope wantedEnv = intersect.getKey();
 
         //-- features the data
@@ -233,19 +233,19 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
      * @return GridCoverage
      * @throws CoverageStoreException
      */
-    private GridCoverage readSlice(Mosaic mosaic, Envelope wantedEnv) throws DataStoreException {
+    private GridCoverage readSlice(TileMatrix mosaic, Envelope wantedEnv) throws DataStoreException {
 
         final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
         final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
         final Dimension tileSize = mosaic.getTileSize();
 
-        final Rectangle tilesInEnvelope = Pyramids.getTilesInEnvelope(mosaic, wantedEnv);
+        final Rectangle tilesInEnvelope = TileMatrices.getTilesInEnvelope(mosaic, wantedEnv);
         final int tileMinCol = tilesInEnvelope.x;
         final int tileMinRow = tilesInEnvelope.y;
 
-        if (mosaic instanceof GeneralProgressiveResource.ProgressiveMosaic) {
+        if (mosaic instanceof GeneralProgressiveResource.ProgressiveTileMatrix) {
 
-            final RenderedImage image = ((GeneralProgressiveResource.ProgressiveMosaic) mosaic).asImage();
+            final RenderedImage image = ((GeneralProgressiveResource.ProgressiveTileMatrix) mosaic).asImage();
 
             final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
             Arrays.fill(high, 1);
@@ -253,7 +253,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             high[1] = image.getHeight();
 
             final GridExtent ge = new GridExtent(null, null, high, false);
-            final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
+            final MathTransform gtc = TileMatrices.getTileGridToCRSND(mosaic,
                     new Point(0,0),wantedCRS.getCoordinateSystem().getDimension(),
                     PixelInCell.CELL_CENTER);
             final GridGeometry gridgeo = new GridGeometry(ge, PixelInCell.CELL_CENTER, gtc, wantedCRS);
@@ -274,7 +274,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
                 h[0] = (tilesInEnvelope.width) * tileSize.width;
                 h[1] = (tilesInEnvelope.height) * tileSize.height;
                 crop = new GridExtent(null, l, h, false);
-                final MathTransform gtcr = Pyramids.getTileGridToCRSND(mosaic,
+                final MathTransform gtcr = TileMatrices.getTileGridToCRSND(mosaic,
                         new Point(tilesInEnvelope.x,tilesInEnvelope.y),wantedCRS.getCoordinateSystem().getDimension(),
                         PixelInCell.CELL_CENTER);
                 final GridGeometry cropped = new GridGeometry(crop, PixelInCell.CELL_CENTER, gtcr, wantedCRS);
@@ -284,7 +284,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         }
 
 
-        final RenderedImage image =  MosaicImage.create(mosaic, tilesInEnvelope, sampleDimensions);
+        final RenderedImage image =  TileMatrixImage.create(mosaic, tilesInEnvelope, sampleDimensions);
 
         final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
         Arrays.fill(high, 1);
@@ -292,17 +292,17 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         high[1] = image.getHeight();
 
         final GridExtent ge = new GridExtent(null, null, high, false);
-        final MathTransform gtc = Pyramids.getTileGridToCRSND(mosaic,
+        final MathTransform gtc = TileMatrices.getTileGridToCRSND(mosaic,
                 new Point(tileMinCol,tileMinRow),wantedCRS.getCoordinateSystem().getDimension(),
                 PixelInCell.CELL_CENTER);
         final GridGeometry gridgeo = new GridGeometry(ge, PixelInCell.CELL_CENTER, gtc, wantedCRS);
         return new GridCoverage2D(gridgeo, sampleDimensions, image);
     }
 
-    private GridCoverage readCube(List<Mosaic> mosaics, Envelope wantedEnv) throws DataStoreException {
+    private GridCoverage readCube(List<TileMatrix> mosaics, Envelope wantedEnv) throws DataStoreException {
         //regroup mosaic by hierarchy cubes
         final TreeMap groups = new TreeMap();
-        for (Mosaic mosaic : mosaics) {
+        for (TileMatrix mosaic : mosaics) {
             appendSlice(groups, mosaic);
         }
 
@@ -318,7 +318,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
      * @param mosaic
      * @throws CoverageStoreException
      */
-    private void appendSlice(final TreeMap<Double,Object> rootGroup, Mosaic mosaic) throws DataStoreException {
+    private void appendSlice(final TreeMap<Double,Object> rootGroup, TileMatrix mosaic) throws DataStoreException {
         final DirectPosition upperLeft = mosaic.getUpperLeftCorner();
         TreeMap<Double,Object> groups = rootGroup;
 
@@ -329,11 +329,11 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             if (obj == null) {
                 groups.put(d, mosaic);
                 break;
-            } else if (obj instanceof Mosaic) {
+            } else if (obj instanceof TileMatrix) {
                 //already another mosaic for the dimension slice
                 //replace the coverage by a map and re-add them.
                 groups.put(d, new TreeMap());
-                appendSlice(rootGroup, (Mosaic) obj);
+                appendSlice(rootGroup, (TileMatrix) obj);
                 appendSlice(rootGroup, mosaic);
                 break;
             } else if (obj instanceof TreeMap) {
@@ -379,8 +379,8 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
             }
 
             final GridCoverage subCoverage;
-            if (obj instanceof Mosaic) {
-                subCoverage = readSlice((Mosaic)obj, sliceEnvelop);
+            if (obj instanceof TileMatrix) {
+                subCoverage = readSlice((TileMatrix)obj, sliceEnvelop);
             } else if (obj instanceof TreeMap) {
                 subCoverage = rebuildCoverage((TreeMap)obj, sliceEnvelop, axisIndex-1);
             } else {
@@ -429,14 +429,14 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
      * @param mrr, not null
      * @param domain, not null
      */
-    public static Entry<Envelope,List<Mosaic>> intersect(MultiResolutionResource mrr, GridGeometry domain) throws DataStoreException {
+    public static Entry<Envelope,List<TileMatrix>> intersect(MultiResolutionResource mrr, GridGeometry domain) throws DataStoreException {
         ArgumentChecks.ensureNonNull("mrr", mrr);
         ArgumentChecks.ensureNonNull("domain", domain);
 
         final DefaultCoverageFinder coverageFinder = new DefaultCoverageFinder();
 
         CoordinateReferenceSystem crs = domain.getCoordinateReferenceSystem();
-        Pyramid pyramid;
+        TileMatrixSet pyramid;
         try {
              pyramid = coverageFinder.findPyramid(mrr, crs);
         } catch (FactoryException ex) {
@@ -491,7 +491,7 @@ public class PyramidReader <T extends MultiResolutionResource & org.apache.sis.s
         }
         //----------------------------------------
 
-        List<Mosaic> mosaics;
+        List<TileMatrix> mosaics;
         try {
             mosaics = coverageFinder.findMosaics(pyramid, wantedResolution, tolerance, wantedEnv);
         } catch (MismatchedDimensionException ex) {

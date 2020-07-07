@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  * Default PyramidSet.
@@ -29,16 +29,17 @@ import org.geotoolkit.util.StringUtilities;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultPyramidSet {
+public class DefaultTileMatrixSets {
 
-    private final List<Pyramid> pyramids = new ArrayList<Pyramid>();
+    private final List<TileMatrixSet> tileMatrixSets = new ArrayList<TileMatrixSet>();
 
-    public Collection<Pyramid> getPyramids() {
-        return pyramids;
+    public Collection<TileMatrixSet> getTileMatrixSets() {
+        return tileMatrixSets;
     }
 
+    @Override
     public String toString(){
-        return StringUtilities.toStringTree(Classes.getShortClassName(this), getPyramids());
+        return StringUtilities.toStringTree(Classes.getShortClassName(this), getTileMatrixSets());
     }
 
 }

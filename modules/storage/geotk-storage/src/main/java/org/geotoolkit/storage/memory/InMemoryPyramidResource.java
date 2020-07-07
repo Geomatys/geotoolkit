@@ -40,18 +40,18 @@ import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.PyramidReader;
-import org.geotoolkit.storage.multires.AbstractMosaic;
-import org.geotoolkit.storage.multires.AbstractPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.storage.multires.AbstractTileMatrix;
+import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -61,7 +61,7 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
     private final InMemoryStore store;
     private final GenericName identifier;
-    private final List<Pyramid> pyramids = new CopyOnWriteArrayList<>();
+    private final List<TileMatrixSet> pyramids = new CopyOnWriteArrayList<>();
     private List<SampleDimension> dimensions;
 
     public InMemoryPyramidResource(final GenericName name) {
@@ -88,7 +88,7 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
      * {@inheritDoc }.
      */
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
         return pyramids;
     }
 
@@ -112,10 +112,10 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
      */
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof Pyramid) {
-            final Pyramid p = (Pyramid) template;
-            final InMemoryPyramid py = new InMemoryPyramid(UUID.randomUUID().toString(), p.getCoordinateReferenceSystem());
-            Pyramids.copyStructure(p, py);
+        if (template instanceof TileMatrixSet) {
+            final TileMatrixSet p = (TileMatrixSet) template;
+            final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(UUID.randomUUID().toString(), p.getCoordinateReferenceSystem());
+            TileMatrices.copyStructure(p, py);
             pyramids.add(py);
             return py;
         } else {
@@ -126,9 +126,9 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
     @Override
     public void removeModel(String identifier) throws DataStoreException {
         ArgumentChecks.ensureNonNull("identifier", identifier);
-        final Iterator<Pyramid> it     = pyramids.iterator();
+        final Iterator<TileMatrixSet> it     = pyramids.iterator();
         while (it.hasNext()) {
-            final Pyramid py = it.next();
+            final TileMatrixSet py = it.next();
             if (identifier.equalsIgnoreCase(py.getIdentifier())) {
                 pyramids.remove(py);
                 return;
@@ -139,12 +139,12 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidReader<>(this).getGridGeometry();
+        return new TileMatrixSetCoverageReader<>(this).getGridGeometry();
     }
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidReader<>(this).read(domain, range);
+        return new TileMatrixSetCoverageReader<>(this).read(domain, range);
     }
 
     @Override
@@ -152,30 +152,30 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
         throw new UnsupportedOperationException("Not supported.");
     }
 
-    private final class InMemoryPyramid extends AbstractPyramid {
+    private final class InMemoryTileMatrixSet extends AbstractTileMatrixSet {
 
-        private final List<InMemoryMosaic> mosaics = new CopyOnWriteArrayList<>();
+        private final List<InMemoryTileMatrix> mosaics = new CopyOnWriteArrayList<>();
 
-        public InMemoryPyramid(String id, CoordinateReferenceSystem crs) {
+        public InMemoryTileMatrixSet(String id, CoordinateReferenceSystem crs) {
             super(id, crs);
         }
 
         @Override
-        public Collection<? extends Mosaic> getMosaics() {
+        public Collection<? extends TileMatrix> getTileMatrices() {
             return Collections.unmodifiableList(mosaics);
         }
 
         @Override
-        public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
             final String mosaicId = UUID.randomUUID().toString();
-            final InMemoryMosaic gm = new InMemoryMosaic(mosaicId,
+            final InMemoryTileMatrix gm = new InMemoryTileMatrix(mosaicId,
                     this, template.getUpperLeftCorner(), template.getGridSize(), template.getTileSize(), template.getScale());
             mosaics.add(gm);
             return gm;
         }
 
         @Override
-        public void deleteMosaic(String mosaicId) throws DataStoreException {
+        public void deleteTileMatrix(String mosaicId) throws DataStoreException {
             for (int id = 0, len = mosaics.size(); id < len; id++) {
                 if (mosaics.get(id).getIdentifier().equalsIgnoreCase(mosaicId)) {
                     mosaics.remove(id);
@@ -186,11 +186,11 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
     }
 
-    private final class InMemoryMosaic extends AbstractMosaic {
+    private final class InMemoryTileMatrix extends AbstractTileMatrix {
 
         private final Map<Point,InMemoryTile> mpTileReference = new HashMap<>();
 
-        public InMemoryMosaic(final String id, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
+        public InMemoryTileMatrix(final String id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
             super(id, pyramid, upperLeft, gridSize, tileSize, scale);
         }
 

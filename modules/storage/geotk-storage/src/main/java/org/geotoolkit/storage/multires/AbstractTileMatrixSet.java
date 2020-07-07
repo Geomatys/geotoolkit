@@ -27,22 +27,22 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Abstract pyramid
+ * Abstract MatrixSet
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class AbstractPyramid implements Pyramid {
+public abstract class AbstractTileMatrixSet implements TileMatrixSet {
 
     protected final String id;
     protected final CoordinateReferenceSystem crs;
     protected String format = null;
 
-    public AbstractPyramid(CoordinateReferenceSystem crs) {
+    public AbstractTileMatrixSet(CoordinateReferenceSystem crs) {
         this(null,crs);
     }
 
-    public AbstractPyramid(String id, CoordinateReferenceSystem crs) {
+    public AbstractTileMatrixSet(String id, CoordinateReferenceSystem crs) {
         this.crs = crs;
         if(id == null){
             this.id = UUID.randomUUID().toString();
@@ -74,7 +74,7 @@ public abstract class AbstractPyramid implements Pyramid {
     @Override
     public Envelope getEnvelope() {
         GeneralEnvelope env = null;
-        for(Mosaic mosaic : getMosaics()){
+        for(TileMatrix mosaic : getTileMatrices()){
             if(env==null){
                 env = new GeneralEnvelope(mosaic.getEnvelope());
             }else{
@@ -88,12 +88,12 @@ public abstract class AbstractPyramid implements Pyramid {
      * Pretty print output of given pyramid.
      * @param pyramid not null
      */
-    public static String toString(Pyramid pyramid) {
+    public static String toString(TileMatrixSet pyramid) {
         final List<String> elements = new ArrayList<>();
         elements.add("id : " + pyramid.getIdentifier());
         elements.add("format : " + pyramid.getFormat());
         elements.add("crs : " + IdentifiedObjects.getIdentifierOrName(pyramid.getCoordinateReferenceSystem()));
-        elements.add(StringUtilities.toStringTree("mosaics", pyramid.getMosaics()));
+        elements.add(StringUtilities.toStringTree("mosaics", pyramid.getTileMatrices()));
         return StringUtilities.toStringTree(Classes.getShortClassName(pyramid), elements);
     }
 }

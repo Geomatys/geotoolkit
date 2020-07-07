@@ -29,10 +29,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.coverage.PyramidReader;
-import org.geotoolkit.wmsc.model.WMSCPyramidSet;
+import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.wmsc.model.WMSCTileMatrixSets;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  *
@@ -43,14 +43,14 @@ public class WMSCCoverageResource extends AbstractGridResource implements MultiR
 
     private final WebMapClientCached server;
     private final GenericName name;
-    private final WMSCPyramidSet set;
+    private final WMSCTileMatrixSets set;
 
     public WMSCCoverageResource(final WebMapClientCached server,
             final GenericName name) throws CapabilitiesException{
         super(null);
         this.server = server;
         this.name = name;
-        set = new WMSCPyramidSet(server, name.tip().toString());
+        set = new WMSCTileMatrixSets(server, name.tip().toString());
     }
 
     @Override
@@ -63,13 +63,13 @@ public class WMSCCoverageResource extends AbstractGridResource implements MultiR
         return Optional.of(name);
     }
 
-    public WMSCPyramidSet getPyramidSet() {
+    public WMSCTileMatrixSets getPyramidSet() {
         return set;
     }
 
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
-        return set.getPyramids();
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+        return set.getTileMatrixSets();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class WMSCCoverageResource extends AbstractGridResource implements MultiR
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidReader<>(this).getGridGeometry();
+        return new TileMatrixSetCoverageReader<>(this).getGridGeometry();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class WMSCCoverageResource extends AbstractGridResource implements MultiR
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidReader<>(this).read(domain, range);
+        return new TileMatrixSetCoverageReader<>(this).read(domain, range);
     }
 
 }

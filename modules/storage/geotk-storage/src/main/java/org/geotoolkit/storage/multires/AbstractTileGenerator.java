@@ -91,7 +91,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
     }
 
     @Override
-    public void generate(Pyramid pyramid, Envelope env, NumberRange resolutions,
+    public void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions,
             ProcessListener listener) throws DataStoreException, InterruptedException {
 
         if (env != null) {
@@ -107,11 +107,11 @@ public abstract class AbstractTileGenerator implements TileGenerator {
 
         //generate mosaic in resolution order
         //this order allows the pyramid to be used at high scales until she is not completed.
-        final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
-        mosaics.sort((Mosaic o1, Mosaic o2) -> Double.compare(o2.getScale(), o1.getScale()));
-        for (final Mosaic mosaic : mosaics) {
+        final List<TileMatrix> mosaics = new ArrayList<>(pyramid.getTileMatrices());
+        mosaics.sort((TileMatrix o1, TileMatrix o2) -> Double.compare(o2.getScale(), o1.getScale()));
+        for (final TileMatrix mosaic : mosaics) {
             if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
-                final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
+                final Rectangle rect = TileMatrices.getTilesInEnvelope(mosaic, env);
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
@@ -195,16 +195,16 @@ public abstract class AbstractTileGenerator implements TileGenerator {
 //        }
 //    }
 
-    protected long countTiles(Pyramid pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
+    protected long countTiles(TileMatrixSet pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
 
         long count = 0;
-        for (Mosaic mosaic : pyramid.getMosaics()) {
-            final Mosaic m = mosaic;
+        for (TileMatrix mosaic : pyramid.getTileMatrices()) {
+            final TileMatrix m = mosaic;
             if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
                 if (env == null) {
                     count += ((long) m.getGridSize().width) * ((long) m.getGridSize().height);
                 } else {
-                    final Rectangle rect = Pyramids.getTilesInEnvelope(m, env);
+                    final Rectangle rect = TileMatrices.getTilesInEnvelope(m, env);
                     count += ((long) rect.width) * ((long) rect.height);
                 }
             }

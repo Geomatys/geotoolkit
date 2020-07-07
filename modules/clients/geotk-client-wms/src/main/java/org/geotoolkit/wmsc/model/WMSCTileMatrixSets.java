@@ -22,10 +22,8 @@ import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.client.map.CachedTileMatrixSets;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.xml.v111.Capability;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
@@ -33,17 +31,19 @@ import org.geotoolkit.wmsc.WebMapClientCached;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMSCPyramidSet extends CachedPyramidSet{
+public class WMSCTileMatrixSets extends CachedTileMatrixSets {
 
     private final String layer;
 
-    public WMSCPyramidSet(final WebMapClientCached server, final String layer) throws CapabilitiesException {
+    public WMSCTileMatrixSets(final WebMapClientCached server, final String layer) throws CapabilitiesException {
         super(server,true,server.isCacheImage());
         this.layer = layer;
 
@@ -69,8 +69,8 @@ public class WMSCPyramidSet extends CachedPyramidSet{
                 }
 
                 try {
-                    final WMSCPyramid pyramid = new WMSCPyramid(this, set);
-                    getPyramids().add(pyramid);
+                    final WMSCTileMatrixSet pyramid = new WMSCTileMatrixSet(this, set);
+                    getTileMatrixSets().add(pyramid);
                 } catch (NoSuchAuthorityCodeException ex) {
                     LOGGER.log(Level.INFO, ex.getMessage(),ex);
                 } catch (FactoryException ex) {
@@ -91,12 +91,12 @@ public class WMSCPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    public Request getTileRequest(Pyramid pyramid, Mosaic mosaic, long col, long row, Map hints) throws DataStoreException {
+    public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
         final GetMapRequest request = getServer().createGetMap();
         request.setLayers(layer);
-        request.setEnvelope(Pyramids.computeTileEnvelope(mosaic, col, row));
+        request.setEnvelope(TileMatrices.computeTileEnvelope(mosaic, col, row));
         request.setDimension(mosaic.getTileSize());
-        request.setFormat(((WMSCPyramid)pyramid).getTileset().getFormat());
+        request.setFormat(((WMSCTileMatrixSet)pyramid).getTileset().getFormat());
         return request;
     }
 

@@ -40,11 +40,9 @@ import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.geotoolkit.storage.coverage.MosaicImage;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.coverage.TileMatrixImage;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -53,6 +51,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Generate tile images for terrain.
@@ -63,13 +63,13 @@ import org.opengis.util.FactoryException;
 public class PyramidImageLoader implements ImageLoader{
 
     private final MultiResolutionResource ref;
-    private final Pyramid dataSource;
-    private MosaicImage dataRenderedImage = null;
+    private final TileMatrixSet dataSource;
+    private TileMatrixImage dataRenderedImage = null;
 
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
 
-    public PyramidImageLoader(final MultiResolutionResource ref, final Pyramid dataSource) throws FactoryException, IncommensurableException {
+    public PyramidImageLoader(final MultiResolutionResource ref, final TileMatrixSet dataSource) throws FactoryException, IncommensurableException {
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
         this.ref = ref;
         this.dataSource = dataSource;
@@ -126,22 +126,22 @@ public class PyramidImageLoader implements ImageLoader{
 
         try {
             if (dataRenderedImage != null) {
-                final Mosaic gridMosaic = dataRenderedImage.getGridMosaic();
+                final TileMatrix gridMosaic = dataRenderedImage.getTileMatrix();
                 final double mosaicScale = gridMosaic.getScale();
                 final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
-                if (!dataSource.getMosaics().contains(gridMosaic) || mosaicIndex != indexImg) {
-                    final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
+                if (!dataSource.getTileMatrices().contains(gridMosaic) || mosaicIndex != indexImg) {
+                    final Collection<? extends TileMatrix> mosaics = dataSource.getTileMatrices(scales[indexImg]);
                     if (!mosaics.isEmpty()) {
-                        dataRenderedImage = MosaicImage.create(mosaics.iterator().next(), null, ((GridCoverageResource) ref).getSampleDimensions());
+                        dataRenderedImage = TileMatrixImage.create(mosaics.iterator().next(), null, ((GridCoverageResource) ref).getSampleDimensions());
                     } else {
                         dataRenderedImage = null;
                         return null;
                     }
                 }
             } else {
-                final Collection<? extends Mosaic> mosaics = dataSource.getMosaics(scales[indexImg]);
+                final Collection<? extends TileMatrix> mosaics = dataSource.getTileMatrices(scales[indexImg]);
                 if (!mosaics.isEmpty()) {
-                    dataRenderedImage = MosaicImage.create(mosaics.iterator().next(), null, ((GridCoverageResource) ref).getSampleDimensions());
+                    dataRenderedImage = TileMatrixImage.create(mosaics.iterator().next(), null, ((GridCoverageResource) ref).getSampleDimensions());
                 } else {
                     dataRenderedImage = null;
                     return null;
@@ -153,7 +153,7 @@ public class PyramidImageLoader implements ImageLoader{
         }
     }
 
-    private static BufferedImage extractTileImage(final Envelope tileEnvelope, final MosaicImage dataRenderedImage,
+    private static BufferedImage extractTileImage(final Envelope tileEnvelope, final TileMatrixImage dataRenderedImage,
             final MathTransform transformFromOutput, final Dimension tileSize) throws TransformException {
         if (dataRenderedImage == null) {
             return null;
@@ -162,8 +162,8 @@ public class PyramidImageLoader implements ImageLoader{
         final double targetTileWidth = tileSize.width;
         final double targetTileHeight = tileSize.height;
 
-        final Mosaic gridmosaic = dataRenderedImage.getGridMosaic();
-        final MathTransform mosaicCrsToMosaicGrid = Pyramids.getTileGridToCRS(
+        final TileMatrix gridmosaic = dataRenderedImage.getTileMatrix();
+        final MathTransform mosaicCrsToMosaicGrid = TileMatrices.getTileGridToCRS(
                 gridmosaic, new Point(0, 0), PixelInCell.CELL_CORNER).inverse();
 
         final AffineTransform2D targetGridToTargetCrs = new AffineTransform2D(

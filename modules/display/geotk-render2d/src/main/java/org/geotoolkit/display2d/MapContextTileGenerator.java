@@ -65,10 +65,8 @@ import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
-import org.geotoolkit.storage.multires.DefaultPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.NamesExt;
@@ -84,6 +82,8 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -142,8 +142,8 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord) throws DataStoreException {
-        final LinearTransform tileGridToCrs = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
+    public Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord) throws DataStoreException {
+        final LinearTransform tileGridToCrs = TileMatrices.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
         final Dimension tileSize = mosaic.getTileSize();
         final GridGeometry gridGeom = new GridGeometry(
                 new GridExtent(tileSize.width, tileSize.height),
@@ -162,7 +162,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public void generate(Pyramid pyramid, Envelope env, NumberRange resolutions,
+    public void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions,
             ProcessListener listener) throws DataStoreException, InterruptedException {
 
         //check if we can optimize tiles generation
@@ -251,8 +251,8 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             }
 
             //generate lower level from data
-            final Mosaic[] mosaics = pyramid.getMosaics().toArray(new Mosaic[0]);
-            Arrays.sort(mosaics, (Mosaic o1, Mosaic o2) -> Double.compare(o1.getScale(), o2.getScale()));
+            final TileMatrix[] mosaics = pyramid.getTileMatrices().toArray(new TileMatrix[0]);
+            Arrays.sort(mosaics, (TileMatrix o1, TileMatrix o2) -> Double.compare(o1.getScale(), o2.getScale()));
 
             MapContext parent = sceneDef.getContext();
             Hints hints = sceneDef.getHints();
@@ -263,10 +263,10 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             final AtomicLong tempo = new AtomicLong(System.currentTimeMillis());
             final String msg = " / "+ NumberFormat.getIntegerInstance(Locale.FRANCE).format(total);
 
-            for (final Mosaic mosaic : mosaics) {
+            for (final TileMatrix mosaic : mosaics) {
                 if (resolutions == null || resolutions.contains(mosaic.getScale())) {
 
-                    final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
+                    final Rectangle rect = TileMatrices.getTilesInEnvelope(mosaic, env);
 
                     final CanvasDef canvasDef = new CanvasDef();
                     canvasDef.setBackground(this.canvasDef.getBackground());
@@ -332,7 +332,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     }
 
                     //modify context
-                    final DefaultPyramid pm = new DefaultPyramid(pyramid.getCoordinateReferenceSystem());
+                    final DefaultTileMatrixSet pm = new DefaultTileMatrixSet(pyramid.getCoordinateReferenceSystem());
                     pm.getMosaicsInternal().add(mosaic);
                     final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
                     r.setSampleDimensions(sampleDimensions);

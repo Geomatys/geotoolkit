@@ -53,18 +53,18 @@ import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.PyramidReader;
-import org.geotoolkit.storage.multires.AbstractMosaic;
-import org.geotoolkit.storage.multires.AbstractPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.storage.multires.AbstractTileMatrix;
+import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * This resource acts as an in memory cache for pyramid tiles.
@@ -90,7 +90,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
     private final T parent;
     private GenericName identifier;
-    private final Map<String,CachePyramid> cacheMap = new HashMap<>();
+    private final Map<String,CacheTileMatrixSet> cacheMap = new HashMap<>();
     private final Cache<String,CacheTile> tiles;
     private final Set<String> tilesInProcess = ConcurrentHashMap.newKeySet();
     private final boolean noblocking;
@@ -155,18 +155,18 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
      * {@inheritDoc }.
      */
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
-        final Collection<Pyramid> parentPyramids = (Collection<Pyramid>) parent.getModels();
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+        final Collection<TileMatrixSet> parentPyramids = (Collection<TileMatrixSet>) parent.getModels();
 
-        final List<Pyramid> pyramids;
+        final List<TileMatrixSet> pyramids;
         synchronized (cacheMap) {
             //check cached pyramids, we need to do this until an event system is created
 
             //add missing pyramids in the cache view
             final Set<String> keys = new HashSet<>();
-            for (Pyramid candidate : parentPyramids) {
+            for (TileMatrixSet candidate : parentPyramids) {
                 if (!cacheMap.containsKey(candidate.getIdentifier())) {
-                    cacheMap.put(candidate.getIdentifier(), new CachePyramid(candidate));
+                    cacheMap.put(candidate.getIdentifier(), new CacheTileMatrixSet(candidate));
                 }
                 keys.add(candidate.getIdentifier());
             }
@@ -174,7 +174,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                 //some pyramids have been deleted from parent
                 cacheMap.keySet().retainAll(keys);
             }
-            pyramids = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new Pyramid[0]));
+            pyramids = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new TileMatrixSet[0]));
         }
 
         return pyramids;
@@ -200,7 +200,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
         synchronized (cacheMap) {
             final MultiResolutionModel newParentPyramid = parent.createModel(template);
-            final CachePyramid cached = new CachePyramid((Pyramid) newParentPyramid);
+            final CacheTileMatrixSet cached = new CacheTileMatrixSet((TileMatrixSet) newParentPyramid);
             cacheMap.put(cached.getIdentifier(), cached);
             return cached;
         }
@@ -216,7 +216,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidReader<>(this).read(domain, range);
+        return new TileMatrixSetCoverageReader<>(this).read(domain, range);
     }
 
     /**
@@ -227,28 +227,28 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         tiles.clear();
     }
 
-    private class CachePyramid implements Pyramid {
+    private class CacheTileMatrixSet implements TileMatrixSet {
 
-        private final Pyramid parent;
-        private final Map<String,CacheMosaic> cacheMap = new HashMap<>();
+        private final TileMatrixSet parent;
+        private final Map<String,CacheTileMatrix> cacheMap = new HashMap<>();
 
-        public CachePyramid(Pyramid parent) {
+        public CacheTileMatrixSet(TileMatrixSet parent) {
             this.parent = parent;
         }
 
         @Override
-        public Collection<? extends Mosaic> getMosaics() {
-            final Collection<? extends Mosaic> parentMosaics = parent.getMosaics();
+        public Collection<? extends TileMatrix> getTileMatrices() {
+            final Collection<? extends TileMatrix> parentMosaics = parent.getTileMatrices();
 
             //check cached mosaics, we need to do this until an event system is created
 
             //add missing mosaics in the cache view
-            final List<Mosaic> mosaics;
+            final List<TileMatrix> mosaics;
             synchronized (cacheMap) {
                 final Set<String> keys = new HashSet<>();
-                for (Mosaic m : parentMosaics) {
+                for (TileMatrix m : parentMosaics) {
                     if (!cacheMap.containsKey(m.getIdentifier())) {
-                        cacheMap.put(m.getIdentifier(), new CacheMosaic(this, parent.getIdentifier(), m));
+                        cacheMap.put(m.getIdentifier(), new CacheTileMatrix(this, parent.getIdentifier(), m));
                     }
                     keys.add(m.getIdentifier());
                 }
@@ -256,26 +256,26 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                     //some mosaics have been deleted from parent
                     cacheMap.keySet().retainAll(keys);
                 }
-                mosaics = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new Mosaic[0]));
+                mosaics = UnmodifiableArrayList.wrap(cacheMap.values().toArray(new TileMatrix[0]));
             }
 
             return mosaics;
         }
 
         @Override
-        public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
             synchronized (cacheMap) {
-                final Mosaic newParentMosaic = parent.createMosaic(template);
-                final CacheMosaic cached = new CacheMosaic(this, parent.getIdentifier(), newParentMosaic);
+                final TileMatrix newParentMosaic = parent.createTileMatrix(template);
+                final CacheTileMatrix cached = new CacheTileMatrix(this, parent.getIdentifier(), newParentMosaic);
                 cacheMap.put(cached.getIdentifier(), cached);
                 return cached;
             }
         }
 
         @Override
-        public void deleteMosaic(String mosaicId) throws DataStoreException {
+        public void deleteTileMatrix(String mosaicId) throws DataStoreException {
             synchronized (cacheMap) {
-                parent.deleteMosaic(mosaicId);
+                parent.deleteTileMatrix(mosaicId);
                 cacheMap.remove(mosaicId);
             }
         }
@@ -302,17 +302,17 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
         @Override
         public String toString(){
-            return AbstractPyramid.toString(this);
+            return AbstractTileMatrixSet.toString(this);
         }
     }
 
-    private class CacheMosaic implements Mosaic {
+    private class CacheTileMatrix implements TileMatrix {
 
-        private final CachePyramid pyramid;
+        private final CacheTileMatrixSet pyramid;
         private final String baseid;
-        private final Mosaic parent;
+        private final TileMatrix parent;
 
-        public CacheMosaic(CachePyramid pyramid, String pyramidId, Mosaic parent) {
+        public CacheTileMatrix(CacheTileMatrixSet pyramid, String pyramidId, TileMatrix parent) {
             this.pyramid = pyramid;
             this.parent = parent;
             this.baseid = pyramidId + "¤" + parent.getIdentifier() +"¤";
@@ -377,7 +377,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
                 if (noblocking) {
                     if (tilesInProcess.add(key)) {
                         //loadUpperTile(col, row);
-                        IMAGEQUEUE.add(new TileLoader(CacheMosaic.this, col, row, hints));
+                        IMAGEQUEUE.add(new TileLoader(CacheTileMatrix.this, col, row, hints));
                     }
                 } else {
                     value = loadTile(col, row, hints);
@@ -501,7 +501,7 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
 
         @Override
         public String toString() {
-            return AbstractMosaic.toString(this);
+            return AbstractTileMatrix.toString(this);
         }
     }
 
@@ -575,12 +575,12 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
     private class TileLoader implements Runnable, Comparable<TileLoader> {
 
         private final long creationTime;
-        private final CacheMosaic mosaic;
+        private final CacheTileMatrix mosaic;
         private final long col;
         private final long row;
         private final Map hints;
 
-        private TileLoader(CacheMosaic mosaic, long col, long row, Map hints) {
+        private TileLoader(CacheTileMatrix mosaic, long col, long row, Map hints) {
             this.mosaic = mosaic;
             this.col = col;
             this.row = row;

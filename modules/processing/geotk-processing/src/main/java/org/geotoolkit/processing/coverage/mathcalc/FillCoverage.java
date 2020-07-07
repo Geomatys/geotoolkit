@@ -43,10 +43,8 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.storage.coverage.*;
-import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
@@ -54,6 +52,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * TODO : This should be part of the CoverageWriter interface.
@@ -192,15 +192,15 @@ public class FillCoverage {
         final ColorModel cm = null;
         final SampleModel sm = null;
 
-        for(Pyramid pyramid : Pyramids.getPyramids(outRef)){
-            for(Mosaic mosaic : pyramid.getMosaics()){
+        for(TileMatrixSet pyramid : TileMatrices.getTileMatrixSets(outRef)){
+            for(TileMatrix mosaic : pyramid.getTileMatrices()){
                 final Dimension tileSize = mosaic.getTileSize();
                 final double[] upperLeftGeo = mosaic.getUpperLeftCorner().getCoordinate();
 
                 final Dimension gridSize = mosaic.getGridSize();
                 for(int y=0;y<gridSize.height;y++){
                     for(int x=0;x<gridSize.width;x++){
-                        final MathTransform gridToCRS = Pyramids.getTileGridToCRS(mosaic, new Point(x, y), PixelInCell.CELL_CENTER);
+                        final MathTransform gridToCRS = TileMatrices.getTileGridToCRS(mosaic, new Point(x, y), PixelInCell.CELL_CENTER);
                         final MathTransform crsToGrid = gridToCRS.inverse();
                         final double[] baseCoord = new double[upperLeftGeo.length];
                         crsToGrid.transform(upperLeftGeo, 0, baseCoord, 0, 1);

@@ -51,19 +51,19 @@ public class PyramidsTest {
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
         final GridGeometry gg = new GridGeometry2D(extent, gridToCrs, crs);
 
-        final DefiningPyramid pyramid = Pyramids.createTemplate(gg, new Dimension(256, 256));
+        final DefiningTileMatrixSet pyramid = TileMatrices.createTemplate(gg, new Dimension(256, 256));
         Assert.assertEquals(crs, pyramid.getCoordinateReferenceSystem());
 
-        Assert.assertEquals(3, pyramid.getMosaics().size());
+        Assert.assertEquals(3, pyramid.getTileMatrices().size());
         final double[] scales = pyramid.getScales();
         Assert.assertEquals(3, scales.length);
         Assert.assertEquals(1, scales[0], DELTA);
         Assert.assertEquals(2, scales[1], DELTA);
         Assert.assertEquals(4, scales[2], DELTA);
 
-        final Mosaic m1 = pyramid.getMosaics(scales[0]).iterator().next();
-        final Mosaic m2 = pyramid.getMosaics(scales[1]).iterator().next();
-        final Mosaic m3 = pyramid.getMosaics(scales[2]).iterator().next();
+        final TileMatrix m1 = pyramid.getTileMatrices(scales[0]).iterator().next();
+        final TileMatrix m2 = pyramid.getTileMatrices(scales[1]).iterator().next();
+        final TileMatrix m3 = pyramid.getTileMatrices(scales[2]).iterator().next();
 
         //upperleft corner is in PixelInCell.CELL_CORNER, causing the 0.5 offset.
         final DirectPosition2D upperleft = new DirectPosition2D(crs, -50.5, 40.5);
@@ -96,22 +96,22 @@ public class PyramidsTest {
 
         {// Wgs84 TEMPLATE /////////////////////////////////////////////////////
             final CoordinateReferenceSystem tempCrs = CRS.forCode("CRS:84");
-            final DefiningPyramid template = Pyramids.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
+            final DefiningTileMatrixSet template = TileMatrices.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
             final Envelope tempEnv = template.getEnvelope();
             Assert.assertEquals(tempCrs, template.getCoordinateReferenceSystem());
             Assert.assertEquals(tempCrs, tempEnv.getCoordinateReferenceSystem());
             Assert.assertTrue(new GeneralEnvelope(Envelopes.transform(tempEnv, baseCrs)).contains(baseEnv));
-            Assert.assertEquals(3, template.getMosaics().size());
+            Assert.assertEquals(3, template.getTileMatrices().size());
         }
 
         {// Mercator TEMPLATE /////////////////////////////////////////////////////
             final CoordinateReferenceSystem tempCrs = CRS.forCode("EPSG:3395");
-            final DefiningPyramid template = Pyramids.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
+            final DefiningTileMatrixSet template = TileMatrices.createTemplate(gridGeom, tempCrs, new Dimension(256, 256));
             final Envelope tempEnv = template.getEnvelope();
             Assert.assertEquals(tempCrs, template.getCoordinateReferenceSystem());
             Assert.assertEquals(tempCrs, tempEnv.getCoordinateReferenceSystem());
             Assert.assertTrue(new GeneralEnvelope(Envelopes.transform(tempEnv, baseCrs)).contains(baseEnv));
-            Assert.assertEquals(4, template.getMosaics().size());
+            Assert.assertEquals(4, template.getTileMatrices().size());
         }
     }
 

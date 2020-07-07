@@ -32,21 +32,21 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.feature.PyramidFeatureSetReader;
-import org.geotoolkit.storage.multires.AbstractMosaic;
-import org.geotoolkit.storage.multires.AbstractPyramid;
+import org.geotoolkit.storage.feature.TileMatrixSetFeatureReader;
+import org.geotoolkit.storage.multires.AbstractTileMatrix;
+import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.DeferredTile;
-import org.geotoolkit.storage.multires.Mosaic;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -79,8 +79,8 @@ public class InMemoryFeatureSetMultiResolution extends AbstractFeatureSet implem
 
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof Pyramid) {
-            Pyramid p = (Pyramid) template;
+        if (template instanceof TileMatrixSet) {
+            TileMatrixSet p = (TileMatrixSet) template;
             String id = p.getIdentifier();
             if (id == null) {
                 //create a unique id
@@ -90,8 +90,8 @@ public class InMemoryFeatureSetMultiResolution extends AbstractFeatureSet implem
                 id = UUID.randomUUID().toString();
             }
 
-            final InMemoryPyramid py = new InMemoryPyramid(id, p.getCoordinateReferenceSystem());
-            Pyramids.copyStructure(p, py);
+            final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(id, p.getCoordinateReferenceSystem());
+            TileMatrices.copyStructure(p, py);
             models.put(id, py);
             return py;
         } else {
@@ -107,33 +107,33 @@ public class InMemoryFeatureSetMultiResolution extends AbstractFeatureSet implem
 
     @Override
     public Stream<Feature> features(boolean parallel) throws DataStoreException {
-        return new PyramidFeatureSetReader(this, type).features(null, parallel);
+        return new TileMatrixSetFeatureReader(this, type).features(null, parallel);
     }
 
-    private final class InMemoryPyramid extends AbstractPyramid {
+    private final class InMemoryTileMatrixSet extends AbstractTileMatrixSet {
 
-        private final List<InMemoryMosaic> mosaics = new CopyOnWriteArrayList<>();
+        private final List<InMemoryTileMatrix> mosaics = new CopyOnWriteArrayList<>();
 
-        public InMemoryPyramid(String id, CoordinateReferenceSystem crs) {
+        public InMemoryTileMatrixSet(String id, CoordinateReferenceSystem crs) {
             super(id, crs);
         }
 
         @Override
-        public Collection<? extends Mosaic> getMosaics() {
+        public Collection<? extends TileMatrix> getTileMatrices() {
             return Collections.unmodifiableList(mosaics);
         }
 
         @Override
-        public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
             final String mosaicId = UUID.randomUUID().toString();
-            final InMemoryMosaic gm = new InMemoryMosaic(mosaicId,
+            final InMemoryTileMatrix gm = new InMemoryTileMatrix(mosaicId,
                     this, template.getUpperLeftCorner(), template.getGridSize(), template.getTileSize(), template.getScale());
             mosaics.add(gm);
             return gm;
         }
 
         @Override
-        public void deleteMosaic(String mosaicId) throws DataStoreException {
+        public void deleteTileMatrix(String mosaicId) throws DataStoreException {
             for (int id = 0, len = mosaics.size(); id < len; id++) {
                 if (mosaics.get(id).getIdentifier().equalsIgnoreCase(mosaicId)) {
                     mosaics.remove(id);
@@ -143,11 +143,11 @@ public class InMemoryFeatureSetMultiResolution extends AbstractFeatureSet implem
         }
     }
 
-    private final class InMemoryMosaic extends AbstractMosaic {
+    private final class InMemoryTileMatrix extends AbstractTileMatrix {
 
         private final Map<Point,InMemoryDeferredTile> mpTileReference = new HashMap<>();
 
-        public InMemoryMosaic(final String id, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
+        public InMemoryTileMatrix(final String id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
             super(id, pyramid, upperLeft, gridSize, tileSize, scale);
         }
 

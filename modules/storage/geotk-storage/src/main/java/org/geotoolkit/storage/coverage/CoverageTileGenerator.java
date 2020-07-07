@@ -54,10 +54,8 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
-import org.geotoolkit.storage.multires.DefaultPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.Streams;
@@ -66,6 +64,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Tile generator splitting a coverage in tiles.
@@ -179,7 +179,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public void generate(Pyramid pyramid, Envelope env, NumberRange resolutions,
+    public void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions,
             ProcessListener listener) throws DataStoreException, InterruptedException {
         if (!coverageIsHomogeneous) {
             super.generate(pyramid, env, resolutions, listener);
@@ -199,18 +199,18 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         }
 
         //generate lower level from data
-        final Mosaic[] mosaics = pyramid.getMosaics().toArray(new Mosaic[0]);
-        Arrays.sort(mosaics, (Mosaic o1, Mosaic o2) -> Double.compare(o1.getScale(), o2.getScale()));
+        final TileMatrix[] mosaics = pyramid.getTileMatrices().toArray(new TileMatrix[0]);
+        Arrays.sort(mosaics, (TileMatrix o1, TileMatrix o2) -> Double.compare(o1.getScale(), o2.getScale()));
 
         final long total = countTiles(pyramid, env, resolutions);
         final AtomicLong al = new AtomicLong();
 
         GridCoverageResource resource = this.resource;
 
-        for (final Mosaic mosaic : mosaics) {
+        for (final TileMatrix mosaic : mosaics) {
             if (resolutions == null || resolutions.contains(mosaic.getScale())) {
 
-                final Rectangle rect = Pyramids.getTilesInEnvelope(mosaic, env);
+                final Rectangle rect = TileMatrices.getTilesInEnvelope(mosaic, env);
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
@@ -262,7 +262,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 }
 
                 //modify context
-                final DefaultPyramid pm = new DefaultPyramid(pyramid.getCoordinateReferenceSystem());
+                final DefaultTileMatrixSet pm = new DefaultTileMatrixSet(pyramid.getCoordinateReferenceSystem());
                 pm.getMosaicsInternal().add(mosaic);
                 final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
                 r.setSampleDimensions(resource.getSampleDimensions());
@@ -274,14 +274,14 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     }
 
     @Override
-    public Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord) throws DataStoreException {
+    public Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord) throws DataStoreException {
         return generateTile(pyramid, mosaic, tileCoord, resource);
     }
 
-    private Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord, GridCoverageResource resource) throws DataStoreException {
+    private Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord, GridCoverageResource resource) throws DataStoreException {
         final Dimension tileSize = mosaic.getTileSize();
         final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
-        final LinearTransform gridToCrsNd = Pyramids.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
+        final LinearTransform gridToCrsNd = TileMatrices.getTileGridToCRS(mosaic, tileCoord, PixelInCell.CELL_CENTER);
         final long[] high = new long[crs.getCoordinateSystem().getDimension()];
         high[0] = tileSize.width-1; //inclusive
         high[1] = tileSize.height-1; //inclusive

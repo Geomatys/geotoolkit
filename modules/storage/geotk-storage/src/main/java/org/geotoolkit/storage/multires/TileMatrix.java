@@ -32,12 +32,12 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
- * A Mosaic is collection of tiles with the same size and properties placed
+ * A TileMatrix is collection of tiles with the same size and properties placed
  * on a regular grid with no overlaping.
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Mosaic {
+public interface TileMatrix {
 
     /**
      * Sentinel object used to notify the end of the queue.
@@ -50,11 +50,11 @@ public interface Mosaic {
     String getIdentifier();
 
     /**
-     * Returns the upper left corner of the mosaic.
+     * Returns the upper left corner of the TileMatrix.
      * The corner is in PixelInCell.CELL_CORNER, so it contains a translate of a half
      * pixel compared to a GridToCrs transform of a coverage.
      *
-     * @return upper left corner of the mosaic, expressed in pyramid CRS.
+     * @return upper left corner of the TileMatrix, expressed in pyramid CRS.
      */
     DirectPosition getUpperLeftCorner();
 
@@ -74,12 +74,12 @@ public interface Mosaic {
     Dimension getTileSize();
 
     /**
-     * Envelope of the mosaic.
+     * Envelope of the TileMatrix.
      *
      * @return Envelope
      */
     default Envelope getEnvelope() {
-        return Pyramids.computeMosaicEnvelope(this);
+        return TileMatrices.computeMosaicEnvelope(this);
     }
 
     /**
@@ -106,11 +106,11 @@ public interface Mosaic {
     }
 
     /**
-     * Find a tile in the mosaic.
+     * Find a tile in the TileMatrix.
      * This tile should be fast to access, it's purpose is to provide a sample
-     * of content of the mosaic.
+     * of content of the TileMatrix.
      *
-     * The returned tile may not really exist or be part of this mosaic at all.
+     * The returned tile may not really exist or be part of this TileMatrix at all.
      *
      * @return tile, should not be null.
      * @throws org.apache.sis.storage.DataStoreException
@@ -158,14 +158,14 @@ public interface Mosaic {
     }
 
     /**
-     * Returns Extent of written data into mosaic tile.<br>
-     * If extent is not known by mosaic implementation, this method browse all
-     * mosaic grid to returning a {@link java.awt.Rectangle} of where data are.<br>
+     * Returns Extent of written data into TileMatrix tile.<br>
+     * If extent is not known by TileMatrix implementation, this method browse all
+     * TileMatrix grid to returning a {@link java.awt.Rectangle} of where data are.<br>
      * Rectangle represente area exprimate in <strong>pixels</strong> grid coordinate.<br>
-     * May return {@code null} if mosaic is empty.
+     * May return {@code null} if TileMatrix is empty.
      *
      * @return {@link java.awt.Rectangle} of data area or null if all
-     * tiles of the mosaic are missing.
+     * tiles of the TileMatrix are missing.
      */
     GridExtent getDataExtent();
 

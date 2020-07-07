@@ -25,8 +25,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.storage.multires.GeneralProgressiveResource;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.TileGenerator;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  *
@@ -43,13 +43,13 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
     }
 
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
-        return (Collection<Pyramid>) super.getModels();
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+        return (Collection<TileMatrixSet>) super.getModels();
     }
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidReader(this).getGridGeometry();
+        return new TileMatrixSetCoverageReader(this).getGridGeometry();
     }
 
     @Override
@@ -59,7 +59,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        PyramidReader reader = new PyramidReader(this);
+        TileMatrixSetCoverageReader reader = new TileMatrixSetCoverageReader(this);
         return reader.read(domain, range);
     }
 

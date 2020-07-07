@@ -38,7 +38,7 @@ public interface TileGenerator {
      * @return
      * @throws DataStoreException
      */
-    Tile generateTile(Pyramid pyramid, Mosaic mosaic, Point tileCoord) throws DataStoreException;
+    Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord) throws DataStoreException;
 
     /**
      * Generate given box of data.
@@ -51,6 +51,6 @@ public interface TileGenerator {
      * @throws DataStoreException
      * @throws java.lang.InterruptedException
      */
-    void generate(Pyramid pyramid, Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException, InterruptedException;
+    void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException, InterruptedException;
 
 }

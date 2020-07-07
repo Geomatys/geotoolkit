@@ -30,7 +30,7 @@ import org.opengis.geometry.DirectPosition;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefiningMosaic implements Mosaic {
+public class DefiningTileMatrix implements TileMatrix {
 
     private final String identifier;
     private final DirectPosition upperLeft;
@@ -39,15 +39,15 @@ public class DefiningMosaic implements Mosaic {
     private final Dimension gridSize;
     private final GridExtent dataExtent;
 
-    public DefiningMosaic(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize) {
+    public DefiningTileMatrix(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize) {
         this(identifier,upperLeft, scale, tileSize, gridSize, (GridExtent) null);
     }
 
-    public DefiningMosaic(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, Dimension dataExtent) {
+    public DefiningTileMatrix(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, Dimension dataExtent) {
         this(identifier,upperLeft, scale, tileSize, gridSize, new GridExtent(dataExtent.width, dataExtent.height));
     }
 
-    public DefiningMosaic(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, GridExtent dataExtent) {
+    public DefiningTileMatrix(String identifier, DirectPosition upperLeft, double scale, Dimension tileSize, Dimension gridSize, GridExtent dataExtent) {
         this.identifier = identifier;
         this.upperLeft = upperLeft;
         this.scale = scale;
@@ -116,6 +116,6 @@ public class DefiningMosaic implements Mosaic {
 
     @Override
     public String toString() {
-        return AbstractMosaic.toString(this);
+        return AbstractTileMatrix.toString(this);
     }
 }
