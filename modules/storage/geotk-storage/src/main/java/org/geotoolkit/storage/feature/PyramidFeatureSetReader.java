@@ -136,21 +136,26 @@ public class PyramidFeatureSetReader {
 
         final TileIterator iterator = new TileIterator(mosaic, area);
 
-        //create a fake subset
-        final FeatureSet subfs = new AbstractFeatureSet(null) {
-            @Override
-            public FeatureType getType() throws DataStoreException {
-                return type;
-            }
-            @Override
-            public Stream<Feature> features(boolean parallel) throws DataStoreException {
-                final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
-                stream.onClose(iterator::close);
-                return stream;
-            }
-        };
+        if (query == null) {
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false)
+                    .onClose(iterator::close);
+        } else {
+            //create a fake subset
+            final FeatureSet subfs = new AbstractFeatureSet(null) {
+                @Override
+                public FeatureType getType() throws DataStoreException {
+                    return type;
+                }
+                @Override
+                public Stream<Feature> features(boolean parallel) throws DataStoreException {
+                    final Stream<Feature> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
+                    stream.onClose(iterator::close);
+                    return stream;
+                }
+            };
 
-        return subfs.subset(query).features(bln);
+            return subfs.subset(query).features(bln);
+        }
     }
 
     private Quantity<Length> getLinearResolution(Mosaic mosaic, Unit<Length> unit) throws TransformException, FactoryException {
