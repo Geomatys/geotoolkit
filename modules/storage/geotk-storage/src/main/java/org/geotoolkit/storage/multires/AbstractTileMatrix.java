@@ -58,15 +58,19 @@ public abstract class AbstractTileMatrix implements TileMatrix {
         this.gridSize = (Dimension) gridSize.clone();
         this.tileSize = (Dimension) tileSize.clone();
 
-        if(id == null){
+        if (id == null) {
             this.id = UUID.randomUUID().toString();
-        }else{
+        } else {
             this.id = id;
         }
 
-        //ensure we do not exceed integer max value.
-        Math.multiplyExact(gridSize.width, tileSize.width);
-        Math.multiplyExact(gridSize.height, tileSize.height);
+        try {
+            //ensure we do not exceed integer max value.
+            Math.multiplyExact(gridSize.width, tileSize.width);
+            Math.multiplyExact(gridSize.height, tileSize.height);
+        } catch (ArithmeticException ex) {
+            throw new IllegalArgumentException("Trying to create a tile matrix too large, Scale:" + scale + " Grid size:" + gridSize + " Tile size: " + tileSize, ex);
+        }
     }
 
     /**
