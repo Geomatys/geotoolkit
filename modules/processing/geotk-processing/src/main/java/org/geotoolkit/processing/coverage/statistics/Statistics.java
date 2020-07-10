@@ -20,10 +20,12 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.function.DoublePredicate;
+import java.util.stream.DoubleStream;
+import javax.annotation.Nullable;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
@@ -32,14 +34,15 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
+
+import static org.geotoolkit.processing.coverage.statistics.NumericHistogram.AddResult.SUCCESS;
 import static org.geotoolkit.processing.coverage.statistics.StatisticsDescriptor.*;
 import org.geotoolkit.storage.coverage.ImageStatistics;
-import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Process to create a {@link org.geotoolkit.process.coverage.statistics.ImageStatistics}
- * from a {@link org.geotoolkit.coverage.grid.GridCoverage} or {@link org.geotoolkit.coverage.io.GridCoverageResource.
+ * Process to compute {@link ImageStatistics image statistics}.
+ * from a {@link GridCoverage} or {@link GridCoverageResource}.
  *
  * Can be directly use using analyse() static methods: <br/>
  * Eg. : <br/>
@@ -92,68 +95,6 @@ public class Statistics extends AbstractProcess {
         return out.getValue(OUTCOVERAGE);
     }
 
-    /**
-     * Run Statistics process with a GridCoverage2D and return ImageStatistics
-     *
-     * @param coverage GridCoverage2D
-     * @param excludeNoData exclude no-data flag
-     * @return ImageStatistics
-     * @throws ProcessException
-     */
-    public static ImageStatistics analyse(GridCoverage coverage, boolean excludeNoData) throws ProcessException {
-        org.geotoolkit.process.Process process = new Statistics(coverage, excludeNoData);
-        Parameters out = Parameters.castOrWrap(process.call());
-        return out.getValue(OUTCOVERAGE);
-    }
-
-    /**
-     * Run Statistics process with a CoverageResource and return ImageStatistics
-     *
-     * @param ref CoverageResource
-     * @param excludeNoData exclude no-data flag
-     * @return ImageStatistics
-     * @throws ProcessException
-     */
-    public static ImageStatistics analyse(GridCoverageResource ref, boolean excludeNoData) throws ProcessException {
-        org.geotoolkit.process.Process process = new Statistics(ref, excludeNoData);
-        Parameters out = Parameters.castOrWrap(process.call());
-        return out.getValue(OUTCOVERAGE);
-    }
-
-    /**
-     * Run Statistics process with a CoverageResource and return ImageStatistics
-     * the process is run on a reduced version of the data to avoid consuming to much resources.
-     *
-     * @param ref CoverageResource
-     * @param excludeNoData exclude no-data flag
-     * @param imageSize sampled image size
-     * @return ImageStatistics
-     * @throws ProcessException
-     */
-    public static ImageStatistics analyse(GridCoverageResource ref, boolean excludeNoData, int imageSize)
-            throws ProcessException, DataStoreException {
-        final GridGeometry gridGeom = ref.getGridGeometry();
-        final Envelope env = gridGeom.getEnvelope();
-        final GridExtent ext = gridGeom.getExtent();
-
-        final double[] res = new double[ext.getDimension()];
-        double max = 0;
-        for(int i=0;i<res.length;i++){
-            res[i] = (env.getSpan(i) / imageSize);
-            max = Math.max(max,res[i]);
-        }
-        Arrays.fill(res, max);
-
-
-        final GridGeometry query = gridGeom.derive().subgrid(env, res).sliceByRatio(0.5, 0, 1).build();
-        GridCoverage coverage = ref.read(query);
-        //we want the statistics on the real data values
-        coverage = coverage.forConvertedValues(true);
-        org.geotoolkit.process.Process process = new Statistics(coverage, excludeNoData);
-        Parameters out = Parameters.castOrWrap(process.call());
-        return out.getValue(OUTCOVERAGE);
-    }
-
     @Override
     protected void execute() throws ProcessException {
 
@@ -171,7 +112,6 @@ public class Statistics extends AbstractProcess {
             final int nbBands = sm.getNumBands();
             //create empty statistic object
             sc = new ImageStatistics(nbBands, sampleType);
-            outputParameters.getOrCreate(OUTCOVERAGE).setValue(sc);
 
         } else {
 
@@ -207,11 +147,13 @@ public class Statistics extends AbstractProcess {
                 sc.getBand(i).setNoData(SampleDimensionUtils.getNoDataValues(sampleDimensions[i]));
                 sc.getBand(i).setName(sampleDimensions[i].getName().toString());
             }
-
-            outputParameters.getOrCreate(OUTCOVERAGE).setValue(sc);
-            fireProgressing("Pre-analysing finished", 10f, true);
-            fireProgressing("Start range/histogram computing", 10f, true);
         }
+
+        final DoublePredicate[] validityTests =initValueValidityTests(sc, excludeNoData);
+
+        outputParameters.getOrCreate(OUTCOVERAGE).setValue(sc);
+        fireProgressing("Pre-analysing finished", 10f, true);
+        fireProgressing("Start range/histogram computing", 10f, true);
 
         final ImageStatistics.Band[] bands = sc.getBands();
         final org.apache.sis.math.Statistics[] stats = new org.apache.sis.math.Statistics[bands.length];
@@ -241,7 +183,7 @@ public class Statistics extends AbstractProcess {
                 analyseRange(pix, stats, bands, excludeNoData);
                 pix.rewind();
 
-                mergeHistograms(histo, analyseHistogram(pix, bands, stats, excludeNoData));
+                mergeHistograms(histo, analyseHistogram(pix, bands, stats, validityTests));
 
                 updateBands(bands, histo);
                 fireProgressing("Histogram progressing", (step/totalTiles)*0.9f, true);
@@ -339,10 +281,12 @@ public class Statistics extends AbstractProcess {
      * Analyse each pixels using a PixelIterator
      * @param pix PixelIterator
      * @param bands
-     * @param excludeNoData
+     * @param validityTests Predicates to filter values extracted from pixel iterator. The predicates must accept
+     *                      (return true) values that are valid, and reject (return false) for no-data / not finite
+     *                      values.
      */
     private NumericHistogram[] analyseHistogram(final PixelIterator pix, final ImageStatistics.Band[] bands,
-                                                org.apache.sis.math.Statistics[] stats, final boolean excludeNoData) {
+                                                org.apache.sis.math.Statistics[] stats, final DoublePredicate[] validityTests) {
 
         int nbBands = bands.length;
         final NumericHistogram[] histograms = new NumericHistogram[nbBands];
@@ -356,27 +300,20 @@ public class Statistics extends AbstractProcess {
 
         //second pass to compute histogram
         // this int permit to loop on images band.
-        if (excludeNoData) {
-            while (pix.next()) {
-                for (int b = 0; b < nbBands; b++) {
-                    final double d = pix.getSampleDouble(b);
-
-                    //add value if not NaN or is flag as no-data
-                    if (!Double.isNaN(d) &&
-                            (bands[b].getNoData() == null || !(Arrays.binarySearch(bands[b].getNoData(), d) >= 0))) {
-                        histograms[b].addValue(d);
-                    }
-                }
-            }
-        } else {
-            //iter on each pixel band by band to add values on each band.
-            while (pix.next()) {
-                for (int b = 0; b < nbBands; b++) {
-                    final double d = pix.getSampleDouble(b);
-                    histograms[b].addValue(d);
+        while (pix.next()) {
+            for (int b = 0; b < nbBands; b++) {
+                final double value = pix.getSampleDouble(b);
+                if (validityTests[b].test(value)) {
+                    NumericHistogram.AddResult state = histograms[b].addValue(value);
+                    /* As non-finite values should have already been filtered, and min/max values are well identified,
+                     * the result of above operation should always be a success. However, in case of error, we will be
+                     * notified quickly, and avoid producing incorrect results.
+                     */
+                    if (!SUCCESS.equals(state)) throw new IllegalStateException("A value cannot be added to histogram. Reason: "+state);
                 }
             }
         }
+
         return histograms;
     }
 
@@ -385,6 +322,33 @@ public class Statistics extends AbstractProcess {
             return 255;
         }
         return 1000;
+    }
+
+    private static DoublePredicate[] initValueValidityTests(final ImageStatistics incompleteStats, final boolean excludeNoData) {
+        final DoublePredicate[] validityTests;
+        if (excludeNoData) {
+            validityTests = Arrays.stream(incompleteStats.getBands())
+                    .map(ImageStatistics.Band::getNoData)
+                    .map(Statistics::initValueValidityTest)
+                    .toArray(size -> new DoublePredicate[size]);
+        } else {
+            // Only check given value is a finite one. No-data categories will be counted as long as they relate to
+            // finite values.
+            validityTests = new DoublePredicate[incompleteStats.getBands().length];
+            Arrays.fill(validityTests, (DoublePredicate) Double::isFinite);
+        }
+        return validityTests;
+    }
+
+    private static DoublePredicate initValueValidityTest(@Nullable double[] nonAllowedValues) {
+        if (nonAllowedValues == null || nonAllowedValues.length < 1 || Arrays.stream(nonAllowedValues).allMatch(Double::isNaN)) {
+            return Double::isFinite;
+        }
+        final double[] defCopyWithoutNaN = DoubleStream.of(nonAllowedValues)
+                .filter(Double::isFinite)
+                .sorted()
+                .toArray();
+        return value -> Double.isFinite(value) && Arrays.binarySearch(defCopyWithoutNaN, value) < 0;
     }
 
     /**

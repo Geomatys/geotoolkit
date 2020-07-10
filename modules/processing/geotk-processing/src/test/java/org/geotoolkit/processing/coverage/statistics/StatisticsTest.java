@@ -36,6 +36,8 @@ import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
+import static java.lang.Float.NaN;
+
 /**
  * @author bgarcia (Geomatys)
  * @author Quentin Boileau (Geomatys)
@@ -48,14 +50,15 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
     @Before
     public void initTest(){
         env.setRange(0, 0, 3);
-        env.setRange(1, 0, 3);
+        env.setRange(1, 0, 4);
 
         GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setDomain(new GridGeometry(new GridExtent(3, 3), env));
+        gcb.setDomain(new GridGeometry(new GridExtent(3, 4), env));
         gcb.setValues(BufferedImages.toDataBuffer1D(new float[][]{
-                {100,100,100},
-                {100,200,100},
-                {100,100,100}
+                {NaN,100,100},
+                {100,NaN,100},
+                {100,100,NaN},
+                {100,200,100}
         }), null);
         gcb.setRanges(new SampleDimension.Builder().setName(0).build());
         coverage = gcb.build();
@@ -79,19 +82,6 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
         // test distribution
         Assert.assertTrue(1l == band0.getDistribution().get(200d));
         Assert.assertTrue(8l == band0.getDistribution().get(100d));
-    }
-
-    @Test
-    public void performanceTest() {
-        double max = 100000.0;
-        NumericHistogram histogram = new NumericHistogram(1000, 0.0, 100000.0);
-
-        long start = System.currentTimeMillis();
-        for (long i = 1; i <= 100000000l; i++) {
-            histogram.addValue(Math.random()*max);
-        }
-        long end = System.currentTimeMillis();
-        System.out.println("Histogram computed for 100.000.000 values finished in "+(end-start)+" ms");
     }
 
     @Test
@@ -181,5 +171,4 @@ public class StatisticsTest extends org.geotoolkit.test.TestBase {
 
         Assert.assertEquals(expectSum, resultSum);
     }
-
 }
