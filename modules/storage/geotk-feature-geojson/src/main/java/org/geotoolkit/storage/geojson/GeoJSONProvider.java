@@ -112,6 +112,8 @@ public final class GeoJSONProvider extends DataStoreProvider {
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         Path p = connector.getStorageAs(Path.class);
+        if (p == null) return ProbeResult.UNSUPPORTED_STORAGE;
+
         String extension = IOUtilities.extension(p).toLowerCase();
         if (EXTENSIONS.contains(extension)) {
             try {
