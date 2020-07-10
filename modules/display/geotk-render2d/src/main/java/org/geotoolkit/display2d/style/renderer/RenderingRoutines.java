@@ -52,11 +52,8 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.filter.binaryspatial.LooseBBox;
-import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.storage.feature.FeatureIterator;
@@ -209,18 +206,14 @@ public final class RenderingRoutines {
         //optimize the filter.
         //make a bbox filter
         if(!geomProperties.isEmpty()){
-            if(geomProperties.size()==1){
+            if (geomProperties.size() == 1) {
                 final String geomAttName = geomProperties.iterator().next();
-                if (layerCRS != null) {
-                    filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
-                } else {
-                    filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
-                }
-            }else{
+                filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
+            } else {
                 //make an OR filter with all geometries
                 final List<Filter> geomFilters = new ArrayList<>();
-                for(String geomAttName : geomProperties){
-                    geomFilters.add(new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox)));
+                for (String geomAttName : geomProperties) {
+                    geomFilters.add(FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox));
                 }
                 filter = FILTER_FACTORY.or(geomFilters);
             }
@@ -473,11 +466,7 @@ public final class RenderingRoutines {
         //}else{
         //make a bbox filter
         if(geomAttName != null){
-            if (layerCRS != null) {
-                filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
-            } else {
-                filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
-            }
+            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
         }else{
             filter = Filter.EXCLUDE;
         }
