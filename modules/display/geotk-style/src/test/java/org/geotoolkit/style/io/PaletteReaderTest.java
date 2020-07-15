@@ -90,7 +90,7 @@ public class PaletteReaderTest {
     }
 
     @Test
-    public void readCPT() throws IOException {
+    public void readCPT_RGB() throws IOException {
         String palette =
             "# Truly simulates the JET colormap in Matlab\n" +
             "# COLOR_MODEL = RGB\n" +
@@ -120,6 +120,69 @@ public class PaletteReaderTest {
                 default : fail("Unexpected number of elements.");
             }
             assertEquals(expected, entry);
+            i++;
+        }
+    }
+
+    @Test
+    public void readCPT_HSV() throws IOException {
+        String palette =
+            "# COLOR_MODEL = HSV\n" +
+            "-6000   255     0.6     1       -5500   240     0.6     1       L\n" +
+            "-5500   240     0.6     1       -5000   225     0.6     1\n" +
+            "-5000   225     0.6     1       -4500   210     0.6     1       L\n" +
+            "-4500   210     0.6     1       -4000   195     0.6     1\n" +
+            "-4000   195     0.6     1       -3500   180     0.6     1       L\n" +
+            "-3500   180     0.6     1       -3000   165     0.6     1\n" +
+            "-3000   165     0.6     1       -2500   150     0.6     1       L\n" +
+            "-2500   150     0.6     1       -2000   135     0.6     1\n" +
+            "-2000   135     0.6     1       -1500   120     0.6     1       L\n" +
+            "-1500   120     0.6     1       -1000   105     0.6     1\n" +
+            "-1000   105     0.6     1       -500    90      0.6     1       L\n" +
+            "-500    90      0.6     1       0       75      0.6     1\n" +
+            "0       60      0.35    1       500     40      0.35    1       L\n" +
+            "500     40      0.35    1       1000    20      0.35    1\n" +
+            "1000    20      0.35    1       1500    0       0.35    1       L\n" +
+            "1500    360     0.35    1       2000    345     0.3     1\n" +
+            "2000    345     0.3     1       2500    330     0.25    1       L\n" +
+            "2500    330     0.25    1       3000    315     0.2     1       U\n" +
+            "B       255     0.6     1\n" +
+            "F       315     0.2     1";
+
+        final ColorMap cm = new PaletteReader(PaletteReader.PATTERN_CPT).read(palette);
+        assertTrue(cm.getFunction() instanceof Categorize);
+        final Categorize categorize = (Categorize) cm.getFunction();
+        final Map<Expression,Expression> steps = categorize.getThresholds();
+        assertEquals(22, steps.size());
+        int i=0;
+        for (Entry<Expression,Expression> entry : steps.entrySet()) {
+            Entry<Expression,Expression> expected = null;
+            switch (i) {
+                case  0 : expected = new AbstractMap.SimpleEntry(StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(0f,0f,0f,0f))); break;
+                case  1 : expected = new AbstractMap.SimpleEntry(FF.literal(-6000), SF.literal(Color.getHSBColor(255f / 360f, 0.6f, 1))); break;
+                case  2 : expected = new AbstractMap.SimpleEntry(FF.literal(-5500), SF.literal(Color.getHSBColor(240f / 360f, 0.6f, 1))); break;
+                case  3 : expected = new AbstractMap.SimpleEntry(FF.literal(-5000), SF.literal(Color.getHSBColor(225f / 360f, 0.6f, 1))); break;
+                case  4 : expected = new AbstractMap.SimpleEntry(FF.literal(-4500), SF.literal(Color.getHSBColor(210f / 360f, 0.6f, 1))); break;
+                case  5 : expected = new AbstractMap.SimpleEntry(FF.literal(-4000), SF.literal(Color.getHSBColor(195f / 360f, 0.6f, 1))); break;
+                case  6 : expected = new AbstractMap.SimpleEntry(FF.literal(-3500), SF.literal(Color.getHSBColor(180f / 360f, 0.6f, 1))); break;
+                case  7 : expected = new AbstractMap.SimpleEntry(FF.literal(-3000), SF.literal(Color.getHSBColor(165f / 360f, 0.6f, 1))); break;
+                case  8 : expected = new AbstractMap.SimpleEntry(FF.literal(-2500), SF.literal(Color.getHSBColor(150f / 360f, 0.6f, 1))); break;
+                case  9 : expected = new AbstractMap.SimpleEntry(FF.literal(-2000), SF.literal(Color.getHSBColor(135f / 360f, 0.6f, 1))); break;
+                case 10 : expected = new AbstractMap.SimpleEntry(FF.literal(-1500), SF.literal(Color.getHSBColor(120f / 360f, 0.6f, 1))); break;
+                case 11 : expected = new AbstractMap.SimpleEntry(FF.literal(-1000), SF.literal(Color.getHSBColor(105f / 360f, 0.6f, 1))); break;
+                case 12 : expected = new AbstractMap.SimpleEntry(FF.literal( -500), SF.literal(Color.getHSBColor( 90f / 360f, 0.6f, 1))); break;
+                case 13 : expected = new AbstractMap.SimpleEntry(FF.literal(    0), SF.literal(Color.getHSBColor( 75f / 360f, 0.6f, 1))); break;
+                case 14 : expected = new AbstractMap.SimpleEntry(FF.literal(Math.nextUp(0.0)), SF.literal(Color.getHSBColor( 60f / 360f, 0.35f, 1))); break;
+                case 15 : expected = new AbstractMap.SimpleEntry(FF.literal(  500), SF.literal(Color.getHSBColor( 40f / 360f, 0.35f, 1))); break;
+                case 16 : expected = new AbstractMap.SimpleEntry(FF.literal( 1000), SF.literal(Color.getHSBColor( 20f / 360f, 0.35f, 1))); break;
+                case 17 : expected = new AbstractMap.SimpleEntry(FF.literal( 1500), SF.literal(Color.getHSBColor(  0f / 360f, 0.35f, 1))); break;
+                case 18 : expected = new AbstractMap.SimpleEntry(FF.literal( 2000), SF.literal(Color.getHSBColor(345f / 360f, 0.3f, 1))); break;
+                case 19 : expected = new AbstractMap.SimpleEntry(FF.literal( 2500), SF.literal(Color.getHSBColor(330f / 360f, 0.25f, 1))); break;
+                case 20 : expected = new AbstractMap.SimpleEntry(FF.literal( 3000), SF.literal(Color.getHSBColor(315f / 360f,  0.2f, 1))); break;
+                case 21 : expected = new AbstractMap.SimpleEntry(FF.literal(Double.NaN), SF.literal(new Color(  0,  0, 0, 0))); break;
+                default : fail("Unexpected number of elements.");
+            }
+            assertEquals("At index : " + i, expected, entry);
             i++;
         }
     }
