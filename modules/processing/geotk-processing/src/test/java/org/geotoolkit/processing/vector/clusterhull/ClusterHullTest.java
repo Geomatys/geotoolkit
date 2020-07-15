@@ -109,7 +109,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         );
     }
     @Test
-    public void testClusterHull15() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
+    public void testClusterHull5() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
         testClusterHullBasic(
                 "cluster_hull_test_5.json",
                 "cluster_hull_test_5_40km_expected.json",
@@ -140,7 +140,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         GeometryCollection gc1 = extractGeometryCollectionFromFeatureSet(out);
         GeometryCollection gc2 = extractGeometryCollectionFromFeatureSet(expected);
         // is same geometry
-        assertTrue(gc1.equalsExact(gc2, 0.0001));
+        assertTrue(equalsExactGeometryCollectionWithoutOrder(gc1, gc2, 0.0001));
         FeatureType type1 = out.getType();
         FeatureType type2 = expected.getType();
         // is same feature
@@ -162,7 +162,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         return geometryFactory.createGeometryCollection(geometries1);
     }
 
-    public FeatureSet buildFeatureSet(String filename) throws URISyntaxException, DataStoreException {
+    private FeatureSet buildFeatureSet(String filename) throws URISyntaxException, DataStoreException {
         final URI uri = ClusterHullTest.class.getResource("/org.geotoolkit.processing.vector.clusterhull/geojson/" + filename).toURI();
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(uri);
@@ -170,5 +170,35 @@ public class ClusterHullTest extends AbstractProcessTest {
         GenericName types = DataStores.getNames(store, true, FeatureSet.class).iterator().next();
         FeatureSet target = (FeatureSet) store.findResource(types.toString());
         return target;
+    }
+
+    private boolean equalsExactGeometryCollectionWithoutOrder(GeometryCollection gc1, GeometryCollection gc2, double tolerance) {
+        if (!(gc1.getClass().getName().equals(gc2.getClass().getName()))) {
+            return false;
+        } else {
+            if (gc1.getNumGeometries() != gc2.getNumGeometries()) {
+                return false;
+            } else {
+                boolean find1;
+                boolean find2;
+                int numGeom = gc1.getNumGeometries();
+                for(int i = 0; i < numGeom; ++i) {
+                    find1 = false;
+                    find2 = false;
+                    for(int j = 0; j < numGeom; ++j) {
+                        if (gc1.getGeometryN(i).equalsExact(gc2.getGeometryN(j), tolerance)) {
+                            find1 = true;
+                        }
+                        if (gc2.getGeometryN(i).equalsExact(gc1.getGeometryN(j), tolerance)) {
+                            find2 = true;
+                        }
+                    }
+                    if(!(find1 && find2)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
     }
 }
