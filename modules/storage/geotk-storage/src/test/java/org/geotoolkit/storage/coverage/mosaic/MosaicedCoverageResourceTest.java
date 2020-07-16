@@ -21,7 +21,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -55,7 +55,7 @@ public class MosaicedCoverageResourceTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
         Coverage 1

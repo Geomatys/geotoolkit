@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -355,7 +354,7 @@ public class ResampleProcess extends AbstractProcess {
          *  @param grid  the grid extent, CRS and conversion from cell indices to CRS.
          * @param bands sample dimensions for each image band.
          */
-        NoConversionCoverage(GridGeometry grid, Collection<? extends SampleDimension> bands, RenderedImage buffer, boolean allowConversion) {
+        NoConversionCoverage(GridGeometry grid, List<? extends SampleDimension> bands, RenderedImage buffer, boolean allowConversion) {
             super(grid, bands);
             this.buffer = buffer;
             this.allowConversion = allowConversion;

@@ -276,7 +276,7 @@ public class ResampleTest extends AbstractProcessTest {
         sourceImage.getRaster().setPixels(16, 0, 16, 32, IntStream.range(0, 16*32).map(idx -> 1).toArray());
         final ResampleProcess.NoConversionCoverage sourceCvg = new ResampleProcess.NoConversionCoverage(
                 source,
-                Collections.singleton(
+                Collections.singletonList(
                         new SampleDimension.Builder()
                                 .addQuantitative("values", -1, 1, Units.UNITY)
                                 .build()

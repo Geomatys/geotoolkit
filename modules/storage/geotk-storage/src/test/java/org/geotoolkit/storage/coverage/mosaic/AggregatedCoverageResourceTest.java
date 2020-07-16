@@ -20,8 +20,8 @@ import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -73,7 +73,7 @@ public class AggregatedCoverageResourceTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
         Coverage 1
@@ -158,7 +158,7 @@ public class AggregatedCoverageResourceTest {
                 .setName("data")
                 .setBackground(null, Double.NaN)
                 .build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
         Coverage 1
@@ -274,7 +274,7 @@ public class AggregatedCoverageResourceTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd,sd);
+        final List<SampleDimension> bands = Arrays.asList(sd,sd);
 
         /*
         Coverage 1
@@ -352,7 +352,7 @@ public class AggregatedCoverageResourceTest {
         final GeneralEnvelope expected = new GeneralEnvelope(crs);
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0.5, 0.5), crs);
         final GridGeometry grid2 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 1.5, 0.5), crs);
@@ -419,7 +419,7 @@ public class AggregatedCoverageResourceTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
         Coverage 1
@@ -483,7 +483,7 @@ public class AggregatedCoverageResourceTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
         Coverage 1
@@ -572,7 +572,7 @@ public class AggregatedCoverageResourceTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
         Coverage 1
@@ -683,7 +683,7 @@ public class AggregatedCoverageResourceTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
         Coverage 1
@@ -753,7 +753,7 @@ public class AggregatedCoverageResourceTest {
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands = Arrays.asList(sd);
+        final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
         Coverage 1
@@ -822,14 +822,14 @@ public class AggregatedCoverageResourceTest {
 
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
         final SampleDimension sd1 = new SampleDimension.Builder().setName("data").build();
-        final Collection<SampleDimension> bands1 = Arrays.asList(sd1);
+        final List<SampleDimension> bands1 = Arrays.asList(sd1);
 
         final SampleDimension sd3 = new SampleDimension.Builder()
                 .setName("data")
                 .addQualitative(null, -1)
                 .addQuantitative("data", 0, 10, 1, 0, Units.UNITY)
                 .build();
-        final Collection<SampleDimension> bands3 = Arrays.asList(sd3);
+        final List<SampleDimension> bands3 = Arrays.asList(sd3);
 
         /*
         Coverage 1
