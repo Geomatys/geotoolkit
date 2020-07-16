@@ -96,162 +96,6 @@ public class ImageUtils extends Static {
     private final static short PLANAR_BANDED           = 2;
 
     /**
-     * Returns a {@link BufferedImage} with an internaly palette {@link ColorSpace}, created from given parameters.
-     *
-     * <p><strong>Moreover : <br/>
-     * - the type of internal image {@link SampleModel} is interleaved.<br/>
-     * - In other words the internal planar configuration is {@link PlanarConfiguration#INTERLEAVED} type.<br/>
-     * - Image will NOT CONTAIN any alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @param numband band number of internaly image rasters.
-     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette.
-     * @return created palette {@link BufferedImage}.
-     * @throws IllegalArgumentException if colorMap argument is {@code null}.
-     * @see SampleType
-     * @see PhotometricInterpretation#PALETTE
-     */
-    public static BufferedImage createPaletteImage(final int width, final int height, final SampleType type,
-                                                   final int numband, final int[] java2DColorMap) {
-        return createImage(width, height,
-                            type, numband,
-                            PhotometricInterpretation.PALETTE, PlanarConfiguration.INTERLEAVED,
-                            false, false,
-                            java2DColorMap);
-    }
-
-    /**
-     * Returns a {@link BufferedImage} of 4 bandswith an internaly AlphaRGB {@link ColorSpace}
-     *  and created from given parameters.
-     *
-     * <p><strong>Moreover : <br/>
-     * - the type of internal image {@link SampleModel} is interleaved.<br/>
-     * - In other words the internal planar configuration is {@link PlanarConfiguration#INTERLEAVED} type.<br/>
-     * - Image will CONTAIN alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @param isAlphaPremultiplied
-     * @return created AlphaRGB {@link BufferedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @see SampleType
-     * @see PlanarConfiguration#INTERLEAVED
-     * @see PhotometricInterpretation#RGB
-     */
-    public static BufferedImage createARGBInterleavedImage(final int width, final int height,
-                                                           final SampleType type, final boolean isAlphaPremultiplied) {
-        return createImage(width, height,
-                           type, 4,
-                           PhotometricInterpretation.RGB, PlanarConfiguration.INTERLEAVED,
-                           true, isAlphaPremultiplied, null);
-    }
-
-    /**
-     * Returns a {@link BufferedImage} of 3 bands, with an internaly RGB {@link ColorSpace}
-     * and created from given parameters.
-     *
-     * <p><strong>Moreover : <br/>
-     * - the type of internal image {@link SampleModel} is interleaved.<br/>
-     * - In other words the internal planar configuration is {@link PlanarConfiguration#INTERLEAVED} type.<br/>
-     * - Image will NOT CONTAIN any alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @return created RGB {@link BufferedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @see SampleType
-     * @see PlanarConfiguration#INTERLEAVED
-     * @see PhotometricInterpretation#RGB
-     */
-    public static BufferedImage createRGBInterleavedImage(final int width, final int height, final SampleType type) {
-        return createImage(width, height,
-                type, 3, PhotometricInterpretation.RGB, PlanarConfiguration.INTERLEAVED,
-                false, false, null);
-    }
-
-    /**
-     * Returns a {@link BufferedImage} of 4 bands, with an internaly AlphaRGB {@link ColorSpace}
-     * and created from given parameters.
-     *
-     * <p><strong>Moreover : the type of internal image {@link SampleModel} is banded.<br/>
-     * In other words the internal planar configuration is {@link PlanarConfiguration#BANDED} type.<br/>
-     * - Image will CONTAIN alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @param isAlphaPremultiplied
-     * @return created AlphaRGB {@link BufferedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @see SampleType
-     * @see PlanarConfiguration#BANDED
-     * @see PhotometricInterpretation#RGB
-     */
-    public static BufferedImage createARGBBandedImage(final int width, final int height, final SampleType type, final boolean isAlphaPremultiplied) {
-        return createImage(width, height, type, 4, PhotometricInterpretation.RGB, PlanarConfiguration.BANDED,true, isAlphaPremultiplied, null);
-    }
-
-    /**
-     * Returns a {@link BufferedImage} of 3 bands with an internaly RGB {@link ColorSpace}, created from given parameters.
-     *
-     * <p><strong>Moreover : <br/>
-     * - the type of internal image {@link SampleModel} is banded.<br/>
-     * - In other words the internal planar configuration is {@link PlanarConfiguration#BANDED} type.<br/>
-     * - Image will NOT CONTAIN any alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @return created RGB {@link BufferedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @see SampleType
-     * @see PlanarConfiguration#BANDED
-     * @see PhotometricInterpretation#RGB
-     */
-    public static BufferedImage createRGBBandedImage(final int width, final int height, final SampleType type) {
-        return createImage(width, height,
-                            type, 3,
-                            PhotometricInterpretation.RGB, PlanarConfiguration.BANDED,
-                            false, false, null);
-    }
-
-    /**
-     * Returns a {@link BufferedImage} with an internaly gray scaled {@link ColorSpace}, created from given parameters.
-     *
-     * <p><strong>Moreover : <br/>
-     * - the type of internal image {@link SampleModel} is banded.<br/>
-     * - In other words the internal planar configuration is {@link PlanarConfiguration#BANDED} type.<br/>
-     * - Image will NOT CONTAIN any alpha canal.
-     * </strong></p>
-     *
-     * @param width image width.
-     * @param height image height.
-     * @param type type of internal data.
-     * @param numBand band number.
-     * @return created gray scaled {@link BufferedImage}.
-     * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
-     * @see SampleType
-     * @see PlanarConfiguration#banded
-     * @see PhotometricInterpretation#GRAYSCALE
-     */
-    public static BufferedImage createGreyScaledBandedImage(final int width, final int height,
-                                                            final SampleType type, final int numBand) {
-        return createImage(width, height,
-                            type, numBand,
-                            PhotometricInterpretation.GRAYSCALE, PlanarConfiguration.BANDED,
-                            false, false, null);
-    }
-
-    /**
      * Returns a {@link BufferedImage} with an internaly gray scaled {@link ColorSpace}, created from given parameters.
      *
      * <p><strong>Moreover : <br/>
@@ -652,12 +496,6 @@ public class ImageUtils extends Static {
     /**
      * Create and returns an adapted {@link ColorModel} from given parameters.
      *
-     * @param sampleBitsSize
-     * @param numBand
-     * @param photometricInterpretation
-     * @param sampleFormat
-     * @param hasAlpha
-     * @param isAlphaPremultiplied
      * @param java2DColorMap associate color map array in case where a palette color model is define.
      * @return an adapted {@link ColorModel} from given parameters.
      * @throws IllegalArgumentException if photometric interpretation is define
@@ -678,10 +516,6 @@ public class ImageUtils extends Static {
     /**
      * Create and returns an adapted {@link ColorModel} from given parameters.
      *
-     * @param sampleBitsSize
-     * @param numBand
-     * @param photometricInterpretation
-     * @param sampleFormat
      * @param minSampleValue minimum raster sample value to build needed {@link ColorSpace},
      * may be {@code null}, if null the default choosen value will be {@link Double#MIN_VALUE}.
      * @param maxSampleValue maximum raster sample value to build needed {@link ColorSpace},
