@@ -186,8 +186,8 @@ public final class SampleDimensionUtils {
             ranges.put(range, colors);
         }
         return org.apache.sis.internal.coverage.j2d.ColorModelFactory.createColorModel(
-                ranges.entrySet().toArray(new Map.Entry[ranges.size()]),
-                visibleBand, numBands, type);
+                type, numBands, visibleBand,
+                ranges.entrySet().toArray(new Map.Entry[ranges.size()]));
     }
 
     /**
