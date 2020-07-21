@@ -245,7 +245,7 @@ public class VI3GStore extends DataStore implements GridCoverageResource, Resour
         }
 
         @Override
-        protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, int ... range) throws DataStoreException {
+        protected GridCoverage readGridSlice(GridGeometry result, int[] areaLower, int[] areaUpper, int[] subsampling, int ... range) throws DataStoreException {
 
             final GridGeometry allGridGeom = getGridGeometry();
             final GridGeometry gridGeometry = getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
