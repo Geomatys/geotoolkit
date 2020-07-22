@@ -632,7 +632,7 @@ final class WPS2Process extends AbstractProcess implements WPSProcess {
             execute.getInput().addAll(wpsIN);
             execute.getOutput().addAll(wpsOUT);
 
-            WPSProcessingRegistry.LOGGER.log(Level.INFO, "Execute request created for {0} in {1} mode.", new Object[]{processId, mode});
+            WPSProcessingRegistry.LOGGER.log(Level.FINER, "Execute request created for {0} in {1} mode.", new Object[]{processId, mode});
 
             return request;
 
