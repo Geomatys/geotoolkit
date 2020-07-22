@@ -61,6 +61,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
@@ -84,6 +85,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -243,11 +245,18 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             using the previously generated level.
             */
             if (env != null) {
-                try {
-                    env = Envelopes.transform(env, pyramid.getCoordinateReferenceSystem());
-                } catch (TransformException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
-                }
+            try {
+                CoordinateReferenceSystem targetCrs = pyramid.getCoordinateReferenceSystem();
+                Envelope baseEnv = env;
+                env = Envelopes.transform(env, targetCrs);
+                double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
+                double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
+                minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
+                maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
+                resolutions = NumberRange.create(minres[0], true, maxres[0], true);
+            } catch (TransformException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
             }
 
             //generate lower level from data

@@ -52,6 +52,7 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
@@ -192,7 +193,14 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         */
         if (env != null) {
             try {
-                env = Envelopes.transform(env, pyramid.getCoordinateReferenceSystem());
+                CoordinateReferenceSystem targetCrs = pyramid.getCoordinateReferenceSystem();
+                Envelope baseEnv = env;
+                env = Envelopes.transform(env, targetCrs);
+                double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
+                double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
+                minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
+                maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
+                resolutions = NumberRange.create(minres[0], true, maxres[0], true);
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
