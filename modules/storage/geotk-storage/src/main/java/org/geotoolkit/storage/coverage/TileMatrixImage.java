@@ -201,10 +201,10 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
 
     @Override
     protected Raster computeTile(int tileX, int tileY, WritableRaster previous) throws Exception {
-        return getTile(tileX, tileY, false);
+        return getTile(tileX, tileY, false, true);
     }
 
-    private Raster getTile(final int tileX, final int tileY, boolean nullable) {
+    private Raster getTile(final int tileX, final int tileY, boolean nullable, boolean allowException) throws Exception {
         final int mosaictileX = gridRange.x + tileX;
         final int mosaictileY = gridRange.y + tileY;
 
@@ -243,7 +243,11 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             }
 
         } catch (DataStoreException | IOException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            if (allowException) {
+                throw e;
+            } else {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+            }
         }
 
         if (raster == null && !nullable) {
@@ -333,7 +337,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             for (int y = Math.max(upperLeftPosition.y, 0); y < Math.min(lowerRightPosition.y + 1, this.getNumYTiles()); y++) {
                 for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
                     if (!isTileMissing(x, y)) {
-                        Raster tile = getTile(x, y, true);
+                        Raster tile = getTile(x, y, true, false);
                         if (tile != null) {
                             final Rectangle tileRect = new Rectangle(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
 
