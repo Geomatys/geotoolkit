@@ -53,6 +53,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.sis.feature.Features;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.util.Numbers;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.nio.IOUtilities;
@@ -412,7 +413,7 @@ public final class Utils {
             if (result == null) {
                 throw new IllegalArgumentException("unexpected type:" + name);
             }
-            return result;
+            return Numbers.primitiveToWrapper(result);
         }
         return null;
     }
@@ -432,43 +433,56 @@ public final class Utils {
 
     private static final Map<Class, QName> NAME_BINDING = new HashMap<>();
     static {
-
         // Special case when we get a Collection or Map we return String => TODO
          NAME_BINDING.put(List.class,          new QName("http://www.w3.org/2001/XMLSchema", "string"));
          NAME_BINDING.put(Map.class,           new QName("http://www.w3.org/2001/XMLSchema", "string"));
          NAME_BINDING.put(Collection.class,    new QName("http://www.w3.org/2001/XMLSchema", "string"));
 
-         NAME_BINDING.put(String.class,        new QName("http://www.w3.org/2001/XMLSchema", "string"));
-         NAME_BINDING.put(String[].class,      new QName("http://www.w3.org/2001/XMLSchema", "string"));
-         NAME_BINDING.put(Float.class,         new QName("http://www.w3.org/2001/XMLSchema", "float"));
-         NAME_BINDING.put(Float[].class,       new QName("http://www.w3.org/2001/XMLSchema", "float"));
-         NAME_BINDING.put(Long.class,          new QName("http://www.w3.org/2001/XMLSchema", "long"));
-         NAME_BINDING.put(Long[].class,        new QName("http://www.w3.org/2001/XMLSchema", "long"));
-         NAME_BINDING.put(Integer.class,       new QName("http://www.w3.org/2001/XMLSchema", "integer"));
-         NAME_BINDING.put(Integer[].class,     new QName("http://www.w3.org/2001/XMLSchema", "integer"));
-         NAME_BINDING.put(Double.class,        new QName("http://www.w3.org/2001/XMLSchema", "double"));
-         NAME_BINDING.put(Double[].class,      new QName("http://www.w3.org/2001/XMLSchema", "double"));
-         NAME_BINDING.put(Date.class,          new QName("http://www.w3.org/2001/XMLSchema", "date"));
-         NAME_BINDING.put(Date[].class,        new QName("http://www.w3.org/2001/XMLSchema", "date"));
-         NAME_BINDING.put(java.sql.Date.class, new QName("http://www.w3.org/2001/XMLSchema", "date"));
+         // Number types (based on https://www.w3schools.com/xml/schema_dtypes_numeric.asp)
+        NAME_BINDING.put(Byte.class,             new QName("http://www.w3.org/2001/XMLSchema", "byte"));
+        NAME_BINDING.put(Byte[].class,           new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
+        NAME_BINDING.put(byte.class,             new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
+        NAME_BINDING.put(byte[].class,           new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
+        NAME_BINDING.put(Short.class,            new QName("http://www.w3.org/2001/XMLSchema", "short"));
+        NAME_BINDING.put(Short[].class,          new QName("http://www.w3.org/2001/XMLSchema", "short"));
+        NAME_BINDING.put(short.class,            new QName("http://www.w3.org/2001/XMLSchema", "short"));
+        NAME_BINDING.put(short[].class,          new QName("http://www.w3.org/2001/XMLSchema", "short"));
+        NAME_BINDING.put(Integer.class,          new QName("http://www.w3.org/2001/XMLSchema", "int"));
+        NAME_BINDING.put(Integer[].class,        new QName("http://www.w3.org/2001/XMLSchema", "int"));
+        NAME_BINDING.put(int.class,              new QName("http://www.w3.org/2001/XMLSchema", "int"));
+        NAME_BINDING.put(int[].class,            new QName("http://www.w3.org/2001/XMLSchema", "int"));
+        NAME_BINDING.put(Long.class,             new QName("http://www.w3.org/2001/XMLSchema", "long"));
+        NAME_BINDING.put(Long[].class,           new QName("http://www.w3.org/2001/XMLSchema", "long"));
+        NAME_BINDING.put(long.class,             new QName("http://www.w3.org/2001/XMLSchema", "long"));
+        NAME_BINDING.put(long[].class,           new QName("http://www.w3.org/2001/XMLSchema", "long"));
+        NAME_BINDING.put(Float.class,            new QName("http://www.w3.org/2001/XMLSchema", "float"));
+        NAME_BINDING.put(Float[].class,          new QName("http://www.w3.org/2001/XMLSchema", "float"));
+        NAME_BINDING.put(float.class,            new QName("http://www.w3.org/2001/XMLSchema", "float"));
+        NAME_BINDING.put(float[].class,          new QName("http://www.w3.org/2001/XMLSchema", "float"));
+        NAME_BINDING.put(Double.class,           new QName("http://www.w3.org/2001/XMLSchema", "double"));
+        NAME_BINDING.put(Double[].class,         new QName("http://www.w3.org/2001/XMLSchema", "double"));
+        NAME_BINDING.put(double.class,           new QName("http://www.w3.org/2001/XMLSchema", "double"));
+        NAME_BINDING.put(double[].class,         new QName("http://www.w3.org/2001/XMLSchema", "double"));
+        NAME_BINDING.put(BigDecimal.class,       new QName("http://www.w3.org/2001/XMLSchema", "decimal"));
+        NAME_BINDING.put(BigDecimal[].class,     new QName("http://www.w3.org/2001/XMLSchema", "decimal"));
+
+        // Other (object) types
+         NAME_BINDING.put(String.class,          new QName("http://www.w3.org/2001/XMLSchema", "string"));
+         NAME_BINDING.put(String[].class,        new QName("http://www.w3.org/2001/XMLSchema", "string"));
+         NAME_BINDING.put(Date.class,            new QName("http://www.w3.org/2001/XMLSchema", "date"));
+         NAME_BINDING.put(Date[].class,          new QName("http://www.w3.org/2001/XMLSchema", "date"));
+         NAME_BINDING.put(java.sql.Date.class,   new QName("http://www.w3.org/2001/XMLSchema", "date"));
          NAME_BINDING.put(java.sql.Date[].class, new QName("http://www.w3.org/2001/XMLSchema", "date"));
-         NAME_BINDING.put(Timestamp.class,     new QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
-         NAME_BINDING.put(Timestamp[].class,   new QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
-         NAME_BINDING.put(Boolean.class,       new QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-         NAME_BINDING.put(Boolean[].class,     new QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-         NAME_BINDING.put(BigDecimal.class,    new QName("http://www.w3.org/2001/XMLSchema", "decimal"));
-         NAME_BINDING.put(BigDecimal[].class,  new QName("http://www.w3.org/2001/XMLSchema", "decimal"));
-         NAME_BINDING.put(Short.class,         new QName("http://www.w3.org/2001/XMLSchema", "short"));
-         NAME_BINDING.put(Short[].class,       new QName("http://www.w3.org/2001/XMLSchema", "short"));
-         NAME_BINDING.put(int.class,           new QName("http://www.w3.org/2001/XMLSchema", "int"));
-         NAME_BINDING.put(int[].class,         new QName("http://www.w3.org/2001/XMLSchema", "int"));
-         NAME_BINDING.put(QName.class,         new QName("http://www.w3.org/2001/XMLSchema", "QName"));
-         NAME_BINDING.put(QName[].class,       new QName("http://www.w3.org/2001/XMLSchema", "QName"));
-         NAME_BINDING.put(URI.class,           new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
-         NAME_BINDING.put(URI[].class,         new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
-         NAME_BINDING.put(URL.class,           new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
-         NAME_BINDING.put(Byte.class,          new QName("http://www.w3.org/2001/XMLSchema", "byte"));
-         NAME_BINDING.put(byte[].class,        new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
+         NAME_BINDING.put(Timestamp.class,       new QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+         NAME_BINDING.put(Timestamp[].class,     new QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+         NAME_BINDING.put(Boolean.class,         new QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+         NAME_BINDING.put(Boolean[].class,       new QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+         NAME_BINDING.put(boolean[].class,       new QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+         NAME_BINDING.put(QName.class,           new QName("http://www.w3.org/2001/XMLSchema", "QName"));
+         NAME_BINDING.put(QName[].class,         new QName("http://www.w3.org/2001/XMLSchema", "QName"));
+         NAME_BINDING.put(URI.class,             new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
+         NAME_BINDING.put(URI[].class,           new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
+         NAME_BINDING.put(URL.class,             new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
 
     }
 
