@@ -38,6 +38,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.storage.coverage.IProgressiveCoverageResource;
 import org.geotoolkit.storage.coverage.TileMatrixImage;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -52,7 +53,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GeneralProgressiveResource extends AbstractResource implements ProgressiveResource {
+public class GeneralProgressiveResource extends AbstractResource implements ProgressiveResource, IProgressiveCoverageResource {
 
     protected final MultiResolutionResource base;
     private GenericName identifier;

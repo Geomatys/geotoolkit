@@ -33,7 +33,7 @@ import org.geotoolkit.storage.multires.TileMatrixSet;
  * @author Johann Sorel (Geomatys)
  */
 public final class ProgressiveCoverageResource<T extends GridCoverageResource & MultiResolutionResource>
-        extends GeneralProgressiveResource implements GridCoverageResource, MultiResolutionResource {
+        extends GeneralProgressiveResource implements GridCoverageResource, MultiResolutionResource, IProgressiveCoverageResource {
 
     private T base = null;
 
