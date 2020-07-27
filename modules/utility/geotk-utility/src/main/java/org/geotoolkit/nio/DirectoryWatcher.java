@@ -67,6 +67,8 @@ public class DirectoryWatcher implements Closeable {
 
     protected final EventListenerList listeners = new EventListenerList();
 
+    private RegistrationErrorHandler registrationErrorHandler = logThenContinue();
+
     /**
      * Prepare watcher for NON-recursive survey.
      *
@@ -96,6 +98,11 @@ public class DirectoryWatcher implements Closeable {
         watchThread.setDaemon(true);
     }
 
+    public void setRegistrationErrorHandler(RegistrationErrorHandler handler) {
+        if (handler == null) registrationErrorHandler = logThenContinue();
+        else registrationErrorHandler = handler;
+    }
+
     /**
      * Provide a filter to specify if a file must processed or ignored at change.
      *
@@ -120,6 +127,9 @@ public class DirectoryWatcher implements Closeable {
     /**
      * Register a directory to the WatchService. If it does not exists, we'll try to create it.
      *
+     * In case this method throws an error, the state of the watcher is undetermined, because it may have succeed an
+     * unknown number of directories before failure.
+     *
      * @param paths A list of folders to watch. If one does not exists, we will try to create it.
      * @throws java.io.IOException                      If an input folder does not exists and cannot be created, or if an error occurred
      *                                                  trying to register it or one of its children.
@@ -129,10 +139,15 @@ public class DirectoryWatcher implements Closeable {
     public synchronized void register(Path... paths) throws IOException, SecurityException {
         for (Path toWatch : paths) {
             if (!roots.contains(toWatch)) {
-                if (!Files.isDirectory(toWatch)) {
-                    Files.createDirectories(toWatch);
+                try {
+                    if (!Files.isDirectory(toWatch)) {
+                        Files.createDirectories(toWatch);
+                    }
+                } catch (Exception e) {
+                    registrationErrorHandler.handle(new RegistrationError(toWatch, true, e));
                 }
-                registerDir(toWatch);
+
+                registerRoot(toWatch);
                 roots.add(toWatch);
             }
             // In case someone asked for its removal before.
@@ -155,12 +170,56 @@ public class DirectoryWatcher implements Closeable {
         dir.register(service, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 
         if (recursive) {
+
             Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                public FileVisitResult preVisitDirectory(Path subdir, BasicFileAttributes attrs)
                         throws IOException {
-                    dir.register(service, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+                    subdir.register(service, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
                     return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    LOGGER.log(Level.FINE, "Cannot register a newly created directory", exc);
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+            });
+        }
+    }
+
+    /**
+     * Try to register directories directly specified by user. It uses a specific error handling mecanism that allow for
+     * a better control of failure. For more information, see {@link RegistrationErrorHandler}, {@link #rethrow()},
+     * {@link #logThenContinue()}.
+     */
+    private final void registerRoot(final Path root) throws IOException, SecurityException {
+        try {
+            root.register(service, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+        } catch (Exception e) {
+            registrationErrorHandler.handle(new RegistrationError(root, true, e));
+        }
+
+        if (recursive) {
+            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path subdir, BasicFileAttributes attrs)
+                        throws IOException {
+                    try {
+                        subdir.register(service, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+                    } catch (Exception e) {
+                        registrationErrorHandler.handle(new RegistrationError(subdir, false, e));
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    registrationErrorHandler.handle(new RegistrationError(file, false, exc));
+                    // If we reach there, it means we're not in fail-fast mode, and must just ignore this file
+                    return FileVisitResult.SKIP_SUBTREE;
                 }
             });
         }
@@ -342,5 +401,57 @@ public class DirectoryWatcher implements Closeable {
         if (traced != null) {
             throw traced;
         }
+    }
+
+    /**
+     * Skip registration of failed path, but continue other directories integration after.
+     *
+     * This log the error as a warning for root directories (directly specified by user) and as a debug log for
+     * others (subtrees in recursive registration).
+     */
+    public static RegistrationErrorHandler logThenContinue() {
+        return event -> LOGGER.log(
+                event.isRoot ? Level.WARNING : Level.FINE,
+                event.error,
+                () -> String.format("Cannot register %sdirectory: %s", event.isRoot ? "root " : "sub-", event.target)
+        );
+    }
+
+    /**
+     * Fail-first strategy: rethrow {@link RegistrationError#error occurred error}. Consequence is that any further registering
+     * process is cancelled at this point, and the watcher will propagate error to the caller of {@link DirectoryWatcher#register(Path...)}.
+     */
+    public static RegistrationErrorHandler rethrow() {
+        return DirectoryWatcher::rethrowError;
+    }
+
+    private static void rethrowError(RegistrationError info) throws IOException, RuntimeException {
+        final Exception error = info.error;
+        if (error instanceof IOException) throw (IOException) error;
+        else if (error instanceof RuntimeException) throw (RuntimeException) error;
+        else throw new RuntimeException("Cannot register directory", error);
+    }
+
+    public final class RegistrationError {
+
+        final Path target;
+        final boolean isRoot;
+        final Exception error;
+
+        private RegistrationError(Path target, boolean isRoot, Exception error) {
+            this.target = target;
+            this.isRoot = isRoot;
+            this.error = error;
+        }
+    }
+
+    /**
+     * Behavior to adopt when an error occurs while registering a directory. Tipically, propagating the exception will
+     * stop the entire registration process, and returning successfully means that we should ignore the directory and
+     * continue processing.
+     */
+    @FunctionalInterface
+    public interface RegistrationErrorHandler {
+        void handle(RegistrationError errorInfo) throws IOException;
     }
 }
