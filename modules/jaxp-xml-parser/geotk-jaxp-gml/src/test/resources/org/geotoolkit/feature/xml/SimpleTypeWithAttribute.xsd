@@ -6,16 +6,16 @@
     <xs:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
     <xs:element xmlns:gml="http://www.opengis.net/gml/3.2" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
     <xs:attribute name="attString" type="string"/>
-    <xs:attribute name="attInteger" type="xs:integer"/>
+    <xs:attribute name="attInteger" type="xs:int"/>
     <xs:complexType name="TestSimpleType">
         <xs:complexContent>
             <xs:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType" >
                 <xs:attribute ref="gml:attString" default="hello"/>
                 <xs:attribute ref="gml:attInteger" default="23"/>
                 <xs:sequence>
-                    <xs:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
+                    <xs:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xs:int"/>
                     <xs:element name="eleString"           maxOccurs="1" minOccurs="1" nillable="true" type="xs:string"/>
-                    <xs:element name="eleInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
+                    <xs:element name="eleInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:int"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
