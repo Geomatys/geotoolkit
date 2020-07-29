@@ -28,11 +28,11 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
 import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.function.LongFunction;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
@@ -61,21 +61,25 @@ public class BufferedImages extends Static {
      * @return
      * @throws IllegalArgumentException
      */
-    public static BufferedImage createImage(RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType) throws IllegalArgumentException{
+    public static BufferedImage createImage(final RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType) throws IllegalArgumentException{
+        final SampleModel sm = reference.getSampleModel();
         if (width == null) width = reference.getWidth();
         if (height == null) height = reference.getHeight();
-        if (nbBand == null) nbBand = reference.getSampleModel().getNumBands();
-        if (dataType == null) dataType = reference.getSampleModel().getDataType();
+        if (nbBand == null) nbBand = sm.getNumBands();
+        if (dataType == null) dataType = sm.getDataType();
         ArgumentChecks.ensureStrictlyPositive("width", width);
         ArgumentChecks.ensureStrictlyPositive("height", height);
         ArgumentChecks.ensureStrictlyPositive("nbBand", nbBand);
 
-        if (nbBand == reference.getSampleModel().getNumBands() && dataType == reference.getSampleModel().getDataType()) {
+        if (nbBand == sm.getNumBands() && dataType == sm.getDataType()) {
             //we can preserver color model and raster configuration
             final Raster anyTile = reference.getTile(reference.getMinTileX(), reference.getMinTileY());
             final WritableRaster raster = anyTile.createCompatibleWritableRaster(width, height);
-            final ColorModel cm = reference.getColorModel();
-            final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
+            ColorModel cm = reference.getColorModel();
+            if (cm == null) {
+                cm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
+            }
+            final BufferedImage resultImage = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
             return resultImage;
         } else {
             //we need to create a new image
@@ -106,7 +110,7 @@ public class BufferedImages extends Static {
         //create a temporary fallback colormodel which will always work
         //extract grayscale min/max from sample dimension
         final ColorModel graycm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
-        final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<>());
+        final BufferedImage resultImage = new BufferedImage(graycm, raster, false, null);
         return resultImage;
     }
 
