@@ -39,10 +39,12 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.PlanarImage;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
+import org.geotoolkit.util.TriFunction;
 
 /**
  *
@@ -382,6 +384,77 @@ public class BufferedImages extends Static {
             in = raster;
         }
         return in;
+    }
+
+    /**
+     * Merge images with a user defined function.
+     * Images may have different sample models, number of bands or data types but must have the same geometry.
+     *
+     * @param source image to read from
+     * @param target image to read and write into
+     * @param filterByMask only apply merge operation where the source mask is valid, if mask is undefined this property has no effect.
+     * @param merger function transforming values before writing. parameters are in order : position in image, source pixel, target pixel, result pixel
+     *               if result pixel is null, the target pixel values are unchanged.
+     * @throws IllegalArgumentException if source and target images have different geometries
+     */
+    public static void mergeImages(RenderedImage source, WritableRenderedImage target, boolean filterByMask, TriFunction<Point, double[], double[], double[]> merger) throws IllegalArgumentException{
+
+        if (  source.getMinX() != target.getMinX()
+           || source.getMinY() != target.getMinY()
+           || source.getWidth() != target.getWidth()
+           || source.getHeight() != target.getHeight()) {
+            throw new IllegalArgumentException("Source and target images must have the same geometry.");
+        }
+
+
+        RenderedImage sourceMask = null;
+        if (filterByMask) {
+            Object cdt = source.getProperty(PlanarImage.MASK_KEY);
+            if (cdt instanceof RenderedImage) {
+                sourceMask = (RenderedImage) cdt;
+            }
+        }
+
+        final PixelIterator sourceIte = new PixelIterator.Builder().create(source);
+        final WritablePixelIterator targetIte = new WritablePixelIterator.Builder().createWritable(target);
+        final double[] pixelr = new double[sourceIte.getNumBands()];
+        final double[] pixelw = new double[targetIte.getNumBands()];
+
+        Point position;
+
+        if (sourceMask != null) {
+            final PixelIterator sourceMaskIte = new PixelIterator.Builder().create(sourceMask);
+            while (sourceMaskIte.next()) {
+
+                //check the source mask
+                if (sourceMaskIte.getSample(0) == 0) {
+                    position = sourceMaskIte.getPosition();
+
+                    sourceIte.moveTo(position.x, position.y);
+                    targetIte.moveTo(position.x, position.y);
+                    sourceIte.getPixel(pixelr);
+                    targetIte.getPixel(pixelw);
+
+                    final double[] result = merger.apply(position, pixelr, pixelw);
+                    if (result != null) {
+                        targetIte.setPixel(result);
+                    }
+                }
+            }
+        } else {
+            while (sourceIte.next()) {
+                position = sourceIte.getPosition();
+
+                targetIte.moveTo(position.x, position.y);
+                sourceIte.getPixel(pixelr);
+                targetIte.getPixel(pixelw);
+
+                final double[] result = merger.apply(position, pixelr, pixelw);
+                if (result != null) {
+                    targetIte.setPixel(result);
+                }
+            }
+        }
     }
 
 }

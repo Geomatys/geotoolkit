@@ -18,7 +18,6 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.Iterator;
@@ -29,10 +28,11 @@ import java.util.concurrent.CancellationException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.image.PixelIterator;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.image.Interpolation;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransformSeparator;
@@ -41,15 +41,10 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.interpolation.Interpolation;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -60,6 +55,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.util.TriFunction;
 
 
 /**
@@ -83,7 +79,7 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
         this.reference = reference;
     }
 
-    public void write(GridCoverage coverage, Envelope requestedEnvelope, InterpolationCase interpolation) throws DataStoreException, CancellationException {
+    public void write(GridCoverage coverage, Envelope requestedEnvelope, Interpolation interpolation) throws DataStoreException, CancellationException {
         if (coverage == null) {
             return;
         }
@@ -120,15 +116,12 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
             throw new DataStoreException(ex);
         }
 
-        //to fill value table : see resample.
-        final int nbBand = image.getSampleModel().getNumBands();
-
         final Iterator<Runnable> tileQueue;
         try {
             //extract the 2D part of the gridtocrs transform
             final TransformSeparator filter = new TransformSeparator(srcCRSToGrid);
             filter.addSourceDimensionRange(0, 2);
-            tileQueue = new Ite(reference, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(), interpolation);
+            tileQueue = new Ite(reference, requestedEnvelope, crsCoverage2D, image, filter.separate(), interpolation, coverage);
         } catch (FactoryException ex) {
             throw new DataStoreException(ex);
         }
@@ -139,15 +132,14 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
         stream.parallel().forEach(Runnable::run);
     }
 
-    private static class Ite <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> implements Iterator<Runnable> {
+    private static class Ite<T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> implements Iterator<Runnable> {
 
-        private final T model;
+        private final GridCoverage sourceCoverage;
         private final Envelope requestedEnvelope;
         private final CoordinateReferenceSystem crsCoverage2D;
         private final RenderedImage sourceImage;
         private final MathTransform srcCRSToGrid;
-        private final int nbBand;
-        private final InterpolationCase interpolation;
+        private final Interpolation interpolation;
         private volatile boolean finished = false;
 
         //iteration state informations
@@ -178,16 +170,15 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
         private Runnable next = null;
 
         private Ite(T model, Envelope requestedEnvelope,
-                CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand,
-                MathTransform srcCRSToGrid, InterpolationCase interpolation) throws DataStoreException{
-            this.model = model;
+                CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage,
+                MathTransform srcCRSToGrid, Interpolation interpolation, GridCoverage sourceCoverage) throws DataStoreException{
             this.requestedEnvelope = requestedEnvelope;
             this.crsCoverage2D = crsCoverage2D;
             this.sourceImage = sourceImage;
-            this.nbBand = nbBand;
             this.srcCRSToGrid = srcCRSToGrid;
             this.interpolation = interpolation;
             pyramidsIte = TileMatrices.getTileMatrixSets(model).iterator();
+            this.sourceCoverage = sourceCoverage;
         }
 
         private boolean calculateMosaicRange(final TileMatrixSet pyramid, final TileMatrix mosaic, Envelope pyramidEnvelope){
@@ -324,14 +315,8 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
                     break;
                 }
 
-                return new TileUpdater(model, currentPyramid, currentMosaic,
-                        idx, idy,
-                        mosAreaX, mosAreaY,
-                        mosAreaMaxX, mosAreaMaxY,
-                        mosULX, mosULY,
-                        crsDestToSrcGrid,
-                        sourceImage, nbBand, res,
-                        interpolation);
+                return new TileUpdater(currentMosaic,
+                        idx, idy, sourceImage, interpolation, sourceCoverage);
             }
         }
 
@@ -339,51 +324,27 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
 
     private static class TileUpdater <T extends MultiResolutionResource & org.apache.sis.storage.GridCoverageResource> implements Runnable{
 
-        private final T pm;
-        private final TileMatrixSet pyramid;
         private final TileMatrix mosaic;
         private final int idx;
         private final int idy;
-        private final int mosAreaX;
-        private final int mosAreaY;
-        private final int mosAreaMaxX;
-        private final int mosAreaMaxY;
-        private final double mosULX;
-        private final double mosULY;
         private final Interpolation interpolation;
-        private final int nbBand;
-        private final double res;
-        private final MathTransform crsDestToSrcGrid;
         private final RenderedImage baseImage;
+        private final GridCoverage coverage;
 
         private final int tileWidth;
         private final int tileHeight;
 
-        public TileUpdater(T pm, TileMatrixSet pyramid, TileMatrix mosaic, int idx, int idy,
-                int mosAreaX, int mosAreaY, int mosAreaMaxX, int mosAreaMaxY,
-                double mosULX, double mosULY, MathTransform crsDestToSrcGrid,
-                RenderedImage image, int nbBand, double res, InterpolationCase interpolation) {
-            this.pm = pm;
+        public TileUpdater(TileMatrix mosaic, int idx, int idy,
+                RenderedImage image, Interpolation interpolation, GridCoverage coverage) {
             this.mosaic = mosaic;
-            this.pyramid = pyramid;
             this.idx = idx;
             this.idy = idy;
-            this.mosAreaX = mosAreaX;
-            this.mosAreaY = mosAreaY;
-            this.mosAreaMaxX = mosAreaMaxX;
-            this.mosAreaMaxY = mosAreaMaxY;
-            this.mosULX = mosULX;
-            this.mosULY = mosULY;
-            this.interpolation = Interpolation.create(new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(image), interpolation, 2);
-            this.nbBand = nbBand;
-            this.res = res;
-            this.crsDestToSrcGrid = crsDestToSrcGrid;
+            this.interpolation = interpolation;
             this.tileWidth = mosaic.getTileSize().width;
             this.tileHeight = mosaic.getTileSize().height;
             this.baseImage = image;
+            this.coverage = coverage;
         }
-
-
 
         @Override
         public void run() {
@@ -400,26 +361,22 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
                 currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, baseImage);
             }
 
-            // define tile translation from bufferedImage min pixel position to mosaic pixel position.
-            final int minidx = idx * tileWidth;
-            final int minidy = idy * tileHeight;
-
-            //define destination grid to CRS.
-            final AffineTransform2D destImgToCRSDest = new AffineTransform2D(res, 0, 0, -res, mosULX + (minidx + 0.5) * res, mosULY - (minidy + 0.5) * res);
-            final MathTransform destImgToCrsCoverage = MathTransforms.concatenate(destImgToCRSDest, crsDestToSrcGrid);
-
-            // define currently tile work area.
-            final int tminx  = Math.max(mosAreaX, minidx);
-            final int tminy  = Math.max(mosAreaY, minidy);
-            final int tmaxx  = Math.min(mosAreaMaxX, minidx + tileWidth);
-            final int tmaxy  = Math.min(mosAreaMaxY, minidy + tileHeight);
-            final Rectangle tileAreaWork = new Rectangle();
-            tileAreaWork.setBounds(tminx - minidx, tminy - minidy, tmaxx - tminx, tmaxy - tminy);
-            if(tminx==tmaxx || tminy==tmaxy) return;
+            final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(mosaic, new Point(idx, idy), mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
 
             try {
-                final Resample resample = new Resample(destImgToCrsCoverage, currentlyTile, tileAreaWork, interpolation, new double[nbBand], ResampleBorderComportement.EXTRAPOLATION);
-                resample.fillImage();
+                final GridCoverageProcessor processor = new GridCoverageProcessor();
+                processor.setInterpolation(interpolation);
+                GridCoverage resampled = processor.resample(coverage, tileGridGeom);
+                RenderedImage resampledImage = resampled.render(null);
+
+                //we need to merge image
+                final TriFunction<Point, double[], double[], double[]> merger = new TriFunction<Point, double[], double[], double[]>() {
+                    @Override
+                    public double[] apply(Point position, double[] sourcePixel, double[] targetPixel) {
+                        return sourcePixel;
+                    }
+                };
+                BufferedImages.mergeImages(resampledImage, currentlyTile, true, merger);
                 mosaic.writeTiles(Stream.of(new DefaultImageTile(currentlyTile, new Point(idx, idy))), null);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);

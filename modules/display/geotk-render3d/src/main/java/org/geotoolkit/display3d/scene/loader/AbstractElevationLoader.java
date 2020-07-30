@@ -17,8 +17,8 @@
 package org.geotoolkit.display3d.scene.loader;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.display.PortrayalException;
 import org.opengis.geometry.DirectPosition;
@@ -45,8 +45,8 @@ public abstract class AbstractElevationLoader implements ElevationLoader{
         env.setRange(0, position.getOrdinate(0)-scale, position.getOrdinate(0)+scale);
         env.setRange(1, position.getOrdinate(1)-scale, position.getOrdinate(1)+scale);
 
-        final BufferedImage image = getBufferedImageOf(env, new Dimension(5,5));
-        final WritableRaster raster = image.getRaster();
+        final RenderedImage image = getBufferedImageOf(env, new Dimension(5,5));
+        final Raster raster = image.getData();
         double[] pixel = new double[raster.getNumBands()];
         double result = 0;
         for(int y=0;y<5;y++){
@@ -66,8 +66,8 @@ public abstract class AbstractElevationLoader implements ElevationLoader{
         env.setRange(0, position.getOrdinate(0)-scale, position.getOrdinate(0)+scale);
         env.setRange(1, position.getOrdinate(1)-scale, position.getOrdinate(1)+scale);
 
-        final BufferedImage image = getBufferedImageOf(env, new Dimension(1,1));
-        final double[] pixel = image.getRaster().getPixel(0, 0, (double[])null);
+        final RenderedImage image = getBufferedImageOf(env, new Dimension(1,1));
+        final double[] pixel = image.getData().getPixel(0, 0, (double[])null);
         return pixel[0];
     }
 

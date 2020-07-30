@@ -19,16 +19,13 @@ package org.geotoolkit.display3d.scene.loader;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
+import java.awt.image.RenderedImage;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.measure.IncommensurableException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -39,15 +36,9 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.utils.TextureUtils;
-import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.image.interpolation.Interpolation;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.storage.coverage.TileMatrixImage;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -132,7 +123,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
     }
 
     @Override
-    public BufferedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
+    public RenderedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
 
         if(outputCrs == null){
             throw new PortrayalException("Output crs has not been set");
@@ -185,7 +176,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
         }
     }
 
-    private static BufferedImage extractTileImage(final Envelope tileEnvelope,
+    private static RenderedImage extractTileImage(final Envelope tileEnvelope,
             final TileMatrixImage dataRenderedImage, final MathTransform transformFromOutput,
             final Dimension tileSize) throws TransformException {
         if (dataRenderedImage == null) {
@@ -205,25 +196,17 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
                 tileEnvelope.getMinimum(0),
                 tileEnvelope.getMaximum(1));
 
-        final ColorModel sourceColorModel = dataRenderedImage.getColorModel();
-        final Raster prototype = dataRenderedImage.getData(new Rectangle(1, 1));
-        //prepare the output image
-        final WritableRaster targetRaster = prototype.createCompatibleWritableRaster(tileSize.width, tileSize.height);
-        final BufferedImage targetImage = new BufferedImage(sourceColorModel, targetRaster, sourceColorModel.isAlphaPremultiplied(), null);
-        ImageUtilities.fill(targetImage, Double.NaN);
-
         final MathTransform sourceToTarget = MathTransforms.concatenate(
                 targetGridToTargetCrs, transformFromOutput, mosaicCrsToMosaicGrid);
 
         //resample image
-        final double[] fillValue = new double[targetImage.getData().getNumBands()];
+        final double[] fillValue = new double[dataRenderedImage.getSampleModel().getNumBands()];
         Arrays.fill(fillValue, Double.NaN);
-        final PixelIterator it = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(dataRenderedImage);
-        final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
-        final Resample resampler = new Resample(sourceToTarget, targetImage, null, interpol, fillValue, ResampleBorderComportement.EXTRAPOLATION);
-        resampler.fillImage();
 
-        return targetImage;
+        final ImageProcessor processor = new ImageProcessor();
+        processor.setInterpolation(org.apache.sis.image.Interpolation.NEAREST);
+        final RenderedImage resampled = processor.resample(dataRenderedImage, new Rectangle(tileSize.width, tileSize.height), sourceToTarget);
+        return resampled;
     }
 
 }

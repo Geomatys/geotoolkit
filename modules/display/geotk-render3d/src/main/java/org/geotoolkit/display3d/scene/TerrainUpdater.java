@@ -27,6 +27,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureData;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
@@ -283,7 +284,7 @@ public class TerrainUpdater implements PropertyChangeListener, Updater {
                 final Dimension textureDimension = node.getTileSize();
 
                 final ElevationLoader loaderMNT = terrain.getElevationLoader();
-                final BufferedImage targetImage = loaderMNT.getBufferedImageOf(tileEnv, textureDimension);
+                final RenderedImage targetImage = loaderMNT.getBufferedImageOf(tileEnv, textureDimension);
                 final Raster rasterMNT = targetImage.getTile(0, 0);
 
                 float[] vertices = tile3d.getVerticesAsArray();
@@ -329,8 +330,8 @@ public class TerrainUpdater implements PropertyChangeListener, Updater {
             final Dimension textureDimension = node.getTileSize();
             final ImageLoader loaderImg = terrain.getImageLoader();
 
-            final BufferedImage targetImage = loaderImg.getBufferedImageOf(tileEnv, textureDimension);
-            final TextureData data = new AWTTextureData(glProfile, 0, 0, false, targetImage);
+            final RenderedImage targetImage = loaderImg.getBufferedImageOf(tileEnv, textureDimension);
+            final TextureData data = new AWTTextureData(glProfile, 0, 0, false, (BufferedImage) targetImage);
             node.setDataImage(data);
         } else {
             System.out.println("Try to update image on " + node.getPosition() + " but has no data");

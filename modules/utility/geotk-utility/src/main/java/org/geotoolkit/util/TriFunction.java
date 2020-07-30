@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2020, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,24 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display3d.scene.loader;
-
-import java.awt.Dimension;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import java.awt.image.RenderedImage;
-import org.geotoolkit.display.PortrayalException;
+package org.geotoolkit.util;
 
 /**
- * Generate tile images for terrain.
+ * Similar to BiFunction but with three input parameters.
  *
- * @author Thomas Rouby (Geomatys)
  * @author Johann Sorel (Geomatys)
+ * @param <A> first parameter type
+ * @param <B> second parameter type
+ * @param <C> third parameter type
+ * @param <R> returned type
  */
-public interface ImageLoader {
+public interface TriFunction<A,B,C,R> {
 
-    void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException;
-
-    RenderedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException;
+    R apply(A a, B b, C c);
 
 }

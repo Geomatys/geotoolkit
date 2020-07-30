@@ -48,7 +48,6 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
-import org.apache.sis.image.PlanarImage;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
@@ -75,6 +74,7 @@ import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.TriFunction;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
@@ -805,35 +805,30 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 processor.setInterpolation(interpolation);
                 final GridCoverage resampledCoverage = processor.resample(coverage, canvas);
                 final RenderedImage resampledImage = resampledCoverage.render(null);
-                final RenderedImage resampledMask = (RenderedImage) resampledImage.getProperty(PlanarImage.MASK_KEY);
 
                 //we need to merge image, replacing only not-NaN values
-                final PixelIterator read = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(resampledImage);
-                final PixelIterator maskIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(resampledMask);
-                final WritablePixelIterator write = new WritablePixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(result);
-                final double[] pixelr = new double[read.getNumBands()];
-                final double[] pixelw = new double[read.getNumBands()];
-                while (read.next() & write.next() & maskIte.next()) {
-                    //check the resampled mask
-                    if (maskIte.getSample(0) != 0) {
-
-                        read.getPixel(pixelr);
+                final TriFunction<Point, double[], double[], double[]> merger = new TriFunction<Point, double[], double[], double[]>() {
+                    @Override
+                    public double[] apply(Point position, double[] sourcePixel, double[] targetPixel) {
                         //apply transform if defined before checking NaN
-                        if (source.sampleTransform != null) {
-                            pixelr[0] = source.sampleTransform.transform(pixelr[0]);
+                        if (source.sampleTransform != null) try {
+                            sourcePixel[0] = source.sampleTransform.transform(sourcePixel[0]);
+                        } catch (TransformException ex) {
+                            Logging.getLogger("org.geotoolkit.storage.coverage.mosaic").log(Level.INFO, ex.getMessage(), ex);
+                            return null;
                         }
-                        if (noData[0] == pixelr[0] || Double.isNaN(pixelr[0]) || coverageNoData[0] == pixelr[0]) {
-                            continue;
+                        if (noData[0] == sourcePixel[0] || Double.isNaN(sourcePixel[0]) || coverageNoData[0] == sourcePixel[0]) {
+                            return null;
                         }
-                        write.getPixel(pixelw);
-                        if (noData[0] == pixelw[0] || Double.isNaN(pixelw[0])) {
-                            write.setPixel(pixelr);
+                        if (noData[0] == targetPixel[0] || Double.isNaN(targetPixel[0])) {
                             //fill the mask
-                            Point pt = read.getPosition();
-                            mask.set2D(pt.x, pt.y);
+                            mask.set2D(position.x, position.y);
+                            return sourcePixel;
                         }
+                        return null;
                     }
-                }
+                };
+                BufferedImages.mergeImages(resampledImage, result, true, merger);
 
             } catch (NoSuchDataException | DisjointExtentException ex) {
                 //may happen, enveloppe is larger then data or mask do not intersect anymore
