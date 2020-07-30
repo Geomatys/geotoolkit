@@ -161,6 +161,43 @@ public class OpenSearchDescription implements OpenSearchResponse{
 
     }
 
+    public OpenSearchDescription(OpenSearchDescription that) {
+        if (that != null) {
+           this.shortName = that.shortName;
+            this.description= that.description;
+            this.contact= that.contact;
+            this.tags= that.tags;
+            this.longName= that.longName;
+            this.developer= that.developer;
+            this.attribution= that.attribution;
+            this.syndicationRight= that.syndicationRight;
+            this.adultContent= that.adultContent;
+            this.inputEncoding= that.inputEncoding;
+            this.outputEncoding= that.outputEncoding;
+            if (that.image != null) {
+                this.image = new ImageType(that.image);
+            }
+            if (that.url != null) {
+                this.url = new ArrayList<>();
+                for (Url u : that.url) {
+                    this.url.add(new Url(u));
+                }
+            }
+            if (that.language != null) {
+                this.language = new ArrayList<>();
+                for (String u : that.language) {
+                    this.language.add(u);
+                }
+            }
+            if (that.query != null) {
+                this.query = new ArrayList<>();
+                for (CompleteQueryType u : that.query) {
+                    this.query.add(new CompleteQueryType(u));
+                }
+            }
+        }
+    }
+
     public OpenSearchDescription(String shortName, String description) {
         this.shortName = shortName;
         this.description = description;
@@ -238,7 +275,7 @@ public class OpenSearchDescription implements OpenSearchResponse{
      */
     public List<Url> getUrl() {
         if (url == null) {
-            url = new ArrayList<Url>();
+            url = new ArrayList<>();
         }
         return this.url;
     }
@@ -488,7 +525,7 @@ public class OpenSearchDescription implements OpenSearchResponse{
      */
     public List<String> getLanguage() {
         if (language == null) {
-            language = new ArrayList<String>();
+            language = new ArrayList<>();
         }
         return this.language;
     }
@@ -541,4 +578,7 @@ public class OpenSearchDescription implements OpenSearchResponse{
         this.outputEncoding = value;
     }
 
+    public OpenSearchDescription clone() {
+        return new OpenSearchDescription(this);
+    }
 }

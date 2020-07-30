@@ -113,6 +113,31 @@ public class Parameter {
         this.value = value;
     }
 
+    public Parameter(Parameter that) {
+        if (that != null) {
+            this.name= that.name;
+            this.maxExclusive= that.maxExclusive;
+            this.maxInclusive= that.maxInclusive;
+            this.maximum= that.maximum;
+            this.minExclusive= that.minExclusive;
+            this.minInclusive= that.minInclusive;
+            this.minimum= that.minimum;
+            this.pattern= that.pattern;
+            this.step= that.step;
+            this.title= that.title;
+            this.value= that.value;
+            if (that.options != null) {
+                this.options = new ArrayList<>();
+                for (Parameter u : that.options) {
+                    this.options.add(new Parameter(u));
+                }
+            }
+
+            // unable to clone any property
+            this.any = that.any;
+        }
+    }
+
     /**
      * Gets the value of the any property.
      *

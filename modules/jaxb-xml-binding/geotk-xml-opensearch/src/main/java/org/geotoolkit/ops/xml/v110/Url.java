@@ -94,6 +94,22 @@ public class Url {
 
     }
 
+    public Url(Url that) {
+        if (that != null) {
+            this.template= that.template;
+            this.indexOffset= that.indexOffset;
+            this.pageOffset= that.pageOffset;
+            this.rel= that.rel;
+            this.type= that.type;
+            if (that.parameters != null) {
+                this.parameters = new ArrayList<>();
+                for (Parameter u : that.parameters) {
+                    this.parameters.add(new Parameter(u));
+                }
+            }
+        }
+    }
+
     public Url(String type, String template) {
         this.type = type;
         this.template = template;
