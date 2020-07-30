@@ -14,7 +14,7 @@
   <xs:complexType name="AbstractGeometryType">
     <xs:sequence>
       <xs:element type="xs:anyURI" nillable="false" minOccurs="0" maxOccurs="1" name="@srsName"/>
-      <xs:element type="xs:integer" nillable="false" minOccurs="0" maxOccurs="1" name="@srsDimension"/>
+      <xs:element type="xs:int" nillable="false" minOccurs="0" maxOccurs="1" name="@srsDimension"/>
       <xs:element type="xs:string" nillable="false" minOccurs="0" maxOccurs="1" name="@axisLabels"/>
       <xs:element type="xs:string" nillable="false" minOccurs="0" maxOccurs="1" name="@uomLabels"/>
     </xs:sequence>

@@ -8,10 +8,10 @@
         <xs:complexContent>
             <xs:extension xmlns:gml="http://www.opengis.net/gml" base="gml:AbstractFeatureType" >
                 <xs:sequence>
-                    <xs:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
+                    <xs:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xs:int"/>
                     <xs:element name="attString"           maxOccurs="1" minOccurs="1" nillable="true" type="xs:string"/>
                     <xs:element name="attShort"            maxOccurs="1" minOccurs="1" nillable="true" type="xs:short"/>
-                    <xs:element name="attInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:integer"/>
+                    <xs:element name="attInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xs:int"/>
                     <xs:element name="attLong"             maxOccurs="1" minOccurs="0" nillable="true" type="xs:long"/>
                     <xs:element name="attDouble"           maxOccurs="1" minOccurs="0" nillable="true" type="xs:double"/>
                     <xs:element name="attDecimal"          maxOccurs="1" minOccurs="0" nillable="true" type="xs:decimal"/>
