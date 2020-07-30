@@ -30,6 +30,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.coverage.grid.BufferedGridCoverage;
+import org.apache.sis.image.Interpolation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
@@ -39,7 +40,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.storage.StorageCountListener;
 import org.geotoolkit.storage.event.AggregationEvent;
 import org.geotoolkit.storage.event.ContentEvent;
@@ -123,7 +123,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+
         */
         final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
-        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);;
+        aggregate.setInterpolation(Interpolation.NEAREST);
         aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
         aggregate.add(resource1);
         aggregate.add(resource2);
@@ -233,7 +233,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+---+---+---+
         */
         final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
-        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+        aggregate.setInterpolation(Interpolation.NEAREST);
         aggregate.setMode(AggregatedCoverageResource.Mode.SCALE);
         aggregate.add(resource1);
         aggregate.add(resource2);
@@ -326,7 +326,7 @@ public class AggregatedCoverageResourceTest {
         final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
                 null, AggregatedCoverageResource.Mode.ORDER,
                 resource1, resource2, resource3);
-        ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+        ((AggregatedCoverageResource)aggregate).setInterpolation(Interpolation.NEAREST);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
         Assert.assertEquals(grid1, gridGeometry);
@@ -459,7 +459,7 @@ public class AggregatedCoverageResourceTest {
         final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
                 null, AggregatedCoverageResource.Mode.ORDER,
                 resource1, resource2);
-        ((AggregatedCoverageResource)aggregate).setInterpolation(InterpolationCase.NEIGHBOR);
+        ((AggregatedCoverageResource)aggregate).setInterpolation(Interpolation.NEAREST);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
         Assert.assertTrue(!gridGeometry.isDefined(GridGeometry.EXTENT));
@@ -541,7 +541,7 @@ public class AggregatedCoverageResourceTest {
         band2.setSources(new AggregatedCoverageResource.Source(resource3, 0));
 
         final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource(Arrays.asList(band0,band1,band2), AggregatedCoverageResource.Mode.ORDER, crs);
-        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+        aggregate.setInterpolation(Interpolation.NEAREST);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
         Assert.assertEquals(grid1, gridGeometry);
@@ -659,7 +659,7 @@ public class AggregatedCoverageResourceTest {
         band.setSources(source1, source2, source3);
 
         final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource(Collections.singletonList(band), AggregatedCoverageResource.Mode.ORDER, null);
-        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+        aggregate.setInterpolation(Interpolation.NEAREST);
         final double[] resolution = aggregate.getGridGeometry().getResolution(true);
         Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
@@ -727,7 +727,7 @@ public class AggregatedCoverageResourceTest {
         band1.setSources(new AggregatedCoverageResource.Source(resource2, 0));
 
         final AggregatedCoverageResource aggregate = new AggregatedCoverageResource(Arrays.asList(band0, band1), AggregatedCoverageResource.Mode.ORDER, null);
-        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);
+        aggregate.setInterpolation(Interpolation.NEAREST);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
         Assert.assertEquals(grid1, gridGeometry);
@@ -784,13 +784,13 @@ public class AggregatedCoverageResourceTest {
 
 
         /*
-        We expect a final coverage with values [1,2,3] on a single row
+        We expect a final coverage with values [1,NaN,3] on a single row
         +---+---+---+
         | 1 |NaN| 3 |
         +---+---+---+
         */
         final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
-        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);;
+        aggregate.setInterpolation(Interpolation.NEAREST);
         aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
         aggregate.add(resource1);
         aggregate.add(resource3);
@@ -867,7 +867,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+
         */
         final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
-        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);;
+        aggregate.setInterpolation(Interpolation.NEAREST);
         aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
         aggregate.add(resource1);
         aggregate.add(resource3);

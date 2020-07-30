@@ -39,13 +39,16 @@ import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.PlanarImage;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
@@ -66,7 +69,6 @@ import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.event.AggregationEvent;
 import org.geotoolkit.storage.event.ContentEvent;
@@ -122,7 +124,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
     //user defined parameters
     private Mode mode = Mode.SCALE;
-    private InterpolationCase interpolation = InterpolationCase.BILINEAR;
+    private Interpolation interpolation = Interpolation.BILINEAR;
     private CoordinateReferenceSystem outputCrs = null;
 
     //computed informations
@@ -327,7 +329,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * Returns preferred interpolation method when aggregating data.
      * @return interpolation, not null
      */
-    public InterpolationCase getInterpolation() {
+    public Interpolation getInterpolation() {
         return interpolation;
     }
 
@@ -336,7 +338,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * @param interpolation not null
      * @return
      */
-    public void setInterpolation(InterpolationCase interpolation) {
+    public void setInterpolation(Interpolation interpolation) {
         ArgumentChecks.ensureNonNull("interpolation", interpolation);
         this.interpolation = interpolation;
     }
@@ -747,15 +749,20 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         return new GridCoverage2D(canvas, sampleDimensions, result);
     }
 
-    private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex, InterpolationCase interpolation) throws DataStoreException {
+    private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex, Interpolation interpolation) throws DataStoreException {
 
         final double[] noData = new double[]{this.noData[bandIndex]};
 
-        BufferedImage result = null;
-        BufferedImage intermediate = null;
+        //create result image
+        final GridExtent extent = canvas.getExtent();
+        final int sizeX = Math.toIntExact(extent.getSize(0));
+        final int sizeY = Math.toIntExact(extent.getSize(1));
+        final BufferedImage result = BufferedImages.createImage(sizeX, sizeY, 1, DataBuffer.TYPE_DOUBLE);
+        if (!TiledCoverageResource.isAllZero(noData)) BufferedImages.setAll(result, noData);
 
-        //start by creating a mask of filled datas
-        final BitSet2D mask = new BitSet2D((int) canvas.getExtent().getSize(0), (int) canvas.getExtent().getSize(1));
+
+        //create a mask of filled datas
+        final BitSet2D mask = new BitSet2D(sizeX, sizeY);
 
         for (Source source : ordered) {
             try {
@@ -792,34 +799,24 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
                 }
                 final double[] coverageNoData = new double[]{extractNoData(sampleDimensions.get(0))};
-                final RenderedImage tileImage = coverage.render(null);
 
-                final BufferedImage workImage;
-                if (result == null) {
-                    //create result image
-                    GridExtent extent = canvas.getExtent();
-                    int sizeX = Math.toIntExact(extent.getSize(0));
-                    int sizeY = Math.toIntExact(extent.getSize(1));
-                    result = BufferedImages.createImage(sizeX, sizeY, 1, DataBuffer.TYPE_DOUBLE);
-                    workImage = result;
-                    if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(result, noData);
-                } else {
-                    if (intermediate == null) {
-                        intermediate = BufferedImages.createImage(result.getWidth(), result.getHeight(), result);
-                    }
-                    workImage = intermediate;
-                    if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(intermediate, noData);
-                }
+                //resample coverage
+                final GridCoverageProcessor processor = new GridCoverageProcessor();
+                processor.setInterpolation(interpolation);
+                final GridCoverage resampledCoverage = processor.resample(coverage, canvas);
+                final RenderedImage resampledImage = resampledCoverage.render(null);
+                final RenderedImage resampledMask = (RenderedImage) resampledImage.getProperty(PlanarImage.MASK_KEY);
 
-                MosaicedCoverageResource.resample(coverage, tileImage, interpolation, canvas, workImage);
+                //we need to merge image, replacing only not-NaN values
+                final PixelIterator read = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(resampledImage);
+                final PixelIterator maskIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(resampledMask);
+                final WritablePixelIterator write = new WritablePixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(result);
+                final double[] pixelr = new double[read.getNumBands()];
+                final double[] pixelw = new double[read.getNumBands()];
+                while (read.next() & write.next() & maskIte.next()) {
+                    //check the resampled mask
+                    if (maskIte.getSample(0) != 0) {
 
-               if (workImage != result) {
-                    //we need to merge image, replacing only not-NaN values
-                    final PixelIterator read = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(workImage);
-                    final WritablePixelIterator write = new WritablePixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(result);
-                    final double[] pixelr = new double[read.getNumBands()];
-                    final double[] pixelw = new double[read.getNumBands()];
-                    while (read.next() & write.next()) {
                         read.getPixel(pixelr);
                         //apply transform if defined before checking NaN
                         if (source.sampleTransform != null) {
@@ -836,34 +833,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                             mask.set2D(pt.x, pt.y);
                         }
                     }
-                } else {
-                    //first resampled Image, fill the mask
-                    WritablePixelIterator read = WritablePixelIterator.create(workImage);
-                    final double[] pixelr = new double[read.getNumBands()];
-                    while (read.next()) {
-                        read.getPixel(pixelr);
-                        //apply transform if defined before checking NaN
-                        if (source.sampleTransform != null) {
-                            pixelr[0] = source.sampleTransform.transform(pixelr[0]);
-                            read.setPixel(pixelr);
-                        }
-                        if ((coverageNoData[0] == pixelr[0]) && (noData[0] != coverageNoData[0])) {
-                            //we must replace the coverage no data by the target sample dimension one.
-                            pixelr[0] = noData[0];
-                            read.setPixel(pixelr);
-                        }
-                        if (!(noData[0] == pixelr[0] || Double.isNaN(pixelr[0]))) {
-                            Point pt = read.getPosition();
-                            mask.set2D(pt.x, pt.y);
-                        }
-                    }
                 }
 
             } catch (NoSuchDataException | DisjointExtentException ex) {
                 //may happen, enveloppe is larger then data or mask do not intersect anymore
                 //quad tree may also return more results
-            } catch (FactoryException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }

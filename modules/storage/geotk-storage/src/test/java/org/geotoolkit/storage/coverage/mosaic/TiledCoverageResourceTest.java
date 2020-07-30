@@ -44,7 +44,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MosaicedCoverageResourceTest {
+public class TiledCoverageResourceTest {
 
     /**
      * Test mosaic add a NaN value to fill spaces.
@@ -91,17 +91,14 @@ public class MosaicedCoverageResourceTest {
         +---+---+---+
         | 1 |NaN| 2 |
         +---+---+---+
-        starting at index 30 in data array, for an image of size 9x7.
-        The 9x7 size is becausze MosaicedCoverageResource.read(GridGeometry domain, int... range)
-        adds a 3x3 margin on each side.
         */
-        final GridCoverageResource aggregate =  MosaicedCoverageResource.create(resource1, resource2).get(0);
+        final GridCoverageResource aggregate =  TiledCoverageResource.create(resource1, resource2).get(0);
 
         final GridCoverage coverage = aggregate.read(grid).forConvertedValues(true);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
-        reader.moveTo(3, 3); Assert.assertEquals(1, reader.getSampleDouble(0), 0.0);
-        reader.moveTo(4, 3); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
-        reader.moveTo(5, 3); Assert.assertEquals(2, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(1, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(2, 0); Assert.assertEquals(2, reader.getSampleDouble(0), 0.0);
     }
 }

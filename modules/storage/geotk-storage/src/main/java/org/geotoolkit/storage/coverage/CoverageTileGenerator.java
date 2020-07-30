@@ -53,6 +53,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
@@ -276,7 +277,18 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 r.setSampleDimensions(resource.getSampleDimensions());
                 r.getModels().add(pm);
 
-                resource = r;
+                GridCoverageResource agg;
+                try {
+                    //aggregate with original data
+                    //upper level tiles may expand over tiles which are not available,
+                    //we specify Mode ORDER, we want pregenerated tiles to be used first
+                    //this way only border tiles may use the original resource
+                    agg = AggregatedCoverageResource.create(r.getGridGeometry().getCoordinateReferenceSystem(), AggregatedCoverageResource.Mode.ORDER, r, this.resource);
+                } catch (TransformException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
+
+                resource = agg;
             }
         }
     }

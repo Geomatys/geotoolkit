@@ -223,7 +223,11 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
                     } else {
                         tileRaster = image.getData();
                     }
-                    tileRaster = makeConform(tileRaster);
+                    try {
+                        tileRaster = BufferedImages.makeConform(tileRaster, rasterModel);
+                    } catch (ImagingOpException ex) {
+                        throw new BackingStoreException("Fix mosaic implementation " + matrix.getClass().getName() + " " + ex.getMessage(), ex);
+                    }
                     buffer = tileRaster.getDataBuffer();
                 }
             }
@@ -264,56 +268,6 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
 
     private boolean isTileMissing(int x, int y) throws DataStoreException{
         return matrix.isMissing(x+gridRange.x, y+gridRange.y);
-    }
-
-    /**
-     * Ensure the given raster is compatible with declared sample model.
-     * If not the data will be copied to a new raster.
-     */
-    private Raster makeConform(Raster in) {
-        final int inNumBands = in.getNumBands();
-        final int outNumBands = rasterModel.getNumBands();
-        if (inNumBands != outNumBands) {
-            //this is a severe issue, the mosaic to no respect it's own sample dimension definition
-            throw new BackingStoreException("Mosaic tile image declares " + inNumBands
-                    + " bands, but sample dimensions have " + outNumBands
-                    + ", please fix mosaic implementation " + matrix.getClass().getName());
-        }
-
-        final int inDataType = in.getDataBuffer().getDataType();
-        final int outDataType = rasterModel.getDataBuffer().getDataType();
-        if (inDataType != outDataType) {
-            //difference in input and output types, this may be caused by an aggregated resource
-            final int x = 0;
-            final int y = 0;
-            final int width = in.getWidth();
-            final int height = in.getHeight();
-            final WritableRaster raster = rasterModel.createCompatibleWritableRaster(width, height);
-            final int nbSamples = width * height * inNumBands;
-            switch (outDataType) {
-                case DataBuffer.TYPE_BYTE :
-                case DataBuffer.TYPE_SHORT :
-                case DataBuffer.TYPE_USHORT :
-                case DataBuffer.TYPE_INT :
-                    int[] arrayi = new int[nbSamples];
-                    in.getPixels(x, y, width, height, arrayi);
-                    raster.setPixels(x, y, width, height, arrayi);
-                    break;
-                case DataBuffer.TYPE_FLOAT :
-                    float[] arrayf = new float[nbSamples];
-                    in.getPixels(x, y, width, height, arrayf);
-                    raster.setPixels(x, y, width, height, arrayf);
-                    break;
-                case DataBuffer.TYPE_DOUBLE :
-                default :
-                    double[] arrayd = new double[nbSamples];
-                    in.getPixels(x, y, width, height, arrayd);
-                    raster.setPixels(x, y, width, height, arrayd);
-                    break;
-            }
-            in = raster;
-        }
-        return in;
     }
 
     /**

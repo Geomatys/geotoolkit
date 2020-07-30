@@ -17,11 +17,15 @@
 package org.geotoolkit.storage.coverage.mosaic;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,64 +39,46 @@ import java.util.Set;
 import javax.measure.Unit;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.image.ComputedImage;
 import org.apache.sis.internal.referencing.j2d.Tile;
 import org.apache.sis.internal.referencing.j2d.TileOrganizer;
 import org.apache.sis.internal.storage.AbstractGridResource;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.NoSuchDataException;
-import org.apache.sis.storage.event.StoreEvent;
-import org.apache.sis.storage.event.StoreListener;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.util.StringUtilities;
-import org.locationtech.jts.index.quadtree.Quadtree;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MosaicedCoverageResource extends AbstractGridResource {
+public class TiledCoverageResource extends AbstractGridResource {
 
     private final GridGeometry gridGeometry;
     private final ResourceTile[] tiles;
-    private final Quadtree tree = new Quadtree();
+    private final Map<Point, ResourceTile> indexedTiles = new HashMap();
 
     private List<SampleDimension> sampleDimensions;
     private boolean forceTransformedValues;
     private double[] noData;
+    private Raster rasterTemplate;
+    private SampleModel sampleModel;
+    private ColorModel colorModel;
 
-    private MosaicedCoverageResource(GridGeometry gridGeometry, Tile[] tiles) throws DataStoreException {
+    private TiledCoverageResource(GridGeometry gridGeometry, Tile[] tiles) throws DataStoreException {
         super(null);
         this.gridGeometry = gridGeometry;
         this.tiles = Arrays.copyOf(tiles, tiles.length, ResourceTile[].class);
 
-        for (ResourceTile tile : this.tiles) {
-            GridCoverageResource resource = tile.getResource();
-            Envelope envelope = resource.getGridGeometry().getEnvelope();
-            tree.insert(new JTSEnvelope2D(envelope), tile);
-        }
 
         //add a no-data category
         //the no-data is needed to fill possible gaps between coverages
@@ -136,6 +122,37 @@ public class MosaicedCoverageResource extends AbstractGridResource {
                 sampleDimensions.set(i, sampleDimensions.get(i).forConvertedValues(true));
             }
         }
+
+        for (ResourceTile tile : this.tiles) {
+            final GridCoverageResource resource = tile.getResource();
+            final GridExtent extent = resource.getGridGeometry().getExtent();
+            final Point location = tile.getLocation();
+
+            final Point tileXY = new Point(
+                    location.x / (int) extent.getSize(0),
+                    location.y / (int) extent.getSize(1));
+            indexedTiles.put(tileXY, tile);
+
+            if (sampleModel == null) {
+                RenderedImage img;
+                if (forceTransformedValues) {
+                    img = resource.read(null).forConvertedValues(true).render(null);
+                } else {
+                    img = resource.read(null).render(null);
+                }
+                sampleModel = img.getSampleModel();
+                colorModel = img.getColorModel();
+                rasterTemplate = img.getData().createCompatibleWritableRaster(2, 2);
+            }
+        }
+
+        if (forceTransformedValues) {
+            final BufferedImage imageTemplate = BufferedImages.createImage(sampleModel.getWidth(), sampleModel.getHeight(), sampleDimensions.size(), DataBuffer.TYPE_DOUBLE);
+            rasterTemplate = imageTemplate.getTile(0, 0);
+            sampleModel = rasterTemplate.getSampleModel();
+            colorModel = imageTemplate.getColorModel();
+        }
+
     }
 
     @Override
@@ -156,125 +173,35 @@ public class MosaicedCoverageResource extends AbstractGridResource {
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
 
-        GridGeometry canvas = gridGeometry;
+        final TiledCoveragesImage img = new TiledCoveragesImage(sampleModel, colorModel);
+
+        final GridCoverage coverage = new GridCoverageBuilder()
+                .setDomain(gridGeometry)
+                .setRanges(sampleDimensions)
+                .setValues(img)
+                .build();
+
         if (domain != null) {
-            try {
-            canvas = canvas.derive()
-                    .margin(3, 3)
-                    .rounding(GridRoundingMode.ENCLOSING)
-                    .subgrid(domain)
+            final GridDerivation derivate = gridGeometry.derive().rounding(GridRoundingMode.ENCLOSING).subgrid(domain);
+            final GridExtent intersection = derivate.getIntersection();
+
+            if (!intersection.equals(gridGeometry.getExtent())) {
+                //reduce returned coverage
+                final RenderedImage subImage = coverage.render(intersection);
+
+                final GridGeometry subGridGeometry = new GridGeometry(intersection,
+                        PixelInCell.CELL_CENTER,
+                        gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER),
+                        gridGeometry.getCoordinateReferenceSystem());
+
+                return new GridCoverageBuilder()
+                    .setDomain(subGridGeometry)
+                    .setRanges(sampleDimensions)
+                    .setValues(subImage)
                     .build();
-            } catch (DisjointExtentException ex) {
-                throw new DisjointCoverageDomainException(ex.getMessage(), ex);
-            }
-        } else {
-            domain = canvas;
-        }
-        canvas = CoverageUtilities.forceLowerToZero(canvas);
-
-        final Envelope envelope = canvas.getEnvelope();
-        final List<ResourceTile> results = tree.query(new JTSEnvelope2D(envelope));
-
-        //single result
-        if (results.size() == 1) {
-            GridCoverageResource resource = results.get(0).getResource();
-            return resource.read(canvas, range);
-        }
-
-        //aggregate tiles
-        BufferedImage buffer = null;
-        for (ResourceTile tile : results) {
-            final GridCoverageResource resource = tile.getResource();
-            try {
-                GridCoverage coverage = resource.read(canvas, range);
-                RenderedImage tileImage = coverage.render(null);
-
-                if (buffer == null) {
-                    //create result image
-                    GridExtent extent = canvas.getExtent();
-                    if (forceTransformedValues) {
-                        coverage = coverage.forConvertedValues(true);
-                        tileImage = coverage.render(null);
-                        buffer = BufferedImages.createImage(
-                            Math.toIntExact(extent.getSize(0)),
-                            Math.toIntExact(extent.getSize(1)),
-                            noData.length, DataBuffer.TYPE_DOUBLE);
-                        if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(buffer, noData);
-                    } else {
-                        buffer = BufferedImages.createImage(
-                            Math.toIntExact(extent.getSize(0)),
-                            Math.toIntExact(extent.getSize(1)),
-                            tileImage);
-                        if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(buffer, noData);
-                    }
-                }
-
-                resample(coverage, tileImage, InterpolationCase.NEIGHBOR, canvas, buffer);
-
-            } catch (NoSuchDataException | DisjointExtentException ex) {
-                //may happen, envelepe is larger then data
-                //quad tree may also return more results
-            } catch (FactoryException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
-            } catch (TransformException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
             }
         }
-
-        if (buffer == null) {
-            throw new DisjointCoverageDomainException();
-        }
-
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setDomain(canvas);
-        gcb.setRanges(getSampleDimensions());
-        gcb.setValues(buffer);
-        return gcb.build();
-    }
-
-    /**
-     * TODO, FIXME : the canvas grid extent offset is ignored.
-     */
-    public static void resample(GridCoverage coverage, RenderedImage coverageImage, InterpolationCase interpolation,
-            GridGeometry canvasGridGeometry, WritableRenderedImage canvasImage) throws TransformException, FactoryException {
-
-        final GridGeometry coverageGridGeometry = coverage.getGridGeometry();
-        final GridExtent sourceRendering = coverageGridGeometry.getExtent();
-
-        final AffineTransform2D source = new AffineTransform2D(
-                1, 0, 0, 1,
-                sourceRendering.getLow(0),
-                sourceRendering.getLow(1)
-        );
-
-        final MathTransform tileToTileCrs = MathTransforms.concatenate(source, coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER)).inverse();
-
-        final MathTransform crsToCrs = CRS.findOperation(
-                canvasGridGeometry.getCoordinateReferenceSystem(),
-                coverage.getGridGeometry().getCoordinateReferenceSystem(),
-                null).getMathTransform();
-        final MathTransform canvasToCrs = canvasGridGeometry.getGridToCRS(PixelInCell.CELL_CENTER);
-
-        final MathTransform targetToSource = MathTransforms.concatenate(canvasToCrs, crsToCrs, tileToTileCrs);
-
-        final Resample resample = new Resample(targetToSource, canvasImage, coverageImage,
-                interpolation, ResampleBorderComportement.FILL_VALUE, null);
-        resample.fillImage();
-    }
-
-    static boolean isAllZero(double[] array) {
-        for (double d : array) {
-            if (d != 0) return false;
-        }
-        return true;
-    }
-
-    @Override
-    public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
-    }
-
-    @Override
-    public <T extends StoreEvent> void removeListener(Class<T> eventType, StoreListener<? super T> listener) {
+        return coverage;
     }
 
     @Override
@@ -290,6 +217,13 @@ public class MosaicedCoverageResource extends AbstractGridResource {
             }
         }
         return StringUtilities.toStringTree("Mosaiced coverage resource", texts);
+    }
+
+    static boolean isAllZero(double[] array) {
+        for (double d : array) {
+            if (d != 0) return false;
+        }
+        return true;
     }
 
     /**
@@ -347,7 +281,7 @@ public class MosaicedCoverageResource extends AbstractGridResource {
                             new long[] {r.x + r.width, r.y + r.height}, false),
                             PixelInCell.CELL_CENTER, group.getGridToCRS(), crs);
 
-                    mosaics.add(new MosaicedCoverageResource(grid, next.getValue()));
+                    mosaics.add(new TiledCoverageResource(grid, next.getValue()));
 //                }
             }
         }
@@ -355,14 +289,68 @@ public class MosaicedCoverageResource extends AbstractGridResource {
     }
 
     private static void append(GridCoverageResource r, TileOrganizer c) throws DataStoreException {
-        if (r instanceof MosaicedCoverageResource) {
-            MosaicedCoverageResource mcr = (MosaicedCoverageResource) r;
+        if (r instanceof TiledCoverageResource) {
+            TiledCoverageResource mcr = (TiledCoverageResource) r;
             for (ResourceTile t : mcr.tiles) {
                 c.add(new ResourceTile(t.getResource()));
             }
         } else {
             c.add(new ResourceTile(r));
         }
+    }
+
+    private class TiledCoveragesImage extends ComputedImage {
+
+        private final ColorModel colorModel;
+
+        private TiledCoveragesImage(SampleModel sampleModel, ColorModel colorModel) {
+            super(sampleModel);
+            this.colorModel = colorModel;
+        }
+
+        @Override
+        protected Raster computeTile(int tileX, int tileY, WritableRaster previous) throws Exception {
+            final int tileWidth = sampleModel.getWidth();
+            final int tileHeight = sampleModel.getHeight();
+            final int x = tileX * tileWidth;
+            final int y = tileY * tileHeight;
+
+            final ResourceTile tile = indexedTiles.get(new Point(tileX, tileY));
+            if (tile != null) {
+                final GridCoverageResource resource = tile.getResource();
+                final GridCoverage coverage = resource.read(null).forConvertedValues(forceTransformedValues);
+                final RenderedImage image = coverage.render(null);
+                Raster raster = image.getData();
+                raster = BufferedImages.makeConform(raster, rasterTemplate);
+
+                //change offset
+                if (raster.getMinX() != x || raster.getMinY() != y) {
+                    raster = raster.createTranslatedChild(x, y);
+                }
+                return raster;
+            } else {
+                //create an empty tile
+                WritableRaster raster = rasterTemplate.createCompatibleWritableRaster(x, y, tileWidth, tileHeight);
+                raster.setPixels(x, y, tileWidth, tileHeight, noData);
+                return raster;
+            }
+        }
+
+        @Override
+        public ColorModel getColorModel() {
+            return colorModel;
+        }
+
+        @Override
+        public int getWidth() {
+            return Math.toIntExact(gridGeometry.getExtent().getSize(0));
+        }
+
+        @Override
+        public int getHeight() {
+            return Math.toIntExact(gridGeometry.getExtent().getSize(1));
+        }
+
     }
 
 }

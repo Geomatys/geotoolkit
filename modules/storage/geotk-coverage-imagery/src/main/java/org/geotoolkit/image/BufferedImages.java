@@ -26,6 +26,7 @@ import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
+import java.awt.image.ImagingOpException;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -328,4 +329,59 @@ public class BufferedImages extends Static {
                     }
                 });
     }
+
+    /**
+     * Ensure the given raster is compatible with raster template.
+     * If not the data will be copied to a new raster.
+     *
+     * @param in raster to verify and transform if needed
+     * @param rasterTemplate reference raster to compare with
+     * @return compatible raster
+     * @throws ImagingOpException if raster can not be transformed
+     */
+    public static Raster makeConform(Raster in, Raster rasterTemplate) throws ImagingOpException {
+        final int inNumBands = in.getNumBands();
+        final int outNumBands = rasterTemplate.getNumBands();
+        if (inNumBands != outNumBands) {
+            //this is a severe issue, the raster do no respect the expected number of samples
+            throw new ImagingOpException("Mosaic tile image declares " + inNumBands
+                    + " bands, but sample dimensions have " + outNumBands);
+        }
+
+        final int inDataType = in.getDataBuffer().getDataType();
+        final int outDataType = rasterTemplate.getDataBuffer().getDataType();
+        if (inDataType != outDataType) {
+            //difference in input and output types, this may be caused by an aggregated resource
+            final int x = 0;
+            final int y = 0;
+            final int width = in.getWidth();
+            final int height = in.getHeight();
+            final WritableRaster raster = rasterTemplate.createCompatibleWritableRaster(in.getMinX(), in.getMinY(), width, height);
+            final int nbSamples = width * height * inNumBands;
+            switch (outDataType) {
+                case DataBuffer.TYPE_BYTE :
+                case DataBuffer.TYPE_SHORT :
+                case DataBuffer.TYPE_USHORT :
+                case DataBuffer.TYPE_INT :
+                    int[] arrayi = new int[nbSamples];
+                    in.getPixels(x, y, width, height, arrayi);
+                    raster.setPixels(x, y, width, height, arrayi);
+                    break;
+                case DataBuffer.TYPE_FLOAT :
+                    float[] arrayf = new float[nbSamples];
+                    in.getPixels(x, y, width, height, arrayf);
+                    raster.setPixels(x, y, width, height, arrayf);
+                    break;
+                case DataBuffer.TYPE_DOUBLE :
+                default :
+                    double[] arrayd = new double[nbSamples];
+                    in.getPixels(x, y, width, height, arrayd);
+                    raster.setPixels(x, y, width, height, arrayd);
+                    break;
+            }
+            in = raster;
+        }
+        return in;
+    }
+
 }
