@@ -992,18 +992,18 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
         final GridGeometry gridGeometry = candidate.getGridGeometry();
         if (gridGeometry.isDefined(GridGeometry.ENVELOPE)) {
             try {
-                Envelope bounds = gridGeometry.getEnvelope();
+                GeneralEnvelope bounds = new GeneralEnvelope(gridGeometry.getEnvelope());
                 GeneralEnvelope boundary = GeneralEnvelope.castOrCopy(
                         Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
                 if (boundary.isEmpty()) {
                     //we may have NaN values with envelopes which cross poles
                     //normalizing envelope before transform often solve this issue
-                    bounds = new GeneralEnvelope(bounds);
-                    ((GeneralEnvelope) bounds).normalize();
+                    bounds.normalize();
                     boundary = GeneralEnvelope.castOrCopy(
                         Envelopes.transform(bounds, renderingContext.getObjectiveCRS2D()));
                 }
-
+                // Ensure both envelopes are expressed in the same convention, because CRS transforms do not take care of it.
+                boundary.normalize();
                 return boundary.intersects(renderingContext.getCanvasObjectiveBounds2D());
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Cannot compare layer bbox with rendering context", e);

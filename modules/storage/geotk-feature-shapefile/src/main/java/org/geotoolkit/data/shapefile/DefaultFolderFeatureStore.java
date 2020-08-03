@@ -180,7 +180,8 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
             }
         }
 
-        return stores.getNames();
+        //return sorted names, avoids different orders between runs or jvm.
+        return new TreeSet<>(stores.getNames());
     }
 
     private void testFile(Path file) throws IOException {
