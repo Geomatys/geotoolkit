@@ -58,8 +58,6 @@ public class BufferedImages extends Static {
      * @param height if null reference image height is copied
      * @param nbBand if null reference image number of bands is copied
      * @param dataType if null reference image data type is copied
-     * @return
-     * @throws IllegalArgumentException
      */
     public static BufferedImage createImage(final RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType) throws IllegalArgumentException{
         final SampleModel sm = reference.getSampleModel();
@@ -89,12 +87,6 @@ public class BufferedImages extends Static {
 
     /**
      * Create a new image of the same type with a different size.
-     *
-     * @param width
-     * @param height
-     * @param reference
-     * @return
-     * @throws IllegalArgumentException
      */
     public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException {
         return createImage(reference, width, height, null, null);
