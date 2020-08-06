@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.storage.coverage.mosaic;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
@@ -30,6 +33,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.coverage.grid.BufferedGridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
@@ -140,6 +144,87 @@ public class AggregatedCoverageResourceTest {
         reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
         reader.moveTo(1, 0); Assert.assertEquals(2, reader.getSample(0));
         reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+
+    }
+
+    /**
+     * Test aggregation user order is preserved with RGB images.
+     *
+     * @throws DataStoreException
+     * @throws TransformException
+     */
+    @Test
+    public void testModeOrderRGB() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final List<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        | R |NaN|NaN|
+        +---+---+---+
+
+        Coverage 2
+        +---+---+---+
+        | G | G |NaN|
+        +---+---+---+
+
+        Coverage 3
+        +---+---+---+
+        | B | B | B |
+        +---+---+---+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final BufferedImage image1 = new BufferedImage(3, 1, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage image2 = new BufferedImage(3, 1, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage image3 = new BufferedImage(3, 1, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g1 = image1.createGraphics();
+        final Graphics2D g2 = image2.createGraphics();
+        final Graphics2D g3 = image3.createGraphics();
+        g1.setPaint(Color.RED);
+        g2.setPaint(Color.GREEN);
+        g3.setPaint(Color.BLUE);
+        g1.fillRect(0, 0, 1, 1);
+        g2.fillRect(0, 0, 2, 1);
+        g3.fillRect(0, 0, 3, 1);
+
+        final GridCoverage coverage1 = new GridCoverageBuilder().setDomain(grid1).setValues(image1).build();
+        final GridCoverage coverage2 = new GridCoverageBuilder().setDomain(grid1).setValues(image2).build();
+        final GridCoverage coverage3 = new GridCoverageBuilder().setDomain(grid1).setValues(image3).build();
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
+
+
+        /*
+        We expect a final coverage with values [R,G,B] on a single row
+        +---+---+---+
+        | R | G | B |
+        +---+---+---+
+        */
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(InterpolationCase.NEIGHBOR);;
+        aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.add(resource1);
+        aggregate.add(resource2);
+        aggregate.add(resource3);
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertArrayEquals(new double[]{255.0, 0.0, 0.0, 255.0}, reader.getPixel((double[]) null), 0.0);
+        reader.moveTo(1, 0); Assert.assertArrayEquals(new double[]{0.0, 255.0, 0.0, 255.0}, reader.getPixel((double[]) null), 0.0);
+        reader.moveTo(2, 0); Assert.assertArrayEquals(new double[]{0.0, 0.0, 255.0, 255.0}, reader.getPixel((double[]) null), 0.0);
 
     }
 

@@ -53,6 +53,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
@@ -196,11 +197,13 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 CoordinateReferenceSystem targetCrs = pyramid.getCoordinateReferenceSystem();
                 Envelope baseEnv = env;
                 env = Envelopes.transform(env, targetCrs);
-                double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
-                double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
-                minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
-                maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
-                resolutions = NumberRange.create(minres[0], true, maxres[0], true);
+                if (resolutions != null) {
+                    double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
+                    double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
+                    minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
+                    maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
+                    resolutions = NumberRange.create(minres[0], true, maxres[0], true);
+                }
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
@@ -217,7 +220,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         for (final TileMatrix mosaic : mosaics) {
             if (resolutions == null || resolutions.contains(mosaic.getScale())) {
-
+                final GridCoverageResource source = resource;
                 final Rectangle rect = TileMatrices.getTilesInEnvelope(mosaic, env);
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
@@ -236,12 +239,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                                         return null;
                                     }
 
-                                    //do not regenerate existing tiles
-                                    //if (!mosaic.isMissing((int)x, (int)y)) return;
-
                                     final Point coord = new Point((int)x, (int)y);
                                     try {
-                                        data = generateTile(pyramid, mosaic, coord);
+                                        data = generateTile(pyramid, mosaic, coord, source);
                                     } catch (Exception ex) {
                                         ex.printStackTrace();
                                     }
@@ -276,7 +276,15 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 r.setSampleDimensions(resource.getSampleDimensions());
                 r.getModels().add(pm);
 
-                resource = r;
+                //we must still use the original resource for generation because
+                //lower level tiles may not be sufficient to generate border tiles
+                final AggregatedCoverageResource aggregated = new AggregatedCoverageResource();
+                aggregated.setMode(AggregatedCoverageResource.Mode.ORDER);
+                aggregated.add(r);
+                aggregated.add(this.resource);
+                aggregated.setInterpolation(interpolation);
+
+                resource = aggregated;
             }
         }
     }
