@@ -22,19 +22,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
+import org.geotoolkit.map.MapLayer;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
@@ -58,15 +57,10 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
     }
 
     @Override
-    public boolean portray(ProjectedObject graphic) throws PortrayalException {
-        return false;
-    }
-
-    @Override
-    public boolean portray(Resource resource) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
 
         if (!(resource instanceof FeatureSet)) {
-            return false;
+            return Stream.empty();
         }
         final FeatureSet fs = (FeatureSet) resource;
 
@@ -77,7 +71,7 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
         final List<PieSymbolizer.ColorQuarter> colorQuarters = symbol.getSource().getColorQuarters();
 
         if (group == null || quarter == null || value == null) {
-            return false;
+            return Stream.empty();
         }
 
         try (final RenderingRoutines.GraphicIterator ite = RenderingRoutines.getIterator(fs, renderingContext)) {
@@ -190,26 +184,11 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
                     }
                 }
             }
-            return true;
+            return Stream.empty();
 
         } catch (DataStoreException | IOException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
-    }
-
-    @Override
-    public boolean portray(ProjectedCoverage graphic) throws PortrayalException {
-        return false;
-    }
-
-    @Override
-    public boolean hit(ProjectedObject graphic, SearchAreaJ2D mask, VisitFilter filter) {
-        return false;
-    }
-
-    @Override
-    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
-        return false;
     }
 
 }

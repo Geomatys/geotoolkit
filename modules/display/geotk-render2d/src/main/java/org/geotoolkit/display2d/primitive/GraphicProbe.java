@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.List;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -48,7 +47,7 @@ public class GraphicProbe extends GraphicJ2D{
     }
 
     @Override
-    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final List<Graphic> graphics) {
         return graphics;
     }
 

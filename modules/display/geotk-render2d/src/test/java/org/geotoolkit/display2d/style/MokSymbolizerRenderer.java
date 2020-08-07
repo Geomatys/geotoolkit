@@ -17,14 +17,14 @@
 
 package org.geotoolkit.display2d.style;
 
-import org.geotoolkit.display.VisitFilter;
+import java.util.stream.Stream;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
+import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.Feature;
 
 /**
  * Test that symbolizer renderer are properly called and only once.
@@ -41,24 +41,9 @@ public class MokSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedMokS
     }
 
     @Override
-    public boolean portray(final ProjectedObject graphic) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
         called++;
-        return false;
-    }
-
-    @Override
-    public boolean portray(final ProjectedCoverage graphic) throws PortrayalException {
-        return false;
-    }
-
-    @Override
-    public boolean hit(final ProjectedObject graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
-        return false;
-    }
-
-    @Override
-    public boolean hit(final ProjectedCoverage graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
-        return false;
+        return Stream.empty();
     }
 
 }

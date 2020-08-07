@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2020, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,15 +14,26 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display;
+package org.geotoolkit.display2d.presentation;
+
+import java.awt.AlphaComposite;
+import java.awt.geom.AffineTransform;
+import java.awt.image.RenderedImage;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.Feature;
 
 /**
- * Filtering type that can be used to limit graphic visiting.
  *
  * @author Johann Sorel (Geomatys)
  */
-public enum VisitFilter {
+public class PointPresentation extends Grid2DPresentation {
 
-    INTERSECTS,
-    WITHIN
+    public AlphaComposite composite = GO2Utilities.ALPHA_COMPOSITE_1F;
+    public AffineTransform displayTransform;
+    public RenderedImage image;
+
+    public PointPresentation(MapLayer layer, Feature feature) {
+        super(layer,feature);
+    }
 }

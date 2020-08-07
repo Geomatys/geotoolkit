@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.presentation;
+package org.geotoolkit.renderer;
 
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
@@ -34,15 +34,15 @@ import org.opengis.feature.Feature;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class Presentation {
+public abstract class AbstractPresentation implements Presentation {
 
     private MapLayer layer;
     private Feature feature;
 
-    public Presentation() {
+    public AbstractPresentation() {
     }
 
-    public Presentation(MapLayer layer, Feature feature) {
+    public AbstractPresentation(MapLayer layer, Feature feature) {
         this.layer = layer;
         this.feature = feature;
     }
@@ -52,6 +52,7 @@ public abstract class Presentation {
      *
      * @return MapLayer can be null if the presentation is not associated to a layer.
      */
+    @Override
     public MapLayer getLayer() {
         return layer;
     }
@@ -70,6 +71,7 @@ public abstract class Presentation {
      *
      * @return Feature can be null if the presentation is not associated to a feature.
      */
+    @Override
     public Feature getFeature() {
         return feature;
     }
