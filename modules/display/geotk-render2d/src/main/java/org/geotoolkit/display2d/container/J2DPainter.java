@@ -75,13 +75,13 @@ public class J2DPainter {
         if (presentation instanceof Grid2DPresentation) {
             final Grid2DPresentation gp = (Grid2DPresentation) presentation;
             gp.paint(renderingContext);
-        } else if (presentation instanceof GroupPresentation) {
+        }
+
+        if (presentation instanceof GroupPresentation) {
             GroupPresentation gp = (GroupPresentation) presentation;
-            for (Presentation p : gp.elements) {
+            for (Presentation p : gp.elements()) {
                 paint(renderingContext, p);
             }
-        } else {
-            throw new UnsupportedOperationException("Unknown presentation " + presentation);
         }
     }
 
@@ -89,17 +89,18 @@ public class J2DPainter {
         if (presentation instanceof Grid2DPresentation) {
             final Grid2DPresentation gp = (Grid2DPresentation) presentation;
             return gp.hit(renderingContext, search);
-        } else if (presentation instanceof GroupPresentation) {
+        }
+
+        if (presentation instanceof GroupPresentation) {
             GroupPresentation gp = (GroupPresentation) presentation;
-            for (Presentation p : gp.elements) {
+            for (Presentation p : gp.elements()) {
                 if (hit(renderingContext, search, p)) {
                     return true;
                 }
             }
             return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
 }

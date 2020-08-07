@@ -31,6 +31,7 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.DefaultGroupPresentation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPoint;
@@ -64,7 +65,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
         //test if the symbol is visible on this feature
         if (symbol.isVisible(candidate)) {
             final ProjectedGeometry projectedGeometry = pf.getGeometry(geomPropertyName);
-            final GroupPresentation group = new GroupPresentation(layer, candidate);
+            final DefaultGroupPresentation group = new DefaultGroupPresentation(layer, candidate);
             if (presentation(group, projectedGeometry, candidate)) {
                 return Stream.of(group);
             }
@@ -147,7 +148,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
                     presentation.composite = GO2Utilities.ALPHA_COMPOSITE_1F;
                     presentation.displayTransform = positioning;
                     presentation.image = img;
-                    group.elements.add(presentation);
+                    group.elements().add(presentation);
 
                     dataRendered = true;
                 }
@@ -174,7 +175,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
                 presentation.composite = GO2Utilities.ALPHA_COMPOSITE_1F;
                 presentation.displayTransform = positioning;
                 presentation.image = img;
-                group.elements.add(presentation);
+                group.elements().add(presentation);
 
                 dataRendered = true;
             }

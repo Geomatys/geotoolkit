@@ -16,13 +16,25 @@
  */
 package org.geotoolkit.renderer;
 
+import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.Feature;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface GroupPresentation extends Presentation {
+public class DefaultGroupPresentation extends AbstractPresentation implements GroupPresentation {
 
-    List<Presentation> elements();
+    public final List<Presentation> elements = new ArrayList<>();
+
+    public DefaultGroupPresentation(MapLayer layer, Feature feature) {
+        super(layer, feature);
+    }
+
+    @Override
+    public List<Presentation> elements() {
+        return elements;
+    }
 }
