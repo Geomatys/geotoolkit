@@ -30,27 +30,29 @@ public interface TileGenerator {
 
     /**
      * Create a single tile.
-     * Create tile is not stored in the pyramid.
+     * Create tile is not stored in the tile matrixset.
      *
-     * @param pyramid
-     * @param mosaic
-     * @param tileCoord
-     * @return
+     * @param tileMatrixSet tileMatrixSet tiles to generate
+     * @param tileMatrix tileMatrix tiles to generate
+     * @param tileCoord tile coordinate to generate
+     * @return created tile
      * @throws DataStoreException
      */
-    Tile generateTile(TileMatrixSet pyramid, TileMatrix mosaic, Point tileCoord) throws DataStoreException;
+    Tile generateTile(TileMatrixSet tileMatrixSet, TileMatrix tileMatrix, Point tileCoord) throws DataStoreException;
 
     /**
      * Generate given box of data.
-     * Create tiles will be stored in the pyramid.
+     * Create tiles will be stored in the tile matrixset.
      *
-     * @param pyramid
-     * @param env
-     * @param resolutions
-     * @param listener
+     * @param tileMatrixSet tileMatrixSet tiles to generate
+     * @param env Envelope to generate, null for all tiles.
+     * @param resolutions resolution range in which to generate tiles,
+     *      only tileMatrix within range will be generated, null for all tile matrices.
+     *      Resolution range is in given envelope CRS, is envelope is null, resolution range is assumed to be in tileMatrixSet CRS.
+     * @param listener progess listener, can be null.
      * @throws DataStoreException
      * @throws java.lang.InterruptedException
      */
-    void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException, InterruptedException;
+    void generate(TileMatrixSet tileMatrixSet, Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException, InterruptedException;
 
 }
