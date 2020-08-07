@@ -17,7 +17,11 @@
 package org.geotoolkit.display2d.presentation;
 
 import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
@@ -33,6 +37,18 @@ public class TextPresentation extends Grid2DPresentation {
 
     public TextPresentation(MapLayer layer, Feature feature) {
         super(layer,feature);
+    }
+
+    @Override
+    public boolean paint(RenderingContext2D renderingContext) throws PortrayalException {
+        renderingContext.switchToDisplayCRS();
+        final Graphics2D g2d = renderingContext.getGraphics();
+        return false;
+    }
+
+    @Override
+    public boolean hit(RenderingContext2D renderingContext, SearchAreaJ2D search) {
+        return false;
     }
 
 }

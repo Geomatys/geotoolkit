@@ -964,7 +964,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 //optimize
                 final Query query = RenderingRoutines.prepareQuery(renderContext, fs, layer, names, rules, symbolsMargin);
 
-                fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
+                final Stream<Presentation> s = fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
                     @Override
                     public Stream<Presentation> apply(Feature feature) {
 
@@ -1003,6 +1003,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                         return stream;
                     }
                 });
+                stream = Stream.concat(stream, s);
             }
         }
 

@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.display2d.presentation;
 
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.renderer.AbstractPresentation;
 import org.opengis.feature.Feature;
@@ -29,7 +31,7 @@ import org.opengis.referencing.operation.MathTransform;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class Grid2DPresentation extends AbstractPresentation {
+public abstract class Grid2DPresentation extends AbstractPresentation {
 
     public CoordinateReferenceSystem objectiveCrs;
     public CoordinateReferenceSystem displayCrs;
@@ -45,4 +47,7 @@ public class Grid2DPresentation extends AbstractPresentation {
         objToDisplay = ctx.getObjectiveToDisplay();
     }
 
+    public abstract boolean paint(RenderingContext2D renderingContext) throws PortrayalException;
+
+    public abstract boolean hit(RenderingContext2D renderingContext, final SearchAreaJ2D search);
 }

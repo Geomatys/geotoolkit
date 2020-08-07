@@ -17,9 +17,15 @@
 package org.geotoolkit.display2d.presentation;
 
 import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 
@@ -35,5 +41,27 @@ public class PointPresentation extends Grid2DPresentation {
 
     public PointPresentation(MapLayer layer, Feature feature) {
         super(layer,feature);
+    }
+
+    @Override
+    public boolean paint(RenderingContext2D renderingContext) {
+        renderingContext.switchToDisplayCRS();
+        Graphics2D g2d = renderingContext.getGraphics();
+        g2d.setComposite(composite);
+        g2d.drawRenderedImage(image, displayTransform);
+        return true;
+    }
+
+    @Override
+    public boolean hit(RenderingContext2D renderingContext, SearchAreaJ2D search) {
+        final Shape mask = search.getDisplayShape();
+        final Area area = new Area(mask);
+
+        final Rectangle2D rect = new Rectangle2D.Double(0, 0, image.getWidth(), image.getHeight());
+        final Shape shp = displayTransform.createTransformedShape(rect);
+        final Area area2 = new Area(shp);
+
+        area.intersect(area2);
+        return !area.isEmpty();
     }
 }
