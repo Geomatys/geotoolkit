@@ -15,7 +15,6 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display.SearchArea;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -120,7 +119,7 @@ public class LinksGraphic extends GraphicJ2D{
     }
 
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, List<Graphic> graphics) {
         return graphics;
     }
 

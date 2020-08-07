@@ -20,20 +20,19 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.display.VisitFilter;
+import org.apache.sis.storage.DataStoreException;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display.primitive.SceneNode;
-import org.geotoolkit.display.primitive.SpatialNode;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -47,7 +46,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.container.GraphicContainer;
+import org.geotoolkit.display2d.GraphicVisitor;
+import org.geotoolkit.display2d.container.J2DPainter;
+import org.geotoolkit.display2d.container.MapLayerJ2D;
+import org.geotoolkit.renderer.GroupPresentation;
+import org.geotoolkit.renderer.Presentation;
 
 /**
  *
@@ -150,23 +155,41 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
          * to start the actual drawing,  we will notify all graphics that they are about to be
          * drawn. Some graphics may spend one or two threads for pre-computing data.
          */
-        for(final Graphic graphic : graphics){
-            if(monitor.stopRequested()){
+        Stream<Presentation> presentations = Stream.empty();
+        for (final Graphic graphic : graphics) {
+            if (monitor.stopRequested()) {
                 return dataPainted;
             }
 
-            if(graphic instanceof GraphicJ2D){
+            if (graphic instanceof MapLayerJ2D) {
+                try {
+                    presentations = Stream.concat(presentations, ((MapLayerJ2D) graphic) .paintLayer(context2D));
+                } catch (PortrayalException ex) {
+                    monitor.exceptionOccured(ex, Level.INFO);
+                } catch (DataStoreException ex) {
+                    monitor.exceptionOccured(ex, Level.INFO);
+                }
+            } else if (graphic instanceof GraphicJ2D) {
                 dataPainted |= ((GraphicJ2D) graphic).paint(context2D);
             }
         }
 
-        if(monitor.stopRequested()){
+        final J2DPainter painter = new J2DPainter();
+        try {
+            dataPainted |= painter.paint(context2D, presentations, true);
+        } catch (PortrayalException ex) {
+            monitor.exceptionOccured(ex, Level.INFO);
+        } finally {
+            presentations.close();
+        }
+
+        if (monitor.stopRequested()) {
             return dataPainted;
         }
 
-        //draw the labels
+        //draw the labels : this does not include labels in the presentations
         final LabelRenderer labelRenderer = context2D.getLabelRenderer(false);
-        if(labelRenderer != null){
+        if (labelRenderer != null) {
             try {
                 dataPainted |= labelRenderer.portrayLabels();
             } catch (TransformException ex) {
@@ -182,10 +205,9 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
      * You should give an Area Object if you can, this will avoid many creation
      * while testing.
      */
-    public void getGraphicsIn(final Shape displayShape, final GraphicVisitor visitor, final VisitFilter filter) {
+    public void getGraphicsIn(final Shape displayShape, final GraphicVisitor visitor) {
         ensureNonNull("mask", displayShape);
         ensureNonNull("visitor", visitor);
-        ensureNonNull("filter", filter);
 
         visitor.startVisit();
 
@@ -193,60 +215,71 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 
         if (container != null) {
 
-            final List<Graphic> candidates = new ArrayList<>();
-
             final RenderingContext2D searchContext = context2D;
             prepareContext(searchContext,null,null);
 
-            final AffineTransform dispToObj = searchContext.getDisplayToObjective();
+            final SearchAreaJ2D searchMask = J2DCanvas.createSearchArea(searchContext, displayShape);
 
-            final Shape objectiveShape = dispToObj.createTransformedShape(displayShape);
-            final org.locationtech.jts.geom.Geometry displayGeometryJTS = GO2Utilities.toJTS(displayShape);
-            final org.locationtech.jts.geom.Geometry objectiveGeometryJTS = GO2Utilities.toJTS(objectiveShape);
-            final Geometry displayGeometryISO = JTSUtils.toISO(displayGeometryJTS, getDisplayCRS());
-            final Geometry objectiveGeometryISO = JTSUtils.toISO(objectiveGeometryJTS, getObjectiveCRS2D());
-            final SearchAreaJ2D searchMask = new DefaultSearchAreaJ2D(
-                    objectiveGeometryISO, displayGeometryISO,
-                    objectiveGeometryJTS, displayGeometryJTS,
-                    objectiveShape, displayShape);
+            final J2DPainter painter = new J2DPainter();
 
             final List<SceneNode> sorted = container.flatten(true);
             //reverse the list order
             Collections.reverse(sorted);
 
             //see if the visitor request a stop-----------------------------
-            if(visitor.isStopRequested()){ visitor.endVisit(); return; }
+            if (visitor.isStopRequested()){ visitor.endVisit(); return; }
             //--------------------------------------------------------------
 
-            for(final Graphic graphic : sorted){
-                search(searchMask,searchContext,graphic,filter,candidates);
-
-                //see if the visitor request a stop-------------------------
-                if(visitor.isStopRequested()){ visitor.endVisit(); return; }
-                //----------------------------------------------------------
-
-                //send the found graphics to the visitor
-                for(final Graphic candidate : candidates){
-                    visitor.visit(candidate,searchContext,searchMask);
-
-                    //see if the visitor request a stop---------------------
-                    if(visitor.isStopRequested()){ visitor.endVisit(); return; }
-                    //------------------------------------------------------
-
+            for (final Graphic graphic : sorted) {
+                if (graphic instanceof MapLayerJ2D) {
+                    try (Stream<Presentation> presentations = ((MapLayerJ2D) graphic).paintLayer(context2D)) {
+                        final Iterator<Presentation> iterator = presentations.iterator();
+                        while (iterator.hasNext()) {
+                            final Presentation presentation = iterator.next();
+                            visitHit(painter, searchMask, visitor, presentation);
+                            if (visitor.isStopRequested()) {
+                                visitor.endVisit();
+                                return;
+                            }
+                        }
+                    } catch (PortrayalException | DataStoreException ex) {
+                        Logging.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(), ex);
+                    }
                 }
-                //empty the list for next search
-                candidates.clear();
             }
         }
 
         visitor.endVisit();
     }
 
-    private void search(final SearchAreaJ2D mask, final RenderingContext context, final Graphic graphic, final VisitFilter filter, final List<Graphic> lst){
-        if(graphic instanceof SpatialNode){
-            final SpatialNode ref = (SpatialNode) graphic;
-            ref.getGraphicAt(context, mask, filter, lst);
+    private void visitHit(J2DPainter painter, SearchAreaJ2D searchMask, GraphicVisitor visitor, Presentation presentation) {
+        if (presentation instanceof GroupPresentation) {
+            GroupPresentation gp = (GroupPresentation) presentation;
+            for (Presentation p : gp.elements) {
+                visitHit(painter, searchMask, visitor, p);
+            }
+        } else {
+            if (painter.hit(context2D, searchMask, presentation)) {
+                visitor.visit(presentation, context2D, searchMask);
+            }
         }
+    }
+
+    public static SearchAreaJ2D createSearchArea(RenderingContext2D searchContext, final Shape displayShape) {
+
+        final AffineTransform dispToObj = searchContext.getDisplayToObjective();
+        final CoordinateReferenceSystem displayCRS = searchContext.getDisplayCRS();
+        final CoordinateReferenceSystem objectiveCRS2D = searchContext.getObjectiveCRS2D();
+
+        final Shape objectiveShape = dispToObj.createTransformedShape(displayShape);
+        final org.locationtech.jts.geom.Geometry displayGeometryJTS = GO2Utilities.toJTS(displayShape);
+        final org.locationtech.jts.geom.Geometry objectiveGeometryJTS = GO2Utilities.toJTS(objectiveShape);
+        final Geometry displayGeometryISO = JTSUtils.toISO(displayGeometryJTS, displayCRS);
+        final Geometry objectiveGeometryISO = JTSUtils.toISO(objectiveGeometryJTS, objectiveCRS2D);
+        return new DefaultSearchAreaJ2D(
+                objectiveGeometryISO, displayGeometryISO,
+                objectiveGeometryJTS, displayGeometryJTS,
+                objectiveShape, displayShape);
     }
 
 }

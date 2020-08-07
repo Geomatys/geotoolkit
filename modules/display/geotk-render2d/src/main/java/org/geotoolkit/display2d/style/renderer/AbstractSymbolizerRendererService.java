@@ -20,12 +20,6 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.geom.Rectangle2D;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -47,33 +41,6 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
     @Override
     public Rectangle2D glyphPreferredSize(final C symbol, final MapLayer layer) {
         return new Rectangle2D.Double(0, 0, 30, 24);
-    }
-
-    @Override
-    public boolean portray(final ProjectedObject graphic, final C symbol,
-            final RenderingContext2D context) throws PortrayalException {
-        final SymbolizerRenderer renderer = createRenderer(symbol, context);
-        return renderer.portray(graphic);
-    }
-
-    @Override
-    public boolean portray(final ProjectedCoverage graphic, final C symbol,
-            final RenderingContext2D context) throws PortrayalException {
-        final SymbolizerRenderer renderer = createRenderer(symbol, context);
-        return renderer.portray(graphic);
-    }
-
-    @Override
-    public boolean hit(final ProjectedObject graphic, final C symbol,
-            final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter) {
-        final SymbolizerRenderer renderer = createRenderer(symbol, context);
-        return renderer.hit(graphic, mask, filter);
-    }
-
-    @Override
-    public boolean hit(final ProjectedCoverage graphic, final C symbol, final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter) {
-        final SymbolizerRenderer renderer = createRenderer(symbol, context);
-        return renderer.hit(graphic, mask, filter);
     }
 
     protected Object mimicObject(MapLayer layer) {

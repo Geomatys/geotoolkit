@@ -43,7 +43,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.se.xml.v110.RuleType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
@@ -199,10 +198,6 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         }else{
             return s;
         }
-    }
-
-    public static FeatureType buildCellType(CoverageMapLayer layer) throws DataStoreException{
-        return buildCellType(layer.getResource());
     }
 
     public static FeatureType buildCellType(GridCoverageResource ref) throws DataStoreException{

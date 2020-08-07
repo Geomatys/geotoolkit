@@ -65,15 +65,11 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer.DRChannel;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -236,30 +232,6 @@ public final class GO2Utilities {
     /**
      * @return true if some datas has been rendered
      */
-    public static boolean portray(final ProjectedFeature feature, final CachedSymbolizer symbol,
-            final RenderingContext2D context) throws PortrayalException{
-        final SymbolizerRendererService renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.portray(feature, symbol, context);
-        }
-        return false;
-    }
-
-    /**
-     * @return true if some datas has been rendered
-     */
-    public static boolean portray(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D context) throws PortrayalException {
-        final SymbolizerRendererService renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.portray(graphic, symbol, context);
-        }
-        return false;
-    }
-
-    /**
-     * @return true if some datas has been rendered
-     */
     public static boolean portray(final RenderingContext2D renderingContext, GridCoverage coverage) throws PortrayalException{
 
         final CanvasMonitor monitor = renderingContext.getMonitor();
@@ -348,24 +320,6 @@ public final class GO2Utilities {
         }else{
             throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + gridToCRS.getClass() );
         }
-    }
-
-    public static boolean hit(final ProjectedFeature graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter){
-        final SymbolizerRendererService renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.hit(graphic, symbol, context, mask, filter);
-        }
-        return false;
-    }
-
-    public static boolean hit(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter filter) {
-        final SymbolizerRendererService renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.hit(graphic, symbol, renderingContext, mask, filter);
-        }
-        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -579,28 +533,12 @@ public final class GO2Utilities {
         return JTS_FACTORY.createPolygon(ring, new LinearRing[0]);
     }
 
-    public static boolean testHit(final VisitFilter filter, final Geometry left, final Geometry right){
-
-        switch(filter){
-            case INTERSECTS :
-                return left.intersects(right);
-            case WITHIN :
-                return left.contains(right);
-        }
-
-        return false;
+    public static boolean testHit(final Geometry left, final Geometry right){
+        return left.intersects(right);
     }
 
-    public static boolean testHit(final VisitFilter filter, final org.opengis.geometry.Geometry left, final org.opengis.geometry.Geometry right){
-
-        switch(filter){
-            case INTERSECTS :
-                return left.intersects(right);
-            case WITHIN :
-                return left.contains(right);
-        }
-
-        return false;
+    public static boolean testHit(final org.opengis.geometry.Geometry left, final org.opengis.geometry.Geometry right){
+        return left.intersects(right);
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -19,7 +19,10 @@ package org.geotoolkit.display2d.primitive;
 import org.geotoolkit.display.primitive.SpatialNode;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.Presentation;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.Feature;
 
 /**
  * Base class for GeotoolKit implementations of {@link Graphic}
@@ -29,7 +32,10 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class GraphicJ2D extends SpatialNode {
+public abstract class GraphicJ2D extends SpatialNode implements Presentation {
+
+    protected MapLayer layer;
+    protected Feature feature;
 
     public GraphicJ2D(J2DCanvas canvas) {
         super(canvas);
@@ -42,6 +48,16 @@ public abstract class GraphicJ2D extends SpatialNode {
     @Override
     public J2DCanvas getCanvas() {
         return (J2DCanvas)super.getCanvas();
+    }
+
+    @Override
+    public Feature getFeature() {
+        return feature;
+    }
+
+    @Override
+    public MapLayer getLayer() {
+        return layer;
     }
 
     /**

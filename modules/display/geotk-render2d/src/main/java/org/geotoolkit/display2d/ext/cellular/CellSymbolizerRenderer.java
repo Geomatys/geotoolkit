@@ -17,13 +17,13 @@
 package org.geotoolkit.display2d.ext.cellular;
 
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
@@ -33,25 +33,28 @@ import org.apache.sis.math.Statistics;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.RenderingRules;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
-import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -60,12 +63,13 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Rule;
+import org.opengis.style.Symbolizer;
 
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
@@ -83,16 +87,23 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
     }
 
     @Override
-    public boolean portray(Resource resource) throws PortrayalException {
-
-        if (!(resource instanceof FeatureSet)) {
-            return false;
-        }
-        final FeatureSet fs = (FeatureSet) resource;
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
 
         if (symbol.getCachedRule() == null) {
-            return false;
+            return Stream.empty();
         }
+
+        if (resource instanceof FeatureSet) {
+            return presentations(layer, (FeatureSet) resource);
+        } else if (resource instanceof GridCoverageResource) {
+            return presentations(layer, (GridCoverageResource) resource);
+        } else {
+            return Stream.empty();
+        }
+    }
+
+    private Stream<Presentation> presentations(MapLayer layer, FeatureSet fs) throws PortrayalException {
+
         //calculate the cells
         final int cellSize = symbol.getSource().getCellSize();
         final AffineTransform trs = renderingContext.getDisplayToObjective();
@@ -126,7 +137,6 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 JTS.setCRS(contours[r][c],crs);
             }
         }
-
 
         FeatureType baseType = null;
         FeatureType cellType = null;
@@ -205,24 +215,19 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         if (numericProperties == null) {
             //nothing in the iterator
-            return false;
+            return Stream.empty();
         }
 
         //render the cell features
         final Object[] values = new Object[2 + 7 * numericProperties.length];
-        final Feature feature = cellType.newInstance();
-        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
-        final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
 
-        final RenderingRules renderers = new RenderingRules(new CachedRule[]{symbol.getCachedRule()},renderingContext);
 
-        //expand the search area by the maximum symbol size
-        float symbolsMargin = renderers.getMargin(null, renderingContext);
-        if (symbolsMargin == 0) symbolsMargin = 300f;
-
+        final List<Feature> features = new ArrayList<>();
         for (int r = 0; r < nbRow; r++) {
             for (int c = 0; c < nbCol; c++) {
-                pf.setCandidate(feature);
+
+                final Feature feature = cellType.newInstance();
+                feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
 
                 values[0] = contours[r][c].getCentroid();
                 JTS.setCRS( ((Geometry)values[0]), crs);
@@ -238,19 +243,23 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                     values[++k] = stats[b][r][c].sum();
                 }
 
-                renderCellFeature(feature, pf, renderers);
-                pf.setCandidate(null);
+                features.add(feature);
             }
         }
-        return true;
+
+        final Rule rule = symbol.getSource().getRule();
+        final InMemoryFeatureSet subfs = new InMemoryFeatureSet(cellType, features);
+        final MapLayer subLayer = MapBuilder.createLayer(subfs);
+        subLayer.setStyle(GO2Utilities.STYLE_FACTORY.style(rule.symbolizers().toArray(new Symbolizer[0])));
+
+        try {
+            return DefaultPortrayalService.present(subLayer, subfs, renderingContext);
+        } catch (DataStoreException ex) {
+            throw new PortrayalException(ex.getMessage(), ex);
+        }
     }
 
-    @Override
-    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
-
-        if (symbol.getCachedRule() == null) {
-            return false;
-        }
+    private Stream<Presentation> presentations(MapLayer layer, final GridCoverageResource resource) throws PortrayalException {
 
         //adjust envelope, we need cells to start at crs 0,0 to avoid artifacts
         //when building tiles
@@ -266,11 +275,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         GridCoverage coverage;
         try {
-            coverage = getObjectiveCoverage(projectedCoverage,
-                    renderingContext.getGridGeometry(),false);
+            coverage = resource.read(renderingContext.getGridGeometry());
         } catch (NoSuchDataException ex) {
             //no data on requested area
-            return false;
+            return Stream.empty();
         } catch (Exception ex) {
             throw new PortrayalException(ex);
         }
@@ -279,9 +287,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         }
         if (coverage == null) {
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
-            return false;
+            return Stream.empty();
         }
-
 
         //create all cell features
         final GeneralEnvelope area = new GeneralEnvelope(coverage.getGridGeometry().getEnvelope());
@@ -326,18 +333,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         //prepare the cell feature type
         final FeatureType cellType = CellSymbolizer.buildCellType(coverage);
-        final Feature feature = cellType.newInstance();
 
-        final ProjectedFeature pf = new ProjectedFeature(renderingContext,feature);
-        final RenderingRules renderers = new RenderingRules(new CachedRule[]{symbol.getCachedRule()},renderingContext);
+        final Rule rule = symbol.getSource().getRule();
 
-        //force image interpolation here
-        Object oldValue = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
-        if(oldValue == null) oldValue = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        renderingContext.getRenderingHints().put(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-
-
+        final List<Feature> features = new ArrayList<>();
         for (y = 0; y < nby; y++) {
             for (x = 0; x < nbx; x++) {
                 if (stats[0][y][x] == null) {
@@ -345,10 +344,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                         stats[i][y][x] = new Statistics("");
                     }
                 }
-                pf.clearDataCache();
                 double cx = area.getMinimum(0) + (0.5+x)*objCellSize;
                 double cy = area.getMinimum(1) + (0.5+y)*objCellSize;
 
+                final Feature feature = cellType.newInstance();
                 feature.setPropertyValue(CellSymbolizer.PROPERY_GEOM_CENTER, GF.createPoint(new Coordinate(cx,cy)));
                 int k=0;
                 for (int b = 0, n = nbBand; b < n; b++) {
@@ -361,42 +360,18 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                     feature.setPropertyValue("band_"+b+CellSymbolizer.PROPERY_SUFFIX_SUM,stats[b][y][x].sum());
                 }
 
-                renderCellFeature(feature, pf, renderers);
+                features.add(feature);
             }
         }
+        final InMemoryFeatureSet fs = new InMemoryFeatureSet(cellType, features);
 
-        //restore image interpolation
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,oldValue);
-        renderingContext.getRenderingHints().put(RenderingHints.KEY_INTERPOLATION,oldValue);
-        return true;
-    }
+        final MapLayer subLayer = MapBuilder.createLayer(fs);
+        subLayer.setStyle(GO2Utilities.STYLE_FACTORY.style(rule.symbolizers().toArray(new Symbolizer[0])));
 
-    private void renderCellFeature(Feature feature, final ProjectedFeature pf, RenderingRules renderers) throws PortrayalException {
-        boolean painted = false;
-        for (int i = 0; i < renderers.elseRuleIndex; i++) {
-            final CachedRule rule = renderers.rules[i];
-            final Filter ruleFilter = rule.getFilter();
-            //test if the rule is valid for this feature
-            if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                painted = true;
-                for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                    renderer.portray(pf);
-                }
-            }
-        }
-
-        //the feature hasn't been painted, paint it with the 'else' rules
-        if (!painted) {
-            for (int i = renderers.elseRuleIndex; i < renderers.rules.length; i++) {
-                final CachedRule rule = renderers.rules[i];
-                final Filter ruleFilter = rule.getFilter();
-                //test if the rule is valid for this feature
-                if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                    for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                        renderer.portray(pf);
-                    }
-                }
-            }
+        try {
+            return DefaultPortrayalService.present(subLayer, fs, renderingContext);
+        } catch (DataStoreException ex) {
+            throw new PortrayalException(ex.getMessage(), ex);
         }
     }
 

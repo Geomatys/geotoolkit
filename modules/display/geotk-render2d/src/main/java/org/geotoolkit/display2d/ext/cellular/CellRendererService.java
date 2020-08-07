@@ -27,6 +27,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -35,8 +38,6 @@ import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.FeatureType;
@@ -83,7 +84,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
     public Rectangle2D glyphPreferredSize(CachedCellSymbolizer symbol, MapLayer layer) {
 
         //fake layer
-        final FeatureMapLayer fakelayer = mimicCellLayer(layer);
+        final MapLayer fakelayer = mimicCellLayer(layer);
 
 //        if(symbol.getSource().getPointSymbolizer() != null){
 //            //generate 4 arrows base on an approximate size
@@ -115,7 +116,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         final double halfheight = rect.getHeight()/2;
 
         //fake layer
-        final FeatureMapLayer fakelayer = mimicCellLayer(layer);
+        final MapLayer fakelayer = mimicCellLayer(layer);
 
 //        if(fakelayer != null && symbol.getSource().getPointSymbolizer() != null){
 //            //generate 4 arrows base on an approximate size
@@ -170,20 +171,24 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
      * feature one and we cannot adapt it, or null if it wasn't a feature map
      * layer and we cannot adapt it.
      */
-    private static FeatureMapLayer mimicCellLayer(MapLayer layer) {
+    private static MapLayer mimicCellLayer(MapLayer layer) {
+        final Resource resource = layer.getResource();
+
         //fake layer
-         if (layer instanceof FeatureMapLayer) {
+         if (resource instanceof FeatureSet) {
+            FeatureSet fs = (FeatureSet) resource;
             try {
-                final FeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getResource().getType(),null);
+                final FeatureType sft = CellSymbolizer.buildCellType( fs.getType(),null);
                 layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(new NamedIdentifier(sft.getName()), sft));
                 layer.setStyle(GO2Utilities.STYLE_FACTORY.style());
             } catch (DataStoreException ex) {
                 //not important
                 LOGGER.log(Level.FINE, "Cannot adapt map layer for cell rendering", ex);
             }
-        } else if(layer instanceof CoverageMapLayer) {
+        } else if (resource instanceof GridCoverageResource) {
+            final GridCoverageResource gcr = (GridCoverageResource) resource;
             try {
-                final FeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)layer);
+                final FeatureType sft = CellSymbolizer.buildCellType(gcr);
                 layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(new NamedIdentifier(sft.getName()), sft));
                 layer.setStyle(GO2Utilities.STYLE_FACTORY.style());
             } catch (DataStoreException ex) {
@@ -194,7 +199,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         } else{
             layer = null;
         }
-        return (FeatureMapLayer) layer;
+        return layer;
     }
 
     private static String getTitle(PointSymbolizer ps){

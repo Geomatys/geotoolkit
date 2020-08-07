@@ -348,7 +348,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     r.getModels().add(pm);
 
                     final MapContext mc = MapBuilder.createContext();
-                    mc.layers().add(MapBuilder.createCoverageLayer(r));
+                    mc.layers().add(MapBuilder.createLayer(r));
                     parent = mc;
                     hints = new Hints(hints);
                     hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);

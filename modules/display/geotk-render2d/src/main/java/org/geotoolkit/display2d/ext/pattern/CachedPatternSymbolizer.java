@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.ext.pattern;
 
 import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -38,12 +39,17 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.storage.FeatureSet;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -58,29 +64,30 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         super(symbol,renderer);
     }
 
-    public Map<Feature,List<CachedSymbolizer>> getMasks(final GridCoverage coverage) throws IOException, TransformException{
-        final Map<Feature,List<CachedSymbolizer>> features = new LinkedHashMap<>();
-        final Map<NumberRange,List<CachedSymbolizer>> styles = new LinkedHashMap<>();
+    public Map.Entry<FeatureSet, MutableStyle> getMasks(final GridCoverage coverage) throws IOException, TransformException{
+        final List<Feature> features = new ArrayList<>();
+        final Map<NumberRange,List<Symbolizer>> styles = new LinkedHashMap<>();
+        final Map<NumberRange,Integer> stylesIndexes = new LinkedHashMap<>();
         final Map<Expression, List<Symbolizer>> categorizes = styleElement.getRanges();
         final Expression[] steps = categorizes.keySet().toArray(new Expression[categorizes.size()]);
         Arrays.sort(steps, new Comparator<Expression>() {
 
             @Override
             public int compare(Expression t1, Expression t2) {
-                if(t1 == null){
+                if (t1 == null) {
                     return -1;
-                }else if(t2 == null){
+                } else if (t2 == null) {
                     return +1;
                 }
 
                 double d1 = t1.evaluate(null, Double.class);
                 double d2 = t2.evaluate(null, Double.class);
                 double res = d1-d2;
-                if(res < 0){
+                if (res < 0) {
                     return -1;
-                }else if(res > 0){
+                } else if (res > 0) {
                     return +1;
-                }else{
+                } else {
                     return 0;
                 }
             }
@@ -91,17 +98,20 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         double end = Double.POSITIVE_INFINITY;
         NumberRange interval;
         int i=0;
-        for(;i<steps.length-1;i++){
+        int index = 0;
+        for (;i<steps.length-1;i++) {
             end = steps[i+1].evaluate(null,Double.class);
             interval = NumberRange.create(last, true, end, false);
-            styles.put(interval, getCached(categorizes.get(steps[i])));
+            styles.put(interval,categorizes.get(steps[i]));
+            stylesIndexes.put(interval, index++);
             last = end;
         }
 
         //last element
         end = Double.POSITIVE_INFINITY;
-        styles.put(NumberRange.create(last, true, end, true),
-                getCached(categorizes.get(steps[i])) );
+        NumberRange<Double> lastRange = NumberRange.create(last, true, end, true);
+        styles.put(lastRange, categorizes.get(steps[i]) );
+        stylesIndexes.put(lastRange, index++);
 
         //calculate the polygons -----------------------------------------------
         final ProcessDescriptor descriptor = CoverageToVectorDescriptor.INSTANCE;
@@ -121,7 +131,20 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
                 CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).getValue();
         } catch (ProcessException ex) {
             Logging.getLogger("org.geotoolkit.display2d.ext.pattern").log(Level.WARNING, null, ex);
-            return features;
+            throw new IOException(ex.getMessage(), ex);
+        }
+
+        //build the global style -----------------------------------------------
+        final MutableStyle style = GO2Utilities.STYLE_FACTORY.style();
+        final MutableFeatureTypeStyle fts = GO2Utilities.STYLE_FACTORY.featureTypeStyle();
+        style.featureTypeStyles().add(fts);
+
+        int idx = 0;
+        for (List<Symbolizer> lst : styles.values()) {
+            MutableRule rule = GO2Utilities.STYLE_FACTORY.rule();
+            rule.symbolizers().addAll(lst);
+            rule.setFilter(GO2Utilities.FILTER_FACTORY.equals(GO2Utilities.FILTER_FACTORY.property("category"), GO2Utilities.FILTER_FACTORY.literal(idx)));
+            idx++;
         }
 
 
@@ -130,18 +153,22 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         final String geometryField = "geometry";
         sftBuilder.setName("DynamicFeature");
         sftBuilder.addAttribute(Geometry.class).setName(geometryField).setCRS(coverage.getCoordinateReferenceSystem()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        sftBuilder.addAttribute(Integer.class).setName("category");
         final FeatureType sft = sftBuilder.build();
 
         int id = 0;
-        for(Geometry entry : polygons){
-            final Feature sf = sft.newInstance();
-            sf.setPropertyValue(geometryField, entry);
-            sf.setPropertyValue("@id", id++);
+        for (Geometry entry : polygons) {
+            Object numberRange = entry.getUserData();
+            idx = stylesIndexes.get(numberRange);
 
-            features.put(sf, styles.get(entry.getUserData()));
+            final Feature feature = sft.newInstance();
+            feature.setPropertyValue(geometryField, entry);
+            feature.setPropertyValue("@id", id++);
+            feature.setPropertyValue("category", idx);
+            features.add(feature);
         }
 
-        return features;
+        return new AbstractMap.SimpleEntry<>(new InMemoryFeatureSet(sft, features), style);
     }
 
     private static List<CachedSymbolizer> getCached(final List<Symbolizer> symbols){

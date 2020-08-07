@@ -36,15 +36,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Spliterator;
+import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.imageio.IIOException;
@@ -61,23 +65,27 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.getCached;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -86,16 +94,12 @@ import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.container.FeatureLayerJ2D;
 import org.geotoolkit.display2d.container.RenderingRules;
-import org.geotoolkit.display2d.presentation.Presentation;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
@@ -117,6 +121,9 @@ import org.opengis.style.portrayal.PortrayalService;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.display2d.GO2Utilities.mergeColors;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
+import org.geotoolkit.style.MutableStyle;
 
 /**
  * Default implementation of portrayal service.
@@ -130,6 +137,28 @@ public final class DefaultPortrayalService implements PortrayalService{
      * Cache the last CoverageWriter.
      */
     private static final AtomicReference<ImageCoverageWriter> WRITER_CACHE = new AtomicReference<>();
+
+    /**
+     * List available presentation writers.
+     */
+    private static final Map<String, PresentationWriter> PRESENTATION_FORMATS = new HashMap<>();
+
+    /**
+     * List of supported image mime-types and formats.
+     */
+    private static final Set<String> IMAGEIO_FORMATS = new HashSet<String>();
+    static {
+        IMAGEIO_FORMATS.addAll(Arrays.asList(ImageIO.getReaderMIMETypes()));
+        IMAGEIO_FORMATS.addAll(Arrays.asList(ImageIO.getReaderFormatNames()));
+        IMAGEIO_FORMATS.addAll(Arrays.asList(ImageIO.getWriterMIMETypes()));
+        IMAGEIO_FORMATS.addAll(Arrays.asList(ImageIO.getWriterFormatNames()));
+
+        final Iterator<PresentationWriter> iterator = ServiceLoader.load(PresentationWriter.class).iterator();
+        while (iterator.hasNext()) {
+            final PresentationWriter writer = iterator.next();
+            PRESENTATION_FORMATS.put(writer.getMimeType(), writer);
+        }
+    }
 
     /**
      * Cache the link between mime-type -> java-type
@@ -449,15 +478,15 @@ public final class DefaultPortrayalService implements PortrayalService{
             final OutputDef outputDef) throws PortrayalException{
 
         final String mime = outputDef.getMime();
-        if(mime.contains("jpeg") || mime.contains("jpg")){
+        if (mime.contains("jpeg") || mime.contains("jpg")) {
             //special case for jpeg format, the writer generate incorrect colors
             //if he find out an alpha channel, so we ensure to have a opaque background
             //which will result in at least an RGB palette
             final Color bgColor = canvasDef.getBackground();
-            if(bgColor == null){
+            if (bgColor == null) {
                 //we set the background white
                 canvasDef.setBackground(Color.WHITE);
-            }else{
+            } else {
                 //we merge colors
                 canvasDef.setBackground(mergeColors(Color.WHITE, bgColor));
             }
@@ -465,15 +494,43 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         //directly return false if hints doesnt contain the coverage writer hint enabled
         final Hints hints = sceneDef.getHints();
-        final Object val = (hints!=null)?hints.get(GO2Hints.KEY_COVERAGE_WRITER):null;
+        final Object val = (hints != null) ? hints.get(GO2Hints.KEY_COVERAGE_WRITER) : null;
         final boolean useCoverageWriter = GO2Hints.COVERAGE_WRITER_ON.equals(val);
 
-        if(useCoverageWriter && portrayAsCoverage(canvasDef, sceneDef, outputDef)){
+        if (useCoverageWriter && portrayAsCoverage(canvasDef, sceneDef, outputDef)) {
             //we succeeded in writing it with coverage writer directly.
             return;
         }
 
-        if("image/svg+xml".equalsIgnoreCase(mime)){
+        final PresentationWriter presWriter = PRESENTATION_FORMATS.get(mime);
+
+        if (presWriter != null) {
+
+            boolean close = false;
+            OutputStream outStream = null;
+            try {
+                if (outputDef.getOutput() instanceof OutputStream) {
+                    outStream = (OutputStream) outputDef.getOutput();
+                } else {
+                    outStream = IOUtilities.openWrite(outputDef.getOutput());
+                    close = true;
+                }
+                final Stream<Presentation> stream = present(canvasDef, sceneDef);
+                presWriter.write(canvasDef, sceneDef, stream, outStream);
+
+            } catch (IOException | DataStoreException ex) {
+                throw new PortrayalException(ex.getMessage(), ex);
+            } finally {
+                if(outStream!=null && close){
+                    try {
+                        outStream.close();
+                    } catch (IOException ex) {
+                        throw new PortrayalException(ex.getMessage(), ex);
+                    }
+                }
+            }
+
+        } else if ("image/svg+xml".equalsIgnoreCase(mime)) {
             //special canvas for svg
             final Envelope contextEnv = canvasDef.getEnvelope();
             final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
@@ -507,21 +564,20 @@ public final class DefaultPortrayalService implements PortrayalService{
                 }
             }
 
-        }else{
+        } else {
             //use the rendering engine to generate an image
             BufferedImage image = portray(canvasDef,sceneDef);
 
-            if(image == null){
+            if (image == null) {
                 throw new PortrayalException("No image created by the canvas.");
             }
 
-
-            if(useCoverageWriter){
+            if (useCoverageWriter) {
                 final Envelope env = canvasDef.getEnvelope();
                 final Dimension dim = canvasDef.getDimension();
                 final double[] resolution = new double[]{
-                        env.getSpan(0) / (double)dim.width,
-                        env.getSpan(1) / (double)dim.height};
+                        env.getSpan(0) / (double) dim.width,
+                        env.getSpan(1) / (double) dim.height};
 
                 //check the image color model
                 image = (BufferedImage) rectifyImageColorModel(image, mime);
@@ -531,7 +587,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 gcb.setValues(image);
                 final GridCoverage coverage = gcb.build();
                 writeCoverage(coverage, env, resolution, outputDef,null);
-            }else{
+            } else {
                 try {
                     //image color model check is done in the writeImage method
                     writeImage(image, outputDef);
@@ -737,10 +793,11 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         final Shape selectedArea = visitDef.getArea();
         final GraphicVisitor visitor = visitDef.getVisitor();
+
         try {
-            canvas.getGraphicsIn(selectedArea, visitor, VisitFilter.INTERSECTS);
-        } catch(Exception ex) {
-            if(ex instanceof PortrayalException){
+            canvas.getGraphicsIn(selectedArea, visitor);
+        } catch (Exception ex) {
+            if (ex instanceof PortrayalException) {
                 throw (PortrayalException)ex;
             } else {
                 throw new PortrayalException(ex);
@@ -758,9 +815,14 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     /**
      * Generate presentation objects for a scene.
+     * @param canvasDef
+     * @param sceneDef
+     * @return stream of Presentation instance.
      */
-    public static Spliterator<Presentation> present(final CanvasDef canvasDef,
+    public static Stream<Presentation> present(final CanvasDef canvasDef,
             final SceneDef sceneDef) throws PortrayalException, DataStoreException{
+
+        Stream<Presentation> stream = Stream.empty();
 
         final Envelope contextEnv = canvasDef.getEnvelope();
         final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
@@ -773,82 +835,193 @@ public final class DefaultPortrayalService implements PortrayalService{
         final RenderingContext2D renderContext = new RenderingContext2D(canvas);
         canvas.prepareContext(renderContext, img.createGraphics(), new Rectangle(canvasDef.getDimension()));
 
-        final List<Presentation> presentations = new ArrayList<>();
-
         final MapContext context = sceneDef.getContext();
         final List<MapLayer> layers = context.layers();
         for (MapLayer layer : layers) {
             if (!layer.isVisible()) continue;
-            if (!(layer instanceof FeatureMapLayer)) continue;
 
-            final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            final FeatureSet resource = fml.getResource();
-            final FeatureType type = resource.getType();
-            final List<Rule> rules = FeatureLayerJ2D.getValidRules(renderContext, fml, type);
+            final Resource resource = layer.getResource();
+            stream = Stream.concat(stream, present(layer, resource, renderContext));
+        }
 
+        return stream;
+    }
+
+    public static Stream<Presentation> present(MapLayer layer, Resource resource, RenderingContext2D renderContext) throws DataStoreException, PortrayalException {
+
+        final MutableStyle style = layer.getStyle();
+
+        Stream<Presentation> stream = Stream.empty();
+
+        FeatureType type = null;
+        if (resource instanceof FeatureSet) {
+            type = ((FeatureSet) resource).getType();
+        } else if (resource instanceof GridCoverageResource) {
+            type = null;
+        } else if (resource instanceof Aggregate) {
+            //combine each component resource in the stream
+            for (Resource r : ((Aggregate) resource).components()) {
+                stream = Stream.concat(stream, present(layer, r, renderContext));
+            }
+            return stream;
+        } else {
+            //unknown type
+            return Stream.empty();
+        }
+
+        for (MutableFeatureTypeStyle fts : style.featureTypeStyles()) {
+            final List<Rule> rules = GO2Utilities.getValidRules(fts, renderContext.getSEScale(), type);
             if (rules.isEmpty()) continue;
 
-            final CachedRule[] cachedRules = FeatureLayerJ2D.toCachedRules(rules, type);
-
             //prepare the renderers
+            final CachedRule[] cachedRules = toCachedRules(rules, type);
             final RenderingRules renderers = new RenderingRules(cachedRules, renderContext);
 
-            final ProjectedFeature projectedFeature = new ProjectedFeature(renderContext,null);
-
-            try (final Stream<Feature> stream = resource.features(false)) {
-
-                final Iterator<ProjectedFeature> ite = stream.map((Feature t) -> {
-                    projectedFeature.setCandidate(t);
-                    return projectedFeature;
-                }).iterator();
-
-                //performance routine, only one symbol to render
-                if (renderers.rules.length == 1
-                   && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
-                   && renderers.rules[0].symbolizers().length == 1) {
-                    renderers.renderers[0][0].presentation(ite).forEachRemaining(presentations::add);
+            {   //special case for group symbolizers
+                //group symbolizers must be alone in a FTS
+                SymbolizerRenderer groupRenderer = null;
+                int count = 0;
+                for (int i = 0; i < renderers.renderers.length; i++) {
+                    for (int k = 0; k < renderers.renderers[i].length; k++) {
+                        count++;
+                        if (renderers.renderers[i][k].getService().isGroupSymbolizer()) {
+                            groupRenderer = renderers.renderers[i][k];
+                        }
+                    }
+                }
+                if (groupRenderer != null) {
+                    if (count > 1) {
+                        throw new PortrayalException("Group symbolizer (" + groupRenderer.getService().getSymbolizerClass().getSimpleName() + ") must be alone in a FeatureTypeStyle element." );
+                    }
+                    stream = Stream.concat(stream, groupRenderer.presentations(layer, resource));
                     continue;
                 }
+            }
 
-                while (ite.hasNext()) {
-                    final ProjectedObject projectedCandidate = ite.next();
+            //extract the used names
+            Set<String> names = GO2Utilities.propertiesNames(rules);
+            if (names.contains("*")) {
+                //we need all properties
+                names = null;
+            }
 
-                    boolean painted = false;
-                    for (int i=0; i<renderers.elseRuleIndex; i++) {
+            //calculate max symbol size, to expand search envelope.
+            double symbolsMargin = 0.0;
+            for (CachedRule rule : cachedRules) {
+                for (CachedSymbolizer cs : rule.symbolizers()) {
+                    symbolsMargin = Math.max(symbolsMargin, cs.getMargin(null, renderContext));
+                }
+            }
+            if (Double.isNaN(symbolsMargin) || Double.isInfinite(symbolsMargin)) {
+                //symbol margin can not be pre calculated, expect a max of 300pixels
+                symbolsMargin = 300f;
+            }
+            if (symbolsMargin > 0) {
+                final double scale = AffineTransforms2D.getScale(renderContext.getDisplayToObjective());
+                symbolsMargin = scale * symbolsMargin;
+            }
+
+            //performance routine, only one symbol to render
+            if (renderers.rules.length == 1
+               && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
+               && renderers.rules[0].symbolizers().length == 1) {
+                stream = Stream.concat(stream, renderers.renderers[0][0].presentations(layer, resource));
+                continue;
+            }
+
+            if (resource instanceof GridCoverageResource) {
+
+                boolean painted = false;
+                for (int i=0; i<renderers.elseRuleIndex; i++) {
+                    final CachedRule rule = renderers.rules[i];
+                    final Filter ruleFilter = rule.getFilter();
+                    //test if the rule is valid for this feature
+                    if (ruleFilter == null || ruleFilter.evaluate(resource)) {
+                        painted = true;
+                        for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
+                            stream = Stream.concat(stream, renderer.presentations(layer, resource));
+                        }
+                    }
+                }
+
+                //the data hasn't been painted, paint it with the 'else' rules
+                if (!painted) {
+                    for (int i=renderers.elseRuleIndex; i<renderers.rules.length; i++) {
                         final CachedRule rule = renderers.rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
-                            painted = true;
+                        if (ruleFilter == null || ruleFilter.evaluate(resource)) {
                             for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                                renderer.presentation(projectedCandidate).forEachRemaining(presentations::add);
-                            }
-                        }
-                    }
-
-                    //the feature hasn't been painted, paint it with the 'else' rules
-                    if(!painted){
-                        for (int i=renderers.elseRuleIndex; i<renderers.rules.length; i++) {
-                            final CachedRule rule = renderers.rules[i];
-                            final Filter ruleFilter = rule.getFilter();
-                            //test if the rule is valid for this feature
-                            if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
-                                for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                                    renderer.presentation(projectedCandidate).forEachRemaining(presentations::add);
-                                }
+                                stream = Stream.concat(stream, renderer.presentations(layer, resource));
                             }
                         }
                     }
                 }
+
+            } else if (resource instanceof FeatureSet) {
+                final FeatureSet fs = (FeatureSet) resource;
+
+                //optimize
+                final Query query = RenderingRoutines.prepareQuery(renderContext, fs, layer, names, rules, symbolsMargin);
+
+                fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
+                    @Override
+                    public Stream<Presentation> apply(Feature feature) {
+
+                        Stream<Presentation> stream = Stream.empty();
+                        try {
+                            boolean painted = false;
+                            for (int i = 0; i < renderers.elseRuleIndex; i++) {
+                                final CachedRule rule = renderers.rules[i];
+                                final Filter ruleFilter = rule.getFilter();
+                                //test if the rule is valid for this feature
+                                if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                                    painted = true;
+                                    for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
+                                        stream = Stream.concat(stream, renderer.presentations(layer, feature));
+                                    }
+                                }
+                            }
+
+                            //the feature hasn't been painted, paint it with the 'else' rules
+                            if (!painted) {
+                                for (int i = renderers.elseRuleIndex; i < renderers.rules.length; i++) {
+                                    final CachedRule rule = renderers.rules[i];
+                                    final Filter ruleFilter = rule.getFilter();
+                                    //test if the rule is valid for this feature
+                                    if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                                        for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
+                                            stream = Stream.concat(stream, renderer.presentations(layer, feature));
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (PortrayalException ex) {
+                            throw new BackingStoreException(ex);
+                        }
+
+                        return stream;
+                    }
+                });
             }
         }
 
-        return presentations.spliterator();
+        return stream;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // OTHER USEFULL ///////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+
+    private static CachedRule[] toCachedRules(Collection<? extends Rule> rules, final FeatureType expected){
+        final CachedRule[] cached = new CachedRule[rules.size()];
+        int i=0;
+        for(Rule r : rules){
+            cached[i] = getCached(r, expected);
+            i++;
+        }
+        return cached;
+    }
 
     /**
      * Write exception in a transparent image.
@@ -997,6 +1170,26 @@ public final class DefaultPortrayalService implements PortrayalService{
         }finally{
             XImageIO.dispose(writer);
         }
+    }
+
+    /**
+     * Returns true if an image reader or writer exist for given format or mime type.
+     *
+     * @param formatOrMimeType
+     * @return true if a reader or writer exists.
+     */
+    public static boolean isImageFormat(String formatOrMimeType) {
+        return IMAGEIO_FORMATS.contains(formatOrMimeType);
+    }
+
+    /**
+     * Returns true if a presentation writer exist for given format or mime type.
+     *
+     * @param formatOrMimeType
+     * @return true if a presentation writer exists.
+     */
+    public static boolean isPresentationFormat(String formatOrMimeType) {
+        return PRESENTATION_FORMATS.containsKey(formatOrMimeType);
     }
 
     ////////////////////////////////////////////////////////////////////////////
