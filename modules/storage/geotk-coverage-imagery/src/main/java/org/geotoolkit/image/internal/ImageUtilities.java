@@ -126,7 +126,7 @@ public final class ImageUtilities extends Static {
             if (layout != null) {
                 layout = layout.unsetTileLayout();
             }
-            final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(image, null);
+            final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(image, null, false);
             int s;
             if ((s=tileSize.width) != image.getTileWidth()) {
                 if (layout == null) {
@@ -230,7 +230,7 @@ public final class ImageUtilities extends Static {
             // If the bounds changed, adjust the tile size.
             if (result != layout) {
                 source = sources.get(0);
-                final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(source, null);
+                final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(source, null, false);
                 if (result.isValid(ImageLayout.TILE_WIDTH_MASK)) {
                     final int oldSize = result.getTileWidth(source);
                     final int newSize = tileSize.width;
