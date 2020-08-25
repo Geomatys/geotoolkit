@@ -36,6 +36,8 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class ClusterHullTest extends AbstractProcessTest {
 
+    private static final double TOLERANCE = 1e-4;
+
     private static GeometryFactory geometryFactory = new GeometryFactory();
 
     public ClusterHullTest() {
@@ -140,7 +142,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         GeometryCollection gc1 = extractGeometryCollectionFromFeatureSet(out);
         GeometryCollection gc2 = extractGeometryCollectionFromFeatureSet(expected);
         // is same geometry
-        assertTrue(gc1.equalsExact(gc2, 0.0001));
+        assertTrue(gc1.equalsExact(gc2, TOLERANCE));
         FeatureType type1 = out.getType();
         FeatureType type2 = expected.getType();
         // is same feature
@@ -148,18 +150,15 @@ public class ClusterHullTest extends AbstractProcessTest {
     }
 
     private GeometryCollection extractGeometryCollectionFromFeatureSet(final FeatureSet fs) throws DataStoreException {
-        List<Geometry> geometries = new ArrayList<>();
-
-        fs.features(false).collect(Collectors.toList());
-        geometries = fs.features(false)
+        Geometry[] geometries = fs.features(false)
                 .map(f -> f.getProperty("geometry"))
                 .map(p -> p.getValue())
                 .filter(value -> value instanceof Geometry)
                 .map(value -> (Geometry) value)
-                .collect(Collectors.toList());
-        int size = geometries.size();
-        Geometry[] geometries1 = geometries.toArray(new Geometry[size]);
-        return geometryFactory.createGeometryCollection(geometries1);
+                .toArray(size -> new Geometry[size]);
+        final GeometryCollection gc = geometryFactory.createGeometryCollection(geometries);
+        gc.normalize();
+        return gc;
     }
 
     public FeatureSet buildFeatureSet(String filename) throws URISyntaxException, DataStoreException {
