@@ -230,8 +230,19 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
         final Map<String, String> headerMap = getRequestHeaderMap();
         getCaps.getHeaderMap().putAll(headerMap);
         getCaps.setUpdateSequence(currentUpdateSequence);
+        
+        String newUpdateSequence = null;
+        boolean changed = true;
         try {
-            capabilities = WMTSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
+            Capabilities lastCapa = WMTSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
+            if (lastCapa != null) {
+                newUpdateSequence = lastCapa.getUpdateSequence();
+            }
+            changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
+            if (changed) {
+                capabilities = lastCapa;
+            }
+            
         } catch (Exception ex) {
             capabilities = null;
             try {
@@ -241,17 +252,10 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
                 LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
             }
         }
-
-        String newUpdateSequence = null;
-        if (capabilities != null) {
-            newUpdateSequence = capabilities.getUpdateSequence();
-        }
-
-        final boolean changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
+        
         if (changed) {
             resources = null;
         }
-
         return changed;
     }
 
@@ -304,6 +308,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
 
     @Override
     public synchronized Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        checkForUpdates();
         List<org.apache.sis.storage.Resource> resources = this.resources;
         if (resources == null) {
             resources = new ArrayList<>();
