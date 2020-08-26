@@ -27,5 +27,13 @@ import org.geotoolkit.client.Request;
  * @module
  */
 public interface GetCapabilitiesRequest extends Request {
+    /**
+     * Returns the upate sequence string.
+     */
+    String getUpdateSequence();
 
+    /**
+     * Sets the update sequence for the GetCapabilities response.
+     */
+    void setUpdateSequence(String sequence);
 }
