@@ -28,7 +28,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -38,7 +37,6 @@ import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
-import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
@@ -418,7 +416,6 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
         if (changed) {
             rootNode = null;
         }
-        System.out.println("changed:" + changed);
         return changed;
     }
 
