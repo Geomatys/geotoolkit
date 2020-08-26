@@ -95,9 +95,9 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
         super(version, updateSequence);
     }
 
-    public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om,
+    public WFSCapabilitiesType(final String version, final String updateSequence, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om,
             final FeatureTypeListType ft, final FilterCapabilities fc) {
-        super(si, sp, om, version, null);
+        super(si, sp, om, version, updateSequence);
         this.featureTypeList = ft;
         this.filterCapabilities = fc;
     }
@@ -267,6 +267,6 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
         if (sections.containsSection("serviceIdentification")|| sections.containsSection("All")) {
             si = getServiceIdentification();
         }
-        return new WFSCapabilitiesType("1.1.0", si, sp, om, ftl, filterCapabilities);
+        return new WFSCapabilitiesType("1.1.0", getUpdateSequence(), si, sp, om, ftl, filterCapabilities);
     }
 }
