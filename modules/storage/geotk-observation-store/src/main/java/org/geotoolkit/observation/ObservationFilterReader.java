@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.sos.xml.ResponseModeType;
+import org.opengis.filter.temporal.BinaryTemporalOperator;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
@@ -132,50 +133,12 @@ public interface ObservationFilterReader {
     void setObservationIds(final List<String> ids);
 
     /**
-     * Add a TM_Equals filter to the current request.
+     * Add a Temporal filter to the current request.
      *
-     * @param time
+     * @param tFilter
      * @throws org.apache.sis.storage.DataStoreException
      */
-     void setTimeEquals(Object time) throws DataStoreException;
-
-    /**
-     * Add a TM_Before filter to the current request.
-     *
-     * @param time
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    void setTimeBefore(Object time) throws DataStoreException;
-
-    /**
-     * Add a TM_After filter to the current request.
-     *
-     * @param time
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    void setTimeAfter(Object time) throws DataStoreException;
-
-    /**
-     * Add a TM_During filter to the current request.
-     *
-     * @param time
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    void setTimeDuring(Object time) throws DataStoreException;
-
-    /**
-     * Add a latest time filter to the current request.
-     *
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    void setTimeLatest() throws DataStoreException;
-
-    /**
-     * Add a first time filter to the current request.
-     *
-     * @throws org.apache.sis.storage.DataStoreException
-     */
-    void setTimeFirst() throws DataStoreException;
+    void setTimeFilter(BinaryTemporalOperator tFilter) throws DataStoreException;
 
     /**
      * Add a BBOX filter to the current request.
@@ -343,15 +306,15 @@ public interface ObservationFilterReader {
     Map<String, List<Date>> getSensorTimes(final Map<String,String> hints) throws DataStoreException;
 
     /**
-     * Return an encoded block of data in a string.
-     * The datas are the results of the matching observations.
+     * Return an encoded block of data in a string. The datas are the results of
+     * the matching observations.
+     *
+     * @param hints hints like decimation size, algorithm etc.
      *
      * @return An encoded block of data in a string.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    String getResults() throws DataStoreException;
-
-    String getDecimatedResults(final int width) throws DataStoreException;
+    Object getResults(final Map<String, String> hints) throws DataStoreException;
 
     /**
      * Return an encoded block of data in a string.
