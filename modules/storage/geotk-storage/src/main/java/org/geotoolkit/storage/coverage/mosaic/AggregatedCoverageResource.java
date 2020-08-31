@@ -89,6 +89,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -934,10 +935,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 } else {
                     try {
                         final RenderedImage src = coverage.render(null);
-                        final MathTransform gridSrcToCrs = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
-                        final MathTransform gridResToCrs = canvas.getGridToCRS(PixelInCell.CELL_CENTER);
-                        final MathTransform crsToCrs = CRS.findOperation(canvas.getCoordinateReferenceSystem(), coverage.getCoordinateReferenceSystem(), null).getMathTransform();
-                        final MathTransform toSource = MathTransforms.concatenate(gridResToCrs, crsToCrs, gridSrcToCrs.inverse());
+                        final MathTransform toSource = createTransform(canvas, coverage.getGridGeometry());
 
                         final BufferedImage image = BufferedImages.createImage(result, null, null, null, DataBuffer.TYPE_DOUBLE);
                         if (!TiledCoverageResource.isAllZero(noData)) BufferedImages.setAll(image, noData);
@@ -1093,6 +1091,13 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
 
         return StringUtilities.toStringTree(name + " aggregated coverage resource", texts);
+    }
+
+    public static MathTransform createTransform(GridGeometry source, GridGeometry target) throws FactoryException, NoninvertibleTransformException {
+        final MathTransform gridSrcToCrs = source.getGridToCRS(PixelInCell.CELL_CENTER);
+        final MathTransform gridResToCrs = target.getGridToCRS(PixelInCell.CELL_CENTER);
+        final MathTransform crsToCrs = CRS.findOperation(source.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null).getMathTransform();
+        return MathTransforms.concatenate(gridSrcToCrs, crsToCrs, gridResToCrs.inverse());
     }
 
     /**

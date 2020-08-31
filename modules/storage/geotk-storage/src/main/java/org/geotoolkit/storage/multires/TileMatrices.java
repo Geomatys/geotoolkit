@@ -45,6 +45,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
@@ -669,6 +670,26 @@ public final class TileMatrices extends Static {
         return depth;
     }
 
+    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Point location) {
+        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
+        final Dimension tileSize = tileMatrix.getTileSize();
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, location, PixelInCell.CELL_CENTER);
+        final GridExtent tileExtent = new GridExtent(tileSize.width, tileSize.height);
+        return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs2d);
+    }
+
+    public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Rectangle rectangle) {
+        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
+        final Dimension tileSize = tileMatrix.getTileSize();
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, rectangle.getLocation(), PixelInCell.CELL_CENTER);
+        final GridExtent tileExtent = new GridExtent((long) tileSize.width * rectangle.width, (long) tileSize.height * rectangle.height);
+        return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs2d);
+    }
+
+    /**
+     * @deprecated use getTileGridGeometry2D method without crs parameter.
+     */
+    @Deprecated
     public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Point location, CoordinateReferenceSystem crs) {
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, location, PixelInCell.CELL_CENTER);
@@ -676,6 +697,10 @@ public final class TileMatrices extends Static {
         return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs);
     }
 
+    /**
+     * @deprecated use getTileGridGeometry2D method without crs parameter.
+     */
+    @Deprecated
     public static GridGeometry getTileGridGeometry2D(TileMatrix tileMatrix, Rectangle rectangle, CoordinateReferenceSystem crs) {
         final Dimension tileSize = tileMatrix.getTileSize();
         final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, rectangle.getLocation(), PixelInCell.CELL_CENTER);

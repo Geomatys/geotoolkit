@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.Iterator;
@@ -28,10 +29,10 @@ import java.util.concurrent.CancellationException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -43,6 +44,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
@@ -55,7 +57,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.storage.multires.TileMatrix;
-import org.geotoolkit.util.TriFunction;
 
 
 /**
@@ -361,23 +362,16 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
                 currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, baseImage);
             }
 
-            final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(mosaic, new Point(idx, idy), mosaic.getUpperLeftCorner().getCoordinateReferenceSystem());
+            final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(mosaic, new Point(idx, idy));
 
             try {
-                final GridCoverageProcessor processor = new GridCoverageProcessor();
-                processor.setInterpolation(interpolation);
-                GridCoverage resampled = processor.resample(coverage, tileGridGeom);
-                RenderedImage resampledImage = resampled.render(null);
+                final MathTransform toSource = AggregatedCoverageResource.createTransform(tileGridGeom, coverage.getGridGeometry());
 
-                //we need to merge image
-                final TriFunction<Point, double[], double[], double[]> merger = new TriFunction<Point, double[], double[], double[]>() {
-                    @Override
-                    public double[] apply(Point position, double[] sourcePixel, double[] targetPixel) {
-                        return sourcePixel;
-                    }
-                };
-                BufferedImages.mergeImages(resampledImage, currentlyTile, true, merger);
-                mosaic.writeTiles(Stream.of(new DefaultImageTile(currentlyTile, new Point(idx, idy))), null);
+                final ImageCombiner ic = new ImageCombiner(currentlyTile);
+                ic.setInterpolation(interpolation);
+                ic.resample(coverage.render(null), new Rectangle(currentlyTile.getWidth(), currentlyTile.getHeight()), toSource);
+                final RenderedImage tileImage = ic.result();
+                mosaic.writeTiles(Stream.of(new DefaultImageTile(tileImage, new Point(idx, idy))), null);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

@@ -270,7 +270,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(x>=3 && y>=2 && y<6){
+                if(x>=3 && y>=1 && y<6){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -282,7 +282,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(x>=0 & x<3 && y>=2 && y<6){
+                if(x>=0 & x<=3 && y>=1 && y<6){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -361,7 +361,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(y>=6 && x>=3 && x<7){
+                if(y>=5 && x>=3 && x<=7){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -373,7 +373,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(y>=0 & y<6 && x>=3 && x<7){
+                if(y>=0 & y<6 && x>=3 && x<=7){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -452,7 +452,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(x>=3 && y>=2 && y<6){
+                if(x>=3 && y>=1 && y<6){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -464,7 +464,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(x>=0 & x<3 && y>=2 && y<6){
+                if(x>=0 & x<=3 && y>=1 && y<6){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
