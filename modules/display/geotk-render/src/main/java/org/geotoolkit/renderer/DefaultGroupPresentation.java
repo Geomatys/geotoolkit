@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2020, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,15 +14,27 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display;
+package org.geotoolkit.renderer;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.Feature;
 
 /**
- * Filtering type that can be used to limit graphic visiting.
  *
  * @author Johann Sorel (Geomatys)
  */
-public enum VisitFilter {
+public class DefaultGroupPresentation extends AbstractPresentation implements GroupPresentation {
 
-    INTERSECTS,
-    WITHIN
+    public final List<Presentation> elements = new ArrayList<>();
+
+    public DefaultGroupPresentation(MapLayer layer, Feature feature) {
+        super(layer, feature);
+    }
+
+    @Override
+    public List<Presentation> elements() {
+        return elements;
+    }
 }

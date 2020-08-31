@@ -61,7 +61,7 @@ public final class DeferredImageRead extends ComputedImage {
      * {@link ImageLayout} will search for a size close to the preferred size which is a divisor of the
      * image size.</p>
      */
-    private static final ImageLayout COSTLY_ACCESS = new ImageLayout(new Dimension(4000, 4000));
+    private static final ImageLayout COSTLY_ACCESS = new ImageLayout(new Dimension(4000, 4000), false);
 
     /**
      * Preferred tile size for image that are untiled but still capable to provide random accesses easily.
@@ -69,7 +69,7 @@ public final class DeferredImageRead extends ComputedImage {
      * {@link ImageLayout} will search for a size close to the preferred size which is a divisor of
      * the image size.
      */
-    private static final ImageLayout EASY_ACCESS = new ImageLayout(new Dimension(1000, 1000));
+    private static final ImageLayout EASY_ACCESS = new ImageLayout(new Dimension(1000, 1000), false);
 
     /**
      * The reader to use for reading tiles.

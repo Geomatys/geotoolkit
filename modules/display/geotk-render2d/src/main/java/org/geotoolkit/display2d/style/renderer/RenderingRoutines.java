@@ -56,6 +56,7 @@ import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
@@ -160,7 +161,7 @@ public final class RenderingRoutines {
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    public static Query prepareQuery(final RenderingContext2D renderingContext, FeatureSet fs, final FeatureMapLayer layer,
+    public static Query prepareQuery(final RenderingContext2D renderingContext, FeatureSet fs, final MapLayer layer,
             final Set<String> styleRequieredAtts, final List<Rule> rules, double symbolsMargin) throws PortrayalException{
 
         final FeatureType schema;
@@ -224,17 +225,19 @@ public final class RenderingRoutines {
 
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
-            Query query = layer.getQuery();
-            if (query instanceof SimpleQuery) {
-                filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
+            if (layer instanceof FeatureMapLayer) {
+                Query query = ((FeatureMapLayer) layer).getQuery();
+                if (query instanceof SimpleQuery) {
+                    filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
+                }
             }
         }
 
         final Set<String> copy = new HashSet<>();
 
         //concatenate with temporal range if needed ----------------------------
-        if (layer != null) {
-            for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
+        if (layer instanceof FeatureMapLayer) {
+            for (final FeatureMapLayer.DimensionDef def : ((FeatureMapLayer) layer).getExtraDimensions()) {
                 final CoordinateReferenceSystem crs = def.getCrs();
                 final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
                 final Envelope dimEnv;

@@ -20,7 +20,7 @@ import java.awt.Image;
 import java.util.Collection;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.Canvas;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.renderer.Presentation;
 
 /**
  * A graphic builder is a convenient way to build the same datas in a different
@@ -32,14 +32,14 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface GraphicBuilder<T extends Graphic> {
+public interface GraphicBuilder<T extends Presentation> {
 
     /**
      * Build a collection of graphics from the provided layer and canvas.
      *
      * @param layer : Maplayer data source
      * @param canvas : Rendering canvas
-     * @return Collection<Graphic> may not be null but can be empty.
+     * @return Collection<Presentation> may not be null but can be empty.
      */
     Collection<T> createGraphics(MapLayer layer, Canvas canvas);
 

@@ -498,6 +498,9 @@ public final class JTS {
                 case PathIterator.SEG_CLOSE: {
                     if (!coords.isEmpty()) {
                         coords.add(coords.get(0));
+                        while (coords.size() < 4) {
+                            coords.add(coords.get(0));
+                        }
                         lines.add(factory.createLinearRing(
                                 (Coordinate[]) coords.toArray(new Coordinate[coords.size()])));
                         coords.clear();

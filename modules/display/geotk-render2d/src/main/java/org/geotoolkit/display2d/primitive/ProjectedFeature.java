@@ -123,7 +123,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
         //check that the geometry is set
         if (!proj.isSet()) {
-            proj.setDataGeometry(GO2Utilities.getGeometry(candidate, geomExp),dataCRS);
+            proj.setDataGeometry(GO2Utilities.getGeometry(candidate, geomExp), dataCRS);
         }
 
         return proj;

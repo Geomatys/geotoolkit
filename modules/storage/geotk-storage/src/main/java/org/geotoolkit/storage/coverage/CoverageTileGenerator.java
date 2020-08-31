@@ -197,11 +197,13 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 CoordinateReferenceSystem targetCrs = pyramid.getCoordinateReferenceSystem();
                 Envelope baseEnv = env;
                 env = Envelopes.transform(env, targetCrs);
-                double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
-                double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
-                minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
-                maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
-                resolutions = NumberRange.create(minres[0], true, maxres[0], true);
+                if (resolutions != null) {
+                    double[] minres = new double[]{resolutions.getMinDouble(), resolutions.getMinDouble()};
+                    double[] maxres = new double[]{resolutions.getMaxDouble(), resolutions.getMaxDouble()};
+                    minres = ReferencingUtilities.convertResolution(baseEnv, minres, targetCrs, null);
+                    maxres = ReferencingUtilities.convertResolution(baseEnv, maxres, targetCrs, null);
+                    resolutions = NumberRange.create(minres[0], true, maxres[0], true);
+                }
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
@@ -218,7 +220,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
         for (final TileMatrix mosaic : mosaics) {
             if (resolutions == null || resolutions.contains(mosaic.getScale())) {
-
+                final GridCoverageResource source = resource;
                 final Rectangle rect = TileMatrices.getTilesInEnvelope(mosaic, env);
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
@@ -237,12 +239,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                                         return null;
                                     }
 
-                                    //do not regenerate existing tiles
-                                    //if (!mosaic.isMissing((int)x, (int)y)) return;
-
                                     final Point coord = new Point((int)x, (int)y);
                                     try {
-                                        data = generateTile(pyramid, mosaic, coord);
+                                        data = generateTile(pyramid, mosaic, coord, source);
                                     } catch (Exception ex) {
                                         ex.printStackTrace();
                                     }
@@ -277,18 +276,15 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                 r.setSampleDimensions(resource.getSampleDimensions());
                 r.getModels().add(pm);
 
-                GridCoverageResource agg;
-                try {
-                    //aggregate with original data
-                    //upper level tiles may expand over tiles which are not available,
-                    //we specify Mode ORDER, we want pregenerated tiles to be used first
-                    //this way only border tiles may use the original resource
-                    agg = AggregatedCoverageResource.create(r.getGridGeometry().getCoordinateReferenceSystem(), AggregatedCoverageResource.Mode.ORDER, r, this.resource);
-                } catch (TransformException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
-                }
+                //we must still use the original resource for generation because
+                //lower level tiles may not be sufficient to generate border tiles
+                final AggregatedCoverageResource aggregated = new AggregatedCoverageResource();
+                aggregated.setMode(AggregatedCoverageResource.Mode.ORDER);
+                aggregated.add(r);
+                aggregated.add(this.resource);
+                aggregated.setInterpolation(interpolation.toSis());
 
-                resource = agg;
+                resource = aggregated;
             }
         }
     }

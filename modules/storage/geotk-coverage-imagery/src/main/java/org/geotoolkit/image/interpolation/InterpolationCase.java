@@ -43,4 +43,20 @@ public enum InterpolationCase {
     InterpolationCase(final int margin) {
         this.margin = margin;
     }
+
+    /**
+     * Temporary method until old geotoolkit resampling classes are removed.
+     * @return Apache SIS counterpart.
+     */
+    public org.apache.sis.image.Interpolation toSis() {
+        final org.apache.sis.image.Interpolation iterpole;
+        switch (this) {
+            case BICUBIC :
+            case BICUBIC2 :
+            case BILINEAR : iterpole = org.apache.sis.image.Interpolation.BILINEAR; break;
+            case LANCZOS : iterpole = org.apache.sis.image.Interpolation.LANCZOS; break;
+            default : iterpole = org.apache.sis.image.Interpolation.NEAREST; break;
+         }
+        return iterpole;
+    }
 }

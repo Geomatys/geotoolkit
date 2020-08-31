@@ -18,12 +18,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Symbolizer;
@@ -89,54 +84,6 @@ public interface SymbolizerRendererService<S extends Symbolizer, C extends Cache
      * @return SymbolizerRenderer or null if symbol is never visible.
      */
     SymbolizerRenderer createRenderer(C symbol, RenderingContext2D context);
-
-    /**
-     * Paint the graphic object using the cached symbolizer and the rendering parameters.
-     *
-     * @param graphic : cached graphic representation of a feature
-     * @param symbol : cached symbolizer to use
-     * @param context : rendering context contains the java2d rendering parameters
-     * @throws PortrayalException
-     */
-    boolean portray(ProjectedObject graphic, C symbol,
-            RenderingContext2D context) throws PortrayalException;
-
-    /**
-     * Paint the graphic object using the cached symbolizer and the rendering parameters.
-     *
-     * @param graphic : cached graphic representation of a coverage
-     * @param symbol : cached symbolizer to use
-     * @param context : rendering context contains the java2d rendering parameters
-     * @throws PortrayalException
-     */
-    boolean portray(ProjectedCoverage graphic, C symbol,
-            RenderingContext2D context) throws PortrayalException;
-
-    /**
-     * Test if the graphic object hit the given search area.
-     *
-     * @param graphic : cached graphic representation of a feature
-     * @param symbol : cached symbolizer to use
-     * @param context : rendering context contains the java2d rendering parameters
-     * @param mask : search area, it can represent a mouse position or a particular shape
-     * @param filter : the type of searching, intersect or within
-     * @return true if the searcharea hit this graphic object, false otherwise.
-     */
-    boolean hit(ProjectedObject graphic, C symbol,
-            RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter);
-
-    /**
-     * Test if the graphic object hit the given search area.
-     *
-     * @param graphic : cached graphic representation of a coverage
-     * @param symbol : cached symbolizer to use
-     * @param renderingContext : rendering context contains the java2d rendering parameters
-     * @param mask : search area, it can represent a mouse position or a particular shape
-     * @param filter : the type of searching, intersect or within
-     * @return true if the searcharea hit this graphic object, false otherwise.
-     */
-    boolean hit(ProjectedCoverage graphic, C symbol,
-            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter);
 
     /**
      * Find the most efficient glyph size to represent this symbol.

@@ -32,16 +32,12 @@ import javax.media.jai.JAI;
 import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
 import org.apache.sis.measure.NumberRange;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.SearchArea;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
@@ -68,13 +64,13 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
 
     protected final T item;
 
-    public MapItemJ2D(final J2DCanvas canvas, final T item, boolean allowChildren){
+    public MapItemJ2D(final J2DCanvas canvas, final T item, boolean allowChildren) {
         super(canvas,allowChildren);
         this.item = item;
 
         //build children nodes
         final List<MapItem> childs = item.items();
-        for(int i=0,n=childs.size(); i<n; i++){
+        for (int i = 0, n = childs.size(); i < n; i++) {
             final MapItem child = childs.get(i);
             final GraphicJ2D gj2d = parseChild(child);
             itemGraphics.put(child, gj2d);
@@ -102,15 +98,15 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
 
     @Override
     public Envelope getEnvelope() {
-        if(item instanceof MapContext){
+        if (item instanceof MapContext) {
             try {
-                return ((MapContext)item).getBounds(true);
+                return ((MapContext) item).getBounds(true);
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, ex.getMessage(), ex);
                 return null;
             }
-        }else if(item instanceof MapLayer){
-            return ((MapLayer)item).getBounds();
+        } else if (item instanceof MapLayer) {
+            return ((MapLayer) item).getBounds();
         }
         return null;
     }
@@ -131,24 +127,10 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
     protected GraphicJ2D parseChild(final MapItem child){
 
         if (child instanceof MapLayer) {
-            final MapLayer layer = (MapLayer) child;
-            final Resource resource = layer.getResource();
-
-        }
-
-        //TODO simplify
-        final MapItemJ2D g2d;
-        if (child instanceof FeatureMapLayer) {
-            g2d = new FeatureLayerJ2D(getCanvas(), (FeatureMapLayer)child);
-        } else if (child instanceof CoverageMapLayer) {
-            final CoverageMapLayer layer = (CoverageMapLayer) child;
-            g2d = new CoverageLayerJ2D(getCanvas(), layer);
-        } else if (child instanceof MapLayer) {
-            g2d = new MapLayerJ2D(getCanvas(), (MapLayer) child);
+            return new MapLayerJ2D(getCanvas(), (MapLayer) child);
         } else {
-            g2d = new MapItemJ2D(getCanvas(), child, true);
+            return new MapItemJ2D(getCanvas(), child, true);
         }
-        return g2d;
     }
 
     @Override
@@ -161,7 +143,7 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
      * {@inheritDoc }
      */
     @Override
-    public List<Graphic> getGraphicAt(final RenderingContext rdcontext, final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext rdcontext, final SearchArea mask, List<Graphic> graphics) {
         //do not loop on children
         return graphics;
     }
@@ -184,7 +166,7 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
     public void itemChange(final CollectionChangeEvent<MapItem> event) {
         final int type = event.getType();
 
-        if(CollectionChangeEvent.ITEM_ADDED == type){
+        if (CollectionChangeEvent.ITEM_ADDED == type) {
             final NumberRange range = event.getRange();
             int index = (int) range.getMinDouble();
             for(final MapItem child : event.getItems()){
@@ -197,7 +179,7 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
             //TODO should call a repaint only on this graphic
             getCanvas().repaint();
 
-        }else if(CollectionChangeEvent.ITEM_REMOVED == type){
+        } else if (CollectionChangeEvent.ITEM_REMOVED == type) {
             for(final MapItem child : event.getItems()){
                 //remove the graphic
                 final GraphicJ2D gra = itemGraphics.remove(child);
@@ -215,13 +197,13 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
 
     //tyling utilities ---------------------------------------------------------
 
-    protected static BufferedImage createBufferedImage(final ColorModel cm, final SampleModel model){
+    protected static BufferedImage createBufferedImage(final ColorModel cm, final SampleModel model) {
         final WritableRaster raster = TILE_FACTORY.createTile(model, pt);
         return new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
     }
 
-    protected static void recycleBufferedImage(final BufferedImage img){
-        if(img != null){
+    protected static void recycleBufferedImage(final BufferedImage img) {
+        if (img != null) {
             TILE_RECYCLER.recycleTile(img.getRaster());
         }
     }

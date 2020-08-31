@@ -26,11 +26,11 @@ import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
-import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -45,9 +45,9 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
-    public abstract void visit(ProjectedFeature feature, RenderingContext2D context, SearchAreaJ2D area);
+    public abstract void visit(Feature feature, RenderingContext2D context, SearchAreaJ2D area);
 
-    public abstract void visit(ProjectedCoverage coverage, RenderingContext2D context, SearchAreaJ2D area);
+    public abstract void visit(GridCoverageResource coverage, RenderingContext2D context, SearchAreaJ2D area);
 
     /**
      * {@inheritDoc }
@@ -67,14 +67,18 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      * {@inheritDoc }
      */
     @Override
-    public void visit(final Graphic graphic, final RenderingContext context, final SearchArea area) {
+    public void visit(final Presentation graphic, final RenderingContext context, final SearchArea area) {
 
-        if(graphic == null ) return;
+        if (graphic == null ) return;
 
-        if(graphic instanceof ProjectedFeature){
-            visit((ProjectedFeature)graphic, (RenderingContext2D)context, (SearchAreaJ2D)area);
-        }else if(graphic instanceof ProjectedCoverage){
-            visit((ProjectedCoverage)graphic, (RenderingContext2D)context, (SearchAreaJ2D)area);
+        final Feature feature = graphic.getFeature();
+        final MapLayer layer = graphic.getLayer();
+        final Resource resource = layer == null ? null : layer.getResource();
+
+        if (feature != null) {
+            visit(feature, (RenderingContext2D) context, (SearchAreaJ2D) area);
+        } else if (resource instanceof GridCoverageResource) {
+            visit((GridCoverageResource) resource, (RenderingContext2D) context, (SearchAreaJ2D) area);
         }
     }
 

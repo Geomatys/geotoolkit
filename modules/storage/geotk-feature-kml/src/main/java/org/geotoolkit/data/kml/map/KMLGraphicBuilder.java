@@ -74,7 +74,6 @@ import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -520,7 +519,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         }
 
         @Override
-        public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+        public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, List<Graphic> graphics) {
             return graphics;
         }
 

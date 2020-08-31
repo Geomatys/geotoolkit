@@ -278,6 +278,35 @@ public class BufferedImages extends Static {
     }
 
     /**
+     * Tests if all pixels in the image are identical and images have the same geometry.
+     *
+     * @param image1
+     * @param image2
+     * @return true if pixels are identical
+     */
+    public static boolean isPixelsIdenticals(RenderedImage image1, RenderedImage image2) {
+        final PixelIterator ite1 = PixelIterator.create(image1);
+        final PixelIterator ite2 = PixelIterator.create(image2);
+        if (!ite1.getDomain().equals(ite2.getDomain())) {
+            return false;
+        }
+        final double[] pixel1 = new double[ite1.getNumBands()];
+        final double[] pixel2 = new double[ite2.getNumBands()];
+
+        while (ite1.next()) {
+            final Point position = ite1.getPosition();
+            ite2.moveTo(position.x, position.y);
+            ite1.getPixel(pixel1);
+            ite2.getPixel(pixel2);
+            if (!Arrays.equals(pixel1, pixel2)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Create a stream of point in the rectangle.
      * @param rectangle
      * @return

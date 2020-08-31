@@ -85,6 +85,7 @@ import org.opengis.util.FactoryException;
 
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
+import org.geotoolkit.renderer.Presentation;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_ANCHOR_POINT;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DISPLACEMENT;
@@ -581,7 +582,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
             }
 
             @Override
-            public void visit(org.opengis.display.primitive.Graphic graphic, RenderingContext context, SearchArea area) {
+            public void visit(Presentation graphic, RenderingContext context, SearchArea area) {
                 count.incrementAndGet();
             }
 

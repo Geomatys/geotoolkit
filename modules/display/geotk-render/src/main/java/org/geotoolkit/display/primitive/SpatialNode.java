@@ -21,7 +21,6 @@ import java.util.logging.Level;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
@@ -88,6 +87,6 @@ public abstract class SpatialNode extends SceneNode{
      * @param point : point in display crs
      * @return ReferencedGraphic, can be this object or a child object
      */
-    public abstract List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics);
+    public abstract List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, List<Graphic> graphics);
 
 }
