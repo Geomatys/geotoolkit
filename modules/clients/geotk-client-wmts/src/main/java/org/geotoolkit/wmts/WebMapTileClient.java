@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
@@ -34,6 +35,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
@@ -178,7 +180,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
         final Thread thread = new Thread() {
             @Override
             public void run() {
-                final GetCapabilitiesRequest getCaps =  createGetCapabilities();
+                final GetCapabilitiesRequest getCaps = createGetCapabilities();
                 //Filling the request header map from the map of the layer's server
                 final Map<String, String> headerMap = getRequestHeaderMap();
                 getCaps.getHeaderMap().putAll(headerMap);
@@ -210,13 +212,61 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     }
 
     /**
+     * Request a new capabilities to check updateSequence.
+     * If capabilities updateSequence has changed, resources are updated.
+     *
+     * @return true if capabilities and resources has changed.
+     */
+    public boolean checkForUpdates() {
+
+        String currentUpdateSequence = null;
+        AbstractCapabilitiesBase capas = this.capabilities;
+        if (capas != null) {
+            currentUpdateSequence = capas.getUpdateSequence();
+        }
+
+        final GetCapabilitiesRequest getCaps = createGetCapabilities();
+        //Filling the request header map from the map of the layer's server
+        final Map<String, String> headerMap = getRequestHeaderMap();
+        getCaps.getHeaderMap().putAll(headerMap);
+        getCaps.setUpdateSequence(currentUpdateSequence);
+        
+        String newUpdateSequence = null;
+        boolean changed = true;
+        try {
+            Capabilities lastCapa = WMTSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
+            if (lastCapa != null) {
+                newUpdateSequence = lastCapa.getUpdateSequence();
+            }
+            changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
+            if (changed) {
+                capabilities = lastCapa;
+            }
+            
+        } catch (Exception ex) {
+            capabilities = null;
+            try {
+                LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                        createGetCapabilities().getURL().toString(), ex);
+            } catch (MalformedURLException ex1) {
+                LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+            }
+        }
+        
+        if (changed) {
+            resources = null;
+        }
+        return changed;
+    }
+
+    /**
      * Returns the request version.
      */
     public WMTSVersion getVersion() {
         return WMTSVersion.getVersion(parameters.getValue(WMTSProvider.VERSION));
     }
 
-    public boolean getImageCache(){
+    public boolean getImageCache() {
         return parameters.getValue(AbstractClientProvider.IMAGE_CACHE);
     }
 
@@ -258,21 +308,23 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
 
     @Override
     public synchronized Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
-        if(resources == null){
+        checkForUpdates();
+        List<org.apache.sis.storage.Resource> resources = this.resources;
+        if (resources == null) {
             resources = new ArrayList<>();
 
             final Capabilities capa = getServiceCapabilities();
-            if(capa == null){
+            if (capa == null) {
                 throw new DataStoreException("Could not get Capabilities.");
             }
             final List<LayerType> layers = capa.getContents().getLayers();
-            for(LayerType lt : layers){
+            for (LayerType lt : layers) {
                 final String name = lt.getIdentifier().getValue();
                 final GenericName nn = NamesExt.create(name);
                 final GridCoverageResource ref = new WMTSResource(this,nn,getImageCache());
                 resources.add(ref);
             }
-
+            this.resources = resources;
         }
         return Collections.unmodifiableList(resources);
     }

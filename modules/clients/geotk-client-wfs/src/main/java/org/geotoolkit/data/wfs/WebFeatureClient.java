@@ -17,6 +17,7 @@
 package org.geotoolkit.data.wfs;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,6 +51,7 @@ import org.geotoolkit.data.wfs.v110.Native110;
 import org.geotoolkit.data.wfs.v110.Transaction110;
 import org.geotoolkit.data.wfs.v110.Update110;
 import org.geotoolkit.data.wfs.v200.GetFeature200;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStores;
@@ -130,9 +133,54 @@ public class WebFeatureClient extends DataStore implements Aggregate, Client {
     Logger getLogger(){
         return LOGGER;
     }
+    /**
+     * Request a new capabilities to check updateSequence.
+     * If capabilities updateSequence has changed, resources are updated.
+     *
+     * @return true if capabilities and resources has changed.
+     */
+    public boolean checkForUpdates() {
+
+        String currentUpdateSequence = null;
+        AbstractCapabilitiesBase capas = this.capabilities;
+        if (capas != null) {
+            currentUpdateSequence = capas.getUpdateSequence();
+        }
+
+        final GetCapabilitiesRequest getCaps = createGetCapabilities();
+        getCaps.setUpdateSequence(currentUpdateSequence);
+        
+        String newUpdateSequence = null;
+        boolean changed = true;
+        try {
+            WFSCapabilities lastCapa = WFSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
+            if (lastCapa != null) {
+                newUpdateSequence = lastCapa.getUpdateSequence();
+            }
+            changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
+            if (changed) {
+                capabilities = lastCapa;
+            }
+            
+        } catch (Exception ex) {
+            capabilities = null;
+            try {
+                LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                        createGetCapabilities().getURL().toString(), ex);
+            } catch (MalformedURLException ex1) {
+                LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+            }
+        }
+        
+        if (changed) {
+            components = null;
+        }
+        return changed;
+    }
 
     @Override
     public synchronized Collection<? extends Resource> components() throws DataStoreException {
+        checkForUpdates();
         if (components == null) {
             components = new ArrayList<>();
 
