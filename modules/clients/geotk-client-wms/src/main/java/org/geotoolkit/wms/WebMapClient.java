@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -23,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +36,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Client;
+import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
@@ -358,8 +361,68 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
         return requestHeaderMap;
     }
 
+    /**
+     * Request a new capabilities to check updateSequence.
+     * If capabilities updateSequence has changed, resources are updated.
+     *
+     * @return true if capabilities and resources has changed.
+     */
+    public boolean checkForUpdates() {
+
+        String currentUpdateSequence = null;
+        AbstractWMSCapabilities capas = this.capabilities;
+        if (capas != null) {
+            currentUpdateSequence = capas.getUpdateSequence();
+        }
+
+        final GetCapabilitiesRequest getCaps = createGetCapabilities();
+        //Filling the request header map from the map of the layer's server
+        final Map<String, String> headerMap = getRequestHeaderMap();
+        getCaps.getHeaderMap().putAll(headerMap);
+        getCaps.setUpdateSequence(currentUpdateSequence);
+
+        String newUpdateSequence = null;
+        boolean changed = true;
+        try {
+            Object lastCapa =  WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion(), Object.class);
+            if (lastCapa instanceof ServiceExceptionReport) {
+                ServiceExceptionReport report = (ServiceExceptionReport) lastCapa;
+                if (!report.getException().isEmpty() && "CurrentUpdateSequence".equalsIgnoreCase(report.getException().get(0).getExceptionCode())) {
+                    newUpdateSequence = currentUpdateSequence;
+                    changed = false;
+                } else {
+                     throw report.toException();
+                }
+
+            } else if (lastCapa instanceof AbstractWMSCapabilities) {
+                AbstractWMSCapabilities lc = (AbstractWMSCapabilities) lastCapa;
+                newUpdateSequence = lc.getUpdateSequence();
+            }
+            changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
+            if (changed) {
+                capabilities = (AbstractWMSCapabilities) lastCapa;
+            }
+
+        } catch (Exception ex) {
+            capabilities = null;
+            try {
+                LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                        createGetCapabilities().getURL().toString(), ex);
+            } catch (MalformedURLException ex1) {
+                LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+            }
+        }
+
+        if (changed) {
+            rootNode = null;
+        }
+        return changed;
+    }
+
+
     @Override
     public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+        checkForUpdates();
         final Resource root = getRootResource();
         return (root == null) ? Collections.EMPTY_LIST : Collections.singletonList(root);
     }

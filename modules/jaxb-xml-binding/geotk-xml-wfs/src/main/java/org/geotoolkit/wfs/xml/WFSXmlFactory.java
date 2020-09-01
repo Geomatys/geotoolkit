@@ -137,7 +137,7 @@ public class WFSXmlFactory {
         }
     }
 
-    public static WFSCapabilities buildWFSCapabilities(final String version,  final AbstractServiceIdentification si, final AbstractServiceProvider sp,
+    public static WFSCapabilities buildWFSCapabilities(final String version, final String updateSequence, final AbstractServiceIdentification si, final AbstractServiceProvider sp,
             final AbstractOperationsMetadata om, FeatureTypeList ftl, final FilterCapabilities fc) {
 
         if (null == version) {
@@ -153,6 +153,7 @@ public class WFSXmlFactory {
                     throw new IllegalArgumentException("Bad version of object");
                 }
                 return new  org.geotoolkit.wfs.xml.v200.WFSCapabilitiesType(version,
+                        updateSequence,
                         (org.geotoolkit.ows.xml.v110.ServiceIdentification)si,
                         (org.geotoolkit.ows.xml.v110.ServiceProvider)      sp,
                         (org.geotoolkit.ows.xml.v110.OperationsMetadata)   om,
@@ -176,6 +177,7 @@ public class WFSXmlFactory {
                     throw new IllegalArgumentException("Bad version of object");
                 }
                 return new  org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType(version,
+                        updateSequence,
                         (org.geotoolkit.ows.xml.v100.ServiceIdentification)si,
                         (org.geotoolkit.ows.xml.v100.ServiceProvider)      sp,
                         (org.geotoolkit.ows.xml.v100.OperationsMetadata)   om,
