@@ -360,7 +360,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
     public Map<String,String> getRequestHeaderMap() {
         return requestHeaderMap;
     }
-    
+
     /**
      * Request a new capabilities to check updateSequence.
      * If capabilities updateSequence has changed, resources are updated.
@@ -380,7 +380,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
         final Map<String, String> headerMap = getRequestHeaderMap();
         getCaps.getHeaderMap().putAll(headerMap);
         getCaps.setUpdateSequence(currentUpdateSequence);
-        
+
         String newUpdateSequence = null;
         boolean changed = true;
         try {
@@ -393,8 +393,8 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
                 } else {
                      throw report.toException();
                 }
-                
-            } else if (lastCapa instanceof AbstractWMSCapabilities) { 
+
+            } else if (lastCapa instanceof AbstractWMSCapabilities) {
                 AbstractWMSCapabilities lc = (AbstractWMSCapabilities) lastCapa;
                 newUpdateSequence = lc.getUpdateSequence();
             }
@@ -402,7 +402,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
             if (changed) {
                 capabilities = (AbstractWMSCapabilities) lastCapa;
             }
-            
+
         } catch (Exception ex) {
             capabilities = null;
             try {
@@ -412,7 +412,7 @@ public class WebMapClient extends AbstractCoverageClient implements Client, Aggr
                 LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
             }
         }
-        
+
         if (changed) {
             rootNode = null;
         }
