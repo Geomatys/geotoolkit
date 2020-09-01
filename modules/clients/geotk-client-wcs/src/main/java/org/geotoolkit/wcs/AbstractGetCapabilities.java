@@ -37,6 +37,11 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
     protected final String version;
 
     /**
+     * The update sequence string, defining a unique id for the GetCapabilities response.
+     */
+    protected String updateSequence;
+    
+    /**
      * Defines the server url and the service version for this kind of request.
      *
      * @param serverURL The server url.
@@ -46,6 +51,23 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         super(serverURL,security,null);
         this.version = version;
     }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getUpdateSequence() {
+        return updateSequence;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setUpdateSequence(final String sequence) {
+        this.updateSequence = sequence;
+    }
+
 
     /**
      * {@inheritDoc }
@@ -55,6 +77,9 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         requestParameters.put("SERVICE", "WCS");
         requestParameters.put("REQUEST", "GetCapabilities");
         requestParameters.put("VERSION", version);
+        if (updateSequence != null && !updateSequence.isEmpty()) {
+            requestParameters.put("UPDATESEQUENCE", updateSequence);
+        }
         return super.getURL();
     }
 }

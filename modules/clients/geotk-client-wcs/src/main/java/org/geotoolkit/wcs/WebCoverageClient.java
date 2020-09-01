@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +33,7 @@ import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
+import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.DefaultAggregate;
@@ -102,8 +104,67 @@ public class WebCoverageClient extends AbstractCoverageClient implements Client,
         return WCSVersion.fromCode(parameters.getValue(WCSProvider.VERSION));
     }
 
+    /**
+     * Request a new capabilities to check updateSequence.
+     * If capabilities updateSequence has changed, resources are updated.
+     *
+     * @return true if capabilities and resources has changed.
+     */
+    public boolean checkForUpdates() {
+
+        String currentUpdateSequence = null;
+        WCSCapabilitiesType capas = this.capabilities;
+        if (capas != null) {
+            currentUpdateSequence = capas.getUpdateSequence();
+        }
+
+        final GetCapabilitiesRequest getCaps = createGetCapabilities();
+        
+        getCaps.setUpdateSequence(currentUpdateSequence);
+        
+        String newUpdateSequence = null;
+        boolean changed = true;
+        try {
+            final Unmarshaller unmarshaller = WCSMarshallerPool.getInstance().acquireUnmarshaller();
+            Object lastCapa = unmarshaller.unmarshal(getCaps.getResponseStream());
+            WCSMarshallerPool.getInstance().recycle(unmarshaller);
+            if (lastCapa instanceof ServiceExceptionReport) {
+                ServiceExceptionReport report = (ServiceExceptionReport) lastCapa;
+                if (!report.getException().isEmpty() && "CurrentUpdateSequence".equalsIgnoreCase(report.getException().get(0).getExceptionCode())) {
+                    newUpdateSequence = currentUpdateSequence;
+                    changed = false;
+                } else {
+                     throw report.toException();
+                }
+                
+            } else if (lastCapa instanceof WCSCapabilitiesType) { 
+                WCSCapabilitiesType lc = (WCSCapabilitiesType) lastCapa;
+                newUpdateSequence = lc.getUpdateSequence();
+            }
+            changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
+            if (changed) {
+                capabilities = (WCSCapabilitiesType) lastCapa;
+            }
+            
+        } catch (Exception ex) {
+            capabilities = null;
+            try {
+                LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                        createGetCapabilities().getURL().toString(), ex);
+            } catch (MalformedURLException ex1) {
+                LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+            }
+        }
+        
+        if (changed) {
+            rootNode = null;
+        }
+        return changed;
+    }
+    
     @Override
     public Collection<? extends Resource> components() throws DataStoreException {
+        checkForUpdates();
         return getRootResource().components();
     }
 
