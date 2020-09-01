@@ -119,9 +119,9 @@ public class WebCoverageClient extends AbstractCoverageClient implements Client,
         }
 
         final GetCapabilitiesRequest getCaps = createGetCapabilities();
-        
+
         getCaps.setUpdateSequence(currentUpdateSequence);
-        
+
         String newUpdateSequence = null;
         boolean changed = true;
         try {
@@ -136,8 +136,8 @@ public class WebCoverageClient extends AbstractCoverageClient implements Client,
                 } else {
                      throw report.toException();
                 }
-                
-            } else if (lastCapa instanceof WCSCapabilitiesType) { 
+
+            } else if (lastCapa instanceof WCSCapabilitiesType) {
                 WCSCapabilitiesType lc = (WCSCapabilitiesType) lastCapa;
                 newUpdateSequence = lc.getUpdateSequence();
             }
@@ -145,7 +145,7 @@ public class WebCoverageClient extends AbstractCoverageClient implements Client,
             if (changed) {
                 capabilities = (WCSCapabilitiesType) lastCapa;
             }
-            
+
         } catch (Exception ex) {
             capabilities = null;
             try {
@@ -155,13 +155,13 @@ public class WebCoverageClient extends AbstractCoverageClient implements Client,
                 LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
             }
         }
-        
+
         if (changed) {
             rootNode = null;
         }
         return changed;
     }
-    
+
     @Override
     public Collection<? extends Resource> components() throws DataStoreException {
         checkForUpdates();

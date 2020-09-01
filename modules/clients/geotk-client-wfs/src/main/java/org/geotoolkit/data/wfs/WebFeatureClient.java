@@ -149,7 +149,7 @@ public class WebFeatureClient extends DataStore implements Aggregate, Client {
 
         final GetCapabilitiesRequest getCaps = createGetCapabilities();
         getCaps.setUpdateSequence(currentUpdateSequence);
-        
+
         String newUpdateSequence = null;
         boolean changed = true;
         try {
@@ -161,7 +161,7 @@ public class WebFeatureClient extends DataStore implements Aggregate, Client {
             if (changed) {
                 capabilities = lastCapa;
             }
-            
+
         } catch (Exception ex) {
             capabilities = null;
             try {
@@ -171,7 +171,7 @@ public class WebFeatureClient extends DataStore implements Aggregate, Client {
                 LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
             }
         }
-        
+
         if (changed) {
             components = null;
         }

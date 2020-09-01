@@ -230,7 +230,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
         final Map<String, String> headerMap = getRequestHeaderMap();
         getCaps.getHeaderMap().putAll(headerMap);
         getCaps.setUpdateSequence(currentUpdateSequence);
-        
+
         String newUpdateSequence = null;
         boolean changed = true;
         try {
@@ -242,7 +242,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
             if (changed) {
                 capabilities = lastCapa;
             }
-            
+
         } catch (Exception ex) {
             capabilities = null;
             try {
@@ -252,7 +252,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
                 LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
             }
         }
-        
+
         if (changed) {
             resources = null;
         }

@@ -43,7 +43,7 @@ import org.geotoolkit.wfs.xml.WFSXmlFactory;
 public class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
 
     protected final WFSVersion version;
-    
+
     /**
      * The update sequence string, defining a unique id for the GetCapabilities response.
      */
@@ -54,7 +54,7 @@ public class AbstractGetCapabilities extends AbstractRequest implements GetCapab
         super(serverURL,security,null);
         this.version = version;
     }
-    
+
     /**
      * {@inheritDoc }
      */

@@ -40,7 +40,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      * The update sequence string, defining a unique id for the GetCapabilities response.
      */
     protected String updateSequence;
-    
+
     /**
      * Defines the server url and the service version for this kind of request.
      *
@@ -51,7 +51,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         super(serverURL,security,null);
         this.version = version;
     }
-    
+
     /**
      * {@inheritDoc }
      */
