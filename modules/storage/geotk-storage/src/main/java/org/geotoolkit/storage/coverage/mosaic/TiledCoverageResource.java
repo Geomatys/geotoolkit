@@ -142,8 +142,12 @@ public class TiledCoverageResource extends AbstractGridResource {
                 }
                 sampleModel = img.getSampleModel();
                 colorModel = img.getColorModel();
-                rasterTemplate = img.getData().createCompatibleWritableRaster(2, 2);
+                rasterTemplate = img.getTile(img.getMinTileX(), img.getMinTileY()).createCompatibleWritableRaster(2, 2);
             }
+        }
+
+        if (rasterTemplate.getSampleModel().getNumBands() != sampleDimensions.size()) {
+            throw new DataStoreException("Raster and sample dimension size differ, raster has " + sampleModel.getNumBands() +" samples has " + sampleDimensions.size());
         }
 
         if (forceTransformedValues) {
@@ -186,10 +190,10 @@ public class TiledCoverageResource extends AbstractGridResource {
             final GridExtent intersection = derivate.getIntersection();
 
             if (!intersection.equals(gridGeometry.getExtent())) {
-                //reduce returned coverage
+                //trye to reduce returned coverage
                 final RenderedImage subImage = coverage.render(intersection);
 
-                final GridGeometry subGridGeometry = new GridGeometry(intersection,
+                final GridGeometry subGridGeometry = new GridGeometry(null,
                         PixelInCell.CELL_CENTER,
                         gridGeometry.getGridToCRS(PixelInCell.CELL_CENTER),
                         gridGeometry.getCoordinateReferenceSystem());
@@ -262,9 +266,9 @@ public class TiledCoverageResource extends AbstractGridResource {
             }
 
             for (List<GridCoverageResource> lst : groups.values()) {
-//                if (lst.size() == 1) {
-//                   mosaics.add(lst.get(0));
-//                } else {
+                if (lst.size() == 1) {
+                   mosaics.add(lst.get(0));
+                } else {
 
                     final TileOrganizer calculator2 = new TileOrganizer(null);
                     for (GridCoverageResource resource : lst) {
@@ -282,7 +286,7 @@ public class TiledCoverageResource extends AbstractGridResource {
                             PixelInCell.CELL_CENTER, group.getGridToCRS(), crs);
 
                     mosaics.add(new TiledCoverageResource(grid, next.getValue()));
-//                }
+                }
             }
         }
         return mosaics;
@@ -330,8 +334,8 @@ public class TiledCoverageResource extends AbstractGridResource {
                 return raster;
             } else {
                 //create an empty tile
-                WritableRaster raster = rasterTemplate.createCompatibleWritableRaster(x, y, tileWidth, tileHeight);
-                raster.setPixels(x, y, tileWidth, tileHeight, noData);
+                final WritableRaster raster = rasterTemplate.createCompatibleWritableRaster(x, y, tileWidth, tileHeight);
+                if (!TiledCoverageResource.isAllZero(noData)) BufferedImages.setAll(raster, noData);
                 return raster;
             }
         }

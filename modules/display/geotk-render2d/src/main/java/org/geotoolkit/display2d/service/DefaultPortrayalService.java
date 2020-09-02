@@ -905,22 +905,6 @@ public final class DefaultPortrayalService implements PortrayalService{
                 names = null;
             }
 
-            //calculate max symbol size, to expand search envelope.
-            double symbolsMargin = 0.0;
-            for (CachedRule rule : cachedRules) {
-                for (CachedSymbolizer cs : rule.symbolizers()) {
-                    symbolsMargin = Math.max(symbolsMargin, cs.getMargin(null, renderContext));
-                }
-            }
-            if (Double.isNaN(symbolsMargin) || Double.isInfinite(symbolsMargin)) {
-                //symbol margin can not be pre calculated, expect a max of 300pixels
-                symbolsMargin = 300f;
-            }
-            if (symbolsMargin > 0) {
-                final double scale = AffineTransforms2D.getScale(renderContext.getDisplayToObjective());
-                symbolsMargin = scale * symbolsMargin;
-            }
-
             //performance routine, only one symbol to render
             if (renderers.rules.length == 1
                && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
@@ -960,6 +944,22 @@ public final class DefaultPortrayalService implements PortrayalService{
 
             } else if (resource instanceof FeatureSet) {
                 final FeatureSet fs = (FeatureSet) resource;
+
+                //calculate max symbol size, to expand search envelope.
+                double symbolsMargin = 0.0;
+                for (CachedRule rule : cachedRules) {
+                    for (CachedSymbolizer cs : rule.symbolizers()) {
+                        symbolsMargin = Math.max(symbolsMargin, cs.getMargin(null, renderContext));
+                    }
+                }
+                if (Double.isNaN(symbolsMargin) || Double.isInfinite(symbolsMargin)) {
+                    //symbol margin can not be pre calculated, expect a max of 300pixels
+                    symbolsMargin = 300f;
+                }
+                if (symbolsMargin > 0) {
+                    final double scale = AffineTransforms2D.getScale(renderContext.getDisplayToObjective());
+                    symbolsMargin = scale * symbolsMargin;
+                }
 
                 //optimize
                 final Query query = RenderingRoutines.prepareQuery(renderContext, fs, layer, names, rules, symbolsMargin);

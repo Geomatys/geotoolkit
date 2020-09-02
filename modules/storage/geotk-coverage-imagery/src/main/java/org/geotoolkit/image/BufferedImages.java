@@ -277,6 +277,14 @@ public class BufferedImages extends Static {
         }
     }
 
+    public static void setAll(WritableRaster raster, double[] pixel) {
+        final WritablePixelIterator ite = new PixelIterator.Builder().createWritable(raster);
+        while (ite.next()) {
+            ite.setPixel(pixel);
+        }
+    }
+
+
     /**
      * Tests if all pixels in the image are identical and images have the same geometry.
      *

@@ -181,13 +181,13 @@ public final class RenderingRoutines {
         //search used geometries
         boolean allDefined = true;
         final Set<String> geomProperties = new HashSet<>();
-        if(rules!=null){
-            for(Rule r : rules){
-                for(Symbolizer s : r.symbolizers()){
+        if (rules != null) {
+            for (Rule r : rules) {
+                for (Symbolizer s : r.symbolizers()) {
                     final Expression expGeom = s.getGeometry();
-                    if(expGeom instanceof PropertyName){
+                    if (expGeom instanceof PropertyName) {
                         geomProperties.add( ((PropertyName)expGeom).getPropertyName() );
-                    }else{
+                    } else {
                         allDefined = false;
                     }
                 }
@@ -206,7 +206,7 @@ public final class RenderingRoutines {
         //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
         //make a bbox filter
-        if(!geomProperties.isEmpty()){
+        if (!geomProperties.isEmpty()) {
             if (geomProperties.size() == 1) {
                 final String geomAttName = geomProperties.iterator().next();
                 filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
@@ -219,7 +219,7 @@ public final class RenderingRoutines {
                 filter = FILTER_FACTORY.or(geomFilters);
             }
 
-        }else{
+        } else {
             filter = Filter.EXCLUDE;
         }
 
