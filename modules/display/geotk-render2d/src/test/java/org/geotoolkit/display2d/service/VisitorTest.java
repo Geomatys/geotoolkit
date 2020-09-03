@@ -47,6 +47,7 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -54,7 +55,6 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.identity.FeatureId;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.PixelInCell;
 
@@ -116,7 +116,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
 
         assertEquals(1, visitor.features.size());
-        assertEquals("id-0", visitor.features.get(0).getID());
+        assertEquals("id-0", FeatureExt.getId(visitor.features.get(0)).getID());
 
         shparea = new Rectangle(30, 12, 2, 2); //starting at top left corner
         visitor = new ListVisitor();
@@ -133,7 +133,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
      * Coverage visitor test
      */
     @Test
-    @org.junit.Ignore("Need to revisit DataBuffer construction.")
+    @Ignore("Need to revisit DataBuffer construction.")
     public void intersectionCoverageTest() throws Exception {
 
         final float[][] data = new float[180][360];
@@ -167,12 +167,12 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
 
     private static class ListVisitor extends AbstractGraphicVisitor {
 
-        public List<FeatureId> features = new ArrayList<>();
+        public List<Feature> features = new ArrayList<>();
         public List<GridCoverageResource> coverages = new ArrayList<>();
 
         @Override
         public void visit(Feature feature, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
-            features.add(FeatureExt.getId(feature));
+            features.add(feature);
         }
 
         @Override

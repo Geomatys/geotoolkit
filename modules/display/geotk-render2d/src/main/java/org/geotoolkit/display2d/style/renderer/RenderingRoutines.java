@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
@@ -286,6 +287,15 @@ public final class RenderingRoutines {
             final Set<String> attributs = styleRequieredAtts;
             copy.addAll(attributs);
             copy.addAll(geomProperties);
+
+            try {
+                //always include the identifier if it exist
+                schema.getProperty(AttributeConvention.IDENTIFIER);
+                copy.add(AttributeConvention.IDENTIFIER);
+            } catch (PropertyNotFoundException ex) {
+                //no id, ignore it
+            }
+
             atts = copy.toArray(new String[copy.size()]);
 
             //check that properties names does not hold sub properties values, if one is found

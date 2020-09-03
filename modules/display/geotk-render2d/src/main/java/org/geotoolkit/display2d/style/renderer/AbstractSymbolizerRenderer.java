@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -34,6 +35,7 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -42,6 +44,7 @@ import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
+import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -132,7 +135,8 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
             }
 
             //optimize
-            final Query query = RenderingRoutines.prepareQuery(getRenderingContext(), fs, layer, names, null, symbolsMargin);
+            final Rule rule = GO2Utilities.STYLE_FACTORY.rule(symbol.getSource());
+            final Query query = RenderingRoutines.prepareQuery(getRenderingContext(), fs, layer, names, Arrays.asList(rule), symbolsMargin);
 
             try {
                 return fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
