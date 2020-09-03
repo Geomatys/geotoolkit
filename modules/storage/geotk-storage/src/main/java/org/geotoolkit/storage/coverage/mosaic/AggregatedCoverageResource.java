@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
+import javax.measure.Quantity;
 import javax.measure.Unit;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
@@ -53,6 +54,7 @@ import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -768,6 +770,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 throw new NoSuchDataException("No data on requested domain");
             }
 
+            //canvas accuracy
+            final double[] canvasResolution = canvas.getResolution(true);
+            final Unit<?> canvasUnit = canvas.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit();
+            final Quantity accuracy = Quantities.create(Math.min(canvasResolution[0], canvasResolution[1]) / 2.0, canvasUnit);
+
             BufferedImage result = null;
             BitSet2D mask = null;
             double[] transparent = null;
@@ -785,6 +792,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
                     final GridCoverageProcessor processor = new GridCoverageProcessor();
                     processor.setInterpolation(interpolation);
+                    processor.setPositionalAccuracyHints(accuracy);
                     final RenderedImage intermediate = processor.resample(sourceCoverage, canvas).render(null);
 
                     aggregate(result, intermediate, mask, transparent, transparent);
@@ -886,6 +894,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         final BufferedImage result = BufferedImages.createImage(sizeX, sizeY, 1, DataBuffer.TYPE_DOUBLE);
         if (!TiledCoverageResource.isAllZero(noData)) BufferedImages.setAll(result, noData);
 
+        //canvas accuracy
+        final double[] canvasResolution = canvas.getResolution(true);
+        final Unit<?> canvasUnit = canvas.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit();
+        final Quantity accuracy = Quantities.create(Math.min(canvasResolution[0], canvasResolution[1]) / 2.0, canvasUnit);
 
         //create a mask of filled datas
         final BitSet2D mask = new BitSet2D(sizeX, sizeY);
@@ -931,6 +943,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 if (false) {
                     final GridCoverageProcessor processor = new GridCoverageProcessor();
                     processor.setInterpolation(interpolation);
+                    processor.setPositionalAccuracyHints(accuracy);
                     final GridCoverage resampledCoverage = processor.resample(coverage, canvas);
                     resampledImage = resampledCoverage.render(null);
                 } else {
@@ -950,6 +963,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
                         final ImageCombiner ic = new ImageCombiner(image);
                         ic.setInterpolation(inter);
+                        ic.setPositionalAccuracyHints(accuracy);
                         ic.resample(coverageImage, new Rectangle(image.getWidth(), image.getHeight()), toSource);
                         resampledImage = image;
                     } catch (FactoryException ex) {
