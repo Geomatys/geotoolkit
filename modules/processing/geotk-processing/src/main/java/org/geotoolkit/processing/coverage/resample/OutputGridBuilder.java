@@ -202,7 +202,7 @@ public final class OutputGridBuilder {
                     step3
             );
 
-            final MathTransform step2 = WraparoundTransform.create(mtFactory, inverseOp);
+            final MathTransform step2 = WraparoundTransform.forTargetCRS(mtFactory, inverseOp);
             final MathTransform withWrap = mtFactory.createConcatenatedTransform(
                     mtFactory.createConcatenatedTransform(step1, step2),
                     step3
