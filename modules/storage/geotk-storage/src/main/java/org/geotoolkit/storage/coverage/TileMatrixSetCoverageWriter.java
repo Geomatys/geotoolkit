@@ -365,7 +365,8 @@ public class TileMatrixSetCoverageWriter <T extends MultiResolutionResource & or
             final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(mosaic, new Point(idx, idy));
 
             try {
-                final MathTransform toSource = AggregatedCoverageResource.createTransform(tileGridGeom, coverage.getGridGeometry());
+                final RenderedImage coverageImage = coverage.render(null);
+                final MathTransform toSource = AggregatedCoverageResource.createTransform(tileGridGeom, currentlyTile, coverage.getGridGeometry(), coverageImage);
 
                 final ImageCombiner ic = new ImageCombiner(currentlyTile);
                 ic.setInterpolation(interpolation);

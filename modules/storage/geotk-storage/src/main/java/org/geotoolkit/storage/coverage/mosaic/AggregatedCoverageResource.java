@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.storage.coverage.mosaic;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -926,7 +927,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 final double[] sourceNoData = new double[]{extractNoData(sampleDimensions.get(0))};
 
                 //resample coverage
-                final RenderedImage resampledImage;
+                RenderedImage resampledImage;
                 if (false) {
                     final GridCoverageProcessor processor = new GridCoverageProcessor();
                     processor.setInterpolation(interpolation);
@@ -934,16 +935,23 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     resampledImage = resampledCoverage.render(null);
                 } else {
                     try {
-                        final RenderedImage src = coverage.render(null);
-                        final MathTransform toSource = createTransform(canvas, coverage.getGridGeometry());
+                        final RenderedImage coverageImage = coverage.render(null);
 
                         final BufferedImage image = BufferedImages.createImage(result, null, null, null, DataBuffer.TYPE_DOUBLE);
-                        if (!TiledCoverageResource.isAllZero(noData)) BufferedImages.setAll(image, noData);
+                        if (!TiledCoverageResource.isAllZero(sourceNoData)) BufferedImages.setAll(image, sourceNoData);
+
+                        Interpolation inter = interpolation;
+                        final Dimension dim = interpolation.getSupportSize();
+                        if (coverageImage.getWidth() < dim.width || coverageImage.getHeight() < dim.height) {
+                            inter = Interpolation.NEAREST;
+                        }
+
+                        final MathTransform toSource = createTransform(canvas, image, coverage.getGridGeometry(), coverageImage);
 
                         final ImageCombiner ic = new ImageCombiner(image);
-                        ic.setInterpolation(interpolation);
-                        ic.resample(src, new Rectangle(image.getWidth(), image.getHeight()), toSource);
-                        resampledImage = ic.result();
+                        ic.setInterpolation(inter);
+                        ic.resample(coverageImage, new Rectangle(image.getWidth(), image.getHeight()), toSource);
+                        resampledImage = image;
                     } catch (FactoryException ex) {
                         throw new DataStoreException(ex.getMessage(), ex);
                     }
@@ -1021,6 +1029,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             for (Source entry : sorted) {
                 try {
                     double ratio = estimateRatio(entry.resource.getGridGeometry(), canvas);
+                    if (Double.isNaN(ratio)) {
+                        GridGeometry realGrid = entry.resource.read(canvas).getGridGeometry();
+                        ratio = estimateRatio(realGrid, canvas);
+                    }
+
                     double order = ratio;
                     if (ratio <= 1.05) { //little tolerance du to crs deformations and math
                         order = 1.05 - ratio;
@@ -1093,11 +1106,22 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         return StringUtilities.toStringTree(name + " aggregated coverage resource", texts);
     }
 
-    public static MathTransform createTransform(GridGeometry source, GridGeometry target) throws FactoryException, NoninvertibleTransformException {
-        final MathTransform gridSrcToCrs = source.getGridToCRS(PixelInCell.CELL_CENTER);
-        final MathTransform gridResToCrs = target.getGridToCRS(PixelInCell.CELL_CENTER);
+    public static MathTransform createTransform(GridGeometry source, RenderedImage sourceImg, GridGeometry target, RenderedImage targetImg) throws FactoryException, NoninvertibleTransformException {
+        final long[] sourceCorner = source.getExtent().getLow().getCoordinateValues();
+        final MathTransform sourceOffset = MathTransforms.translation((sourceCorner[0] - sourceImg.getMinX()), (sourceCorner[1] - sourceImg.getMinY()));
+        final MathTransform gridSourceToCrs = source.getGridToCRS(PixelInCell.CELL_CENTER);
+        final MathTransform imgSourceToCrs = MathTransforms.concatenate(sourceOffset, gridSourceToCrs);
+
+        final long[] targetCorner = target.getExtent().getLow().getCoordinateValues();
+        final MathTransform targetOffset = MathTransforms.translation((targetCorner[0] - targetImg.getMinX()), (targetCorner[1] - targetImg.getMinY()));
+        final MathTransform gridTargetToCrs = target.getGridToCRS(PixelInCell.CELL_CENTER);
+        final MathTransform imgTargetToCrs = MathTransforms.concatenate(targetOffset, gridTargetToCrs);
+
         final MathTransform crsToCrs = CRS.findOperation(source.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null).getMathTransform();
-        return MathTransforms.concatenate(gridSrcToCrs, crsToCrs, gridResToCrs.inverse());
+        return MathTransforms.concatenate(
+                imgSourceToCrs,
+                crsToCrs,
+                imgTargetToCrs.inverse());
     }
 
     /**
@@ -1105,30 +1129,51 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * The ratio is an estimation of the resolution difference from the target grid resolution.
      * A value lower then 1 means the coverage has a higher resolution then the target grid, coverage is more accurate.
      * A value higher then 1 means the coverage has a lower resolution then the target grid, coverage is less accurate.
+     * A value of NaN indicates the impossibility to estimate the resolution.
      *
-     * @param coverage
+     * @param coverageGridGeom
      * @param target
      * @return
      */
-    private static double estimateRatio(GridGeometry coverage, GridGeometry target) throws FactoryException, TransformException {
+    private static double estimateRatio(GridGeometry coverageGridGeom, GridGeometry target) throws FactoryException, TransformException {
         //intersect grid geometries
-        final GridGeometry result = coverage.derive().subgrid(target.getEnvelope()).build();
-        //compute transform
-        final MathTransform gridToCRS = result.getGridToCRS(PixelInCell.CELL_CENTER);
-        final CoordinateOperation crsToCrs = CRS.findOperation(result.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null);
-        final MathTransform trs = MathTransforms.concatenate(gridToCRS, crsToCrs.getMathTransform(), target.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
-        //transform a unitary vector at most representative point
-        double[] point = result.getExtent().getPointOfInterest();
-        double[] vector = Arrays.copyOf(point, 4);
-        double diagonal = 1.0 / Math.sqrt(2); //for a vector of length = 1
-        vector[2] = point[0] + diagonal;
-        vector[3] = point[1] + diagonal;
-        trs.transform(vector, 0, vector, 0, 2);
-        double x = Math.abs(vector[0] - vector[2]);
-        double y = Math.abs(vector[1] - vector[3]);
-        return Math.sqrt(x*x + y*y);
+        final GridGeometry result = coverageGridGeom.derive().subgrid(target.getEnvelope()).build();
+        if (result.isDefined(GridGeometry.GRID_TO_CRS)) {
+            //compute transform
+            final MathTransform gridToCRS = result.getGridToCRS(PixelInCell.CELL_CENTER);
+            final CoordinateOperation crsToCrs = CRS.findOperation(result.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null);
+            final MathTransform trs = MathTransforms.concatenate(gridToCRS, crsToCrs.getMathTransform(), target.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
+            //transform a unitary vector at most representative point
+            double[] point = result.getExtent().getPointOfInterest();
+            double[] vector = Arrays.copyOf(point, 4);
+            double diagonal = 1.0 / Math.sqrt(2); //for a vector of length = 1
+            vector[2] = point[0] + diagonal;
+            vector[3] = point[1] + diagonal;
+            trs.transform(vector, 0, vector, 0, 2);
+            double x = Math.abs(vector[0] - vector[2]);
+            double y = Math.abs(vector[1] - vector[3]);
+            return Math.sqrt(x*x + y*y);
+        } else if (result.isDefined(GridGeometry.RESOLUTION)) {
+            final double[] resolution = result.getResolution(true);
+            final CoordinateOperation crsToCrs = CRS.findOperation(result.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null);
+            final MathTransform trs = MathTransforms.concatenate(crsToCrs.getMathTransform(), target.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
+            final double centerx = result.getEnvelope().getMedian(0);
+            final double centery = result.getEnvelope().getMedian(1);
+            //transform a unitary vector
+            double[] vector = new double[] {
+                centerx,
+                centery,
+                centerx + resolution[0],
+                centery + resolution[1],
+            };
+            trs.transform(vector, 0, vector, 0, 2);
+            double x = Math.abs(vector[0] - vector[2]);
+            double y = Math.abs(vector[1] - vector[3]);
+            return Math.sqrt(x*x + y*y);
+        } else {
+            return Double.NaN;
+        }
     }
-
 
     private static List<VirtualBand> toMapping(List<GridCoverageResource> resources) throws DataStoreException {
         final List<VirtualBand> lst = new ArrayList();

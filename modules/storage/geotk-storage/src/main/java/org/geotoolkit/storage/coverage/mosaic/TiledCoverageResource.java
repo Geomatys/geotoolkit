@@ -27,6 +27,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -208,6 +209,14 @@ public class TiledCoverageResource extends AbstractGridResource {
         return coverage;
     }
 
+    public GridCoverageResource[] getTileResources() {
+        final GridCoverageResource[] res = new GridCoverageResource[tiles.length];
+        for (int i=0;i<tiles.length;i++) {
+            res[i] = tiles[i].getResource();
+        }
+        return res;
+    }
+
     @Override
     public String toString() {
         final List<String> texts = new ArrayList<>();
@@ -252,15 +261,19 @@ public class TiledCoverageResource extends AbstractGridResource {
 
             final Tile[] tiles = entry.getValue();
 
-            //keep tiles with the same subsampling together
-            //we consider different subsampling as different mosaics
-            final Map<Dimension,List<GridCoverageResource>> groups = new HashMap<>();
+            //keep tiles with the same subsampling + dimension together
+            //we consider different subsampling+dimension as different mosaics
+            final Map<Entry,List<GridCoverageResource>> groups = new HashMap<>();
 
             for (Tile tile : tiles) {
-                List<GridCoverageResource> lst = groups.get(tile.getSubsampling());
+                final Dimension subsampling = tile.getSubsampling();
+                final Dimension size = tile.getSize();
+                final Entry key = new AbstractMap.SimpleImmutableEntry(subsampling, size);
+
+                List<GridCoverageResource> lst = groups.get(key);
                 if (lst == null) {
                     lst = new ArrayList<>();
-                    groups.put(tile.getSubsampling(), lst);
+                    groups.put(key, lst);
                 }
                 lst.add(((ResourceTile) tile).getResource());
             }
