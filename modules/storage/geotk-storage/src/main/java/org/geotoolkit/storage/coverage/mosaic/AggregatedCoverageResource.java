@@ -969,6 +969,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                             return null;
                         }
 
+                        if (Double.isNaN(sourcePixel[0])) {
+                            return null;
+                        }
+
                         if (sourceNoData != null && Arrays.equals(sourceNoData, sourcePixel)) {
                             return null;
                         }
