@@ -27,9 +27,11 @@ import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.StoreEvent;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.wmts.model.WMTSTileMatrixSets;
 import org.geotoolkit.wmts.xml.v100.LayerType;
 import org.opengis.util.GenericName;
@@ -41,17 +43,18 @@ import org.geotoolkit.storage.multires.TileMatrixSet;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSResource extends AbstractGridResource implements MultiResolutionResource, StoreResource {
+public final class WMTSResource extends AbstractGridResource implements MultiResolutionResource, StoreResource {
 
     private final WebMapTileClient server;
     private final GenericName name;
-    private final WMTSTileMatrixSets set;
+    private final boolean cacheImage;
+    private WMTSTileMatrixSets set;
 
     WMTSResource(WebMapTileClient server, GenericName name, boolean cacheImage){
         super(null);
         this.server = server;
         this.name = name;
-        set = new WMTSTileMatrixSets(server, name.tip().toString(), cacheImage);
+        this.cacheImage = cacheImage;
     }
 
     @Override
@@ -60,17 +63,22 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
     }
 
     @Override
-    public Optional<GenericName> getIdentifier() throws DataStoreException {
+    public Optional<GenericName> getIdentifier() {
         return Optional.of(name);
     }
 
-    public WMTSTileMatrixSets getPyramidSet() {
-        return set;
+    public synchronized WMTSTileMatrixSets getPyramidSet() {
+        WMTSTileMatrixSets s = set;
+        if (s == null) {
+            s = new WMTSTileMatrixSets(server, name.tip().toString(), cacheImage);
+        }
+        set = s;
+        return s;
     }
 
     @Override
-    public Collection<TileMatrixSet> getModels() throws DataStoreException {
-        return set.getTileMatrixSets();
+    public Collection<TileMatrixSet> getModels() {
+        return getPyramidSet().getTileMatrixSets();
     }
 
     @Override
@@ -132,6 +140,26 @@ public class WMTSResource extends AbstractGridResource implements MultiResolutio
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
         return new TileMatrixSetCoverageReader<>(this).read(domain, range);
+    }
+
+    /**
+     * Request a new capabilities to check updateSequence.
+     * If capabilities updateSequence has changed, resources are updated.
+     *
+     * @return true if capabilities and resources has changed.
+     */
+    public boolean checkForUpdates() {
+        return server.checkForUpdates();
+        //server class will call resetCache if needed
+    }
+
+    /**
+     * Set matrixSet to null, will be created when needed.
+     */
+    void resetCache() {
+        set = null;
+        //send event
+        fire(new ModelEvent(this), StoreEvent.class);
     }
 
 }

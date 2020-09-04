@@ -44,7 +44,7 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
     private LayerType wmtsLayer;
     private Collection<TileMatrixSet> pyramids;
 
-    public WMTSTileMatrixSets(final WebMapTileClient server, final String layerName, boolean cacheImage){
+    public WMTSTileMatrixSets(final WebMapTileClient server, final String layerName, boolean cacheImage) {
         super(server,true,cacheImage);
         ArgumentChecks.ensureNonNull("layer name", layerName);
         this.layerName = layerName;
@@ -52,8 +52,8 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
         //find the wmts layer
         final ContentsType contents = server.getServiceCapabilities().getContents();
         wmtsLayer = null;
-        for(LayerType candidate : contents.getLayers()){
-            if(layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())){
+        for (LayerType candidate : contents.getLayers()) {
+            if (layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())) {
                 wmtsLayer = candidate;
                 break;
             }
@@ -75,22 +75,22 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
 
     @Override
     public synchronized Collection<TileMatrixSet> getTileMatrixSets() {
-        if(pyramids == null){
+        if (pyramids == null) {
             final List<TileMatrixSet> pyramids = new ArrayList<>();
             final ContentsType contents = getServer().getServiceCapabilities().getContents();
 
             //first find the layer
             LayerType layer = null;
-            for(LayerType candidate : contents.getLayers()){
-                if(layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())){
+            for (LayerType candidate : contents.getLayers()) {
+                if (layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())) {
                     layer = candidate;
                     break;
                 }
             }
 
-            if(layer != null){
+            if (layer != null) {
                 //layer found
-                for(TileMatrixSetLink lk : layer.getTileMatrixSetLink()){
+                for (TileMatrixSetLink lk : layer.getTileMatrixSetLink()) {
                     pyramids.add(new WMTSTileMatrixSet(this,lk));
                 }
             }
@@ -104,7 +104,7 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
     public Request getTileRequest(TileMatrixSet pyramid, TileMatrix mosaic, long col, long row, Map hints) throws DataStoreException {
         final WMTSTileMatrix wmtsMosaic = (WMTSTileMatrix) mosaic;
 
-        if(hints == null) hints = new HashMap();
+        if (hints == null) hints = new HashMap();
 
         final GetTileRequest request = getServer().createGetTile();
 
@@ -112,14 +112,14 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
         Object format = hints.get(TileMatrices.HINT_FORMAT);
 
         //extract the default format from server
-        if(format == null){
+        if (format == null) {
             final WMTSTileMatrixSets ps = ((WMTSTileMatrixSet) pyramid).getPyramidSet();
             final List<LayerType> layers = ps.getCapabilities().getContents().getLayers();
-            for(LayerType lt : layers){
+            for (LayerType lt : layers) {
                 final String name = lt.getIdentifier().getValue();
-                if(layerName.equals(name)){
+                if (layerName.equals(name)) {
                     final List<String> formats = lt.getFormat();
-                    if(formats != null && !formats.isEmpty()){
+                    if (formats != null && !formats.isEmpty()) {
                         format = formats.get(0);
                     }
                 }
@@ -127,7 +127,7 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
         }
 
         //last chance, use png as default
-        if(format == null){
+        if (format == null) {
             //set a default value
             format = "image/png";
         }
@@ -141,8 +141,8 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
 
         //search if there is a resource url
         final List<URLTemplateType> resourceURLs = wmtsLayer.getResourceURL();
-        for(URLTemplateType template : resourceURLs){
-            if(format.equals(template.getFormat()) && "tile".equals(template.getResourceType())){
+        for (URLTemplateType template : resourceURLs) {
+            if (format.equals(template.getFormat()) && "tile".equals(template.getResourceType())) {
                 request.setResourceURL(template.getTemplate());
                 break;
             }
@@ -150,19 +150,19 @@ public class WMTSTileMatrixSets extends CachedTileMatrixSets {
 
         //set the style
         Object style = hints.get(HINT_STYLE);
-        if(style == null || !(style instanceof String)){
+        if (style == null || !(style instanceof String)) {
             //get the default style
-            for(Style st : wmtsLayer.getStyle()){
-                if(style == null){
+            for (Style st : wmtsLayer.getStyle()) {
+                if (style == null) {
                     style = st.getIdentifier().getValue();
                 }
-                if(st.isIsDefault()){
+                if (st.isIsDefault()) {
                     break;
                 }
             }
         }
 
-        if(style != null){
+        if (style != null) {
             request.setStyle(style.toString());
         }
         return request;

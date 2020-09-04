@@ -45,6 +45,8 @@ import org.apache.sis.internal.storage.AbstractGridResource;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.XImageIO;
@@ -54,6 +56,8 @@ import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.AbstractResource;
 import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.storage.event.ModelEvent;
+import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
@@ -94,6 +98,20 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
     private final Cache<String,CacheTile> tiles;
     private final Set<String> tilesInProcess = ConcurrentHashMap.newKeySet();
     private final boolean noblocking;
+
+    /**
+     * Listener on parent resource.
+     * Any event will cause the cache to be cleared.
+     */
+    private final StoreListener<StoreEvent> eventListener = new StoreListener<StoreEvent>() {
+        @Override
+        public void eventOccured(StoreEvent event) {
+            cacheMap.clear();
+            tiles.clear();
+            fire(new ModelEvent(CachePyramidResource.this), StoreEvent.class);
+        }
+    };
+    private final StorageListener.Weak weakListener = new StorageListener.Weak(eventListener);
 
     /**
      * Creates a new cache using the given initial capacity and cost limit. The initial capacity
@@ -137,6 +155,8 @@ public class CachePyramidResource <T extends MultiResolutionResource & org.apach
         this.tiles = new Cache<String, CacheTile>(initialCapacity, costLimit, soft);
         this.tiles.setKeyCollisionAllowed(true);
         this.noblocking = noblocking;
+
+        this.parent.addListener(StoreEvent.class, weakListener);
     }
 
     public void setIdentifier(GenericName identifier) {

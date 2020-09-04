@@ -29,8 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.AbstractCoverageClient;
@@ -60,7 +58,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
     private Capabilities capabilities;
-    private List<Resource> resources = null;
+    private List<WMTSResource> resources = null;
 
     /**
      * Defines the timeout in milliseconds for the GetCapabilities request.
@@ -217,7 +215,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
      *
      * @return true if capabilities and resources has changed.
      */
-    public boolean checkForUpdates() {
+    public synchronized boolean checkForUpdates() {
 
         String currentUpdateSequence = null;
         AbstractCapabilitiesBase capas = this.capabilities;
@@ -254,7 +252,8 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
         }
 
         if (changed) {
-            resources = null;
+            resources = createOrUpdateResources(resources, capabilities);
+            //TODO events
         }
         return changed;
     }
@@ -307,9 +306,9 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     }
 
     @Override
-    public synchronized Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
+    public synchronized Collection<WMTSResource> components() throws DataStoreException {
         checkForUpdates();
-        List<org.apache.sis.storage.Resource> resources = this.resources;
+        List<WMTSResource> resources = this.resources;
         if (resources == null) {
             resources = new ArrayList<>();
 
@@ -317,16 +316,45 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
             if (capa == null) {
                 throw new DataStoreException("Could not get Capabilities.");
             }
-            final List<LayerType> layers = capa.getContents().getLayers();
-            for (LayerType lt : layers) {
-                final String name = lt.getIdentifier().getValue();
-                final GenericName nn = NamesExt.create(name);
-                final GridCoverageResource ref = new WMTSResource(this,nn,getImageCache());
-                resources.add(ref);
-            }
-            this.resources = resources;
+
+            this.resources = createOrUpdateResources(null, capa);
         }
         return Collections.unmodifiableList(resources);
+    }
+
+    private List<WMTSResource> createOrUpdateResources(List<WMTSResource> existing, Capabilities capa) {
+        final List<WMTSResource> newres = new ArrayList<>();
+
+        if (capa == null) {
+            return newres;
+        }
+        final List<LayerType> layers = capa.getContents().getLayers();
+        for (LayerType lt : layers) {
+            final String name = lt.getIdentifier().getValue();
+            final GenericName nn = NamesExt.create(name);
+
+            //try to reuse existing resource
+            if (existing != null) {
+                WMTSResource previous = null;
+                for (WMTSResource r : existing) {
+                    if (nn.equals(r.getIdentifier().orElse(null))) {
+                        previous = r;
+                        break;
+                    }
+                }
+
+                if (previous != null) {
+                    previous.resetCache();
+                    newres.add(previous);
+                    continue;
+                }
+            }
+
+            //create a new resource
+            newres.add(new WMTSResource(this,nn,getImageCache()));
+        }
+
+        return newres;
     }
 
     @Override
