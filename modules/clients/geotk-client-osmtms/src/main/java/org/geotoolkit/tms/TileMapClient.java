@@ -22,7 +22,7 @@ import java.util.Collections;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.client.AbstractCoverageClient;
+import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
@@ -37,7 +37,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class TileMapClient extends AbstractCoverageClient implements Client, Aggregate {
+public class TileMapClient extends AbstractClient implements Client, Aggregate {
 
     private final TMSTileMatrixSets pyramidSet;
     private final TMSResource resource;

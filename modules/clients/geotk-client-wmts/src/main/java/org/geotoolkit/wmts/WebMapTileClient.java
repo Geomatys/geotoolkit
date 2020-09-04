@@ -30,8 +30,8 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.security.ClientSecurity;
@@ -53,7 +53,7 @@ import org.opengis.util.GenericName;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class WebMapTileClient extends AbstractCoverageClient implements Client, Aggregate {
+public class WebMapTileClient extends AbstractClient implements Client, Aggregate {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 

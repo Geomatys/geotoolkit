@@ -31,7 +31,7 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.client.AbstractCoverageClient;
+import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
 import org.geotoolkit.security.ClientSecurity;
@@ -55,7 +55,7 @@ import org.opengis.util.GenericName;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class WebCoverageClient extends AbstractCoverageClient implements Client, Aggregate {
+public class WebCoverageClient extends AbstractClient implements Client, Aggregate {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wcs");
 

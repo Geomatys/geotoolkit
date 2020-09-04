@@ -35,12 +35,10 @@ import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.storage.event.StorageEvent;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -190,6 +188,16 @@ public abstract class AbstractClient extends DataStore implements Client {
         }
     }
 
+    protected static Parameters create(final ParameterDescriptorGroup desc,
+            final URL url, final ClientSecurity security){
+        final Parameters param = Parameters.castOrWrap(desc.createValue());
+        param.getOrCreate(AbstractClientProvider.URL).setValue(url);
+        if (security != null) {
+            param.getOrCreate(AbstractClientProvider.SECURITY).setValue(security);
+        }
+        return param;
+    }
+
     protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
             final URL url, final ClientSecurity security, final Integer timeout){
         final Parameters param = Parameters.castOrWrap(desc.createValue());
@@ -206,24 +214,6 @@ public abstract class AbstractClient extends DataStore implements Client {
     @Override
     public void close() throws DataStoreException {
         //do nothing
-    }
-
-    /**
-     * Forward a structure event to all listeners.
-     * @param event , event to send to listeners.
-     *
-     * @todo should specify event type.
-     */
-    protected void sendEvent(final StorageEvent event) {
-        listeners.fire(event, StoreEvent.class);
-    }
-
-    /**
-     * Forward given event, changing the source by this object.
-     * For implementation use only.
-     */
-    public void forwardEvent(StorageEvent event){
-        sendEvent(event.copy(this));
     }
 
 }

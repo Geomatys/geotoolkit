@@ -33,7 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.client.AbstractCoverageClient;
+import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
@@ -71,7 +71,7 @@ import org.opengis.util.GenericName;
  * @author Cédric Briançon (Geomatys)
  * @module
  */
-public class WebMapClient extends AbstractCoverageClient implements Client, Aggregate {
+public class WebMapClient extends AbstractClient implements Client, Aggregate {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
