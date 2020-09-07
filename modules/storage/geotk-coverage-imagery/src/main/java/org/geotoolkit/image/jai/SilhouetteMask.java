@@ -32,7 +32,6 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.UntiledOpImage;
 
 import org.geotoolkit.image.color.ColorUtilities;
-import org.geotoolkit.image.internal.ImageUtilities;
 
 import static javax.media.jai.ImageLayout.COLOR_MODEL_MASK;
 import static javax.media.jai.ImageLayout.SAMPLE_MODEL_MASK;
@@ -150,14 +149,6 @@ public class SilhouetteMask extends UntiledOpImage {
         assert sources.length == 1;
         if (destRect.isEmpty()) return;
         final Raster source = sources[0];
-        if (false) {
-            /*
-             * According javax.media.jai.TileFactory javadoc (see method createTile), new tiles
-             * should be initialized to 0 even if they were recycled from an older image. So we
-             * should not need to invoke this fill method.
-             */
-            ImageUtilities.fill(dest, destRect, 0);
-        }
         final int xmin = destRect.x;
         final int ymin = destRect.y;
         final int xmax = destRect.width  + xmin;
