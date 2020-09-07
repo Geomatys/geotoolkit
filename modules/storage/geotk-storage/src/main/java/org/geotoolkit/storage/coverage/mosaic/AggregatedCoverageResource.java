@@ -841,13 +841,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             //create blank images with NoData value if a band image is missing
             for (int i = 0; i < bandImages.length; i++) {
                 if (bandImages[i] == null) {
-                    BufferedImage band = BufferedImages.createImage(
+                    bandImages[i] = BufferedImages.createImage(
                             (int) canvas.getExtent().getSize(0),
                             (int) canvas.getExtent().getSize(1),
-                            1, dataType);
-                    if (noData[i] != 0) {
-                        BufferedImages.setAll(band, new double[]{noData[i]});
-                    }
+                            1, dataType, new double[]{noData[i]});
                 }
             }
 
@@ -891,8 +888,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         final GridExtent extent = canvas.getExtent();
         final int sizeX = Math.toIntExact(extent.getSize(0));
         final int sizeY = Math.toIntExact(extent.getSize(1));
-        final BufferedImage result = BufferedImages.createImage(sizeX, sizeY, 1, DataBuffer.TYPE_DOUBLE);
-        if (!TiledCoverageResource.isAllZero(noData)) BufferedImages.setAll(result, noData);
+        final BufferedImage result = BufferedImages.createImage(sizeX, sizeY, 1, DataBuffer.TYPE_DOUBLE, noData);
 
         //canvas accuracy
         final double[] canvasResolution = canvas.getResolution(true);
@@ -950,8 +946,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     try {
                         final RenderedImage coverageImage = coverage.render(null);
 
-                        final BufferedImage image = BufferedImages.createImage(result, null, null, null, DataBuffer.TYPE_DOUBLE);
-                        if (!TiledCoverageResource.isAllZero(sourceNoData)) BufferedImages.setAll(image, sourceNoData);
+                        final BufferedImage image = BufferedImages.createImage(result, null, null, null, DataBuffer.TYPE_DOUBLE, sourceNoData);
 
                         Interpolation inter = interpolation;
                         final Dimension dim = interpolation.getSupportSize();

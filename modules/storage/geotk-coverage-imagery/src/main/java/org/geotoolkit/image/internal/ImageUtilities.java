@@ -326,6 +326,10 @@ public final class ImageUtilities extends Static {
         }
     }
 
+    public static void fill(final WritableRaster raster, final Number value) {
+        fill(raster.getDataBuffer(), value);
+    }
+
     /**
      * Sets the content of all banks in the given data buffer to the specified value. We do not
      * allow setting of different value for individual bank because the data buffer "banks" do
