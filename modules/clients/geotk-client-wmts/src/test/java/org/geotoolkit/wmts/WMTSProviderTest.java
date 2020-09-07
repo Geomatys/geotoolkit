@@ -28,13 +28,13 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class WMTSClientFactoryTest extends org.geotoolkit.test.TestBase {
+public class WMTSProviderTest extends org.geotoolkit.test.TestBase {
 
-    public WMTSClientFactoryTest() {
+    public WMTSProviderTest() {
     }
 
     @Test
-    public void testFactory() {
+    public void testProvider() {
 
         final Iterator<DataStoreProvider> ite = DataStores.providers().iterator();
         boolean found = false;

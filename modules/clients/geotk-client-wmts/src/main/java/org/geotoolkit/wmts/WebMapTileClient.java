@@ -213,46 +213,47 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
      * Request a new capabilities to check updateSequence.
      * If capabilities updateSequence has changed, resources are updated.
      *
+     * @param newCapabilities, the new capabilities, or null to fetch it
      * @return true if capabilities and resources has changed.
      */
-    public synchronized boolean checkForUpdates() {
-
+    public synchronized boolean checkForUpdates(Capabilities newCapabilities) {
         String currentUpdateSequence = null;
         AbstractCapabilitiesBase capas = this.capabilities;
         if (capas != null) {
             currentUpdateSequence = capas.getUpdateSequence();
         }
 
-        final GetCapabilitiesRequest getCaps = createGetCapabilities();
-        //Filling the request header map from the map of the layer's server
-        final Map<String, String> headerMap = getRequestHeaderMap();
-        getCaps.getHeaderMap().putAll(headerMap);
-        getCaps.setUpdateSequence(currentUpdateSequence);
-
-        String newUpdateSequence = null;
         boolean changed = true;
-        try {
-            Capabilities lastCapa = WMTSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
-            if (lastCapa != null) {
-                newUpdateSequence = lastCapa.getUpdateSequence();
-            }
-            changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
-            if (changed) {
-                capabilities = lastCapa;
-            }
-
-        } catch (Exception ex) {
-            capabilities = null;
+        String newUpdateSequence = null;
+        if (newCapabilities == null) {
+            final GetCapabilitiesRequest getCaps = createGetCapabilities();
+            //Filling the request header map from the map of the layer's server
+            final Map<String, String> headerMap = getRequestHeaderMap();
+            getCaps.getHeaderMap().putAll(headerMap);
+            getCaps.setUpdateSequence(currentUpdateSequence);
             try {
-                LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
-                        createGetCapabilities().getURL().toString(), ex);
-            } catch (MalformedURLException ex1) {
-                LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                newCapabilities = WMTSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
+            } catch (Exception ex) {
+                this.capabilities = null;
+                try {
+                    LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                            createGetCapabilities().getURL().toString(), ex);
+                } catch (MalformedURLException ex1) {
+                    LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                }
             }
         }
 
+        if (newCapabilities != null) {
+            newUpdateSequence = newCapabilities.getUpdateSequence();
+        }
+        changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
         if (changed) {
-            resources = createOrUpdateResources(resources, capabilities);
+            this.capabilities = newCapabilities;
+        }
+
+        if (changed) {
+            resources = createOrUpdateResources(resources, newCapabilities);
             //TODO events
         }
         return changed;
@@ -307,7 +308,6 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
 
     @Override
     public synchronized Collection<WMTSResource> components() throws DataStoreException {
-        checkForUpdates();
         List<WMTSResource> resources = this.resources;
         if (resources == null) {
             resources = new ArrayList<>();
@@ -317,7 +317,8 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
                 throw new DataStoreException("Could not get Capabilities.");
             }
 
-            this.resources = createOrUpdateResources(null, capa);
+            resources = createOrUpdateResources(null, capa);
+            this.resources = resources;
         }
         return Collections.unmodifiableList(resources);
     }

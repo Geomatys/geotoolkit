@@ -149,7 +149,7 @@ public final class WMTSResource extends AbstractGridResource implements MultiRes
      * @return true if capabilities and resources has changed.
      */
     public boolean checkForUpdates() {
-        return server.checkForUpdates();
+        return server.checkForUpdates(null);
         //server class will call resetCache if needed
     }
 

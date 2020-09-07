@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:Capabilities xmlns:gml="http://www.opengis.net/gml" xmlns:ns2="http://www.opengis.net/ows/1.1" xmlns:ns3="http://www.w3.org/1999/xlink" xmlns:ns4="http://www.opengis.net/wmts/1.0" xmlns:ns5="http://www.opengis.net/gml/3.2" version="1.0.0" updateSequence="1234">
+    <ns2:ServiceIdentification>
+        <ns2:Title>Web Map Tile Service</ns2:Title>
+        <ns2:ServiceType>WMTS</ns2:ServiceType>
+        <ns2:ServiceTypeVersion>1.0.0</ns2:ServiceTypeVersion>
+        <ns2:Fees>NONE</ns2:Fees>
+        <ns2:AccessConstraints>NONE</ns2:AccessConstraints>
+    </ns2:ServiceIdentification>
+    <ns2:OperationsMetadata>
+        <ns2:Operation name="GetCapabilities">
+            <ns2:DCP>
+                <ns2:HTTP>
+                    <ns2:Get ns3:href="http://localhost:8081/examind/WS/wmts/def?">
+                        <ns2:Constraint name="GetEncoding">
+                            <ns2:AllowedValues>
+                                <ns2:Value>KVP</ns2:Value>
+                            </ns2:AllowedValues>
+                        </ns2:Constraint>
+                    </ns2:Get>
+                    <ns2:Get ns3:href="http://localhost:8081/examind/WS/wmts/def?">
+                        <ns2:Constraint name="GetEncoding">
+                            <ns2:AllowedValues>
+                                <ns2:Value>RESTful</ns2:Value>
+                            </ns2:AllowedValues>
+                        </ns2:Constraint>
+                    </ns2:Get>
+                    <ns2:Post ns3:href="http://localhost:8081/examind/WS/wmts/def?"/>
+                </ns2:HTTP>
+            </ns2:DCP>
+        </ns2:Operation>
+        <ns2:Operation name="GetTile">
+            <ns2:DCP>
+                <ns2:HTTP>
+                    <ns2:Get ns3:href="http://localhost:8081/examind/WS/wmts/def?">
+                        <ns2:Constraint name="GetEncoding">
+                            <ns2:AllowedValues>
+                                <ns2:Value>KVP</ns2:Value>
+                            </ns2:AllowedValues>
+                        </ns2:Constraint>
+                    </ns2:Get>
+                    <ns2:Get ns3:href="http://localhost:8081/examind/WS/wmts/def?">
+                        <ns2:Constraint name="GetEncoding">
+                            <ns2:AllowedValues>
+                                <ns2:Value>RESTful</ns2:Value>
+                            </ns2:AllowedValues>
+                        </ns2:Constraint>
+                    </ns2:Get>
+                    <ns2:Post ns3:href="http://localhost:8081/examind/WS/wmts/def?"/>
+                </ns2:HTTP>
+            </ns2:DCP>
+        </ns2:Operation>
+        <ns2:Operation name="GetFeatureInfo">
+            <ns2:DCP>
+                <ns2:HTTP>
+                    <ns2:Get ns3:href="http://localhost:8081/examind/WS/wmts/def?">
+                        <ns2:Constraint name="GetEncoding">
+                            <ns2:AllowedValues>
+                                <ns2:Value>KVP</ns2:Value>
+                            </ns2:AllowedValues>
+                        </ns2:Constraint>
+                    </ns2:Get>
+                    <ns2:Post ns3:href="http://localhost:8081/examind/WS/wmts/def?"/>
+                </ns2:HTTP>
+            </ns2:DCP>
+        </ns2:Operation>
+        <ns2:Constraint name="PostEncoding">
+            <ns2:AllowedValues>
+                <ns2:Value>XML</ns2:Value>
+            </ns2:AllowedValues>
+        </ns2:Constraint>
+    </ns2:OperationsMetadata>
+    <ns4:Contents>
+        <ns4:Layer>
+            <ns2:Title>PROFONDEUR_RGB_pyramid</ns2:Title>
+            <ns2:Abstract>PROFONDEUR_RGB_pyramid</ns2:Abstract>
+            <ns2:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84" dimensions="2">
+                <ns2:LowerCorner>-49.99999999999999 -52.004961840660506</ns2:LowerCorner>
+                <ns2:UpperCorner>49.99999999999999 79.99999999999878</ns2:UpperCorner>
+            </ns2:WGS84BoundingBox>
+            <ns2:Identifier>PROFONDEUR_RGB_pyramid</ns2:Identifier>
+            <ns2:BoundingBox xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:WGS84BoundingBoxType" crs="urn:ogc:def:crs:OGC:2:84" dimensions="2">
+                <ns2:LowerCorner>-5565974.539663678 -6767327.418930994</ns2:LowerCorner>
+                <ns2:UpperCorner>5565974.539663678 1.5496570739723718E7</ns2:UpperCorner>
+            </ns2:BoundingBox>
+            <ns4:Style isDefault="true">
+                <ns2:Title>default</ns2:Title>
+                <ns2:Identifier>default</ns2:Identifier>
+            </ns4:Style>
+            <ns4:TileMatrixSetLink>
+                <ns4:TileMatrixSet>PROFONDEUR_RGB/NAD83</ns4:TileMatrixSet>
+            </ns4:TileMatrixSetLink>
+            <ns4:ResourceURL resourceType="tile" template="http://localhost:8081/examind/WS/wmts/def/PROFONDEUR_RGB_pyramid/{tileMatrixSet}/{tileMatrix}/{tileRow}/{tileCol}.{format}"/>
+        </ns4:Layer>
+        <ns4:TileMatrixSet>
+            <ns2:Identifier>PROFONDEUR_RGB/NAD83</ns2:Identifier>
+            <ns2:SupportedCRS>urn:ogc:def:crs:OGC:2:83</ns2:SupportedCRS>
+            <ns4:TileMatrix>
+                <ns2:Identifier>PROFONDEUR_RGB/3395_7</ns2:Identifier>
+                <ns4:ScaleDenominator>1213286.1632567658</ns4:ScaleDenominator>
+                <ns4:TopLeftCorner>-5565974.539663678 1.5496570739723718E7</ns4:TopLeftCorner>
+                <ns4:TileWidth>256</ns4:TileWidth>
+                <ns4:TileHeight>256</ns4:TileHeight>
+                <ns4:MatrixWidth>128</ns4:MatrixWidth>
+                <ns4:MatrixHeight>179</ns4:MatrixHeight>
+            </ns4:TileMatrix>
+            <ns4:TileMatrix>
+                <ns2:Identifier>PROFONDEUR_RGB/3395_6</ns2:Identifier>
+                <ns4:ScaleDenominator>2426572.3265135316</ns4:ScaleDenominator>
+                <ns4:TopLeftCorner>-5565974.539663678 1.5496570739723718E7</ns4:TopLeftCorner>
+                <ns4:TileWidth>256</ns4:TileWidth>
+                <ns4:TileHeight>256</ns4:TileHeight>
+                <ns4:MatrixWidth>64</ns4:MatrixWidth>
+                <ns4:MatrixHeight>90</ns4:MatrixHeight>
+            </ns4:TileMatrix>
+            <ns4:TileMatrix>
+                <ns2:Identifier>PROFONDEUR_RGB/3395_5</ns2:Identifier>
+                <ns4:ScaleDenominator>4853144.653027063</ns4:ScaleDenominator>
+                <ns4:TopLeftCorner>-5565974.539663678 1.5496570739723718E7</ns4:TopLeftCorner>
+                <ns4:TileWidth>256</ns4:TileWidth>
+                <ns4:TileHeight>256</ns4:TileHeight>
+                <ns4:MatrixWidth>32</ns4:MatrixWidth>
+                <ns4:MatrixHeight>45</ns4:MatrixHeight>
+            </ns4:TileMatrix>
+            <ns4:TileMatrix>
+                <ns2:Identifier>PROFONDEUR_RGB/3395_4</ns2:Identifier>
+                <ns4:ScaleDenominator>9706289.306054126</ns4:ScaleDenominator>
+                <ns4:TopLeftCorner>-5565974.539663678 1.5496570739723718E7</ns4:TopLeftCorner>
+                <ns4:TileWidth>256</ns4:TileWidth>
+                <ns4:TileHeight>256</ns4:TileHeight>
+                <ns4:MatrixWidth>16</ns4:MatrixWidth>
+                <ns4:MatrixHeight>23</ns4:MatrixHeight>
+            </ns4:TileMatrix>
+            <ns4:TileMatrix>
+                <ns2:Identifier>PROFONDEUR_RGB/3395_3</ns2:Identifier>
+                <ns4:ScaleDenominator>1.9412578612108253E7</ns4:ScaleDenominator>
+                <ns4:TopLeftCorner>-5565974.539663678 1.5496570739723718E7</ns4:TopLeftCorner>
+                <ns4:TileWidth>256</ns4:TileWidth>
+                <ns4:TileHeight>256</ns4:TileHeight>
+                <ns4:MatrixWidth>8</ns4:MatrixWidth>
+                <ns4:MatrixHeight>12</ns4:MatrixHeight>
+            </ns4:TileMatrix>
+            <ns4:TileMatrix>
+                <ns2:Identifier>PROFONDEUR_RGB/3395_2</ns2:Identifier>
+                <ns4:ScaleDenominator>3.8825157224216506E7</ns4:ScaleDenominator>
+                <ns4:TopLeftCorner>-5565974.539663678 1.5496570739723718E7</ns4:TopLeftCorner>
+                <ns4:TileWidth>256</ns4:TileWidth>
+                <ns4:TileHeight>256</ns4:TileHeight>
+                <ns4:MatrixWidth>4</ns4:MatrixWidth>
+                <ns4:MatrixHeight>6</ns4:MatrixHeight>
+            </ns4:TileMatrix>
+            <ns4:TileMatrix>
+                <ns2:Identifier>PROFONDEUR_RGB/3395_1</ns2:Identifier>
+                <ns4:ScaleDenominator>7.765031444843301E7</ns4:ScaleDenominator>
+                <ns4:TopLeftCorner>-5565974.539663678 1.5496570739723718E7</ns4:TopLeftCorner>
+                <ns4:TileWidth>256</ns4:TileWidth>
+                <ns4:TileHeight>256</ns4:TileHeight>
+                <ns4:MatrixWidth>2</ns4:MatrixWidth>
+                <ns4:MatrixHeight>3</ns4:MatrixHeight>
+            </ns4:TileMatrix>
+            <ns4:TileMatrix>
+                <ns2:Identifier>PROFONDEUR_RGB/3395_0</ns2:Identifier>
+                <ns4:ScaleDenominator>1.5530062889686602E8</ns4:ScaleDenominator>
+                <ns4:TopLeftCorner>-5565974.539663678 1.5496570739723718E7</ns4:TopLeftCorner>
+                <ns4:TileWidth>256</ns4:TileWidth>
+                <ns4:TileHeight>256</ns4:TileHeight>
+                <ns4:MatrixWidth>1</ns4:MatrixWidth>
+                <ns4:MatrixHeight>2</ns4:MatrixHeight>
+            </ns4:TileMatrix>
+        </ns4:TileMatrixSet>
+    </ns4:Contents>
+</ns4:Capabilities>
