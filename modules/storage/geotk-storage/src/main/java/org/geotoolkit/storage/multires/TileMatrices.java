@@ -21,10 +21,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -40,7 +38,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.coverage.grid.GridGeometryIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -459,10 +456,15 @@ public final class TileMatrices extends Static {
      * @param dataEnv
      * @param minResolution
      * @return
+     * @deprecated use TileMatrixSetBuilder instead
      */
+    @Deprecated
     public static DefiningTileMatrixSet createTemplate(Envelope dataEnv, double minResolution) {
-        final double[] scales = computeScales(dataEnv, minResolution);
-        return createTemplate(dataEnv, new Dimension(256, 256), scales);
+        return new TileMatrixSetBuilder()
+                .setDomain(dataEnv, minResolution)
+                .setNbTileThreshold(1)
+                .setTileSize(new Dimension(256, 256))
+                .build();
     }
 
     /**
@@ -470,10 +472,15 @@ public final class TileMatrices extends Static {
      *
      * @param gridGeom reference grid geometry
      * @return
+     * @deprecated use TileMatrixSetBuilder instead
      */
-    public static DefiningTileMatrixSet createTemplate(GridGeometry gridGeom, Dimension tileSize) throws DataStoreException {
-        ArgumentChecks.ensureNonNull("gridGeom", gridGeom);
-        return createTemplate(gridGeom, gridGeom.getCoordinateReferenceSystem(), tileSize);
+    @Deprecated
+    public static DefiningTileMatrixSet createTemplate(GridGeometry gridGeom, Dimension tileSize) {
+        return new TileMatrixSetBuilder()
+                .setDomain(gridGeom)
+                .setNbTileThreshold(1)
+                .setTileSize(tileSize)
+                .build();
     }
 
     /**
@@ -485,148 +492,32 @@ public final class TileMatrices extends Static {
      * @return
      * @throws org.apache.sis.storage.DataStoreException if template could not be
      *         created because grid geometry doesn't have enough information.
+     * @deprecated use TileMatrixSetBuilder instead
      */
+    @Deprecated
     public static DefiningTileMatrixSet createTemplate(GridGeometry gridGeom, CoordinateReferenceSystem crs, Dimension tileSize) throws DataStoreException {
-        ArgumentChecks.ensureNonNull("gridGeom", gridGeom);
-
-        final DefiningTileMatrixSet pyramid = new DefiningTileMatrixSet(crs);
-
-        if (gridGeom.isDefined(GridGeometry.EXTENT)) {
-
-            if (crs == null) {
-                crs = gridGeom.getCoordinateReferenceSystem();
-            } else if (!(Utilities.equalsIgnoreMetadata(gridGeom.getCoordinateReferenceSystem(), crs))) {
-                try {
-                    //transform given grid geometry to new crs
-                    MathTransform gridToCRS = gridGeom.getGridToCRS(PixelInCell.CELL_CENTER);
-                    MathTransform crsToCrs = CRS.findOperation(gridGeom.getCoordinateReferenceSystem(), crs, null).getMathTransform();
-                    gridToCRS = MathTransforms.concatenate(gridToCRS, crsToCrs);
-                    gridGeom = new GridGeometry(gridGeom.getExtent(), PixelInCell.CELL_CENTER, gridToCRS, crs);
-                } catch (FactoryException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
-                }
-            }
-
-            //loop on all dimensions
-            try {
-                final GridGeometryIterator ite = new GridGeometryIterator(gridGeom);
-                while (ite.hasNext()) {
-                    final GridGeometry slice = ite.next();
-                    final Envelope envelope = slice.getEnvelope();
-
-                    final DirectPosition upperLeft = new GeneralDirectPosition(crs);
-                    //-- We found the second horizontale axis dimension.
-                    final int horizontalOrdinate = CRSUtilities.firstHorizontalAxis(crs);
-                    for (int d = 0; d < crs.getCoordinateSystem().getDimension(); d++) {
-                        final double v = (d == horizontalOrdinate+1) ? envelope.getMaximum(d) : envelope.getMinimum(d);
-                        upperLeft.setOrdinate(d, v);
-                    }
-
-                    final double[] allRes;
-                    try {
-                        allRes = slice.getResolution(true);
-                    } catch (IncompleteGridGeometryException ex) {
-                        throw new DataStoreException("Mosaic resolution could not be computed");
-                    }
-                    if (Double.isNaN(allRes[horizontalOrdinate])) {
-                        throw new DataStoreException("Horizontal resolution is undefined on axis " + horizontalOrdinate);
-                    }
-                    if (Double.isNaN(allRes[horizontalOrdinate+1])) {
-                        throw new DataStoreException("Horizontal resolution is undefined on axis " + (horizontalOrdinate+1));
-                    }
-                    double resolution = Double.min(allRes[horizontalOrdinate], allRes[horizontalOrdinate+1]);
-
-                    //find number of tiles needed
-                    Dimension gridSize = new Dimension();
-                    final double spanX = envelope.getSpan(horizontalOrdinate);
-                    final double spanY = envelope.getSpan(horizontalOrdinate+1);
-                    double nbX = (spanX / resolution) / tileSize.width;
-                    double nbY = (spanY / resolution) / tileSize.height;
-                    gridSize.width = (int) Math.ceil(nbX);
-                    gridSize.height = (int) Math.ceil(nbY);
-
-                    final DefiningTileMatrix m = new DefiningTileMatrix(UUID.randomUUID().toString(), upperLeft, resolution, tileSize, new Dimension(gridSize));
-                    pyramid.createTileMatrix(m);
-
-                    //multiply resolution by 2 until we reach a 1x1 grid size
-                    while (gridSize.width > 1 || gridSize.height > 1) {
-                        resolution *= 2.0;
-                        nbX = (spanX / resolution) / tileSize.width;
-                        nbY = (spanY / resolution) / tileSize.height;
-                        gridSize.width = (int) Math.ceil(nbX);
-                        gridSize.height = (int) Math.ceil(nbY);
-
-                        final DefiningTileMatrix m2 = new DefiningTileMatrix(UUID.randomUUID().toString(), upperLeft, resolution, tileSize, new Dimension(gridSize));
-                        pyramid.createTileMatrix(m2);
-                    }
-                }
-                return pyramid;
-            } catch (IncompleteGridGeometryException ex) {
-                throw new DataStoreException(ex);
-            }
-        } else {
-            try {
-                final Envelope envelope = gridGeom.getEnvelope();
-                final double[] resolution = gridGeom.getResolution(true);
-                if (resolution.length == 2) {
-                    final GridExtent extent = new GridExtent(
-                            (long) Math.ceil(envelope.getSpan(0) / resolution[0]),
-                            (long) Math.ceil(envelope.getSpan(1) / resolution[1]));
-                    final GridGeometry gg = new GridGeometry(extent, envelope);
-                    return createTemplate(gg, crs, tileSize);
-                } else {
-                    throw new DataStoreException("Can not create a pyramid model from a grid geometry with no extent and only a resolution information with more then two dimensions");
-                }
-            } catch (IncompleteGridGeometryException ex) {
-                throw new DataStoreException(ex);
-            }
+        try {
+            return new TileMatrixSetBuilder()
+                    .setDomain(gridGeom, crs)
+                    .setNbTileThreshold(1)
+                    .setTileSize(tileSize)
+                    .build();
+        } catch (FactoryException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
         }
     }
 
-    private static double[] computeScales(Envelope dataEnv, double minResolution) {
-        //calculate scales
-        final double geospanX = dataEnv.getSpan(0);
-        final int tileSize = 256;
-        double scale = geospanX / tileSize;
-        final GeneralDirectPosition ul = new GeneralDirectPosition(dataEnv.getCoordinateReferenceSystem());
-        ul.setOrdinate(0, dataEnv.getMinimum(0));
-        ul.setOrdinate(1, dataEnv.getMaximum(1));
-        final List<Double> scalesList = new ArrayList<>();
-        while (true) {
-            scalesList.add(scale);
-            if (scale <= minResolution) {
-                break;
-            }
-            scale = scale / 2;
-        }
-        final double[] scales = new double[scalesList.size()];
-        for (int i = 0; i < scales.length; i++) scales[i] = scalesList.get(i);
-        return scales;
-    }
-
+    /**
+     * @deprecated use TileMatrixSetBuilder instead
+     */
+    @Deprecated
     public static DefiningTileMatrixSet createTemplate(Envelope envelope, Dimension tileSize, double[] scales) {
-        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-
-        final DirectPosition newUpperleft = new GeneralDirectPosition(crs);
-        //-- We found the second horizontale axis dimension.
-        final int maxHorizOrdinate = CRSUtilities.firstHorizontalAxis(crs) + 1;
-        for (int d = 0; d < crs.getCoordinateSystem().getDimension(); d++) {
-            final double v = (d == maxHorizOrdinate) ? envelope.getMaximum(d) : envelope.getMinimum(d);
-            newUpperleft.setOrdinate(d, v);
-        }
-
-        //generate each mosaic
-        final List<TileMatrix> mosaics = new ArrayList<>();
-        for (int i=0;i<scales.length;i++) {
-            final double scale = scales[i];
-            final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
-            final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
-            final Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
-            final DefiningTileMatrix levelN = new DefiningTileMatrix(""+i, newUpperleft, scale, tileSize, gridSize);
-            mosaics.add(levelN);
-        }
-
-        return new DefiningTileMatrixSet("Pyramid", "", crs, mosaics);
+            return new TileMatrixSetBuilder()
+                    .setDomain(envelope, 1)
+                    .setScales(scales)
+                    .setNbTileThreshold(1)
+                    .setTileSize(tileSize)
+                    .build();
     }
 
     /**

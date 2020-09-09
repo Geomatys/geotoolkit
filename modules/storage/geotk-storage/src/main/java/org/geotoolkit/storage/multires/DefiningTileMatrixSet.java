@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -87,7 +86,7 @@ public class DefiningTileMatrixSet implements TileMatrixSet {
     }
 
     @Override
-    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
+    public TileMatrix createTileMatrix(TileMatrix template) {
         String uid = template.getIdentifier();
         if (mosaics.containsKey(uid)) {
             uid = UUID.randomUUID().toString();
@@ -100,7 +99,7 @@ public class DefiningTileMatrixSet implements TileMatrixSet {
     }
 
     @Override
-    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
+    public void deleteTileMatrix(String mosaicId) {
         mosaics.remove(mosaicId);
     }
 

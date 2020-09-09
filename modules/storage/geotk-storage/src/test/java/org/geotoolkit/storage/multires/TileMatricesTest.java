@@ -39,7 +39,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidsTest {
+public class TileMatricesTest {
 
     private static final double DELTA = 0.0;
 
@@ -47,7 +47,7 @@ public class PyramidsTest {
     public void testGridGeometry2DTemplate() throws DataStoreException {
 
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
-        final GridExtent extent = new GridExtent(1000, 512);
+        final GridExtent extent = new GridExtent(1024, 512);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1, 0, 0, -1, -50, 40);
         final GridGeometry gg = new GridGeometry2D(extent, gridToCrs, crs);
 
