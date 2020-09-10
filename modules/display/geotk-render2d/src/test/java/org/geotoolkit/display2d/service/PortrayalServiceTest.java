@@ -334,11 +334,6 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         }
     }
 
-//    @Test
-//    public void testCoverageNDRendering() throws Exception{
-//        //todo
-//    }
-
     /**
      * Test rendering a coverage which envelope is larger then the objective CRS
      * validity area.

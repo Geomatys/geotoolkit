@@ -33,8 +33,10 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -96,7 +98,8 @@ public class RasterPresentation extends Grid2DPresentation {
          */
         renderingContext.switchToObjectiveCRS();
 
-        final MathTransform trs2D = dataImage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+        MathTransform trs2D = renderingTransform(dataImage.getGridGeometry());
+
         if (monitor.stopRequested()) return dataRendered;
 
         ////////////////////////////////////////////////////////////////////
@@ -208,7 +211,7 @@ public class RasterPresentation extends Grid2DPresentation {
                     //resample image ourself
                     try {
                         GridCoverage cov = new ResampleProcess(coverage, renderingContext.getGridGeometry().getCoordinateReferenceSystem(), renderingContext.getGridGeometry2D(), interpolationCase, null).executeNow();
-                        trs2D = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+                        trs2D = renderingTransform(cov.getGridGeometry());
                         img = cov.render(null);
                     } catch (ProcessException ex) {
                         throw new PortrayalException(ex);
@@ -303,6 +306,13 @@ public class RasterPresentation extends Grid2DPresentation {
             return extremum;
         }
         throw new IllegalArgumentException("Array of " + (min ? "min" : "max") + " values is empty.");
+    }
+
+    private static MathTransform renderingTransform(GridGeometry gridGeometry) {
+        final MathTransform trs2D = gridGeometry.getGridToCRS(PixelInCell.CELL_CORNER);
+        final long[] sourceCorner = gridGeometry.getExtent().getLow().getCoordinateValues();
+        final MathTransform cornerOffset = MathTransforms.translation(sourceCorner[0], sourceCorner[1]);
+        return MathTransforms.concatenate(cornerOffset, trs2D);
     }
 
 }

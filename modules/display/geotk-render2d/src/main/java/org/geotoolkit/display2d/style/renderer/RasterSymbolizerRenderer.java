@@ -494,8 +494,6 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             GridCoverageResource ref = (GridCoverageResource) rs;
 
             try {
-                if (!isInView(ref)) return Stream.empty();
-
                 final RasterSymbolizer sourceSymbol = symbol.getSource();
                 final int[] channelSelection = channelSelection(sourceSymbol, ref);
 

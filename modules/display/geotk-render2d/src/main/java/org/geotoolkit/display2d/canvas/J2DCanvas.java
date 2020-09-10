@@ -25,7 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.logging.Logging;
@@ -53,6 +55,7 @@ import org.geotoolkit.display2d.container.J2DPainter;
 import org.geotoolkit.display2d.container.MapLayerJ2D;
 import org.geotoolkit.renderer.GroupPresentation;
 import org.geotoolkit.renderer.Presentation;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  *
@@ -98,7 +101,13 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
         final AffineTransform2D dispToObjCorner;
         final AffineTransform2D objToDispCorner;
         try {
-            dispToObjCorner = (AffineTransform2D) getGridGeometry2D().getGridToCRS(PixelInCell.CELL_CORNER);
+            final GridGeometry gridGeometry2D = getGridGeometry2D();
+            final long[] sourceCorner = gridGeometry2D.getExtent().getLow().getCoordinateValues();
+            final MathTransform sourceOffset = MathTransforms.translation((sourceCorner[0] - 0), (sourceCorner[1] - 0));
+            final MathTransform gridSourceToCrs = gridGeometry2D.getGridToCRS(PixelInCell.CELL_CORNER);
+            final MathTransform imgSourceToCrs = MathTransforms.concatenate(sourceOffset, gridSourceToCrs);
+
+            dispToObjCorner = (AffineTransform2D) imgSourceToCrs;
             objToDispCorner = dispToObjCorner.inverse();
         } catch (org.opengis.referencing.operation.NoninvertibleTransformException ex) {
             throw new IllegalStateException(ex.getMessage(), ex);
