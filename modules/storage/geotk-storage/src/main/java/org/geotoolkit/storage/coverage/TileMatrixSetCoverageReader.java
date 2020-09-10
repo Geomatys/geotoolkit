@@ -34,7 +34,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.CancellationException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -43,6 +42,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
@@ -199,15 +199,12 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
 
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
 
-        if (range != null) {
-            LOGGER.log(Level.FINE, "Source or destination bands can not be used on pyramidal coverages."
-                                    + " Continue Coverage reading without sources and destinations bands interpretations.");
-        }
-
         //choose the most appropriate pyramid based on requested CRS
         if (domain == null) {
             domain = getGridGeometry();
         }
+
+        if (range != null && range.length == 0) range = null;
 
         final Entry<Envelope, List<TileMatrix>> intersect = intersect(ref, domain);
         final List<TileMatrix> mosaics = intersect.getValue();
@@ -216,11 +213,11 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
         //-- features the data
         if (mosaics.size() == 1) {
             //-- features a single slice
-            return readSlice(mosaics.get(0), wantedEnv);
+            return readSlice(mosaics.get(0), wantedEnv, range);
 
         } else {
             //-- features a data cube of multiple slices
-            return readCube(mosaics, wantedEnv);
+            return readCube(mosaics, wantedEnv, range);
         }
     }
 
@@ -233,10 +230,18 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
      * @return GridCoverage
      * @throws CoverageStoreException
      */
-    private GridCoverage readSlice(TileMatrix mosaic, Envelope wantedEnv) throws DataStoreException {
+    private GridCoverage readSlice(TileMatrix mosaic, Envelope wantedEnv, int... range) throws DataStoreException {
 
         final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
-        final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
+        List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
+        if (range != null) {
+            List<SampleDimension> subSamples = new ArrayList<>();
+            for (int i : range) {
+                subSamples.add(sampleDimensions.get(i));
+            }
+            sampleDimensions = subSamples;
+        }
+
         final Dimension tileSize = mosaic.getTileSize();
 
         final Rectangle tilesInEnvelope = TileMatrices.getTilesInEnvelope(mosaic, wantedEnv);
@@ -245,7 +250,10 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
 
         if (mosaic instanceof GeneralProgressiveResource.ProgressiveTileMatrix) {
 
-            final RenderedImage image = ((GeneralProgressiveResource.ProgressiveTileMatrix) mosaic).asImage();
+            RenderedImage image = ((GeneralProgressiveResource.ProgressiveTileMatrix) mosaic).asImage();
+            if (range != null) {
+                image = new ImageProcessor().selectBands(image, range);
+            }
 
             final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
             Arrays.fill(high, 1);
@@ -284,7 +292,10 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
         }
 
 
-        final RenderedImage image =  TileMatrixImage.create(mosaic, tilesInEnvelope, sampleDimensions);
+        RenderedImage image =  TileMatrixImage.create(mosaic, tilesInEnvelope, sampleDimensions);
+        if (range != null) {
+            image = new ImageProcessor().selectBands(image, range);
+        }
 
         final long[] high = new long[wantedCRS.getCoordinateSystem().getDimension()];
         Arrays.fill(high, 1);
@@ -299,7 +310,7 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
         return new GridCoverage2D(gridgeo, sampleDimensions, image);
     }
 
-    private GridCoverage readCube(List<TileMatrix> mosaics, Envelope wantedEnv) throws DataStoreException {
+    private GridCoverage readCube(List<TileMatrix> mosaics, Envelope wantedEnv, int... range) throws DataStoreException {
         //regroup mosaic by hierarchy cubes
         final TreeMap groups = new TreeMap();
         for (TileMatrix mosaic : mosaics) {
@@ -308,7 +319,7 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
 
         int dim = wantedEnv.getDimension();
         //rebuild coverage
-        return rebuildCoverage(groups, wantedEnv, dim-1);
+        return rebuildCoverage(groups, wantedEnv, dim-1, range);
     }
 
     /**
@@ -353,7 +364,7 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
      * @return GridCoverage
      * @throws CoverageStoreException
      */
-    private GridCoverage rebuildCoverage(TreeMap<Double,Object> groups, Envelope wantedEnv, int axisIndex)
+    private GridCoverage rebuildCoverage(TreeMap<Double,Object> groups, Envelope wantedEnv, int axisIndex, int... range)
             throws DataStoreException {
 
         final CoordinateReferenceSystem crs = wantedEnv.getCoordinateReferenceSystem();
@@ -380,9 +391,9 @@ public class TileMatrixSetCoverageReader <T extends MultiResolutionResource & or
 
             final GridCoverage subCoverage;
             if (obj instanceof TileMatrix) {
-                subCoverage = readSlice((TileMatrix)obj, sliceEnvelop);
+                subCoverage = readSlice((TileMatrix)obj, sliceEnvelop, range);
             } else if (obj instanceof TreeMap) {
-                subCoverage = rebuildCoverage((TreeMap)obj, sliceEnvelop, axisIndex-1);
+                subCoverage = rebuildCoverage((TreeMap)obj, sliceEnvelop, axisIndex-1, range);
             } else {
                 throw new DataStoreException("Found an object which is not a Coverage or a Map group, should not happen : "+obj);
             }
