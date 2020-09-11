@@ -20,8 +20,10 @@ package org.geotoolkit.lucene.filter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 
-import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.geotoolkit.index.LogicalFilterType;
@@ -32,22 +34,23 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * A Spatial query use to perform search request on elasticsearch datasource.
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @module
  */
 public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
 
     /**
-     * The spatial filter added to the lucene query.
+     * The Lucene Query added to the textual query.
      */
-    private final Filter spatialFilter ;
+    private final Query query ;
 
     /**
-     * The lucene query
+     * The lucene text query to be parsed.
      */
-    private final StringBuilder query;
+    private StringBuilder textQuery;
 
     /**
      * Logical operator to apply between the spatial filter and the query
@@ -66,43 +69,68 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     private Sort sort;
 
     /**
-     * Build a new Simple Text Query.
+     * Build a new simple textual lucene Query.
      *
-     * @param query  A well-formed Lucene query.
+     * @param textQuery  A well-formed Lucene query.
      */
-    public SpatialQuery(final String query) {
-        this(query,null,LogicalFilterType.AND,null);
+    public SpatialQuery(final String textQuery) {
+        this(textQuery,null,LogicalFilterType.AND,null);
     }
 
     /**
-     * Build a new Query combinating a lucene query and a spatial filter.
+     * Build a new SpatialQuery with only a Lucene Query object.
      *
-     * @param spatialFilter spatial filter
+     * @param query a Lucene Query object
      *
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
      * @throws org.opengis.util.FactoryException
      * @throws org.opengis.referencing.operation.TransformException
      */
-    public SpatialQuery(final LuceneOGCFilter spatialFilter) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
-        this("",spatialFilter,LogicalFilterType.AND);
+    public SpatialQuery(final Query query) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
+        this(null,query,LogicalFilterType.AND);
     }
 
     /**
-     * Build a new Query combinating a lucene query and a lucene filter.
+     * Build a new Query combinating a lucene text query and a lucene Query.
      *
-     * @param query  A well-formed Lucene query.
-     * @param filter A lucene filter (spatial, serialChain, ...)
-     * @param logicalOperator The logical operator to apply between the query and the spatialFilter.
+     * @param textQuery  A well-formed Lucene query.
+     * @param query A lucene Query Object.
+     * @param logicalOperator The logical operator to apply between the textual query and the query object.
      */
-    public SpatialQuery(final String query, final Filter filter, final LogicalFilterType logicalOperator) {
-        this(query,filter,logicalOperator,null);
+    public SpatialQuery(final String textQuery, final Query query, final LogicalFilterType logicalOperator) {
+        this(textQuery,query,logicalOperator,null);
+    }
+
+    /**
+     * Build a new simple textual lucene Query with a logical operator (should be an unary operator).
+     *
+     * @param textQuery A well-formed Lucene query.
+     * @param logicalOperator The logical operator to apply to the textual query (should be an unary operator).
+     */
+    public SpatialQuery(final String textQuery, final LogicalFilterType logicalOperator) {
+        this(textQuery,null,logicalOperator,null);
     }
 
 
-    private SpatialQuery(final String query, final Filter filter, final LogicalFilterType logicalOperator, final List<SpatialQuery> sub){
-        this.query           = new StringBuilder(query);
-        this.spatialFilter   = filter;
-        this.logicalOperator = logicalOperator;
+    /**
+     * Build a new Query combinating a lucene text query and a lucene Query.
+     *
+     * @param textQuery A well-formed Lucene query.
+     * @param query A lucene Query Object
+     * @param logicalOperator The logical operator to apply between the textual query and the query object.
+     * @param sub a list of subQueries.
+     */
+    private SpatialQuery(final String textQuery, final Query query, final LogicalFilterType logicalOperator, final List<SpatialQuery> sub){
+        if (textQuery != null) {
+            this.textQuery = new StringBuilder();
+            this.textQuery.append(textQuery);
+        }
+        this.query   = query;
+        if (logicalOperator != null) {
+            this.logicalOperator = logicalOperator;
+        } else {
+            this.logicalOperator = LogicalFilterType.AND;
+        }
         if(sub != null){
             this.subQueries.addAll(sub);
         }
@@ -111,22 +139,23 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
 
 
     /**
-     * Return the spatial filter (it can be a SerialChainFilter) to add to the lucene query.
+     * Return a lucene {@link Query} object.
+     * can be {@code null}.
      */
     @Override
-    public Filter getSpatialFilter() {
-        return spatialFilter;
+    public Query getQuery() {
+        return query;
     }
 
     /**
-     * Return the lucene query associated with the filter.
+     * Return the lucene text query (Using lucene syntax).
      */
     @Override
-    public String getQuery() {
-        if (query == null || query.toString().equals("") || query.toString().equals(" ")) {
-            return "metafile:doc";
+    public String getTextQuery() {
+        if (textQuery != null) {
+            return textQuery.toString();
         }
-        return query.toString();
+        return null;
     }
 
     /**
@@ -139,6 +168,7 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     /**
      * Return the sort Object joinded to this Query.
      */
+    @Override
     public Sort getSort() {
         return sort;
     }
@@ -201,11 +231,13 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     }
 
     /**
-     * Set the lucene query associated with the filter.
+     * Set the lucene text query associated with the Query object.
      */
-    public void setQuery(final String query) {
-        this.query.delete(0, this.query.length()-1);
-        this.query.append(query);
+    public void setQuery(final String textQuery) {
+        if (textQuery != null) {
+            this.textQuery = new StringBuilder();
+            this.textQuery.append(textQuery);
+        }
     }
 
     /**
@@ -213,13 +245,25 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
      *
      * @param s a piece of lucene query.
      */
-    public void appendToQuery(final String s) {
-        query.append(s);
+    public void appendToTextQuery(final String s) {
+        if (this.textQuery == null) {
+            this.textQuery = new StringBuilder();
+        }
+        textQuery.append(s);
     }
 
-    public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
-        if (spatialFilter instanceof org.geotoolkit.lucene.filter.Filter) {
-            ((org.geotoolkit.lucene.filter.Filter)spatialFilter).applyRtreeOnFilter(rTree, envelopeOnly);
+    public void applyRtreeOnQuery(final Tree rTree, final boolean envelopeOnly) {
+        applyRtreeOnQuery(query, rTree, envelopeOnly);
+    }
+
+    private void applyRtreeOnQuery(final Query query, final Tree rTree, final boolean envelopeOnly) {
+        if (query instanceof org.geotoolkit.lucene.filter.Filter) {
+            ((org.geotoolkit.lucene.filter.Filter)query).applyRtreeOnFilter(rTree, envelopeOnly);
+        } else if (query instanceof BooleanQuery) {
+            BooleanQuery bQuery = (BooleanQuery) query;
+            for (BooleanClause clause : bQuery.clauses()) {
+                applyRtreeOnQuery(clause.getQuery(), rTree, envelopeOnly);
+            }
         }
     }
 
@@ -230,19 +274,19 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     public String toString() {
         StringBuilder s = new StringBuilder("[SpatialQuery]:").append('\n');
 
-        if (spatialFilter == null && !query.toString().equals("") && logicalOperator == LogicalFilterType.NOT) {
-            s.append("query: NOT <").append(query).append(">").append('\n');
+        if (query == null && !textQuery.toString().equals("") && logicalOperator == LogicalFilterType.NOT) {
+            s.append("textQuery: NOT <").append(textQuery).append(">").append('\n');
 
-        } else if (!query.toString().equals("")) {
-            s.append('\t').append("query: |").append(query.toString()).append('|').append('\n');
+        } else if (!textQuery.toString().equals("")) {
+            s.append('\t').append("textQuery: |").append(textQuery.toString()).append('|').append('\n');
         }
 
-        if (spatialFilter != null && !query.toString().equals("")) {
-            s.append(SerialChainFilter.valueOf(logicalOperator)).append('\n');
+        if (query != null && !textQuery.toString().equals("")) {
+            s.append(logicalOperator.name()).append('\n');
         }
 
-        if (spatialFilter != null) {
-            s.append('\t').append(spatialFilter).append('\n');
+        if (query != null) {
+            s.append('\t').append(query).append('\n');
         }
         if (subQueries != null && subQueries.size() > 0) {
             s.append("subqueries:").append('\n');
@@ -270,9 +314,9 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
             final SpatialQuery that = (SpatialQuery) object;
 
             return (this.logicalOperator ==  that.logicalOperator)          &&
-                   Objects.equals(this.getQuery(), that.getQuery())       &&
+                   Objects.equals(this.getTextQuery(), that.getTextQuery())       &&
                    Objects.equals(this.sort, that.sort)                   &&
-                   Objects.equals(this.spatialFilter, that.spatialFilter) &&
+                   Objects.equals(this.query, that.query) &&
                    Objects.equals(this.subQueries, that.subQueries);
         }
         return false;
@@ -281,8 +325,8 @@ public class SpatialQuery implements org.geotoolkit.index.SpatialQuery {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 97 * hash + (this.spatialFilter != null ? this.spatialFilter.hashCode() : 0);
-        hash = 97 * hash + (this.query != null ? getQuery().hashCode() : 0);
+        hash = 97 * hash + (this.query != null ? this.query.hashCode() : 0);
+        hash = 97 * hash + (this.textQuery != null ? getTextQuery().hashCode() : 0);
         hash = 97 * hash + (this.logicalOperator != null ? logicalOperator.hashCode() : 0);
         hash = 97 * hash + (this.subQueries != null ? this.subQueries.hashCode() : 0);
         hash = 97 * hash + (this.sort != null ? this.sort.hashCode() : 0);

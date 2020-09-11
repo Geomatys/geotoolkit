@@ -39,7 +39,11 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.search.Filter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.Envelopes;
@@ -54,12 +58,11 @@ import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
-import org.geotoolkit.lucene.filter.LuceneOGCFilter;
-import org.geotoolkit.lucene.filter.SerialChainFilter;
+import org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.referencing.CRS;
-import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
+import static org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery.*;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
 
 import org.opengis.filter.FilterFactory2;
@@ -92,6 +95,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
     private static CoordinateReferenceSystem treeCrs;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
+    private static Query simpleQuery;
 
     @BeforeClass
     public static void setUpMethod() throws Exception {
@@ -111,6 +115,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         indexer.destroy();
 
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(), false);
+        simpleQuery = new TermQuery(new Term("metafile", "doc"));
     }
 
     @AfterClass
@@ -1354,13 +1359,11 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery1 = new SpatialQuery(wrap(filter1));
         SpatialQuery spatialQuery2 = new SpatialQuery(wrap(filter2));
 
-        List<Filter> filters  = new ArrayList<>();
-        filters.add(spatialQuery1.getSpatialFilter());
-        filters.add(spatialQuery2.getSpatialFilter());
-        LogicalFilterType filterType[]  = {LogicalFilterType.OR, LogicalFilterType.OR};
-        SerialChainFilter serialFilter = new SerialChainFilter(filters, filterType);
-
-        SpatialQuery sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        BooleanQuery serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery1.getQuery(), BooleanClause.Occur.SHOULD)
+                                .add(spatialQuery2.getQuery(), BooleanClause.Occur.SHOULD)
+                                .build();
+        SpatialQuery sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         Set<String> results = searcher.doSearch(sQuery);
@@ -1383,9 +1386,11 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
          * case 2: same test with AND instead of OR
          *
          */
-        LogicalFilterType filterType2[]  = {LogicalFilterType.AND,LogicalFilterType.AND};
-        serialFilter = new SerialChainFilter(filters, filterType2);
-        sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        serialQuery = new BooleanQuery.Builder()
+                                .add(spatialQuery1.getQuery(), BooleanClause.Occur.MUST)
+                                .add(spatialQuery2.getQuery(), BooleanClause.Occur.MUST)
+                                .build();
+        sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
@@ -1408,12 +1413,12 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
-        List<Filter> filters3     = new ArrayList<>();
-        filters3.add(spatialQuery.getSpatialFilter());
-        LogicalFilterType filterType3[]         = {LogicalFilterType.NOT};
-        serialFilter              = new SerialChainFilter(filters3, filterType3);
+        serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST_NOT)
+                          .add(simpleQuery,                     BooleanClause.Occur.MUST)
+                          .build();
 
-        sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
@@ -1446,13 +1451,12 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         bbox2.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         org.opengis.filter.Filter bfilter = FF.bbox(GEOMETRY_PROPERTY, -12,-17,15,50,"CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bfilter));
-        List<Filter> filters4  = new ArrayList<>();
-        filters4.add(spatialQuery.getSpatialFilter());
-        filters4.add(bboxQuery.getSpatialFilter());
-        LogicalFilterType filterType4[]         = {LogicalFilterType.AND,LogicalFilterType.AND};
-        serialFilter              = new SerialChainFilter(filters4, filterType4);
+        serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
+                          .add(bboxQuery.getQuery(),    BooleanClause.Occur.MUST)
+                          .build();
 
-        sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
@@ -1462,7 +1466,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
-    assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
@@ -1471,10 +1475,12 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
          * case 5: INTERSECT line AND NOT BBOX
          *
          */
-        LogicalFilterType filterType5[] = {LogicalFilterType.AND, LogicalFilterType.NOT};
-        serialFilter      = new SerialChainFilter(filters4, filterType5);
+        serialQuery = new BooleanQuery.Builder()
+                          .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
+                          .add(bboxQuery.getQuery(),    BooleanClause.Occur.MUST_NOT)
+                          .build();
 
-        sQuery = new SpatialQuery("", serialFilter, LogicalFilterType.AND);
+        sQuery = new SpatialQuery("", serialQuery, LogicalFilterType.AND);
 
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
@@ -2276,10 +2282,10 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
         org.opengis.filter.Filter bboxFilter = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
-        SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
+        SpatialQuery sQuery = new SpatialQuery(wrap(bboxFilter));
 
         //we perform a lucene query
-        Set<String> results = searcher.doSearch(bboxQuery);
+        Set<String> results = searcher.doSearch(sQuery);
 
         int nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
@@ -2298,11 +2304,30 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("line 1 projected"));
 
         /*
+         *  case 1.2: NOT a normal spatial request BBOX
+         */
+        sQuery = new SpatialQuery(null, wrap(bboxFilter), LogicalFilterType.NOT);
+
+        //we perform a lucene query
+        results = searcher.doSearch(sQuery);
+
+        nbResults = results.size();
+        LOGGER.log(Level.FINER, "NOT QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 5);
+        assertTrue(results.contains("point 4"));
+        assertTrue(results.contains("point 5"));
+        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("box 5"));
+
+        /*
          *  case 2: same filter with a StringQuery
          */
 
         //we perform a lucene query
-        SpatialQuery sQuery = new SpatialQuery("id:point*", bboxQuery.getSpatialFilter(), LogicalFilterType.AND);
+        sQuery = new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.AND);
 
         results = searcher.doSearch(sQuery);
 
@@ -2316,19 +2341,41 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
 
+
+        /*
+         *  case 2.1: NOT same filter with a StringQuery
+         */
+
+        //we perform a lucene query
+        sQuery = new SpatialQuery(null, LogicalFilterType.NOT);
+        sQuery.addSubQuery(new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.AND));
+
+        results = searcher.doSearch(sQuery);
+
+        nbResults = results.size();
+        LOGGER.log(Level.FINER, "QnS: title like point* AND BBOX 1: nb Results: {0}", nbResults);
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 11);
+        assertTrue(results.contains("point 4"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
+        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("point 5"));
+        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 5"));
+
         /*
          *  case 3: same filter same query but with an OR
          */
 
         //we perform two lucene query
-        sQuery = new SpatialQuery("id:point*");
-        Set<String> hits1 = searcher.doSearch(sQuery);
-        Set<String> hits2 = searcher.doSearch(bboxQuery);
-
-
-        results = new HashSet<>();
-        results.addAll(hits1);
-        results.addAll(hits2);
+        sQuery = new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.OR);
+        results = searcher.doSearch(sQuery);
 
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", nbResults);
@@ -2349,6 +2396,24 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("line 1"));
 
         /*
+         *  case 3.1: NOT same filter same query but with an OR
+         */
+         //we perform two lucene query
+        sQuery = new SpatialQuery(null, LogicalFilterType.NOT);
+        sQuery.addSubQuery(new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.OR));
+        results = searcher.doSearch(sQuery);
+
+
+        nbResults = results.size();
+        LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", nbResults);
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 3);
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 5"));
+
+        /*
          *  case 4: two filter two query with an OR in the middle
          *          (BBOX and name like point*) OR (INTERSECT line1 and name like box*)
          */
@@ -2362,15 +2427,13 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
 
-        SpatialQuery query1     = new SpatialQuery("id:point*", bboxQuery.getSpatialFilter(), LogicalFilterType.AND);
-        SpatialQuery query2     = new SpatialQuery("id:box*", interQuery.getSpatialFilter(),  LogicalFilterType.AND);
+        SpatialQuery query1     = new SpatialQuery("id:point*", wrap(bboxFilter), LogicalFilterType.AND);
+        SpatialQuery query2     = new SpatialQuery("id:box*", interQuery.getQuery(),  LogicalFilterType.AND);
+        SpatialQuery query3     = new SpatialQuery(null, LogicalFilterType.OR);
+        query3.addSubQuery(query1);
+        query3.addSubQuery(query2);
 
-        hits1 = searcher.doSearch(query1);
-        hits2 = searcher.doSearch(query2);
-
-        results      = new HashSet<>();
-        results.addAll(hits1);
-        results.addAll(hits2);
+        results = searcher.doSearch(query3);
 
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", nbResults);
@@ -2382,6 +2445,32 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 3"));
+
+        /*
+         *  case 4.1: NOT (two filter two query with an OR in the middle
+         *          (BBOX and name like point*) OR (INTERSECT line1 and name like box*))
+         */
+        query3     = new SpatialQuery(null, LogicalFilterType.NOT);
+        query3.addSubQuery(query1);
+        query3.addSubQuery(query2);
+        results = searcher.doSearch(query3);
+
+        nbResults = results.size();
+        LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", nbResults);
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 10);
+        assertTrue(results.contains("point 4"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
+        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("point 5"));
+        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 5"));
+
     }
 
 
@@ -2628,7 +2717,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 
         final String id = doc.get("id");
         NamedEnvelope namedBound      = LuceneUtils.getNamedEnvelope(id, line, treeCrs);
-        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(line)));
+        doc.add(new StoredField(LuceneOGCSpatialQuery.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(line)));
 
         return namedBound;
     }
@@ -2648,7 +2737,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 
         final String id = doc.get("id");
         NamedEnvelope namedBound      = LuceneUtils.getNamedEnvelope(id, pt, treeCrs);
-        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(pt)));
+        doc.add(new StoredField(LuceneOGCSpatialQuery.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(pt)));
 
         return namedBound;
     }
@@ -2668,7 +2757,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, crs);
         final String id = doc.get("id");
         NamedEnvelope namedBound      = LuceneUtils.getNamedEnvelope(id, poly, treeCrs);
-        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(poly)));
+        doc.add(new StoredField(LuceneOGCSpatialQuery.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(poly)));
 
         return namedBound;
     }

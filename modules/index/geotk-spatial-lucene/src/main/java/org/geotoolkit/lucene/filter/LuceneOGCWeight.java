@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2020, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,50 +17,52 @@
 package org.geotoolkit.lucene.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.*;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DocsEnum;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.DocIdSet;
-import org.apache.lucene.util.BitDocIdSet;
+import org.apache.lucene.search.ConstantScoreScorer;
+import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreMode;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.Weight;
+import org.apache.lucene.util.BitSet;
+import org.apache.lucene.util.BitSetIterator;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.FixedBitSet;
-import org.geotoolkit.filter.SpatialFilterType;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.index.tree.Tree;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.TreeX;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
-import static org.geotoolkit.lucene.LuceneUtils.*;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
+import static org.geotoolkit.lucene.LuceneUtils.getExtendedReprojectedEnvelope;
+import static org.geotoolkit.lucene.LuceneUtils.getReprojectedEnvelope;
+import static org.geotoolkit.lucene.LuceneUtils.getSpatialFilterType;
 import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.*;
+import org.opengis.filter.spatial.Beyond;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.spatial.DistanceBufferOperator;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 
 /**
- * Wrap an OGC filter object in a Lucene filter.
  *
- * @author Johann Sorel (Geomatys)
- * @module
+ * @author Guilhem Legal (Geomatys)
  */
-public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements  org.geotoolkit.lucene.filter.Filter {
+public class LuceneOGCWeight extends Weight {
 
     public static final String GEOMETRY_FIELD_NAME     = "idx_lucene_geometry";
     public static final String IDENTIFIER_FIELD_NAME   = "id";
-    public static final PropertyName GEOMETRY_PROPERTY = DefaultFactories.forBuildin(FilterFactory.class).property(GEOMETRY_FIELD_NAME);
-    public static final Term GEOMETRY_FIELD            = new Term(GEOMETRY_FIELD_NAME);
-    public static final Term META_FIELD                = new Term("metafile", "doc");
-
     private static final Set<String> GEOMETRY_FIELDS = new HashSet<>(1);
     static {
         GEOMETRY_FIELDS.add(GEOMETRY_FIELD_NAME);
@@ -70,37 +72,41 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     static {
         ID_FIELDS.add(IDENTIFIER_FIELD_NAME);
     }
-
+    private final Tree tree;
+    private final org.opengis.filter.Filter filter;
     private final SpatialFilterType filterType;
+
+    private boolean envelopeOnly;
+
+    private final ScoreMode scoreMode;
+    private final float boost;
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene.filter");
 
-    private final Filter filter;
-
-    private Tree tree;
-
-    private boolean envelopeOnly = false;
-
-    private LuceneOGCFilter(final Filter filter){
+    public LuceneOGCWeight(Query parentQuery, final Tree tree, org.opengis.filter.Filter filter, IndexSearcher searcher, ScoreMode scoreMode, float boost, boolean envelopeOnly) {
+        super(parentQuery);
+        this.boost = boost;
+        this.scoreMode = scoreMode;
         this.filter = filter;
         this.filterType = getSpatialFilterType(filter);
-    }
-
-    public Filter getOGCFilter(){
-        return filter;
-    }
-
-    @Override
-    public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
-        this.tree         = rTree;
+        this.tree = tree;
         this.envelopeOnly = envelopeOnly;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public DocIdSet getDocIdSet(final LeafReaderContext ctx, final Bits b) throws IOException {
+    public void extractTerms(Set<Term> terms) {
+        // do nothing
+    }
+
+    @Override
+    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Scorer scorer(LeafReaderContext context) throws IOException {
+       //final SortedDocValues values = context.reader().getSortedDocValues(IDENTIFIER_FIELD_NAME);
+        final LeafReader reader = context.reader();
 
         boolean treeSearch     = false;
         boolean reverse        = false;
@@ -196,61 +202,40 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
             LOGGER.finer("Null R-tree in spatial search");
         }
 
-        final LeafReader reader = ctx.reader();
-        final BitDocIdSet set = new BitDocIdSet(new FixedBitSet(reader.maxDoc()));
-        final DocsEnum termDocs = reader.termDocsEnum(META_FIELD);
-        int n = termDocs.nextDoc();
-        while (n != DocsEnum.NO_MORE_DOCS){
-            final int docId     = termDocs.docID();
-            final Document doc  = reader.document(docId, ID_FIELDS);
-            final String id     = doc.get(IDENTIFIER_FIELD_NAME);
-            final boolean match = treeMatching.contains(id);
-            if (treeSearch && reverse && !match) {
-                set.bits().set(docId);
+        final BitSet set = new FixedBitSet( reader.maxDoc());
 
-            } else if (!treeSearch || match) {
-                if (envelopeOnly && !distanceFilter) {
-                    set.bits().set(docId);
-                } else {
-                    final Document geoDoc = reader.document(docId, GEOMETRY_FIELDS);
-                    if (filter.evaluate(geoDoc)) {
-                        set.bits().set(docId);
+        Bits b = reader.getLiveDocs();
+        if (b == null) {
+            b = new Bits.MatchAllBits(reader.maxDoc());
+        }
+        for (int i = 0; i < b.length(); i++){
+            if (b.get(i)) {
+                final int docId     = i;
+                final Document doc  = reader.document(docId, ID_FIELDS);
+                final String id     = doc.get(IDENTIFIER_FIELD_NAME);
+                final boolean match = treeMatching.contains(id);
+                if (treeSearch && reverse && !match) {
+                    set.set(docId);
+
+                } else if (!treeSearch || match) {
+                    if (envelopeOnly && !distanceFilter) {
+                        set.set(docId);
+                    } else {
+                        final Document geoDoc = reader.document(docId, GEOMETRY_FIELDS);
+                        if (filter.evaluate(geoDoc)) {
+                            set.set(docId);
+                        }
                     }
                 }
             }
-            n = termDocs.nextDoc();
         }
+        return new ConstantScoreScorer(this, boost, scoreMode, new BitSetIterator(set, 5));
+      }
 
-        return set;
-    }
-
-    public static LuceneOGCFilter wrap(final Filter filter){
-        return new LuceneOGCFilter(filter);
-    }
 
     @Override
-    public String toString(String s) {
-        return "[LuceneOGCFilter] " + filter.toString();
+    public boolean isCacheable(LeafReaderContext ctx) {
+        return true;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj instanceof LuceneOGCFilter) {
-            LuceneOGCFilter that = (LuceneOGCFilter) obj;
-            return Objects.equals(this.filter, that.filter) &&
-                   Objects.equals(this.filterType, that.filterType);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.filterType);
-        hash = 79 * hash + Objects.hashCode(this.filter);
-        return hash;
-    }
 }

@@ -2,8 +2,6 @@ package org.geotoolkit.processing.vector.clusterhull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
-import java.util.stream.Collectors;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.measure.Units;
@@ -35,6 +33,8 @@ import org.opengis.util.NoSuchIdentifierException;
  * @module
  */
 public class ClusterHullTest extends AbstractProcessTest {
+
+    private static final double TOLERANCE = 1e-4;
 
     private static GeometryFactory geometryFactory = new GeometryFactory();
 
@@ -140,7 +140,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         GeometryCollection gc1 = extractGeometryCollectionFromFeatureSet(out);
         GeometryCollection gc2 = extractGeometryCollectionFromFeatureSet(expected);
         // is same geometry
-        assertTrue(equalsExactGeometryCollectionWithoutOrder(gc1, gc2, 0.0001));
+        assertTrue(gc1.equalsExact(gc2, TOLERANCE));
         FeatureType type1 = out.getType();
         FeatureType type2 = expected.getType();
         // is same feature
@@ -148,18 +148,15 @@ public class ClusterHullTest extends AbstractProcessTest {
     }
 
     private GeometryCollection extractGeometryCollectionFromFeatureSet(final FeatureSet fs) throws DataStoreException {
-        List<Geometry> geometries = new ArrayList<>();
-
-        fs.features(false).collect(Collectors.toList());
-        geometries = fs.features(false)
+        Geometry[] geometries = fs.features(false)
                 .map(f -> f.getProperty("geometry"))
                 .map(p -> p.getValue())
                 .filter(value -> value instanceof Geometry)
                 .map(value -> (Geometry) value)
-                .collect(Collectors.toList());
-        int size = geometries.size();
-        Geometry[] geometries1 = geometries.toArray(new Geometry[size]);
-        return geometryFactory.createGeometryCollection(geometries1);
+                .toArray(size -> new Geometry[size]);
+        final GeometryCollection gc = geometryFactory.createGeometryCollection(geometries);
+        gc.normalize();
+        return gc;
     }
 
     private FeatureSet buildFeatureSet(String filename) throws URISyntaxException, DataStoreException {
@@ -170,35 +167,5 @@ public class ClusterHullTest extends AbstractProcessTest {
         GenericName types = DataStores.getNames(store, true, FeatureSet.class).iterator().next();
         FeatureSet target = (FeatureSet) store.findResource(types.toString());
         return target;
-    }
-
-    private boolean equalsExactGeometryCollectionWithoutOrder(GeometryCollection gc1, GeometryCollection gc2, double tolerance) {
-        if (!(gc1.getClass().getName().equals(gc2.getClass().getName()))) {
-            return false;
-        } else {
-            if (gc1.getNumGeometries() != gc2.getNumGeometries()) {
-                return false;
-            } else {
-                boolean find1;
-                boolean find2;
-                int numGeom = gc1.getNumGeometries();
-                for(int i = 0; i < numGeom; ++i) {
-                    find1 = false;
-                    find2 = false;
-                    for(int j = 0; j < numGeom; ++j) {
-                        if (gc1.getGeometryN(i).equalsExact(gc2.getGeometryN(j), tolerance)) {
-                            find1 = true;
-                        }
-                        if (gc2.getGeometryN(i).equalsExact(gc1.getGeometryN(j), tolerance)) {
-                            find2 = true;
-                        }
-                    }
-                    if(!(find1 && find2)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
     }
 }

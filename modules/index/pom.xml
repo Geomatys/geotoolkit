@@ -71,17 +71,7 @@
        =========================================================== -->
   <modules>
     <module>geotk-index</module>
+    <module>geotk-spatial-lucene</module>
   </modules>
-  <profiles>
-    <profile>
-      <id>JDK8</id>
-      <activation>
-        <jdk>1.8</jdk>
-      </activation>
-      <modules>
-        <module>geotk-spatial-lucene</module>
-      </modules>
-    </profile>
-  </profiles>
 
 </project>

@@ -26,6 +26,5 @@ public enum LogicalFilterType {
     AND,
     OR,
     NOT,
-    XOR,
-    DEFAULT
+    XOR;
 }
