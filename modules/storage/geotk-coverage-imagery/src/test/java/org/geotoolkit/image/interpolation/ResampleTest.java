@@ -22,12 +22,10 @@ import java.awt.image.*;
 import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -147,116 +145,6 @@ public class ResampleTest extends org.geotoolkit.test.TestBase {
         final Resample resample = new Resample(theMTSrcToDest.inverse(), targetImage, sourceImg,
                 InterpolationCase.BICUBIC, ResampleBorderComportement.EXTRAPOLATION, new double[]{0});
         resample.fillImage();
-
-        //-- get the grid
-        final ResampleGrid resGrid = null;  // resample.getGrid();
-        if (true) return;                   // TODO grid support has been removed for now because not used.
-
-        assertNotNull("grid should not be null", resGrid);
-
-        final double[] expectedResultByFeedBack = compareGrid(resGrid, 12, 12, theMTSrcToDest);
-
-        final Raster coverageRaster = targetImage.getTile(0, 0);
-
-        final double tol = StrictMath.sqrt(2) * 0.125;
-        java.awt.image.DataBufferDouble datadouble = (java.awt.image.DataBufferDouble) coverageRaster.getDataBuffer();
-        final double[] testedArray = datadouble.getData(0);
-        assertArrayEquals(expectedResultByFeedBack, testedArray, tol);
-    }
-
-    /**
-     * Study grid built during resample an verify pertinency of its values from
-     * destination coordinates transformed by {@link MathTransform}.
-     *
-     * @param testedGrid the grid which will be test.
-     * @param destImgWidth destination image width.
-     * @param destImgHeight destination image height.
-     * @param srcToDest {@link MathTransform} use to resample image.
-     * @throws TransformException
-     */
-    private double[] compareGrid(final ResampleGrid testedGrid, final int destImgWidth, final int destImgHeight, final MathTransform srcToDest) throws TransformException {
-
-        final int gridW = testedGrid.getGridWidth();
-        final int gridH = testedGrid.getGridHeight();
-        final int stepx = testedGrid.getStepX();
-        final int stepy = testedGrid.getStepY();
-
-        final MathTransform destToSrc = srcToDest.inverse();
-
-        //-- interpolation value
-        final double[] feedBack = new double[destImgHeight * destImgWidth];
-        int fbid = 0;
-
-        final Interpolation interpol = Interpolation.create(PixelIterator.create(sourceImg),
-                InterpolationCase.BICUBIC, 0, ResampleBorderComportement.EXTRAPOLATION, new double[]{0});
-
-        double[] grid = testedGrid.getGrid();
-
-        int desty = 0;
-        int destx = 0;
-        int gx = 0;
-        int gy = 0;
-        int nextgy = stepy;
-
-        double[] destCoords = new double[2];
-
-        while (desty < destImgHeight) {
-            if (desty == nextgy) {
-                nextgy += stepy;
-                gy++;
-                gy = StrictMath.min(gy, gridH - 2);
-            }
-            int nextgx = stepx;
-            destx = 0;
-            gx = 0;
-            while (destx < destImgWidth) {
-                if (destx == nextgx) {
-                    nextgx += stepx;
-                    gx++;
-                    gx = StrictMath.min(gx, gridW - 2);
-                }
-                destCoords[0] = destx;
-                destCoords[1] = desty;
-                destToSrc.transform(destCoords, 0, destCoords, 0, 1);
-
-                feedBack[fbid++] = interpol.interpolate(destCoords[0], destCoords[1], 0);
-
-                // compare result entre result transformation et interpol grid[gx][gy]
-                final int id00 = ((gy * gridW + gx) << 1);
-                final int id01 = id00 + (gridW << 1);
-
-                final double testedx = interpolate2D(gx, gy, grid[id00], grid[id00 + 2], grid[id01], grid[id01 + 2], destx / ((double)stepx), desty / ((double)stepy));
-                final double testedy = interpolate2D(gx, gy, grid[id00 | 1], grid[(id00 + 2) | 1], grid[id01 | 1], grid[(id01 + 2) | 1], destx / ((double)stepx), desty / ((double)stepy));
-
-                assertEquals("at ("+destx+", "+desty+") X : ", destCoords[0], testedx, 0.125);
-                assertEquals("at ("+destx+", "+desty+") Y : ", destCoords[1], testedy, 0.125);
-                destx ++;
-            }
-            desty++;
-        }
-        return feedBack;
-    }
-
-    /**
-     * Bilinear interpolation.
-     *
-     * @param t0x bilinear interpolation origine in X direction.
-     * @param t0y bilinear interpolation origine in Y direction.
-     * @param x position which will be interpolate in X direction.
-     * @param y position which will be interpolate in Y direction.
-     */
-    private static double interpolate2D(double t0x, double t0y, double f00, double f10, double f01, double f11, double x, double y) {
-        final double x0 = interpolate1D(t0x, x, f00, f10);
-        final double x1 = interpolate1D(t0x, x, f01, f11);
-        return interpolate1D(t0y, y, x0, x1);
-    }
-
-    /**
-     * Compute linear interpolation between 2 values.
-     * {@inheritDoc }
-     */
-    private static double interpolate1D(double t0, double t, double f0, double f1) {
-        return (t - t0) * (f1 - f0) + f0;
     }
 
     /**

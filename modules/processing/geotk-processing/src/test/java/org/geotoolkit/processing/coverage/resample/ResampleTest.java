@@ -46,7 +46,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -250,7 +249,6 @@ public class ResampleTest extends AbstractProcessTest {
      *
      * @throws Exception If anything unexpected append.
      */
-    @Ignore
     @Test
     public void testTrue0_360() throws Exception {
         // Create a 0-360 source

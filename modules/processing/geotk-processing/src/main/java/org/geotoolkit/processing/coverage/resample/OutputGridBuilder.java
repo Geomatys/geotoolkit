@@ -158,34 +158,6 @@ public final class OutputGridBuilder {
         );
     }
 
-    /**
-     * Computes the math transform from [Target Grid] to [Source Grid].
-     * /!\ Be careful ! This transform does not include translation from/to image renderings. When resampling, between
-     * rendered images, please use {@link #forDefaultRendering()} or {@link #forRendering(GridExtent, GridExtent)}
-     * instead.
-     *
-     * @implNote
-     * The transform will be computed using the following path:
-     *
-     *      Target Grid --> Target CRS --> Source CRS --> Source Grid
-     *                   ^              ^              ^
-     *                 step 1         step 2         step 3
-     *
-     * If source and target CRS are equal, a shorter path is used. This special
-     * case is needed because 'sourceCRS' and 'targetCRS' may be null.
-     *
-     *      Target Grid --> Common CRS --> Source Grid
-     *                   ^              ^
-     *                 step 1         step 3
-     * @param inCell The pixel in cell to use for grid transforms. Used through {@link GridGeometry#getGridToCRS(PixelInCell)}.
-     * @return A math transform to get source pixel coordinates from target pixel coordinates.
-     * @throws NoninvertibleTransformException If we cannot inverse source grid transform.
-     * @throws FactoryException If we cannot find a conversion between source and target CRS.
-     */
-    MathTransform getOrCreateBridge2D(PixelInCell inCell) throws NoninvertibleTransformException, FactoryException {
-        return cache.getOrCreateBridge2D(inCell);
-    }
-
     private MathTransform createBridge(PixelInCell inCell) throws NoninvertibleTransformException, FactoryException {
         final Point targetXY = cache.getOrComputeImageAxes();
         final GridGeometry source = this.source.reduce(new int[]{sourceXY.x, sourceXY.y});
