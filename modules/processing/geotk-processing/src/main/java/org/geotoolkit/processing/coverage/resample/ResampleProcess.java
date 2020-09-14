@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.processing.coverage.resample;
 
-import java.awt.Dimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.Interpolation;
@@ -34,7 +32,6 @@ import org.geotoolkit.resources.Errors;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -181,20 +178,10 @@ public class ResampleProcess extends AbstractProcess {
         }
 
         if (targetGG == null) {
-            //compute it for targetcrs
-
-            final OutputGridBuilder builder = new OutputGridBuilder(sourceCov.getGridGeometry(), targetGG)
-                    .setTargetCrs(targetCRS);
-
-            /* For now, we use only one rendering to pass from source to target. However, in the future, we could split
-             * processing into many tiles, each one with its own transform layout for rendering. We could also use
-             * progressive rendering, and make rendering transform layout vary upon user request.
-             */
-            MathTransform targetToSource = builder.forDefaultRendering();
-            Dimension targetImageDimension = builder.getTargetImageDimension();
-
-            targetGG = new GridGeometry(new GridExtent(targetImageDimension.width, targetImageDimension.height),
-                    PixelInCell.CELL_CENTER, targetToSource, targetCRS);
+            if (targetCRS == null) {
+                return sourceCov;
+            }
+            targetGG = new GridGeometry(null, PixelInCell.CELL_CENTER, null, targetCRS);
         }
 
         final GridCoverageProcessor processor = new GridCoverageProcessor(imgProcessor);

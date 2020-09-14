@@ -128,36 +128,6 @@ public final class OutputGridBuilder {
         cache = new Cache();
     }
 
-    /**
-     * Converts current target into given CRS, if needed. Note that we'll try to conserve original Grid To CRS, and
-     * provide CRS shift by concatenating a {@link CoordinateOperation} to it. The resulting grid geometry should
-     * therefore conserve its original grid, and its envelopes will be adapted as needed.
-     *
-     * @param targetCrs The coordindate reference system wanted for output grid.
-     * @return this builder for further modifications.
-     * @throws FactoryException
-     */
-    OutputGridBuilder setTargetCrs(final CoordinateReferenceSystem targetCrs) throws FactoryException {
-        if (targetCrs == null) return this;
-
-        final PixelInCell inCell = PixelInCell.CELL_CENTER;
-        final MathTransform newG2C = concatenateGrid2Crs(target, targetCrs, inCell);
-        // TODO: Should we check if the operation is inversible ? Resample will need it, but prehaps it's automatically checked when build the geom.
-        target = new GridGeometry(target.getExtent(), inCell, newG2C, targetCrs);
-        cache.clear();
-
-        return this;
-    }
-
-    Dimension getTargetImageDimension() {
-        final Point imageAxes = cache.getOrComputeImageAxes();
-        final GridExtent baseExtent = target.getExtent();
-        return new Dimension(
-                Math.toIntExact(baseExtent.getSize(imageAxes.x)),
-                Math.toIntExact(baseExtent.getSize(imageAxes.y))
-        );
-    }
-
     private MathTransform createBridge(PixelInCell inCell) throws NoninvertibleTransformException, FactoryException {
         final Point targetXY = cache.getOrComputeImageAxes();
         final GridGeometry source = this.source.reduce(new int[]{sourceXY.x, sourceXY.y});
