@@ -42,6 +42,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
 import javax.media.jai.RenderedOp;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -509,6 +510,8 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
                 return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));
 
             } catch (NoSuchDataException e) {
+                LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
+            } catch (DisjointExtentException e) {
                 LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
