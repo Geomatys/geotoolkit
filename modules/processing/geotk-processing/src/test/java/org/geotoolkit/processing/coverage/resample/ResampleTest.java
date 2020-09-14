@@ -234,8 +234,7 @@ public class ResampleTest extends AbstractProcessTest {
                 CommonCRS.WGS84.normalizedGeographic()
         );
 
-        final OutputGridBuilder builder = new OutputGridBuilder(source, target);
-        final MathTransform trs = builder.forDefaultRendering();
+        final MathTransform trs = target.createTransformTo(source, PixelInCell.CELL_CENTER);
 
         //transform point should be in the left side of source image
         double[] crd = new double[]{0,0};

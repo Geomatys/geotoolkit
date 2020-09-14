@@ -65,7 +65,6 @@ import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.resample.OutputGridBuilder;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.opengis.geometry.Envelope;
@@ -368,8 +367,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //compute forward transform
         final GridGeometry coverageGridGeom = coverage.getGridGeometry();
-        final OutputGridBuilder ogb = new OutputGridBuilder(canvasGrid, coverageGridGeom);
-        final MathTransform transform = ogb.forDefaultRendering();
+        final MathTransform transform = coverageGridGeom.createTransformTo(canvasGrid, PixelInCell.CELL_CENTER);
 
         //create result image
         final RenderedImage img = coverage.render(null);
