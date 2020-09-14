@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.io.IOException;
@@ -28,8 +27,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongFunction;
+import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
@@ -57,6 +64,8 @@ import org.geotoolkit.storage.coverage.mosaic.AggregatedCoverageResource;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
+import org.geotoolkit.storage.multires.EmptyTile;
+import org.geotoolkit.storage.multires.TileInError;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.util.NamesExt;
@@ -78,6 +87,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
     private final GridCoverageResource resource;
     private final double[] empty;
+    private final Future<RenderedImage> baseRendering;
 
     private InterpolationCase interpolation = InterpolationCase.NEIGHBOR;
     private double[] fillValues;
@@ -87,7 +97,6 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     public CoverageTileGenerator(GridCoverageResource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
         this.resource = resource;
-
         final List<SampleDimension> sampleDimensions = resource.getSampleDimensions();
         if (sampleDimensions == null || sampleDimensions.isEmpty()) {
             throw new DataStoreException("Base resource sample dimensions are undefined");
@@ -96,6 +105,8 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         for (int i = 0; i < empty.length; i++) {
             empty[i] = getEmptyValue(sampleDimensions.get(i));
         }
+
+        baseRendering = ForkJoinPool.commonPool().submit(() -> createBaseRendering(resource));
     }
 
     /**
@@ -214,7 +225,9 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         Arrays.sort(mosaics, (TileMatrix o1, TileMatrix o2) -> Double.compare(o1.getScale(), o2.getScale()));
 
         final long total = countTiles(pyramid, env, resolutions);
+        final double totalAsDouble = total;
         final AtomicLong al = new AtomicLong();
+        final Supplier<Float> progress = () -> (float) (al.get() / totalAsDouble *100.0);
 
         GridCoverageResource resource = this.resource;
 
@@ -232,7 +245,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                                 final long x = rect.x + (value % rect.width);
                                 final long y = rect.y + (value / rect.width);
 
-                                Tile data = null;
+                                Tile data;
                                 try {
                                     if (skipExistingTiles && !mosaic.isMissing((int) x, (int) y)) {
                                         //tile already exist
@@ -243,12 +256,12 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                                     try {
                                         data = generateTile(pyramid, mosaic, coord, source);
                                     } catch (Exception ex) {
-                                        ex.printStackTrace();
+                                        data = TileInError.create(coord, null, ex);
                                     }
                                 } finally {
                                     long v = al.incrementAndGet();
                                     if (listener != null & (v % eventstep == 0))  {
-                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                                        listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), progress.get()  ));
                                     }
                                 }
                                 return data;
@@ -256,17 +269,11 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                         })
                         .filter(this::emptyFilter);
 
-                Streams.batchExecute(stream, (Collection<Tile> t) -> {
-                    try {
-                        mosaic.writeTiles(t.stream(), null);
-                    } catch (DataStoreException ex) {
-                        ex.printStackTrace();
-                    }
-                }, 200);
+                batchWrite(stream, mosaic, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", progress.get(), err)), 200);
 
                 long v = al.get();
                 if (listener != null) {
-                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), (float) (( ((double)v)/((double)total) )*100.0)  ));
+                    listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), progress.get()  ));
                 }
 
                 //modify context
@@ -311,10 +318,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
             Arrays.fill(margins, 2);
             coverage = resource.read(gridGeomNd.derive().margin(margins).build());
         } catch (NoSuchDataException ex) {
-            //create an empty tile
-            final BufferedImage img = BufferedImages.createImage(tileSize.width, tileSize.height, empty.length, DataBuffer.TYPE_DOUBLE);
-            BufferedImages.setAll(img, fillValues == null ? empty : fillValues);
-            return new DefaultImageTile(img, tileCoord);
+            return replaceIfEmpty(TileInError.create(tileCoord, ex), tileSize);
         } catch (DataStoreException ex) {
             throw ex;
         }
@@ -334,11 +338,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         } catch (IllegalGridGeometryException ex) {
-            //create an empty tile
-            RenderedImage image = coverage.render(null);
-            image = BufferedImages.createImage(image, tileSize.width, tileSize.height, null, null);
-            BufferedImages.setAll((WritableRenderedImage) image, fillValues == null ? empty : fillValues);
-            return new DefaultImageTile(image, tileCoord);
+            return replaceIfEmpty(TileInError.create(tileCoord, ex), tileSize);
         }
 
         RenderedImage image = coverage.render(null);
@@ -359,4 +359,48 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         return StringUtilities.toStringTree(this.getClass().getSimpleName(), elements);
     }
 
+    private Tile replaceIfEmpty(final Tile source, Dimension tileSize) {
+        if (source instanceof EmptyTile) {
+            final RenderedImage base;
+            try {
+                base = baseRendering.get(2, TimeUnit.SECONDS);
+                final BufferedImage image = BufferedImages.createImage(base, tileSize.width, tileSize.height, null, null);
+                BufferedImages.setAll(image, fillValues == null ? empty : fillValues);
+                return new DefaultImageTile(image, source.getPosition());
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Cannot emulate empty tile !", e);
+            }
+        }
+
+        return source;
+    }
+
+    /**
+     * HACK: we try to replace notion of empty tile / tile in error by filling a canvas with fill values and returning
+     * it in a tile.
+     *
+     * This method is <em>NOT</em> safe at all. In the mid-term, we should get rid of it and properly manage emptiness
+     * and result (by tile) error.
+     *
+     * @param resource The resource to read from
+     * @return Result of the rendering. Never null;
+     */
+    private static RenderedImage createBaseRendering(final GridCoverageResource resource) throws DataStoreException {
+        final GridGeometry gg = resource.getGridGeometry();
+        final GridExtent extent = gg.getExtent();
+        final long[] lower = extent.getLow().getCoordinateValues();
+        final long[] upper = extent.getHigh().getCoordinateValues();
+
+        for (int i = 0 ; i < 2 ; i++) {
+            upper[i] = Math.min(upper[i], lower[i] + 7);
+        }
+
+        for (int i = 2 ; i < extent.getDimension() ; i++) {
+            upper[i] = lower[i];
+        }
+
+        final GridExtent newExtent = new GridExtent(null, lower, upper, true);
+        final GridGeometry newGg = gg.derive().subgrid(new GridGeometry(newExtent, PixelInCell.CELL_CENTER, gg.getGridToCRS(PixelInCell.CELL_CENTER), gg.getCoordinateReferenceSystem())).build();
+        return resource.read(newGg).render(null);
+    }
 }

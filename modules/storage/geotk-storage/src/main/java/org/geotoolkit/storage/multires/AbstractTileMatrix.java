@@ -209,7 +209,7 @@ public abstract class AbstractTileMatrix implements TileMatrix {
                 }
             });
         } catch (BackingStoreException ex) {
-            throw (DataStoreException) ex.getCause();
+            throw ex.unwrapOrRethrow(DataStoreException.class);
         }
     }
 

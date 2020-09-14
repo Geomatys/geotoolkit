@@ -606,7 +606,7 @@ public class XMLMosaic implements TileMatrix {
                 }
             });
         } catch (BackingStoreException ex) {
-            throw (DataStoreException) ex.getCause();
+            throw ex.unwrapOrRethrow(DataStoreException.class);
         }
     }
 
@@ -616,6 +616,7 @@ public class XMLMosaic implements TileMatrix {
         //-- check conformity between internal data and currentImage.
         //-- if no sm and cm automatical set from image (use for the first insertion)
         final XMLCoverageResource ref = pyramid.getPyramidSet().getRef();
+        System.out.printf("%nDATA TYPE FOR: %s --> %d%n", pt, image.getSampleModel().getDataType());
         synchronized (ref) {
             ref.checkOrSetSampleColor(image);
         }

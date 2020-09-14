@@ -25,6 +25,7 @@ import java.awt.image.WritableRenderedImage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntFunction;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -53,9 +54,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
 
 
 /**
@@ -96,7 +101,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+
         */
 
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
@@ -136,14 +141,14 @@ public class AggregatedCoverageResourceTest {
         Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
-        Assert.assertEquals(grid1, gridGeometry);
+        assertEquals(grid1, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
-        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
-        reader.moveTo(1, 0); Assert.assertEquals(2, reader.getSample(0));
-        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+        reader.moveTo(0, 0); assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); assertEquals(2, reader.getSample(0));
+        reader.moveTo(2, 0); assertEquals(3, reader.getSample(0));
 
     }
 
@@ -178,7 +183,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+
         */
 
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
 
         final BufferedImage image1 = new BufferedImage(3, 1, BufferedImage.TYPE_INT_ARGB);
         final BufferedImage image2 = new BufferedImage(3, 1, BufferedImage.TYPE_INT_ARGB);
@@ -217,7 +222,7 @@ public class AggregatedCoverageResourceTest {
         Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
-        Assert.assertEquals(grid1, gridGeometry);
+        assertEquals(grid1, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
@@ -269,9 +274,9 @@ public class AggregatedCoverageResourceTest {
         |NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|NaN|
         +---+---+---+---+---+---+---+---+---+---+---+---+
         */
-        final GridGeometry grid1 = new GridGeometry(new GridExtent( 3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(2.0, 0, 0, 2.0, 1.00, 1.00), crs);
-        final GridGeometry grid2 = new GridGeometry(new GridExtent( 6, 2), PixelInCell.CELL_CENTER, new AffineTransform2D(1.0, 0, 0, 1.0, 0.50, 0.50), crs);
-        final GridGeometry grid3 = new GridGeometry(new GridExtent(12, 4), PixelInCell.CELL_CENTER, new AffineTransform2D(0.5, 0, 0, 0.5, 0.25, 0.25), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent( 3, 1), CELL_CENTER, new AffineTransform2D(2.0, 0, 0, 2.0, 1.00, 1.00), crs);
+        final GridGeometry grid2 = new GridGeometry(new GridExtent( 6, 2), CELL_CENTER, new AffineTransform2D(1.0, 0, 0, 1.0, 0.50, 0.50), crs);
+        final GridGeometry grid3 = new GridGeometry(new GridExtent(12, 4), CELL_CENTER, new AffineTransform2D(0.5, 0, 0, 0.5, 0.25, 0.25), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_DOUBLE);
@@ -336,17 +341,17 @@ public class AggregatedCoverageResourceTest {
         final PixelIterator reader =  PixelIterator.create( image);
         reader.moveTo(0, 0); Assert.assertTrue(Double.isNaN(reader.getSampleDouble(0)));
         reader.moveTo(1, 0); Assert.assertTrue(Double.isNaN(reader.getSampleDouble(0)));
-        reader.moveTo(2, 0); Assert.assertEquals(2, reader.getSample(0));
-        reader.moveTo(3, 0); Assert.assertEquals(2, reader.getSample(0));
-        reader.moveTo(4, 0); Assert.assertEquals(3, reader.getSample(0));
-        reader.moveTo(5, 0); Assert.assertEquals(1, reader.getSample(0));
+        reader.moveTo(2, 0); assertEquals(2, reader.getSample(0));
+        reader.moveTo(3, 0); assertEquals(2, reader.getSample(0));
+        reader.moveTo(4, 0); assertEquals(3, reader.getSample(0));
+        reader.moveTo(5, 0); assertEquals(1, reader.getSample(0));
 
         reader.moveTo(0, 1); Assert.assertTrue(Double.isNaN(reader.getSampleDouble(0)));
         reader.moveTo(1, 1); Assert.assertTrue(Double.isNaN(reader.getSampleDouble(0)));
-        reader.moveTo(2, 1); Assert.assertEquals(2, reader.getSample(0));
-        reader.moveTo(3, 1); Assert.assertEquals(2, reader.getSample(0));
-        reader.moveTo(4, 1); Assert.assertEquals(1, reader.getSample(0));
-        reader.moveTo(5, 1); Assert.assertEquals(1, reader.getSample(0));
+        reader.moveTo(2, 1); assertEquals(2, reader.getSample(0));
+        reader.moveTo(3, 1); assertEquals(2, reader.getSample(0));
+        reader.moveTo(4, 1); assertEquals(1, reader.getSample(0));
+        reader.moveTo(5, 1); assertEquals(1, reader.getSample(0));
 
     }
 
@@ -378,7 +383,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+
         */
 
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
@@ -414,14 +419,14 @@ public class AggregatedCoverageResourceTest {
         ((AggregatedCoverageResource)aggregate).setInterpolation(Interpolation.NEAREST);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
-        Assert.assertEquals(grid1, gridGeometry);
+        assertEquals(grid1, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
-        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0)); Assert.assertEquals(2, reader.getSample(1));
-        reader.moveTo(1, 0); Assert.assertEquals(3, reader.getSample(0)); Assert.assertEquals(4, reader.getSample(1));
-        reader.moveTo(2, 0); Assert.assertEquals(5, reader.getSample(0)); Assert.assertEquals(6, reader.getSample(1));
+        reader.moveTo(0, 0); assertEquals(1, reader.getSample(0)); assertEquals(2, reader.getSample(1));
+        reader.moveTo(1, 0); assertEquals(3, reader.getSample(0)); assertEquals(4, reader.getSample(1));
+        reader.moveTo(2, 0); assertEquals(5, reader.getSample(0)); assertEquals(6, reader.getSample(1));
     }
 
     /**
@@ -439,9 +444,9 @@ public class AggregatedCoverageResourceTest {
         final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
         final List<SampleDimension> bands = Arrays.asList(sd);
 
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0.5, 0.5), crs);
-        final GridGeometry grid2 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 1.5, 0.5), crs);
-        final GridGeometry grid3 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2.5, 0.5), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0.5, 0.5), crs);
+        final GridGeometry grid2 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 1.5, 0.5), crs);
+        final GridGeometry grid3 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2.5, 0.5), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_DOUBLE);
@@ -455,41 +460,41 @@ public class AggregatedCoverageResourceTest {
         Assert.assertNull(agg.getEnvelope().orElse(null));
 
         agg.add(resource1);
-        Assert.assertEquals(1, listener.count(ContentEvent.class));
-        Assert.assertEquals(1, listener.count(ModelEvent.class));
-        Assert.assertEquals(1, listener.count(AggregationEvent.class));
+        assertEquals(1, listener.count(ContentEvent.class));
+        assertEquals(1, listener.count(ModelEvent.class));
+        assertEquals(1, listener.count(AggregationEvent.class));
         Envelope envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 3);
         expected.setRange(1, 0, 1);
-        Assert.assertEquals(expected, new GeneralEnvelope(envelope));
+        assertEquals(expected, new GeneralEnvelope(envelope));
 
         agg.add(resource2);
-        Assert.assertEquals(2, listener.count(ContentEvent.class));
-        Assert.assertEquals(2, listener.count(ModelEvent.class));
-        Assert.assertEquals(2, listener.count(AggregationEvent.class));
+        assertEquals(2, listener.count(ContentEvent.class));
+        assertEquals(2, listener.count(ModelEvent.class));
+        assertEquals(2, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 4);
         expected.setRange(1, 0, 1);
-        Assert.assertEquals(expected, new GeneralEnvelope(envelope));
+        assertEquals(expected, new GeneralEnvelope(envelope));
 
         agg.add(resource3);
-        Assert.assertEquals(3, listener.count(ContentEvent.class));
-        Assert.assertEquals(3, listener.count(ModelEvent.class));
-        Assert.assertEquals(3, listener.count(AggregationEvent.class));
+        assertEquals(3, listener.count(ContentEvent.class));
+        assertEquals(3, listener.count(ModelEvent.class));
+        assertEquals(3, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 0, 5);
         expected.setRange(1, 0, 1);
-        Assert.assertEquals(expected, new GeneralEnvelope(envelope));
+        assertEquals(expected, new GeneralEnvelope(envelope));
 
         agg.remove(resource1);
         agg.remove(resource2);
-        Assert.assertEquals(5, listener.count(ContentEvent.class));
-        Assert.assertEquals(5, listener.count(ModelEvent.class));
-        Assert.assertEquals(5, listener.count(AggregationEvent.class));
+        assertEquals(5, listener.count(ContentEvent.class));
+        assertEquals(5, listener.count(ModelEvent.class));
+        assertEquals(5, listener.count(AggregationEvent.class));
         envelope = agg.getEnvelope().orElse(null);
         expected.setRange(0, 2, 5);
         expected.setRange(1, 0, 1);
-        Assert.assertEquals(expected, new GeneralEnvelope(envelope));
+        assertEquals(expected, new GeneralEnvelope(envelope));
     }
 
     /**
@@ -503,7 +508,10 @@ public class AggregatedCoverageResourceTest {
 
         final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
-        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final SampleDimension sd = new SampleDimension.Builder()
+                .setName("data")
+                .setBackground("no-data", Short.MIN_VALUE)
+                .build();
         final List<SampleDimension> bands = Arrays.asList(sd);
 
         /*
@@ -519,9 +527,9 @@ public class AggregatedCoverageResourceTest {
 
         */
 
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
-        final GridGeometry grid2 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2, 0), crs);
-        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid2 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2, 0), crs);
+        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_SHORT);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_SHORT);
@@ -537,9 +545,9 @@ public class AggregatedCoverageResourceTest {
 
         /*
         We expect a final coverage with values :
-        +---+---+---+
-        | 1 |NaN| 2 |
-        +---+---+---+
+        +---+------+---+
+        | 1 |-32768| 2 |
+        +---+------+---+
         */
         final GridCoverageResource aggregate =  AggregatedCoverageResource.create(
                 null, AggregatedCoverageResource.Mode.ORDER,
@@ -553,9 +561,9 @@ public class AggregatedCoverageResourceTest {
         final GridCoverage coverage = aggregate.read(grid).forConvertedValues(true);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
-        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSampleDouble(0), 0.0);
-        reader.moveTo(1, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
-        reader.moveTo(2, 0); Assert.assertEquals(2, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(0, 0); assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); assertEquals(Short.MIN_VALUE, reader.getSample(0));
+        reader.moveTo(2, 0); assertEquals(2, reader.getSample(0));
 
     }
 
@@ -587,7 +595,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+
         */
 
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
@@ -629,23 +637,23 @@ public class AggregatedCoverageResourceTest {
         aggregate.setInterpolation(Interpolation.NEAREST);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
-        Assert.assertEquals(grid1, gridGeometry);
+        assertEquals(grid1, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
         reader.moveTo(0, 0);
-        Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
-        Assert.assertEquals(4, reader.getSampleDouble(1), 0.0);
-        Assert.assertEquals(7, reader.getSampleDouble(2), 0.0);
+        assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        assertEquals(4, reader.getSampleDouble(1), 0.0);
+        assertEquals(7, reader.getSampleDouble(2), 0.0);
         reader.moveTo(1, 0);
-        Assert.assertEquals(2, reader.getSampleDouble(0), 0.0);
-        Assert.assertEquals(Double.NaN, reader.getSampleDouble(1), 0.0);
-        Assert.assertEquals(8, reader.getSampleDouble(2), 0.0);
+        assertEquals(2, reader.getSampleDouble(0), 0.0);
+        assertEquals(Double.NaN, reader.getSampleDouble(1), 0.0);
+        assertEquals(8, reader.getSampleDouble(2), 0.0);
         reader.moveTo(2, 0);
-        Assert.assertEquals(3, reader.getSampleDouble(0), 0.0);
-        Assert.assertEquals(6, reader.getSampleDouble(1), 0.0);
-        Assert.assertEquals(Double.NaN, reader.getSampleDouble(2), 0.0);
+        assertEquals(3, reader.getSampleDouble(0), 0.0);
+        assertEquals(6, reader.getSampleDouble(1), 0.0);
+        assertEquals(Double.NaN, reader.getSampleDouble(2), 0.0);
     }
 
     /**
@@ -676,7 +684,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+
         */
 
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
@@ -749,14 +757,14 @@ public class AggregatedCoverageResourceTest {
         Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
-        Assert.assertEquals(grid1, gridGeometry);
+        assertEquals(grid1, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
-        reader.moveTo(0, 0); Assert.assertEquals(12.0, reader.getSampleDouble(0), 0.0);
-        reader.moveTo(1, 0); Assert.assertEquals(-3.0, reader.getSampleDouble(0), 0.0);
-        reader.moveTo(2, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(0, 0); assertEquals(12.0, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(1, 0); assertEquals(-3.0, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(2, 0); assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
     }
 
     /**
@@ -782,7 +790,7 @@ public class AggregatedCoverageResourceTest {
         +---+---+---+
         */
 
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
         final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
@@ -815,14 +823,14 @@ public class AggregatedCoverageResourceTest {
         aggregate.setInterpolation(Interpolation.NEAREST);
 
         final GridGeometry gridGeometry = aggregate.getGridGeometry();
-        Assert.assertEquals(grid1, gridGeometry);
+        assertEquals(grid1, gridGeometry);
 
         final GridCoverage coverage = aggregate.read(grid1);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
-        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0)); Assert.assertEquals(4, reader.getSample(1));
-        reader.moveTo(1, 0); Assert.assertEquals(2, reader.getSample(0)); Assert.assertEquals(5, reader.getSample(1));
-        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0)); Assert.assertEquals(6, reader.getSample(1));
+        reader.moveTo(0, 0); assertEquals(1, reader.getSample(0)); assertEquals(4, reader.getSample(1));
+        reader.moveTo(1, 0); assertEquals(2, reader.getSample(0)); assertEquals(5, reader.getSample(1));
+        reader.moveTo(2, 0); assertEquals(3, reader.getSample(0)); assertEquals(6, reader.getSample(1));
     }
 
 
@@ -852,9 +860,9 @@ public class AggregatedCoverageResourceTest {
                 +---+
         */
 
-        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
-        final GridGeometry grid3 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2, 0), crs);
+        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid3 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 2, 0), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_INT);
         final GridCoverage coverage3 = new BufferedGridCoverage(grid3, bands, DataBuffer.TYPE_INT);
@@ -877,6 +885,7 @@ public class AggregatedCoverageResourceTest {
         final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
         aggregate.setInterpolation(Interpolation.NEAREST);
         aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.setDataType(DataBuffer.TYPE_DOUBLE);
         aggregate.add(resource1);
         aggregate.add(resource3);
         final double[] resolution = aggregate.getGridGeometry().getResolution(true);
@@ -887,9 +896,9 @@ public class AggregatedCoverageResourceTest {
         final GridCoverage coverage = aggregate.read(grid);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
-        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
-        reader.moveTo(1, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
-        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+        reader.moveTo(0, 0); assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(2, 0); assertEquals(3, reader.getSample(0));
 
     }
 
@@ -928,9 +937,9 @@ public class AggregatedCoverageResourceTest {
             +---+---+
         */
 
-        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
-        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
-        final GridGeometry grid3 = new GridGeometry(new GridExtent(2, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 1, 0), crs);
+        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(1, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid3 = new GridGeometry(new GridExtent(2, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 1, 0), crs);
 
         final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands1, DataBuffer.TYPE_INT);
         final GridCoverage coverage3 = new BufferedGridCoverage(grid3, bands3, DataBuffer.TYPE_INT);
@@ -965,10 +974,93 @@ public class AggregatedCoverageResourceTest {
         final GridCoverage coverage = aggregate.read(grid);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);
-        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
-        reader.moveTo(1, 0); Assert.assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
-        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+        reader.moveTo(0, 0); assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); assertEquals(Double.NaN, reader.getSampleDouble(0), 0.0);
+        reader.moveTo(2, 0); assertEquals(3, reader.getSample(0));
 
     }
 
+    @Test
+    public void defaultDataTypeIsAuto() {
+        final AggregatedCoverageResource r = new AggregatedCoverageResource();
+        Assert.assertTrue("Default data type should be auto: infer type from aggregated sources", r.getDataType() < 0);
+    }
+
+    /**
+     * Ensure that aggregation properly detect source data types and re-use them for output production.
+     */
+    @Test
+    public void typeInference() throws Exception {
+        final CoordinateReferenceSystem crs = CommonCRS.defaultGeographic();
+        final AffineTransform2D gridToCRS = new AffineTransform2D(1, 0, 0, 1, 0, 0);
+        final IntFunction<GridGeometry> translateGrid = i -> new GridGeometry(new GridExtent(1, 1).translate(i, 0), CELL_CENTER, gridToCRS, crs);
+        final GridGeometry gridLeft = translateGrid.apply(0);
+        final GridGeometry gridCenterLeft = translateGrid.apply(1);
+        final GridGeometry gridCenterRight = translateGrid.apply(2);
+        final GridGeometry gridRight = translateGrid.apply(3);
+        final GridGeometry overallGrid = new GridGeometry(new GridExtent(4, 1), CELL_CENTER, gridToCRS, crs);
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final GridCoverage bandShort = new BufferedGridCoverage(gridLeft, Collections.singletonList(sd), DataBuffer.TYPE_SHORT);
+        final GridCoverage bandInt = new BufferedGridCoverage(gridCenterLeft, Collections.singletonList(sd), DataBuffer.TYPE_INT);
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(Interpolation.NEAREST);
+        aggregate.add(new InMemoryGridCoverageResource(bandInt));
+        aggregate.add(new InMemoryGridCoverageResource(bandShort));
+
+        RenderedImage rendering = aggregate.read(overallGrid).render(null);
+        assertEquals("Infered sample type is wrong", DataBuffer.TYPE_INT, rendering.getSampleModel().getDataType());
+
+        final GridCoverage bandFloat = new BufferedGridCoverage(gridCenterRight, Collections.singletonList(sd), DataBuffer.TYPE_FLOAT);
+        aggregate.add(new InMemoryGridCoverageResource(bandFloat));
+
+        rendering = aggregate.read(overallGrid).render(null);
+        assertEquals("Infered sample type is wrong", DataBuffer.TYPE_FLOAT, rendering.getSampleModel().getDataType());
+
+        // Test non-homogeneous aggregation
+        final SampleDimension userDefinedSd = new SampleDimension.Builder()
+                .setName("data")
+                .setBackground("NaN", Double.NaN)
+                .addQuantitative("percentage", 0, 1, 100d, 0d, Units.PERCENT)
+                .build();
+        aggregate.add(new InMemoryGridCoverageResource(new BufferedGridCoverage(gridRight, Collections.singletonList(userDefinedSd), DataBuffer.TYPE_DOUBLE)));
+
+        rendering = aggregate.read(overallGrid).render(null);
+        assertEquals("Infered sample type is wrong", DataBuffer.TYPE_DOUBLE, rendering.getSampleModel().getDataType());
+    }
+
+    /**
+     * Ensure that data-type specified by user is used instead of datasource types.
+     */
+    @Test
+    public void forceOutputDataType() throws Exception {
+        final GridGeometry grid = new GridGeometry(new GridExtent(3, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), CommonCRS.defaultGeographic());
+        final GridGeometry biggerGrid = new GridGeometry(new GridExtent(4, 1), CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), CommonCRS.defaultGeographic());
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final GridCoverage bandShort = new BufferedGridCoverage(grid, Collections.singletonList(sd), DataBuffer.TYPE_SHORT);
+        final GridCoverage bandInt = new BufferedGridCoverage(grid, Collections.singletonList(sd), DataBuffer.TYPE_INT);
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(Interpolation.NEAREST);
+        aggregate.add(new InMemoryGridCoverageResource(bandInt));
+        aggregate.add(new InMemoryGridCoverageResource(bandShort));
+
+        aggregate.setDataType(DataBuffer.TYPE_DOUBLE);
+
+        RenderedImage rendering = aggregate.read(biggerGrid).render(null);
+        assertEquals("Infered sample type is wrong", DataBuffer.TYPE_DOUBLE, rendering.getSampleModel().getDataType());
+
+        // Test non-homogeneous aggregation
+        final SampleDimension userDefinedSd = new SampleDimension.Builder()
+                .setName("data")
+                .setBackground("NaN", Double.NaN)
+                .addQuantitative("percentage", 0, 1, 100d, 0d, Units.PERCENT)
+                .build();
+        aggregate.add(new InMemoryGridCoverageResource(new BufferedGridCoverage(grid, Collections.singletonList(userDefinedSd), DataBuffer.TYPE_DOUBLE)));
+
+        aggregate.setDataType(DataBuffer.TYPE_INT);
+
+        rendering = aggregate.read(biggerGrid).render(null);
+        assertEquals("Infered sample type is wrong", DataBuffer.TYPE_INT, rendering.getSampleModel().getDataType());
+    }
 }

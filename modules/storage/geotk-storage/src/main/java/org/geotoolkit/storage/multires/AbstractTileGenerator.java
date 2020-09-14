@@ -22,13 +22,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.function.LongFunction;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
@@ -45,6 +52,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractTileGenerator implements TileGenerator {
+
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.multires");
 
     protected static final Process DUMMY = new Process() {
         @Override
@@ -131,7 +140,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                                     try {
                                         data = generateTile(pyramid, mosaic, coord);
                                     } catch (Exception ex) {
-                                        ex.printStackTrace();
+                                        data = TileInError.create(coord, null, ex);
                                     }
                                 } finally {
                                     long v = al.incrementAndGet();
@@ -144,13 +153,7 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                         })
                         .filter(this::emptyFilter);
 
-                Streams.batchExecute(stream, (Collection<Tile> t) -> {
-                    try {
-                        mosaic.writeTiles(t.stream(), null);
-                    } catch (DataStoreException ex) {
-                        ex.printStackTrace();
-                    }
-                }, 200);
+                batchWrite(stream, mosaic, listener == null ? null : err -> listener.progressing(new ProcessEvent(DUMMY, "Error while writing tile batch", (float) (( ((double)al.get())/((double)total) )*100.0))), 200);
 
                 long v = al.get();
                 if (listener != null) {
@@ -158,13 +161,30 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                 }
             }
         }
-
     }
 
+    protected void batchWrite(Stream<Tile> source, TileMatrix destination, Consumer<Exception> errorHandler, int batchSize) {
+        Streams.batchExecute(source, (Collection<Tile> t) -> {
+            try {
+                destination.writeTiles(t.stream(), null);
+            } catch (DataStoreException ex) {
+                LOGGER.log(Level.WARNING, "Failed to write tile batch", ex);
+                if (errorHandler != null) errorHandler.accept(ex);
+            }
+        }, batchSize);
+    }
+
+    // TODO: we should be able to simplify this if we transmit correctly empty tiles and tiles in error.
     protected final boolean emptyFilter(Tile data) {
         if (data == null) return false;
+        if (data instanceof TileInError) {
+            final TileInError error = (TileInError) data;
+            final boolean errorDueToNoDataAvailable = (error.getCause() instanceof NoSuchDataException || error.getCause() instanceof IllegalGridGeometryException);
+            LOGGER.log(errorDueToNoDataAvailable ? Level.FINER : Level.WARNING, error.getCause(), () -> String.format("Error on tile loading:%nTile coordinate: %s", error.getPosition()));
+            if (!errorDueToNoDataAvailable) return false;
+        }
         try {
-            return !(skipEmptyTiles && isEmpty(data));
+            return !(skipEmptyTiles && (data instanceof EmptyTile || isEmpty(data)));
         } catch (DataStoreException ex) {
             throw new BackingStoreException(ex.getMessage(), ex);
         }
