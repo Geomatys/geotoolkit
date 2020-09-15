@@ -655,9 +655,6 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
         final ColorSpace imgCmCS = imgCm.getColorSpace();
         if (isScaledColorSpace(imgCmCS)) {
 
-            if (cm != null && (!isScaledColorSpace(cm.getColorSpace())))
-                throw new IllegalArgumentException(String.format("Mismatch color space."));
-
             if (minColorSampleValue == null) minColorSampleValue = Double.POSITIVE_INFINITY;
             if (maxColorSampleValue == null) maxColorSampleValue = Double.NEGATIVE_INFINITY;
 
