@@ -891,8 +891,6 @@ public class AggregatedCoverageResourceTest {
         final double[] resolution = aggregate.getGridGeometry().getResolution(true);
         Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
 
-        final GridGeometry gridGeometry = aggregate.getGridGeometry();
-
         final GridCoverage coverage = aggregate.read(grid);
         final RenderedImage image = coverage.render(null);
         final PixelIterator reader =  PixelIterator.create( image);

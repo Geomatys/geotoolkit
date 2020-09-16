@@ -854,9 +854,12 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
     private int defineDataType(final IntStream sourceDataTypes) throws NoSuchDataException {
         if (this.dataType < 0) {
-            return sourceDataTypes
+            final int dataType = sourceDataTypes
                     .max()
                     .orElseThrow(() -> new NoSuchDataException("No band to aggregate. Cannot determine appropriate data type."));
+            final boolean canContainNaN = bands.stream().anyMatch(band -> band.userDefinedSampleDimension != null && band.userDefinedSampleDimension.allowsNaN());
+            if (canContainNaN && dataType < DataBuffer.TYPE_FLOAT) return DataBuffer.TYPE_DOUBLE;
+            return dataType;
         }
 
         return this.dataType;
@@ -941,8 +944,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             final SingleBandedFilteredSource filteredSource = readSingleBandedSource(source, readGeometry).orElse(null);
             if (filteredSource == null) continue; // Source not available for remaining area to fill
 
-            final double sourceFillValue = filteredSource.fillValue;
-            final double[] sourceNoData = {sourceFillValue};
+            final double[] sourceNoData = {filteredSource.fillValue};
             final RenderedImage coverageImage = filteredSource.image;
             sourceDataTypes.add(coverageImage.getSampleModel().getDataType());
 
@@ -968,33 +970,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 } catch (FactoryException ex) {
                     throw new DataStoreException(ex.getMessage(), ex);
                 }
-/*
-                final TriFunction<Point, double[], double[], double[]> baseMerger = (pt, sourcePx, targetPx) -> {
-                    final double spx = sourcePx[0];
-                    if (Double.isNaN(spx) || sourceFillValue == spx) return null;
-                    if (noDataValue == targetPx[0]) {
-                        //fill the mask
-                        mask.set2D(pt.x, pt.y);
-                        return sourcePx;
-                    }
-                    return null;
-                };
 
-                TriFunction<Point, double[], double[], double[]> merger;
-                if (source.sampleTransform != null) {
-                    merger = (pt, sourcePx, targetPx) -> {
-                        try {
-                            sourcePx[0] = source.sampleTransform.transform(sourcePx[0]);
-                        } catch (TransformException ex) {
-                            throw new BackingStoreException(ex);
-                        }
-
-                        return baseMerger.apply(pt, sourcePx, targetPx);
-                    };
-                } else {
-                    merger = baseMerger;
-                }
-*/
                 final TriFunction<Point, double[], double[], double[]> merger = new TriFunction<Point, double[], double[], double[]>() {
                     @Override
                     public double[] apply(Point position, double[] sourcePixel, double[] targetPixel) {
@@ -1336,7 +1312,6 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private static class SingleBandedFilteredSource {
         final RenderedImage image;
         final GridGeometry geometry;
-        // TODO: remove if unnecessary
         final double fillValue;
 
         SingleBandedFilteredSource(RenderedImage image, GridGeometry geometry, double fillValue) {
