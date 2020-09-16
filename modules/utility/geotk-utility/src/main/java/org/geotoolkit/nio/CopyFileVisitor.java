@@ -49,6 +49,7 @@ public class CopyFileVisitor extends SimpleFileVisitor<Path> {
                                              final BasicFileAttributes attrs) throws IOException {
         if (sourcePath == null) {
             sourcePath = dir;
+            Files.createDirectories(targetPath);
         } else {
             final Path relativize = sourcePath.relativize(dir);
             Files.createDirectories(targetPath.resolve(relativize.toString()));
