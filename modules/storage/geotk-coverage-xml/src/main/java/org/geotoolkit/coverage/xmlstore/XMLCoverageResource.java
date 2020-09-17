@@ -66,7 +66,6 @@ import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 
@@ -97,8 +96,6 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
             throw new RuntimeException("Failed to initialize JAXB XML Coverage reference marshaller pool.");
         }
     }
-
-    private static final GenericName DEFAULT_NAME = NamesExt.create("default");
 
     @XmlElement(name="Version")
     private String version = CURRENT_VERSION;

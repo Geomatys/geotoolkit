@@ -733,7 +733,7 @@ public class GridCoverage2D extends GridCoverage {
      *
      * @since 2.5
      */
-    public GridCoverage2D view(final ViewType type) {
+    final GridCoverage2D view(final ViewType type) {
         if (type == ViewType.SAME) {
             return this;
         }
