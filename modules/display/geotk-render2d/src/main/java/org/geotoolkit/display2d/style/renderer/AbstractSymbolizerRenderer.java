@@ -113,13 +113,18 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
             */
             final FeatureSet fs = (FeatureSet) resource;
 
-            //extract the used names
-            final org.geotoolkit.style.visitor.ListingPropertyVisitor visitor = new org.geotoolkit.style.visitor.ListingPropertyVisitor();
-            Set<String> names = new HashSet<>();
-            symbol.getSource().accept(visitor, names);
-            if (names.contains("*")) {
-                //we need all properties
-                names = null;
+            Set<String> names;
+            if (GO2Utilities.mustPreserveAllProperties(getRenderingContext())) {
+                names= null;
+            } else {
+                //extract the used names
+                final org.geotoolkit.style.visitor.ListingPropertyVisitor visitor = new org.geotoolkit.style.visitor.ListingPropertyVisitor();
+                names = new HashSet<>();
+                symbol.getSource().accept(visitor, names);
+                if (names.contains("*")) {
+                    //we need all properties
+                    names = null;
+                }
             }
 
             //calculate max symbol size, to expand search envelope.

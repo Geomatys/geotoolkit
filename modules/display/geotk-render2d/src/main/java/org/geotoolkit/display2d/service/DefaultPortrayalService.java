@@ -869,6 +869,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             return Stream.empty();
         }
 
+        final boolean keepAllProperties = GO2Utilities.mustPreserveAllProperties(renderContext);
         for (MutableFeatureTypeStyle fts : style.featureTypeStyles()) {
             final List<Rule> rules = GO2Utilities.getValidRules(fts, renderContext.getSEScale(), type);
             if (rules.isEmpty()) continue;
@@ -899,10 +900,15 @@ public final class DefaultPortrayalService implements PortrayalService{
             }
 
             //extract the used names
-            Set<String> names = GO2Utilities.propertiesNames(rules);
-            if (names.contains("*")) {
-                //we need all properties
+            Set<String> names;
+            if (keepAllProperties) {
                 names = null;
+            } else {
+                names = GO2Utilities.propertiesNames(rules);
+                if (names.contains("*")) {
+                    //we need all properties
+                    names = null;
+                }
             }
 
             //performance routine, only one symbol to render

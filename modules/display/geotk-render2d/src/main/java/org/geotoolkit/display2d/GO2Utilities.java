@@ -65,6 +65,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -1576,5 +1577,12 @@ public final class GO2Utilities {
         }
 
         return ranges;
+    }
+
+    public static boolean mustPreserveAllProperties(final RenderingContext ctx) {
+        return ctx.getCanvas().getHint(GO2Hints.KEY_PRESERVE_PROPERTIES)
+                .filter(value -> value instanceof Boolean)
+                .map(value -> (Boolean) value)
+                .orElse(false);
     }
 }
