@@ -61,14 +61,9 @@ import javax.imageio.spi.ImageWriterSpi;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -112,8 +107,6 @@ import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
@@ -266,9 +259,6 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     public static void prepareCanvas(final J2DCanvas canvas, final CanvasDef canvasDef, final SceneDef sceneDef) throws PortrayalException{
 
-        final Envelope contextEnv = canvasDef.getEnvelope();
-        final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
-
         final ContextContainer2D renderer = new ContextContainer2D(canvas);
         canvas.setContainer(renderer);
 
@@ -284,8 +274,8 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         final Hints hints = sceneDef.getHints();
         if (hints != null) {
-            for(Entry<?,?> entry : hints.entrySet()){
-                canvas.setRenderingHint((Key)entry.getKey(), entry.getValue());
+            for (Entry<?,?> entry : hints.entrySet()) {
+                canvas.setRenderingHint((Key) entry.getKey(), entry.getValue());
             }
         }
 
@@ -300,6 +290,8 @@ public final class DefaultPortrayalService implements PortrayalService{
                 throw new PortrayalException("Could not set objective crs",ex);
             }
         } else {
+            final Envelope contextEnv = canvasDef.getEnvelope();
+            final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
             try {
                 canvas.setObjectiveCRS(crs);
             } catch (TransformException | FactoryException ex) {
@@ -312,61 +304,27 @@ public final class DefaultPortrayalService implements PortrayalService{
             // setVisibleArea -> setAxisRange -> setRange.
             if (contextEnv != null) {
                 try {
-                    final int x, y;
-                    final int east = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), AxisDirection.EAST);
-                    if (east < 0) {
-                        x = 0;
-                        y = 1;
-                    } else {
-                        final int north = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), AxisDirection.NORTH);
-                        x = Math.min(east, north);
-                        y = Math.max(east, north);
-                    }
-
-                    final int dimension = contextEnv.getDimension();
-                    final long[] lowGrid = new long[dimension];
-                    final long[] highGrid = new long[lowGrid.length];
-                    final Dimension canvasDim = canvasDef.getDimension();
-                    Arrays.fill(highGrid, 1);
-                    highGrid[x] = canvasDim.width;
-                    highGrid[y] = canvasDim.height;
-                    final GridExtent displayExtent = new GridExtent(null, lowGrid, highGrid, false);
-                    final MatrixSIS gridToCrs = Matrices.createIdentity(dimension + 1);
-                    // init translations for each dimension
-                    for (int i = 0 ; i < dimension ; i++) {
-                        gridToCrs.setElement(i, dimension, contextEnv.getMinimum(i));
-                    }
-                    // Initialize display scales, inverting y to represent image space where origin is upper-left.
-                    gridToCrs.setElement(x, x, contextEnv.getSpan(x)/canvasDim.width);
-                    gridToCrs.setElement(y, y, -contextEnv.getSpan(y)/canvasDim.height);
-                    // As y is inverted, its translation must also be reversed
-                    gridToCrs.setElement(y, dimension, contextEnv.getMaximum(y));
-                    final GridGeometry displayGeom = new GridGeometry(
-                            displayExtent, PixelInCell.CELL_CORNER,
-                            MathTransforms.linear(gridToCrs),
-                            contextEnv.getCoordinateReferenceSystem()
-                    );
-                    canvas.setGridGeometry(displayGeom);
+                    canvas.setGridGeometry(canvasDef.getOrCreateGridGeometry());
                 } catch (Exception e) {
-                // Rollback to previous behavior
-                try {
-                    canvas.setVisibleArea(contextEnv);
-                    if (canvasDef.getAzimuth() != 0) {
-                        canvas.rotate( -Math.toRadians(canvasDef.getAzimuth()) );
+                    // Rollback to previous behavior
+                    try {
+                        canvas.setVisibleArea(contextEnv);
+                        if (canvasDef.getAzimuth() != 0) {
+                            canvas.rotate( -Math.toRadians(canvasDef.getAzimuth()) );
+                        }
+                    } catch (NoninvertibleTransformException | TransformException ex) {
+                        ex.addSuppressed(e);
+                        throw new PortrayalException(ex);
                     }
-                } catch (NoninvertibleTransformException | TransformException ex) {
-                    ex.addSuppressed(e);
-                    throw new PortrayalException(ex);
                 }
-            }
             }
         }
 
         //paints all extensions
         final List<PortrayalExtension> extensions = sceneDef.extensions();
-        if(extensions != null){
-            for(final PortrayalExtension extension : extensions){
-                if(extension != null) extension.completeCanvas(canvas);
+        if (extensions != null) {
+            for (final PortrayalExtension extension : extensions) {
+                if (extension != null) extension.completeCanvas(canvas);
             }
         }
 

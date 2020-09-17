@@ -264,33 +264,39 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final GridExtent extent = new GridExtent(null, low, high, true);
 
         GridGeometry gridGeometry = new GridGeometry(extent, env);
-        gridGeometry = preserverRatio(gridGeometry);
+        if (proportion) {
+            gridGeometry = preserverRatio(gridGeometry);
+        }
         setGridGeometry(gridGeometry);
     }
 
-    private GridGeometry preserverRatio(GridGeometry gridGeometry) {
-        if (proportion) {
-            final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
-            final GridExtent extent = gridGeometry.getExtent();
-            final Envelope envelope = gridGeometry.getEnvelope();
-            final int idx = getHorizontalIndex(crs);
-            final long width = extent.getSize(idx);
-            final long height = extent.getSize(idx+1);
-            final double sx = envelope.getSpan(idx) / width;
-            final double sy = envelope.getSpan(idx+1) / height;
-            if (sx != sy) {
-                final GeneralEnvelope env = new GeneralEnvelope(envelope);
-                if (sx < sy) {
-                    double halfSpan = (sy * width / 2.0);
-                    double median = env.getMedian(idx);
-                    env.setRange(idx, median - halfSpan, median + halfSpan);
-                } else {
-                    double halfSpan = (sx * height / 2.0);
-                    double median = env.getMedian(idx+1);
-                    env.setRange(idx+1, median - halfSpan, median + halfSpan);
-                }
-                gridGeometry = new GridGeometry(extent, env);
+    /**
+     * Rebuild grid geometry and configure horizontal axis scales to the same factor.
+     *
+     * @param gridGeometry original grid geometry
+     * @return ratio preserved grid geometry
+     */
+    public static GridGeometry preserverRatio(GridGeometry gridGeometry) {
+        final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+        final GridExtent extent = gridGeometry.getExtent();
+        final Envelope envelope = gridGeometry.getEnvelope();
+        final int idx = getHorizontalIndex(crs);
+        final long width = extent.getSize(idx);
+        final long height = extent.getSize(idx+1);
+        final double sx = envelope.getSpan(idx) / width;
+        final double sy = envelope.getSpan(idx+1) / height;
+        if (sx != sy) {
+            final GeneralEnvelope env = new GeneralEnvelope(envelope);
+            if (sx < sy) {
+                double halfSpan = (sy * width / 2.0);
+                double median = env.getMedian(idx);
+                env.setRange(idx, median - halfSpan, median + halfSpan);
+            } else {
+                double halfSpan = (sx * height / 2.0);
+                double median = env.getMedian(idx+1);
+                env.setRange(idx+1, median - halfSpan, median + halfSpan);
             }
+            gridGeometry = new GridGeometry(extent, env);
         }
         return gridGeometry;
     }

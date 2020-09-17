@@ -19,12 +19,23 @@ package org.geotoolkit.display2d.service;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.util.Arrays;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -113,6 +124,63 @@ public class CanvasDef {
         this.gridGeometry = gridGeometry;
     }
 
+    /**
+     * Get defined grid geometry of create it from current informations.
+     *
+     * @return GridGeometry
+     * @throws IncompleteGridGeometryException if informations insufficiant to create the grid
+     */
+    public GridGeometry getOrCreateGridGeometry() throws IncompleteGridGeometryException {
+        if (gridGeometry != null) return gridGeometry;
+
+        final Envelope envelope = getEnvelope();
+        if (envelope == null) throw new IncompleteGridGeometryException("Canvas envelope is undefined.");
+        final Dimension canvasDim = getDimension();
+        if (canvasDim == null) throw new IncompleteGridGeometryException("Canvas dimension is undefined.");
+
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        final int dimension = envelope.getDimension();
+
+        final int x, y;
+        final int east = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), AxisDirection.EAST);
+        if (east < 0) {
+            x = 0;
+            y = 1;
+        } else {
+            final int north = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), AxisDirection.NORTH);
+            x = Math.min(east, north);
+            y = Math.max(east, north);
+        }
+
+        final long[] lowGrid = new long[dimension];
+        final long[] highGrid = new long[lowGrid.length];
+        Arrays.fill(highGrid, 1);
+        highGrid[x] = canvasDim.width;
+        highGrid[y] = canvasDim.height;
+        final GridExtent displayExtent = new GridExtent(null, lowGrid, highGrid, false);
+        final MatrixSIS gridToCrs = Matrices.createIdentity(dimension + 1);
+        // init translations for each dimension
+        for (int i = 0; i < dimension; i++) {
+            gridToCrs.setElement(i, dimension, envelope.getMinimum(i));
+        }
+        // Initialize display scales, inverting y to represent image space where origin is upper-left.
+        gridToCrs.setElement(x, x, envelope.getSpan(x) / canvasDim.width);
+        gridToCrs.setElement(y, y, -envelope.getSpan(y) / canvasDim.height);
+        // As y is inverted, its translation must also be reversed
+        gridToCrs.setElement(y, dimension, envelope.getMaximum(y));
+        GridGeometry displayGeom = new GridGeometry(
+                displayExtent, PixelInCell.CELL_CORNER,
+                MathTransforms.linear(gridToCrs),
+                crs
+        );
+
+        if (!stretchImage) {
+            displayGeom = AbstractCanvas2D.preserverRatio(displayGeom);
+        }
+
+        return displayGeom;
+    }
+
     public Graphics2D getGraphics() {
         return graphics;
     }
@@ -139,4 +207,5 @@ public class CanvasDef {
     public String toString() {
         return "CanvasDef[dimension="+ dimension +", background="+ background +", stretchImage="+ stretchImage +", envelope=" + envelope + ", azimuth=" + azimuth +"]";
     }
+
 }
