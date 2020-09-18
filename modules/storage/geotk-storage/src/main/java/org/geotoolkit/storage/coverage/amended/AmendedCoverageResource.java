@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
@@ -311,7 +312,7 @@ public class AmendedCoverageResource implements Resource, GridCoverageResource, 
         final GridCoverageReadParam param = new GridCoverageReadParam();
         if (range != null && range.length > 0) {
             param.setSourceBands(range);
-            param.setDestinationBands(range);
+            param.setDestinationBands(IntStream.range(0, range.length).toArray());
         }
 
         if (domain != null && domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {

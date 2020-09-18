@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
@@ -170,7 +171,7 @@ public final class FileCoverageResource extends AbstractGridResource implements 
             final GridCoverageReadParam param = new GridCoverageReadParam();
             if (range != null && range.length > 0) {
                 param.setSourceBands(range);
-                param.setDestinationBands(range);
+                param.setDestinationBands(IntStream.range(0, range.length).toArray());
             }
 
             if (domain != null && domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {

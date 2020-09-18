@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -158,7 +159,7 @@ final class TiffStore extends DataStore implements ResourceOnFileSystem, Writabl
             final GridCoverageReadParam param = new GridCoverageReadParam();
             if (range != null && range.length > 0) {
                 param.setSourceBands(range);
-                param.setDestinationBands(range);
+                param.setDestinationBands(IntStream.range(0, range.length).toArray());
             }
 
             if (domain != null && domain.isDefined(org.apache.sis.coverage.grid.GridGeometry.ENVELOPE)) {
