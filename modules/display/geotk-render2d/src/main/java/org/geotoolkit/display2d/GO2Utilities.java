@@ -908,9 +908,9 @@ public final class GO2Utilities {
         return (Collection<String>) exp.accept(ListingPropertyVisitor.VISITOR, collection);
     }
 
-    public static boolean isStatic(final Expression exp){
+    public static boolean isStatic(final Expression exp) {
         if(exp == null) return true;
-        return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
+        return Boolean.TRUE.equals(exp.accept(IsStaticExpressionVisitor.VISITOR, null));
     }
 
     /**
