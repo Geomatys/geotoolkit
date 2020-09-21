@@ -63,6 +63,7 @@ import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -175,6 +176,8 @@ public final class GO2Utilities {
      * Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}.
      */
     private static final double[][] BLACK_COLORS;
+
+    private static final Cache<FeatureType, java.util.function.Function<Feature, Geometry>> GEOM_EXTRACTION_CACHE = new Cache<>(10, 10, true);
 
     static{
 
@@ -898,7 +901,9 @@ public final class GO2Utilities {
 
     public static Geometry getGeometry(final Feature feature, final Expression geomExp){
         if (isNullorEmpty(geomExp)) {
-            return (Geometry) FeatureExt.getDefaultGeometryValue(feature).orElse(null);
+            // TODO: should be part of cached symbolizers
+            final java.util.function.Function<Feature, Geometry> extractor = GEOM_EXTRACTION_CACHE.computeIfAbsent(feature.getType(), FeatureExt::prepareGeometryExtractor);
+            return extractor.apply(feature);
         } else {
             return geomExp.evaluate(feature, Geometry.class);
         }

@@ -20,6 +20,7 @@ import com.bric.geom.Clipper;
 import java.awt.Shape;
 import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -48,6 +49,8 @@ import org.opengis.referencing.operation.TransformException;
  * @module
  */
 public class ProjectedGeometry  {
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.primitive");
 
     private final RenderingContext2D context;
     private MathTransform2D dataToObjective;
@@ -98,12 +101,12 @@ public class ProjectedGeometry  {
         this.geomSet = this.dataGeometryJTS != null;
 
         try {
-            if(dataCRS == null){
+            if (dataCRS == null) {
                 //try to extract data crs from geometry
                 dataCRS = JTS.findCoordinateReferenceSystem(geom);
             }
             if (dataCRS == null) {
-                throw new BackingStoreException("Geometry CRS is undefined");
+                throw new IllegalArgumentException("Geometry CRS is undefined");
             }
             if(dataCRS != null && this.dataCRS!=dataCRS){
                 this.dataCRS = dataCRS;
@@ -112,7 +115,7 @@ public class ProjectedGeometry  {
                 dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, context.getDisplayCRS(), null).getMathTransform();
             }
         } catch (Exception ex) {
-            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);
+            LOGGER.log(Level.WARNING, "An error occurred while analysing input geometry referencing", ex);
         }
     }
 
