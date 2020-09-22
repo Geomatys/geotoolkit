@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.data.shapefile.shx;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -132,7 +133,9 @@ public final class ShxReader implements Closeable{
     private static ShapefileHeader readHeader(final ReadableByteChannel channel) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(100);
         while (buffer.remaining() > 0) {
-            channel.read(buffer);
+             if (channel.read(buffer) < 0) {
+                 throw new EOFException("End of file reached while reading SHX header");
+             }
         }
         buffer.flip();
         return ShapefileHeader.read(buffer, true);
