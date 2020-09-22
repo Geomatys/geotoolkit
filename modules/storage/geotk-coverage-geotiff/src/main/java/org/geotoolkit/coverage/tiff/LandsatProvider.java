@@ -47,7 +47,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 public class LandsatProvider extends DataStoreProvider implements ProviderOnFileSystem {
 
     /** factory identification **/
-    public static final String NAME = "Landsat";
+    public static final String NAME = "geotk-landsat";
     public static final String MIME_TYPE = "application/x-landsat";
 
     /**
