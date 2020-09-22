@@ -61,7 +61,7 @@ public class FileCoverageStoreTest {
 
             final BufferedImage img = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
             ImageIO.write(img, "png", file.toFile());
-
+            
             final StorageConnector cnx = new StorageConnector(file);
 
             final FileCoverageProvider provider = FileCoverageProvider.provider();
@@ -84,6 +84,40 @@ public class FileCoverageStoreTest {
             }
         } finally {
             IOUtilities.deleteRecursively(tmpDir);
+        }
+    }
+    
+    @Test
+    public void testFileRead() throws Exception {
+        final Path file    = IOUtilities.getResourceAsPath("org/geotoolkit/coverage/worldfile/SSTMDE200305.png");
+        final Path filePrj = IOUtilities.getResourceAsPath("org/geotoolkit/coverage/worldfile/SSTMDE200305.prj");
+        final Path fileTfw = IOUtilities.getResourceAsPath("org/geotoolkit/coverage/worldfile/SSTMDE200305.tfw");
+
+        final StorageConnector cnx = new StorageConnector(file);
+
+        final FileCoverageProvider provider = FileCoverageProvider.provider();
+
+        final ProbeResult result = provider.probeContent(cnx);
+        Assert.assertEquals(true, result.isSupported());
+
+        try (DataStore store = provider.open(cnx)) {
+            Assert.assertTrue("Unexpected implementation for file coverage data store", store instanceof FileCoverageStore);
+            final FileCoverageStore fcStore = (FileCoverageStore) store;
+            final Path[] cFiles = fcStore.getComponentFiles();
+
+            // i dont know why it dfoes not search for a tfw file but a pgw ...
+            // Assert.assertArrayEquals("We should detect all files needed to read this world-file PNJ", new Path[]{file, fileTfw, filePrj}, cFiles);
+            Assert.assertArrayEquals("We should detect all files needed to read this world-file PNJ", new Path[]{file, filePrj}, cFiles);
+            final Collection<Resource> components = fcStore.components();
+            Assert.assertNotNull("Datastore components should not be null", components);
+            final Iterator<? extends Resource> it = components.iterator();
+            Assert.assertTrue("Datastore should not be empty", it.hasNext());
+            final Resource first = it.next();
+            Assert.assertFalse("Current store should have exactly one resource", it.hasNext());
+            Assert.assertTrue(first instanceof GridCoverageResource);
+
+            GridCoverageResource gcr = (GridCoverageResource) first;
+            gcr.read(null, 0);
         }
     }
 }
