@@ -146,42 +146,49 @@ public final class ShapefileReader implements Closeable{
         this.channel = shpChannel;
         this.randomAccessEnabled = channel instanceof FileChannel;
 
-        header = readHeader(channel, strict);
+        try {
+            header = readHeader(channel, strict);
 
-        if(shxChannel != null){
-            shxReader = new ShxReader(shxChannel, true);
-        }else{
-            currentShape = UNKNOWN;
+            if(shxChannel != null){
+                shxReader = new ShxReader(shxChannel, true);
+            }else{
+                currentShape = UNKNOWN;
+            }
+
+            fileShapeType = header.getShapeType();
+            handler = fileShapeType.getShapeHandler(read3D,resample);
+
+            if (handler == null) {
+                throw new IOException("Unsuported shape type:" + fileShapeType);
+            }
+
+            if (channel instanceof FileChannel && useMemoryMapped) {
+                this.useMemoryMappedBuffer = useMemoryMapped;
+                final FileChannel fc = (FileChannel) channel;
+                buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+                buffer.position(100);
+                this.currentOffset = 0;
+            } else {
+                // force useMemoryMappedBuffer to false
+                this.useMemoryMappedBuffer = false;
+                // start with 8K buffer
+                buffer = ByteBuffer.allocate(8 * 1024);
+                fill(buffer, channel);
+                buffer.flip();
+                this.currentOffset = 100;
+            }
+
+            headerTransfer = ByteBuffer.allocate(8);
+            headerTransfer.order(ByteOrder.BIG_ENDIAN);
+
+            // make sure the record end is set now...
+            record.end = this.toFileOffset(buffer.position());
+        }  catch (IOException | DataStoreException e) {
+            if (channel != null) {
+                channel.close();
+            }
+            throw e;
         }
-
-        fileShapeType = header.getShapeType();
-        handler = fileShapeType.getShapeHandler(read3D,resample);
-
-        if (handler == null) {
-            throw new IOException("Unsuported shape type:" + fileShapeType);
-        }
-
-        if (channel instanceof FileChannel && useMemoryMapped) {
-            this.useMemoryMappedBuffer = useMemoryMapped;
-            final FileChannel fc = (FileChannel) channel;
-            buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-            buffer.position(100);
-            this.currentOffset = 0;
-        } else {
-            // force useMemoryMappedBuffer to false
-            this.useMemoryMappedBuffer = false;
-            // start with 8K buffer
-            buffer = ByteBuffer.allocate(8 * 1024);
-            fill(buffer, channel);
-            buffer.flip();
-            this.currentOffset = 100;
-        }
-
-        headerTransfer = ByteBuffer.allocate(8);
-        headerTransfer.order(ByteOrder.BIG_ENDIAN);
-
-        // make sure the record end is set now...
-        record.end = this.toFileOffset(buffer.position());
     }
 
     /**
