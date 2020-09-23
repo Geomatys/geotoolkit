@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -174,7 +175,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         Graphics2D g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        GridCoverage coverage = new GridCoverage2D(env, null, img);
+        GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, env, null), null, img);
         coverages.add(coverage);
 
         env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -184,7 +185,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        coverage = new GridCoverage2D(env, null, img);
+        coverage = new GridCoverage2D(new GridGeometry(null, env, null), null, img);
         coverages.add(coverage);
 
     }
@@ -405,7 +406,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
-        final GridCoverage coverage = new GridCoverage2D(env, null, img);
+        final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, env, null), null, img);
 
         //display it
         final MapContext context = MapBuilder.createContext();
@@ -451,7 +452,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
-        final GridCoverage coverage = new GridCoverage2D(env, null, img);
+        final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, env, null), null, img);
 
         //display it
         final MapContext context = MapBuilder.createContext();
