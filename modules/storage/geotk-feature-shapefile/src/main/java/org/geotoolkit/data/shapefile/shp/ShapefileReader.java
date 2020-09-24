@@ -184,6 +184,9 @@ public final class ShapefileReader implements Closeable{
             // make sure the record end is set now...
             record.end = this.toFileOffset(buffer.position());
         }  catch (IOException | DataStoreException e) {
+            if (shxReader != null) {
+                shxReader.close();
+            }
             if (channel != null) {
                 channel.close();
             }
