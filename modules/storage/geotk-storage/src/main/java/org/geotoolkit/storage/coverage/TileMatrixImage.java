@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ import org.apache.sis.image.ComputedImage;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.storage.multires.Tile;
@@ -69,6 +71,11 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      */
     private final Raster rasterModel;
 
+    /**
+     * Fill pixel values used when creating empty tiles.
+     */
+    private final double[] fillPixel;
+
     public static TileMatrixImage create(TileMatrix matrix, Rectangle gridRange, final List<SampleDimension> sampleDimensions) throws DataStoreException {
         if (gridRange == null) {
             gridRange = new Rectangle(matrix.getGridSize());
@@ -98,10 +105,18 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             }
         }
 
+        final double[] fillPixel;
+        if (sampleDimensions != null) {
+            fillPixel = SampleDimensionUtils.getFillPixel(sampleDimensions.toArray(new SampleDimension[sampleDimensions.size()]));
+        } else {
+            fillPixel = new double[sample.getSampleModel().getNumBands()];
+            Arrays.fill(fillPixel, Double.NaN);
+        }
+
         final SampleModel sm = sample.getSampleModel();
         final ColorModel cm = sample.getColorModel();
         final Raster rm = sample.getTile(sample.getMinTileX(), sample.getMinTileY());
-        return new TileMatrixImage(matrix, gridRange, sm, cm, rm);
+        return new TileMatrixImage(matrix, gridRange, sm, cm, rm, fillPixel);
     }
 
     /**
@@ -110,13 +125,14 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
      * @param gridRange the tile to include in the rendered image.
      *        rectangle max max values are exclusive.
      */
-    private TileMatrixImage(final TileMatrix matrix, Rectangle gridRange, SampleModel sampleModel, ColorModel colorModel, Raster rasterModel){
+    private TileMatrixImage(final TileMatrix matrix, Rectangle gridRange, SampleModel sampleModel, ColorModel colorModel, Raster rasterModel, double[] fillPixel){
         super(sampleModel);
         this.matrix = matrix;
         this.gridRange = gridRange;
         this.sampleModel = sampleModel;
         this.colorModel = colorModel;
         this.rasterModel = rasterModel;
+        this.fillPixel = fillPixel;
     }
 
     /**
@@ -232,10 +248,11 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
                 }
             }
 
+            boolean isEmpty = false;
             if (!nullable && buffer == null) {
                 //create an empty buffer
                 buffer = getSampleModel().createDataBuffer();
-                //TODO should be filled with no data pixel value
+                isEmpty = true;
             }
 
             if (buffer != null) {
@@ -244,6 +261,9 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
                 final int rX = tileX * this.getTileWidth();
                 final int rY = tileY * this.getTileHeight();
                 raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
+                if (isEmpty) {
+                    BufferedImages.setAll((WritableRaster) raster, fillPixel);
+                }
             }
 
         } catch (DataStoreException | IOException e) {
@@ -260,7 +280,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
             final int rX = tileX * this.getTileWidth();
             final int rY = tileY * this.getTileHeight();
             raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
-            //TODO should be filled with no data pixel value
+            BufferedImages.setAll((WritableRaster) raster, fillPixel);
         }
 
         return raster;
