@@ -22,12 +22,12 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * More Mathematical exhaustive CoverageFinder.
@@ -41,13 +41,13 @@ public class StrictlyCoverageFinder extends CoverageFinder {
      * <p>Note : Can return null if no mosaic within {@link Envelope} parameter area exist.</p>
      */
     @Override
-    public Mosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber)
+    public TileMatrix findMosaic(TileMatrixSet pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber)
             throws FactoryException {
 
         final MathTransform mt = CRS.findOperation(pyramid.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem(), null).getMathTransform();
         if (!mt.isIdentity()) throw new IllegalArgumentException("findMosaic : not same CoordinateReferenceSystem");
-        final List<Mosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
-        final List<Mosaic> goodMosaics;
+        final List<TileMatrix> mosaics = new ArrayList<>(pyramid.getTileMatrices());
+        final List<TileMatrix> goodMosaics;
 
         final GeneralEnvelope findEnvelope = new GeneralEnvelope(env);
         // if crs is compound
@@ -55,7 +55,7 @@ public class StrictlyCoverageFinder extends CoverageFinder {
             double bestRatio = Double.NEGATIVE_INFINITY;
             goodMosaics = new ArrayList<>();
             // find nearest gridMosaic
-            for (Mosaic gridMosaic : mosaics) {
+            for (TileMatrix gridMosaic : mosaics) {
                 final Envelope gridEnvelope = gridMosaic.getEnvelope();
                 // if intersection solution exist
                 if (findEnvelope.intersects(gridEnvelope, true)) {
@@ -81,9 +81,9 @@ public class StrictlyCoverageFinder extends CoverageFinder {
         Collections.sort(goodMosaics, SCALE_COMPARATOR);
         Collections.reverse(goodMosaics);
 
-        Mosaic result = null;
+        TileMatrix result = null;
 
-        for (Mosaic candidate : goodMosaics) {// find best scale
+        for (TileMatrix candidate : goodMosaics) {// find best scale
             final double scale = candidate.getScale();
 
             if(result == null){

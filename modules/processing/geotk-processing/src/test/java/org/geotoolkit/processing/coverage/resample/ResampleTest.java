@@ -20,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.util.Collections;
 import java.util.stream.IntStream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -235,8 +234,7 @@ public class ResampleTest extends AbstractProcessTest {
                 CommonCRS.WGS84.normalizedGeographic()
         );
 
-        final OutputGridBuilder builder = new OutputGridBuilder(source, target);
-        final MathTransform trs = builder.forDefaultRendering();
+        final MathTransform trs = target.createTransformTo(source, PixelInCell.CELL_CENTER);
 
         //transform point should be in the left side of source image
         double[] crd = new double[]{0,0};
@@ -274,15 +272,15 @@ public class ResampleTest extends AbstractProcessTest {
         final BufferedImage sourceImage = BufferedImages.createImage(32, 32, 1, DataBuffer.TYPE_DOUBLE);
         sourceImage.getRaster().setPixels(0, 0, 16, 32, IntStream.range(0, 16*32).map(idx -> -1).toArray());
         sourceImage.getRaster().setPixels(16, 0, 16, 32, IntStream.range(0, 16*32).map(idx -> 1).toArray());
-        final ResampleProcess.NoConversionCoverage sourceCvg = new ResampleProcess.NoConversionCoverage(
-                source,
-                Collections.singleton(
-                        new SampleDimension.Builder()
+
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setDomain(source);
+        gcb.setRanges(new SampleDimension.Builder()
                                 .addQuantitative("values", -1, 1, Units.UNITY)
-                                .build()
-                ),
-                sourceImage, false
-        );
+                                .build());
+        gcb.setValues(sourceImage);
+        GridCoverage sourceCvg = gcb.build();
+
         final ResampleProcess process = new ResampleProcess(sourceCvg, null, target, InterpolationCase.NEIGHBOR, new double[]{Double.NaN});
         final GridCoverage result = process.executeNow();
 

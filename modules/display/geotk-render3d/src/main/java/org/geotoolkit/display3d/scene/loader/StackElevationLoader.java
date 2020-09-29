@@ -18,6 +18,8 @@ package org.geotoolkit.display3d.scene.loader;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.List;
 import org.geotoolkit.display.PortrayalException;
@@ -68,14 +70,14 @@ public class StackElevationLoader implements ElevationLoader{
     }
 
     @Override
-    public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException {
-        BufferedImage image = stack.get(0).getBufferedImageOf(outputEnv, outputDimension);
+    public RenderedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException {
+        RenderedImage image = stack.get(0).getBufferedImageOf(outputEnv, outputDimension);
 
         final boolean[][] mask = new boolean[outputDimension.height][outputDimension.width];
         for(int i=1,n=stack.size();i<n;i++){
             if(hasNaN(image, mask)){
                 //get next elevation image and merge them
-                final BufferedImage nextimg = stack.get(i).getBufferedImageOf(outputEnv, outputDimension);
+                final RenderedImage nextimg = stack.get(i).getBufferedImageOf(outputEnv, outputDimension);
                 merge(image,nextimg,mask);
             }
         }
@@ -93,8 +95,8 @@ public class StackElevationLoader implements ElevationLoader{
         return stack.get(0).getValueOf(position, scale);
     }
 
-    private static boolean hasNaN(BufferedImage buffer, boolean[][] mask){
-        final WritableRaster raster = buffer.getRaster();
+    private static boolean hasNaN(RenderedImage buffer, boolean[][] mask){
+        final Raster raster = buffer.getData();
         final double[] sample = new double[raster.getNumBands()];
         boolean hasnan = false;
 
@@ -109,9 +111,9 @@ public class StackElevationLoader implements ElevationLoader{
         return hasnan;
     }
 
-    private static void merge(BufferedImage base, BufferedImage next, boolean[][] mask){
-        final WritableRaster baseRaster = base.getRaster();
-        final WritableRaster nextRaster = next.getRaster();
+    private static void merge(RenderedImage base, RenderedImage next, boolean[][] mask){
+        final WritableRaster baseRaster = ((BufferedImage) base).getRaster();
+        final WritableRaster nextRaster = ((BufferedImage) next).getRaster();
         final double[] sample = new double[nextRaster.getNumBands()];
 
         for(int y=0;y<mask.length;y++){

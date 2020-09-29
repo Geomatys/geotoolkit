@@ -2,8 +2,6 @@ package org.geotoolkit.processing.vector.clusterhull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
-import java.util.stream.Collectors;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.measure.Units;
@@ -111,7 +109,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         );
     }
     @Test
-    public void testClusterHull15() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
+    public void testClusterHull5() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
         testClusterHullBasic(
                 "cluster_hull_test_5.json",
                 "cluster_hull_test_5_40km_expected.json",
@@ -161,7 +159,7 @@ public class ClusterHullTest extends AbstractProcessTest {
         return gc;
     }
 
-    public FeatureSet buildFeatureSet(String filename) throws URISyntaxException, DataStoreException {
+    private FeatureSet buildFeatureSet(String filename) throws URISyntaxException, DataStoreException {
         final URI uri = ClusterHullTest.class.getResource("/org.geotoolkit.processing.vector.clusterhull/geojson/" + filename).toURI();
         ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
         param.parameter(PATH.getName().getCode()).setValue(uri);

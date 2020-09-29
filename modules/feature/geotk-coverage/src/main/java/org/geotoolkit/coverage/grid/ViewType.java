@@ -17,17 +17,11 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
-import java.awt.image.RenderedImage;
-import javax.media.jai.JAI;
-import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationNearest;
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationBicubic;
-import javax.media.jai.operator.ScaleDescriptor;
-import org.geotoolkit.image.internal.ImageUtilities;
 
 
 /**
@@ -69,7 +63,7 @@ public enum ViewType {
      * not allowed. Conversions to the RGB color space are not allowed neither, for the
      * same reasons than the {@linkplain #RENDERED rendered} view.
      */
-    NATIVE(false, false, false),
+    NATIVE,
 
     /**
      * Coverage data are packed, usually as integers convertible to geophysics values. The conversion
@@ -84,7 +78,7 @@ public enum ViewType {
      *
      * @since 2.5
      */
-    PACKED(false, false, false),
+    PACKED,
 
     /**
      * Coverage data are compatible with common Java2D {@linkplain ColorModel color models}.
@@ -107,7 +101,7 @@ public enum ViewType {
      *
      * @see org.opengis.metadata.content.CoverageContentType#IMAGE
      */
-    RENDERED(false, false, false),
+    RENDERED,
 
     /**
      * Coverage data are the values of some geophysics phenomenon, for example an elevation
@@ -131,7 +125,7 @@ public enum ViewType {
      *
      * @see org.opengis.metadata.content.CoverageContentType#PHYSICAL_MEASUREMENT
      */
-    GEOPHYSICS(true, false, false),
+    GEOPHYSICS,
 
     /**
      * Coverage data have no meaning other than visual color. It is not an elevation map for
@@ -145,7 +139,7 @@ public enum ViewType {
      * Interpolation are not allowed on indexed values. They must be performed on the RGB
      * or similar color space instead.
      */
-    PHOTOGRAPHIC(true, true, true),
+    PHOTOGRAPHIC,
 
     /**
      * Special value for returning the same coverage unchanged.
@@ -153,132 +147,5 @@ public enum ViewType {
      *
      * @since 2.5
      */
-    SAME(false, false, false);
-
-    /**
-     * {@code true} if interpolations other than {@linkplain InterpolationNearest
-     * nearest neighbor} are allowed.
-     *
-     * @see JAI#KEY_INTERPOLATION
-     */
-    private final boolean interpolationAllowed;
-
-    /**
-     * {@code true} if operations can be performed on the colormap rather than the values.
-     *
-     * @see JAI#KEY_TRANSFORM_ON_COLORMAP
-     */
-    private final boolean transformOnColormapAllowed;
-
-    /**
-     * {@code true} if the replacement of {@linkplain IndexColorModel index color model}
-     * is allowed. This allows the replacement of indexed values by RGB values.
-     *
-     * @see JAI#KEY_REPLACE_INDEX_COLOR_MODEL
-     */
-    private final boolean replaceIndexColorModelAllowed;
-
-    /**
-     * Creates a new instance of {@code ViewType}.
-     */
-    private ViewType(final boolean interpolationAllowed,
-                     final boolean transformOnColormapAllowed,
-                     final boolean replaceIndexColorModelAllowed)
-    {
-        this.interpolationAllowed          = interpolationAllowed;
-        this.transformOnColormapAllowed    = transformOnColormapAllowed;
-        this.replaceIndexColorModelAllowed = replaceIndexColorModelAllowed;
-    }
-
-    /**
-     * Returns {@code true} if interpolations other than {@linkplain InterpolationNearest
-     * nearest neighbor} are allowed. Those interpolations require the following conditions:
-     * <p>
-     * <ul>
-     *   <li>Values are either {@linkplain #GEOPHYSICS geophysics} values, or related to
-     *       geophysics values through a linear relationship over all the range of possible
-     *       values (including "no data" values).</li>
-     *   <li>There is no "pad values". Missing values, if any, are represented by some
-     *       {@link Float#NaN NaN} values}.</li>
-     * </ul>
-     * <p>
-     * This method may conservatively returns {@code false} if unsure. If interpolations
-     * are wanted but not allowed, then users should try to convert the coverage to the
-     * {@linkplain #GEOPHYSICS geophysics} space, which supports interpolations. If no
-     * geophysics view is available, then users may convert the image to the RGB space
-     * if {@linkplain #isReplaceIndexColorModelAllowed replacement of index color model
-     * is allowed}. Interpolations in the RGB space produce nice-looking images, but the
-     * pixel values lose all geophysical meaning. If the color space conversion is not
-     * allowed, then then users should stick with {@linkplain InterpolationNearest nearest
-     * neighbor} interpolation.
-     *
-     * @return {@code true} if interpolations are allowed.
-     *
-     * @see JAI#KEY_INTERPOLATION
-     */
-    public boolean isInterpolationAllowed() {
-        return interpolationAllowed;
-    }
-
-    /**
-     * Returns {@code true} if the replacement of {@linkplain IndexColorModel index color model}
-     * is allowed. Such replacements may occurs during some operations requirying interpolations,
-     * like {@linkplain ScaleDescriptor scale}, in order to produce images that look nicer.
-     * However such replacements should be attempted only in last resort (interpolations in the
-     * {@linkplain #GEOPHYSICS geophysics} space should be preferred) and only if the coverage
-     * data don't have any meaning other than visual color, as in {@linkplain #PHOTOGRAPHIC
-     * photographic} images.
-     *
-     * @return {@code true} if replacement of {@code IndexColorModel} is allowed.
-     *
-     * @see JAI#KEY_REPLACE_INDEX_COLOR_MODEL
-     *
-     * @since 2.5
-     */
-    public boolean isReplaceIndexColorModelAllowed() {
-        return replaceIndexColorModelAllowed;
-    }
-
-    /**
-     * Returns {@code true} if operations can be performed on the colormap rather than the values.
-     *
-     * @return {@code true} if operations can be performed on the colormap.
-     *
-     * @see JAI#KEY_TRANSFORM_ON_COLORMAP
-     *
-     * @since 2.5
-     */
-    public boolean isTransformOnColormapAllowed() {
-        return transformOnColormapAllowed;
-    }
-
-    /**
-     * Returns suggested rendering hints for a JAI operation on the given image.
-     * <p>
-     * <ul>
-     *   <li>{@link JAI#KEY_INTERPOLATION} is sets to "<cite>nearest neighbor</cite>" if
-     *       {@link #isInterpolationAllowed} returns {@code false}, and left unchanged otherwise.</li>
-     *   <li>{@link JAI#KEY_REPLACE_INDEX_COLOR_MODEL} is sets to the value returned by
-     *       {@link #isReplaceIndexColorModelAllowed}.</li>
-     *   <li>{@link JAI#KEY_TRANSFORM_ON_COLORMAP} is sets to the value returned by
-     *       {@link #isTransformOnColormapAllowed}.</li>
-     * </ul>
-     *
-     * @param  image The image on which to apply an operation.
-     * @return Proposed rendering hints to pass to JAI operation.
-     *
-     * @since 2.5
-     */
-    public RenderingHints getRenderingHints(final RenderedImage image) {
-        RenderingHints hints = ImageUtilities.getRenderingHints(image);
-        if (hints == null) {
-            hints = new RenderingHints(null);
-        }
-        if (!isInterpolationAllowed()) {
-            hints.put(JAI.KEY_INTERPOLATION, Interpolation.getInstance(Interpolation.INTERP_NEAREST));
-        }
-        hints.put(JAI.KEY_REPLACE_INDEX_COLOR_MODEL, Boolean.valueOf(isReplaceIndexColorModelAllowed()));
-        hints.put(JAI.KEY_TRANSFORM_ON_COLORMAP,     Boolean.valueOf(isTransformOnColormapAllowed()));
-        return hints;
-    }
+    SAME;
 }

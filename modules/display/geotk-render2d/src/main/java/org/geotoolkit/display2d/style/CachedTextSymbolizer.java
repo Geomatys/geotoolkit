@@ -113,8 +113,8 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         return cachedFont.getJ2dFont(candidate, coeff);
     }
 
-    public String getLabel(final Object candidate){
-        return GO2Utilities.evaluate(styleElement.getLabel(),candidate,String.class, null);
+    public String getLabel(final Object candidate) {
+        return label != null ? label : GO2Utilities.evaluate(styleElement.getLabel(),candidate,String.class, null);
     }
 
     public CachedHalo getHalo(){
@@ -134,9 +134,10 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         //we can not know so always visible
         isStaticVisible = VisibilityState.VISIBLE;
 
-        if(GO2Utilities.isStatic(expLabel)){
+        if (GO2Utilities.isStatic(expLabel)) {
             label = GO2Utilities.evaluate(expLabel, null, String.class, "No Label");
-        }else{
+        } else {
+            label = null;
             GO2Utilities.getRequieredAttributsName(expLabel,requieredAttributs);
             isStatic = false;
         }
@@ -147,7 +148,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         cachedPlacement.getRequieredAttributsName(requieredAttributs);
 
         //no attributs needed replace with static empty list.
-        if(requieredAttributs.isEmpty()){
+        if (requieredAttributs.isEmpty()) {
             requieredAttributs = EMPTY_ATTRIBUTS;
         }
 

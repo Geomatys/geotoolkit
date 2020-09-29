@@ -37,21 +37,24 @@ import org.apache.sis.internal.storage.StoreResource;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableGridCoverageResource;
+import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.coverage.PyramidReader;
-import org.geotoolkit.storage.multires.AbstractMosaic;
-import org.geotoolkit.storage.multires.AbstractPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
+import org.geotoolkit.storage.event.ContentEvent;
+import org.geotoolkit.storage.event.ModelEvent;
+import org.geotoolkit.storage.multires.AbstractTileMatrix;
+import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -61,7 +64,7 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
     private final InMemoryStore store;
     private final GenericName identifier;
-    private final List<Pyramid> pyramids = new CopyOnWriteArrayList<>();
+    private final List<TileMatrixSet> tileMatrixSets = new CopyOnWriteArrayList<>();
     private List<SampleDimension> dimensions;
 
     public InMemoryPyramidResource(final GenericName name) {
@@ -88,8 +91,8 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
      * {@inheritDoc }.
      */
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
-        return pyramids;
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+        return tileMatrixSets;
     }
 
     /**
@@ -112,11 +115,14 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
      */
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof Pyramid) {
-            final Pyramid p = (Pyramid) template;
-            final InMemoryPyramid py = new InMemoryPyramid(UUID.randomUUID().toString(), p.getCoordinateReferenceSystem());
-            Pyramids.copyStructure(p, py);
-            pyramids.add(py);
+        if (template instanceof TileMatrixSet) {
+            final TileMatrixSet p = (TileMatrixSet) template;
+            final InMemoryTileMatrixSet py = new InMemoryTileMatrixSet(UUID.randomUUID().toString(), p.getCoordinateReferenceSystem());
+            py.setBuildPhase(true);
+            TileMatrices.copyStructure(p, py);
+            py.setBuildPhase(false);
+            tileMatrixSets.add(py);
+            fire(new ModelEvent(this), StoreEvent.class);
             return py;
         } else {
             throw new DataStoreException("Unsupported model "+template);
@@ -126,11 +132,12 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
     @Override
     public void removeModel(String identifier) throws DataStoreException {
         ArgumentChecks.ensureNonNull("identifier", identifier);
-        final Iterator<Pyramid> it     = pyramids.iterator();
+        final Iterator<TileMatrixSet> it     = tileMatrixSets.iterator();
         while (it.hasNext()) {
-            final Pyramid py = it.next();
-            if (identifier.equalsIgnoreCase(py.getIdentifier())) {
-                pyramids.remove(py);
+            final TileMatrixSet tms = it.next();
+            if (identifier.equalsIgnoreCase(tms.getIdentifier())) {
+                tileMatrixSets.remove(tms);
+                fire(new ModelEvent(this), StoreEvent.class);
                 return;
             }
         }
@@ -139,12 +146,12 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidReader<>(this).getGridGeometry();
+        return new TileMatrixSetCoverageReader<>(this).getGridGeometry();
     }
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidReader<>(this).read(domain, range);
+        return new TileMatrixSetCoverageReader<>(this).read(domain, range);
     }
 
     @Override
@@ -152,46 +159,65 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
         throw new UnsupportedOperationException("Not supported.");
     }
 
-    private final class InMemoryPyramid extends AbstractPyramid {
+    private final class InMemoryTileMatrixSet extends AbstractTileMatrixSet {
 
-        private final List<InMemoryMosaic> mosaics = new CopyOnWriteArrayList<>();
+        private final List<InMemoryTileMatrix> tileMatrices = new CopyOnWriteArrayList<>();
+        private boolean buildPhase = false;
 
-        public InMemoryPyramid(String id, CoordinateReferenceSystem crs) {
+        public InMemoryTileMatrixSet(String id, CoordinateReferenceSystem crs) {
             super(id, crs);
         }
 
         @Override
-        public Collection<? extends Mosaic> getMosaics() {
-            return Collections.unmodifiableList(mosaics);
+        public Collection<? extends TileMatrix> getTileMatrices() {
+            return Collections.unmodifiableList(tileMatrices);
+        }
+
+        private void setBuildPhase(boolean buildPhase) {
+            this.buildPhase = buildPhase;
+            for (InMemoryTileMatrix it : tileMatrices) {
+                it.setBuildPhase(buildPhase);
+            }
         }
 
         @Override
-        public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
             final String mosaicId = UUID.randomUUID().toString();
-            final InMemoryMosaic gm = new InMemoryMosaic(mosaicId,
+            final InMemoryTileMatrix gm = new InMemoryTileMatrix(mosaicId,
                     this, template.getUpperLeftCorner(), template.getGridSize(), template.getTileSize(), template.getScale());
-            mosaics.add(gm);
+            tileMatrices.add(gm);
+            if (!buildPhase) {
+                //we are creating object, dont send an event until we are finished.
+                InMemoryPyramidResource.this.fire(new ModelEvent(InMemoryPyramidResource.this), StoreEvent.class);
+            }
             return gm;
         }
 
         @Override
-        public void deleteMosaic(String mosaicId) throws DataStoreException {
-            for (int id = 0, len = mosaics.size(); id < len; id++) {
-                if (mosaics.get(id).getIdentifier().equalsIgnoreCase(mosaicId)) {
-                    mosaics.remove(id);
+        public void deleteTileMatrix(String mosaicId) throws DataStoreException {
+            for (int id = 0, len = tileMatrices.size(); id < len; id++) {
+                if (tileMatrices.get(id).getIdentifier().equalsIgnoreCase(mosaicId)) {
+                    tileMatrices.remove(id);
+                    if (!buildPhase) {
+                        InMemoryPyramidResource.this.fire(new ModelEvent(InMemoryPyramidResource.this), StoreEvent.class);
+                    }
                     break;
                 }
             }
         }
-
     }
 
-    private final class InMemoryMosaic extends AbstractMosaic {
+    private final class InMemoryTileMatrix extends AbstractTileMatrix {
 
         private final Map<Point,InMemoryTile> mpTileReference = new HashMap<>();
+        private boolean buildPhase = false;
 
-        public InMemoryMosaic(final String id, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
+        public InMemoryTileMatrix(final String id, TileMatrixSet pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
             super(id, pyramid, upperLeft, gridSize, tileSize, scale);
+        }
+
+        private void setBuildPhase(boolean buildPhase) {
+            this.buildPhase = buildPhase;
         }
 
         @Override
@@ -206,6 +232,10 @@ public class InMemoryPyramidResource extends AbstractGridResource implements Mul
 
         public synchronized void setTile(int col, int row, InMemoryTile tile) {
             mpTileReference.put(new Point(Math.toIntExact(col), Math.toIntExact(row)), tile);
+            if (!buildPhase) {
+                //we are creating object, dont send an event until we are finished.
+                InMemoryPyramidResource.this.fire(new ContentEvent(InMemoryPyramidResource.this), StoreEvent.class);
+            }
         }
 
         @Override

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
@@ -75,13 +73,9 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      * if queried area is completely outside this coverage extent.
      */
     public GridCoverage getCoverage(final GridGeometry param, int... bands) throws DataStoreException {
-        return getCoverage(new ReadParam(param, bands));
-    }
-
-    private GridCoverage getCoverage(final ReadParam param) throws DataStoreException {
         Resource resource = layer.getResource();
         if (resource instanceof GridCoverageResource) {
-            GridCoverage result = ((GridCoverageResource)resource).read(param.geometry, param.bands);
+            GridCoverage result = ((GridCoverageResource)resource).read(param, (bands == null || bands.length < 1)? null : bands);
             if (result instanceof GridCoverageStack) {
                 Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
             }
@@ -140,29 +134,4 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
         throw new UnsupportedOperationException("Not supported.");
     }
 
-    private static class ReadParam {
-        final GridGeometry geometry;
-        final int[] bands;
-
-        ReadParam(GridGeometry geometry, int... bands) {
-            this.geometry = geometry;
-            this.bands = (bands == null || bands.length < 1)? null : bands;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ReadParam)) return false;
-            ReadParam readParam = (ReadParam) o;
-            return Objects.equals(geometry, readParam.geometry) &&
-                    Arrays.equals(bands, readParam.bands);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Objects.hash(geometry);
-            result = 31 * result + Arrays.hashCode(bands);
-            return result;
-        }
-    }
 }

@@ -30,16 +30,14 @@ import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.Interpolation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.memory.InMemoryStore;
-import org.geotoolkit.storage.multires.DefiningMosaic;
-import org.geotoolkit.storage.multires.DefiningPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.DefiningTileMatrix;
+import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -48,6 +46,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Test pyramid coverage writer.
@@ -84,23 +84,24 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
-        final Mosaic mosaic = pyramid.createMosaic(new DefiningMosaic(null, UL84, 1, new Dimension(360, 180), new Dimension(1, 1)));
-        mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(360, 180, Color.BLACK), 0, 0)), null);
+        final TileMatrixSet tileMatrixSet = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrix tileMatrix = tileMatrixSet.createTileMatrix(new DefiningTileMatrix(null, UL84, 1, new Dimension(360, 180), new Dimension(1, 1)));
+        tileMatrix.writeTiles(Stream.of(new DefaultImageTile(createImage(360, 180, Color.BLACK), 0, 0)), null);
 
         //sanity check
         RenderedImage candidate = ref.read(null).render(null);
         testImage(candidate, 360, 180, Color.BLACK);
 
         //write over the tile
-        final PyramidWriter writer = new PyramidWriter(ref);
+        final TileMatrixSetCoverageWriter writer = new TileMatrixSetCoverageWriter(ref);
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, -1, -180, 90), CRS84));
         gcb.setValues(createImage(360, 180, Color.RED));
-        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
+        writer.write(gcb.build(), env, Interpolation.NEAREST);
 
         //image should be red
         candidate = ref.read(null).render(null);
@@ -120,9 +121,8 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
-        final Mosaic mosaic = pyramid.createMosaic(
-                new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
                 mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
@@ -134,14 +134,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final PyramidWriter writer = new PyramidWriter(ref);
+        final TileMatrixSetCoverageWriter writer = new TileMatrixSetCoverageWriter(ref);
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(10, 0, 0, -10, -180, 90), CRS84));
         gcb.setValues(createImage(36, 18, Color.RED));
-        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
+        writer.write(gcb.build(), env, Interpolation.NEAREST);
 
         //image should be red
         candidate = ref.read(null).render(null);
@@ -161,9 +161,8 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
-        final Mosaic mosaic = pyramid.createMosaic(
-                new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrix mosaic = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
                 mosaic.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
@@ -175,14 +174,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final PyramidWriter writer = new PyramidWriter(ref);
+        final TileMatrixSetCoverageWriter writer = new TileMatrixSetCoverageWriter(ref);
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(10, 0, 0, -10, -120, 60), CRS84));
         gcb.setValues(createImage(19, 9, Color.RED));
-        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
+        writer.write(gcb.build(), env, Interpolation.NEAREST);
 
         //image should be black/red
         candidate = ref.read(null).render(null);
@@ -217,16 +216,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
-        final Mosaic mosaic1 = pyramid.createMosaic(
-                new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
                 mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
-        final Mosaic mosaic2 = pyramid.createMosaic(
-                new DefiningMosaic(null, UL84, 20, new Dimension(9, 9), new Dimension(2, 1)));
+        final TileMatrix mosaic2 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 20, new Dimension(9, 9), new Dimension(2, 1)));
         for(int y=0;y<1;y++){
             for(int x=0;x<2;x++){
                 mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
@@ -238,14 +235,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final PyramidWriter writer = new PyramidWriter(ref);
+        final TileMatrixSetCoverageWriter writer = new TileMatrixSetCoverageWriter(ref);
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(10, 0, 0, -10, -120, 60), CRS84));
         gcb.setValues(createImage(19, 9, Color.RED));
-        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
+        writer.write(gcb.build(), env, Interpolation.NEAREST);
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);
@@ -273,7 +270,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(x>=3 && y>=2 && y<6){
+                if(x>=3 && y>=1 && y<6){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -285,7 +282,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(x>=0 & x<3 && y>=2 && y<6){
+                if(x>=0 & x<=3 && y>=1 && y<6){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -310,16 +307,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(EPSG4326));
-        final Mosaic mosaic1 = pyramid.createMosaic(
-                new DefiningMosaic(null, UL4326, 10, new Dimension(9, 9), new Dimension(2, 4)));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(EPSG4326));
+        final TileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL4326, 10, new Dimension(9, 9), new Dimension(2, 4)));
         for(int y=0;y<4;y++){
             for(int x=0;x<2;x++){
                 mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
-        final Mosaic mosaic2 = pyramid.createMosaic(
-                new DefiningMosaic(null, UL4326, 20, new Dimension(9, 9), new Dimension(1, 2)));
+        final TileMatrix mosaic2 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL4326, 20, new Dimension(9, 9), new Dimension(1, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<1;x++){
                 mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
@@ -331,14 +326,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         testImage(candidate, 18, 36, Color.BLACK);
 
         //write over the tile
-        final PyramidWriter writer = new PyramidWriter(ref);
+        final TileMatrixSetCoverageWriter writer = new TileMatrixSetCoverageWriter(ref);
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
         env.setRange(1, -30, +60);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(10, 0, 0, -10, -120, 60), CRS84));
         gcb.setValues(createImage(19, 9, Color.RED));
-        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
+        writer.write(gcb.build(), env, Interpolation.NEAREST);
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);
@@ -366,7 +361,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(y>=6 && x>=3 && x<7){
+                if(y>=5 && x>=3 && x<=7){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -378,7 +373,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(y>=0 & y<6 && x>=3 && x<7){
+                if(y>=0 & y<6 && x>=3 && x<=7){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -403,16 +398,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
                 new SampleDimension.Builder().setName(2).build(),
                 new SampleDimension.Builder().setName(3).build()
         ));
-        final Pyramid pyramid = (Pyramid) ref.createModel(new DefiningPyramid(CRS84));
-        final Mosaic mosaic1 = pyramid.createMosaic(
-                new DefiningMosaic(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
+        final TileMatrixSet pyramid = (TileMatrixSet) ref.createModel(new DefiningTileMatrixSet(CRS84));
+        final TileMatrix mosaic1 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 10, new Dimension(9, 9), new Dimension(4, 2)));
         for(int y=0;y<2;y++){
             for(int x=0;x<4;x++){
                 mosaic1.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
             }
         }
-        final Mosaic mosaic2 = pyramid.createMosaic(
-                new DefiningMosaic(null, UL84, 20, new Dimension(9, 9), new Dimension(2, 1)));
+        final TileMatrix mosaic2 = pyramid.createTileMatrix(new DefiningTileMatrix(null, UL84, 20, new Dimension(9, 9), new Dimension(2, 1)));
         for(int y=0;y<1;y++){
             for(int x=0;x<2;x++){
                 mosaic2.writeTiles(Stream.of(new DefaultImageTile(createImage(9, 9, Color.BLACK), x, y)), null);
@@ -424,14 +417,14 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         testImage(candidate, 36, 18, Color.BLACK);
 
         //write over the tile
-        final PyramidWriter writer = new PyramidWriter(ref);
+        final TileMatrixSetCoverageWriter writer = new TileMatrixSetCoverageWriter(ref);
         final GeneralEnvelope env = new GeneralEnvelope(EPSG4326);
         env.setRange(0, -30, +60);
         env.setRange(1, -120, +70);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(-10, 0, 0, 10, 60,-120), EPSG4326));
         gcb.setValues(createImage(9, 19, Color.RED));
-        writer.write(gcb.build(), env, InterpolationCase.NEIGHBOR);
+        writer.write(gcb.build(), env, Interpolation.NEAREST);
 
         //lower image should be black/red---------------------------------------
         candidate = ref.read(null).render(null);
@@ -459,7 +452,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(x>=3 && y>=2 && y<6){
+                if(x>=3 && y>=1 && y<6){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
@@ -471,7 +464,7 @@ public class PyramidWriterTest <T extends InMemoryPyramidResource> extends org.g
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
                 data.getPixel(x, y, buffer);
-                if(x>=0 & x<3 && y>=2 && y<6){
+                if(x>=0 & x<=3 && y>=1 && y<6){
                     assertArrayEquals(""+y+" "+x,red, buffer);
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);

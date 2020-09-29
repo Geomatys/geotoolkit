@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.storage.coverage.mosaic;
 
+import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
@@ -29,24 +31,32 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import javax.measure.Quantity;
 import javax.measure.Unit;
 import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
+import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IncompleteGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.ImageCombiner;
+import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -60,19 +70,21 @@ import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.storage.event.StoreListeners;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.FrequencySortedSet;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.storage.event.AggregationEvent;
 import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.TriFunction;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
@@ -83,6 +95,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -107,14 +120,18 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         SCALE
     }
 
-    /**
-     * Based on sample dimension information, we can define
-     * the most appropriate merge operation.
-     */
-    private static enum MergingMode {
-        COLORED,
-        SAMPLED,
-        CONVERTED
+    private static final Set<String> COLORED_SAMPLE_NAMES = new HashSet<>();
+    static {
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.ColorIndex  ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Black       ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Yellow      ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Magenta     ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Cyan        ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Red         ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Green       ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Blue        ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Gray        ).toString(Locale.ENGLISH));
+        COLORED_SAMPLE_NAMES.add(Vocabulary.formatInternational(Vocabulary.Keys.Transparency).toString(Locale.ENGLISH));
     }
 
     private final StoreListeners listeners = new StoreListeners(null, this);
@@ -122,7 +139,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
     //user defined parameters
     private Mode mode = Mode.SCALE;
-    private InterpolationCase interpolation = InterpolationCase.BILINEAR;
+    private Interpolation interpolation = Interpolation.BILINEAR;
     private CoordinateReferenceSystem outputCrs = null;
 
     //computed informations
@@ -131,8 +148,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private GridGeometry cachedGridGeometry;
     private boolean forceTransformedValues;
     private double[] noData;
-    private MergingMode mergeMode;
-    private int dataType = DataBuffer.TYPE_DOUBLE;
+    private int dataType = -1; // Not known / initialized
+    private boolean photographic = false;
+    /** See {@link #isHomogeneousSources()} */
+    private boolean homogeneous = false;
 
 
     public static GridCoverageResource create(CoordinateReferenceSystem resultCrs, GridCoverageResource ... resources) throws DataStoreException, TransformException {
@@ -160,7 +179,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     @Override
-    public Optional<GenericName> getIdentifier() throws DataStoreException {
+    public Optional<GenericName> getIdentifier() {
         return Optional.ofNullable(identifier);
     }
 
@@ -169,7 +188,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     @Override
-    public Metadata getMetadata() throws DataStoreException {
+    public Metadata getMetadata() {
         return new DefaultMetadata();
     }
 
@@ -234,7 +253,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     @Override
-    public Collection<? extends Resource> components() throws DataStoreException {
+    public Set<GridCoverageResource> components() {
         final Set<GridCoverageResource> components = new HashSet<>();
         for (VirtualBand band : bands) {
             for (Source source : band.sources) {
@@ -327,7 +346,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * Returns preferred interpolation method when aggregating data.
      * @return interpolation, not null
      */
-    public InterpolationCase getInterpolation() {
+    public Interpolation getInterpolation() {
         return interpolation;
     }
 
@@ -336,7 +355,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * @param interpolation not null
      * @return
      */
-    public void setInterpolation(InterpolationCase interpolation) {
+    public void setInterpolation(Interpolation interpolation) {
         ArgumentChecks.ensureNonNull("interpolation", interpolation);
         this.interpolation = interpolation;
     }
@@ -361,14 +380,20 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     /**
-     * Set preferred image raster data type.
+     * Set preferred image raster data type. If set to -1 or below, we'll try to infer data type on the fly when
+     * aggregating images.
      *
-     * @param dataType
+     * @param dataType Data type to force on output renderings.
      */
     public void setDataType(int dataType) {
         this.dataType = dataType;
     }
 
+    /**
+     *
+     * @return Value manually set by user to force data type. If < 0, means that data type is unknown and we'll try to
+     * infer it from aggregated images.
+     */
     public int getDataType() {
         return dataType;
     }
@@ -406,12 +431,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         tree = new Quadtree();
 
-        final Set<GridCoverageResource> components = new HashSet<>();
-        for (VirtualBand band : bands) {
-            for (Source source : band.sources) {
-                components.add(source.resource);
-            }
-        }
+        final Set<GridCoverageResource> components = components();
 
         if (components.isEmpty()) {
             //no data yet
@@ -497,6 +517,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         if (bands.isEmpty()) return;
         if (bands.get(0).cachedSampleDimension != null) return;
 
+        final List<SampleDimension> sampleDimensions = new ArrayList<>();
         for (int i = 0, n = bands.size(); i < n; i++) {
             final VirtualBand band = bands.get(i);
             if (band.userDefinedSampleDimension != null) {
@@ -534,6 +555,16 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 }
                 band.cachedSampleDimension = dim;
             }
+            sampleDimensions.add(band.cachedSampleDimension);
+        }
+
+        photographic = isPhotographic(getSampleDimensions());
+        homogeneous = isHomogeneousSources();
+
+        if (photographic && homogeneous) {
+            forceTransformedValues = false;
+            noData = new double[bands.size()];
+            return;
         }
 
         /*
@@ -586,6 +617,71 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         return Double.NaN;
     }
 
+    /**
+     * @return true if :
+     * <ul>
+     *     <li>All sources are in the same order on all bands.</li>
+     *     <li>All bands are used and in their original order.</li>
+     *     <li>No transforms are applied on each source.</li>
+     *     <li>No user defined sample dimensions.</li>
+     * </ul>
+     *
+     * This is a common case where we just aggregate similar coverages.
+     */
+    private boolean isHomogeneousSources() throws DataStoreException {
+
+        List<GridCoverageResource> orderedResources = null;
+        for (int i = 0, n = bands.size(); i < n; i++) {
+            final VirtualBand band = bands.get(i);
+
+            //check number and order of resources
+            if (orderedResources == null) {
+                orderedResources = new ArrayList();
+                for (int k = 0, kn = band.sources.size(); k < kn; k++) {
+                    final Source source = band.sources.get(k);
+                    orderedResources.add(source.resource);
+                }
+            } else {
+                for (int k = 0, kn = band.sources.size(); k < kn; k++) {
+                    final Source source = band.sources.get(k);
+                    if (source.resource != orderedResources.get(k)) {
+                        return false;
+                    }
+                }
+            }
+
+            // check transform and band index
+            for (int k = 0, kn = band.sources.size(); k < kn; k++) {
+                final Source source = band.sources.get(k);
+                if (source.sampleTransform != null && !source.sampleTransform.isIdentity()) {
+                    return false;
+                }
+                if (source.bandIndex != i) {
+                    return false;
+                }
+                if (source.resource.getSampleDimensions().size() != getSampleDimensions().size()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isPhotographic(List<SampleDimension> sampleDimensions) throws DataStoreException {
+        boolean photographic = true;
+        for (SampleDimension sd : sampleDimensions) {
+            final GenericName name = sd.getName();
+            final String enName = name.tip().toInternationalString().toString(Locale.ENGLISH);
+            if (COLORED_SAMPLE_NAMES.contains(enName)) {
+                //TODO need a better check
+            } else {
+                photographic = false;
+                break;
+            }
+        }
+        return photographic;
+    }
+
     private void eraseCaches() {
         cachedGridGeometry = null;
         for (VirtualBand vb : bands) {
@@ -594,6 +690,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         tree = null;
         listeners.fire(new ModelEvent(this), ModelEvent.class);
         listeners.fire(new ContentEvent(this), ContentEvent.class);
+        photographic = false;
+        homogeneous = false;
     }
 
     @Override
@@ -622,17 +720,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
 
         // Extract resources which intersect request ///////////////////////////
-        Envelope envelope = domain.getEnvelope();
-        try {
-            envelope = Envelopes.transform(envelope, outputCrs);
-        } catch (TransformException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
-        }
-        final List<GridCoverageResource> treeResults = tree.query(new JTSEnvelope2D(envelope));
-
-        if (treeResults == null || treeResults.isEmpty()) {
-            throw new DisjointCoverageDomainException();
-        }
+        final List<GridCoverageResource> candidates = getCandidates(domain);
 
         // Build expected GridGeometry /////////////////////////////////////////
 
@@ -648,230 +736,396 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             throw new DataStoreException("Aggregated resource require a grid extent to be defined on the resource or on the requested domain");
         }
 
-
         // aggregate tiles /////////////////////////////////////////////////////
-        boolean foundDatas = false;
-        final BufferedImage[] bandImages = new BufferedImage[bands.size()];
-        for (int bandIndex = 0, n = bands.size(); bandIndex < n; bandIndex++) {
-            final VirtualBand band = bands.get(bandIndex);
+        if (photographic && homogeneous) {
+            final List<Source> sources = new ArrayList<>(bands.get(0).getSources());
+            final List<Source> sorted = prepareSources(sources, candidates, canvas);
+            if (sorted.isEmpty()) throw new NoSuchDataException("No data on requested domain");
 
-            //pick and sort resources as user mode requested
-            final List<Source> sorted = new ArrayList<>();
-            for (Source source : band.sources) {
-                if (treeResults.contains(source.resource)) {
-                    sorted.add(source);
+            //canvas accuracy
+            final double[] canvasResolution = canvas.getResolution(true);
+            final Unit<?> canvasUnit = canvas.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit();
+            final Quantity accuracy = Quantities.create(Math.min(canvasResolution[0], canvasResolution[1]) / 2.0, canvasUnit);
+
+            BufferedImage result = null;
+            BitSet2D mask = null;
+            double[] transparent = null;
+            for (Source source : sorted) {
+                try {
+                    final GridCoverage sourceCoverage = source.resource.read(source.resource.getGridGeometry().derive().margin(3,3).subgrid(canvas).build());
+                    final RenderedImage sourceImage = sourceCoverage.render(null);
+                    if (result == null) {
+                        final int width = Math.toIntExact(canvas.getExtent().getSize(0));
+                        final int height = Math.toIntExact(canvas.getExtent().getSize(1));
+                        result = BufferedImages.createImage(sourceImage, width, height, null, null);
+                        mask = new BitSet2D(width, height);
+                        transparent = new double[result.getSampleModel().getNumBands()];
+                    }
+
+                    final GridCoverageProcessor processor = new GridCoverageProcessor();
+                    processor.setInterpolation(interpolation);
+                    processor.setPositionalAccuracyHints(accuracy);
+                    final RenderedImage intermediate = processor.resample(sourceCoverage, canvas).render(null);
+
+                    aggregate(result, intermediate, mask, transparent, transparent);
+                } catch (NoSuchDataException ex) {
+                    //do nothing
+                } catch (TransformException ex) {
+                    //do nothing
                 }
             }
-            if (sorted.isEmpty()) {
-                continue;
-            }
-            if (Mode.SCALE.equals(mode)) {
-                //the most accurate order is to render in order coverages
-                //with relative scale going from 1.0 to 0.0 then from 1.0 to +N
-                //filling only the gaps at each coverage
 
-                List<Source> ordered = new ArrayList<>();
-                final Map<GridCoverageResource,Double> ratios = new HashMap<>();
-                for (Source entry : sorted) {
-                    try {
-                        double ratio = estimateRatio(entry.resource.getGridGeometry(), canvas);
-                        double order = ratio;
-                        if (ratio <= 1.05) { //little tolerance du to crs deformations and math
-                            order = 1.05 - ratio;
-                        }
-                        ratios.put(entry.resource, order);
-                        ordered.add(entry);
-                    } catch (DisjointExtentException ex) {
-                        continue;
-                    } catch (FactoryException | TransformException ex) {
-                        continue;
+            if (result == null) {
+                throw new NoSuchDataException();
+            }
+
+            return new GridCoverage2D(canvas, sampleDimensions, result);
+        } else {
+
+            boolean foundDatas = false;
+            final BufferedImage[] bandImages = new BufferedImage[bands.size()];
+            for (int bandIndex = 0, n = bands.size(); bandIndex < n; bandIndex++) {
+                final VirtualBand band = bands.get(bandIndex);
+
+                //pick only intersection resources
+                final List<Source> sorted = prepareSources(band.sources, candidates, canvas);
+                if (sorted.isEmpty()) {
+                    continue;
+                }
+
+                bandImages[bandIndex] = aggregate(sorted, canvas, bandIndex, interpolation);
+                foundDatas |= (bandImages[bandIndex] != null);
+            }
+
+            //if all band images are null, this means not datas really intersected
+            if (!foundDatas) {
+                throw new NoSuchDataException("No data on requested domain");
+            }
+
+            final int dataType = defineDataType(bandImages);
+            //create blank images with NoData value if a band image is missing
+            for (int i = 0; i < bandImages.length; i++) {
+                if (bandImages[i] == null) {
+                    bandImages[i] = BufferedImages.createImage(
+                            (int) canvas.getExtent().getSize(0),
+                            (int) canvas.getExtent().getSize(1),
+                            1, dataType, new double[]{noData[i]});
+                }
+            }
+
+            BufferedImage result;
+            if (bandImages.length == 1) {
+                result = bandImages[0];
+
+                if (result.getSampleModel().getDataType() != dataType) {
+                    final BufferedImage cp = BufferedImages.createImage(result, null, null, null, dataType);
+                    final PixelIterator readIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(result);
+                    final WritablePixelIterator writeIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(cp);
+                    final double[] buffer = new double[cp.getSampleModel().getNumBands()];
+                    while (readIte.next() && writeIte.next()) {
+                        writeIte.setPixel(readIte.getPixel(buffer));
+                    }
+                    result = cp;
+                }
+
+            } else {
+                result = BufferedImages.createImage(bandImages[0].getWidth(), bandImages[1].getHeight(), bandImages.length, dataType);
+                WritablePixelIterator writer = WritablePixelIterator.create(result);
+                for (int bandIndex = 0; bandIndex < bandImages.length; bandIndex++) {
+                    final PixelIterator reader = PixelIterator.create(bandImages[bandIndex]);
+                    while (reader.next()) {
+                        final Point pt = reader.getPosition();
+                        writer.moveTo(pt.x, pt.y);
+                        writer.setSample(bandIndex, reader.getSampleDouble(0));
                     }
                 }
-                ordered.sort((Source o1, Source o2) -> ratios.get(o1.resource).compareTo(ratios.get(o2.resource)));
-                sorted.clear();
-                sorted.addAll(ordered);
             }
-            if (sorted.isEmpty()) {
-                continue;
-            }
-
-            bandImages[bandIndex] = aggregate(sorted, canvas, bandIndex, interpolation);
-            foundDatas |= (bandImages[bandIndex] != null);
+            return new GridCoverage2D(canvas, sampleDimensions, result);
         }
-
-        //if all band images are null, this means not datas really intersected
-        if (!foundDatas) {
-            throw new NoSuchDataException("No data on requested domain");
-        }
-
-        //create blank images with NoData value if a band image is missing
-        for (int i = 0; i < bandImages.length; i++) {
-            if (bandImages[i] == null) {
-                BufferedImage band = BufferedImages.createImage(
-                        (int) canvas.getExtent().getSize(0),
-                        (int) canvas.getExtent().getSize(1),
-                        1, dataType);
-                if (noData[i] != 0) {
-                    BufferedImages.setAll(band, new double[]{noData[i]});
-                }
-            }
-        }
-
-        BufferedImage result = null;
-        if (bandImages.length == 1) {
-            result = bandImages[0];
-
-            if (result.getSampleModel().getDataType() != dataType) {
-                final BufferedImage cp = BufferedImages.createImage(result, null, null, null, dataType);
-                final PixelIterator readIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(result);
-                final WritablePixelIterator writeIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(cp);
-                final double[] buffer = new double[cp.getSampleModel().getNumBands()];
-                while (readIte.next() && writeIte.next()) {
-                    writeIte.setPixel(readIte.getPixel(buffer));
-                }
-                result = cp;
-            }
-
-        } else {
-            result = BufferedImages.createImage(bandImages[0].getWidth(), bandImages[1].getHeight(), bandImages.length, dataType);
-            WritablePixelIterator writer = WritablePixelIterator.create(result);
-            for (int bandIndex = 0; bandIndex < bandImages.length; bandIndex++) {
-                final PixelIterator reader = PixelIterator.create(bandImages[bandIndex]);
-                while (reader.next()) {
-                    final Point pt = reader.getPosition();
-                    writer.moveTo(pt.x, pt.y);
-                    writer.setSample(bandIndex, reader.getSampleDouble(0));
-                }
-            }
-        }
-        return new GridCoverage2D(canvas, sampleDimensions, result);
     }
 
-    private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex, InterpolationCase interpolation) throws DataStoreException {
+    private int defineDataType(final RenderedImage[] images) throws NoSuchDataException {
+        return defineDataType(Arrays.stream(images));
+    }
 
-        final double[] noData = new double[]{this.noData[bandIndex]};
+    private int defineDataType(final Stream<RenderedImage> images) throws NoSuchDataException {
+        return defineDataType(images.mapToInt(img -> img.getSampleModel().getDataType()));
+    }
 
-        BufferedImage result = null;
-        BufferedImage intermediate = null;
+    private int defineDataType(final IntStream sourceDataTypes) throws NoSuchDataException {
+        if (this.dataType < 0) {
+            final int dataType = sourceDataTypes
+                    .max()
+                    .orElseThrow(() -> new NoSuchDataException("No band to aggregate. Cannot determine appropriate data type."));
+            final boolean canContainNaN = bands.stream().anyMatch(band -> band.userDefinedSampleDimension != null && band.userDefinedSampleDimension.allowsNaN());
+            if (canContainNaN && dataType < DataBuffer.TYPE_FLOAT) return DataBuffer.TYPE_DOUBLE;
+            return dataType;
+        }
 
-        //start by creating a mask of filled datas
-        final BitSet2D mask = new BitSet2D((int) canvas.getExtent().getSize(0), (int) canvas.getExtent().getSize(1));
+        return this.dataType;
+    }
 
-        for (Source source : ordered) {
-            try {
-                //check the mask if we have finish
-                GridExtent maskExtent = mask.areaCleared().orElse(null);
-                if (maskExtent == null) {
-                    break;
-                } else {
-                    //add the base canvas offsets which may be negative or positive
-                    final long mincanvasx = canvas.getExtent().getLow(0);
-                    final long mincanvasy = canvas.getExtent().getLow(1);
-                    maskExtent = new GridExtent(null,
-                            new long[]{mincanvasx + maskExtent.getLow(0), mincanvasy + maskExtent.getLow(1)},
-                            new long[]{mincanvasx + maskExtent.getHigh(0), mincanvasy + maskExtent.getHigh(1)}, true);
-                }
-                final GridGeometry maskGrid = new GridGeometry(maskExtent, PixelInCell.CELL_CENTER, canvas.getGridToCRS(PixelInCell.CELL_CENTER), canvas.getCoordinateReferenceSystem());
+    /**
+     * Select sources matching queried domain.
+     *
+     * @param domain The region of interest queried by user.
+     * @return A list of all sources matching given domain. Never null, never empty.
+     * @throws NoSuchDataException if no source candidate can be found in given domain.
+     * @throws DataStoreException if we cannot compare input domain with source ones.
+     */
+    private List<GridCoverageResource> getCandidates(final GridGeometry domain) throws DataStoreException {
+        Envelope envelope = domain.getEnvelope();
+        try {
+            envelope = Envelopes.transform(envelope, outputCrs);
+        } catch (TransformException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
 
-                //expend grid geometry a little for interpolation
-                GridGeometry readGridGeom;
-                GridGeometry coverageGridGeometry = source.resource.getGridGeometry();
-                if (coverageGridGeometry.isDefined(GridGeometry.EXTENT)) {
-                    readGridGeom = coverageGridGeometry.derive()
-                            .rounding(GridRoundingMode.ENCLOSING)
-                            .margin(5,5)
-                            .subgrid(maskGrid)
-                            .build();
-                } else {
-                    readGridGeom = maskGrid.derive().margin(5,5).build();
-                }
+        final List<GridCoverageResource> treeResults = tree.query(new JTSEnvelope2D(envelope));
 
-                final GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(forceTransformedValues);
-                final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
-                if (sampleDimensions.size() != 1) {
-                    throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
-                }
-                final double[] coverageNoData = new double[]{extractNoData(sampleDimensions.get(0))};
-                final RenderedImage tileImage = coverage.render(null);
+        if (treeResults == null || treeResults.isEmpty()) {
+            throw new NoSuchDataException("No data on requested domain");
+        }
+        return treeResults;
+    }
 
-                final BufferedImage workImage;
-                if (result == null) {
-                    //create result image
-                    GridExtent extent = canvas.getExtent();
-                    int sizeX = Math.toIntExact(extent.getSize(0));
-                    int sizeY = Math.toIntExact(extent.getSize(1));
-                    result = BufferedImages.createImage(sizeX, sizeY, 1, DataBuffer.TYPE_DOUBLE);
-                    workImage = result;
-                    if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(result, noData);
-                } else {
-                    if (intermediate == null) {
-                        intermediate = BufferedImages.createImage(result.getWidth(), result.getHeight(), result);
-                    }
-                    workImage = intermediate;
-                    if (!MosaicedCoverageResource.isAllZero(noData)) BufferedImages.setAll(intermediate, noData);
-                }
-
-                MosaicedCoverageResource.resample(coverage, tileImage, interpolation, canvas, workImage);
-
-               if (workImage != result) {
-                    //we need to merge image, replacing only not-NaN values
-                    final PixelIterator read = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(workImage);
-                    final WritablePixelIterator write = new WritablePixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(result);
-                    final double[] pixelr = new double[read.getNumBands()];
-                    final double[] pixelw = new double[read.getNumBands()];
-                    while (read.next() & write.next()) {
-                        read.getPixel(pixelr);
-                        //apply transform if defined before checking NaN
-                        if (source.sampleTransform != null) {
-                            pixelr[0] = source.sampleTransform.transform(pixelr[0]);
-                        }
-                        if (noData[0] == pixelr[0] || Double.isNaN(pixelr[0]) || coverageNoData[0] == pixelr[0]) {
-                            continue;
-                        }
-                        write.getPixel(pixelw);
-                        if (noData[0] == pixelw[0] || Double.isNaN(pixelw[0])) {
-                            write.setPixel(pixelr);
-                            //fill the mask
-                            Point pt = read.getPosition();
-                            mask.set2D(pt.x, pt.y);
-                        }
-                    }
-                } else {
-                    //first resampled Image, fill the mask
-                    WritablePixelIterator read = WritablePixelIterator.create(workImage);
-                    final double[] pixelr = new double[read.getNumBands()];
-                    while (read.next()) {
-                        read.getPixel(pixelr);
-                        //apply transform if defined before checking NaN
-                        if (source.sampleTransform != null) {
-                            pixelr[0] = source.sampleTransform.transform(pixelr[0]);
-                            read.setPixel(pixelr);
-                        }
-                        if ((coverageNoData[0] == pixelr[0]) && (noData[0] != coverageNoData[0])) {
-                            //we must replace the coverage no data by the target sample dimension one.
-                            pixelr[0] = noData[0];
-                            read.setPixel(pixelr);
-                        }
-                        if (!(noData[0] == pixelr[0] || Double.isNaN(pixelr[0]))) {
-                            Point pt = read.getPosition();
-                            mask.set2D(pt.x, pt.y);
-                        }
-                    }
-                }
-
-            } catch (NoSuchDataException | DisjointExtentException ex) {
-                //may happen, enveloppe is larger then data or mask do not intersect anymore
-                //quad tree may also return more results
-            } catch (FactoryException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
-            } catch (TransformException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
+    /**
+     * Select and sort sources matching queried domain.
+     *
+     * @param candidates Sources to consider as possible output.
+     * @param sourcesMatchingDomain Available resources for current domain.
+     * @param domain The region of interest queried by user, serves to sort output.
+     * @return A sorted list of all candidate sources matching given domain. Never null, but can be empty.
+     * @throws NoSuchDataException if no source candidate can be found in given domain.
+     * @throws DataStoreException if we cannot compare input domain with source ones.
+     */
+    private List<Source> prepareSources(Collection<Source> candidates, Collection<GridCoverageResource> sourcesMatchingDomain, GridGeometry domain) throws DataStoreException {
+        //pick only intersection resources
+        final List<Source> sorted = new ArrayList<>();
+        for (Source candidate : candidates) {
+            if (sourcesMatchingDomain.contains(candidate.resource)) {
+                sorted.add(candidate);
             }
+        }
+
+        // Sort resources according to their scale.
+        if (!sorted.isEmpty()) {
+            sort(domain, sorted, mode);
+        }
+
+        return sorted;
+    }
+
+    private BufferedImage aggregate(List<Source> ordered, final GridGeometry canvas, int bandIndex, final Interpolation interpolation) throws DataStoreException {
+        final double noDataValue = this.noData[bandIndex];
+        final double[] noData = new double[]{noDataValue};
+
+        //create result image
+        final GridExtent extent = canvas.getExtent();
+        final int sizeX = Math.toIntExact(extent.getSize(0));
+        final int sizeY = Math.toIntExact(extent.getSize(1));
+
+        //canvas accuracy
+        final double[] canvasResolution = canvas.getResolution(true);
+        final Unit<?> canvasUnit = canvas.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit();
+        final Quantity accuracy = Quantities.create(Math.min(canvasResolution[0], canvasResolution[1]) / 2.0, canvasUnit);
+
+        //create a mask of filled datas
+        final BitSet2D mask = new BitSet2D(sizeX, sizeY);
+
+        final int tmpDataType = this.dataType < 0 ? DataBuffer.TYPE_DOUBLE : this.dataType;
+        final BufferedImage result = BufferedImages.createImage(sizeX, sizeY, 1, tmpDataType, noData);
+
+        // HACK: To try and preserve color space if possible, we keep aggregated source images in memory
+        final List<Integer> sourceDataTypes = new ArrayList<>(ordered.size());
+        for (Source source : ordered) {
+            final GridGeometry readGeometry = adapt(canvas, mask);
+            if (readGeometry == null) break; // No more empty space to fill
+            final SingleBandedFilteredSource filteredSource = readSingleBandedSource(source, readGeometry).orElse(null);
+            if (filteredSource == null) continue; // Source not available for remaining area to fill
+
+            final double[] sourceNoData = {filteredSource.fillValue};
+            final RenderedImage coverageImage = filteredSource.image;
+            sourceDataTypes.add(coverageImage.getSampleModel().getDataType());
+
+            try {
+                //resample coverage
+                RenderedImage resampledImage;
+                try {
+                    final BufferedImage image = BufferedImages.createImage(result, null, null, null, tmpDataType, sourceNoData);
+                    final Dimension dim = interpolation.getSupportSize();
+
+                    Interpolation inter = interpolation;
+                    if (coverageImage.getWidth() < dim.width || coverageImage.getHeight() < dim.height) {
+                        inter = Interpolation.NEAREST;
+                    }
+
+                    final MathTransform toSource = createTransform(canvas, image, filteredSource.geometry, coverageImage);
+
+                    final ImageCombiner ic = new ImageCombiner(image);
+                    ic.setInterpolation(inter);
+                    ic.setPositionalAccuracyHints(accuracy);
+                    ic.resample(coverageImage, new Rectangle(image.getWidth(), image.getHeight()), toSource);
+                    resampledImage = image;
+                } catch (FactoryException ex) {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
+
+                final TriFunction<Point, double[], double[], double[]> merger = new TriFunction<Point, double[], double[], double[]>() {
+                    @Override
+                    public double[] apply(Point position, double[] sourcePixel, double[] targetPixel) {
+                        //apply transform if defined before checking NaN
+                        if (source.sampleTransform != null) try {
+                            sourcePixel[0] = source.sampleTransform.transform(sourcePixel[0]);
+                        } catch (TransformException ex) {
+                            Logging.getLogger("org.geotoolkit.storage.coverage.mosaic").log(Level.INFO, ex.getMessage(), ex);
+                            return null;
+                        }
+
+                        if (Double.isNaN(sourcePixel[0])) {
+                            return null;
+                        }
+
+                        if (sourceNoData != null && Arrays.equals(sourceNoData, sourcePixel)) {
+                            return null;
+                        }
+                        if (Arrays.equals(noData, targetPixel)) {
+                            //fill the mask
+                            mask.set2D(position.x, position.y);
+                            return sourcePixel;
+                        }
+                        return null;
+                    }
+                };
+
+                BufferedImages.mergeImages(resampledImage, result, true, merger);
+
+            } catch (TransformException ex) {
+                throw new DataStoreException("Error while aggregating source datasets into queried domain", ex);
+            }
+        }
+
+        // HACK: Aggregation should preserve source data types. Coverage API does not provide any hint about sample data
+        // type, so we're forced to "fix" image after merge.
+        // TODO: find a better solution
+        final int dataType = defineDataType(sourceDataTypes.stream().mapToInt(i -> i));
+        if (tmpDataType != dataType) {
+            final PixelIterator.Builder builder = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR);
+            PixelIterator source = builder.create(result);
+            final BufferedImage newResult = BufferedImages.createImage(result.getWidth(), result.getHeight(), source.getNumBands(), dataType, noData);
+            try (WritablePixelIterator destination = builder.createWritable(newResult, newResult)) {
+                final double[] buffer= new double[source.getNumBands()];
+                while (source.next() && destination.next()) destination.setPixel(source.getPixel(buffer));
+            }
+            return newResult;
         }
 
         return result;
     }
 
+    private GridGeometry adapt(final GridGeometry domain, final BitSet2D mask) {
+        // Test mask for remaining area to fill.
+        GridExtent maskExtent = mask.areaCleared().orElse(null);
+        if (maskExtent == null) return null;
+        //add the base canvas offsets which may be negative or positive
+        final GridExtent baseExtent = domain.getExtent();
+        final long mincanvasx = baseExtent.getLow(0);
+        final long mincanvasy = baseExtent.getLow(1);
+        maskExtent = new GridExtent(null,
+                new long[]{mincanvasx + maskExtent.getLow(0), mincanvasy + maskExtent.getLow(1)},
+                new long[]{mincanvasx + maskExtent.getHigh(0), mincanvasy + maskExtent.getHigh(1)}, true);
+        return new GridGeometry(maskExtent, PixelInCell.CELL_CENTER, domain.getGridToCRS(PixelInCell.CELL_CENTER), domain.getCoordinateReferenceSystem());
+    }
+
+    private Optional<SingleBandedFilteredSource> readSingleBandedSource(final Source source, final GridGeometry targetDomain) throws DataStoreException {
+        try {
+            //expend grid geometry a little for interpolation
+            GridGeometry readGridGeom;
+            GridGeometry coverageGridGeometry = source.resource.getGridGeometry();
+            if (coverageGridGeometry.isDefined(GridGeometry.EXTENT)) {
+                readGridGeom = coverageGridGeometry.derive()
+                        .rounding(GridRoundingMode.ENCLOSING)
+                        .margin(5, 5)
+                        .subgrid(targetDomain)
+                        .build();
+            } else {
+                readGridGeom = targetDomain.derive().margin(5, 5).build();
+            }
+
+            final GridCoverage coverage = source.resource.read(readGridGeom, source.bandIndex).forConvertedValues(forceTransformedValues);
+            final List<SampleDimension> sampleDimensions = coverage.getSampleDimensions();
+            if (sampleDimensions.size() != 1) {
+                throw new DataStoreException(source.resource + " returned a coverage with more then one sample dimension, fix implementation");
+            }
+
+            return Optional.of(new SingleBandedFilteredSource(coverage.render(null), coverage.getGridGeometry(), extractNoData(sampleDimensions.get(0))));
+        } catch (NoSuchDataException | DisjointExtentException ex) {
+            //may happen, enveloppe is larger then data or mask do not intersect anymore
+            //quad tree may also return more results
+            return Optional.empty();
+        }
+    }
+
+    private void aggregate(BufferedImage result, RenderedImage source, BitSet2D mask, double[] resultNoData, double[] sourceNoData) {
+
+        //we need to merge image, replacing only not-NaN values
+        final PixelIterator sourceIte = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(source);
+        final WritablePixelIterator resultIte = new WritablePixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).createWritable(result);
+        final double[] sourcePx = new double[sourceIte.getNumBands()];
+        final double[] resultPx = new double[sourceIte.getNumBands()];
+        while (sourceIte.next()) {
+            sourceIte.getPixel(sourcePx);
+            if (sourceNoData != null && Arrays.equals(sourceNoData, sourcePx)) {
+                continue;
+            }
+
+            final Point position = sourceIte.getPosition();
+            resultIte.moveTo(position.x, position.y);
+            resultIte.getPixel(resultPx);
+
+            if (Arrays.equals(resultNoData, resultPx)) {
+                resultIte.setPixel(sourcePx);
+                //fill the mask
+                mask.set2D(position.x, position.y);
+            }
+        }
+    }
+
+    private static void sort(GridGeometry canvas, List<Source> sorted, Mode mode) throws DataStoreException {
+        if (Mode.SCALE.equals(mode)) {
+            //the most accurate order is to render in order coverages
+            //with relative scale going from 1.0 to 0.0 then from 1.0 to +N
+            //filling only the gaps at each coverage
+
+            List<Source> ordered = new ArrayList<>();
+            final Map<GridCoverageResource,Double> ratios = new HashMap<>();
+            for (Source entry : sorted) {
+                try {
+                    double ratio = estimateRatio(entry.resource.getGridGeometry(), canvas);
+                    if (Double.isNaN(ratio)) {
+                        GridGeometry realGrid = entry.resource.read(canvas).getGridGeometry();
+                        ratio = estimateRatio(realGrid, canvas);
+                    }
+
+                    double order = ratio;
+                    if (ratio <= 1.05) { //little tolerance du to crs deformations and math
+                        order = 1.05 - ratio;
+                    }
+                    ratios.put(entry.resource, order);
+                    ordered.add(entry);
+                } catch (DisjointExtentException ex) {
+                    continue;
+                } catch (FactoryException | TransformException ex) {
+                    continue;
+                }
+            }
+            ordered.sort((Source o1, Source o2) -> ratios.get(o1.resource).compareTo(ratios.get(o2.resource)));
+            sorted.clear();
+            sorted.addAll(ordered);
+        } else if (Mode.ORDER.equals(mode)) {
+            //do nothing
+        }
+    }
 
     @Override
     public <T extends StoreEvent> void addListener(Class<T> eventType, StoreListener<? super T> listener) {
@@ -893,7 +1147,6 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         final List<String> texts = new ArrayList<>();
         texts.add("Interpolate : "+ interpolation);
-        texts.add("Mode : "+ mode);
 
         for (VirtualBand vb : bands) {
             String name = vb.cachedSampleDimension.getName().toString();
@@ -915,14 +1168,27 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             texts.add(StringUtilities.toStringTree(name, sources));
         }
 
-        String name = "Unnamed";
-        try {
-            name = getIdentifier().orElse(NamesExt.create("Unnamed")).toString();
-        } catch (DataStoreException ex) {
-            //do nothing
-        }
+        final String name = getIdentifier().orElse(NamesExt.create("Unnamed")).toString();
 
         return StringUtilities.toStringTree(name + " aggregated coverage resource", texts);
+    }
+
+    public static MathTransform createTransform(GridGeometry source, RenderedImage sourceImg, GridGeometry target, RenderedImage targetImg) throws FactoryException, NoninvertibleTransformException {
+        final long[] sourceCorner = source.getExtent().getLow().getCoordinateValues();
+        final MathTransform sourceOffset = MathTransforms.translation((sourceCorner[0] - sourceImg.getMinX()), (sourceCorner[1] - sourceImg.getMinY()));
+        final MathTransform gridSourceToCrs = source.getGridToCRS(PixelInCell.CELL_CENTER);
+        final MathTransform imgSourceToCrs = MathTransforms.concatenate(sourceOffset, gridSourceToCrs);
+
+        final long[] targetCorner = target.getExtent().getLow().getCoordinateValues();
+        final MathTransform targetOffset = MathTransforms.translation((targetCorner[0] - targetImg.getMinX()), (targetCorner[1] - targetImg.getMinY()));
+        final MathTransform gridTargetToCrs = target.getGridToCRS(PixelInCell.CELL_CENTER);
+        final MathTransform imgTargetToCrs = MathTransforms.concatenate(targetOffset, gridTargetToCrs);
+
+        final MathTransform crsToCrs = CRS.findOperation(source.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null).getMathTransform();
+        return MathTransforms.concatenate(
+                imgSourceToCrs,
+                crsToCrs,
+                imgTargetToCrs.inverse());
     }
 
     /**
@@ -930,30 +1196,57 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * The ratio is an estimation of the resolution difference from the target grid resolution.
      * A value lower then 1 means the coverage has a higher resolution then the target grid, coverage is more accurate.
      * A value higher then 1 means the coverage has a lower resolution then the target grid, coverage is less accurate.
+     * A value of NaN indicates the impossibility to estimate the resolution.
      *
-     * @param coverage
+     * @param coverageGridGeom
      * @param target
      * @return
      */
-    private static double estimateRatio(GridGeometry coverage, GridGeometry target) throws FactoryException, TransformException {
+    private static double estimateRatio(GridGeometry coverageGridGeom, GridGeometry target) throws FactoryException, TransformException {
         //intersect grid geometries
-        final GridGeometry result = coverage.derive().subgrid(target.getEnvelope()).build();
-        //compute transform
-        final MathTransform gridToCRS = result.getGridToCRS(PixelInCell.CELL_CENTER);
-        final CoordinateOperation crsToCrs = CRS.findOperation(result.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null);
-        final MathTransform trs = MathTransforms.concatenate(gridToCRS, crsToCrs.getMathTransform(), target.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
-        //transform a unitary vector at most representative point
-        double[] point = result.getExtent().getPointOfInterest();
-        double[] vector = Arrays.copyOf(point, 4);
-        double diagonal = 1.0 / Math.sqrt(2); //for a vector of length = 1
-        vector[2] = point[0] + diagonal;
-        vector[3] = point[1] + diagonal;
-        trs.transform(vector, 0, vector, 0, 2);
-        double x = Math.abs(vector[0] - vector[2]);
-        double y = Math.abs(vector[1] - vector[3]);
-        return Math.sqrt(x*x + y*y);
+        final GridGeometry result = coverageGridGeom.derive().subgrid(target.getEnvelope()).build();
+        if (result.isDefined(GridGeometry.GRID_TO_CRS)) {
+            //compute transform
+            final MathTransform gridToCRS = result.getGridToCRS(PixelInCell.CELL_CENTER);
+            final CoordinateOperation crsToCrs = CRS.findOperation(result.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null);
+            final MathTransform trs = MathTransforms.concatenate(gridToCRS, crsToCrs.getMathTransform(), target.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
+            //transform a unitary vector at most representative point
+            double[] point = result.getExtent().getPointOfInterest();
+            double[] vector = Arrays.copyOf(point, 4);
+            double diagonal = 1.0 / Math.sqrt(2); //for a vector of length = 1
+            vector[2] = point[0] + diagonal;
+            vector[3] = point[1] + diagonal;
+            trs.transform(vector, 0, vector, 0, 2);
+            return norm(vector);
+        } else if (result.isDefined(GridGeometry.RESOLUTION)) {
+            final double[] resolution = result.getResolution(true);
+            final CoordinateOperation crsToCrs = CRS.findOperation(result.getCoordinateReferenceSystem(), target.getCoordinateReferenceSystem(), null);
+            final MathTransform trs = MathTransforms.concatenate(crsToCrs.getMathTransform(), target.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
+            final double centerx = result.getEnvelope().getMedian(0);
+            final double centery = result.getEnvelope().getMedian(1);
+            //transform a unitary vector
+            double[] vector = new double[] {
+                centerx,
+                centery,
+                centerx + resolution[0],
+                centery + resolution[1],
+            };
+            trs.transform(vector, 0, vector, 0, 2);
+            return norm(vector);
+        } else {
+            return Double.NaN;
+        }
     }
 
+    /**
+     * @param vector A 2D vector in the form [minX, minY, maxX, maxY]
+     * @return norm of input 2D vector
+     */
+    private static double norm(double[] vector) {
+        double x = Math.abs(vector[0] - vector[2]);
+        double y = Math.abs(vector[1] - vector[3]);
+        return Math.sqrt(x * x + y * y);
+    }
 
     private static List<VirtualBand> toMapping(List<GridCoverageResource> resources) throws DataStoreException {
         final List<VirtualBand> lst = new ArrayList();
@@ -1013,6 +1306,18 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             this.resource = resource;
             this.bandIndex = bandIndex;
             this.sampleTransform = sampleTransform;
+        }
+    }
+
+    private static class SingleBandedFilteredSource {
+        final RenderedImage image;
+        final GridGeometry geometry;
+        final double fillValue;
+
+        SingleBandedFilteredSource(RenderedImage image, GridGeometry geometry, double fillValue) {
+            this.image = image;
+            this.geometry = geometry;
+            this.fillValue = fillValue;
         }
     }
 }

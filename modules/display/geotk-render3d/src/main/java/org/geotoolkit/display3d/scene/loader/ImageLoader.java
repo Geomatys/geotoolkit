@@ -19,7 +19,7 @@ package org.geotoolkit.display3d.scene.loader;
 import java.awt.Dimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import org.geotoolkit.display.PortrayalException;
 
 /**
@@ -32,6 +32,6 @@ public interface ImageLoader {
 
     void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException;
 
-    BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException;
+    RenderedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException;
 
 }

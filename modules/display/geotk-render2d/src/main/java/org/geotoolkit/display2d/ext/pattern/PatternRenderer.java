@@ -17,32 +17,29 @@
 package org.geotoolkit.display2d.ext.pattern;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.renderer.Presentation;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.Feature;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.style.MutableStyle;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * Renderer for Pattern symbolizer.
@@ -56,17 +53,21 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         super(service,symbol,context);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
 
+        if (!(resource instanceof GridCoverageResource)) {
+            return Stream.empty();
+        }
+
+        final GridCoverageResource gcr = (GridCoverageResource) resource;
         GridCoverage dataCoverage;
         try {
-            dataCoverage = projectedCoverage.getCoverage(renderingContext.getGridGeometry());
+            dataCoverage = gcr.read(renderingContext.getGridGeometry());
+        } catch (NoSuchDataException ex) {
+            return Stream.empty();
         } catch (DataStoreException ex) {
-            throw new PortrayalException(ex);
+            throw new PortrayalException(ex.getMessage(), ex);
         }
 
         if (!Utilities.equalsIgnoreMetadata(CRS.getHorizontalComponent(dataCoverage.getCoordinateReferenceSystem()), renderingContext.getObjectiveCRS())) {
@@ -80,47 +81,24 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
             }
         }
 
-
-        final Map<Feature, List<CachedSymbolizer>> features;
+        final Map.Entry<FeatureSet, MutableStyle> entry;
         try {
-            features = symbol.getMasks(dataCoverage);
+            entry = symbol.getMasks(dataCoverage);
         } catch (IOException ex) {
             throw new PortrayalException(ex);
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
 
-        //paint all dynamicly generated features -------------------------------
-        final CoordinateReferenceSystem dataCRS = dataCoverage.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
+        final MapLayer subLayer = MapBuilder.createLayer(entry.getKey());
+        subLayer.setStyle(entry.getValue());
 
-        //data to objective
-        final CoordinateSequenceMathTransformer cstrs;
+        Stream<Presentation> presentations;
         try {
-            cstrs = new CoordinateSequenceMathTransformer(CRS.findOperation(dataCRS, objectiveCRS, null).getMathTransform());
-        } catch (FactoryException ex) {
-            throw new PortrayalException(ex);
+            presentations = DefaultPortrayalService.present(subLayer, entry.getKey(), renderingContext);
+        } catch (DataStoreException ex) {
+            throw new PortrayalException(ex.getMessage(), ex);
         }
-        GeometryTransformer trs = new GeometryCSTransformer(cstrs);
-
-        final ProjectedFeature projectedFeature = new ProjectedFeature(renderingContext);
-        boolean dataRendered = false;
-        try {
-            for(final Map.Entry<Feature,List<CachedSymbolizer>> entry : features.entrySet()){
-                Feature f = entry.getKey();
-                f.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(),
-                        trs.transform((Geometry)f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString())));
-                projectedFeature.setCandidate(entry.getKey());
-
-                for(final CachedSymbolizer cached : entry.getValue()){
-                    dataRendered |= GO2Utilities.portray(projectedFeature, cached, renderingContext);
-                }
-            }
-        } catch (TransformException ex) {
-            throw new PortrayalException(ex);
-        }
-
-        renderingContext.switchToDisplayCRS();
-        return dataRendered;
+        return presentations;
     }
 }

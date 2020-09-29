@@ -37,11 +37,11 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.multires.AbstractPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
+import org.geotoolkit.storage.multires.AbstractTileMatrixSet;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -50,7 +50,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="XMLPyramid")
-public class XMLPyramid implements Pyramid {
+public class XMLPyramid implements TileMatrixSet {
 
     @XmlElement(name="id")
     String id;
@@ -195,14 +195,14 @@ public class XMLPyramid implements Pyramid {
     }
 
     @Override
-    public List<Mosaic> getMosaics() {
-        return new ArrayList<Mosaic>(mosaics());
+    public List<TileMatrix> getTileMatrices() {
+        return new ArrayList<TileMatrix>(mosaics());
     }
 
     @Override
     public Envelope getEnvelope() {
         GeneralEnvelope env = null;
-        for(Mosaic mosaic : getMosaics()){
+        for(TileMatrix mosaic : getTileMatrices()){
             if(env==null){
                 env = new GeneralEnvelope(mosaic.getEnvelope());
             }else{
@@ -214,7 +214,7 @@ public class XMLPyramid implements Pyramid {
 
     @Override
     public String toString(){
-        return AbstractPyramid.toString(this);
+        return AbstractTileMatrixSet.toString(this);
     }
 
     /**
@@ -234,7 +234,7 @@ public class XMLPyramid implements Pyramid {
     }
 
     @Override
-    public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+    public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
         final XMLMosaic mosaic = new XMLMosaic();
         mosaic.scale = template.getScale();
         mosaic.gridWidth = template.getGridSize().width;
@@ -254,7 +254,7 @@ public class XMLPyramid implements Pyramid {
      * {@inheritDoc }.
      */
     @Override
-    public void deleteMosaic(String mosaicId) throws DataStoreException {
+    public void deleteTileMatrix(String mosaicId) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 

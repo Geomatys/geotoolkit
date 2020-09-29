@@ -38,7 +38,8 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.process.ProcessListener;
-import org.geotoolkit.storage.coverage.MosaicImage;
+import org.geotoolkit.storage.coverage.IProgressiveCoverageResource;
+import org.geotoolkit.storage.coverage.TileMatrixImage;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
@@ -52,11 +53,11 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GeneralProgressiveResource extends AbstractResource implements ProgressiveResource {
+public class GeneralProgressiveResource extends AbstractResource implements ProgressiveResource, IProgressiveCoverageResource {
 
     protected final MultiResolutionResource base;
     private GenericName identifier;
-    private final Map<String,ProgressivePyramid> cachePyramids = new HashMap<>();
+    private final Map<String,ProgressiveTileMatrixSet> cachePyramids = new HashMap<>();
     protected TileGenerator generator;
 
     public GeneralProgressiveResource(MultiResolutionResource base, TileGenerator generator) throws DataStoreException {
@@ -91,18 +92,18 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
      * {@inheritDoc }.
      */
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
-        final Collection<Pyramid> parentPyramids = (Collection<Pyramid>) base.getModels();
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
+        final Collection<TileMatrixSet> parentPyramids = (Collection<TileMatrixSet>) base.getModels();
 
-        final List<Pyramid> pyramids;
+        final List<TileMatrixSet> pyramids;
         synchronized (cachePyramids) {
             //check pyramids, we need to do this until an event system is created
 
             //add missing pyramids in the view
             final Set<String> keys = new HashSet<>();
-            for (Pyramid candidate : parentPyramids) {
+            for (TileMatrixSet candidate : parentPyramids) {
                 if (!cachePyramids.containsKey(candidate.getIdentifier())) {
-                    cachePyramids.put(candidate.getIdentifier(), new ProgressivePyramid(candidate));
+                    cachePyramids.put(candidate.getIdentifier(), new ProgressiveTileMatrixSet(candidate));
                 }
                 keys.add(candidate.getIdentifier());
             }
@@ -110,7 +111,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
                 //some pyramids have been deleted from parent
                 cachePyramids.keySet().retainAll(keys);
             }
-            pyramids = UnmodifiableArrayList.wrap(cachePyramids.values().toArray(new Pyramid[0]));
+            pyramids = UnmodifiableArrayList.wrap(cachePyramids.values().toArray(new TileMatrixSet[0]));
         }
 
         return pyramids;
@@ -123,7 +124,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
         synchronized (cachePyramids) {
             final MultiResolutionModel newParentPyramid = base.createModel(template);
-            final ProgressivePyramid cached = new ProgressivePyramid((Pyramid) newParentPyramid);
+            final ProgressiveTileMatrixSet cached = new ProgressiveTileMatrixSet((TileMatrixSet) newParentPyramid);
             cachePyramids.put(cached.getIdentifier(), cached);
             return cached;
         }
@@ -139,15 +140,15 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
 
     @Override
     public void clear(Envelope env, NumberRange resolutions) throws DataStoreException {
-        for (Pyramid pyramid : Pyramids.getPyramids(base)) {
-            Pyramids.clear(pyramid, env, resolutions);
+        for (TileMatrixSet pyramid : TileMatrices.getTileMatrixSets(base)) {
+            TileMatrices.clear(pyramid, env, resolutions);
         }
     }
 
     @Override
     public void generate(Envelope env, NumberRange resolutions, ProcessListener listener) throws DataStoreException {
         try {
-            for (Pyramid pyramid : Pyramids.getPyramids(base)) {
+            for (TileMatrixSet pyramid : TileMatrices.getTileMatrixSets(base)) {
                 generator.generate(pyramid, env, resolutions, listener);
             }
         } catch (InterruptedException ex) {
@@ -168,12 +169,12 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         return StringUtilities.toStringTree(name, elements);
     }
 
-    private final class ProgressivePyramid implements Pyramid {
+    private final class ProgressiveTileMatrixSet implements TileMatrixSet {
 
-        private final Pyramid parent;
-        private final Map<String,ProgressiveMosaic> cacheMosaics = new HashMap<>();
+        private final TileMatrixSet parent;
+        private final Map<String,ProgressiveTileMatrix> cacheMosaics = new HashMap<>();
 
-        ProgressivePyramid(Pyramid pyramid) {
+        ProgressiveTileMatrixSet(TileMatrixSet pyramid) {
             this.parent = pyramid;
         }
 
@@ -183,18 +184,18 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
 
         @Override
-        public Collection<? extends Mosaic> getMosaics() {
-            final Collection<? extends Mosaic> parentMosaics = parent.getMosaics();
+        public Collection<? extends TileMatrix> getTileMatrices() {
+            final Collection<? extends TileMatrix> parentMosaics = parent.getTileMatrices();
 
-            final List<Mosaic> pmosaics;
+            final List<TileMatrix> pmosaics;
             synchronized (cacheMosaics) {
                 //check mosaics, we need to do this until an event system is created
 
                 //add missing mosaics in the view
                 final Set<String> keys = new HashSet<>();
-                for (Mosaic candidate : parentMosaics) {
+                for (TileMatrix candidate : parentMosaics) {
                     if (!cacheMosaics.containsKey(candidate.getIdentifier())) {
-                        cacheMosaics.put(candidate.getIdentifier(), new ProgressiveMosaic(ProgressivePyramid.this, candidate));
+                        cacheMosaics.put(candidate.getIdentifier(), new ProgressiveTileMatrix(ProgressiveTileMatrixSet.this, candidate));
                     }
                     keys.add(candidate.getIdentifier());
                 }
@@ -202,7 +203,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
                     //some mosaics have been deleted from parent
                     cacheMosaics.keySet().retainAll(keys);
                 }
-                pmosaics = UnmodifiableArrayList.wrap(cacheMosaics.values().toArray(new Mosaic[0]));
+                pmosaics = UnmodifiableArrayList.wrap(cacheMosaics.values().toArray(new TileMatrix[0]));
             }
 
             return pmosaics;
@@ -229,36 +230,36 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
         }
 
         @Override
-        public Mosaic createMosaic(Mosaic template) throws DataStoreException {
+        public TileMatrix createTileMatrix(TileMatrix template) throws DataStoreException {
             synchronized (cacheMosaics) {
-                final Mosaic newParentMosaic = parent.createMosaic(template);
-                final ProgressiveMosaic cached = new ProgressiveMosaic(ProgressivePyramid.this, newParentMosaic);
+                final TileMatrix newParentMosaic = parent.createTileMatrix(template);
+                final ProgressiveTileMatrix cached = new ProgressiveTileMatrix(ProgressiveTileMatrixSet.this, newParentMosaic);
                 cacheMosaics.put(cached.getIdentifier(), cached);
                 return cached;
             }
         }
 
         @Override
-        public void deleteMosaic(String mosaicId) throws DataStoreException {
+        public void deleteTileMatrix(String mosaicId) throws DataStoreException {
             synchronized (cacheMosaics) {
-                parent.deleteMosaic(mosaicId);
+                parent.deleteTileMatrix(mosaicId);
                 cacheMosaics.remove(mosaicId);
             }
         }
 
         @Override
         public String toString(){
-            return AbstractPyramid.toString(this);
+            return AbstractTileMatrixSet.toString(this);
         }
     }
 
-    public final class ProgressiveMosaic implements Mosaic {
+    public final class ProgressiveTileMatrix implements TileMatrix {
 
-        private final ProgressivePyramid pyramid;
-        private final Mosaic base;
-        private MosaicImage image;
+        private final ProgressiveTileMatrixSet pyramid;
+        private final TileMatrix base;
+        private TileMatrixImage image;
 
-        ProgressiveMosaic(ProgressivePyramid pyramid, Mosaic base) {
+        ProgressiveTileMatrix(ProgressiveTileMatrixSet pyramid, TileMatrix base) {
             this.pyramid = pyramid;
             this.base = base;
         }
@@ -308,7 +309,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
             if (tile == null && generator != null) {
                 //generate tile
                 tile = generator.generateTile(pyramid, base, new Point(Math.toIntExact(col), Math.toIntExact(row)));
-                if (!(base instanceof DefiningMosaic)) {
+                if (!(base instanceof DefiningTileMatrix)) {
                     base.writeTiles(Stream.of(tile), null);
                     tile = base.getTile(col, row);
                 }
@@ -356,14 +357,14 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
                 if (r instanceof GridCoverageResource) {
                     samples = ((GridCoverageResource) r).getSampleDimensions();
                 }
-                this.image = MosaicImage.create(this, null, samples);
+                this.image = TileMatrixImage.create(this, null, samples);
             }
             return image;
         }
 
         @Override
         public String toString() {
-            return AbstractMosaic.toString(this);
+            return AbstractTileMatrix.toString(this);
         }
     }
 

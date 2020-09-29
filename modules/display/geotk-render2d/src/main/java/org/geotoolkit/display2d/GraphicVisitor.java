@@ -18,7 +18,7 @@ package org.geotoolkit.display2d;
 
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.renderer.Presentation;
 
 /**
  * Used to explore the graphics send when using the
@@ -44,7 +44,7 @@ public interface GraphicVisitor {
      *
      * @param graphic : graphic that validate the visiting parameters
      */
-    void visit(Graphic graphic, RenderingContext context, SearchArea area);
+    void visit(Presentation graphic, RenderingContext context, SearchArea area);
 
     /**
      * Should return true when the visitor want to stop the search process.

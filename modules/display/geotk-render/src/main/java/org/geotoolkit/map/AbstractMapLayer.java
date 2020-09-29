@@ -28,6 +28,7 @@ import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Resource;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
@@ -36,7 +37,6 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.style.StyleFactory;
 
@@ -240,7 +240,7 @@ public class AbstractMapLayer extends AbstractMapItem implements MapLayer,StyleL
      * @return graphicBuilder<? extends type> or null
      */
     @Override
-    public <T extends Graphic> GraphicBuilder<? extends T> getGraphicBuilder( final Class<T> type ){
+    public <T extends Presentation> GraphicBuilder<? extends T> getGraphicBuilder( final Class<T> type ){
 
         for(GraphicBuilder builder : builders){
             if(type.isAssignableFrom(builder.getGraphicType())){

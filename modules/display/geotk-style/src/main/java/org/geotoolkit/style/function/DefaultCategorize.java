@@ -330,7 +330,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             colors.getRGBs(ARGB);
 
             transformColormap(ARGB);
-            model = ColorModelFactory.createIndexColorModel(ARGB, 1, visibleBand, -1);
+            model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, -1);
 
         } else if (candidate instanceof ComponentColorModel) {
             final ComponentColorModel colors = (ComponentColorModel) candidate;
@@ -351,7 +351,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
                 }
 
                 transformColormap(ARGB);
-                model = ColorModelFactory.createIndexColorModel(ARGB, 1, visibleBand, -1);
+                model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, -1);
 
             } else {
                 //we can't handle a index color model when values exceed int max value
@@ -377,7 +377,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
                 }
 
                 transformColormap(ARGB);
-                model = ColorModelFactory.createIndexColorModel(ARGB, 1, visibleBand, -1);
+                model = ColorModelFactory.createIndexColorModel(1, visibleBand, ARGB, -1);
 
             } else {
                 //we can't handle a index color model when values exceed int max value

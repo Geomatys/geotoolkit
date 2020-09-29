@@ -62,13 +62,12 @@ import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.nio.IOUtilities;
-import org.geotoolkit.storage.coverage.PyramidReader;
+import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
-import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -97,8 +96,6 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
             throw new RuntimeException("Failed to initialize JAXB XML Coverage reference marshaller pool.");
         }
     }
-
-    private static final GenericName DEFAULT_NAME = NamesExt.create("default");
 
     @XmlElement(name="Version")
     private String version = CURRENT_VERSION;
@@ -306,7 +303,7 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
     }
 
     @Override
-    public Collection<Pyramid> getModels() throws DataStoreException {
+    public Collection<TileMatrixSet> getModels() throws DataStoreException {
         return set.getPyramids();
     }
 
@@ -655,9 +652,6 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
         final ColorSpace imgCmCS = imgCm.getColorSpace();
         if (isScaledColorSpace(imgCmCS)) {
 
-            if (cm != null && (!isScaledColorSpace(cm.getColorSpace())))
-                throw new IllegalArgumentException(String.format("Mismatch color space."));
-
             if (minColorSampleValue == null) minColorSampleValue = Double.POSITIVE_INFINITY;
             if (maxColorSampleValue == null) maxColorSampleValue = Double.NEGATIVE_INFINITY;
 
@@ -723,12 +717,12 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
 
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof Pyramid) {
-            final Pyramid base = (Pyramid) template;
+        if (template instanceof TileMatrixSet) {
+            final TileMatrixSet base = (TileMatrixSet) template;
             final XMLPyramidSet set = getPyramidSet();
-            final Pyramid pyramid = set.createPyramid(getIdentifier().get().tip().toString(), base.getCoordinateReferenceSystem());
+            final TileMatrixSet pyramid = set.createPyramid(getIdentifier().get().tip().toString(), base.getCoordinateReferenceSystem());
             save();
-            Pyramids.copyStructure(base, pyramid);
+            TileMatrices.copyStructure(base, pyramid);
             return pyramid;
         } else {
             throw new DataStoreException("Unsupported template : "+template);
@@ -746,12 +740,12 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
 
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException {
-        return new PyramidReader<>(this).getGridGeometry();
+        return new TileMatrixSetCoverageReader<>(this).getGridGeometry();
     }
 
     @Override
     public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
-        return new PyramidReader<>(this).read(domain, range);
+        return new TileMatrixSetCoverageReader<>(this).read(domain, range);
     }
 
     @Override

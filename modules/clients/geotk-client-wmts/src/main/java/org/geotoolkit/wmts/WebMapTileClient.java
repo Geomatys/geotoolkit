@@ -24,16 +24,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.Client;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
@@ -53,12 +53,12 @@ import org.opengis.util.GenericName;
  * @author Guilhem Legal (Geomatys)
  * @module
  */
-public class WebMapTileClient extends AbstractCoverageClient implements Client, Aggregate {
+public class WebMapTileClient extends AbstractClient implements Client, Aggregate {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
     private Capabilities capabilities;
-    private List<Resource> resources = null;
+    private List<WMTSResource> resources = null;
 
     /**
      * Defines the timeout in milliseconds for the GetCapabilities request.
@@ -178,7 +178,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
         final Thread thread = new Thread() {
             @Override
             public void run() {
-                final GetCapabilitiesRequest getCaps =  createGetCapabilities();
+                final GetCapabilitiesRequest getCaps = createGetCapabilities();
                 //Filling the request header map from the map of the layer's server
                 final Map<String, String> headerMap = getRequestHeaderMap();
                 getCaps.getHeaderMap().putAll(headerMap);
@@ -210,13 +210,63 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     }
 
     /**
+     * Request a new capabilities to check updateSequence.
+     * If capabilities updateSequence has changed, resources are updated.
+     *
+     * @param newCapabilities, the new capabilities, or null to fetch it
+     * @return true if capabilities and resources has changed.
+     */
+    public synchronized boolean checkForUpdates(Capabilities newCapabilities) {
+        String currentUpdateSequence = null;
+        AbstractCapabilitiesBase capas = this.capabilities;
+        if (capas != null) {
+            currentUpdateSequence = capas.getUpdateSequence();
+        }
+
+        boolean changed = true;
+        String newUpdateSequence = null;
+        if (newCapabilities == null) {
+            final GetCapabilitiesRequest getCaps = createGetCapabilities();
+            //Filling the request header map from the map of the layer's server
+            final Map<String, String> headerMap = getRequestHeaderMap();
+            getCaps.getHeaderMap().putAll(headerMap);
+            getCaps.setUpdateSequence(currentUpdateSequence);
+            try {
+                newCapabilities = WMTSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
+            } catch (Exception ex) {
+                this.capabilities = null;
+                try {
+                    LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                            createGetCapabilities().getURL().toString(), ex);
+                } catch (MalformedURLException ex1) {
+                    LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                }
+            }
+        }
+
+        if (newCapabilities != null) {
+            newUpdateSequence = newCapabilities.getUpdateSequence();
+        }
+        changed = !Objects.equals(currentUpdateSequence, newUpdateSequence);
+        if (changed) {
+            this.capabilities = newCapabilities;
+        }
+
+        if (changed) {
+            resources = createOrUpdateResources(resources, newCapabilities);
+            //TODO events
+        }
+        return changed;
+    }
+
+    /**
      * Returns the request version.
      */
     public WMTSVersion getVersion() {
         return WMTSVersion.getVersion(parameters.getValue(WMTSProvider.VERSION));
     }
 
-    public boolean getImageCache(){
+    public boolean getImageCache() {
         return parameters.getValue(AbstractClientProvider.IMAGE_CACHE);
     }
 
@@ -257,24 +307,55 @@ public class WebMapTileClient extends AbstractCoverageClient implements Client, 
     }
 
     @Override
-    public synchronized Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
-        if(resources == null){
+    public synchronized Collection<WMTSResource> components() throws DataStoreException {
+        List<WMTSResource> resources = this.resources;
+        if (resources == null) {
             resources = new ArrayList<>();
 
             final Capabilities capa = getServiceCapabilities();
-            if(capa == null){
+            if (capa == null) {
                 throw new DataStoreException("Could not get Capabilities.");
             }
-            final List<LayerType> layers = capa.getContents().getLayers();
-            for(LayerType lt : layers){
-                final String name = lt.getIdentifier().getValue();
-                final GenericName nn = NamesExt.create(name);
-                final GridCoverageResource ref = new WMTSResource(this,nn,getImageCache());
-                resources.add(ref);
-            }
 
+            resources = createOrUpdateResources(null, capa);
+            this.resources = resources;
         }
         return Collections.unmodifiableList(resources);
+    }
+
+    private List<WMTSResource> createOrUpdateResources(List<WMTSResource> existing, Capabilities capa) {
+        final List<WMTSResource> newres = new ArrayList<>();
+
+        if (capa == null) {
+            return newres;
+        }
+        final List<LayerType> layers = capa.getContents().getLayers();
+        for (LayerType lt : layers) {
+            final String name = lt.getIdentifier().getValue();
+            final GenericName nn = NamesExt.create(name);
+
+            //try to reuse existing resource
+            if (existing != null) {
+                WMTSResource previous = null;
+                for (WMTSResource r : existing) {
+                    if (nn.equals(r.getIdentifier().orElse(null))) {
+                        previous = r;
+                        break;
+                    }
+                }
+
+                if (previous != null) {
+                    previous.resetCache();
+                    newres.add(previous);
+                    continue;
+                }
+            }
+
+            //create a new resource
+            newres.add(new WMTSResource(this,nn,getImageCache()));
+        }
+
+        return newres;
     }
 
     @Override

@@ -16,16 +16,9 @@
  */
 package org.geotoolkit.display3d.utils;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
+import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
-import org.apache.sis.image.PixelIterator;
-import org.geotoolkit.image.interpolation.Interpolation;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.opengis.coverage.grid.SequenceType;
+import org.apache.sis.image.ImageProcessor;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -41,19 +34,10 @@ public final class TextureUtils {
      * @param sampleValue the value to set on non-existing pixel after resampling
      */
     public static RenderedImage sampleImage(RenderedImage imgSrc, MathTransform transform, double[] sampleValue) throws TransformException {
-
-        final ColorModel colorModel = imgSrc.getColorModel();
-
-        final PixelIterator it = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(imgSrc);
-        final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
-//        final Rectangle area = new Rectangle(0, startRow, width, Math.min(tile_size_y - startRow, threadHeight));
-        final WritableRaster raster = colorModel.createCompatibleWritableRaster(imgSrc.getWidth(), imgSrc.getHeight());
-        final BufferedImage destImage = new BufferedImage(colorModel, raster, false, null);
-
-        final Resample resampler = new Resample(transform, destImage, null, interpol, sampleValue, ResampleBorderComportement.EXTRAPOLATION);
-        resampler.fillImage();
-
-        return destImage;
+        final ImageProcessor processor = new ImageProcessor();
+        processor.setInterpolation(org.apache.sis.image.Interpolation.NEAREST);
+        final RenderedImage resampled = processor.resample(imgSrc, new Rectangle(imgSrc.getWidth(), imgSrc.getHeight()), transform);
+        return resampled;
     }
 
     public static int getNearestScaleIndex(double[] scales, double scale) {

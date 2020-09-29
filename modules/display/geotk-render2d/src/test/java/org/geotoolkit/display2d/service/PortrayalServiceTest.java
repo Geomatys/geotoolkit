@@ -27,8 +27,13 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.measure.Unit;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -38,6 +43,7 @@ import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -55,6 +61,7 @@ import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -69,10 +76,12 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.junit.Assert;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
@@ -85,6 +94,7 @@ import org.opengis.util.FactoryException;
 
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
+import org.geotoolkit.renderer.Presentation;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_ANCHOR_POINT;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DISPLACEMENT;
@@ -333,11 +343,6 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         }
     }
 
-//    @Test
-//    public void testCoverageNDRendering() throws Exception{
-//        //todo
-//    }
-
     /**
      * Test rendering a coverage which envelope is larger then the objective CRS
      * validity area.
@@ -581,7 +586,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
             }
 
             @Override
-            public void visit(org.opengis.display.primitive.Graphic graphic, RenderingContext context, SearchArea area) {
+            public void visit(Presentation graphic, RenderingContext context, SearchArea area) {
                 count.incrementAndGet();
             }
 
@@ -599,6 +604,67 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         DefaultPortrayalService.visit(canvas, scene, visit);
 
         assertEquals(1, count.get());
+    }
+
+    @Test
+    public void testPropertyPreservation() throws Exception {
+        final Point location = GO2Utilities.JTS_FACTORY.createPoint(new Coordinate(2, 3));
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder().setName("Donaldville");
+        builder.addAttribute(Point.class).setName("geometry");
+        builder.addAttribute(String.class).setName("firstName");
+        builder.addAttribute(String.class).setName("lastName");
+        final FeatureType duckType = builder.build();
+
+        final Feature duck = duckType.newInstance();
+        duck.setPropertyValue("firstName", "Donald");
+        duck.setPropertyValue("lastName", "Duck");
+        duck.setPropertyValue("geometry", location);
+        final MapLayer layer = MapBuilder.createLayer(new InMemoryFeatureSet(duckType, Collections.singleton(duck)));
+        final CanvasDef canvas = new CanvasDef(new Dimension(16, 16), new Envelope2D(CommonCRS.defaultGeographic(), 0, 0, 16, 16));
+        final MapContext ctx = MapBuilder.createContext();
+        ctx.items().add(layer);
+        final SceneDef scene = new SceneDef(ctx);
+        scene.getHints().put(GO2Hints.KEY_PRESERVE_PROPERTIES, true);
+        final List<Presentation> result = DefaultPortrayalService.present(canvas, scene).collect(Collectors.toList());
+        assertEquals(1, result.size());
+
+        final Presentation presentation = result.get(0);
+        final Feature picked = presentation.getFeature();
+        assertNotNull(picked);
+
+        Map<String, Object> expectedProperties = new HashMap<>();
+        expectedProperties.put("firstName", "Donald");
+        expectedProperties.put("lastName", "Duck");
+        expectedProperties.put("geometry", location);
+
+        final Map<String, Object> properties = picked.getType().getProperties(true).stream()
+                .filter(p -> p instanceof AttributeType)
+                .map(attr -> attr.getName().tip().toString())
+                .collect(Collectors.toMap(Function.identity(), name -> picked.getPropertyValue(name)));
+        assertEquals(
+                String.format(
+                        "Returned values do not match.%nExpected: %s%nActual: %s%n",
+                        expectedProperties.entrySet().stream()
+                                .map(entry -> String.format("%s -> %s", entry.getKey(), entry.getValue()))
+                                .collect(Collectors.joining(", ")),
+                        properties.entrySet().stream()
+                                .map(entry -> String.format("%s -> %s", entry.getKey(), entry.getValue()))
+                                .collect(Collectors.joining(", "))
+                        ),
+                expectedProperties, properties
+        );
+
+        // By default, don't load un-necessary properties
+        scene.getHints().remove(GO2Hints.KEY_PRESERVE_PROPERTIES);
+        final List<Object> geometries = DefaultPortrayalService.present(canvas, scene)
+                .map(p -> p.getFeature())
+                .peek(Assert::assertNotNull)
+                .peek(f -> assertEquals(1, f.getType().getProperties(true).stream().filter(p -> p instanceof AttributeType).count()))
+                .map(f -> f.getPropertyValue("geometry"))
+                .collect(Collectors.toList());
+
+        assertEquals(1, geometries.size());
+        assertEquals(geometries.get(0), location);
     }
 
     private void testRendering(final MapLayer layer) throws Exception {

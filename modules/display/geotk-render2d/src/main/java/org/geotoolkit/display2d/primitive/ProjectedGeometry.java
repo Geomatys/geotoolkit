@@ -20,7 +20,9 @@ import com.bric.geom.Clipper;
 import java.awt.Shape;
 import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -47,6 +49,8 @@ import org.opengis.referencing.operation.TransformException;
  * @module
  */
 public class ProjectedGeometry  {
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.primitive");
 
     private final RenderingContext2D context;
     private MathTransform2D dataToObjective;
@@ -91,15 +95,18 @@ public class ProjectedGeometry  {
         this.geomSet                = copy.geomSet;
     }
 
-    public void setDataGeometry(final org.locationtech.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS){
+    public void setDataGeometry(final org.locationtech.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS) {
         clearDataCache();
         this.dataGeometryJTS = geom;
         this.geomSet = this.dataGeometryJTS != null;
 
         try {
-            if(dataCRS == null){
+            if (dataCRS == null) {
                 //try to extract data crs from geometry
                 dataCRS = JTS.findCoordinateReferenceSystem(geom);
+            }
+            if (dataCRS == null) {
+                throw new IllegalArgumentException("Geometry CRS is undefined");
             }
             if(dataCRS != null && this.dataCRS!=dataCRS){
                 this.dataCRS = dataCRS;
@@ -108,7 +115,7 @@ public class ProjectedGeometry  {
                 dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, context.getDisplayCRS(), null).getMathTransform();
             }
         } catch (Exception ex) {
-            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);
+            LOGGER.log(Level.WARNING, "An error occurred while analysing input geometry referencing", ex);
         }
     }
 
@@ -172,7 +179,7 @@ public class ProjectedGeometry  {
      */
     public org.locationtech.jts.geom.Geometry[] getObjectiveGeometryJTS() throws TransformException {
         if(objectiveGeometryJTS == null && geomSet){
-
+            final CoordinateReferenceSystem objCrs = context.getObjectiveCRS2D();
             objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[1];
 
             org.locationtech.jts.geom.Geometry objBase;
@@ -183,6 +190,7 @@ public class ProjectedGeometry  {
                 final GeometryCSTransformer transformer = new GeometryCSTransformer(new CoordinateSequenceMathTransformer(dataToObjective));
                 objBase = transformer.transform(getDataGeometryJTS());
             }
+            objBase.setUserData(objCrs);
 
 
             if(context.wraps != null){
@@ -227,21 +235,26 @@ public class ProjectedGeometry  {
 
                 objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[nbIncRep+nbDecRep+1];
                 int n=0;
-                for(int i=0;i<nbIncRep;i++){
+                for (int i=0;i<nbIncRep;i++) {
                     //check that the futur geometry will intersect the visible area
                     final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapIncObj[i]);
                     if(candidate.intersects(context.objectiveJTSEnvelope)){
-                        objectiveGeometryJTS[n++] = JTS.transform(objBase, context.wraps.wrapIncObj[i]);
+                        org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapIncObj[i]);
+                        trsGeom.setUserData(objCrs);
+                        objectiveGeometryJTS[n++] = trsGeom;
                     }
                 }
-                if(objBounds.intersects(context.objectiveJTSEnvelope)){
+                if (objBounds.intersects(context.objectiveJTSEnvelope)) {
+                    objBase.setUserData(objCrs);
                     objectiveGeometryJTS[n++] = objBase;
                 }
-                for(int i=0;i<nbDecRep;i++){
+                for (int i=0;i<nbDecRep;i++) {
                     //check that the futur geometry will intersect the visible area
                     final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapDecObj[i]);
                     if(candidate.intersects(context.objectiveJTSEnvelope)){
-                        objectiveGeometryJTS[n++] = JTS.transform(objBase, context.wraps.wrapDecObj[i]);
+                        org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapDecObj[i]);
+                        trsGeom.setUserData(objCrs);
+                        objectiveGeometryJTS[n++] = trsGeom;
                     }
                 }
                 if(n!=objectiveGeometryJTS.length){

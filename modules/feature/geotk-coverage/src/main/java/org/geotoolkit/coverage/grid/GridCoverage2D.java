@@ -25,7 +25,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.measure.Unit;
@@ -179,7 +179,7 @@ public class GridCoverage2D extends GridCoverage {
      * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
      * is thrown.
      */
-    private static Collection<SampleDimension> fillSampleDimensions(final CharSequence name, final RenderedImage image, final SampleDimension[] bands) {
+    private static List<SampleDimension> fillSampleDimensions(final CharSequence name, final RenderedImage image, final SampleDimension[] bands) {
         final SampleDimension[] sampleDimensions = new SampleDimension[image.getSampleModel().getNumBands()];
         GridCoverageBuilder.create(name, image, bands, sampleDimensions);
         return new ArrayList<>(Arrays.asList(sampleDimensions));
@@ -733,7 +733,7 @@ public class GridCoverage2D extends GridCoverage {
      *
      * @since 2.5
      */
-    public GridCoverage2D view(final ViewType type) {
+    final GridCoverage2D view(final ViewType type) {
         if (type == ViewType.SAME) {
             return this;
         }

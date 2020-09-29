@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.feature;
 
+import java.util.function.Function;
+import org.apache.sis.feature.Features;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.locationtech.jts.geom.Geometry;
 import java.lang.reflect.Array;
 import java.net.URI;
@@ -72,6 +75,8 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.system.DefaultFactories;
 
 import static org.apache.sis.feature.AbstractIdentifiedType.NAME_KEY;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.geometry.jts.JTS;
@@ -712,8 +717,8 @@ public final class FeatureExt extends Static {
      */
     public static ParameterValueGroup toParameter(final Feature source, final ParameterDescriptorGroup desc) {
 
-        ArgumentChecks.ensureNonNull("source", source);
-        ArgumentChecks.ensureNonNull("desc", desc);
+        ensureNonNull("source", source);
+        ensureNonNull("desc", desc);
         final Parameters target = Parameters.castOrWrap(desc.createValue());
         fill(source,target);
         return target;
@@ -726,7 +731,7 @@ public final class FeatureExt extends Static {
      * @return Feature
      */
     public static Feature toFeature(final ParameterValueGroup source) {
-        ArgumentChecks.ensureNonNull("source", source);
+        ensureNonNull("source", source);
         return toFeature(source,null);
     }
 
@@ -739,7 +744,7 @@ public final class FeatureExt extends Static {
      */
     public static Feature toFeature(final ParameterValueGroup source, FeatureType targetType) {
 
-        ArgumentChecks.ensureNonNull("source", source);
+        ensureNonNull("source", source);
         if(targetType == null){
             targetType = FeatureTypeExt.toFeatureType(source.getDescriptor());
         }
@@ -776,7 +781,7 @@ public final class FeatureExt extends Static {
      */
     public static Map<String,Object> toMap(final Feature att) {
 
-        ArgumentChecks.ensureNonNull("att", att);
+        ensureNonNull("att", att);
         final Map<String,Object> map = new HashMap<>();
         FeatureLoop.loop(att, (Predicate)null, new BiFunction<PropertyType, Object, Object>() {
             @Override
@@ -797,7 +802,7 @@ public final class FeatureExt extends Static {
      * @deprecated Use method {@link Parameters#toMap(org.opengis.parameter.ParameterValueGroup)} instead.
      */
     public static Map<String,Object> toMap(final ParameterValueGroup source) {
-        ArgumentChecks.ensureNonNull("source", source);
+        ensureNonNull("source", source);
         return toMap(toFeature(source));
     }
 
@@ -895,7 +900,7 @@ public final class FeatureExt extends Static {
      * @return GeneralParameterValue
      */
     public static GeneralParameterValue searchParameter(final ParameterValueGroup group, final String code){
-        ArgumentChecks.ensureNonNull("group", group);
+        ensureNonNull("group", group);
         for(GeneralParameterValue param : group.values()){
             if(param instanceof ParameterValue){
                 final ParameterValue pv = (ParameterValue) param;
@@ -941,5 +946,57 @@ public final class FeatureExt extends Static {
         }
 
         return firstProperties.size() == secondProperties.size() && firstProperties.containsAll(secondProperties);
+    }
+
+    /**
+     * Try to create an operator to extract primary geometry from features of a specific type. This method offers the
+     * following advantages:
+     * <ul>
+     *     <li>When read geometry does not define any CRS, we assign the one extracted from related property type.</li>
+     *     <li>Property/characteristic analysis is done on assembly, to ensure minimal overhead on result function execution.</li>
+     * </ul>
+     *
+     * @param targetType Type of the features that will be passed as input to the resulting function. Cannot be null.
+     * @return A function for geometry extraction from features whose is or inherits from input type. Never null.
+     * If we cannot return a valid value, an error will be thrown as specified by {@link #getDefaultGeometry(FeatureType)}.
+     * @throws RuntimeException See {@link #getDefaultGeometry(FeatureType)}.
+     */
+    public static Function<Feature, Geometry> prepareGeometryExtractor(final FeatureType targetType) {
+        ensureNonNull("Target type", targetType);
+        PropertyType geom = getDefaultGeometry(targetType);
+        // Minor optimisation : directly use geometry attribute in case a link convention has been set.
+        geom = Features.getLinkTarget(geom)
+                .map(name -> targetType.getProperty(name))
+                .orElse(geom);
+        final AttributeType<?> attr = Features.toAttribute(geom)
+                .orElseThrow(() -> new IllegalStateException("Cannot extract geometries when associate type is not an attribute"));
+
+        final Class<?> vClass = attr.getValueClass();
+        if (!Geometry.class.isAssignableFrom(vClass)) {
+            throw new UnsupportedOperationException("Only JTS geometries are supported for now.");
+        }
+
+        // Name is built from geom, not attr, because attr can be a virtual result property, not present in source type.
+        // For example, if you've got two numeric attributes x and y, then add a concatenation operation, you've got no
+        // geometric attribute, but a geometric operation.
+        final String name = geom.getName().toString();
+        final CoordinateReferenceSystem crs = AttributeConvention.getCRSCharacteristic(targetType, attr);
+        if (crs == null) {
+            return f -> (Geometry) f.getPropertyValue(name);
+        } else {
+            return f -> {
+                final Object value = f.getPropertyValue(name);
+                if (value == null) return null;
+                final Geometry geometry = (Geometry) value;
+                final CoordinateReferenceSystem currentCrs;
+                try {
+                    currentCrs = JTS.findCoordinateReferenceSystem(geometry);
+                } catch (FactoryException e) {
+                    throw new BackingStoreException(e);
+                }
+                if (currentCrs == null) JTS.setCRS(geometry, crs);
+                return geometry;
+            };
+        }
     }
 }

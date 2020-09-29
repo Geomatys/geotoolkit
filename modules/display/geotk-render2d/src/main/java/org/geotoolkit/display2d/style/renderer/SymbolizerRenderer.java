@@ -16,22 +16,18 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.presentation.Presentation;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.renderer.Presentation;
+import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.Feature;
 
 
 /**
@@ -61,100 +57,64 @@ public interface SymbolizerRenderer {
     RenderingContext2D getRenderingContext();
 
     /**
-     * Paint the graphic object using the cached symbolizer and the rendering parameters.
+     * Obtain the presentation for given resource.Default implementation loops on each feature if resource is a FeatureSet.
+     * If resource is an Aggregate, loops on each components and concatenate streams.
      *
-     * @param graphic : cached graphic representation of a feature
-     * @return true if any data has been rendered
+     * @param layer
+     * @param resource
+     * @return Stream never null, can be empty
      * @throws PortrayalException
+     * @throws BackingStoreException in stream iteration
      */
-    boolean portray(ProjectedObject graphic) throws PortrayalException;
-
-    /**
-     * Paint in one iteration a complete set of features.
-     *
-     * @param resource resource to portray
-     * @return true if any data has been rendered
-     * @throws PortrayalException
-     */
-    default boolean portray(Resource resource) throws PortrayalException {
-        final CanvasMonitor monitor = getRenderingContext().getMonitor();
+    default Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
         if (resource instanceof FeatureSet) {
             final FeatureSet fs = (FeatureSet) resource;
-            try (RenderingRoutines.GraphicIterator graphics = RenderingRoutines.getIterator(fs, getRenderingContext())) {
-                boolean dataRendered = false;
-                while (graphics.hasNext()) {
-                    if (monitor.stopRequested()) return dataRendered;
-                    dataRendered |= portray(graphics.next());
-                }
-                return dataRendered;
-            } catch (IOException | DataStoreException ex) {
-                throw new PortrayalException(ex.getMessage(), ex);
+
+            try {
+                return fs.features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
+                    @Override
+                    public Stream<Presentation> apply(Feature t) {
+                        try {
+                            return presentations(layer, t);
+                        } catch (PortrayalException ex) {
+                            throw new BackingStoreException(ex);
+                        }
+                    }
+                });
+            } catch (DataStoreException ex) {
+                throw new PortrayalException(ex);
             }
-        } else {
-            throw new PortrayalException("Unsupported resource : " + resource);
+
+        } else if (resource instanceof Aggregate) {
+            final Aggregate agg = (Aggregate) resource;
+            try {
+                return agg.components().stream().flatMap(new Function<Resource, Stream<Presentation>>() {
+                    @Override
+                    public Stream<Presentation> apply(Resource t) {
+                        try {
+                            return presentations(layer, t);
+                        } catch (PortrayalException ex) {
+                            throw new BackingStoreException(ex);
+                        }
+                    }
+                });
+            } catch (DataStoreException ex) {
+                throw new PortrayalException(ex);
+            }
         }
-    }
-
-    /**
-     * Test if the graphic object hit the given search area.
-     *
-     * @param graphic : cached graphic representation of a feature
-     * @param mask : search area, it can represent a mouse position or a particular shape
-     * @param filter : the type of searching, intersect or within
-     * @return true if the searcharea hit this graphic object, false otherwise.
-     */
-    boolean hit(ProjectedObject graphic, SearchAreaJ2D mask, VisitFilter filter);
-
-    /**
-     * Paint the graphic object using the cached symbolizer and the rendering parameters.
-     *
-     * @param graphic : cached graphic representation of a coverage
-     * @return true if any data has been rendered
-     * @throws PortrayalException
-     */
-    boolean portray(ProjectedCoverage graphic) throws PortrayalException;
-
-    /**
-     * Test if the graphic object hit the given search area.
-     *
-     * @param graphic : cached graphic representation of a coverage
-     * @param mask : search area, it can represent a mouse position or a particular shape
-     * @param filter : the type of searching, intersect or within
-     * @return true if the searcharea hit this graphic object, false otherwise.
-     */
-    boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter);
-
-    /**
-     * Obtain the presentation for given graphic.
-     *
-     * @param resource : cached graphic object
-     * @return Spliterator never null
-     * @throws PortrayalException
-     */
-    default Spliterator<Presentation> presentation(Resource resource) throws PortrayalException {
-        throw new UnsupportedOperationException();
+        return Stream.empty();
     }
 
     /**
      * Obtain the presentation for given graphic.
      *
-     * @param graphic : cached graphic object
-     * @return Spliterator never null
+     * @param layer
+     * @param feature
+     * @return Stream never null, can be empty
      * @throws PortrayalException
+     * @throws BackingStoreException in stream iteration
      */
-    default Spliterator<Presentation> presentation(ProjectedObject graphic) throws PortrayalException {
-        return presentation(Collections.singleton(graphic).iterator());
+    default Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+        return Stream.empty();
     }
-
-    /**
-     * Obtain the presentation for given graphics.
-     *
-     * @param graphics : iterator over all graphics to render
-     * @return Spliterator never null
-     * @throws PortrayalException
-     */
-    default Spliterator<Presentation> presentation(Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
-        return Spliterators.emptySpliterator();
-    }
-
 }

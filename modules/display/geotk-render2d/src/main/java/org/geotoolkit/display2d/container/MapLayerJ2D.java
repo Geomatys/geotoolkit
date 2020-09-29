@@ -23,19 +23,25 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.beans.PropertyChangeEvent;
-import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
+import org.geotoolkit.display.PortrayalException;
 
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.presentation.RasterPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
@@ -49,7 +55,7 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> implements StoreListener<StoreEvent> {
+public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<StoreEvent> {
 
     private final LayerListener ll = new LayerListener() {
 
@@ -83,10 +89,9 @@ public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> implements St
 
     private final LayerListener.Weak weakLayerListener = new LayerListener.Weak(ll);
     private final StorageListener.Weak weakResourceListener = new StorageListener.Weak(this);
-    private SoftReference<Collection<? extends GraphicJ2D>> weakGraphic = null;
 
 
-    public MapLayerJ2D(final J2DCanvas canvas, final T layer){
+    public MapLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         //do not use layer crs here, to long to calculate
         super(canvas, layer, false);
         weakLayerListener.registerSource(layer);
@@ -99,19 +104,22 @@ public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> implements St
         weakLayerListener.dispose();
     }
 
-    @Override
-    public boolean paint(final RenderingContext2D context) {
+    /**
+     * Render layer, will only be painted if an appropriate graphic builder is attached
+     * to it.
+     */
+    public Stream<Presentation> paintLayer(final RenderingContext2D context) throws PortrayalException, DataStoreException {
 
         //we abort painting if the layer is not visible.
-        if (!item.isVisible()) return false;
+        if (!item.isVisible()) return Stream.empty();
 
         //we abort if opacity is to low
         final double opacity = item.getOpacity();
-        if (opacity < 1e-6) return false;
+        if (opacity < 1e-6) return Stream.empty();
 
         if (1-opacity < 1e-6) {
             //we are very close to opacity one, no need to create a intermediate image
-            return paintLayer(context);
+            return streamPresentations(context);
         } else {
             //create an intermediate layer which will be painted on the main context
             //after with the given opacity
@@ -120,46 +128,34 @@ public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> implements St
                     ColorModel.getRGBdefault().createCompatibleSampleModel(rect.width, rect.height));
             final Graphics2D g2d = inter.createGraphics();
             final RenderingContext2D interContext = context.create(g2d);
-            boolean dataRendered = paintLayer(interContext);
 
-            //paint intermediate image
-            context.switchToDisplayCRS();
-            final Graphics2D g = context.getGraphics();
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)opacity));
-            g.drawImage(inter, 0, 0, null);
-            recycleBufferedImage(inter);
+            final J2DPainter painter = new J2DPainter();
+            try (Stream<Presentation> stream = streamPresentations(interContext)) {
+                painter.paint(interContext, stream, true);
+            }
 
-            return dataRendered;
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setDomain(interContext.getGridGeometry());
+            gcb.setValues(inter);
+            final GridCoverage coverage = gcb.build();
+
+            final RasterPresentation rp = new RasterPresentation(layer, coverage);
+            rp.forGrid(context);
+            rp.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) opacity);
+
+            return Stream.of(rp);
         }
     }
 
-    /**
-     * Render layer, will only be painted if an appropriate graphic builder is attached
-     * to it.
-     */
-    protected boolean paintLayer(final RenderingContext2D context){
-
-        boolean dataRendered = false;
-        //get graphics from the cache first
-        if(weakGraphic != null){
-            final Collection<? extends GraphicJ2D> graphics = weakGraphic.get();
-            if(graphics != null){
-                for(GraphicJ2D g : graphics){
-                    dataRendered |= g.paint(context);
-                }
-            }
-            return dataRendered;
-        }
+    private Stream<Presentation> streamPresentations(final RenderingContext2D context) throws DataStoreException, PortrayalException {
 
         final GraphicBuilder<? extends GraphicJ2D> builder = item.getGraphicBuilder(GraphicJ2D.class);
-        if(builder != null){
+        if (builder != null) {
             final Collection<? extends GraphicJ2D> graphics = builder.createGraphics(item, canvas);
-            weakGraphic = new SoftReference<Collection<? extends GraphicJ2D>>(graphics);
-            for(GraphicJ2D g : graphics){
-                dataRendered |= g.paint(context);
-            }
+            return (Stream) graphics.stream();
+        } else {
+            return DefaultPortrayalService.present(item, item.getResource(), context);
         }
-        return dataRendered;
     }
 
     /**
@@ -167,17 +163,17 @@ public class MapLayerJ2D<T extends MapLayer> extends MapItemJ2D<T> implements St
      * to it.
      */
     @Override
-    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, List<Graphic> graphics) {
 
         final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
-        if(builder != null){
+        if (builder != null) {
             //this layer hasa special graphic rendering, use it instead of normal rendering
             final Collection<GraphicJ2D> gras = builder.createGraphics(item, canvas);
-            for(final GraphicJ2D gra : gras){
-                graphics = gra.getGraphicAt(context, mask, filter,graphics);
+            for (final GraphicJ2D gra : gras) {
+                graphics = gra.getGraphicAt(context, mask, graphics);
             }
             return graphics;
-        }else{
+        } else {
             //since this is a custom layer, we have no way to find a child graphic.
             graphics.add(this);
             return graphics;

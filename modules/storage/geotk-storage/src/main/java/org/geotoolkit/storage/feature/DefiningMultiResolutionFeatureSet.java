@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.UUID;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.multires.DefiningPyramid;
+import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.opengis.feature.FeatureType;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  *
@@ -38,7 +38,7 @@ import org.opengis.feature.FeatureType;
  */
 public class DefiningMultiResolutionFeatureSet extends DefiningFeatureSet implements MultiResolutionResource {
 
-    public final Map<String,MultiResolutionModel> models = new HashMap<>();
+    public final Map<String, MultiResolutionModel> models = new HashMap<>();
     private TileFormat tileFormat;
 
     public DefiningMultiResolutionFeatureSet(FeatureType type) {
@@ -62,8 +62,8 @@ public class DefiningMultiResolutionFeatureSet extends DefiningFeatureSet implem
 
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof Pyramid) {
-            Pyramid p = (Pyramid) template;
+        if (template instanceof TileMatrixSet) {
+            TileMatrixSet p = (TileMatrixSet) template;
             String id = p.getIdentifier();
             if (id == null) {
                 //create a unique id
@@ -72,8 +72,8 @@ public class DefiningMultiResolutionFeatureSet extends DefiningFeatureSet implem
                 //change id to avoid overriding an existing pyramid
                 id = UUID.randomUUID().toString();
             }
-            DefiningPyramid cp = new DefiningPyramid(id, p.getFormat(), p.getCoordinateReferenceSystem(), new ArrayList<>());
-            Pyramids.copyStructure(p, cp);
+            DefiningTileMatrixSet cp = new DefiningTileMatrixSet(id, p.getFormat(), p.getCoordinateReferenceSystem(), new ArrayList<>());
+            TileMatrices.copyStructure(p, cp);
             models.put(id, cp);
             return cp;
         } else {

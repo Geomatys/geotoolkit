@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.wps.converters.inputs.literal;
 
-import java.util.LinkedList;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -41,43 +43,49 @@ public class StringToIntegerArrayConverter extends SimpleConverter<String, int[]
     }
 
     @Override
-    public int[] apply(final String source) throws UnconvertibleObjectException {
+    public int[] apply(String source) throws UnconvertibleObjectException {
 
-        if (source != null && !source.trim().isEmpty()) {
+        if (source != null) {
+            source = source.trim();
+            if (!source.isEmpty()) {
 
-            final List<Integer> integerList = new LinkedList<Integer>();
-            if (source.contains(",")) {
-                final String[] sourceSplit = source.split(",");
+                final List<Number> values = new ArrayList<>();
 
-                for (final String str : sourceSplit) {
-                    try {
-                        final Integer i = Integer.valueOf(str.trim());
-                        if (i != null) {
-                            integerList.add(i);
+                final int length = source.length();
+                final NumberFormat nf = NumberFormat.getIntegerInstance();
+                nf.setParseIntegerOnly(true);
+                final ParsePosition pp = new ParsePosition(0);
+                int idx = 0;
+
+                for(;;) {
+                    Number number = nf.parse(source, pp);
+                    if (number == null) {
+                        throw new UnconvertibleObjectException("Invalid source String : "+source);
+                    }
+                    values.add(number);
+
+                    idx = pp.getIndex();
+                    while (idx != length) {
+                        char c = source.charAt(idx);
+                        if (c == ',' || c == ' ' || c == '\t' || c == '\n') {
+                            idx++;
+                        } else {
+                            break;
                         }
-                    } catch (NumberFormatException ex) {
-                        throw new UnconvertibleObjectException(ex.getMessage(), ex);
                     }
+                    if (idx == length) break;
+                    pp.setIndex(idx);
                 }
-            } else {
-                 try {
-                    final Integer i = Integer.valueOf(source.trim());
-                    if (i != null) {
-                        integerList.add(i);
-                    }
-                } catch (NumberFormatException ex) {
-                    throw new UnconvertibleObjectException(ex.getMessage(), ex);
-                }
-            }
 
-            if (!integerList.isEmpty()) {
-                final int[] outArray = new int[integerList.size()];
-                for (int i = 0; i < integerList.size(); i++) {
-                    outArray[i] = integerList.get(i);
+                if (!values.isEmpty()) {
+                    final int[] outArray = new int[values.size()];
+                    for (int i = 0; i < outArray.length; i++) {
+                        outArray[i] = values.get(i).intValue();
+                    }
+                    return outArray;
+                } else {
+                    throw new UnconvertibleObjectException("Invalid source String : "+source);
                 }
-                return outArray;
-            } else {
-                throw new UnconvertibleObjectException("Invalid source String : "+source);
             }
         }
 

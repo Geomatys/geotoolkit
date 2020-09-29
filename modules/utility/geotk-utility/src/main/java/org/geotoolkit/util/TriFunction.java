@@ -1,0 +1,32 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2020, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.util;
+
+/**
+ * Similar to BiFunction but with three input parameters.
+ *
+ * @author Johann Sorel (Geomatys)
+ * @param <A> first parameter type
+ * @param <B> second parameter type
+ * @param <C> third parameter type
+ * @param <R> returned type
+ */
+public interface TriFunction<A,B,C,R> {
+
+    R apply(A a, B b, C c);
+
+}

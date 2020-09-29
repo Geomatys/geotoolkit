@@ -25,13 +25,13 @@ import java.util.UUID;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.storage.multires.DefiningPyramid;
+import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 /**
  *
@@ -60,7 +60,7 @@ public class DefiningMultiResolutionResource extends DefiningCoverageResource im
     public GridGeometry getGridGeometry() throws DataStoreException {
         GridGeometry gridGeometry = super.getGridGeometry();
         if (gridGeometry == null) {
-            gridGeometry = new PyramidReader(this).getGridGeometry();
+            gridGeometry = new TileMatrixSetCoverageReader(this).getGridGeometry();
         }
         return gridGeometry;
     }
@@ -72,8 +72,8 @@ public class DefiningMultiResolutionResource extends DefiningCoverageResource im
 
     @Override
     public MultiResolutionModel createModel(MultiResolutionModel template) throws DataStoreException {
-        if (template instanceof Pyramid) {
-            Pyramid p = (Pyramid) template;
+        if (template instanceof TileMatrixSet) {
+            TileMatrixSet p = (TileMatrixSet) template;
             String id = p.getIdentifier();
             if (id == null) {
                 //create a unique id
@@ -82,8 +82,8 @@ public class DefiningMultiResolutionResource extends DefiningCoverageResource im
                 //change id to avoid overriding an existing pyramid
                 id = UUID.randomUUID().toString();
             }
-            DefiningPyramid cp = new DefiningPyramid(id, p.getFormat(), p.getCoordinateReferenceSystem(), new ArrayList<>());
-            Pyramids.copyStructure(p, cp);
+            DefiningTileMatrixSet cp = new DefiningTileMatrixSet(id, p.getFormat(), p.getCoordinateReferenceSystem(), new ArrayList<>());
+            TileMatrices.copyStructure(p, cp);
             models.put(id, cp);
             return cp;
         } else {

@@ -50,7 +50,6 @@ import org.geotoolkit.storage.DataStores.ResourceWalker.VisitOption;
 import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.ProgressiveResource;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.geotoolkit.storage.multires.TileFormat;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.FeatureType;
@@ -60,6 +59,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 
 
 /**
@@ -432,7 +432,7 @@ public final class DataStores extends Static {
                 final Collection<? extends MultiResolutionModel> models = cdt.getModels();
                 final List<String> mms = new ArrayList<>();
                 for (MultiResolutionModel mrm : models) {
-                    if (mrm instanceof Pyramid) {
+                    if (mrm instanceof TileMatrixSet) {
                         mms.add(mrm.toString());
                     } else {
                         //todo : do a better print ?

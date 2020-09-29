@@ -143,6 +143,13 @@ public final class GO2Hints extends Static {
      * Default value is false.
      */
     public static final Key KEY_BEHAVIOR_MODE = new NamedKey(Object.class, "GO2 - Paint of finish");
+
+    /**
+     * Used mainly for picking (WMS GetFeatureInfo, etc.). Prevent any filtering of properties when loading feature
+     * layers.
+     */
+    public static final Key KEY_PRESERVE_PROPERTIES = new NamedKey(Boolean.class, "GO2 - Paint of finish");
+
     public static final Object BEHAVIOR_PROGRESSIVE = new Object();
     public static final Object BEHAVIOR_KEEP_TILE = new Object();
     public static final Object BEHAVIOR_ON_FINISH = new Object();

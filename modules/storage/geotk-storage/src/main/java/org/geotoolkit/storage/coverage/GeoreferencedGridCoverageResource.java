@@ -54,6 +54,7 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
     @Override
     public GridCoverage read(GridGeometry domain, int ... range) throws DataStoreException {
         final GridGeometry gg = getGridGeometry();
+        final GridGeometry resultGrid;
         final GridExtent extent;
         final int[] subsampling;
         try {
@@ -63,24 +64,19 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
                         .subgrid(domain);
                 extent = derived.getIntersection();
                 subsampling = derived.getSubsamplings();
+                resultGrid = derived.build();
             } else {
                 GridDerivation derived = gg.derive();
                 extent = derived.getIntersection();
                 subsampling = derived.getSubsamplings();
+                resultGrid = derived.build();
             }
         } catch (IllegalGridGeometryException ex) {
             throw new DisjointCoverageDomainException(ex.getMessage(), ex);
         }
 
-        final int[] areaLower = new int[extent.getDimension()];
-        final int[] areaUpper = new int[extent.getDimension()];
-        for (int i = 0; i < areaLower.length; i++) {
-            areaLower[i] = Math.toIntExact(extent.getLow(i));
-            areaUpper[i] = Math.toIntExact(extent.getHigh(i)+1l);
-        }
-
         try {
-            return readInGridCRS(areaLower, areaUpper, subsampling, range);
+            return readInGridCRS(resultGrid, extent, subsampling, range);
         } catch (TransformException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
@@ -93,13 +89,16 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
      * @param areaUpper readInGridCRS upper corner, exclusive
      * @param subsampling image subsampling in pixels
      */
-    protected GridCoverage readInGridCRS(int[] areaLower, int[] areaUpper, int[] subsampling, int ... range)
+    protected GridCoverage readInGridCRS(GridGeometry resultGrid, GridExtent extent, int[] subsampling, int ... range)
             throws DataStoreException, TransformException {
+
+//        int[] areaLower,
+//                int[] areaUpper
 
         // find if we need to readInGridCRS more then one slice
         int cubeDim = -1;
         for (int i=0; i<subsampling.length; i++) {
-            final int width = (areaUpper[i] - areaLower[i] + subsampling[i] - 1) / subsampling[i];
+            final long width = (extent.getHigh(i)+1 - extent.getLow(i) + subsampling[i]-1 ) / subsampling[i];
             if (i>1 && width>1) {
                 cubeDim = i;
                 break;
@@ -108,19 +107,24 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
 
         if (cubeDim == -1) {
             //read a single slice
-            return readGridSlice(areaLower, areaUpper, subsampling);
+            return readGridSlice(resultGrid, getLow(extent), getHigh(extent), subsampling);
         } else {
             //read an Nd cube
             final List<GridCoverage> coverages = new ArrayList<>();
-            final int lower = areaLower[cubeDim];
-            final int upper = areaUpper[cubeDim];
-            for(int i=lower;i<upper;i++){
-                areaLower[cubeDim] = i;
-                areaUpper[cubeDim] = i+1;
-                coverages.add(readInGridCRS(areaLower, areaUpper, subsampling));
+            final long lower = extent.getLow(cubeDim);
+            final long upper = extent.getHigh(cubeDim) +1;
+            for(long i=lower;i<upper;i++){
+                final long[] low = extent.getLow().getCoordinateValues();
+                final long[] high = extent.getHigh().getCoordinateValues();
+                low[cubeDim] = i;
+                high[cubeDim] = i;
+                final GridExtent subExtent = new GridExtent(null, low, high, true);
+
+                final GridGeometry subGrid = new GridGeometry(subExtent, PixelInCell.CELL_CENTER,
+                        resultGrid.getGridToCRS(PixelInCell.CELL_CENTER), resultGrid.getCoordinateReferenceSystem());
+
+                coverages.add(readInGridCRS(subGrid, subExtent, subsampling));
             }
-            areaLower[cubeDim] = lower;
-            areaUpper[cubeDim] = upper;
 
             try {
                 return new GridCoverageStack(getIdentifier().toString(), coverages, cubeDim);
@@ -130,10 +134,24 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
         }
     }
 
+    private static int[] getLow(GridExtent extent) {
+        long[] values = extent.getLow().getCoordinateValues();
+        final int[] array = new int[values.length];
+        for(int i=0;i<values.length;i++) array[i] = (int) values[i];
+        return array;
+    }
+
+    private static int[] getHigh(GridExtent extent) {
+        long[] values = extent.getHigh().getCoordinateValues();
+        final int[] array = new int[values.length];
+        for(int i=0;i<values.length;i++) array[i] = (int) (values[i]+1);
+        return array;
+    }
+
     /**
      * Read a coverage slice with defined image area.
      */
-    protected abstract GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, int ... range) throws DataStoreException;
+    protected abstract GridCoverage readGridSlice(GridGeometry resultGrid, int[] areaLower, int[] areaUpper, int[] subsampling, int ... range) throws DataStoreException;
 
     /**
      * Calculate the final size of each dimension.
@@ -177,8 +195,8 @@ public abstract class GeoreferencedGridCoverageResource extends AbstractGridReso
             matrix.setElement(i, dim, areaLower[i]);
         }
         final MathTransform ssToGrid = MathTransforms.linear(matrix);
-        final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS(PixelInCell.CELL_CENTER));
+        final MathTransform ssToCrs = MathTransforms.concatenate(ssToGrid, gridGeom.getGridToCRS(PixelInCell.CELL_CORNER));
         final GridExtent extent = new GridExtent(null, null, outExtent, false);
-        return new GridGeometry(extent, PixelInCell.CELL_CENTER, ssToCrs, gridGeom.getCoordinateReferenceSystem());
+        return new GridGeometry(extent, PixelInCell.CELL_CORNER, ssToCrs, gridGeom.getCoordinateReferenceSystem());
     }
 }

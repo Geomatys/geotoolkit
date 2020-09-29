@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.storage.multires.Mosaic;
-import org.geotoolkit.storage.multires.Pyramid;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Define a default CoverageFinder adapted for projects.<br/>
@@ -42,13 +42,13 @@ public class DefaultCoverageFinder extends CoverageFinder {
      * {@inheritDoc }.
      */
     @Override
-    public Mosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber) throws FactoryException {
-        final List<Mosaic> mosaics = new ArrayList<Mosaic>(pyramid.getMosaics());
+    public TileMatrix findMosaic(TileMatrixSet pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber) throws FactoryException {
+        final List<TileMatrix> mosaics = new ArrayList<TileMatrix>(pyramid.getTileMatrices());
         Collections.sort(mosaics, SCALE_COMPARATOR);
         Collections.reverse(mosaics);
-        Mosaic result = null;
+        TileMatrix result = null;
         mosaicLoop:
-        for (Mosaic candidate : mosaics) {
+        for (TileMatrix candidate : mosaics) {
             //check the mosaic intersect the searched envelope
             final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
             if (!clip.intersects(env, true)) continue;

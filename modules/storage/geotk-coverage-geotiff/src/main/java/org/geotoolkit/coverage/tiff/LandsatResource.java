@@ -215,7 +215,7 @@ final class LandsatResource extends GeoreferencedGridCoverageResource implements
     }
 
     @Override
-    protected GridCoverage readGridSlice(int[] areaLower, int[] areaUpper, int[] subsampling, int... range) throws DataStoreException {
+    protected GridCoverage readGridSlice(GridGeometry resultGrid, int[] areaLower, int[] areaUpper, int[] subsampling, int... range) throws DataStoreException {
         GridGeometry geometry = getGridGeometry(getGridGeometry(), areaLower, areaUpper, subsampling);
 
         //-- get all needed band to build coverage (see Landsat spec)

@@ -41,6 +41,7 @@ public class SceneDef {
         }
 
     };
+
     private Hints hints = new Hints();
     private MapContext context = null;
 
@@ -83,7 +84,7 @@ public class SceneDef {
     }
 
     public void setHints(final Hints hints) {
-        this.hints = hints;
+        this.hints = hints == null ? new Hints() : hints;
     }
 
     public List<PortrayalExtension> extensions() {

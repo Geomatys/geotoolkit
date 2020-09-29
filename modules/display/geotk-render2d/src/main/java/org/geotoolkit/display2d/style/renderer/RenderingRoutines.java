@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
@@ -52,13 +53,11 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.filter.binaryspatial.LooseBBox;
-import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
@@ -163,7 +162,7 @@ public final class RenderingRoutines {
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    public static Query prepareQuery(final RenderingContext2D renderingContext, FeatureSet fs, final FeatureMapLayer layer,
+    public static Query prepareQuery(final RenderingContext2D renderingContext, FeatureSet fs, final MapLayer layer,
             final Set<String> styleRequieredAtts, final List<Rule> rules, double symbolsMargin) throws PortrayalException{
 
         final FeatureType schema;
@@ -183,13 +182,13 @@ public final class RenderingRoutines {
         //search used geometries
         boolean allDefined = true;
         final Set<String> geomProperties = new HashSet<>();
-        if(rules!=null){
-            for(Rule r : rules){
-                for(Symbolizer s : r.symbolizers()){
+        if (rules != null) {
+            for (Rule r : rules) {
+                for (Symbolizer s : r.symbolizers()) {
                     final Expression expGeom = s.getGeometry();
-                    if(expGeom instanceof PropertyName){
+                    if (expGeom instanceof PropertyName) {
                         geomProperties.add( ((PropertyName)expGeom).getPropertyName() );
-                    }else{
+                    } else {
                         allDefined = false;
                     }
                 }
@@ -208,40 +207,38 @@ public final class RenderingRoutines {
         //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
         //make a bbox filter
-        if(!geomProperties.isEmpty()){
-            if(geomProperties.size()==1){
+        if (!geomProperties.isEmpty()) {
+            if (geomProperties.size() == 1) {
                 final String geomAttName = geomProperties.iterator().next();
-                if (layerCRS != null) {
-                    filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
-                } else {
-                    filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
-                }
-            }else{
+                filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
+            } else {
                 //make an OR filter with all geometries
                 final List<Filter> geomFilters = new ArrayList<>();
-                for(String geomAttName : geomProperties){
-                    geomFilters.add(new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox)));
+                for (String geomAttName : geomProperties) {
+                    geomFilters.add(FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox));
                 }
                 filter = FILTER_FACTORY.or(geomFilters);
             }
 
-        }else{
+        } else {
             filter = Filter.EXCLUDE;
         }
 
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
-            Query query = layer.getQuery();
-            if (query instanceof SimpleQuery) {
-                filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
+            if (layer instanceof FeatureMapLayer) {
+                Query query = ((FeatureMapLayer) layer).getQuery();
+                if (query instanceof SimpleQuery) {
+                    filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
+                }
             }
         }
 
         final Set<String> copy = new HashSet<>();
 
         //concatenate with temporal range if needed ----------------------------
-        if (layer != null) {
-            for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
+        if (layer instanceof FeatureMapLayer) {
+            for (final FeatureMapLayer.DimensionDef def : ((FeatureMapLayer) layer).getExtraDimensions()) {
                 final CoordinateReferenceSystem crs = def.getCrs();
                 final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
                 final Envelope dimEnv;
@@ -290,6 +287,15 @@ public final class RenderingRoutines {
             final Set<String> attributs = styleRequieredAtts;
             copy.addAll(attributs);
             copy.addAll(geomProperties);
+
+            try {
+                //always include the identifier if it exist
+                schema.getProperty(AttributeConvention.IDENTIFIER);
+                copy.add(AttributeConvention.IDENTIFIER);
+            } catch (PropertyNotFoundException ex) {
+                //no id, ignore it
+            }
+
             atts = copy.toArray(new String[copy.size()]);
 
             //check that properties names does not hold sub properties values, if one is found
@@ -473,11 +479,7 @@ public final class RenderingRoutines {
         //}else{
         //make a bbox filter
         if(geomAttName != null){
-            if (layerCRS != null) {
-                filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
-            } else {
-                filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
-            }
+            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
         }else{
             filter = Filter.EXCLUDE;
         }

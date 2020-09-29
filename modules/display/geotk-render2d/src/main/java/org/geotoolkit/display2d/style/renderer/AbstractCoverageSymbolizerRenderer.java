@@ -40,7 +40,6 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
@@ -53,31 +52,21 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.ReducedGridCoverage;
+import org.geotoolkit.coverage.grid.GridCoverageStack;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.resample.OutputGridBuilder;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -105,71 +94,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
     public AbstractCoverageSymbolizerRenderer(final SymbolizerRendererService service, final C symbol, final RenderingContext2D context){
         super(service, symbol,context);
-    }
-
-    @Override
-    public boolean portray(final ProjectedObject graphic) throws PortrayalException {
-        if (graphic instanceof ProjectedFeature) {
-            final ProjectedFeature pf = (ProjectedFeature) graphic;
-            final String geomName = symbol.getSource().getGeometryPropertyName();
-            Object obj;
-            if (geomName == null || geomName.isEmpty()) {
-                try {
-                    obj = pf.getCandidate().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-                } catch(PropertyNotFoundException ex) {
-                    obj = null;
-                }
-            } else {
-                obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(geomName), pf.getCandidate(), null, null);
-            }
-            if (obj instanceof GridCoverage) {
-                final GridCoverage cov = (GridCoverage) obj;
-                CharSequence name = null;
-                if (name == null) name = "unnamed";
-                final MapLayer ml = MapBuilder.createCoverageLayer(cov, GO2Utilities.STYLE_FACTORY.style(), name.toString());
-                final ProjectedCoverage pc = new ProjectedCoverage(ml);
-                return portray(pc);
-            } else if (obj instanceof GridCoverageResource) {
-                final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverageResource)obj);
-                final ProjectedCoverage pc = new ProjectedCoverage(ml);
-                return portray(pc);
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean hit(final ProjectedObject graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
-        if(graphic instanceof ProjectedFeature){
-            final ProjectedFeature pf = (ProjectedFeature) graphic;
-            final Object obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(
-                    symbol.getSource().getGeometryPropertyName()), pf.getCandidate(), null, null);
-            if (obj instanceof GridCoverage) {
-                final MapLayer ml = MapBuilder.createCoverageLayer((GridCoverage) obj, GO2Utilities.STYLE_FACTORY.style(), "");
-                final ProjectedCoverage pc = new ProjectedCoverage(ml);
-                return hit(pc,mask,filter);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean hit(final ProjectedCoverage projectedCoverage, final SearchAreaJ2D search, final VisitFilter filter) {
-
-        final Geometry geom = search.getObjectiveGeometryJTS();
-        final JTSEnvelope2D searchEnv = JTS.toEnvelope(geom);
-
-        GridGeometry searchGrid = renderingContext.getGridGeometry().reduce(0,1);
-        try {
-            searchGrid = searchGrid.derive().subgrid(searchEnv).build();
-            GridCoverage coverage = getObjectiveCoverage(projectedCoverage, searchGrid, false);
-            return coverage != null;
-        } catch (DataStoreException | TransformException | FactoryException | ProcessException | DisjointExtentException ex) {
-            return false;
-        }
     }
 
     /**
@@ -258,22 +182,57 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final MapLayer coverageLayer = projectedCoverage.getLayer();
         final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
 
+        return getObjectiveCoverage(ref, canvasGrid, isElevation, sourceBands);
+    }
+
+    /**
+     * Returns expected {@linkplain GridCoverage elevation coverage} or {@linkplain GridCoverage coverage}
+     * from given {@link ProjectedCoverage}.
+     *
+     * TODO: add a margin or interpolation parameter. To properly interpolate border on output canvas, we need extra
+     *  lines/columns on source image. Their number depends on applied interpolation (bilinear, bicubic, etc.).
+     *
+     * @param ref coverage resource
+     * @param canvasGrid Rendering canvas grid geometry
+     * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for features coverage.
+     * @param sourceBands coverage source bands to features
+     * @return expected {@linkplain GridCoverage elevation coverage} or {@linkplain GridCoverage coverage}
+     * @throws org.geotoolkit.coverage.io.CoverageStoreException if problem during coverage reading.
+     * @throws org.opengis.referencing.operation.TransformException if problem during {@link Envelope} transformation.
+     * @throws org.opengis.util.FactoryException if problem during {@link Envelope} study.
+     * @throws org.geotoolkit.process.ProcessException if problem during resampling processing.
+     * @see ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
+     * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
+     */
+    protected GridCoverage getObjectiveCoverage(final GridCoverageResource ref,
+            GridGeometry canvasGrid, final boolean isElevation, int[] sourceBands)
+            throws DataStoreException, TransformException, FactoryException, ProcessException {
+        ArgumentChecks.ensureNonNull("projectedCoverage", ref);
+
         final InterpolationCase interpolation = InterpolationCase.BILINEAR;
 
-        GridCoverage coverage;
         final GridGeometry refGG = ref.getGridGeometry();
         final GridGeometry slice = extractSlice(refGG, canvasGrid, computeMargin2D(interpolation), true);
+        GridCoverage coverage;
         try {
-            coverage = projectedCoverage.getCoverage(slice, sourceBands);
+            coverage = ref.read(slice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
         } catch (NoSuchDataException e) {
             // TODO: Remove this poor hack when SIS manage wrap-around on GridGeometry derivations.
             try {
                 final GridGeometry hackedSlice = hackWrapAround(refGG, slice);
-                coverage = projectedCoverage.getCoverage(hackedSlice, sourceBands);
+                coverage = ref.read(hackedSlice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
             } catch (Exception bis) {
                 e.addSuppressed(bis);
                 throw e;
             }
+        }
+
+        if (coverage instanceof GridCoverageStack) {
+            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
+        }
+        while (coverage instanceof GridCoverageStack) {
+            //pick the first slice
+            coverage = ((GridCoverageStack) coverage).coverageAtIndex(0);
         }
 
         //at this point, we want a single slice in 2D
@@ -408,8 +367,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //compute forward transform
         final GridGeometry coverageGridGeom = coverage.getGridGeometry();
-        final OutputGridBuilder ogb = new OutputGridBuilder(canvasGrid, coverageGridGeom);
-        final MathTransform transform = ogb.forDefaultRendering();
+        final MathTransform transform = coverageGridGeom.createTransformTo(canvasGrid, PixelInCell.CELL_CENTER);
 
         //create result image
         final RenderedImage img = coverage.render(null);

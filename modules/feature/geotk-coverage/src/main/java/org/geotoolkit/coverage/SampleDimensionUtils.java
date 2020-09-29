@@ -29,6 +29,7 @@ import org.apache.sis.coverage.Category;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Containers;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.util.InternationalString;
@@ -90,6 +91,27 @@ public final class SampleDimensionUtils {
             }
         }
         return Double.POSITIVE_INFINITY;
+    }
+
+    /**
+     * Create a pixel samples with default no data values of given sample dimensions.
+     * If no value is found, NaN is assumed.
+     *
+     * @param dimensions sample dimensions to evaluate, not null and not empty.
+     * @return pixel values, never null.
+     */
+    public static double[] getFillPixel(SampleDimension ... dimensions) {
+        ArgumentChecks.ensureNonNull("dimensions", dimensions);
+        ArgumentChecks.ensureStrictlyPositive("dimensions", dimensions.length);
+        final double[] pixel = new double[dimensions.length];
+        for (int i = 0; i < pixel.length; i++) {
+            pixel[i] = Double.NaN;
+            final double[] nodata = getNoDataValues(dimensions[i]);
+            if (nodata != null && nodata.length > 0) {
+                pixel[i] = nodata[0];
+            }
+        }
+        return pixel;
     }
 
     public static boolean isRangeSigned(final SampleDimension band) {
@@ -185,7 +207,8 @@ public final class SampleDimensionUtils {
             }
             ranges.put(range, colors);
         }
-        return org.apache.sis.internal.coverage.j2d.ColorModelFactory.createColorModel(ranges, visibleBand, numBands, type);
+        return org.apache.sis.internal.coverage.j2d.ColorModelFactory.createColorModel(
+                type, numBands, visibleBand, ranges.entrySet());
     }
 
     /**
@@ -203,6 +226,5 @@ public final class SampleDimensionUtils {
             int blue = (rand.nextInt(255) + 255) / 2;
             return new Color(red, green, blue);
         }
-
     }
 }

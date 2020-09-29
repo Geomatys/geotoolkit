@@ -19,8 +19,8 @@ package org.geotoolkit.map;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.style.MutableStyle;
-import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -145,7 +145,7 @@ public interface MapLayer extends MapItem {
      * @param type : the graphic type wanted
      * @return graphicBuilder<? extends type> or null
      */
-    <T extends Graphic> GraphicBuilder<? extends T> getGraphicBuilder(Class<T> type);
+    <T extends Presentation> GraphicBuilder<? extends T> getGraphicBuilder(Class<T> type);
 
     /**
      * Register a layer listener, this listener will be registered

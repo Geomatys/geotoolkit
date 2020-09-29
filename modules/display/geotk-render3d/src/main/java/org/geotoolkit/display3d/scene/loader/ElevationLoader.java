@@ -17,7 +17,7 @@
 package org.geotoolkit.display3d.scene.loader;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -37,7 +37,7 @@ public interface ElevationLoader {
 
     void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException;
 
-    BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException;
+    RenderedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException;
 
     double getSmoothValueOf(DirectPosition position, double scale) throws PortrayalException;
 

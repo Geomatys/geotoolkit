@@ -19,6 +19,7 @@ package org.geotoolkit.display;
 import java.awt.RenderingHints;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Optional;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.util.Classes;
@@ -156,6 +157,16 @@ public class DisplayElement {
     public Object getRenderingHint(final RenderingHints.Key key) {
         final Hints hints = getHints(false);
         return (hints==null) ? null : hints.get(key);
+    }
+
+    /**
+     * Search internal hints for a value associated to provided key.
+     * @param key The key to get a value for. Must not be null
+     * @return Value found for given key, if any.
+     */
+    public Optional<?> getHint(final RenderingHints.Key key) {
+        if (key == null || hints == null) return Optional.empty();
+        return Optional.ofNullable(hints.get(key));
     }
 
     /**

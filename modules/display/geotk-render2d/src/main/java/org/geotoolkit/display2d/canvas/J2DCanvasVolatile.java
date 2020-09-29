@@ -240,7 +240,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
             if (!mustupdate) {
                 return;
             }
-            mustupdate = false;
 
             final Shape copy;
             synchronized (dirtyArea) {
@@ -249,6 +248,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
             }
 
             render(copy);
+            mustupdate = false;
         }
     }
 

@@ -22,7 +22,7 @@ import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.client.AbstractClientProvider;
-import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.client.map.CachedTileMatrixSets;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
 import org.opengis.parameter.*;
@@ -91,7 +91,7 @@ public class TMSProvider extends AbstractClientProvider {
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
             boolean useNIO = Boolean.TRUE.equals(val.getValue());
-            server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
+            server.setUserProperty(CachedTileMatrixSets.PROPERTY_NIO, useNIO);
         }catch(ParameterNotFoundException ex){}
 
         return server;

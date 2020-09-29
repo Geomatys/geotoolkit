@@ -76,12 +76,12 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.process.Monitor;
 import org.geotoolkit.storage.coverage.DefaultImageTile;
 import org.geotoolkit.storage.coverage.ImageTile;
-import org.geotoolkit.storage.multires.AbstractMosaic;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.AbstractTileMatrix;
 import org.geotoolkit.storage.multires.Tile;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  *
@@ -90,7 +90,7 @@ import org.opengis.geometry.Envelope;
  * @module
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class XMLMosaic implements Mosaic {
+public class XMLMosaic implements TileMatrix {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.xmlstore");
     private static final NumberFormat DECIMAL_FORMAT = NumberFormat.getInstance(Locale.ENGLISH);
@@ -529,7 +529,7 @@ public class XMLMosaic implements Mosaic {
 
     @Override
     public String toString() {
-        return AbstractMosaic.toString(this);
+        return AbstractTileMatrix.toString(this);
     }
 
     /**
@@ -606,7 +606,7 @@ public class XMLMosaic implements Mosaic {
                 }
             });
         } catch (BackingStoreException ex) {
-            throw (DataStoreException) ex.getCause();
+            throw ex.unwrapOrRethrow(DataStoreException.class);
         }
     }
 

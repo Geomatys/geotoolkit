@@ -713,9 +713,7 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
         }
     }
 
-    private static Collection<SampleDimension> buildSampleDimensions(Element[] elements) throws IOException {
-
-        boolean sampleDimensionMismatch = false;
+    private static List<SampleDimension> buildSampleDimensions(Element[] elements) throws IOException {
         SampleDimension[] sampleDimensions = null;
         for (final Element element : elements) {
             /*
@@ -732,9 +730,6 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
                     if (sampleDimensions.length != candidate.length) {
                         throw new IllegalArgumentException( // TODO: localize
                                 "Inconsistent number of sample dimensions.");
-                    }
-                    if (!Arrays.equals(sampleDimensions, candidate)) {
-                        sampleDimensionMismatch = true;
                     }
                 }
             }

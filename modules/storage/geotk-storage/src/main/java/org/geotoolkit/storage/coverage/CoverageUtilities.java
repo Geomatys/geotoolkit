@@ -39,12 +39,10 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.storage.coverage.finder.CoverageFinder;
 import org.geotoolkit.storage.coverage.finder.StrictlyCoverageFinder;
-import org.geotoolkit.storage.multires.DefiningMosaic;
-import org.geotoolkit.storage.multires.DefiningPyramid;
-import org.geotoolkit.storage.multires.Mosaic;
+import org.geotoolkit.storage.multires.DefiningTileMatrix;
+import org.geotoolkit.storage.multires.DefiningTileMatrixSet;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.Pyramid;
-import org.geotoolkit.storage.multires.Pyramids;
+import org.geotoolkit.storage.multires.TileMatrices;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -57,6 +55,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.storage.multires.TileMatrixSet;
+import org.geotoolkit.storage.multires.TileMatrix;
 
 
 /**
@@ -81,7 +81,7 @@ public final class CoverageUtilities {
      * TODO: Is it really OK ? If we search a Lambert pyramid, and we've only got polar ones...
      * @deprecated use {@link org.geotoolkit.coverage.finder.StrictlyCoverageFinder#findPyramid(PyramidSet, org.opengis.referencing.crs.CoordinateReferenceSystem)}
      */
-    public static Pyramid findPyramid(final MultiResolutionResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
+    public static TileMatrixSet findPyramid(final MultiResolutionResource set, final CoordinateReferenceSystem crs) throws FactoryException, DataStoreException {
         CoverageFinder finder = new StrictlyCoverageFinder();
         return finder.findPyramid(set, crs);
     }
@@ -91,7 +91,7 @@ public final class CoverageUtilities {
      *
      * @deprecated use {@link org.geotoolkit.coverage.finder.StrictlyCoverageFinder#findMosaic(Pyramid, double, double, org.opengis.geometry.Envelope, Integer)}
      */
-    public static Mosaic findMosaic(final Pyramid pyramid, final double resolution,
+    public static TileMatrix findMosaic(final TileMatrixSet pyramid, final double resolution,
             final double tolerance, final Envelope env, int maxTileNumber) throws FactoryException
     {
         CoverageFinder finder = new StrictlyCoverageFinder();
@@ -113,14 +113,14 @@ public final class CoverageUtilities {
      * @throws TransformException If input filter {@link CoordinateReferenceSystem} is not compatible with
      * input mosaics one.
      */
-    public static List<Mosaic> findMosaics(final Pyramid toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
-        final ArrayList<Mosaic> result = new ArrayList<Mosaic>();
+    public static List<TileMatrix> findMosaics(final TileMatrixSet toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
+        final ArrayList<TileMatrix> result = new ArrayList<TileMatrix>();
 
         // Rebuild filter envelope from pyramid CRS
         final GeneralEnvelope tmpFilter = new GeneralEnvelope(
                 ReferencingUtilities.transform(filter, toSearchIn.getCoordinateReferenceSystem()));
 
-        for (Mosaic source : toSearchIn.getMosaics()) {
+        for (TileMatrix source : toSearchIn.getTileMatrices()) {
             final Envelope sourceEnv = source.getEnvelope();
             if ((containOnly && tmpFilter.contains(sourceEnv, true))
                     || (!containOnly && tmpFilter.intersects(sourceEnv, true))) {
@@ -202,15 +202,15 @@ public final class CoverageUtilities {
      * @throws IOException If a problem occurs at image reading/writing.
      */
     public static void copyPyramidReference(MultiResolutionResource sourceRef, MultiResolutionResource targetRef) throws DataStoreException, IOException {
-        final Collection<? extends Pyramid> pyramids = Pyramids.getPyramids(sourceRef);
+        final Collection<? extends TileMatrixSet> pyramids = TileMatrices.getTileMatrixSets(sourceRef);
 
         // Create pyramids
-        for (Pyramid sP : pyramids) {
-            final Pyramid tP = (Pyramid) targetRef.createModel(new DefiningPyramid(sP.getCoordinateReferenceSystem()));
+        for (TileMatrixSet sP : pyramids) {
+            final TileMatrixSet tP = (TileMatrixSet) targetRef.createModel(new DefiningTileMatrixSet(sP.getCoordinateReferenceSystem()));
 
             //create mosaics
-            for (Mosaic sM : sP.getMosaics()) {
-                final Mosaic tM = tP.createMosaic(sM);
+            for (TileMatrix sM : sP.getTileMatrices()) {
+                final TileMatrix tM = tP.createTileMatrix(sM);
                 final int height = sM.getGridSize().height;
                 final int width = sM.getGridSize().width;
 
@@ -267,13 +267,13 @@ public final class CoverageUtilities {
     /**
      * Get or create a pyramid and it's mosaic for the given envelope and scales.
      */
-    public static Pyramid getOrCreatePyramid(MultiResolutionResource container,
+    public static TileMatrixSet getOrCreatePyramid(MultiResolutionResource container,
             Envelope envelope, Dimension tileSize, double[] scales) throws DataStoreException
     {
         // Find if we already have a pyramid in the given CRS
-        Pyramid pyramid = null;
+        TileMatrixSet pyramid = null;
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        for (Pyramid candidate : Pyramids.getPyramids(container)) {
+        for (TileMatrixSet candidate : TileMatrices.getTileMatrixSets(container)) {
             if (Utilities.equalsApproximately(crs, candidate.getCoordinateReferenceSystem())) {
                 pyramid = candidate;
                 break;
@@ -281,7 +281,7 @@ public final class CoverageUtilities {
         }
         if (pyramid == null) {
             // We didn't find a pyramid, create one
-            pyramid = (Pyramid) container.createModel(new DefiningPyramid(crs));
+            pyramid = (TileMatrixSet) container.createModel(new DefiningTileMatrixSet(crs));
         }
 
         // Those parameters can change if another mosaic already exist
@@ -307,7 +307,7 @@ public final class CoverageUtilities {
             // Check if we already have a mosaic at this scale
             boolean mosaicFound = false;
             int index = 0;
-            for (Mosaic m : pyramid.getMosaics()) {
+            for (TileMatrix m : pyramid.getTileMatrices()) {
                 if (m.getScale() == scale) {
                     mosaicFound = true;
                     break;
@@ -315,14 +315,14 @@ public final class CoverageUtilities {
             }
             if (!mosaicFound) {
                 // Create a new mosaic
-                final DefiningMosaic dm = new DefiningMosaic(
+                final DefiningTileMatrix dm = new DefiningTileMatrix(
                         null,
                         newUpperleft,
                         scale,
                         tileSize,
                         gridSize,
                         new GridExtent(dataPixelWidth, dataPixelHeight));
-                pyramid.createMosaic(dm);
+                pyramid.createTileMatrix(dm);
             }
         }
         return pyramid;
@@ -334,10 +334,10 @@ public final class CoverageUtilities {
      * @param pyramid shouldn't be null
      * @return pyramid Envelope or null if no mosaic found.
      */
-    public static GeneralEnvelope getPyramidEnvelope(org.geotoolkit.storage.multires.Pyramid pyramid) {
+    public static GeneralEnvelope getPyramidEnvelope(org.geotoolkit.storage.multires.TileMatrixSet pyramid) {
         ArgumentChecks.ensureNonNull("pyramid", pyramid);
         GeneralEnvelope pyramidEnv = null;
-        for (Mosaic mosaic : pyramid.getMosaics()) {
+        for (TileMatrix mosaic : pyramid.getTileMatrices()) {
             if (pyramidEnv == null) {
                 pyramidEnv = new GeneralEnvelope(mosaic.getEnvelope());
             } else {

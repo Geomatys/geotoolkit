@@ -30,7 +30,7 @@ import javax.measure.IncommensurableException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -42,11 +42,6 @@ import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
-import org.geotoolkit.image.interpolation.Interpolation;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.interpolation.ResampleBorderComportement;
-import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -129,7 +124,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
     }
 
     @Override
-    public BufferedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
+    public RenderedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
 
         if (outputCrs == null) {
             throw new PortrayalException("Output crs has not been set");
@@ -157,7 +152,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
         }
     }
 
-    private static BufferedImage extractTileImage(final Envelope tileEnvelope,
+    private static RenderedImage extractTileImage(final Envelope tileEnvelope,
             final GridCoverage coverage, final MathTransform outputCRSToCoverageCRS,
             final Dimension tileSize) throws TransformException {
 
@@ -189,15 +184,15 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
         final MathTransform sourceToTarget = MathTransforms.concatenate(
                 tileGridToOutputCRS, outputCRSToCoverageCRS, coverageCRSToImageGrid);
 
-        //resample image
-        final double[] fillValue = new double[targetImage.getData().getNumBands()];
+        final Number[] fillValue = new Number[targetImage.getData().getNumBands()];
         Arrays.fill(fillValue, Double.NaN);
-        final PixelIterator it = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(dataRenderedImage);
-        final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
-        final Resample resampler = new Resample(sourceToTarget, targetImage, null, interpol, fillValue, ResampleBorderComportement.EXTRAPOLATION);
-        resampler.fillImage();
 
-        return targetImage;
+        //resample image
+        final ImageProcessor processor = new ImageProcessor();
+        processor.setInterpolation(org.apache.sis.image.Interpolation.NEAREST);
+        processor.setFillValues(fillValue);
+        final RenderedImage resampled = processor.resample(dataRenderedImage, new Rectangle(tileSize.width, tileSize.height), sourceToTarget);
+        return resampled;
     }
 
 }

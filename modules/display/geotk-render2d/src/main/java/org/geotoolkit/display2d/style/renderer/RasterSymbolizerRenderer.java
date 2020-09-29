@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.Color;
-import java.awt.RenderingHints;
+import org.geotoolkit.display2d.presentation.RasterPresentation;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -29,8 +28,6 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,41 +37,36 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
-import javax.media.jai.ImageLayout;
+import java.util.stream.Stream;
 import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
-import javax.media.jai.NullOpImage;
-import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.image.ImageProcessor;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.iso.Names;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -87,26 +79,17 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.style.function.CompatibleColorModel;
-import org.geotoolkit.style.function.DefaultInterpolationPoint;
-import org.geotoolkit.style.function.InterpolationPoint;
-import org.geotoolkit.style.function.Method;
-import org.geotoolkit.style.function.Mode;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
@@ -114,8 +97,6 @@ import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -127,8 +108,11 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.LocalName;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
+import org.geotoolkit.renderer.Presentation;
+import org.geotoolkit.geometry.GeometricUtilities;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -150,126 +134,6 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
     public RasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
-        if (monitor.stopRequested()) return false;
-
-        boolean dataRendered = false;
-        try {
-            final MapLayer coverageLayer = projectedCoverage.getLayer();
-            final Resource resource = coverageLayer.getResource();
-            if (!(resource instanceof GridCoverageResource)) {
-                LOGGER.log(Level.WARNING, () -> String.format(
-                        "Unsupported case: given layer [%s] has no compatible resource.%nExpected: %s%nBut got: %s",
-                        coverageLayer.getName(), GridCoverageResource.class, resource == null? "null" : resource.getClass()
-                ));
-                return false;
-            }
-
-            final GridCoverageResource ref = (GridCoverageResource) resource;
-            if (!isInView(ref)) return false;
-            if (monitor.stopRequested()) return false;
-
-            final RasterSymbolizer sourceSymbol = symbol.getSource();
-
-            ////////////////////////////////////////////////////////////////////
-            // 2 - Select bands to style / display                            //
-            ////////////////////////////////////////////////////////////////////
-
-            //band select ----------------------------------------------------------
-            //works as a JAI operation
-            final ChannelSelection selections = sourceSymbol.getChannelSelection();
-            final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
-            final int[] channelSelection;
-            //we can change sample dimension only if we have more then one available.
-            if (selections != null && (sampleDimensions == null || sampleDimensions.size() > 1)) {
-                final SelectedChannelType channel = selections.getGrayChannel();
-
-                final SelectedChannelType[] channels = channel != null?
-                        new SelectedChannelType[]{channel} : selections.getRGBChannels();
-                if (channels != null && channels.length > 0) {
-                    channelSelection = new int[channels.length];
-                    for (int i = 0 ; i < channels.length ; i++) {
-                        channelSelection[i] = getBandIndice(channels[i].getChannelName(), sampleDimensions);
-                    }
-                } else channelSelection = null;
-            } else {
-                channelSelection = null;
-            }
-
-            if (monitor.stopRequested()) return false;
-            final GridCoverage dataCoverage = getObjectiveCoverage(projectedCoverage, renderingContext.getGridGeometry(), false, channelSelection);
-            if (dataCoverage == null) {
-                //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
-                return false;
-            }
-            if (monitor.stopRequested()) return false;
-
-            /*
-             * If we haven't got any reprojection we delegate affine transformation to java2D
-             * we must switch to objectiveCRS for grid coverage
-             */
-            renderingContext.switchToObjectiveCRS();
-
-            ////////////////////////////////////////////////////////////////////
-            // 4 - Apply style                                                //
-            ////////////////////////////////////////////////////////////////////
-
-            final GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
-            final MathTransform trs2D = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
-            if (monitor.stopRequested()) return false;
-
-            ////////////////////////////////////////////////////////////////////
-            // 5 - Correct cross meridian problems / render                   //
-            ////////////////////////////////////////////////////////////////////
-
-            if (renderingContext.wraps == null) {
-                //single rendering
-                dataRendered |= renderCoverage(projectedCoverage, dataImage, trs2D);
-
-            } else {
-                //check if the geometry overlaps the meridian
-                int nbIncRep = renderingContext.wraps.wrapIncNb;
-                int nbDecRep = renderingContext.wraps.wrapDecNb;
-                final Geometry objBounds = JTS.toGeometry(dataCoverage.getGridGeometry().getEnvelope());
-
-                // geometry cross the far east meridian, geometry is like :
-                // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
-                if (objBounds.intersects(renderingContext.wraps.wrapIncLine)) {
-                    //duplicate geometry on the other warp line
-                    nbDecRep++;
-                }
-                // geometry cross the far west meridian, geometry is like :
-                // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
-                else if (objBounds.intersects(renderingContext.wraps.wrapDecLine)) {
-                    //duplicate geometry on the other warp line
-                    nbIncRep++;
-                }
-                dataRendered |= renderCoverage(projectedCoverage, dataImage, trs2D);
-
-                //-- repetition of increasing and decreasing sides.
-                for (int i = 0; i < nbDecRep; i++) {
-                    g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
-                    dataRendered |= renderCoverage(projectedCoverage, dataImage, trs2D);
-                }
-                for (int i = 0; i < nbIncRep; i++) {
-                    g2d.setTransform(renderingContext.wraps.wrapIncObjToDisp[i]);
-                    dataRendered |= renderCoverage(projectedCoverage, dataImage, trs2D);
-                }
-            }
-
-            renderingContext.switchToDisplayCRS();
-        } catch (NoSuchDataException e) {
-            LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
-        }
-        return dataRendered;
     }
 
     /**
@@ -411,7 +275,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
              * (which mean index color model with positive colormap array index -> DataBuffer.TYPE_BYTE || DataBuffer.TYPE_USHORT)
              * or if image has already 3 or 4 bands Byte typed.
              */
-            if (!defaultStyleIsNeeded(sampleMod, riColorModel)) {
+            if (riColorModel != null && !defaultStyleIsNeeded(sampleMod, riColorModel)) {
                 break recolorCase;
             }
 
@@ -448,10 +312,11 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
             // TODO : we should analyze a subset of the entire image instead, to
             // ensure consistency over tiled rendering (cf. OpenLayer/WMS).
-            if (analyse == null)
+            if (analyse == null) {
                 analyse = Statistics.analyse(coverage.render(null), true);
+            }
 
-            final Optional<MutableStyle> styleFromStats = GO2Utilities.inferStyle(analyse, riColorModel.hasAlpha());
+            final Optional<MutableStyle> styleFromStats = GO2Utilities.inferStyle(analyse, (riColorModel== null) ? true : riColorModel.hasAlpha());
             if (styleFromStats.isPresent()) {
                 /* WARNING: That's neither optimal nor stable. However, do not know any other way to override style on
                  * the fly.
@@ -534,128 +399,6 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
         }
 
         throw new PortrayalException("Band for name/indice "+name+" not found");
-    }
-
-    private boolean renderCoverage(final ProjectedCoverage projectedCoverage, org.apache.sis.coverage.grid.GridCoverage2D coverage, MathTransform trs2D) throws PortrayalException{
-        if (monitor.stopRequested()) return false;
-        boolean dataRendered = false;
-
-        RenderedImage img = coverage.render(null);
-
-        /*
-         * Try to prefetch image before rendering
-         * resampled image or mosaic have deferred tiles
-         * java2d render tiles one by one which can be slow when working with
-         * computed coverages or distant services like WMTS or TMS
-         */
-        if ( (img.getWidth() * img.getHeight()) < 5000*5000) {
-            ImageProcessor processor = new ImageProcessor();
-            processor.setExecutionMode(ImageProcessor.Mode.PARALLEL);
-            img = processor.prefetch(img, null);
-        }
-
-        if (monitor.stopRequested()) return false;
-
-        final InterpolationCase interpolationCase = (InterpolationCase) hints.get(GO2Hints.KEY_INTERPOLATION);
-        if (interpolationCase != null) {
-            switch (interpolationCase) {
-                case NEIGHBOR :
-                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-                    break;
-                case BILINEAR :
-                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                    break;
-                case BICUBIC :
-                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                    break;
-                default :
-                    //resample image ourself
-                    try {
-                        GridCoverage cov = new ResampleProcess(coverage, renderingContext.getGridGeometry().getCoordinateReferenceSystem(), renderingContext.getGridGeometry2D(), interpolationCase, null).executeNow();
-                        trs2D = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
-                        if (monitor.stopRequested()) return false;
-                        img = cov.render(null);
-                    } catch (ProcessException ex) {
-                        throw new PortrayalException(ex);
-                    }
-                    break;
-            }
-        }
-
-        if (trs2D instanceof AffineTransform) {
-            g2d.setComposite(symbol.getJ2DComposite());
-            try {
-                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-                dataRendered = true;
-            } catch (Exception ex) {
-                final StringWriter sw = new StringWriter();
-                final PrintWriter pw = new PrintWriter(sw);
-                ex.printStackTrace(pw);
-                LOGGER.log(Level.WARNING, sw.toString());//-- more explicite way to debug
-
-                if(ex instanceof ArrayIndexOutOfBoundsException){
-
-                    //we can recover when it's an inapropriate componentcolormodel
-                    final StackTraceElement[] eles = ex.getStackTrace();
-                    if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
-
-                        final Resource resource = projectedCoverage.getLayer().getResource();
-                        if (resource instanceof GridCoverageResource) {
-                            try {
-                                final GridCoverageResource reader = (GridCoverageResource) resource;
-                                final Map<String,Object> analyze = StatisticOp.analyze(reader.read(null).render(null));
-                                final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
-                                final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
-                                final double min = findExtremum(minArray, true);
-                                final double max = findExtremum(maxArray, false);
-
-                                final List<InterpolationPoint> values = new ArrayList<>();
-                                values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
-                                values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
-                                values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
-                                final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-                                final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
-                                final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
-                                        lookup, values, Method.COLOR, Mode.LINEAR, fallback);
-                                final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
-                                final ImageLayout layout = new ImageLayout().setColorModel(model);
-                                img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
-                                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-                                dataRendered = true;
-                            } catch(Exception e) {
-                                //plenty of errors can happen when painting an image
-                                monitor.exceptionOccured(e, Level.WARNING);
-
-                                //raise the original error
-                                monitor.exceptionOccured(ex, Level.WARNING);
-                            }
-                        }
-                    } else {
-                        //plenty of errors can happen when painting an image
-                        monitor.exceptionOccured(ex, Level.WARNING);
-                    }
-                } else {
-                    //plenty of errors can happen when painting an image
-                    monitor.exceptionOccured(ex, Level.WARNING);
-                }
-            }
-        }else if (trs2D instanceof LinearTransform) {
-            final LinearTransform lt = (LinearTransform) trs2D;
-            final int col = lt.getMatrix().getNumCol();
-            final int row = lt.getMatrix().getNumRow();
-            //TODO using only the first parameters of the linear transform
-            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
-        }else{
-            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
-        }
-
-        //draw the border if there is one---------------------------------------
-        CachedSymbolizer outline = symbol.getOutLine();
-        if(outline != null){
-            if (monitor.stopRequested()) return false;
-            dataRendered |= GO2Utilities.portray(projectedCoverage, outline, renderingContext);
-        }
-        return dataRendered;
     }
 
     /**
@@ -742,6 +485,123 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             }
         }
         return values;
+    }
+
+    @Override
+    public Stream<Presentation> presentations(MapLayer layer, Resource rs) throws PortrayalException {
+
+        if (rs instanceof GridCoverageResource) {
+            GridCoverageResource ref = (GridCoverageResource) rs;
+
+            try {
+                final RasterSymbolizer sourceSymbol = symbol.getSource();
+                final int[] channelSelection = channelSelection(sourceSymbol, ref);
+
+                final GridCoverage dataCoverage = getObjectiveCoverage(ref, renderingContext.getGridGeometry(), false, channelSelection);
+                if (dataCoverage == null) {
+                    return Stream.empty();
+                }
+
+                final GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
+                final RasterPresentation rasterPresentation = new RasterPresentation(layer, dataImage);
+                rasterPresentation.forGrid(renderingContext);
+
+                return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));
+
+            } catch (NoSuchDataException e) {
+                LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
+            } catch (DisjointExtentException e) {
+                LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
+            }
+        } else {
+            return super.presentations(layer, rs);
+        }
+
+        return Stream.empty();
+    }
+
+    @Override
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+
+        final RasterSymbolizer sourceSymbol = symbol.getSource();
+        final Object candidate = GO2Utilities.evaluate(sourceSymbol.getGeometry(), feature, null, null);
+
+        GridCoverageResource ref = null;
+        if (candidate instanceof GridCoverageResource) {
+            ref = (GridCoverageResource) candidate;
+        } else if (candidate instanceof GridCoverage) {
+            ref = new InMemoryGridCoverageResource((GridCoverage) candidate);
+        } else {
+            return Stream.empty();
+        }
+
+        try {
+            final int[] channelSelection = channelSelection(sourceSymbol, ref);
+
+            final GridCoverage dataCoverage = getObjectiveCoverage(ref, renderingContext.getGridGeometry(), false, channelSelection);
+            if (dataCoverage == null) {
+                return Stream.empty();
+            }
+
+            final GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
+            final RasterPresentation rasterPresentation = new RasterPresentation(layer, dataImage);
+            rasterPresentation.forGrid(renderingContext);
+
+            return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));
+        } catch (NoSuchDataException e) {
+            LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
+        }
+        return Stream.empty();
+    }
+
+    private int[] channelSelection(RasterSymbolizer sourceSymbol, GridCoverageResource ref) throws PortrayalException, DataStoreException {
+        final ChannelSelection selections = sourceSymbol.getChannelSelection();
+        final List<SampleDimension> sampleDimensions = ref.getSampleDimensions();
+        final int[] channelSelection;
+        //we can change sample dimension only if we have more then one available.
+        if (selections != null && (sampleDimensions == null || sampleDimensions.size() > 1)) {
+            final SelectedChannelType channel = selections.getGrayChannel();
+
+            final SelectedChannelType[] channels = channel != null?
+                    new SelectedChannelType[]{channel} : selections.getRGBChannels();
+            if (channels != null && channels.length > 0) {
+                channelSelection = new int[channels.length];
+                for (int i = 0 ; i < channels.length ; i++) {
+                    channelSelection[i] = getBandIndice(channels[i].getChannelName(), sampleDimensions);
+                }
+            } else {
+                channelSelection = null;
+            }
+        } else {
+            channelSelection = null;
+        }
+        return channelSelection;
+    }
+
+    private Stream<Presentation> outline(MapLayer layer, GridGeometry gridGeom) throws PortrayalException {
+        if (symbol.getOutLine() != null) {
+            final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(gridGeom.getCoordinateReferenceSystem());
+            final Geometry geom = GeometricUtilities.toJTSGeometry(gridGeom.getEnvelope(), GeometricUtilities.WrapResolution.NONE);
+            geom.setUserData(crs2d);
+
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName("border");
+            ftb.addAttribute(Geometry.class).setName("geom").setCRS(crs2d).addRole(AttributeRole.DEFAULT_GEOMETRY);
+            ftb.addAttribute(Integer.class).setName("id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
+            final FeatureType type = ftb.build();
+            final Feature feature = type.newInstance();
+            feature.setPropertyValue("id", 0);
+            feature.setPropertyValue("geom", geom);
+
+            final SymbolizerRendererService service = GO2Utilities.findRenderer(symbol.getOutLine());
+            final SymbolizerRenderer renderer = service.createRenderer(symbol, renderingContext);
+            return renderer.presentations(layer, feature);
+        }
+        return Stream.empty();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -924,59 +784,6 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
         pb.add(lookup);
         return JAI.create("lookup", pb, null);
     }
-
-    /**
-     * Find the min or max values in an array of double
-     * @param data double array
-     * @param min search min values or max values
-     * @return min or max value.
-     */
-    private static double findExtremum(final double[] data, final boolean min) {
-        if (data.length > 0) {
-            double extremum = data[0];
-            if (min) {
-                for (int i = 0; i < data.length; i++) {
-                    extremum = Math.min(extremum, data[i]);
-                }
-            } else {
-                for (int i = 0; i < data.length; i++) {
-                    extremum = Math.max(extremum, data[i]);
-                }
-            }
-            return extremum;
-        }
-        throw new IllegalArgumentException("Array of " + (min ? "min" : "max") + " values is empty.");
-    }
-
-    private static ColorMap create(Color[] palette, final double[] noDataValues, final double minValue, final double maxValue) {
-        final List<InterpolationPoint> values = new ArrayList<>();
-        if (noDataValues != null)
-            for (double nodata : noDataValues) {
-                values.add(SF.interpolationPoint(nodata, SF.literal(new Color(0, 0, 0, 0))));
-            }
-
-        values.add(SF.interpolationPoint(Float.NaN, SF.literal(new Color(0, 0, 0, 0))));
-
-        //-- Color palette
-        assert palette.length >= 2;
-        values.add(SF.interpolationPoint(minValue, SF.literal(palette[0])));
-
-        if (palette.length > 2) {
-            final int numSteps = palette.length-2;
-            final double step = maxValue - minValue / (numSteps);
-            double currentValue = minValue;
-            for (int i = 1 ; i <= numSteps ; i++) {
-                currentValue += step;
-                values.add(SF.interpolationPoint(currentValue, SF.literal(palette[i])));
-            }
-        }
-
-        values.add(SF.interpolationPoint(maxValue, SF.literal(palette[palette.length - 1])));
-
-        final Function function = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
-        return GO2Utilities.STYLE_FACTORY.colorMap(function);
-    }
-
 
     private static List<SampleDimension> addAlphaDimension(final List<SampleDimension> source) {
         if (source == null || source.isEmpty()) {

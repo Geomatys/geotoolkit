@@ -22,13 +22,11 @@ import java.util.Arrays;
 
 import java.awt.image.*;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
 import javax.media.jai.JAI;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
-import com.sun.media.jai.util.ImageUtil;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
@@ -126,7 +124,7 @@ public final class ImageUtilities extends Static {
             if (layout != null) {
                 layout = layout.unsetTileLayout();
             }
-            final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(image, null);
+            final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(image, null, false);
             int s;
             if ((s=tileSize.width) != image.getTileWidth()) {
                 if (layout == null) {
@@ -230,7 +228,7 @@ public final class ImageUtilities extends Static {
             // If the bounds changed, adjust the tile size.
             if (result != layout) {
                 source = sources.get(0);
-                final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(source, null);
+                final Dimension tileSize = org.apache.sis.internal.coverage.j2d.ImageLayout.DEFAULT.suggestTileSize(source, null, false);
                 if (result.isValid(ImageLayout.TILE_WIDTH_MASK)) {
                     final int oldSize = result.getTileWidth(source);
                     final int newSize = tileSize.width;
@@ -328,23 +326,8 @@ public final class ImageUtilities extends Static {
         }
     }
 
-    /**
-     * Sets every samples in the given region of the given raster to the given value.
-     *
-     * @param raster The raster where to set the sample values.
-     * @param region The region in the given rectangle where the values should be set.
-     * @param value  The value to be given to every samples that are inside the given region.
-     */
-    public static void fill(final WritableRaster raster, Rectangle region, final Number value) {
-        final Rectangle bounds = raster.getBounds();
-        if (region.contains(bounds)) {
-            fill(raster.getDataBuffer(), value);
-        } else {
-            region = region.intersection(bounds);
-            final double[] background = new double[raster.getNumBands()];
-            Arrays.fill(background, value.doubleValue());
-            ImageUtil.fillBackground(raster, region, background);
-        }
+    public static void fill(final WritableRaster raster, final Number value) {
+        fill(raster.getDataBuffer(), value);
     }
 
     /**

@@ -42,7 +42,6 @@ import java.io.StringWriter;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -163,7 +162,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      */
     protected GridCoverage(final CharSequence name,
                            final GridGeometry grid,
-                           final Collection<? extends SampleDimension> bands)
+                           final List<? extends SampleDimension> bands)
     {
         super(grid, bands);
         this.name = Types.toInternationalString(name);
@@ -199,7 +198,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
      */
     protected GridCoverage(final CharSequence name,
                            final GridGeometry grid,
-                           final Collection<? extends SampleDimension> bands,
+                           final List<? extends SampleDimension> bands,
                            final GridCoverage[] sources)
     {
         super(grid, bands);

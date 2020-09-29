@@ -44,9 +44,31 @@ public class AbstractGetCapabilities extends AbstractRequest implements GetCapab
 
     protected final WFSVersion version;
 
+    /**
+     * The update sequence string, defining a unique id for the GetCapabilities response.
+     */
+    protected String updateSequence;
+
+
     public AbstractGetCapabilities(final String serverURL,final WFSVersion version, final ClientSecurity security){
         super(serverURL,security,null);
         this.version = version;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getUpdateSequence() {
+        return updateSequence;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setUpdateSequence(String sequence) {
+        this.updateSequence = sequence;
     }
 
     /**
@@ -58,6 +80,9 @@ public class AbstractGetCapabilities extends AbstractRequest implements GetCapab
         requestParameters.put("REQUEST",    "GetCapabilities");
         if (version != null) {
             requestParameters.put("VERSION",    version.getCode());
+        }
+        if (updateSequence != null && !updateSequence.isEmpty()) {
+            requestParameters.put("UPDATESEQUENCE", updateSequence);
         }
         return super.getURL();
     }
@@ -74,7 +99,7 @@ public class AbstractGetCapabilities extends AbstractRequest implements GetCapab
             versions = WFSXmlFactory.buildAcceptVersion(null, WFSVersion.codes());
         }
 
-        final GetCapabilities request = WFSXmlFactory.buildGetCapabilities(version.getCode(), versions, null, null, null, "WFS");
+        final GetCapabilities request = WFSXmlFactory.buildGetCapabilities(version.getCode(), versions, null, null, updateSequence, "WFS");
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();

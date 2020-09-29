@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.image;
 
+import com.sun.media.jai.util.ImageUtil;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -26,22 +27,26 @@ import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
+import java.awt.image.ImagingOpException;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
 import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.function.LongFunction;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.image.PlanarImage;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.util.TriFunction;
 
 /**
  *
@@ -58,81 +63,132 @@ public class BufferedImages extends Static {
      * @param height if null reference image height is copied
      * @param nbBand if null reference image number of bands is copied
      * @param dataType if null reference image data type is copied
-     * @return
-     * @throws IllegalArgumentException
      */
-    public static BufferedImage createImage(RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType) throws IllegalArgumentException{
+    public static BufferedImage createImage(final RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType) throws IllegalArgumentException{
+        return createImage(reference, width, height, nbBand, dataType, null);
+    }
+
+    /**
+     * Create a new image, trying to preserve raster, sample model and color model
+     * when possible.
+     *
+     * @param reference not null
+     * @param width if null reference image width is copied
+     * @param height if null reference image height is copied
+     * @param nbBand if null reference image number of bands is copied
+     * @param dataType if null reference image data type is copied
+     * @param fillValue if not null, samples to fill image
+     */
+    public static BufferedImage createImage(final RenderedImage reference, Integer width, Integer height, Integer nbBand, Integer dataType, double[] fillValue) throws IllegalArgumentException{
+        final SampleModel sm = reference.getSampleModel();
         if (width == null) width = reference.getWidth();
         if (height == null) height = reference.getHeight();
-        if (nbBand == null) nbBand = reference.getSampleModel().getNumBands();
-        if (dataType == null) dataType = reference.getSampleModel().getDataType();
+        if (nbBand == null) nbBand = sm.getNumBands();
+        if (dataType == null) dataType = sm.getDataType();
         ArgumentChecks.ensureStrictlyPositive("width", width);
         ArgumentChecks.ensureStrictlyPositive("height", height);
         ArgumentChecks.ensureStrictlyPositive("nbBand", nbBand);
 
-        if (nbBand == reference.getSampleModel().getNumBands() && dataType == reference.getSampleModel().getDataType()) {
+        if (nbBand == sm.getNumBands() && dataType == sm.getDataType()) {
             //we can preserver color model and raster configuration
             final Raster anyTile = reference.getTile(reference.getMinTileX(), reference.getMinTileY());
             final WritableRaster raster = anyTile.createCompatibleWritableRaster(width, height);
-            final ColorModel cm = reference.getColorModel();
-            final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
+            if (fillValue != null && !isAllZero(fillValue)) setAll(raster, fillValue);
+            ColorModel cm = reference.getColorModel();
+            if (cm == null) {
+                cm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
+            }
+            final BufferedImage resultImage = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
             return resultImage;
         } else {
             //we need to create a new image
-            return createImage(width, height, nbBand, dataType);
+            return createImage(width, height, nbBand, dataType, fillValue);
         }
     }
 
     /**
      * Create a new image of the same type with a different size.
-     *
-     * @param width
-     * @param height
-     * @param reference
-     * @return
-     * @throws IllegalArgumentException
      */
     public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException {
         return createImage(reference, width, height, null, null);
     }
 
     public static BufferedImage createImage(final int width, final int height, final int nbBand, final int dataType) throws IllegalArgumentException{
+        return createImage(width, height, nbBand, dataType, null);
+    }
+
+    public static BufferedImage createImage(final int width, final int height, final int nbBand, final int dataType, double[] fillValue) throws IllegalArgumentException{
         ArgumentChecks.ensureStrictlyPositive("width", width);
         ArgumentChecks.ensureStrictlyPositive("height", height);
         final Point upperLeft = new Point(0,0);
-        final WritableRaster raster = createRaster(width, height, nbBand, dataType, upperLeft);
+        final WritableRaster raster = createRaster(width, height, nbBand, dataType, upperLeft, fillValue);
 
         //TODO try to reuse java colormodel if possible
         //create a temporary fallback colormodel which will always work
         //extract grayscale min/max from sample dimension
         final ColorModel graycm = ColorModelFactory.createGrayScale(dataType, nbBand, 0, 0, 1);
-        final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<>());
-        return resultImage;
+        return new BufferedImage(graycm, raster, false, null);
     }
 
     public static WritableRaster createRaster(int width, int height, int nbBand, int dataType, Point upperLeft) throws IllegalArgumentException{
+        return createRaster(width, height, nbBand, dataType, upperLeft, null);
+    }
+
+    public static WritableRaster createRaster(int width, int height, int nbBand, int dataType, Point upperLeft, double[] fillValue) throws IllegalArgumentException{
         ArgumentChecks.ensureStrictlyPositive("width", width);
         ArgumentChecks.ensureStrictlyPositive("height", height);
+
+        if (fillValue != null) {
+            if (fillValue.length != nbBand) {
+                throw new IllegalArgumentException("Fill value size " + fillValue.length + "do not match nb band " + nbBand);
+            }
+            /*
+            Created rasters are filled with 0 by default, set fillValue to null if all samples are 0
+            */
+            if (isAllZero(fillValue)) {
+                fillValue = null;
+            }
+        }
+
         final WritableRaster raster;
-        if(nbBand == 1){
-            if(dataType == DataBuffer.TYPE_BYTE || dataType == DataBuffer.TYPE_USHORT || dataType == DataBuffer.TYPE_INT){
+        if (nbBand == 1) {
+            if (dataType == DataBuffer.TYPE_BYTE || dataType == DataBuffer.TYPE_USHORT || dataType == DataBuffer.TYPE_INT) {
                 raster = WritableRaster.createBandedRaster(dataType, width, height, nbBand, upperLeft);
-            }else{
+                if (fillValue != null) {
+                    ImageUtilities.fill(raster, fillValue[0]);
+                }
+            } else {
                 //create it ourself
+                final int bufferSize = Math.multiplyExact(width, height);
+
                 final DataBuffer buffer;
-                if(dataType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height);
-                else if(dataType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height);
-                else if(dataType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height);
-                else throw new IllegalArgumentException("Type not supported "+dataType);
+                if (dataType == DataBuffer.TYPE_SHORT) {
+                    final short[] data = new short[bufferSize];
+                    if (fillValue != null) Arrays.fill(data, (short) fillValue[0]);
+                    buffer = new DataBufferShort(data, bufferSize);
+                } else if(dataType == DataBuffer.TYPE_FLOAT) {
+                    final float[] data = new float[bufferSize];
+                    if (fillValue != null) Arrays.fill(data, (float) fillValue[0]);
+                    buffer = new DataBufferFloat(data, bufferSize);
+                } else if(dataType == DataBuffer.TYPE_DOUBLE) {
+                    final double[] data = new double[bufferSize];
+                    if (fillValue != null) Arrays.fill(data, fillValue[0]);
+                    buffer = new DataBufferDouble(data, bufferSize);
+                } else {
+                    throw new IllegalArgumentException("Type not supported "+dataType);
+                }
                 final int[] zero = new int[1];
                 //TODO create our own raster factory to avoid JAI
                 raster = RasterFactory.createBandedRaster(buffer, width, height, width, zero, zero, upperLeft);
             }
 
-        }else{
-            if(dataType == DataBuffer.TYPE_BYTE || dataType == DataBuffer.TYPE_USHORT){
+        } else {
+            if (dataType == DataBuffer.TYPE_BYTE || dataType == DataBuffer.TYPE_USHORT) {
                 raster = WritableRaster.createInterleavedRaster(dataType, width, height, nbBand, upperLeft);
-            }else{
+                if (fillValue != null) {
+                    setAll(raster, fillValue);
+                }
+            } else {
                 //create it ourself
                 final long size = (long) width * height * nbBand;
                 final int isize = Math.toIntExact(size);
@@ -151,6 +207,9 @@ public class BufferedImages extends Static {
                 }
                 //TODO create our own raster factory to avoid JAI
                 raster = RasterFactory.createBandedRaster(buffer, width, height, width, bankIndices, bandOffsets, upperLeft);
+                if (fillValue != null) {
+                    setAll(raster, fillValue);
+                }
             }
         }
         return raster;
@@ -272,10 +331,50 @@ public class BufferedImages extends Static {
     }
 
     public static void setAll(WritableRenderedImage img, double[] pixel) {
-        final WritablePixelIterator ite = WritablePixelIterator.create(img);
-        while (ite.next()) {
-            ite.setPixel(pixel);
+
+        final int minTileX = img.getMinTileX();
+        final int minTileY = img.getMinTileY();
+        final int numXTiles = img.getNumXTiles();
+        final int numYTiles = img.getNumYTiles();
+
+        for (int y = minTileY, yn = minTileY + numYTiles; y < yn; y++) {
+            for (int x = minTileX, xn = minTileX + numXTiles; x < xn; x++) {
+                setAll(img.getWritableTile(x, y), pixel);
+            }
         }
+    }
+
+    public static void setAll(WritableRaster raster, double[] pixel) {
+        ImageUtil.fillBackground(raster, raster.getBounds(), pixel);
+    }
+
+    /**
+     * Tests if all pixels in the image are identical and images have the same geometry.
+     *
+     * @param image1
+     * @param image2
+     * @return true if pixels are identical
+     */
+    public static boolean isPixelsIdenticals(RenderedImage image1, RenderedImage image2) {
+        final PixelIterator ite1 = PixelIterator.create(image1);
+        final PixelIterator ite2 = PixelIterator.create(image2);
+        if (!ite1.getDomain().equals(ite2.getDomain())) {
+            return false;
+        }
+        final double[] pixel1 = new double[ite1.getNumBands()];
+        final double[] pixel2 = new double[ite2.getNumBands()];
+
+        while (ite1.next()) {
+            final Point position = ite1.getPosition();
+            ite2.moveTo(position.x, position.y);
+            ite1.getPixel(pixel1);
+            ite2.getPixel(pixel2);
+            if (!Arrays.equals(pixel1, pixel2)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -331,5 +430,139 @@ public class BufferedImages extends Static {
                         return new Rectangle(rectX - left,rectY - bottom,rectWidth,rectHeight).intersection(imageBounds);
                     }
                 });
+    }
+
+    /**
+     * Ensure the given raster is compatible with raster template.
+     * If not the data will be copied to a new raster.
+     *
+     * @param in raster to verify and transform if needed
+     * @param rasterTemplate reference raster to compare with
+     * @return compatible raster
+     * @throws ImagingOpException if raster can not be transformed
+     */
+    public static Raster makeConform(Raster in, Raster rasterTemplate) throws ImagingOpException {
+        final int inNumBands = in.getNumBands();
+        final int outNumBands = rasterTemplate.getNumBands();
+        if (inNumBands != outNumBands) {
+            //this is a severe issue, the raster do no respect the expected number of samples
+            throw new ImagingOpException("Mosaic tile image declares " + inNumBands
+                    + " bands, but sample dimensions have " + outNumBands);
+        }
+
+        final int inDataType = in.getDataBuffer().getDataType();
+        final int outDataType = rasterTemplate.getDataBuffer().getDataType();
+        if (inDataType != outDataType) {
+            //difference in input and output types, this may be caused by an aggregated resource
+            final int x = 0;
+            final int y = 0;
+            final int width = in.getWidth();
+            final int height = in.getHeight();
+            final WritableRaster raster = rasterTemplate.createCompatibleWritableRaster(in.getMinX(), in.getMinY(), width, height);
+            final int nbSamples = width * height * inNumBands;
+            switch (outDataType) {
+                case DataBuffer.TYPE_BYTE :
+                case DataBuffer.TYPE_SHORT :
+                case DataBuffer.TYPE_USHORT :
+                case DataBuffer.TYPE_INT :
+                    int[] arrayi = new int[nbSamples];
+                    in.getPixels(x, y, width, height, arrayi);
+                    raster.setPixels(x, y, width, height, arrayi);
+                    break;
+                case DataBuffer.TYPE_FLOAT :
+                    float[] arrayf = new float[nbSamples];
+                    in.getPixels(x, y, width, height, arrayf);
+                    raster.setPixels(x, y, width, height, arrayf);
+                    break;
+                case DataBuffer.TYPE_DOUBLE :
+                default :
+                    double[] arrayd = new double[nbSamples];
+                    in.getPixels(x, y, width, height, arrayd);
+                    raster.setPixels(x, y, width, height, arrayd);
+                    break;
+            }
+            in = raster;
+        }
+        return in;
+    }
+
+    /**
+     * Merge images with a user defined function.
+     * Images may have different sample models, number of bands or data types but must have the same geometry.
+     *
+     * @param source image to read from
+     * @param target image to read and write into
+     * @param filterByMask only apply merge operation where the source mask is valid, if mask is undefined this property has no effect.
+     * @param merger function transforming values before writing. parameters are in order : position in image, source pixel, target pixel, result pixel
+     *               if result pixel is null, the target pixel values are unchanged.
+     * @throws IllegalArgumentException if source and target images have different geometries
+     */
+    public static void mergeImages(RenderedImage source, WritableRenderedImage target, boolean filterByMask, TriFunction<Point, double[], double[], double[]> merger) throws IllegalArgumentException{
+
+        if (  source.getMinX() != target.getMinX()
+           || source.getMinY() != target.getMinY()
+           || source.getWidth() != target.getWidth()
+           || source.getHeight() != target.getHeight()) {
+            throw new IllegalArgumentException("Source and target images must have the same geometry.");
+        }
+
+
+        RenderedImage sourceMask = null;
+        if (filterByMask) {
+            Object cdt = source.getProperty(PlanarImage.MASK_KEY);
+            if (cdt instanceof RenderedImage) {
+                sourceMask = (RenderedImage) cdt;
+            }
+        }
+
+        final PixelIterator sourceIte = new PixelIterator.Builder().create(source);
+        final WritablePixelIterator targetIte = new WritablePixelIterator.Builder().createWritable(target);
+        final double[] pixelr = new double[sourceIte.getNumBands()];
+        final double[] pixelw = new double[targetIte.getNumBands()];
+
+        Point position;
+
+        if (sourceMask != null) {
+            final PixelIterator sourceMaskIte = new PixelIterator.Builder().create(sourceMask);
+            while (sourceMaskIte.next()) {
+
+                //check the source mask
+                if (sourceMaskIte.getSample(0) == 0) {
+                    position = sourceMaskIte.getPosition();
+
+                    sourceIte.moveTo(position.x, position.y);
+                    targetIte.moveTo(position.x, position.y);
+                    sourceIte.getPixel(pixelr);
+                    targetIte.getPixel(pixelw);
+
+                    final double[] result = merger.apply(position, pixelr, pixelw);
+                    if (result != null) {
+                        targetIte.setPixel(result);
+                    }
+                }
+            }
+        } else {
+            while (sourceIte.next()) {
+                position = sourceIte.getPosition();
+
+                targetIte.moveTo(position.x, position.y);
+                sourceIte.getPixel(pixelr);
+                targetIte.getPixel(pixelw);
+
+                final double[] result = merger.apply(position, pixelr, pixelw);
+                if (result != null) {
+                    targetIte.setPixel(result);
+                }
+            }
+        }
+    }
+
+    private static boolean isAllZero(double[] array) {
+        for (double s : array) {
+            if (s != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }

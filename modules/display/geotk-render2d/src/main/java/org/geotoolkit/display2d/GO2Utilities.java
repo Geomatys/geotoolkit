@@ -63,17 +63,15 @@ import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer.DRChannel;
-import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -179,6 +177,8 @@ public final class GO2Utilities {
      */
     private static final double[][] BLACK_COLORS;
 
+    private static final Cache<FeatureType, java.util.function.Function<Feature, Geometry>> GEOM_EXTRACTION_CACHE = new Cache<>(10, 10, true);
+
     static{
 
         List<double[]> blackColorsList = new ArrayList<>();
@@ -232,30 +232,6 @@ public final class GO2Utilities {
     }
 
     private GO2Utilities() {}
-
-    /**
-     * @return true if some datas has been rendered
-     */
-    public static boolean portray(final ProjectedFeature feature, final CachedSymbolizer symbol,
-            final RenderingContext2D context) throws PortrayalException{
-        final SymbolizerRendererService renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.portray(feature, symbol, context);
-        }
-        return false;
-    }
-
-    /**
-     * @return true if some datas has been rendered
-     */
-    public static boolean portray(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D context) throws PortrayalException {
-        final SymbolizerRendererService renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.portray(graphic, symbol, context);
-        }
-        return false;
-    }
 
     /**
      * @return true if some datas has been rendered
@@ -348,24 +324,6 @@ public final class GO2Utilities {
         }else{
             throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + gridToCRS.getClass() );
         }
-    }
-
-    public static boolean hit(final ProjectedFeature graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter){
-        final SymbolizerRendererService renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.hit(graphic, symbol, context, mask, filter);
-        }
-        return false;
-    }
-
-    public static boolean hit(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
-            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter filter) {
-        final SymbolizerRendererService renderer = findRenderer(symbol);
-        if(renderer != null){
-            return renderer.hit(graphic, symbol, renderingContext, mask, filter);
-        }
-        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -579,28 +537,12 @@ public final class GO2Utilities {
         return JTS_FACTORY.createPolygon(ring, new LinearRing[0]);
     }
 
-    public static boolean testHit(final VisitFilter filter, final Geometry left, final Geometry right){
-
-        switch(filter){
-            case INTERSECTS :
-                return left.intersects(right);
-            case WITHIN :
-                return left.contains(right);
-        }
-
-        return false;
+    public static boolean testHit(final Geometry left, final Geometry right){
+        return left.intersects(right);
     }
 
-    public static boolean testHit(final VisitFilter filter, final org.opengis.geometry.Geometry left, final org.opengis.geometry.Geometry right){
-
-        switch(filter){
-            case INTERSECTS :
-                return left.intersects(right);
-            case WITHIN :
-                return left.contains(right);
-        }
-
-        return false;
+    public static boolean testHit(final org.opengis.geometry.Geometry left, final org.opengis.geometry.Geometry right){
+        return left.intersects(right);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -959,7 +901,9 @@ public final class GO2Utilities {
 
     public static Geometry getGeometry(final Feature feature, final Expression geomExp){
         if (isNullorEmpty(geomExp)) {
-            return (Geometry) FeatureExt.getDefaultGeometryValue(feature).orElse(null);
+            // TODO: should be part of cached symbolizers
+            final java.util.function.Function<Feature, Geometry> extractor = GEOM_EXTRACTION_CACHE.computeIfAbsent(feature.getType(), FeatureExt::prepareGeometryExtractor);
+            return extractor.apply(feature);
         } else {
             return geomExp.evaluate(feature, Geometry.class);
         }
@@ -969,9 +913,9 @@ public final class GO2Utilities {
         return (Collection<String>) exp.accept(ListingPropertyVisitor.VISITOR, collection);
     }
 
-    public static boolean isStatic(final Expression exp){
+    public static boolean isStatic(final Expression exp) {
         if(exp == null) return true;
-        return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
+        return Boolean.TRUE.equals(exp.accept(IsStaticExpressionVisitor.VISITOR, null));
     }
 
     /**
@@ -1638,5 +1582,12 @@ public final class GO2Utilities {
         }
 
         return ranges;
+    }
+
+    public static boolean mustPreserveAllProperties(final RenderingContext ctx) {
+        return ctx.getCanvas().getHint(GO2Hints.KEY_PRESERVE_PROPERTIES)
+                .filter(value -> value instanceof Boolean)
+                .map(value -> (Boolean) value)
+                .orElse(false);
     }
 }
