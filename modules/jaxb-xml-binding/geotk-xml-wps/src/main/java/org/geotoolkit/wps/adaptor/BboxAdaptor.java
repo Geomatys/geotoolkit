@@ -57,7 +57,7 @@ public class BboxAdaptor implements DataAdaptor<Envelope> {
     public DataInput toWPS2Input(Envelope candidate) {
 
         //change envelope crs if not supported
-        if (crss.contains(candidate.getCoordinateReferenceSystem())) {
+        if (!crss.contains(candidate.getCoordinateReferenceSystem())) {
             try {
                 candidate = Envelopes.transform(candidate, crss.get(0));
             } catch (TransformException ex) {
