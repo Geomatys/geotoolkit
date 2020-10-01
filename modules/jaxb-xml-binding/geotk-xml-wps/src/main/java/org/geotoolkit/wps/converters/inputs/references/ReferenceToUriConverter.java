@@ -49,8 +49,11 @@ public class ReferenceToUriConverter extends AbstractReferenceInputConverter<URI
 
     @Override
     public URI convert(Reference source, Map<String, Object> params) throws UnconvertibleObjectException {
+        if (source == null) return null;
+        String href = source.getHref();
+        if (href == null || (href = href.trim()).isEmpty()) return null;
         try {
-            return new URI(source.getHref());
+            return new URI(href);
         } catch (URISyntaxException ex) {
             throw new UnconvertibleObjectException("Can't reach the reference data.", ex);
         }

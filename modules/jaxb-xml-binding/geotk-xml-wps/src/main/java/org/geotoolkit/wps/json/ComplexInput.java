@@ -35,8 +35,12 @@ public class ComplexInput extends InputBase {
 
     public ComplexInput(ComplexInput that) {
         if (that != null) {
-            this.format = new Format(that.format);
-            this.value = new ValueType(that.value);
+            if (that.format != null) {
+                this.format = new Format(that.format);
+            }
+            if (that.value != null) {
+                this.value = new ValueType(that.value);
+            }
         }
     }
 

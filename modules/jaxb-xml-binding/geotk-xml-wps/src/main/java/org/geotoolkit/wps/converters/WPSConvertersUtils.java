@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -879,9 +880,9 @@ public class WPSConvertersUtils {
         ArgumentChecks.ensureNonEmpty("content", content);
 
         // Parse GeoJSON
-        try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
+        try (final StringReader contentReader = new StringReader(content)) {
             Unmarshaller um = GMLMarshallerPool.getInstance().acquireUnmarshaller();
-            Object obj = um.unmarshal(inputStream);
+            Object obj = um.unmarshal(contentReader);
             GMLMarshallerPool.getInstance().recycle(um);
             if (obj instanceof JAXBElement) {
                 obj = ((JAXBElement)obj).getValue();

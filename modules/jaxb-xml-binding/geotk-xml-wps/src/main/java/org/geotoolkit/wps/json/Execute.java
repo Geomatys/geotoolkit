@@ -118,28 +118,52 @@ public class Execute implements WPSJSONResponse {
         return this;
     }
 
+    /**
+     * Build an Execute request similar to this one but only with the specified
+     * inputs.
+     *
+     * @param stepInputs A List of input id that will be kept in the returned
+     * execute request.
+     *
+     * @return A similar Execute request with fitered inputs.
+     */
     public Execute subRequest(List<String> stepInputs) {
         Execute result = new Execute(this);
-        List<Input> subInputs = new ArrayList<>();
-        for (Input in : result.inputs) {
-            if (stepInputs.contains(in.getId())) {
-                subInputs.add(in);
+        if (stepInputs != null) {
+            List<Input> subInputs = new ArrayList<>();
+            for (Input in : result.inputs) {
+                if (stepInputs.contains(in.getId())) {
+                    subInputs.add(in);
+                }
             }
+            result.setInputs(subInputs);
         }
-        result.setInputs(subInputs);
         return result;
     }
 
+    /**
+     * Build an Execute request similar to this one but only with the specified
+     * inputs. The specified input identifiers are overriden with the map
+     * values.
+     *
+     * @param stepInputs A Map of input id/overriden_id that will be kept in the
+     * returned execute request.
+     *
+     * @return A similar Execute request with fitered/overriden inputs.
+     */
     public Execute subRequest(Map<String, String> stepInputs) {
         Execute result = new Execute(this);
-        List<Input> subInputs = new ArrayList<>();
-        for (Input in : result.inputs) {
-            if (stepInputs.containsKey(in.getId())) {
-                in.setId(stepInputs.get(in.getId()));
-                subInputs.add(in);
+        if (stepInputs != null) {
+            List<Input> subInputs = new ArrayList<>();
+            for (Input in : result.inputs) {
+                String newId = stepInputs.get(in.getId());
+                if (newId != null) {
+                    in.setId(newId);
+                    subInputs.add(in);
+                }
             }
+            result.setInputs(subInputs);
         }
-        result.setInputs(subInputs);
         return result;
     }
 

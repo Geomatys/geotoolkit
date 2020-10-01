@@ -48,10 +48,10 @@ public class UriToReferenceConverter extends AbstractReferenceOutputConverter<UR
 
     @Override
     public Reference convert(URI source, Map<String, Object> params) throws UnconvertibleObjectException {
+        if (source == null) return null;
         final Reference reference = new Reference();
         reference.setHref(source.toString());
         mapParameters(reference, params);
-
         return reference;
     }
 }
