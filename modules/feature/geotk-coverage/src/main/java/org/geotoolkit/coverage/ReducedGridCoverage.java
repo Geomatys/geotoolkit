@@ -47,7 +47,7 @@ public class ReducedGridCoverage extends GridCoverage {
             final long[] high = new long[low.length];
             int k = 0;
             for (int i=0;i<low.length;i++) {
-                if (dimensions[k] == i) {
+                if (k < dimensions.length && dimensions[k] == i) {
                     low[i] = sliceExtent.getLow(k);
                     high[i] = sliceExtent.getHigh(k);
                     k++;
