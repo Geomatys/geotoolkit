@@ -68,7 +68,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -95,7 +95,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -141,7 +141,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -168,7 +168,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -195,7 +195,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -241,7 +241,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -273,7 +273,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -327,7 +327,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -359,7 +359,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -407,7 +407,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(
@@ -439,7 +439,7 @@ public class ComposeTest {
             final GridCoverage gridCoverage2d = new GridCoverageBuilder()
                     .setValues(image)
                     .setDomain(envelope)
-                    .flipAxis(1)
+                    .flipGridAxis(1)
                     .build();
 
             Geometry geometry = GF.createPolygon(

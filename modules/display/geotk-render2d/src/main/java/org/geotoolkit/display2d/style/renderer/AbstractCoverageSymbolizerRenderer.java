@@ -34,6 +34,7 @@ import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridDerivation;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.coverage.grid.GridRoundingMode;
 import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.geometry.Envelopes;
@@ -322,7 +323,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             final MathTransform requestG2d = requestedDomain.getGridToCRS(PixelInCell.CELL_CORNER);
             final MathTransform newGrid2Crs = MathTransforms.concatenate(requestG2d, crsConversion);
             return new GridGeometry(PixelInCell.CELL_CORNER, newGrid2Crs, hackedEnvelope, GridRoundingMode.ENCLOSING);
-        } else return new GridGeometry(null, hackedEnvelope);
+        } else return new GridGeometry(null, hackedEnvelope, GridOrientation.HOMOTHETY);
     }
 
     private static int[] computeMargin2D(InterpolationCase interpolationCase) {

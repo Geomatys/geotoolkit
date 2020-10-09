@@ -31,6 +31,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
@@ -185,7 +186,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         gridEnv.setRange(1, 0, 90);
 
         //create the coverage
-        final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, gridEnv, null), null, img);
+        final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, gridEnv, GridOrientation.HOMOTHETY), null, img);
 
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
