@@ -36,8 +36,8 @@ public class GetTile100 extends AbstractGetTile {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetTile100(final String serverURL, final ClientSecurity security){
-        super(serverURL,"1.0.0", security);
+    public GetTile100(final String serverURL, final ClientSecurity security, Integer timeout){
+        super(serverURL,"1.0.0", security, timeout);
     }
 
     @Override

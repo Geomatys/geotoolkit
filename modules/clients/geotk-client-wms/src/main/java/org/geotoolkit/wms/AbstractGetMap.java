@@ -26,18 +26,16 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.CRS;
-
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
@@ -87,12 +85,12 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * @param version The version of the request.
      */
     protected AbstractGetMap(final String serverURL, final String version, final ClientSecurity security) {
-        super(serverURL,security,null);
+        super(serverURL, security, null);
         this.version = version;
     }
 
     protected AbstractGetMap(final WebMapClient server, final String version, final ClientSecurity security) {
-        super(server.getURL().toString(),security,null);
+        super(server.getURL().toString(),security,null, server.getTimeOutValue());
         this.server = server;
         this.version = version;
     }

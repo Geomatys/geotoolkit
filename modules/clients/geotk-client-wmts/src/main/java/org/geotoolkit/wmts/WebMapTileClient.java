@@ -278,7 +278,7 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
     public GetTileRequest createGetTile() {
         switch (getVersion()) {
             case v100:
-                return new GetTile100(serverURL.toString(),getClientSecurity());
+                return new GetTile100(serverURL.toString(),getClientSecurity(), getTimeOutValue());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

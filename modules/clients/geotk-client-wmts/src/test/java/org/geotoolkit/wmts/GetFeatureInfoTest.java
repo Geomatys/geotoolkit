@@ -16,16 +16,16 @@
  */
 package org.geotoolkit.wmts;
 
-import org.geotoolkit.wmts.v100.GetFeatureInfo100;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.wmts.v100.GetFeatureInfo100;
+import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.referencing.CommonCRS;
-import static org.junit.Assert.*;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -49,7 +49,7 @@ public class GetFeatureInfoTest extends org.geotoolkit.test.TestBase {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetFeatureInfo100 featureInfo111 = new GetFeatureInfo100("http://test.com",null);
+        final GetFeatureInfo100 featureInfo111 = new GetFeatureInfo100("http://test.com",null, 100);
         featureInfo111.setFormat("image/png");
         featureInfo111.setLayer("test");
         featureInfo111.setStyle("");

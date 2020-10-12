@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.wmts;
 
-import org.geotoolkit.wmts.v100.GetTile100;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.junit.Test;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.geotoolkit.wmts.v100.GetTile100;
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -42,7 +42,7 @@ public class GetTileTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testGetTile100() throws NoSuchAuthorityCodeException, FactoryException {
-        final GetTile100 map111 = new GetTile100("http://test.com",null);
+        final GetTile100 map111 = new GetTile100("http://test.com",null, 100);
         map111.setFormat("image/png");
         map111.setLayer("test");
         map111.setStyle("");

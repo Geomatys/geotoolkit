@@ -29,8 +29,8 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetTile implements 
     protected Integer rawIndex;
     protected String infoFormat;
 
-    protected AbstractGetFeatureInfo(String serverURL, String version, final ClientSecurity security) {
-        super(serverURL, version,security);
+    protected AbstractGetFeatureInfo(String serverURL, String version, final ClientSecurity security, Integer timeout) {
+        super(serverURL, version, security, timeout);
     }
 
     /**
