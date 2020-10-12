@@ -1017,14 +1017,24 @@ public class WPSConvertersUtils {
     public static String writeSchema(final FeatureType schema, final Map convertParams) throws IOException, JAXBException {
         Object tmpDir = convertParams.get(TMP_DIR_PATH);
         Object tmpUrl = convertParams.get(TMP_DIR_URL);
-        if (!(tmpDir instanceof String)) {
+        if (tmpDir == null) {
             throw new UnconvertibleObjectException("Missing parameter : output directory");
-        } else if (!(tmpUrl instanceof String)) {
+        } else if (!(tmpDir instanceof String) && !(tmpDir instanceof URI)) {
+            throw new UnconvertibleObjectException("Bad parameter type for output directory:" + tmpDir.getClass().getSimpleName());
+        } else if (tmpUrl == null) {
             throw new UnconvertibleObjectException("Missing parameter : output URL");
+        } else if (!(tmpUrl instanceof String)) {
+            throw new UnconvertibleObjectException("Bad parameter type for output URL:" + tmpDir.getClass().getSimpleName());
         }
 
         final String schemaFileName = "schema_" + UUID.randomUUID().toString() + ".xsd";
-        final Path output = Paths.get((String) tmpDir, schemaFileName);
+        Path dir;
+        if (tmpDir instanceof String) {
+            dir = Paths.get((String) tmpDir);
+        } else {
+            dir = Paths.get((URI) tmpDir);
+        }
+        final Path output = dir.resolve(schemaFileName);
         try (final OutputStream stream = Files.newOutputStream(output, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)) {
             //write featureType xsd on file
             final JAXBFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
