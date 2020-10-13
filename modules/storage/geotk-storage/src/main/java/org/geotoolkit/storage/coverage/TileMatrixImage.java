@@ -106,7 +106,7 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         }
 
         final double[] fillPixel;
-        if (sampleDimensions != null) {
+        if (sampleDimensions != null && !sampleDimensions.isEmpty()) {
             fillPixel = SampleDimensionUtils.getFillPixel(sampleDimensions.toArray(new SampleDimension[sampleDimensions.size()]));
         } else {
             fillPixel = new double[sample.getSampleModel().getNumBands()];
