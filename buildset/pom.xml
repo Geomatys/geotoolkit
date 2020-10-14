@@ -10,7 +10,7 @@
 
     <properties>
         <geoapi.version>4.0-M14</geoapi.version>
-        <sis.version>2.0-M0074</sis.version>
+        <sis.version>2.0-M0075</sis.version>
         <geotoolkit.version>5.0-SNAPSHOT</geotoolkit.version>
     </properties>
 
