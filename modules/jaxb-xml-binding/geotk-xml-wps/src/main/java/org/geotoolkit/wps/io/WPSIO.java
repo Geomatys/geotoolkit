@@ -82,13 +82,22 @@ public final class WPSIO {
     static {
         FORMATSUPPORTS.add(new FormatSupport(StyledLayerDescriptor.class, IOType.BOTH, WPSMimeType.APP_SLD.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_SLD_1_1_0.getValue(), true));
 
+        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), "*", true));
+
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
+
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), true));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.APP_GEOJSON.val(), WPSEncoding.UTF8.getValue(), null, true));
+
+        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), "*", true));
 
         FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
@@ -98,14 +107,22 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), true));
 
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_2_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet.class, IOType.BOTH, WPSMimeType.APP_GEOJSON.val(), WPSEncoding.UTF8.getValue(), null, true));
 
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), "*", false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), "*", true));
 
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureSet[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
@@ -342,15 +359,18 @@ public final class WPSIO {
      *
      * @param clazz
      * @param ioType
+     * @param includeWildChar
      * @return a list of {@link FormatSupport}
      */
-    public static List<FormatSupport> getFormats(final Class clazz, final IOType ioType) {
-        final List<FormatSupport> supports = new ArrayList<FormatSupport>();
+    public static List<FormatSupport> getFormats(final Class clazz, final IOType ioType, boolean includeWildChar) {
+        final List<FormatSupport> supports = new ArrayList<>();
 
         for (final FormatSupport formatSupport : FORMATSUPPORTS) {
             if (clazz != null && (formatSupport.getClazz().equals(clazz) || formatSupport.getClazz().isAssignableFrom(clazz))) {
                 if (formatSupport.getIOType().equals(IOType.BOTH) || formatSupport.getIOType().equals(ioType)) {
-                    supports.add(formatSupport);
+                    if (includeWildChar || formatSupport.getSchema() == null || (!includeWildChar && !"*".equals(formatSupport.getSchema()))) {
+                        supports.add(formatSupport);
+                    }
                 }
             }
         }
@@ -365,7 +385,7 @@ public final class WPSIO {
      * @return a {@link FormatSupport}
      */
     public static FormatSupport getDefaultFormats(final Class clazz, final IOType ioType) {
-        final List<FormatSupport> supports = getFormats(clazz, ioType);
+        final List<FormatSupport> supports = getFormats(clazz, ioType, false);
         if (!supports.isEmpty()) {
             for (FormatSupport formatSupport : supports) {
                 if (formatSupport.isDefaultFormat()) {
@@ -532,7 +552,7 @@ public final class WPSIO {
             throws UnconvertibleObjectException {
 
         boolean formatOK = false;
-        final List<FormatSupport> candidates = getFormats(clazz, ioType);
+        final List<FormatSupport> candidates = getFormats(clazz, ioType, true);
 
         int nbSearch = 0;
         if (mimeType != null) {
@@ -581,7 +601,7 @@ public final class WPSIO {
                 if (mimeType != null && mimeType.equalsIgnoreCase(wpsMime)) {
                     match++;
                 }
-                if (schema != null && schema.equalsIgnoreCase(wpsSchema)) {
+                if (schema != null && (schema.equalsIgnoreCase(wpsSchema) || "*".equals(wpsSchema))) {
                     match++;
                 }
                 if (encoding != null && encoding.equalsIgnoreCase(wpsEncoding)) {

@@ -20,14 +20,19 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import javax.xml.bind.JAXBElement;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
+import org.geotoolkit.gml.xml.FeatureCollection;
+import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.converters.inputs.references.ReferenceToFeatureCollectionConverter;
@@ -117,8 +122,27 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
         } catch (MalformedURLException ex) {
             throw new UnconvertibleObjectException("Unable to reach the schema url.", ex);
         }
+        List<Object> content = new ArrayList<>();
 
-        final Stream<FeatureSet> result = source.getContent().stream()
+        // extract feature nodes from gml unmarshalled feature collection
+        for (Object o : source.getContent()) {
+            if (o instanceof JAXBElement) {
+                o = ((JAXBElement) o).getValue();
+            }
+            if (o instanceof FeatureCollection) {
+                FeatureCollection fc = (FeatureCollection) o;
+                for (FeatureProperty fp : fc.getFeatureMember()) {
+                    if (fp.getUnknowFeature() != null) {
+                        content.add(fp.getUnknowFeature());
+                    } else {
+                        throw new UnconvertibleObjectException("Unabel to read feature from XML.");
+                    }
+                }
+            } else {
+                content.add(o);
+            }
+        }
+        final Stream<FeatureSet> result = content.stream()
                 .map(in -> {
                     try {
                         return fcollReader.read(in);
