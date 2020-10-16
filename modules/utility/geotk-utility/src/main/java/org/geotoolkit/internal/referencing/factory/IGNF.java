@@ -69,7 +69,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         r.setContactInfo(new DefaultContact(new DefaultOnlineResource(URI.create("http://www.ign.fr"))));
         final DefaultCitation c = new DefaultCitation();
         c.setCitedResponsibleParties(Collections.singleton(r));
-        c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);
+        c.setPresentationForms(Collections.singleton(PresentationForm.TABLE_DIGITAL));
         c.transitionTo(DefaultCitation.State.FINAL);
         AUTHORITY = c;
     }
