@@ -70,8 +70,8 @@ public interface SymbolizerRenderer {
         if (resource instanceof FeatureSet) {
             final FeatureSet fs = (FeatureSet) resource;
 
-            try {
-                return fs.features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
+            try (Stream<Feature> st = fs.features(false)) {
+                return st.flatMap(new Function<Feature, Stream<Presentation>>() {
                     @Override
                     public Stream<Presentation> apply(Feature t) {
                         try {

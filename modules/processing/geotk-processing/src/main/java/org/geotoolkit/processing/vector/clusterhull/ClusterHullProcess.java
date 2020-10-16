@@ -6,7 +6,6 @@ import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.storage.*;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -14,7 +13,6 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.memory.InMemoryStore;
@@ -22,6 +20,7 @@ import org.locationtech.jts.geom.Geometry;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.geotoolkit.processing.AbstractProcess;
 
@@ -142,12 +141,14 @@ public class ClusterHullProcess extends AbstractProcess {
 
     private Set<Geometry> extractGeometrySet(final FeatureSet fs) throws DataStoreException {
         String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
-        Set<Geometry> geometries = fs.features(false)
-                .map(f -> f.getPropertyValue(geomName))
-                .filter(value -> value instanceof Geometry)
-                .map(value -> (Geometry) value)
-                .collect(Collectors.toSet());
-        return geometries;
+        try (Stream<Feature> st = fs.features(false)) {
+            Set<Geometry> geometries = st
+                    .map(f -> f.getPropertyValue(geomName))
+                    .filter(value -> value instanceof Geometry)
+                    .map(value -> (Geometry) value)
+                    .collect(Collectors.toSet());
+            return geometries;
+        }
     }
 
     private Double customDistance(final Geometry geom1, final Geometry geom2) throws TransformException {

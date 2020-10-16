@@ -20,6 +20,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.storage.DataStoreException;
@@ -98,8 +99,9 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
-                try (GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
-                    Iterator<Feature> iterator = source.features(false).iterator();
+                try (GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, WPSConvertersUtils.FRACTION_DIGITS);
+                     Stream<Feature> st = source.features(false)) {
+                    Iterator<Feature> iterator = st.iterator();
                     while (iterator.hasNext()) {
                         Feature next = iterator.next();
                         Feature neww = writer.next();
