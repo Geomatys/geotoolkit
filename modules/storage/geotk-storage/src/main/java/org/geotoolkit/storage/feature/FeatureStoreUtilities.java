@@ -39,13 +39,14 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.storage.feature.query.QueryBuilder;
+import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.memory.GenericMappingFeatureCollection;
 import org.geotoolkit.storage.memory.MemoryFeatureStore;
 import org.geotoolkit.storage.memory.mapping.DefaultFeatureMapper;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
-import org.geotoolkit.storage.feature.session.Session;
-import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.locationtech.jts.geom.LineString;
@@ -98,7 +99,7 @@ public class FeatureStoreUtilities {
     }
 
     public static FeatureCollection collection(final NamedIdentifier id, FeatureType type){
-        if(type == null){
+        if (type == null) {
             //a collection with no defined type, make a generic abstract type
             //that is possible since feature collection may not always have a type.
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -124,21 +125,21 @@ public class FeatureStoreUtilities {
      * @param target : collection to copy features into.
      */
     public static Collection fill(final Collection source, final Collection target){
-        if(target instanceof FeatureCollection){
+        if (target instanceof FeatureCollection) {
             //we can safely use the addAll method.
             target.addAll(source);
-        }else{
+        } else {
             //we are not sure that the given collection will take care of closing
             //the underlying iterator, we better do the iteration ourself.
             final Iterator ite = source.iterator();
-            try{
-                while(ite.hasNext()){
+            try {
+                while (ite.hasNext()) {
                     final Object f = ite.next();
                     target.add(f);
                 }
-            }finally{
+            } finally {
                 //todo must close safely both iterator
-                if(ite instanceof Closeable){
+                if (ite instanceof Closeable) {
                     try {
                         ((Closeable) ite).close();
                     } catch (IOException ex) {
@@ -247,15 +248,15 @@ public class FeatureStoreUtilities {
      * Iterate on the given iterator and calculate count.
      * @throws FeatureStoreRuntimeException
      */
-    public static long calculateCount(final CloseableIterator reader) throws FeatureStoreRuntimeException{
+    public static long calculateCount(final CloseableIterator reader) throws FeatureStoreRuntimeException {
         long count = 0;
 
-        try{
-            while(reader.hasNext()){
+        try {
+            while (reader.hasNext()) {
                 reader.next();
                 count++;
             }
-        }finally{
+        } finally {
             reader.close();
         }
 
@@ -266,24 +267,24 @@ public class FeatureStoreUtilities {
      * Iterate on the given iterator and calculate the envelope.
      * @throws FeatureStoreRuntimeException
      */
-    public static Envelope calculateEnvelope(final FeatureIterator iterator) throws FeatureStoreRuntimeException{
+    public static Envelope calculateEnvelope(final FeatureIterator iterator) throws FeatureStoreRuntimeException {
         ensureNonNull("iterator", iterator);
 
         GeneralEnvelope env = null;
 
-        try{
-            while(iterator.hasNext()){
+        try {
+            while (iterator.hasNext()) {
                 final Feature f = iterator.next();
                 final Envelope bbox = FeatureExt.getEnvelope(f);
-                if(bbox != null){
-                    if(env != null){
+                if (bbox != null) {
+                    if (env != null) {
                         env.add(bbox);
-                    }else{
+                    } else {
                         env = new GeneralEnvelope(bbox);
                     }
                 }
             }
-        }finally{
+        } finally {
             iterator.close();
         }
 
@@ -351,6 +352,8 @@ public class FeatureStoreUtilities {
         if (count == null) {
             try (Stream<Feature> stream = dataset.features(true)) {
                 count = stream.count();
+            } catch (BackingStoreException ex) {
+                throw ex.unwrapOrRethrow(DataStoreException.class);
             }
         }
 
@@ -406,14 +409,16 @@ public class FeatureStoreUtilities {
                     while (iterator.hasNext()) {
                         final Feature f = iterator.next();
                         final Envelope bbox = FeatureExt.getEnvelope(f);
-                        if(bbox != null){
-                            if(env != null){
+                        if (bbox != null) {
+                            if (env != null) {
                                 env.add(bbox);
-                            }else{
+                            } else {
                                 env = new GeneralEnvelope(bbox);
                             }
                         }
                     }
+                } catch (BackingStoreException ex) {
+                    throw ex.unwrapOrRethrow(DataStoreException.class);
                 }
             }
             envelope = env;
@@ -479,27 +484,27 @@ public class FeatureStoreUtilities {
         final List<Class> lstClasses = Arrays.asList(geomClasses);
 
         final FeatureCollection[] cols = new FeatureCollection[geomClasses.length];
-        for(int i=0; i<geomClasses.length;i++){
+        for (int i=0; i<geomClasses.length;i++) {
             final Class geomClass = geomClasses[i];
             Filter filter = FF.equals(
                     FF.function("geometryType", FF.property(geomPropName.tip().toString())),
                     FF.literal(geomClass.getSimpleName()));
 
             //check if we need to map another type
-            if(adaptType){
-                if(geomClass == MultiPolygon.class && !lstClasses.contains(Polygon.class)){
+            if (adaptType) {
+                if (geomClass == MultiPolygon.class && !lstClasses.contains(Polygon.class)) {
                     filter = FF.or(filter,
                             FF.equals(
                                 FF.function("geometryType", FF.property(geomPropName.tip().toString())),
                                 FF.literal(Polygon.class.getSimpleName()))
                             );
-                }else if(geomClass == MultiLineString.class && !lstClasses.contains(LineString.class)){
+                } else if (geomClass == MultiLineString.class && !lstClasses.contains(LineString.class)) {
                     filter = FF.or(filter,
                             FF.equals(
                                 FF.function("geometryType", FF.property(geomPropName.tip().toString())),
                                 FF.literal(LineString.class.getSimpleName()))
                             );
-                }else if(geomClass == MultiPoint.class && !lstClasses.contains(Point.class)){
+                } else if (geomClass == MultiPoint.class && !lstClasses.contains(Point.class)) {
                     filter = FF.or(filter,
                             FF.equals(
                                 FF.function("geometryType", FF.property(geomPropName.tip().toString())),
@@ -523,8 +528,9 @@ public class FeatureStoreUtilities {
                 }
             }
             final AttributeTypeBuilder geomAttr = ftb.addAttribute(geomClasses[i]).setCRS(crs);
-            if (setDefaultGeometryRole)
+            if (setDefaultGeometryRole) {
                 geomAttr.addRole(AttributeRole.DEFAULT_GEOMETRY);
+            }
 
             cols[i] = new GenericMappingFeatureCollection(cols[i],new DefaultFeatureMapper(baseType, ftb.build()));
         }
