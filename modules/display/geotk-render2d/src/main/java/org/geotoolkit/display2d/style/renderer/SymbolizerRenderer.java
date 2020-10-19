@@ -25,8 +25,8 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 
 
@@ -70,8 +70,8 @@ public interface SymbolizerRenderer {
         if (resource instanceof FeatureSet) {
             final FeatureSet fs = (FeatureSet) resource;
 
-            try (Stream<Feature> st = fs.features(false)) {
-                return st.flatMap(new Function<Feature, Stream<Presentation>>() {
+            try {
+                return fs.features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
                     @Override
                     public Stream<Presentation> apply(Feature t) {
                         try {

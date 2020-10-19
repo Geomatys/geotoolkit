@@ -143,8 +143,8 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
             final Rule rule = GO2Utilities.STYLE_FACTORY.rule(symbol.getSource());
             final Query query = RenderingRoutines.prepareQuery(getRenderingContext(), fs, layer, names, Arrays.asList(rule), symbolsMargin);
 
-            try (Stream<Feature> st = fs.subset(query).features(false)) {
-                return st.flatMap(new Function<Feature, Stream<Presentation>>() {
+            try {
+                return fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
                     @Override
                     public Stream<Presentation> apply(Feature t) {
                         try {
