@@ -3,8 +3,11 @@ package org.geotoolkit.internal.jaxb;
 
 import java.util.logging.Level;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.util.FactoryException;
@@ -15,6 +18,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Guilhem Legal (Geomatys)
  */
 public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, CoordinateReferenceSystem> {
+
+    /**
+     * Fallback CRS
+     */
+    private static final CoordinateReferenceSystem DEFAULT_CRS = CommonCRS.WGS84.normalizedGeographic();
 
     private static final Cache<CoordinateReferenceSystem, String> cachedIdentifier = new Cache<CoordinateReferenceSystem, String>();
 
@@ -37,12 +45,23 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
             try {
                 srsName = CoordinateReferenceSystemAdapter.cachedIdentifier.get(crs);
                 if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
-                    srsName = org.apache.sis.referencing.IdentifiedObjects.lookupURN(crs, null);
+
+                    CoordinateReferenceSystem candidate;
+                    if (Utilities.equalsIgnoreMetadata(crs, DEFAULT_CRS) ||
+                        org.apache.sis.referencing.CRS.findOperation(crs, DEFAULT_CRS, null).getMathTransform().isIdentity()) {
+                        candidate = DEFAULT_CRS;
+                    } else {
+                        candidate = crs;
+                    }
+
+                    srsName = IdentifiedObjects.lookupURN(candidate, Citations.EPSG);
                     if (srsName == null) {
-                        srsName = IdentifiedObjects.getIdentifierOrName(crs);
+                        srsName = IdentifiedObjects.lookupURN(candidate, null);
+                        if (srsName == null) {
+                            srsName = IdentifiedObjects.getIdentifierOrName(candidate);
+                        }
                     }
                     CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
-
                 }
             } catch (FactoryException ex) {
                 Logging.getLogger("org.geotoolkit.referencing").log(Level.WARNING, null, ex);

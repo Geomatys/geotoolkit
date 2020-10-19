@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
@@ -106,8 +107,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             final Path dataFile = buildPath(params, randomFileName + ".json");
 
             try (OutputStream fos = Files.newOutputStream(dataFile, CREATE,  TRUNCATE_EXISTING, WRITE);
-                 GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)){
-                Iterator<Feature> iterator = source.features(false).iterator();
+                 GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS);
+                 Stream<Feature> st = source.features(false)){
+                Iterator<Feature> iterator = st.iterator();
                 while (iterator.hasNext()) {
                     Feature next = iterator.next();
                     Feature neww = writer.next();

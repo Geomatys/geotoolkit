@@ -23,6 +23,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.wps.xml.v200.DataInput;
 import org.geotoolkit.wps.xml.v200.Format;
 import static org.junit.Assert.assertEquals;
@@ -43,7 +44,7 @@ public class GMLAdaptorTest {
         final Format format = new Format("UTF-8", "text/xml", "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", null);
 
         final ComplexAdaptor adaptor = ComplexAdaptor.getAdaptor(format);
-        assertEquals(Feature.class, adaptor.getValueClass());
+        assertEquals(FeatureSet.class, adaptor.getValueClass());
 
 
 
