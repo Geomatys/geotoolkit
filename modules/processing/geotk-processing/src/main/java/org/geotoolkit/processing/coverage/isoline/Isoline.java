@@ -20,6 +20,7 @@ import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -46,6 +47,7 @@ import org.geotoolkit.processing.image.MarchingSquares;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -118,8 +120,7 @@ public class Isoline extends AbstractProcess {
                     final List<Feature> features = new ArrayList<>();
                     for (double threshold : intervals) {
                         try {
-                            Feature f = build(image, r, threshold);
-                            if (f != null) {
+                            for (Feature f : build(image, r, threshold, crs)) {
                                 features.add(f);
                             }
                         } catch (MismatchedDimensionException | TransformException ex) {
@@ -140,17 +141,24 @@ public class Isoline extends AbstractProcess {
         outputParameters.parameter("outFeatureCollection").setValue(col);
     }
 
-    private Feature build(RenderedImage image, Rectangle rectangle, double threshold) throws MismatchedDimensionException, TransformException {
+    private List<Feature> build(RenderedImage image, Rectangle rectangle, double threshold, CoordinateReferenceSystem crs) throws MismatchedDimensionException, TransformException {
         final PixelIterator ite = new PixelIterator.Builder().setRegionOfInterest(rectangle).create(image);
-        Geometry geom = MarchingSquares.build(ite, threshold, 0);
+        MultiLineString geom = MarchingSquares.build(ite, threshold, 0, true);
         if (geom == null) {
-            return null;
+            return Collections.EMPTY_LIST;
         }
-        geom = JTS.transform(geom, gridToCRS);
-        final Feature feature = type.newInstance();
-        feature.setPropertyValue(AttributeConvention.GEOMETRY, geom);
-        feature.setPropertyValue("value", threshold);
-        return feature;
+
+        final List<Feature> features = new ArrayList<>(geom.getNumGeometries());
+        for (int i = 0; i < geom.getNumGeometries(); i++) {
+            final Geometry subgeom = JTS.transform(geom.getGeometryN(i), gridToCRS);
+            subgeom.setUserData(crs);
+            final Feature feature = type.newInstance();
+            feature.setPropertyValue(AttributeConvention.GEOMETRY, subgeom);
+            feature.setPropertyValue("value", threshold);
+            features.add(feature);
+        }
+
+        return features;
     }
 
     private static FeatureType getOrCreateIsoType(DataStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
@@ -179,7 +187,7 @@ public class Isoline extends AbstractProcess {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(featureTypeName != null ? featureTypeName : "contour");
         ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
-        ftb.addAttribute(MultiLineString.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(LineString.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(Double.class).setName("value");
         return ftb.build();
     }
