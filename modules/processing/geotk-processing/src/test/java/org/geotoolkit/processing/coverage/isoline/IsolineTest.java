@@ -36,7 +36,7 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.LineString;
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.PixelInCell;
@@ -105,8 +105,8 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         final FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
         assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
         final Feature feature = col.features(false).iterator().next();
-        final MultiLineString geom = (MultiLineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
-        assertEquals("MULTILINESTRING ((2 0.5, 2 1.5), (2.5 2, 2 1.5))", geom.toText());
+        final LineString geom = (LineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
+        assertEquals("LINESTRING (2 0.5, 2 1.5, 2.5 2)", geom.toText());
 
     }
 
@@ -139,8 +139,8 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         FeatureSet col = (FeatureSet) result.parameter("outFeatureCollection").getValue();
         assertEquals(1, FeatureStoreUtilities.getCount(col, true).longValue());
         final Feature feature = col.features(false).iterator().next();
-        final MultiLineString geom = (MultiLineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
-        assertEquals("MULTILINESTRING ((2 2.625, 2 1.875), (2.5 1.5, 2 1.875))", geom.toText());
+        final LineString geom = (LineString) feature.getPropertyValue(AttributeConvention.GEOMETRY);
+        assertEquals("LINESTRING (2 2.625, 2 1.875, 2.5 1.5)", geom.toText());
 
     }
 
@@ -178,9 +178,9 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
 
         org.opengis.feature.Feature candidate = col.features(false).iterator().next();
         Geometry geom = (Geometry) candidate.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
-        assertTrue(geom instanceof MultiLineString);
-        MultiLineString line = (MultiLineString) geom;
-        assertEquals("MULTILINESTRING ((2.5 5.131933362127943, 1.5039371438387097 5.25), (2.5 3.5590333533118175, 1.6830860462828303 2.916666666666667), (1.5 2.7515672842277548, 1.6830860462828303 2.916666666666667), (2.5 5.131933362127943, 3.5 5.01232266160712), (2.5 3.5590333533118175, 3.5 3.765209494383988), (3.5 5.01232266160712, 4.5 4.484307738208203), (3.5 3.765209494383988, 4.5 3.8283104640195758), (4.5 4.484307738208203, 4.771314100938448 4.083333333333334), (4.5 3.8283104640195758, 4.771314100938448 4.083333333333334))", line.toText());
+        assertTrue(geom instanceof LineString);
+        LineString line = (LineString) geom;
+        assertEquals("LINESTRING (1.5 2.7515672842277548, 1.6830860462828303 2.916666666666667, 2.5 3.5590333533118175, 3.5 3.765209494383988, 4.5 3.8283104640195758, 4.771314100938448 4.083333333333334, 4.5 4.484307738208203, 3.5 5.01232266160712, 2.5 5.131933362127943, 1.5039371438387097 5.25)", line.toText());
     }
 
 }

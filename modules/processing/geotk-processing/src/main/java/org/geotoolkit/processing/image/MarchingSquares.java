@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.util.Static;
-import org.geotoolkit.geometry.jts.JTSMapping;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.operation.linemerge.LineMerger;
 
 /**
  *
@@ -37,7 +37,15 @@ public final class MarchingSquares extends Static {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
-    public static MultiLineString build(PixelIterator ite, double threshold, int band) {
+    /**
+     *
+     * @param ite image pixel iterator
+     * @param threshold searched value
+     * @param band band index in image
+     * @param mergeLines use LineMerger to reduce the number of created lines.
+     * @return MultiLineString, can be null if no segment found
+     */
+    public static MultiLineString build(PixelIterator ite, double threshold, int band, boolean mergeLines) {
         final Rectangle domain = ite.getDomain();
 
         final List<LineString> geometries = new ArrayList<>();
@@ -84,13 +92,14 @@ public final class MarchingSquares extends Static {
             return null;
         }
 
-        MultiLineString col = GF.createMultiLineString(geometries.toArray(new LineString[geometries.size()]));
-        try {
-            return JTSMapping.convertType(col.union(), MultiLineString.class);
-        } catch (Throwable ex) {
-            System.out.println("MarchingSquares JTS union caused exception : " + ex.getMessage());
-            return col;
+        if (mergeLines) {
+            final LineMerger lineMerger = new LineMerger();
+            lineMerger.add(geometries);
+            geometries.clear();
+            geometries.addAll(lineMerger.getMergedLineStrings());
         }
+
+        return GF.createMultiLineString(geometries.toArray(new LineString[geometries.size()]));
     }
 
     private static Object buildGeometry(int idx, double threshold, double ll, double lr, double tl, double tr, int x, int y) {
