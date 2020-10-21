@@ -33,8 +33,8 @@ public class GetFeatureInfo100 extends AbstractGetFeatureInfo {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetFeatureInfo100(final String serverURL, final ClientSecurity security){
-        super(serverURL,"1.0.0", security);
+    public GetFeatureInfo100(final String serverURL, final ClientSecurity security, Integer timeout){
+        super(serverURL,"1.0.0", security, timeout);
     }
 
 }

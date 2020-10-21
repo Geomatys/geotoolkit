@@ -197,7 +197,7 @@ public class MarchingSquaresTest {
         image.getRaster().setSample(0, 1, 0, x0y1);
         image.getRaster().setSample(1, 1, 0, x1y1);
         final PixelIterator ite = PixelIterator.create(image);
-        return MarchingSquares.build(ite, 2, 0);
+        return MarchingSquares.build(ite, 2, 0, false);
     }
 
     private static LineString line(double x0, double y0, double x1, double y1) {

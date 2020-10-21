@@ -35,20 +35,17 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.test.DependsOnMethod;
-import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for HGT reader. We'll make an simple image which each pixel value is its position in a 1D buffer.
@@ -121,14 +118,14 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
      * Test the capacity of the reader to decode a rectangle of source image, at full resolution.
      * @throws DataStoreException If temporary image file has been corrupted.
      */
-    @Ignore
     @DependsOnMethod("readFullyTest")
     @Test
     public void readRegion() throws DataStoreException {
-        final SpatialImageReadParam readParam = null; //TODO
-        readParam.setSourceRegion(SOURCE_REGION);
 
-        final RenderedImage read = store.read(null).render(null);
+        final MathTransform gridToCrsCorner = new AffineTransform2D(1d/IMG_WIDTH, 0, 0, -1d/IMG_WIDTH, 0, 0+1);
+        final GridGeometry readParam = new GridGeometry(new GridExtent(null, new long[]{SOURCE_REGION.x,SOURCE_REGION.y}, new long[]{SOURCE_REGION.x + SOURCE_REGION.width, SOURCE_REGION.y + SOURCE_REGION.height}, false), PixelInCell.CELL_CORNER, gridToCrsCorner, CommonCRS.defaultGeographic());
+
+        final RenderedImage read = store.read(readParam).render(null);
         assertEquals("Read image width is invalid !", SOURCE_REGION.width, read.getWidth());
         assertEquals("Read image height is invalid !", SOURCE_REGION.height, read.getHeight());
         final PixelIterator pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
@@ -149,17 +146,17 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
      * Test the capacity of the reader to decode entire source image, at a degraded resolution.
      * @throws DataStoreException If temporary image file has been corrupted.
      */
-    @Ignore
     @DependsOnMethod("readFullyTest")
     @Test
     public void readSubsampled() throws DataStoreException {
-        final SpatialImageReadParam readParam = null;
 
         // Subsampling without offset
         final int xSubsampling = 5;
         final int ySubsampling = 3;
-        readParam.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
-        RenderedImage read = store.read(null).render(null);
+        final MathTransform gridToCrsCorner = new AffineTransform2D(1d/IMG_WIDTH, 0, 0, -1d/IMG_WIDTH, 0, 0+1);
+        GridGeometry readParam = new GridGeometry(new GridExtent(IMG_WIDTH, IMG_WIDTH), PixelInCell.CELL_CORNER, gridToCrsCorner, CommonCRS.defaultGeographic())
+                .derive().subsample(xSubsampling, ySubsampling).build();
+        RenderedImage read = store.read(readParam).render(null);
         assertEquals("Read image width is invalid !", 3, read.getWidth());
         assertEquals("Read image height is invalid !", 4, read.getHeight());
 
@@ -181,8 +178,9 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
         // Subsampling with an offset
         final int xOffset = 2;
         final int yOffset = 1;
-        readParam.setSourceSubsampling(xSubsampling, ySubsampling, xOffset, yOffset);
-        read = store.read(null).render(null);
+        readParam = new GridGeometry(new GridExtent(null, new long[]{xOffset, yOffset}, new long[]{IMG_WIDTH,IMG_WIDTH}, false), PixelInCell.CELL_CORNER, gridToCrsCorner, CommonCRS.defaultGeographic())
+                .derive().subsample(xSubsampling, ySubsampling).build();
+        read = store.read(readParam).render(null);
         assertEquals("Read image width is invalid !", 2, read.getWidth());
         assertEquals("Read image height is invalid !", 4, read.getHeight());
         pxIt = new PixelIterator.Builder().setIteratorOrder(SequenceType.LINEAR).create(read);
@@ -204,21 +202,20 @@ public class HGTReaderTest extends org.geotoolkit.test.TestBase {
      * Test the capacity of the reader to decode entire source image, at a degraded resolution.
      * @throws DataStoreException If temporary image file has been corrupted.
      */
-    @Ignore
     @DependsOnMethod({"readRegion", "readSubsampled"})
     @Test
     public void readSubSampledRegion() throws DataStoreException {
-        final SpatialImageReadParam readParam = null;
 
-        readParam.setSourceRegion(SOURCE_REGION);
         // Subsampling with an offset
         final int xSubsampling = 2;
         final int ySubsampling = 2;
         final int xOffset = 1;
         final int yOffset = 1;
-        readParam.setSourceSubsampling(xSubsampling, ySubsampling, xOffset, yOffset);
+        final MathTransform gridToCrsCorner = new AffineTransform2D(1d/IMG_WIDTH, 0, 0, -1d/IMG_WIDTH, 0, 0+1);
+        GridGeometry readParam = new GridGeometry(new GridExtent(null, new long[]{SOURCE_REGION.x + xOffset,SOURCE_REGION.y + yOffset}, new long[]{SOURCE_REGION.x + SOURCE_REGION.width, SOURCE_REGION.y + SOURCE_REGION.height}, false), PixelInCell.CELL_CORNER, gridToCrsCorner, CommonCRS.defaultGeographic())
+                .derive().subsample(xSubsampling, ySubsampling).build();
 
-        final RenderedImage read = store.read(null).render(null);
+        final RenderedImage read = store.read(readParam).render(null);
         assertEquals("Read image width is invalid !", 3, read.getWidth());
         assertEquals("Read image height is invalid !", 2, read.getHeight());
 

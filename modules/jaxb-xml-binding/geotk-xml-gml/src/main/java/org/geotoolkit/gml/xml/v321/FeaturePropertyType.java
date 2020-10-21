@@ -24,6 +24,7 @@ import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -55,12 +56,16 @@ import org.geotoolkit.gml.xml.FeatureProperty;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeaturePropertyType", propOrder = {
-    "abstractFeature"
+    "abstractFeature",
+    "unknowFeature"
 })
 public class FeaturePropertyType implements FeatureProperty {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<? extends AbstractFeatureType> abstractFeature;
+
+    @XmlAnyElement(lax = true)
+    private Object unknowFeature;
 
     /**
      * Allow to record the feature when its in href mode
@@ -422,6 +427,21 @@ public class FeaturePropertyType implements FeatureProperty {
     }
 
     /**
+     * @return the unknowFeature
+     */
+    @Override
+    public Object getUnknowFeature() {
+        return unknowFeature;
+    }
+
+    /**
+     * @param unknowFeature the unknowFeature to set
+     */
+    public void setUnknowFeature(Object unknowFeature) {
+        this.unknowFeature = unknowFeature;
+    }
+
+    /**
      * Verify if this entry is identical to specified object.
      */
     @Override
@@ -438,7 +458,9 @@ public class FeaturePropertyType implements FeatureProperty {
             } else if (this.abstractFeature != null && that.abstractFeature != null) {
                 feat = Objects.equals(this.abstractFeature.getValue(),    that.abstractFeature.getValue());
             }
-            return feat                                                             &&
+            return feat                                                           &&
+                   Objects.equals(this.hiddenFeature,      that.hiddenFeature)    &&
+                   Objects.equals(this.unknowFeature,      that.unknowFeature)    &&
                    Objects.equals(this.actuate,            that.actuate)          &&
                    Objects.equals(this.arcrole,            that.arcrole)          &&
                    Objects.equals(this.type,               that.type)             &&
@@ -455,6 +477,8 @@ public class FeaturePropertyType implements FeatureProperty {
     public int hashCode() {
         int hash = 5;
         hash = 47 * hash + (this.abstractFeature != null ? this.abstractFeature.hashCode() : 0);
+        hash = 47 * hash + (this.unknowFeature != null ? this.unknowFeature.hashCode() : 0);
+        hash = 47 * hash + (this.hiddenFeature != null ? this.hiddenFeature.hashCode() : 0);
         hash = 47 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
         hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
         hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
@@ -475,6 +499,12 @@ public class FeaturePropertyType implements FeatureProperty {
         StringBuilder s = new StringBuilder("[FeaturePropertyType]");
         if (abstractFeature != null && abstractFeature.getValue() != null) {
             s.append(abstractFeature.getValue().toString()).append('\n');
+        }
+        if (hiddenFeature != null) {
+            s.append(hiddenFeature.toString()).append('\n');
+        }
+        if (unknowFeature != null) {
+            s.append(unknowFeature.toString()).append('\n');
         }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');

@@ -28,4 +28,6 @@ public interface FeatureProperty {
     String getHref();
 
     AbstractFeature getAbstractFeature();
+
+    Object getUnknowFeature();
 }

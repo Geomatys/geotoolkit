@@ -22,12 +22,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -41,13 +45,16 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.storage.UnsupportedStorageException;
 import org.geotoolkit.image.io.SpatialImageReader;
+import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.storage.Bundle;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.ResourceType;
 import org.geotoolkit.storage.StoreMetadataExt;
+import org.geotoolkit.storage.StrictStorageConnector;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -174,93 +181,109 @@ public class FileCoverageProvider extends DataStoreProvider {
 
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
-
-        final ImageInputStream in = connector.getStorageAs(ImageInputStream.class);
-        if (in == null) return ProbeResult.UNSUPPORTED_STORAGE;
-
         try {
+            return probeContent(new StrictStorageConnector(connector));
+        } catch (IOException e) {
+            throw new DataStoreException("Strict storage support verification failed", e);
+        }
+    }
 
-            final Path path = connector.getStorageAs(Path.class);
-            boolean hasPrj = path != null;
-            if (hasPrj) {
-                final Object prj = SupportFiles.changeExtension(path, "prj");
-                if (prj == null || !Files.exists((Path)prj)) hasPrj = false;
-                final Object tfw = SupportFiles.changeExtension(path, "tfw");
-                if (tfw == null || !Files.exists((Path)tfw)) hasPrj = false;
+    public ProbeResult probeContent(StrictStorageConnector conn) throws IOException, DataStoreException {
+        try {
+            conn.useAsImageInputStream(in -> true);
+        } catch (UnsupportedStorageException e) {
+            // Any image source should be usable through ImageIO API
+            return ProbeResult.UNSUPPORTED_STORAGE;
+        }
+
+        final Path path = conn.getPath().orElse(null);
+        boolean hasPrj = path != null;
+        if (hasPrj) {
+            final Object prj = SupportFiles.changeExtension(path, "prj");
+            if (prj == null || !Files.exists((Path)prj)) hasPrj = false;
+            final Object tfw = SupportFiles.changeExtension(path, "tfw");
+            if (tfw == null || !Files.exists((Path)tfw)) hasPrj = false;
+        }
+
+        for (Entry<ImageReaderSpi,Boolean> entry : SPIS.entrySet()) {
+            // Bypass world-file readers if neither prj nor tfw file is found.
+            if (!hasPrj && entry.getValue()) {
+                continue;
             }
-
-            in.mark();
-            for (Entry<ImageReaderSpi,Boolean> entry : SPIS.entrySet()) {
-                if (!hasPrj && entry.getValue()) {
+            final ImageReaderSpi spi = entry.getKey();
+            final String spiName = spi.getClass().getName();
+            try {
+                //Special case for JP2K, this decoder is close to useless
+                //it work on a very limited number of cases
+                //this decoder is not present by default, added by third-party jars.
+                if (spiName.contains("J2KImageReaderSpi")) {
                     continue;
                 }
-                final ImageReaderSpi spi = entry.getKey();
-                try {
-                    //Special case for TextImageReaders, waiting for fix : GEOTK-688
-                    Object input = in;
-                    if (spi.getClass().getName().contains("Text") || spi.getClass().getName().contains("AsciiGrid")) {
-                        input = connector.getStorageAs(File.class);
-                        if (input == null) continue;
-                    }
-                    //Special case for JP2K, this decoder is close to useless
-                    //it work on a very limited number of cases
-                    //this decoder is not present by default, added by third-party jars.
-                    if (spi.getClass().getName().contains("J2KImageReaderSpi")) {
-                        continue;
-                    }
 
-                    if (canDecode(spi, connector, input)) {
-                        final String[] mimeTypes = spi.getMIMETypes();
-                        if (mimeTypes != null) {
-                            in.reset();
-                            return new ProbeResult(true, mimeTypes[0], null);
-                        } else {
-                            //no defined mime-type
-                            in.reset();
-                            return new ProbeResult(true, "image", null);
-                        }
-                    }
-                } catch (EOFException ex) {
-                    //reached an EOF while testing file, test next spi
-                } catch (IOException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
+                final Class<?> baseClass;
+                //Special case for TextImageReaders, waiting for fix : GEOTK-688
+                if (spiName.contains("Text") || spiName.contains("AsciiGrid")) {
+                    baseClass = File.class;
+                } else baseClass = ImageInputStream.class;
+
+                if (canDecode(spi, conn, baseClass)) {
+                    final String mime = getMime(spi)
+                            .orElse("image");
+                    return new ProbeResult(true, mime, null);
                 }
+            } catch (EOFException ex) {
+                //reached an EOF while testing file, test next spi
+                WarningProducer.LOGGER.log(Level.FINEST, ex, () -> "Reached end of file while testing image spi: "+spiName);
             }
-
-            in.reset();
-        } catch (IOException ex) {
-           throw new DataStoreException(ex.getMessage(), ex);
         }
         return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
-    /**
-     * Test if an image spi can decode provided input.
-     * @param spi SPI to test
-     * @param connector input connector
-     * @param in base image input stream
-     * @return
-     * @throws IOException
-     */
-    private boolean canDecode(ImageReaderSpi spi, StorageConnector connector, Object in) throws IOException {
-        if (spi.canDecodeInput(in)) return true;
+    private static Optional<String> getMime(final ImageReaderSpi spi) {
+        final String[] mimeTypes = spi.getMIMETypes();
+        if (mimeTypes == null || mimeTypes.length < 1) return Optional.empty();
+        return Arrays.stream(mimeTypes)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .findFirst();
+    }
 
-        //check other input types
-        //example : HGT only support File or Path
-        for (Class type : spi.getInputTypes()) {
-            try {
-                Object tin = connector.getStorageAs(type);
-                if (spi.canDecodeInput(tin)) {
-                    return true;
-                } else {
-                    //all other types are expected to return false too
-                    return false;
+    /**
+     * Verify if given image reader service declares provided storage as supported (can read).
+     *
+     * @param spi Image reader to test support for
+     * @param conn The storage connection to use for tests
+     * @param baseStorageClass primary storage interface to test. That's a slight optimisation to try an reuse already
+     *                         opened streams.
+     * @return True if input SPI has successfully tested input storage and marked it a supported, false otherwise.
+     * @throws IOException If an error occurs while accessing provided storage.
+     * @throws DataStoreException If an error occurs while accessing provided storage.
+     */
+    private static boolean canDecode(final ImageReaderSpi spi, final StrictStorageConnector conn, final Class baseStorageClass) throws IOException, DataStoreException {
+        boolean support;
+        try {
+            support = conn.useAs(baseStorageClass, spi::canDecodeInput);
+        } catch (UnsupportedStorageException e) {
+            support = false;
+        }
+
+        if (!support) {
+            //check other input types
+            //example : HGT only support File or Path
+            for (Class type : spi.getInputTypes()) {
+                if (baseStorageClass.isAssignableFrom(type)) continue;
+                try {
+                    support = conn.useAs(type, spi::canDecodeInput);
+                    // A single valid result should be enough
+                    break;
+                } catch (IllegalArgumentException | UnsupportedStorageException ex) {
+                    WarningProducer.LOGGER.log(Level.FINER, "image reader support test failed", ex);
                 }
-            } catch (IllegalArgumentException | DataStoreException ex) {
-                //don't log, it would spam the logs
             }
         }
-        return false;
+
+        return support;
     }
 
     /**

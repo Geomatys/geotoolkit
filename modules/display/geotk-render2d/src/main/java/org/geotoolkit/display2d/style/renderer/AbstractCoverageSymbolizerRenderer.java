@@ -550,7 +550,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         int offsetGrid = 0;
         SingleCRS gridHorizontalCrs = null;
         for (SingleCRS gridCmpCrs : gridCrsComponents) {
-            if (CRS.isHorizontalCRS(areaHorizontalCrs)) {
+            if (CRS.isHorizontalCRS(gridCmpCrs)) {
                 gridHorizontalCrs = gridCmpCrs;
                 break;
             }
@@ -566,11 +566,11 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         // Extract Horizontal envelopes
         final Envelope gridEnvelope = grid.getEnvelope();
         GeneralEnvelope areaEnv = new GeneralEnvelope(areaHorizontalCrs);
-        areaEnv.setRange(areaHorizontalOffset, areaOfInterest.getMinimum(areaHorizontalOffset), areaOfInterest.getMaximum(areaHorizontalOffset));
-        areaEnv.setRange(areaHorizontalOffset+1, areaOfInterest.getMinimum(areaHorizontalOffset+1), areaOfInterest.getMaximum(areaHorizontalOffset+1));
+        areaEnv.setRange(0, areaOfInterest.getMinimum(areaHorizontalOffset), areaOfInterest.getMaximum(areaHorizontalOffset));
+        areaEnv.setRange(1, areaOfInterest.getMinimum(areaHorizontalOffset+1), areaOfInterest.getMaximum(areaHorizontalOffset+1));
         GeneralEnvelope gridEnv = new GeneralEnvelope(gridHorizontalCrs);
-        gridEnv.setRange(offsetGrid, gridEnvelope.getMinimum(offsetGrid), gridEnvelope.getMaximum(offsetGrid));
-        gridEnv.setRange(offsetGrid+1, gridEnvelope.getMinimum(offsetGrid+1), gridEnvelope.getMaximum(offsetGrid+1));
+        gridEnv.setRange(0, gridEnvelope.getMinimum(offsetGrid), gridEnvelope.getMaximum(offsetGrid));
+        gridEnv.setRange(1, gridEnvelope.getMinimum(offsetGrid+1), gridEnvelope.getMaximum(offsetGrid+1));
 
         // Convert envelopes to geographic
         GeneralEnvelope areaHorizontalEnv = areaEnv;

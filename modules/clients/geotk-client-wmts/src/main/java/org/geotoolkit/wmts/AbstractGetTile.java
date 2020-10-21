@@ -19,9 +19,9 @@ package org.geotoolkit.wmts;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Abstract implementation of {@link GetTileRequest}, which defines the parameters for
@@ -58,8 +58,8 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetTile(final String serverURL,final String version, final ClientSecurity security){
-        super(serverURL,security,null);
+    protected AbstractGetTile(final String serverURL,final String version, final ClientSecurity security, Integer timeout){
+        super(serverURL,security,null, timeout);
         this.version = version;
     }
 

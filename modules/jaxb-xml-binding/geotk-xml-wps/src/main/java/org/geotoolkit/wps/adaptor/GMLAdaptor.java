@@ -25,15 +25,18 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.dom.DOMResult;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.ReferenceProxy;
 import org.geotoolkit.wps.xml.v200.ComplexData;
 import org.geotoolkit.wps.xml.v200.Data;
 import org.geotoolkit.wps.xml.v200.DataInput;
+import org.geotoolkit.wps.xml.v200.DataOutput;
 import org.geotoolkit.wps.xml.v200.Format;
-import org.opengis.feature.Feature;
+import org.geotoolkit.wps.xml.v200.Reference;
 import org.w3c.dom.Document;
 
 /**
@@ -91,7 +94,7 @@ public class GMLAdaptor extends ComplexAdaptor {
 
     @Override
     public Class getValueClass() {
-        return Feature.class;
+        return FeatureSet.class;
     }
 
     @Override
@@ -128,6 +131,19 @@ public class GMLAdaptor extends ComplexAdaptor {
         final DataInput dit = new DataInput();
         dit.setData(data);
         return dit;
+    }
+
+    @Override
+    public Object fromWPS2Input(DataOutput candidate) throws UnconvertibleObjectException {
+        final Reference ref = candidate.getReference();
+        if (ref != null) {
+            return WPSConvertersUtils.convertFromReference(ref, FeatureSet.class);
+        }
+        final Data data = candidate.getData();
+        if (data != null) {
+            return WPSConvertersUtils.convertFromComplex(gmlVersion, data, FeatureSet.class);
+        }
+        throw new UnconvertibleObjectException("Niether reference or data is filled.");
     }
 
     public static class Spi implements ComplexAdaptor.Spi {

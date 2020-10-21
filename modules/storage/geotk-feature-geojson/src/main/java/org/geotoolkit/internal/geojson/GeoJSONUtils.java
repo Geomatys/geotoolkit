@@ -316,11 +316,15 @@ public final class GeoJSONUtils extends Static {
 
         String urn = null;
         try {
-            if (Utilities.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
-                crs = CommonCRS.WGS84.normalizedGeographic();
+            if (Utilities.equalsIgnoreMetadata(crs, DEFAULT_CRS) ||
+                org.apache.sis.referencing.CRS.findOperation(crs, DEFAULT_CRS, null).getMathTransform().isIdentity()) {
+                crs = DEFAULT_CRS;
             }
 
             urn = IdentifiedObjects.lookupURN(crs, Citations.EPSG);
+            if (urn == null) {
+                urn = IdentifiedObjects.lookupURN(crs, null);
+            }
         } catch (FactoryException e) {
             GeoJSONParser.LOGGER.log(Level.WARNING, "Unable to extract epsg code from given CRS "+crs, e);
         }
