@@ -17,115 +17,117 @@
 
 package org.geotoolkit.map;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.style.DefaultDescription;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.event.EventListenerList;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.Description;
-import org.opengis.util.InternationalString;
 
 /**
- * Super interface for map elements. MapContext and MapLayer objects are
+ * Super class for map elements. MapContext and MapLayer objects are
  * map items.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public interface MapItem {
+public abstract class MapItem {
 
-    public static final String NAME_PROPERTY = "name";
-    public static final String DESCRIPTION_PROPERTY = "description";
-    public static final String VISIBILITY_PROPERTY = "visible";
+    public static final String IDENTIFIER_PROPERTY = org.apache.sis.portrayal.MapItem.IDENTIFIER_PROPERTY;
+    public static final String TITLE_PROPERTY = org.apache.sis.portrayal.MapItem.TITLE_PROPERTY;
+    public static final String ABSTRACT_PROPERTY = org.apache.sis.portrayal.MapItem.ABSTRACT_PROPERTY;
+    public static final String VISIBLE_PROPERTY = org.apache.sis.portrayal.MapItem.VISIBLE_PROPERTY;
+
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
+
+    protected final EventListenerList listeners = new EventListenerList();
+    private final Map<String,Object> parameters = new HashMap<>();
+    protected String identifier = null;
+    protected CharSequence title = null;
+    protected CharSequence abstrat = null;
+    protected Description desc = null;
+    protected boolean visible = true;
 
     /**
-     * Placeholder for Apache SIS new MapItem API.
+     * Constructor that can used by subclass only.
      */
-    default String getIdentifier() {
-        return getName();
+    protected MapItem(){
+        this.desc = StyleConstants.DEFAULT_DESCRIPTION;
     }
 
     /**
      * Placeholder for Apache SIS new MapItem API.
      */
-    default void setIdentifier(String identifier) {
-        setName(identifier);
+    public final String getIdentifier() {
+        return identifier;
     }
 
     /**
      * Placeholder for Apache SIS new MapItem API.
      */
-    default CharSequence getTitle() {
-        return getName();
-    }
-
-    /**
-     * Placeholder for Apache SIS new MapItem API.
-     */
-    default void setTitle(CharSequence title) {
-        InternationalString titl = (title instanceof InternationalString || title == null) ? (InternationalString)title : new SimpleInternationalString(title.toString());
-        Description description = getDescription();
-        InternationalString abst = null;
-        if (description != null) {
-            abst = description.getAbstract();
+    public final void setIdentifier(String identifier) {
+        final String oldIdentifier;
+        synchronized (this) {
+            oldIdentifier = this.identifier;
+            if (Objects.equals(oldIdentifier, identifier)) {
+                return;
+            }
+            this.identifier = identifier;
         }
-        setDescription(new DefaultDescription(titl, abst));
+        firePropertyChange(IDENTIFIER_PROPERTY, oldIdentifier, this.identifier);
     }
 
     /**
      * Placeholder for Apache SIS new MapItem API.
      */
-    default CharSequence getAbstract() {
-        return getName();
+    public final CharSequence getTitle() {
+        return title;
     }
 
     /**
      * Placeholder for Apache SIS new MapItem API.
      */
-    default void setAbstract(CharSequence abs) {
-        InternationalString abst = (abs instanceof InternationalString || abs == null) ? (InternationalString)abs : new SimpleInternationalString(abs.toString());
-        Description description = getDescription();
-        InternationalString title = null;
-        if (description != null) {
-            title = description.getTitle();
+    public final void setTitle(CharSequence title) {
+        final CharSequence oldtitle;
+        synchronized (this) {
+            oldtitle = this.title;
+            if (Objects.equals(oldtitle, title)) {
+                return;
+            }
+            this.title = title;
         }
-        setDescription(new DefaultDescription(title, abst));
+        firePropertyChange(TITLE_PROPERTY, oldtitle, this.title);
     }
 
     /**
-     * Set the item name, this should be used as an
-     * identifier. Use getdescription for UI needs.
-     *
-     * @deprecated to be remove, migration to apache SIS API, use identifier property instead
+     * Placeholder for Apache SIS new MapItem API.
      */
-    @Deprecated
-    void setName(String name);
+    public final CharSequence getAbstract() {
+        return abstrat;
+    }
 
     /**
-     * Get the layer name. Use getDescription for UI needs.
-     *
-     * @deprecated to be remove, migration to apache SIS API, use identifier property instead
+     * Placeholder for Apache SIS new MapItem API.
      */
-    @Deprecated
-    String getName();
-
-    /**
-     * Set the item description. this holds a title and an abstract summary
-     * used for user interfaces.
-     *
-     * @deprecated to be remove, migration to apache SIS API, use title and abstract properties instead
-     */
-    @Deprecated
-    void setDescription(Description desc);
-
-    /**
-     * Returns the description of the item. This holds a title and an abstract summary
-     * used for user interfaces.
-     *
-     * @deprecated to be remove, migration to apache SIS API, use title and abstract properties instead
-     */
-    @Deprecated
-    Description getDescription();
+    public final void setAbstract(CharSequence abs) {
+        final CharSequence oldabs;
+        synchronized (this) {
+            oldabs = this.abstrat;
+            if (Objects.equals(oldabs, abs)) {
+                return;
+            }
+            this.abstrat = abs;
+        }
+        firePropertyChange(ABSTRACT_PROPERTY, oldabs, this.abstrat);
+    }
 
     /**
      * Determine whether this item is visible on a map pane or whether the
@@ -134,7 +136,9 @@ public interface MapItem {
      * @return <code>true</code> if the item is visible, or <code>false</code>
      *         if the item is hidden.
      */
-    boolean isVisible();
+    public boolean isVisible() {
+        return this.visible;
+    }
 
     /**
      * Specify whether this item is visible on a map pane or whether the item
@@ -143,44 +147,88 @@ public interface MapItem {
      * @param visible Show the item if <code>true</code>, or hide the item if
      *        <code>false</code>
      */
-    void setVisible(boolean visible);
-
-    /**
-     * Returns the living list of all items. You may add, remove or change items
-     * of this list. In case this object is a map layer object, this list will be empty
-     * and immutable.
-     * @return the live list
-     */
-    List<MapItem> items();
+    public void setVisible(final boolean visible) {
+        final boolean oldVisible;
+        synchronized (this) {
+            oldVisible = this.visible;
+            if(oldVisible == visible){
+                return;
+            }
+            this.visible = visible;
+        }
+        firePropertyChange(VISIBLE_PROPERTY, oldVisible, this.visible);
+    }
 
     /**
      * @return map of all user properties.
      *          This is the live map.
      */
-    Map<String,Object> getUserProperties();
-
-    /**
-     * Register an item listener.
-     * @param listener item listener to register
-     */
-    void addItemListener(ItemListener listener);
-
-    /**
-     * Unregister an item listener.
-     * @param listener item listener to unregister.
-     */
-    void removeItemListener(ItemListener listener);
+    public Map<String, Object> getUserProperties() {
+        return parameters;
+    }
 
     /**
      * Register a property listener.
      * @param listener property listener to register
      */
-    void addPropertyChangeListener(PropertyChangeListener listener);
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        listeners.add(PropertyChangeListener.class, listener);
+    }
 
     /**
      * Unregister a property listener.
      * @param listener property listener to register
      */
-    void removePropertyChangeListener(PropertyChangeListener listener);
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        listeners.remove(PropertyChangeListener.class, listener);
+    }
 
+    protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
+        //TODO make fire property change thread safe, preserve fire order
+
+        final ItemListener[] listIs = listeners.getListeners(ItemListener.class);
+        final PropertyChangeListener[] listPs = listeners.getListeners(PropertyChangeListener.class);
+        if(listIs.length==0 && listPs.length==0) return;
+
+
+        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
+        for (PropertyChangeListener listener : listIs) {
+            listener.propertyChange(event);
+        }
+        for (PropertyChangeListener listener : listPs) {
+            listener.propertyChange(event);
+        }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder buf = new StringBuilder();
+        buf.append(Classes.getShortClassName(this));
+        if(identifier != null){
+            buf.append(" (");
+            buf.append(identifier);
+            buf.append(") ");
+        }
+        if(desc != null){
+            buf.append(desc);
+        }
+        buf.append(" Visible = ");
+        buf.append(visible);
+        return buf.toString();
+    }
+
+    /**
+     * Try to affect this object {@link #identifier} property with given resource {@link Resource#getIdentifier() identifier}.
+     * Note that if an error occurs while accessing the resource identifier, a log is triggered, and we fail silently
+     * (name not affected, no error thrown).
+     *
+     * @param input The resource to get name from. Must not be null.
+     */
+    protected final void trySetName(final Resource input) {
+        try {
+            input.getIdentifier().ifPresent((id) -> setIdentifier(id.toString()));
+        } catch (DataStoreException | RuntimeException e) {
+            LOGGER.log(Level.WARNING, "Cannot extract identifier from a resource", e);
+        }
+    }
 }

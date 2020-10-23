@@ -32,7 +32,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.storage.Query;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.feature.FeatureExt;
@@ -58,12 +57,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @deprecated use MapLayer interface instead
  */
 @Deprecated
-public final class FeatureMapLayer extends AbstractMapLayer {
+public final class FeatureMapLayer extends MapLayer {
 
     public static final String PROP_EXTRA_DIMENSIONS = "extra_dims";
 
     protected Id selectionFilter = null;
-    private Query query = null;
 
     private final List<DimensionDef> extraDims = new NotifiedCheckedList<DimensionDef>(DimensionDef.class) {
 
@@ -129,37 +127,6 @@ public final class FeatureMapLayer extends AbstractMapLayer {
             this.selectionFilter = filter;
         }
         firePropertyChange(SELECTION_FILTER_PROPERTY, oldfilter, this.selectionFilter);
-    }
-
-    /**
-     * Returns the definition query (filter) for this layer. If no definition
-     * query has  been defined {@link Query#ALL} is returned.
-     */
-    public Query getQuery() {
-        return query;
-    }
-
-    /**
-     * Sets a filter query for this layer.
-     *
-     * <p>
-     * Query filters should be used to reduce searched or displayed feature
-     * when rendering or analyzing this layer.
-     * </p>
-     *
-     * @param query the full filter for this layer. can not be null.
-     */
-    public void setQuery(final Query query) {
-
-        final Query oldQuery;
-        synchronized (this) {
-            oldQuery = getQuery();
-            if (Objects.equals(oldQuery, query)){
-                return;
-            }
-            this.query = query;
-        }
-        firePropertyChange(QUERY_PROPERTY, oldQuery, this.query);
     }
 
     /**

@@ -49,7 +49,7 @@ public class WMTSClientDemo {
             MultiResolutionResource model = (MultiResolutionResource) ref;
             System.out.println(model);
 
-            layer.setDescription(SF.description(n.tip().toString(), n.tip().toString()));
+            layer.setTitle(n.tip().toString());
             context.layers().add(layer);
 
         }

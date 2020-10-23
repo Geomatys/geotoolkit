@@ -707,8 +707,8 @@ public class Styles {
 
     public static MapContext createWorldContext(MutableStyle style) throws DataStoreException, URISyntaxException, MalformedURLException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
-        context.setName("demo context");
-        context.setDescription(SF.description("demo context", ""));
+        context.setIdentifier("demo context");
+        context.setTitle("demo context");
 
         DataStore store;
         FeatureSet fs;
@@ -729,8 +729,8 @@ public class Styles {
 
     public static MapContext createPolygonContext(MutableStyle style) throws DataStoreException, URISyntaxException, MalformedURLException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
-        context.setName("demo context");
-        context.setDescription(SF.description("demo context", ""));
+        context.setIdentifier("demo context");
+        context.setTitle("demo context");
 
         DataStore store;
         FeatureSet fs;
@@ -751,13 +751,13 @@ public class Styles {
 
     public static MapContext createRasterContext(MutableStyle style) throws DataStoreException, URISyntaxException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
-        context.setName("demo context");
-        context.setDescription(SF.description("demo context", ""));
+        context.setIdentifier("demo context");
+        context.setTitle("demo context");
 
         File cloudFile = new File(Styles.class.getResource("/data/coverage/clouds.jpg").toURI());
         final MapLayer layer = MapBuilder.createCoverageLayer(cloudFile);
-        layer.setDescription(SF.description("raster", ""));
-        layer.setName("raster");
+        layer.setTitle("raster");
+        layer.setIdentifier("raster");
         context.layers().add(layer);
 
         return context;

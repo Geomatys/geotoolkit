@@ -32,7 +32,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.map.MapItem;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.style.Symbolizer;
@@ -122,17 +121,17 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         final MapLayer leaf2 = MapBuilder.createEmptyMapLayer();
         leaf2.setStyle(SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 
-        final MapItem node1 = MapBuilder.createItem();
-        node1.setName("bouh");
-        node1.items().add(leaf1);
-        node1.items().add(leaf2);
+        final MapContext node1 = MapBuilder.createItem();
+        node1.setIdentifier("bouh");
+        node1.getComponents().add(leaf1);
+        node1.getComponents().add(leaf2);
 
-        final MapItem node2 = MapBuilder.createItem();
-        node2.items().add(leaf1);
+        final MapContext node2 = MapBuilder.createItem();
+        node2.getComponents().add(leaf1);
 
         final MapContext context = MapBuilder.createContext();
-        context.items().add(node1);
-        context.items().add(node2);
+        context.getComponents().add(node1);
+        context.getComponents().add(node2);
 
         Dimension dim = DefaultLegendService.legendPreferredSize(NO_MARGIN_TEMPLATE, context);
 
@@ -162,7 +161,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         final Graphics2D g2d = img.createGraphics();
         final FontMetrics font = g2d.getFontMetrics(titleTemplate.getLayerFont());
         final int fontHeight = font.getHeight();
-        final int fontWidth = font.stringWidth(node1.getName());
+        final int fontWidth = font.stringWidth(node1.getIdentifier());
         final int gap = (int) titleTemplate.getGapSize();
 
         final int legendHeight =

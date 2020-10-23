@@ -27,10 +27,10 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -40,7 +40,6 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
@@ -82,7 +81,7 @@ public class J2DLegendUtilities {
 
         if (item instanceof MapLayer) {
             final MapContext context = MapBuilder.createContext();
-            context.items().add(item);
+            context.getComponents().add(item);
             item = context;
         }
 
@@ -131,11 +130,14 @@ public class J2DLegendUtilities {
      * @param bounds The graphic area to paint into.
      */
     private static void paintNoTemplate(final MapItem item, final Graphics2D g2d, final Rectangle bounds) {
-        for (MapItem layer : item.items()) {
-            if (layer instanceof MapLayer) {
-                DefaultGlyphService.render(((MapLayer) layer).getStyle(), bounds, g2d, (MapLayer) layer);
-            } else {
-                paintNoTemplate(layer, g2d, bounds);
+        if (item instanceof MapContext) {
+            final MapContext mc = (MapContext) item;
+            for (MapItem layer : mc.getComponents()) {
+                if (layer instanceof MapLayer) {
+                    DefaultGlyphService.render(((MapLayer) layer).getStyle(), bounds, g2d, (MapLayer) layer);
+                } else {
+                    paintNoTemplate(layer, g2d, bounds);
+                }
             }
         }
     }
@@ -168,7 +170,7 @@ public class J2DLegendUtilities {
         final Rectangle2D rectangle = new Rectangle2D.Float();
         float moveY = 0;
 
-        final List<MapItem> layers = item.items();
+        final List<MapItem> layers = (item instanceof MapContext) ? ((MapContext) item).getComponents() : Collections.EMPTY_LIST;
         for (int l = 0, n = layers.size(); l < n; l++) {
             final MapItem currentItem = layers.get(l);
 
@@ -228,12 +230,11 @@ public class J2DLegendUtilities {
             // we can use the result of a GetLegendGraphic request instead. It should presents the
             // default style defined on the WMS service for this layer
             wmscase:
-            if (layer instanceof CoverageMapLayer) {
-                final CoverageMapLayer covLayer = (CoverageMapLayer)layer;
+            if (layer.getResource() instanceof GridCoverageResource) {
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
                 BufferedImage image = null;
                 try {
-                    image = legendResults.get(covLayer.getResource().getIdentifier().get().tip().toString());
+                    image = legendResults.get(layer.getResource().getIdentifier().get().tip().toString());
                 } catch (DataStoreException ex) {
                     //do nothing
                 }
@@ -401,7 +402,7 @@ public class J2DLegendUtilities {
 
         if (mapitem instanceof MapLayer) {
             final MapContext context = MapBuilder.createContext();
-            context.items().add(mapitem);
+            context.getComponents().add(mapitem);
             mapitem = context;
         }
 
@@ -424,21 +425,24 @@ public class J2DLegendUtilities {
      * @param toSet the dimension used to store estimation result.
      */
     private static void estimateNoTemplate(MapItem source, Dimension toSet) {
-        for (MapItem childItem : source.items()) {
+        if (source instanceof MapContext) {
+            final MapContext mc = (MapContext) source;
+            for (MapItem childItem : mc.getComponents()) {
 
-            if (childItem instanceof MapLayer) {
-                final MapLayer ml = (MapLayer) childItem;
-                final Dimension preferred = new Dimension(0, 0);
-                DefaultGlyphService.glyphPreferredSize(ml.getStyle(), preferred, ml);
-                if (preferred != null) {
-                    if (preferred.width > toSet.width) {
-                        toSet.width = preferred.width;
+                if (childItem instanceof MapLayer) {
+                    final MapLayer ml = (MapLayer) childItem;
+                    final Dimension preferred = new Dimension(0, 0);
+                    DefaultGlyphService.glyphPreferredSize(ml.getStyle(), preferred, ml);
+                    if (preferred != null) {
+                        if (preferred.width > toSet.width) {
+                            toSet.width = preferred.width;
+                        }
+                        toSet.height += preferred.height;
                     }
-                    toSet.height += preferred.height;
-                }
 
-            } else {
-                estimateNoTemplate(childItem, toSet);
+                } else {
+                    estimateNoTemplate(childItem, toSet);
+                }
             }
         }
     }
@@ -469,7 +473,7 @@ public class J2DLegendUtilities {
         final int ruleFontHeight = ruleFontMetric.getHeight();
         final Dimension glyphSize = template.getGlyphSize();
 
-        final List<MapItem> childItems = source.items();
+        final List<MapItem> childItems = (source instanceof MapContext) ? ((MapContext) source).getComponents() : Collections.EMPTY_LIST;
         for (int l = 0, n = childItems.size(); l < n; l++) {
 
             /* If legend template asks for visible items only, we have to proceed
@@ -504,34 +508,6 @@ public class J2DLegendUtilities {
             }
 
             final MapLayer layer = (MapLayer) currentItem;
-
-            // Launch a get legend request and take the dimensions from the result
-            testwms:
-            if (layer instanceof CoverageMapLayer) {
-                final CoverageMapLayer covLayer = (CoverageMapLayer)layer;
-                final GridCoverageResource covRef = covLayer.getResource();
-
-                if (covRef == null) {
-                    continue;
-                }
-                // try first to retrieve the legend directly from the coverage reference.
-                BufferedImage image = null;
-                try {
-                    if (image != null) {
-                        toSet.height += image.getHeight();
-                        if (toSet.width < image.getWidth()) {
-                            toSet.width = image.getWidth();
-                        }
-                        if (images != null) {
-                            images.put(covLayer.getResource().getIdentifier().orElse(null), image);
-                        }
-                        continue;
-                    }
-                } catch (DataStoreException ex) {
-                    LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
-                    continue;
-                }
-            }
 
             final MutableStyle style = layer.getStyle();
             if (style == null) {
@@ -604,8 +580,8 @@ public class J2DLegendUtilities {
     public static boolean isVisible(final MapItem toCheck) {
         ArgumentChecks.ensureNonNull("Map item to check visibility on", toCheck);
         // If it's a visible container, we must check its children.
-        if (toCheck.isVisible() && !(toCheck instanceof MapLayer)) {
-            for (final MapItem child : toCheck.items()) {
+        if (toCheck.isVisible() && toCheck instanceof MapContext) {
+            for (final MapItem child : ((MapContext) toCheck).getComponents()) {
                 if (isVisible(child)) {
                     return true;
                 }

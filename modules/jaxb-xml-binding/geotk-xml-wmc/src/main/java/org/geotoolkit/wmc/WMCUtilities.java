@@ -43,7 +43,6 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.NamesExt;
@@ -51,7 +50,6 @@ import org.geotoolkit.wmc.xml.v110.*;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.style.Description;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
@@ -141,12 +139,13 @@ public class WMCUtilities {
 
             SimpleInternationalString title = new SimpleInternationalString(general.getTitle());
             SimpleInternationalString description = new SimpleInternationalString((general.getAbstract() == null) ? "No description" : general.getAbstract());
-            Description desc = new DefaultDescription(title, description);
-            context.setDescription(desc);
+            context.setTitle(title);
+            context.setAbstract(description);
+
             context.setAreaOfInterest(aoi);
         }
         //set context general values
-        context.setName(root.getId());
+        context.setIdentifier(root.getId());
         context.setCoordinateReferenceSystem(srs);
 
         //fill context with layers

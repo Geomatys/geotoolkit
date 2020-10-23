@@ -22,8 +22,8 @@ import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.apache.sis.util.Disposable;
+import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 /**
@@ -46,13 +46,13 @@ public interface ItemListener extends PropertyChangeListener {
      */
     public static final class Weak extends WeakReference<ItemListener> implements ItemListener,Disposable{
 
-        private final Collection<MapItem> sources = new ArrayList<MapItem>(1);
+        private final Collection<MapContext> sources = new ArrayList<MapContext>(1);
 
         public Weak(final ItemListener ref) {
             this(null,ref);
         }
 
-        public Weak(final MapItem source, final ItemListener ref) {
+        public Weak(final MapContext source, final ItemListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -60,7 +60,7 @@ public interface ItemListener extends PropertyChangeListener {
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(final MapItem source){
+        public synchronized void registerSource(final MapContext source){
             if(source != null && !sources.contains(source)){
                 //register in the new source
                 source.addItemListener(this);
@@ -71,14 +71,14 @@ public interface ItemListener extends PropertyChangeListener {
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(final MapItem source){
+        public synchronized void unregisterSource(final MapContext source){
             sources.remove(source);
             source.removeItemListener(this);
         }
 
         @Override
         public synchronized void dispose() {
-            for(MapItem source : sources){
+            for(MapContext source : sources){
                 source.removeItemListener(this);
             }
             sources.clear();
