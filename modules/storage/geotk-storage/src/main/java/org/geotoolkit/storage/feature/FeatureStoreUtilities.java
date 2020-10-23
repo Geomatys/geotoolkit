@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
@@ -37,6 +38,7 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -419,6 +421,12 @@ public class FeatureStoreUtilities {
                     }
                 } catch (BackingStoreException ex) {
                     throw ex.unwrapOrRethrow(DataStoreException.class);
+                }
+            } else if (dataset instanceof GridCoverageResource) {
+                final GridCoverageResource gcr = (GridCoverageResource) dataset;
+                final GridGeometry gridGeometry = gcr.getGridGeometry();
+                if (gridGeometry.isDefined(GridGeometry.ENVELOPE)) {
+                    return gridGeometry.getEnvelope();
                 }
             }
             envelope = env;

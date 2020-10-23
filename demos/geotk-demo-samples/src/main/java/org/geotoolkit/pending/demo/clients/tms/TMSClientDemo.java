@@ -7,13 +7,11 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
-import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.tms.TMSProvider;
@@ -45,9 +43,7 @@ public class TMSClientDemo {
 
         for (Resource cr : DataStores.flatten(store, true, GridCoverageResource.class)) {
             final MapLayer cml = MapBuilder.createCoverageLayer(cr);
-            cml.setDescription(new DefaultDescription(
-                    new SimpleInternationalString(cr.getIdentifier().get().tip().toString()),
-                    new SimpleInternationalString("")));
+            cml.setTitle(cr.getIdentifier().get().tip().toString());
             context.layers().add(cml);
         }
 

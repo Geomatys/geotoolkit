@@ -26,16 +26,13 @@ import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
-import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.style.Description;
 import org.opengis.style.StyleFactory;
 
 /**
@@ -72,7 +69,7 @@ public final class MapBuilder {
      * Create a Default MapItem object. It can be used to group layers.
      * @return MapItem
      */
-    public static MapItem createItem(){
+    public static MapContext createItem(){
         return new MapContext(CommonCRS.WGS84.normalizedGeographic());
     }
 
@@ -83,7 +80,7 @@ public final class MapBuilder {
      * @return MapLayer
      */
     public static MapLayer createEmptyMapLayer(){
-        return new AbstractMapLayer(null);
+        return new MapLayer(null);
     }
 
     /**
@@ -97,7 +94,7 @@ public final class MapBuilder {
         } else if (resource instanceof GridCoverageResource) {
             return createCoverageLayer((GridCoverageResource) resource);
         } else {
-            throw new IllegalArgumentException("Unsupported resource");
+            return new MapLayer(resource);
         }
     }
 
@@ -111,20 +108,21 @@ public final class MapBuilder {
     public static FeatureMapLayer createFeatureLayer(final FeatureSet collection){
         MutableStyle style;
         String name = "";
-        Description description = null;
+        String title = null;
+        String abstrat = null;
         try {
             final FeatureType type = collection.getType();
             name = type.getName().tip().toString();
-            description = new DefaultDescription(
-                    new SimpleInternationalString(name),
-                    new SimpleInternationalString(type.getName().toString()));
+            title = name;
+            abstrat = type.getName().toString();
             style = RandomStyleBuilder.createDefaultVectorStyle(type);
         } catch (DataStoreException ex) {
             style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
         final FeatureMapLayer maplayer = new FeatureMapLayer(collection, style);
-        maplayer.setName(name);
-        if (description != null) maplayer.setDescription(description);
+        maplayer.setIdentifier(name);
+        maplayer.setTitle(title);
+        maplayer.setAbstract(abstrat);
         return maplayer;
     }
 
@@ -148,7 +146,7 @@ public final class MapBuilder {
      * @deprecated use createLayer method instead
      */
     @Deprecated
-    public static CoverageMapLayer createCoverageLayer(final GridCoverage grid, final MutableStyle style, final String name) {
+    public static MapLayer createCoverageLayer(final GridCoverage grid, final MutableStyle style, final String name) {
         final GridCoverageResource ref = new InMemoryGridCoverageResource(NamesExt.create(name), grid);
         return createCoverageLayer(ref, style);
     }
@@ -162,7 +160,7 @@ public final class MapBuilder {
      * @deprecated use createLayer method instead
      */
     @Deprecated
-    public static CoverageMapLayer createCoverageLayer(final Object input) {
+    public static MapLayer createCoverageLayer(final Object input) {
         final GridCoverageResource resource;
         if (input instanceof GridCoverageResource) {
             resource = (GridCoverageResource) input;
@@ -193,8 +191,10 @@ public final class MapBuilder {
      * @deprecated use createLayer method instead
      */
     @Deprecated
-    public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref){
-        return new CoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
+    public static MapLayer createCoverageLayer(final GridCoverageResource ref){
+        MapLayer layer = new MapLayer(ref);
+        layer.setStyle(RandomStyleBuilder.createDefaultRasterStyle());
+        return layer;
     }
 
     /**
@@ -205,8 +205,10 @@ public final class MapBuilder {
      * @deprecated use createLayer method instead
      */
     @Deprecated
-    public static CoverageMapLayer createCoverageLayer(final GridCoverageResource ref, final MutableStyle style){
-        return new CoverageMapLayer(ref, style);
+    public static MapLayer createCoverageLayer(final GridCoverageResource ref, final MutableStyle style){
+        MapLayer layer = new MapLayer(ref);
+        if (style != null) layer.setStyle(style);
+        return layer;
     }
 
     /**
@@ -217,8 +219,8 @@ public final class MapBuilder {
      * @deprecated use createLayer method instead
      */
     @Deprecated
-    public static CoverageMapLayer createCoverageLayer(final Object input, final MutableStyle style){
-        CoverageMapLayer layer = createCoverageLayer(input);
+    public static MapLayer createCoverageLayer(final Object input, final MutableStyle style){
+        MapLayer layer = createCoverageLayer(input);
         if (style != null) layer.setStyle(style);
         return layer;
     }

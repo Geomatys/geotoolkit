@@ -17,17 +17,25 @@
 package org.geotoolkit.map;
 
 import java.io.IOException;
+import java.util.Optional;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataSet;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.event.StoreEvent;
+import org.apache.sis.storage.event.StoreListener;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  * Test MapContext creation and behavior.
@@ -70,12 +78,12 @@ public class MapContextTest {
         GeneralEnvelope envWGS84 = new GeneralEnvelope(CommonCRS.WGS84.defaultGeographic());
         envWGS84.setRange(0, -10, 10);
         envWGS84.setRange(1, -10, 10);
-        context.layers().add(new EmptyLayer(envWGS84));
+        context.layers().add(createEmptyLayer(envWGS84));
 
         GeneralEnvelope envWGS842 = new GeneralEnvelope(CommonCRS.WGS84.defaultGeographic());
         envWGS842.setRange(0, 10, 20);
         envWGS842.setRange(1, 10, 20);
-        EmptyLayer layer = new EmptyLayer(envWGS842);
+        MapLayer layer = createEmptyLayer(envWGS842);
         layer.setVisible(false);
         context.layers().add(layer);
 
@@ -123,7 +131,7 @@ public class MapContextTest {
         GeneralEnvelope env1 = new GeneralEnvelope(mercator);
         env1.setRange(0, -10000, 10000);
         env1.setRange(1, -10000, 10000);
-        context.layers().add(new EmptyLayer(env1));
+        context.layers().add(createEmptyLayer(env1));
 
         CoordinateReferenceSystem lambert = CRS.fromWKT(
                 "PROJCS[“NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001”,\n" +
@@ -148,7 +156,7 @@ public class MapContextTest {
         GeneralEnvelope env2 = new GeneralEnvelope(lambert);
         env2.setRange(0, -10, 10);
         env2.setRange(1, -10, 10);
-        context.layers().add(new EmptyLayer(env2));
+        context.layers().add(createEmptyLayer(env2));
 
         ctxBounds = context.getBounds(true);
         assertNotNull(ctxBounds);
@@ -166,19 +174,31 @@ public class MapContextTest {
 
     }
 
-    private static class EmptyLayer extends AbstractMapLayer{
+    private static MapLayer createEmptyLayer(Envelope env) {
+        final DataSet ds = new DataSet() {
+            @Override
+            public Optional<Envelope> getEnvelope() throws DataStoreException {
+                return Optional.of(env);
+            }
 
-        private final Envelope env;
+            @Override
+            public Optional<GenericName> getIdentifier() throws DataStoreException {
+                return Optional.empty();
+            }
 
-        public EmptyLayer(Envelope env) {
-            super(null);
-            this.env = env;
-        }
+            @Override
+            public Metadata getMetadata() throws DataStoreException {
+                return new DefaultMetadata();
+            }
 
-        @Override
-        public Envelope getBounds() {
-            return env;
-        }
+            @Override
+            public <T extends StoreEvent> void addListener(Class<T> type, StoreListener<? super T> sl) {
+            }
+
+            @Override
+            public <T extends StoreEvent> void removeListener(Class<T> type, StoreListener<? super T> sl) {
+            }
+        };
+        return MapBuilder.createLayer(ds);
     }
-
 }

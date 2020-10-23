@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.geotoolkit.display2d.presentation.RasterPresentation;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -53,40 +52,47 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
+import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.iso.Names;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.presentation.RasterPresentation;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
+import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Rescaler;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.ImageStatistics;
-import org.geotoolkit.storage.feature.query.Query;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.coverage.grid.SequenceType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -106,13 +112,6 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.util.FactoryException;
 import org.opengis.util.LocalName;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.geotoolkit.renderer.Presentation;
-import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -326,7 +325,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
                  * two times the affine transform to display system.
                  */
                 final MapContext subCtx = MapBuilder.createContext();
-                subCtx.items().add(MapBuilder.createCoverageLayer(coverage, styleFromStats.get()));
+                subCtx.getComponents().add(MapBuilder.createCoverageLayer(coverage, styleFromStats.get()));
                 resultImage = DefaultPortrayalService.portray(
                         new CanvasDef(coverage.getGridGeometry()),
                         new SceneDef(subCtx)
@@ -456,33 +455,31 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
     /**
      * Extract query parameters from CoverageMapLayer if his an instance of DefaultCoverageMapLayer.
      *
-     * @param coverageMapLayer CoverageMapLayer
+     * @param coverageMapLayer MapLayer
      * @return a Map</String,Double> with query parameters or null
      */
     public static Map<String, Double> extractQuery(final MapLayer coverageMapLayer) {
 
         Map<String,Double> values = null;
-        if (coverageMapLayer instanceof CoverageMapLayer) {
-            final CoverageMapLayer covMapLayer = (CoverageMapLayer) coverageMapLayer;
-            final Query query = covMapLayer.getQuery();
-            if (query != null) {
-                // visit the filter to extract all values
-                final FilterVisitor fv = new DefaultFilterVisitor() {
+        final Query query = coverageMapLayer.getQuery();
+        if (query instanceof SimpleQuery) {
+            SimpleQuery sq = (SimpleQuery) query;
+            // visit the filter to extract all values
+            final FilterVisitor fv = new DefaultFilterVisitor() {
 
-                    @Override
-                    public Object visit(PropertyIsEqualTo filter, Object data) {
-                        final Map<String,Double> values = (Map<String,Double>) data;
-                        final String expr1 = ((PropertyName)filter.getExpression1()).getPropertyName();
-                        final Double expr2 = Double.valueOf(((Literal)filter.getExpression2()).getValue().toString());
-                        values.put(expr1, expr2);
-                        return values;
-                    }
+                @Override
+                public Object visit(PropertyIsEqualTo filter, Object data) {
+                    final Map<String,Double> values = (Map<String,Double>) data;
+                    final String expr1 = ((PropertyName)filter.getExpression1()).getPropertyName();
+                    final Double expr2 = Double.valueOf(((Literal)filter.getExpression2()).getValue().toString());
+                    values.put(expr1, expr2);
+                    return values;
+                }
 
-                };
+            };
 
-                final Filter filter = query.getFilter();
-                values = (Map<String,Double>) filter.accept(fv, new HashMap<>());
-            }
+            final Filter filter = sq.getFilter();
+            values = (Map<String,Double>) filter.accept(fv, new HashMap<>());
         }
         return values;
     }

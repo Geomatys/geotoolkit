@@ -41,6 +41,7 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
@@ -297,16 +298,18 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     private static SortedSet<Integer> extractColors(final MapItem context, SortedSet<Integer> buffer){
-        for(MapItem child : context.items()){
-            if(child instanceof MapLayer){
-                buffer = extractColors((MapLayer)child, buffer);
-            }else{
-                buffer = extractColors(child, buffer);
-            }
+        if (context instanceof MapContext) {
+            for(MapItem child : ((MapContext) context).getComponents()){
+                if(child instanceof MapLayer){
+                    buffer = extractColors((MapLayer)child, buffer);
+                }else{
+                    buffer = extractColors(child, buffer);
+                }
 
-            if(buffer == null){
-                //unpredictable colors
-                return buffer;
+                if(buffer == null){
+                    //unpredictable colors
+                    return buffer;
+                }
             }
         }
         return buffer;
