@@ -40,7 +40,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.georss.xml.v100.WhereType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -57,7 +56,6 @@ import org.geotoolkit.owc.xml.v10.StyleSetType;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.sld.xml.v110.UserStyle;
-import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -126,11 +124,11 @@ public class OwcXmlIO {
         final LinkType link = ATOM_FACTORY.createLinkType();
         link.setRel("profile");
         link.setHref("http://www.opengis.net/spec/owc-atom/1.0/req/core");
-        link.setTitle(context.getName()==null ? "" : context.getName());
+        link.setTitle(context.getIdentifier()==null ? "" : context.getIdentifier());
         feed.getAuthorOrCategoryOrContributor().add(ATOM_FACTORY.createFeedTypeLink(link));
 
         final TextType title = ATOM_FACTORY.createTextType();
-        title.getContent().add(context.getName()==null ? "" : context.getName());
+        title.getContent().add(context.getIdentifier()==null ? "" : context.getIdentifier());
         feed.getAuthorOrCategoryOrContributor().add(ATOM_FACTORY.createFeedTypeTitle(title));
 
         final Envelope aoi = context.getAreaOfInterest();
@@ -146,7 +144,7 @@ public class OwcXmlIO {
             feed.getAuthorOrCategoryOrContributor().add(GEORSS_FACTORY.createWhere(where));
         }
 
-        for (final MapItem mapItem : context.items()) {
+        for (final MapItem mapItem : context.getComponents()) {
             toEntry(null, mapItem, feed.getAuthorOrCategoryOrContributor());
         }
         return feed;
@@ -210,11 +208,12 @@ public class OwcXmlIO {
                 }
             }
 
-        } else {
+        } else if (item instanceof MapContext) {
+            final MapContext mc = (MapContext) item;
             final ContentType content = OWC_FACTORY.createContentType();
-            content.setType(item.getName());
+            content.setType(mc.getIdentifier());
             //encode children
-            for (MapItem child : item.items()) {
+            for (MapItem child : mc.getComponents()) {
                 toEntry(name+"/", child, entries);
             }
             entry.getAuthorOrCategoryOrContent().add(OWC_FACTORY.createOfferingTypeContent(content));
@@ -281,28 +280,28 @@ public class OwcXmlIO {
                 final EntryType entry = (EntryType) o;
                 final MapItem item = readEntry(entry);
                 //find insert parent
-                final String[] path = item.getName().split("/");
-                MapItem parent = context;
+                final String[] path = item.getIdentifier().split("/");
+                MapContext parent = context;
                 for (int i=0;i<path.length-1;i++) {
-                    parent = findItem(parent, path[i]);
+                    parent = (MapContext) findItem(parent, path[i]);
                 }
-                item.setName(path[path.length-1]);
-                parent.items().add(item);
+                item.setIdentifier(path[path.length-1]);
+                parent.getComponents().add(item);
             }
         }
 
         return context;
     }
 
-    private static MapItem findItem(MapItem parent, String name) {
-        for (MapItem mi : parent.items()) {
-            if (mi.getName().equals(name)) {
+    private static MapItem findItem(MapContext parent, String name) {
+        for (MapItem mi : parent.getComponents()) {
+            if (mi.getIdentifier().equals(name)) {
                 return mi;
             }
         }
         //does not exist, create it
-        final MapItem np = MapBuilder.createItem();
-        parent.items().add(np);
+        final MapContext np = MapBuilder.createItem();
+        parent.getComponents().add(np);
         return np;
     }
 
@@ -392,14 +391,16 @@ public class OwcXmlIO {
             ((MapLayer)mapItem).setSelectable(selectable);
             ((MapLayer)mapItem).setOpacity(layerOpacity);
         }
-        mapItem.setName(layerName);
-        mapItem.setDescription(new DefaultDescription(
-                new SimpleInternationalString(layerTitle),
-                new SimpleInternationalString(layerAbstract)));
-        mapItem.setName(layerName);
+        mapItem.setIdentifier(layerName);
+        mapItem.setTitle(layerTitle);
+        mapItem.setAbstract(layerAbstract);
         mapItem.setVisible(visible);
 
-        mapItem.items().addAll(children);
+        if (mapItem instanceof MapContext) {
+            ((MapContext) mapItem).getComponents().addAll(children);
+        } else if (!children.isEmpty()) {
+            throw new IllegalArgumentException("MapLayer can not have children layers.");
+        }
 
         return mapItem;
     }

@@ -69,16 +69,20 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
         this.item = item;
 
         //build children nodes
-        final List<MapItem> childs = item.items();
-        for (int i = 0, n = childs.size(); i < n; i++) {
-            final MapItem child = childs.get(i);
-            final GraphicJ2D gj2d = parseChild(child);
-            itemGraphics.put(child, gj2d);
-            getChildren().add(gj2d);
+        if (item instanceof MapContext) {
+            final MapContext mc = (MapContext) item;
+            final List<MapItem> childs = mc.getComponents();
+            for (int i = 0, n = childs.size(); i < n; i++) {
+                final MapItem child = childs.get(i);
+                final GraphicJ2D gj2d = parseChild(child);
+                itemGraphics.put(child, gj2d);
+                getChildren().add(gj2d);
+            }
+
+            //listen to mapitem changes
+            weakListener.registerSource(mc);
         }
 
-        //listen to mapitem changes
-        weakListener.registerSource(item);
     }
 
     @Override
@@ -155,7 +159,7 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
     public void propertyChange(final PropertyChangeEvent event) {
         if(getCanvas().isAutoRepaint()){
             final String propName = event.getPropertyName();
-            if(MapItem.VISIBILITY_PROPERTY.equals(propName)){
+            if(MapItem.VISIBLE_PROPERTY.equals(propName)){
                 //TODO should call a repaint only on this graphic
                 getCanvas().repaint();
             }

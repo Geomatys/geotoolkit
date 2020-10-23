@@ -27,10 +27,8 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.symbology.Styles;
 import org.geotoolkit.sld.xml.Specification.SymbologyEncoding;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.style.StyleFactory;
 import org.opengis.util.FactoryException;
 
@@ -87,20 +85,18 @@ public class LegendDemo {
         final MutableStyle style2 = xmlutil.readStyle(LegendDemo.class.getResource("/data/style/legend2.xml"), SymbologyEncoding.V_1_1_0);
         final MapLayer layer2 = MapBuilder.createEmptyMapLayer();
         layer2.setStyle(style2);
-        layer2.setDescription(SF.description("Highway", "Highway"));
+        layer2.setTitle("Highway");
         context.layers().add(layer2);
 
         //point styles
         final MapLayer layerMark = MapBuilder.createEmptyMapLayer();
         layerMark.setStyle(Styles.markPoint());
-        layerMark.setDescription(new DefaultDescription(
-                new SimpleInternationalString("Cities"), new SimpleInternationalString("")));
+        layerMark.setTitle("Cities");
         context.layers().add(layerMark);
 
         final MapLayer layerImage = MapBuilder.createEmptyMapLayer();
         layerImage.setStyle(Styles.imagePoint());
-        layerImage.setDescription(new DefaultDescription(
-                new SimpleInternationalString("Fishing areas"), new SimpleInternationalString("")));
+        layerImage.setTitle("Fishing areas");
         context.layers().add(layerImage);
 
         return context;

@@ -33,19 +33,18 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.display.PortrayalException;
-
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
@@ -73,7 +72,7 @@ public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<S
         public void propertyChange(PropertyChangeEvent event) {
             if(getCanvas().isAutoRepaint()){
                 final String propName = event.getPropertyName();
-                if(MapLayer.VISIBILITY_PROPERTY.equals(propName)){
+                if(MapLayer.VISIBLE_PROPERTY.equals(propName)){
                     //handle in StatelessMapItemJ2D
                 } else if (item.isVisible() &&
                    (  MapLayer.STYLE_PROPERTY.equals(propName)

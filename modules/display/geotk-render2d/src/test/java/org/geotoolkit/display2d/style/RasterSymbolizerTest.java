@@ -44,7 +44,6 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -52,6 +51,9 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
@@ -60,10 +62,6 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.util.FactoryException;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test that raster symbolizer are properly rendered.
@@ -331,9 +329,9 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         );
         final GridCoverage baseData = new GridCoverage2D(geom, null, image);
 
-        CoverageMapLayer layer = MapBuilder.createCoverageLayer(baseData);
+        MapLayer layer = MapBuilder.createLayer(new InMemoryGridCoverageResource(baseData));
         final MapContext ctx = MapBuilder.createContext();
-        ctx.items().add(layer);
+        ctx.getComponents().add(layer);
         BufferedImage rendering = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),
                 new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR,
@@ -358,7 +356,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
                 ),
                 null, null, FF.literal(Color.BLACK)));
         final RasterSymbolizer symbol = SF.rasterSymbolizer(null, null, null, null, colorMap, null, null, null);
-        ctx.items().set(0, MapBuilder.createCoverageLayer(baseData, SF.style(symbol), "test"));
+        ctx.getComponents().set(0, MapBuilder.createCoverageLayer(baseData, SF.style(symbol), "test"));
         rendering = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),
                 new SceneDef(ctx, new Hints(GO2Hints.KEY_INTERPOLATION, InterpolationCase.NEIGHBOR,

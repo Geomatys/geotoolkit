@@ -49,7 +49,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class MapContext extends AbstractMapItem implements ItemListener, Serializable, LayerListener {
+public final class MapContext extends MapItem implements ItemListener, Serializable, LayerListener {
 
     public static final String AREA_OF_INTEREST_PROPERTY = "areaOfInterest";
     public static final String BOUNDS_PROPERTY = "bounds";
@@ -131,8 +131,25 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
         return crs;
     }
 
-    @Override
+    /**
+     * Returns the living list of all items. You may add, remove or change items
+     * of this list. In case this object is a map layer object, this list will be empty
+     * and immutable.
+     * This method is deprecated, use getComponents instead.
+     * @return the live list
+     */
+    @Deprecated
     public List<MapItem> items() {
+        return getComponents();
+    }
+
+    /**
+     * Returns the living list of all items. You may add, remove or change items
+     * of this list. In case this object is a map layer object, this list will be empty
+     * and immutable.
+     * @return the live list
+     */
+    public List<MapItem> getComponents() {
         return items;
     }
 
@@ -255,6 +272,22 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
     }
 
     /**
+     * Register an item listener.
+     * @param listener item listener to register
+     */
+    public void addItemListener(final ItemListener listener){
+        listeners.add(ItemListener.class, listener);
+    }
+
+    /**
+     * Unregister an item listener.
+     * @param listener item listener to unregister.
+     */
+    public void removeItemListener(final ItemListener listener){
+        listeners.remove(ItemListener.class, listener);
+    }
+
+    /**
      * Register a context listener, this listener will be registered
      * also as an item listener.
      * @param listener Context listener to register
@@ -290,13 +323,13 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
     }
 
     private void updateItemAdd(final MapLayer layer, final int index){
-        if(index==0){
+        if (index == 0) {
             items.add(0, layer);
-        }else{
+        } else {
             final MapLayer beforeElement = layers.get(index-1);
-            final MapItem parent = findParentForLayerNumber(this, index-1, new AtomicInteger(-1));
-            final int beforeIndex = parent.items().indexOf(beforeElement);
-            parent.items().add(beforeIndex+1, layer);
+            final MapContext parent = findParentForLayerNumber(this, index-1, new AtomicInteger(-1));
+            final int beforeIndex = parent.getComponents().indexOf(beforeElement);
+            parent.getComponents().add(beforeIndex+1, layer);
         }
     }
 
@@ -324,17 +357,16 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
         }
     }
 
+    private MapContext findParentForLayerNumber(final MapContext root, final int wishedNumber, final AtomicInteger inc){
 
-    private MapItem findParentForLayerNumber(final MapItem root, final int wishedNumber, final AtomicInteger inc){
-
-        for(MapItem item : root.items()){
-            if(item instanceof MapLayer){
-                if(inc.incrementAndGet() == wishedNumber){
+        for (MapItem item : root.getComponents()) {
+            if (item instanceof MapLayer) {
+                if (inc.incrementAndGet() == wishedNumber) {
                     return root;
                 }
-            }else{
-                final MapItem test = findParentForLayerNumber(item, wishedNumber, inc);
-                if(test != null){
+            } else if (item instanceof MapContext) {
+                final MapContext test = findParentForLayerNumber((MapContext) item, wishedNumber, inc);
+                if (test != null) {
                     return test;
                 }
             }
@@ -342,17 +374,17 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
         return null;
     }
 
-    private boolean findAndRemoveForLayerNumber(final MapItem root, final int wishedNumber, final AtomicInteger inc){
+    private boolean findAndRemoveForLayerNumber(final MapContext root, final int wishedNumber, final AtomicInteger inc){
 
-        for(MapItem item : root.items()){
-            if(item instanceof MapLayer){
-                if(inc.incrementAndGet() == wishedNumber){
-                    root.items().remove(item);
+        for (MapItem item : root.getComponents()) {
+            if (item instanceof MapLayer) {
+                if (inc.incrementAndGet() == wishedNumber) {
+                    root.getComponents().remove(item);
                     return true;
                 }
-            }else{
-                final boolean found = findAndRemoveForLayerNumber(item, wishedNumber, inc);
-                if(found){
+            } else if (item instanceof MapContext) {
+                final boolean found = findAndRemoveForLayerNumber((MapContext) item, wishedNumber, inc);
+                if (found) {
                     return found;
                 }
             }
@@ -369,10 +401,10 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
      * In case item is a MapLayer we register it using the layer listener.
      */
     protected void registerListenerSource(final MapItem item) {
-        if(item instanceof MapLayer){
+        if (item instanceof MapLayer) {
             layerListener.registerSource((MapLayer) item);
-        }else{
-            itemListener.registerSource(item);
+        } else if (item instanceof MapContext) {
+            itemListener.registerSource((MapContext) item);
         }
     }
 
@@ -380,10 +412,10 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
      * In case item is a MapLayer we register it using the layer listener.
      */
     protected void unregisterListenerSource(final MapItem item) {
-        if(item instanceof MapLayer){
+        if (item instanceof MapLayer) {
             layerListener.unregisterSource((MapLayer) item);
-        }else{
-            itemListener.unregisterSource(item);
+        } else if (item instanceof MapContext) {
+            itemListener.unregisterSource((MapContext) item);
         }
     }
 
@@ -395,9 +427,13 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
     // item changes, update layers list ----------------------------------------
     //--------------------------------------------------------------------------
 
-    @Override
     protected void fireItemChange(final int type, final Collection<? extends MapItem> items, final NumberRange<Integer> range) {
-        super.fireItemChange(type, items, range);
+        final CollectionChangeEvent<MapItem> event = new CollectionChangeEvent<MapItem>(this,items,type,range, null);
+        final ItemListener[] lists = listeners.getListeners(ItemListener.class);
+
+        for (ItemListener listener : lists) {
+            listener.itemChange(event);
+        }
 
         final Collection<MapLayer> candidates = new ArrayList<MapLayer>();
         final MapItem[] array = items.toArray(new MapItem[items.size()]);
@@ -424,9 +460,13 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
         }
     }
 
-    @Override
     protected void fireItemChange(final int type, final MapItem item, final NumberRange<Integer> range, final EventObject orig) {
-        super.fireItemChange(type, item, range, orig);
+        final CollectionChangeEvent<MapItem> event = new CollectionChangeEvent<MapItem>(this, item, type, range, orig);
+        final ItemListener[] lists = listeners.getListeners(ItemListener.class);
+
+        for (ItemListener listener : lists) {
+            listener.itemChange(event);
+        }
 
         //forward event a MapLayer event if necessary
 
@@ -443,10 +483,10 @@ public final class MapContext extends AbstractMapItem implements ItemListener, S
     }
 
     private List<MapLayer> createLayerList(final MapItem item, final List<MapLayer> buffer){
-        if(item instanceof MapLayer){
+        if (item instanceof MapLayer) {
             buffer.add((MapLayer) item);
-        }else{
-            for(MapItem child : item.items()){
+        } else if (item instanceof MapContext) {
+            for (MapItem child : ((MapContext) item).getComponents()) {
                 createLayerList(child, buffer);
             }
         }
