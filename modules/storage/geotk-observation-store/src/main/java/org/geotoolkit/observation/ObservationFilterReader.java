@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.sos.xml.ResponseModeType;
+import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.temporal.BinaryTemporalOperator;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.Observation;
@@ -158,13 +159,12 @@ public interface ObservationFilterReader {
     void setOfferings(final List<String> offerings) throws DataStoreException;
 
     /**
-     * Add a filter on the result for the specified property.
+     * Add a filter on the result.
      *
-     * @param propertyName a property of the result.
-     * @param value a literal value.
+     * @param filter a comparison filter the result.
      * @throws org.apache.sis.storage.DataStoreException
      */
-    void setResultEquals(String propertyName, String value) throws DataStoreException;
+    void setResultFilter(final BinaryComparisonOperator filter) throws DataStoreException;
 
     /**
      * Return the list of properties that can be applied on the result.
