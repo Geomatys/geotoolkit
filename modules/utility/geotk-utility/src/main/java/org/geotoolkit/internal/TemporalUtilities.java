@@ -18,8 +18,6 @@
 package org.geotoolkit.internal;
 
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import org.apache.sis.internal.system.DefaultFactories;
 
 import org.opengis.temporal.Period;
@@ -29,9 +27,6 @@ import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.Static;
-import org.apache.sis.util.Exceptions;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.factory.FactoryNotFoundException;
 
 
 /**
@@ -71,9 +66,8 @@ public final class TemporalUtilities extends Static {
      *
      * @param  time The date for which to create instant.
      * @return The instant.
-     * @throws FactoryNotFoundException If the temporal factory is not available on the classpath.
      */
-    public static Instant createInstant(final Date time) throws FactoryNotFoundException {
+    public static Instant createInstant(final Date time) {
         return createInstant(DefaultFactories.forBuildin(TemporalFactory.class), time);
     }
 
@@ -85,9 +79,8 @@ public final class TemporalUtilities extends Static {
      * @param  begin The begin date, inclusive.
      * @param  end The end date, inclusive.
      * @return The period.
-     * @throws FactoryNotFoundException If the temporal factory is not available on the classpath.
      */
-    public static Period createPeriod(final Date begin, final Date end) throws FactoryNotFoundException {
+    public static Period createPeriod(final Date begin, final Date end) {
         final TemporalFactory factory = DefaultFactories.forBuildin(TemporalFactory.class);
         return factory.createPeriod(createInstant(factory, begin), createInstant(factory, end));
     }
@@ -105,34 +98,13 @@ public final class TemporalUtilities extends Static {
      * @param seconds the number of seconds for this period duration.
      *
      * @return The period duration.
-     * @throws FactoryNotFoundException If the temporal factory is not available on the classpath.
      *
      * @since 3.21
      */
     public static PeriodDuration createPeriodDuration(final InternationalString years, final InternationalString months, final InternationalString weeks,
             final InternationalString days, final InternationalString hours, final InternationalString minutes, final InternationalString seconds)
-            throws FactoryNotFoundException
     {
         final TemporalFactory factory = DefaultFactories.forBuildin(TemporalFactory.class);
         return factory.createPeriodDuration(years, months, weeks, days, hours, minutes, seconds);
-    }
-
-    /**
-     * Creates a record for a message to be logged in case of missing factory.
-     * Note that the caller should still set the source class, source method and logger name.
-     *
-     * @param  e The exception thrown by one of the above {@code createFoo} methods.
-     * @return The record to log.
-     */
-    public static LogRecord createLog(final FactoryNotFoundException e) {
-        Level level = Level.FINE;
-        if (!warningLogged) {
-            warningLogged = true;
-            level = Level.WARNING;
-        }
-        final LogRecord record = new LogRecord(level, Errors.format(
-                Errors.Keys.MissingModule_1, "geotk-temporal"));
-        record.setMessage(Exceptions.formatChainedMessages(null, record.getMessage(), e));
-        return record;
     }
 }

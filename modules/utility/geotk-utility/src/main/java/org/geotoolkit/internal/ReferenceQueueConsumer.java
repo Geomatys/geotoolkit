@@ -40,7 +40,7 @@ import org.apache.sis.util.Classes;
  * @since 3.00
  * @module
  */
-public class ReferenceQueueConsumer<T> extends DaemonThread {
+public class ReferenceQueueConsumer<T> extends Thread {
     /**
      * The default thread.
      */
@@ -95,10 +95,6 @@ public class ReferenceQueueConsumer<T> extends DaemonThread {
         Level level = Level.SEVERE;
         ReferenceQueue<T> queue;
         while ((queue = this.queue) != null) {
-            if (isKillRequested()) {
-                level = Level.INFO;
-                break;
-            }
             final Reference<? extends T> ref;
             try {
                 // Block until a reference is enqueded.

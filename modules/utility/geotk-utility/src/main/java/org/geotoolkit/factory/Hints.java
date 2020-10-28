@@ -192,6 +192,33 @@ public class Hints extends RenderingHints {
     public static final ClassKey STYLE_FACTORY = new ClassKey("org.opengis.style.StyleFactory");
 
     /**
+     * When adding features in a datastore, it is not always necessary to have
+     * the returned id of the inserted feature.
+     * JDBC featurestore for exemple are much more efficient when inserting datas
+     * in batch mode. setting this value to false may bring a huge performance
+     * gain.
+     *
+     * Default value is true.
+     */
+    public static final Key UPDATE_ID_ON_INSERT = new Key(Boolean.class);
+
+    /**
+     * Used to identify a PropertyDescriptor if he is part of the FeatureID.
+     */
+    public static final Key PROPERTY_IS_IDENTIFIER = new Key(Boolean.class);
+
+    /**
+     * This flag indicates that the featurestore can ignore features which are smaller
+     * than the given resolution. FeatureStore are supposed to
+     * try to conform to this request only if it doesnt requiere to much work.
+     * For exemple when exploring a quad tree, tiles can be ignored when there bbox
+     * is to small or when the feature bbox can be read before.
+     *
+     * Default value is null.
+     */
+    public static final Key KEY_IGNORE_SMALL_FEATURES = new Key(double[].class);
+
+    /**
      * Constructs a map of hints initialized with the system-wide default values.
      *
      * @since 2.5

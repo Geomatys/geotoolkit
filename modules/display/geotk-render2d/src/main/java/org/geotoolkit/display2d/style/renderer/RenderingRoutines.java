@@ -426,7 +426,7 @@ public final class RenderingRoutines {
             //if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
             //    //style does not expend itself further than the feature geometry
             //    //that mean geometries smaller than a pixel will not be renderer or barely visible
-            //    queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
+            //    queryHints.put(Hints.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
             //}
         }
 
@@ -544,7 +544,7 @@ public final class RenderingRoutines {
             //if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
             //    //style does not expend itself further than the feature geometry
             //    //that mean geometries smaller than a pixel will not be renderer or barely visible
-            //    queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
+            //    queryHints.put(Hints.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
             //}
         }
 

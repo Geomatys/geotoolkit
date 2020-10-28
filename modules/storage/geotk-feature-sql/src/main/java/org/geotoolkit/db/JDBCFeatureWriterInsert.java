@@ -26,7 +26,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -58,7 +57,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
     private void init(){
         last = type.newInstance();
         if(hints != null){
-            batchInsert = Boolean.FALSE.equals(hints.get(HintsPending.UPDATE_ID_ON_INSERT));
+            batchInsert = Boolean.FALSE.equals(hints.get(Hints.UPDATE_ID_ON_INSERT));
         }else{
             batchInsert = Boolean.FALSE;
         }
