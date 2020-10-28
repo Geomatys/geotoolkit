@@ -249,30 +249,11 @@ public final class Trees extends Static {
      * @since 2.5
      */
     public static MutableTreeNode copy(final TreeNode node) {
-        return copy(node, null);
-    }
-
-    /**
-     * Returns a copy of a subset of the tree starting at the given node. The references to the
-     * {@linkplain org.geotoolkit.gui.swing.tree.TreeNode#getUserObject() user objects} in the
-     * copied nodes can be modified by the filter.
-     *
-     * @param  node The tree to copy (may be {@code null}).
-     * @param  filter An object filtering the node to copy, or {@code null} if none.
-     * @return A mutable copy of the given tree, or {@code null} if the given tree was null or if
-     *         the given node is not {@linkplain TreeNodeFilter#accept accepted} by the filter.
-     *
-     * @since 3.04
-     */
-    public static MutableTreeNode copy(final TreeNode node, final TreeNodeFilter filter) {
-        if (node == null || (filter != null && !filter.accept(node))) {
+        if (node == null) {
             return null;
         }
         final String label = node.toString();
         Object userObject = getUserObject(node);
-        if (filter != null) {
-            userObject = filter.convertUserObject(node, userObject);
-        }
         final boolean allowsChildren = node.getAllowsChildren();
         final DefaultMutableTreeNode target;
         if (userObject == null || userObject == label) {
@@ -284,7 +265,7 @@ public final class Trees extends Static {
         final Enumeration<? extends TreeNode> children = node.children();
         if (children != null) {
             while (children.hasMoreElements()) {
-                final MutableTreeNode child = copy(children.nextElement(), filter);
+                final MutableTreeNode child = copy(children.nextElement());
                 if (child != null) {
                     target.add(child);
                 }

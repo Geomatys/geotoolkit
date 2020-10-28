@@ -50,7 +50,6 @@ import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.referencing.operation.DefaultConversion;
-import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 
 
 /**
@@ -665,5 +664,45 @@ search:     for (final CoordinateReferenceSystem source : sources) {
         return Collections.singletonMap(IdentifiedObject.NAME_KEY,
                 new ImmutableIdentifier(null, // Null because we are inventing a code.
                     id.getCodeSpace(), id.getCode() + suffix));
+    }
+
+    /**
+     * Adds the specified hints to a {@link Factory#hints}. This method can be used as a
+     * replacement for {@code hints.putAll(map)} when the map is an instance of {@link Hints}.
+     *
+     * @param  source The hints to add.
+     * @param  target Where to add the hints.
+     * @return {@code true} if at least one value changed as a result of this call.
+     */
+    private static boolean addImplementationHints(final RenderingHints source,
+            final Map<RenderingHints.Key, Object> target)
+    {
+        /*
+         * Do NOT change the parameter signature to Map<?,?>. We want to keep type safety.
+         * Use hints.putAll(...) if you have a Map<RenderingHints.Key,?>,  or this method
+         * if you have a RenderingHints map. Furthermore this method implementation needs
+         * the guarantee that the map do not contains null value (otherwise the 'changed'
+         * computation could be inacurate) - this condition is enforced by RenderingHints
+         * but not by Map.
+         *
+         * The implementation below strips non-RenderingHints.Key as a paranoiac check,
+         * which should not be necessary since RenderingHints implementation prevented
+         * that. If the parameter was changed to Map<?,?>, the stripping would be more
+         * likely and could surprise the user since it is performed without warnings.
+         */
+        boolean changed = false;
+        if (source != null) {
+            for (final Map.Entry<?,?> entry : source.entrySet()) {
+                final Object key = entry.getKey();
+                if (key instanceof RenderingHints.Key) {
+                    final Object value = entry.getValue();
+                    final Object old = target.put((RenderingHints.Key) key, value);
+                    if (!changed && !Objects.equals(value, old)) {
+                        changed = true;
+                    }
+                }
+            }
+        }
+        return changed;
     }
 }

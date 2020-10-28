@@ -52,7 +52,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
@@ -368,7 +367,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             final Envelope bbox, final boolean loose, final Hints hints, final boolean read3D, final double[] res) throws DataStoreException {
 
         final AccessManager locker = shpFiles.createLocker();
-        final double[] minRes = (double[]) hints.get(HintsPending.KEY_IGNORE_SMALL_FEATURES);
+        final double[] minRes = (double[]) hints.get(Hints.KEY_IGNORE_SMALL_FEATURES);
 
         CloseableCollection<ShpData> goodCollec = null;
 
