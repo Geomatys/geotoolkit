@@ -53,8 +53,6 @@ import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
  * {@linkplain java.util.Properties property file}. This gives some of the benefits of using
  * the {@linkplain org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory EPSG database}
  * in a portable property file (which must be provided by the users), or add new authorities.
- * See {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory} for a subclass
- * specialized for the EPSG authority.
  * <p>
  * This factory doesn't cache any result. Any call to a {@code createFoo} method
  * will trig a new WKT parsing. For adding caching service, this factory needs to
@@ -130,8 +128,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      *
      * <ol>
      *   <li><p>The file directory is specified as a hint stored under the {@code directoryKey}.
-     *       That key is usually {@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY}, but other keys are
-     *       allowed. If a value exists for that key and a file having the given {@code filename}
+     *       If a value exists for that key and a file having the given {@code filename}
      *       exists in that directory, then it is loaded.</p></li>
      *
      *   <li><p>The resource directory (which may be a directory in a JAR file) is specified as
@@ -147,7 +144,6 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      *          An optional set of hints, or {@code null} for the default ones.
      * @param directoryKey
      *          The key under which a directory may be stored in the hints map, or {@code null} if none.
-     *          If non-null, this value is typically {@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY}.
      * @param resourceLoader
      *          The class to use for loading resources, or {@code null} if none. If non-null, the
      *          class package determine the directory (potentially in a JAR file) where to look

@@ -552,7 +552,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      * @param  element The WKT element name.
      * @return The GeoAPI class of the specified element, or {@code null} if unknown.
      */
-    static Class<?> getWKTClassOf(String element) {
+    private static Class<?> getWKTClassOf(String element) {
         if (element == null) {
             return null;
         }

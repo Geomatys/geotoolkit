@@ -22,8 +22,7 @@
  * Known Text</a></cite> (WKT). This package contains two main implementations:
  * <p>
  * <ul>
- *   <li>{@link org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory} (and its
- *       {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory} specialization)
+ *   <li>{@link org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory}
  *       for parsing CRS from a {@linkplain java.util.Properties property file}.</li>
  *   <li>{@link org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory} for parsing CRS
  *       from the {@value org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory#TABLE}
@@ -36,9 +35,7 @@
  * convenience class can be used.
  * <p>
  * By default, the classes defined in this package are <strong>not</strong> registered for use
- * though the {@link org.geotoolkit.factory.FactoryFinder}. The only subclass automatically
- * registered is {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory}, which
- * is defined in another package. For all other classes, users shall either instantiate and
+ * though the {@link org.geotoolkit.factory.FactoryFinder}. Users shall either instantiate and
  * use a class directly, or create a subclass and
  * <a href="../../../factory/package-summary.html#package_description">register</a> it themselves.
  *
