@@ -30,9 +30,7 @@
  * </ul>
  * <p>
  * The public implementations provided in this package does not cache the CRS - each call to a
- * {@code createFoo} method will trig a new WKT parsing. In order to get implementations that
- * cache the CRS, the {@link org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider}
- * convenience class can be used.
+ * {@code createFoo} method will trig a new WKT parsing.
  * <p>
  * By default, the classes defined in this package are <strong>not</strong> registered for use
  * though the {@link org.geotoolkit.factory.FactoryFinder}. Users shall either instantiate and

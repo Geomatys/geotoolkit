@@ -53,12 +53,6 @@ import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
  * {@linkplain java.util.Properties property file}. This gives some of the benefits of using
  * the {@linkplain org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory EPSG database}
  * in a portable property file (which must be provided by the users), or add new authorities.
- * <p>
- * This factory doesn't cache any result. Any call to a {@code createFoo} method
- * will trig a new WKT parsing. For adding caching service, this factory needs to
- * be wrapped in {@link org.geotoolkit.referencing.factory.CachingAuthorityFactory}.
- * The {@link AuthorityFactoryProvider#createFromProperties AuthorityFactoryProvider}
- * convenience class can be used for that purpose.
  *
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
