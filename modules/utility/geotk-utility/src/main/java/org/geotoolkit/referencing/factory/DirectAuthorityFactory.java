@@ -138,7 +138,7 @@ public abstract class DirectAuthorityFactory extends GeodeticAuthorityFactory {
      */
     protected String trimAuthority(String code) {
         /*
-         * IMPLEMENTATION NOTE: This method is overridden in PropertyAuthorityFactory. If
+         * IMPLEMENTATION NOTE: This method is overridden in WKTParsingAuthorityFactory. If
          * implementation below is modified, it is probably worth to revisit the overridden
          * method as well.
          */
