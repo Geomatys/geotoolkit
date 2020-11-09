@@ -1,0 +1,19 @@
+variables:
+  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+  SONAR_HOST_URL: 'https://sonar.geomatys.com'
+  GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+
+quality:
+  image: images.geomatys.com/ci/maven:3-jdk-8-openjfx
+  stage: quality
+  script:
+    - mvn sonar:sonar
+      -Dsonar.qualitygate.wait=true
+      -Dsonar.login=$SONAR_TOKEN
+      -Dsonar.host.url=$SONAR_HOST_URL
+      -Dsonar.java.binaries=${CI_PROJECT_DIR}/.m2
+      $MAVEN_CLI_OPTS -s $SETTINGS_MAVEN
+  allow_failure: true
+  only:
+    variables:
+      - $SONAR_TOKEN

@@ -1,0 +1,18 @@
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - .m2
+  - .sonar/cache
+variables:
+  MAVEN_USER: 'deployment'
+  MAVEN_CLI_OPTS: "--batch-mode"
+  MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/.m2'
+  SONAR_HOST_URL: 'https://sonar.geomatys.com'
+
+stages:
+  - build
+  - quality
+
+include:
+  - '.gitlab/CI/build.yml'
+  - '.gitlab/CI/quality.yml'

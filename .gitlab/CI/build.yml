@@ -1,0 +1,5 @@
+build:
+  image: images.geomatys.com/ci/maven:3-jdk-8-openjfx
+  stage: build
+  script:
+    - mvn clean install -DskipTests $MAVEN_CLI_OPTS -s $SETTINGS_MAVEN
