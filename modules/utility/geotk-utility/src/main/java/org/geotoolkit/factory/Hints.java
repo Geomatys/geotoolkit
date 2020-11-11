@@ -130,22 +130,6 @@ public class Hints extends RenderingHints {
     public static final Key DEFAULT_COORDINATE_REFERENCE_SYSTEM = new Key(
             "org.opengis.referencing.crs.CoordinateReferenceSystem");
 
-    /**
-     * Used to direct WKT CRS Authority to a directory containing extra definitions.
-     * The value should be an instance of {@link File} or {@link String} refering to
-     * an existing directory.
-     * <p>
-     * Filenames in the supplied directory should be of the form
-     * <code><var>authority</var>.properties</code> where <var>authority</var>
-     * is the authority name space to use. For example the
-     * {@value org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory#FILENAME}
-     * file contains extra CRS to add as new EPSG codes.
-     *
-     * @since 2.4
-     * @category Referencing
-     */
-    public static final FileKey CRS_AUTHORITY_EXTRA_DIRECTORY = new FileKey(false);
-
 
 
     ////////////////////////////////////////////////////////////////////////

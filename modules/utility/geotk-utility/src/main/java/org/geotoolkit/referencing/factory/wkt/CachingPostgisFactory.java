@@ -38,7 +38,7 @@ import org.apache.sis.referencing.factory.UnavailableFactoryException;
  * @author Martin Desruisseaux (Geomatys)
  * @module
  */
-final class CachingPostgisFactory extends ConcurrentAuthorityFactory<DirectPostgisFactory> implements CRSAuthorityFactory {
+public final class CachingPostgisFactory extends ConcurrentAuthorityFactory<DirectPostgisFactory> implements CRSAuthorityFactory {
     /**
      * Provides connection to the PostGIS database.
      */
@@ -53,7 +53,7 @@ final class CachingPostgisFactory extends ConcurrentAuthorityFactory<DirectPostg
      * @param userHints An optional set of hints, or {@code null} for the default ones.
      * @param datasource Provides connection to the PostGIS database.
      */
-    CachingPostgisFactory(final DataSource datasource) {
+    public CachingPostgisFactory(final DataSource datasource) {
         super(DirectPostgisFactory.class, 10, 2);
         this.datasource = datasource;
         setTimeout(2, TimeUnit.SECONDS);
