@@ -208,8 +208,8 @@ public class ShapefileHeader {
     }
 
     public static void main(final String[] args) throws Exception {
-        final FileChannel channel = new FileInputStream(new File(args[0])).getChannel();
-        System.out.println(ShapefileReader.readHeader(channel, true));
-        channel.close();
+        try (FileChannel channel = new FileInputStream(new File(args[0])).getChannel()) {
+            System.out.println(ShapefileReader.readHeader(channel, true));
+        }
     }
 }

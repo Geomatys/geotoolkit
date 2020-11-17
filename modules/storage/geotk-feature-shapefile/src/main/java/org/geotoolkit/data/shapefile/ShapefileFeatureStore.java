@@ -361,7 +361,12 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         }
         try {
             return FeatureStreams.filter(new ShapefileFeatureWriter(this,type.getName().tip().toString(), shpFiles, attReader, featureReader, dbfCharset),gquery.getFilter());
-        } catch (IOException ex) {
+        } catch (Exception ex) {
+            try {
+                featureReader.close();
+            } catch (Exception bis) {
+                ex.addSuppressed(bis);
+            }
             throw new DataStoreException(ex);
         }
     }
