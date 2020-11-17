@@ -19,12 +19,14 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import java.nio.file.Path;
+import java.util.logging.Level;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.StorageConnector;
 import org.apache.sis.coverage.SampleDimension;
+import org.geotoolkit.image.io.WarningProducer;
 
 
 /**
@@ -93,11 +95,7 @@ final class FormatEntry extends Entry {
      * @param  path  path to the file to open. Shall be resolved (i.e. should include the {@linkplain Database#root root directory}).
      */
     final DataStore open(final Path path) throws DataStoreException {
-        if (provider != null) {
-            return provider.open(new StorageConnector(path));
-        } else {
-            return DataStores.open(path);
-        }
+        return NewRaster.open(provider, path);
     }
 
     /**

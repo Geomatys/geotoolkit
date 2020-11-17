@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.measure.Range;
@@ -34,6 +35,7 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.StorageConnector;
+import org.geotoolkit.image.io.WarningProducer;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.Identification;
@@ -99,16 +101,19 @@ final class NewRaster {
     /**
      * Opens the given file using the given provider, or by auto-detection if {@code provider} is null.
      */
-    private static DataStore open(final DataStoreProvider provider, final Path file) throws DataStoreException {
+    static DataStore open(final DataStoreProvider provider, final Path file) throws DataStoreException {
         if (provider == null) {
             return DataStores.open(file);
         }
         final StorageConnector connector = new StorageConnector(file);
         try {
             return provider.open(connector);
-        } catch (DataStoreException e) {
-            connector.closeAllExcept(null);
-            throw e;
+        } finally {
+            try {
+                connector.closeAllExcept(null);
+            } catch (Exception e) {
+                WarningProducer.LOGGER.log(Level.WARNING, "Cannot properly close storage connector: "+e.getMessage());
+            }
         }
     }
 
