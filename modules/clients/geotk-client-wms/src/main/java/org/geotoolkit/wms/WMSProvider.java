@@ -99,8 +99,9 @@ public class WMSProvider extends AbstractClientProvider {
             String protocol = url.getProtocol();
 
             if (protocol.startsWith("http")) {
-                WebMapClient client = new WebMapClient(url);
-                AbstractWMSCapabilities capability = client.getServiceCapabilities();
+                try (WebMapClient client = new WebMapClient(url)) {
+                    AbstractWMSCapabilities capability = client.getServiceCapabilities();
+                }
                 return new ProbeResult(true, MIME_TYPE, null);
             }
 
