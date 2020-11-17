@@ -52,14 +52,14 @@ public final class HDRAccessor extends Static {
 
     public static Map<String,String> read(final Object file) throws IOException{
         final Map<String,String> parameters = new HashMap<String, String>();
-        final LineNumberReader reader = IOUtilities.openLatin(file);
-
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            final int index = line.indexOf(' ');
-            final String key = line.substring(0,index).trim();
-            final String value = line.substring(index+1).trim();
-            parameters.put(key, value);
+        try (LineNumberReader reader = IOUtilities.openLatin(file)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final int index = line.indexOf(' ');
+                final String key = line.substring(0, index).trim();
+                final String value = line.substring(index + 1).trim();
+                parameters.put(key, value);
+            }
         }
 
         return parameters;
