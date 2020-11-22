@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.logging.Logging;
-import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
+import static org.apache.sis.internal.util.CollectionsExt.unmodifiableOrCopy;
 import org.opengis.util.InternationalString;
 
 

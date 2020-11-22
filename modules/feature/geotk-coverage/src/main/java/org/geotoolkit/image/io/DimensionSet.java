@@ -39,7 +39,7 @@ import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.DimensionSlice.API;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
-import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
+import static org.apache.sis.internal.util.CollectionsExt.unmodifiableOrCopy;
 
 
 /**
