@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Collections;
+import org.apache.sis.internal.referencing.ReferencingFactoryContainer;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
@@ -41,27 +42,26 @@ import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.internal.simple.SimpleCitation;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.factory.GeodeticAuthorityFactory;
+import org.geotoolkit.resources.Errors;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.Role;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 
 /**
  * The IGNF authority factory.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.14
- * @module
  */
-public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFactory {
+public final class IGNF extends GeodeticAuthorityFactory implements CRSAuthorityFactory {
     private static final Citation AUTHORITY;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
@@ -73,6 +73,11 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         c.transitionTo(DefaultCitation.State.FINAL);
         AUTHORITY = c;
     }
+
+    /**
+     * The underlying factories used for objects creation.
+     */
+    private final ReferencingFactoryContainer factories;
 
     /**
      * The map of pre-defined CRS. Will be created when first needed. Keys are IGNF codes.
@@ -92,6 +97,17 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
     public IGNF() {
         crsMap.put("MILLER", "Miller_Cylindrical");
         codes = Collections.unmodifiableSet(crsMap.keySet());
+        factories = new ReferencingFactoryContainer();
+    }
+
+    /**
+     * Returns the vendor responsible for creating this factory implementation.
+     *
+     * @return the vendor for this factory implementation.
+     */
+    @Override
+    public Citation getVendor() {
+        return new SimpleCitation("Geotk");
     }
 
     /**
@@ -138,7 +154,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
     public synchronized CoordinateReferenceSystem createCoordinateReferenceSystem(final String code)
             throws FactoryException
     {
-        final String key = trimAuthority(code).toUpperCase();
+        final String key = trimNamespace(code).toUpperCase();
         final Object value = crsMap.get(key);
         if (value == null) {
             throw noSuchAuthorityCode(CoordinateReferenceSystem.class, code);
@@ -172,5 +188,21 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
                 new DefiningConversion("Miller", param), PredefinedCS.PROJECTED);
         crsMap.put(key, crs);
         return crs;
+    }
+
+    /**
+     * Creates an exception for an unknown authority code. This convenience method is provided
+     * for implementation of {@code createXXX} methods.
+     *
+     * @param  type  the GeoAPI interface that was to be created
+     *               (e.g. {@code CoordinateReferenceSystem.class}).
+     * @param  code  the unknown authority code.
+     * @return An exception initialized with an error message built
+     *         from the specified information.
+     */
+    private NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type, final String code) {
+        final InternationalString authority = getAuthority().getTitle();
+        return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NoSuchAuthorityCode_3,
+                   code, authority, type), authority.toString(), trimNamespace(code), code);
     }
 }
