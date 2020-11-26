@@ -17,6 +17,7 @@ import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -89,29 +90,37 @@ public class ClusterHullProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         final FeatureSet inputFeatureSet                = inputParameters.getMandatoryValue(ClusterHullDescriptor.FEATURE_SET_IN);
         final Double tolerance_value                    = inputParameters.getMandatoryValue(ClusterHullDescriptor.TOLERANCE_VALUE);
+        final Double smoothing_epsilon                  = inputParameters.getValue(ClusterHullDescriptor.SMOOTHING_EPSILON);
         final Unit<Length> tolerance_unit               = inputParameters.getValue(ClusterHullDescriptor.TOLERANCE_UNIT);
-        final FeatureSet hull                           = computeClusterHull(inputFeatureSet, tolerance_value, tolerance_unit);
+        final FeatureSet hull                           = computeClusterHull(inputFeatureSet, tolerance_value, smoothing_epsilon, tolerance_unit);
         outputParameters.getOrCreate(ClusterHullDescriptor.FEATURE_SET_OUT).setValue(hull);
     }
 
     /**
      * Compute the cluster hull from a feature set according to the measure of tolerance.
      *
+     * @param inputFeatureSet input feature set
+     * @param tolerance distance minimum between two cluster and buffer width
+     * @param epsilon tolerance used to simplify/smoothing geometries
+     * @param unit unit of tolerance and epsilon
      * @return the cluster hull
      */
-    private FeatureSet computeClusterHull(final FeatureSet inputFeatureSet, final Double tolerance, Unit<Length> unit) throws ProcessException {
+    private FeatureSet computeClusterHull(final FeatureSet inputFeatureSet, final Double tolerance, final Double epsilon, Unit<Length> unit) throws ProcessException {
         try {
-            // Convert the current tolerance to meter according to the unit specified
-            Double toMeter;
+            // Convert the current tolerance and epsilon to meter according to the unit specified
             final UnitConverter uc = unit.getConverterTo(Units.METRE);
-            toMeter = uc.convert((double)tolerance);
+            Double toleranceToMeter = uc.convert((double)tolerance);
+            Double epsilonToMeter = uc.convert((double)epsilon);
             // Initialise the GeometryCSTransformer (Lambert projection)
             initTransformation(inputFeatureSet);
-            // Apply the process
+            // Extract geometries set from featureSet
             Set<Geometry> geometries = extractGeometrySet(inputFeatureSet);
+            // Smooth geometries with Douglas Peucker algorithm
+            geometries = applyDouglasPeuckerAlgorithm(geometries, epsilonToMeter);
+            // Apply the process
             Set<Geometry> current = new HashSet<>();
             current.add(geometries.iterator().next());
-            Set<Geometry> clusterHullSet = applyClusterHull(geometries, new HashSet<Geometry>(), current, new HashSet<Geometry>(), toMeter);
+            Set<Geometry> clusterHullSet = applyClusterHull(geometries, new HashSet<Geometry>(), current, new HashSet<Geometry>(), toleranceToMeter);
             // Extract the initial CRS
             final FeatureType type = inputFeatureSet.getType();
             CoordinateReferenceSystem crs = FeatureExt.getCRS(type);
@@ -142,8 +151,8 @@ public class ClusterHullProcess extends AbstractProcess {
 
     private Set<Geometry> extractGeometrySet(final FeatureSet fs) throws DataStoreException {
         String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
-        try (Stream<Feature> st = fs.features(false)) {
-            Set<Geometry> geometries = st
+        try (Stream<Feature> stream = fs.features(false)) {
+            Set<Geometry> geometries = stream
                     .map(f -> f.getPropertyValue(geomName))
                     .filter(value -> value instanceof Geometry)
                     .map(value -> (Geometry) value)
@@ -152,16 +161,35 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
+    private Set<Geometry> applyDouglasPeuckerAlgorithm(final Set<Geometry> toSmooth, final Double epsilon) throws TransformException {
+        // if smoothing tolerance is negative do not apply the algorithm
+        if (epsilon <= 0) {
+            return toSmooth;
+        }
+        final Set<Geometry> result = new HashSet<>();
+        for (Geometry geom: toSmooth) {
+            result.add(customDouglasPeucker(geom, epsilon));
+        }
+        return result;
+    }
+
+    private Geometry customDouglasPeucker(final Geometry toSmooth, final Double epsilon) throws TransformException {
+        final Geometry trans = trs.transform(toSmooth);
+        final Geometry smoothed = DouglasPeuckerSimplifier.simplify(trans, epsilon);
+
+        return inv.transform(smoothed);
+    }
+
     private Double customDistance(final Geometry geom1, final Geometry geom2) throws TransformException {
-        Geometry trans1 = trs.transform(geom1);
-        Geometry trans2 = trs.transform(geom2);
+        final Geometry trans1 = trs.transform(geom1);
+        final Geometry trans2 = trs.transform(geom2);
 
         return trans1.distance(trans2);
     }
 
     private Double[] getMedianPoint(final FeatureSet fs) throws DataStoreException {
-        Double[] median = {0.0, 0.0};
-        Envelope envelope = FeatureStoreUtilities.getEnvelope(fs,true);
+        final Double[] median = {0.0, 0.0};
+        final Envelope envelope = FeatureStoreUtilities.getEnvelope(fs,true);
         median[0] = (envelope.getMinimum(0) + envelope.getMaximum(0)) / 2;
         median[1] = (envelope.getMinimum(1) + envelope.getMaximum(1)) / 2;
         return median;
