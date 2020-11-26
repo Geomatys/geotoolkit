@@ -18,6 +18,7 @@ package org.geotoolkit.processing.image;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.WritableRaster;
 import org.apache.sis.image.PixelIterator;
 import org.geotoolkit.image.BufferedImages;
 import org.junit.Assert;
@@ -27,6 +28,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.impl.PackedCoordinateSequence;
 
 /**
  *
@@ -175,6 +177,24 @@ public class MarchingSquaresTest {
         }
     }
 
+    /**
+     * Test created geometry is closed.
+     */
+    @Test
+    public void testClosedSquare() {
+        final double[][] array = new double[][]{
+            {0,0,0},
+            {0,1,0},
+            {0,0,0}
+        };
+        final MultiLineString multiline = createImage(array, 0.5, true);
+        Assert.assertEquals(1, multiline.getNumGeometries());
+        final LineString line = (LineString) multiline.getGeometryN(0);
+
+        final LineString expected = GF.createLineString(new PackedCoordinateSequence.Double(new double[]{0.5,1, 1,1.5, 1.5,1, 1,0.5, 0.5,1}, 2, 0));
+        Assert.assertTrue(expected.equalsExact(line));
+    }
+
     @Test
     public void testNaN() {
         Geometry geom;
@@ -190,14 +210,23 @@ public class MarchingSquaresTest {
         }
     }
 
-    private static Geometry createImage(double x0y0, double x1y0, double x0y1, double x1y1, double threshold) {
-        final BufferedImage image = BufferedImages.createImage(2, 2, 1, DataBuffer.TYPE_DOUBLE);
-        image.getRaster().setSample(0, 0, 0, x0y0);
-        image.getRaster().setSample(1, 0, 0, x1y0);
-        image.getRaster().setSample(0, 1, 0, x0y1);
-        image.getRaster().setSample(1, 1, 0, x1y1);
+    private static MultiLineString createImage(double x0y0, double x1y0, double x0y1, double x1y1, double threshold) {
+        return createImage(new double[][] {
+            {x0y0, x1y0},
+            {x0y1, x1y1},
+        }, threshold, false);
+    }
+
+    private static MultiLineString createImage(double[][] array, double threshold, boolean mergeLines) {
+        final BufferedImage image = BufferedImages.createImage(array[0].length, array.length, 1, DataBuffer.TYPE_DOUBLE);
+        final WritableRaster raster = image.getRaster();
+        for (int y = 0; y < array.length; y++) {
+            for (int x = 0; x < array[0].length; x++) {
+                raster.setSample(x, y, 0, array[y][x]);
+            }
+        }
         final PixelIterator ite = PixelIterator.create(image);
-        return MarchingSquares.build(ite, 2, 0, false);
+        return MarchingSquares.build(ite, threshold, 0, mergeLines);
     }
 
     private static LineString line(double x0, double y0, double x1, double y1) {
