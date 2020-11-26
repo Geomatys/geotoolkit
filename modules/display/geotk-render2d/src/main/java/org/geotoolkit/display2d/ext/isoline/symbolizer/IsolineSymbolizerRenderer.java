@@ -17,26 +17,17 @@
 
 package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
-import java.awt.Rectangle;
-import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridCoverageProcessor;
-import org.apache.sis.coverage.grid.GridExtent;
-import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.image.Interpolation;
 import org.apache.sis.internal.storage.query.CoverageQuery;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.renderer.*;
@@ -44,14 +35,11 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.*;
 import org.geotoolkit.processing.coverage.isoline.IsolineDescriptor;
+import org.geotoolkit.renderer.Presentation;
+import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.function.Jenks;
-import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ColorMap;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.RasterSymbolizer;
@@ -91,11 +79,6 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 stream = Stream.concat(stream, DefaultPortrayalService.present(sublayer, coverageReference, renderingContext));
             }
 
-//            final MutableStyle rasterStyle = GO2Utilities.STYLE_FACTORY.style(cachedRasterSymbolizer.getSource());
-//            final CoverageMapLayer covMapLayer = MapBuilder.createCoverageLayer(resampledCoverage, rasterStyle, name.getLocalPart());
-//            final StatelessCoverageLayerJ2D statelessCoverageLayer = new StatelessCoverageLayerJ2D(renderingContext.getCanvas(), covMapLayer);
-//            statelessCoverageLayer.paintLayer(renderingContext);
-
             final LineSymbolizer lineSymbolizer = isolineSymbolizer.getLineSymbolizer();
             final TextSymbolizer textSymbolizer = isolineSymbolizer.getTextSymbolizer();
 
@@ -105,58 +88,23 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
             if (lineSymbolizer != null) {
 
                 double[] intervales = symbol.getSteps();
-                ////////////////////
-                // 2.1 - Resample input coverage
-                ////////////////////
-                final GridGeometry gridGeometry = coverageReference.getGridGeometry();
-                final CoordinateReferenceSystem coverageMapLayerCRS = gridGeometry.getCoordinateReferenceSystem();
-
-                double[] resolution = renderingContext.getResolution();
-                Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
-                resolution = checkResolution(resolution, bounds);
-                if (resolution.length != bounds.getDimension()) {
-                    double[] res = new double[bounds.getDimension()];
-                    res[0] = resolution[0];
-                    res[1] = resolution[1];
-                    for(int i=2;i<res.length;i++){
-                        res[i] = bounds.getSpan(i);
-                    }
-                    resolution = res;
-                }
-
-                final Map<String, Double> queryValues = RasterSymbolizerRenderer.extractQuery(layer);
-                if (queryValues != null && !queryValues.isEmpty()) {
-                    bounds = RasterSymbolizerRenderer.fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
-                    resolution = RasterSymbolizerRenderer.fixResolutionWithCRS(resolution, coverageMapLayerCRS);
-                }
-
-                GridCoverage inCoverage = coverageReference.read(coverageReference.getGridGeometry().derive().subgrid(bounds, resolution).build());
-                inCoverage = inCoverage.forConvertedValues(true);
-
-                final Rectangle rec = renderingContext.getPaintingDisplayBounds();
-                final GridExtent gridEnv = new GridExtent(null, new long[]{rec.x,rec.y}, new long[]{rec.width,rec.height}, false);
-                final CoordinateReferenceSystem crs = renderingContext.getObjectiveCRS2D();
-                final MathTransform gridToCRS = renderingContext.getDisplayToObjective();
-                final GridGeometry inGridGeom = new GridGeometry(gridEnv, PixelInCell.CELL_CENTER, gridToCRS, crs);
-
-                final GridCoverageProcessor processor = new GridCoverageProcessor();
-                processor.setInterpolation(Interpolation.BILINEAR);
-                final GridCoverage resampledCoverage = processor.resample(inCoverage, inGridGeom);
-
-                final GridCoverageResource resampledCovRef = new InMemoryGridCoverageResource(coverageReference.getIdentifier().orElse(null), resampledCoverage);
 
                 final CoverageQuery query = new CoverageQuery();
-                query.setDomain(resampledCovRef.getGridGeometry().derive().subgrid(bounds, resolution).build());
-                final GridCoverageResource subref = resampledCovRef.subset(query);
+                query.setDomain(renderingContext.getGridGeometry());
+                query.setSourceDomainExpansion(2);
+                final GridCoverageResource res = coverageReference.subset(query);
+
+                final GridCoverage inCoverage = res.read(null).forConvertedValues(true);
+                final GridCoverageResource resampledCovRef = new InMemoryGridCoverageResource(coverageReference.getIdentifier().orElse(null), inCoverage);
 
                 /////////////////////
                 // 2.2 - Compute isolines
                 ////////////////////
                 FeatureSet isolines = null;
-                ProcessDescriptor isolineDesc = symbol.getIsolineDesc();
+                final ProcessDescriptor isolineDesc = symbol.getIsolineDesc();
                 if (isolineDesc != null) {
                     final Parameters inputs = Parameters.castOrWrap(isolineDesc.getInputDescriptor().createValue());
-                    inputs.getOrCreate(IsolineDescriptor.COVERAGE_REF).setValue(subref);
+                    inputs.getOrCreate(IsolineDescriptor.COVERAGE_REF).setValue(resampledCovRef);
                     inputs.getOrCreate(IsolineDescriptor.INTERVALS).setValue(intervales);
                     final org.geotoolkit.process.Process process = isolineDesc.createProcess(inputs);
                     final ParameterValueGroup result = process.call();
@@ -183,7 +131,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
 
             return stream;
 
-        } catch (DataStoreException | TransformException | ProcessException ex) {
+        } catch (DataStoreException | ProcessException ex) {
             throw new PortrayalException(ex.getMessage(), ex);
         }
     }
