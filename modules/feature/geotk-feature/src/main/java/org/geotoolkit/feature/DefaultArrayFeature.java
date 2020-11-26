@@ -104,7 +104,7 @@ final class DefaultArrayFeature extends AbstractFeature implements ArrayFeature 
     }
 
     @Override
-    public Object getPropertyValue(String name, Object fallback) {
+    public Object getValueOrFallback(String name, Object fallback) {
         final Integer idx = index.get(name);
         if (idx == null) return fallback;
         return getPropertyValue(idx);
