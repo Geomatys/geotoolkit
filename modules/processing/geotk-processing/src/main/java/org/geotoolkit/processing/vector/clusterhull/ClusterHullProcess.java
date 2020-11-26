@@ -21,6 +21,7 @@ import org.locationtech.jts.geom.Geometry;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.lang.OutOfMemoryError;
 
 import org.geotoolkit.processing.AbstractProcess;
 
@@ -117,7 +118,7 @@ public class ClusterHullProcess extends AbstractProcess {
             // Build the feature set
             FeatureSet clusterHull = createFeatureSetFromGeometrySet(clusterHullSet, crs);
             return clusterHull;
-        } catch (FactoryException | DataStoreException | TransformException e) {
+        } catch (FactoryException | DataStoreException | TransformException | OutOfMemoryError e) {
             throw new ProcessException(e.getMessage(), this, e);
         }
     }
