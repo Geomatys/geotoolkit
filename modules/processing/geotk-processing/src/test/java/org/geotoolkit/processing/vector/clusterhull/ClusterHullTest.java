@@ -45,8 +45,8 @@ public class ClusterHullTest extends AbstractProcessTest {
     @Test
     public void testClusterHull1() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
         testClusterHullBasic(
-                "cluster_hull_test_1.json",
-                "cluster_hull_test_1_60km_expected.json",
+                "2_points.json",
+                "2_points_60km_expected.json",
                 60.0,
                 Units.KILOMETRE
         );
@@ -54,14 +54,14 @@ public class ClusterHullTest extends AbstractProcessTest {
     @Test
     public void testClusterHull2() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
         testClusterHullBasic(
-                "cluster_hull_test_2.json",
-                "cluster_hull_test_2_60km_expected.json",
+                "4_points.json",
+                "4_points_60km_expected.json",
                 60.0,
                 Units.KILOMETRE
         );
         testClusterHullBasic(
-                "cluster_hull_test_2.json",
-                "cluster_hull_test_2_80km_expected.json",
+                "4_points.json",
+                "4_points_80km_expected.json",
                 80.0,
                 Units.KILOMETRE
         );
@@ -69,14 +69,14 @@ public class ClusterHullTest extends AbstractProcessTest {
     @Test
     public void testClusterHull3() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
         testClusterHullBasic(
-                "cluster_hull_test_3.json",
-                "cluster_hull_test_3_30km_expected.json",
+                "3_linestring.json",
+                "3_linestring_30km_expected.json",
                 30.0,
                 Units.KILOMETRE
         );
         testClusterHullBasic(
-                "cluster_hull_test_3.json",
-                "cluster_hull_test_3_71km_expected.json",
+                "3_linestring.json",
+                "3_linestring_71km_expected.json",
                 71.0,
                 Units.KILOMETRE
         );
@@ -84,26 +84,26 @@ public class ClusterHullTest extends AbstractProcessTest {
     @Test
     public void testClusterHull4() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
         testClusterHullBasic(
-                "cluster_hull_test_4.json",
-                "cluster_hull_test_4_60km_expected.json",
+                "multipoint.json",
+                "multipoint_60km_expected.json",
                 60.0,
                 Units.KILOMETRE
         );
         testClusterHullBasic(
-                "cluster_hull_test_4.json",
-                "cluster_hull_test_4_90km_expected.json",
+                "multipoint.json",
+                "multipoint_90km_expected.json",
                 90.0,
                 Units.KILOMETRE
         );
         testClusterHullBasic(
-                "cluster_hull_test_4.json",
-                "cluster_hull_test_4_120km_expected.json",
+                "multipoint.json",
+                "multipoint_120km_expected.json",
                 120.0,
                 Units.KILOMETRE
         );
         testClusterHullBasic(
-                "cluster_hull_test_4.json",
-                "cluster_hull_test_4_150km_expected.json",
+                "multipoint.json",
+                "multipoint_150km_expected.json",
                 150.0,
                 Units.KILOMETRE
         );
@@ -111,25 +111,47 @@ public class ClusterHullTest extends AbstractProcessTest {
     @Test
     public void testClusterHull5() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
         testClusterHullBasic(
-                "cluster_hull_test_5.json",
-                "cluster_hull_test_5_40km_expected.json",
+                "complexe.json",
+                "complexe_40km_expected.json",
                 40.0,
                 Units.KILOMETRE
         );
         testClusterHullBasic(
-                "cluster_hull_test_5.json",
-                "cluster_hull_test_5_60km_expected.json",
+                "complexe.json",
+                "complexe_60km_expected.json",
                 60.0,
                 Units.KILOMETRE
         );
     }
+    @Test
+    public void testClusterHullWithSmoothing1() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
+        testClusterHullBasic(
+                "C2912_wp.json",
+                "C2912_wp_1000m_tolerance_10m_smooth_expected.json",
+                1000.0,
+                10.0,
+                Units.METRE
+        );
+        testClusterHullBasic(
+                "C2912_wp.json",
+                "C2912_wp_10000m_tolerance_500m_smooth_expected.json",
+                10000.0,
+                500.0,
+                Units.METRE
+        );
+    }
 
     private void testClusterHullBasic(String filename_in, String filename_expected, Double tolerance, Unit<Length> unit) throws URISyntaxException, DataStoreException, NoSuchIdentifierException, ProcessException {
+        testClusterHullBasic(filename_in, filename_expected, tolerance, 0.0, unit);
+    }
+
+    private void testClusterHullBasic(String filename_in, String filename_expected, Double tolerance, Double epsilon, Unit<Length> unit) throws URISyntaxException, DataStoreException, NoSuchIdentifierException, ProcessException {
         final FeatureSet featureSet = buildFeatureSet(filename_in);
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:clusterhull");
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_set_in").setValue(featureSet);
         in.parameter("tolerance_value").setValue(tolerance);
+        in.parameter("smoothing_epsilon").setValue(epsilon);
         in.parameter("tolerance_unit").setValue(unit);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
         //Feature set out

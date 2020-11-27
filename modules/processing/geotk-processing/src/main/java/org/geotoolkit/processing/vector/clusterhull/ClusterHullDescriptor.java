@@ -84,7 +84,7 @@ public final class ClusterHullDescriptor extends AbstractProcessDescriptor {
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_SET_IN, TOLERANCE_VALUE, TOLERANCE_UNIT);
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_SET_IN, TOLERANCE_VALUE, SMOOTHING_EPSILON, TOLERANCE_UNIT);
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_SET_OUT);
