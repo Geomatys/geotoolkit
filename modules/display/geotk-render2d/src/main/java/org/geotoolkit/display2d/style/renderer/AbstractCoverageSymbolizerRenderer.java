@@ -215,19 +215,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         // directly derive data geometry to short any further operation if requested area does not intersect data.
         final GridGeometry baseGG = refGG.derive().subgrid(canvasGrid).build();
         final GridGeometry slice = extractSlice(baseGG, canvasGrid, computeMargin2D(interpolation), true);
-        GridCoverage coverage;
-        try {
-            coverage = ref.read(slice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
-        } catch (NoSuchDataException e) {
-            // TODO: Remove this poor hack when SIS manage wrap-around on GridGeometry derivations.
-            try {
-                final GridGeometry hackedSlice = hackWrapAround(refGG, slice);
-                coverage = ref.read(hackedSlice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
-            } catch (Exception bis) {
-                e.addSuppressed(bis);
-                throw e;
-            }
-        }
+
+        GridCoverage coverage = ref.read(slice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
 
         if (coverage instanceof GridCoverageStack) {
             Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, "Coverage reader return more than one slice.");
@@ -299,32 +288,6 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 return process.executeNow();
             }
         }
-    }
-
-    /**
-     * HACK+TODO: This method is a last resort. Once SIS properly manage wrap-around, please delete this.
-     * It should only be used when reading a dataset using wrap-around axis, and it fails with a disjoint domain error.
-     * The way it solve the problem is not right, and it is just a temporary hack.
-     *
-     * @param dataDomain Grid geometry of the dataset to read data from.
-     * @param requestedDomain The domain that was requested and failed initially.
-     * @return If we succeed to apply the hack, return its result (the grid geometry to try for reading). Otherwise, empty.
-     * @throws Exception All kind of bad things.
-     */
-    private static GridGeometry hackWrapAround(GridGeometry dataDomain, GridGeometry requestedDomain) throws Exception {
-        // If user only passed an envelope, we can try to just transform envelope in the right convention and subgrid dataset
-        final CoordinateOperation requestToDataCrs = CRS.findOperation(requestedDomain.getCoordinateReferenceSystem(), dataDomain.getCoordinateReferenceSystem(), null);
-
-        final GeneralEnvelope wantedEnv = Envelopes.transform(requestToDataCrs, requestedDomain.getEnvelope());
-        final GeneralEnvelope hackedEnvelope = new GeneralEnvelope(wantedEnv);
-        hackedEnvelope.normalize();
-
-        if (requestedDomain.isDefined(GridGeometry.GRID_TO_CRS)) {
-            final MathTransform crsConversion = requestToDataCrs.getMathTransform();
-            final MathTransform requestG2d = requestedDomain.getGridToCRS(PixelInCell.CELL_CORNER);
-            final MathTransform newGrid2Crs = MathTransforms.concatenate(requestG2d, crsConversion);
-            return new GridGeometry(PixelInCell.CELL_CORNER, newGrid2Crs, hackedEnvelope, GridRoundingMode.ENCLOSING);
-        } else return new GridGeometry(null, hackedEnvelope);
     }
 
     private static int[] computeMargin2D(InterpolationCase interpolationCase) {
