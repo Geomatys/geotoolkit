@@ -212,7 +212,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final InterpolationCase interpolation = InterpolationCase.BILINEAR;
 
         final GridGeometry refGG = ref.getGridGeometry();
-        final GridGeometry slice = extractSlice(refGG, canvasGrid, computeMargin2D(interpolation), true);
+        // directly derive data geometry to short any further operation if requested area does not intersect data.
+        final GridGeometry baseGG = refGG.derive().subgrid(canvasGrid).build();
+        final GridGeometry slice = extractSlice(baseGG, canvasGrid, computeMargin2D(interpolation), true);
         GridCoverage coverage;
         try {
             coverage = ref.read(slice, (sourceBands == null || sourceBands.length < 1)? null : sourceBands);
@@ -435,6 +437,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                     margin[1] = (int) Math.ceil(margin[1] * (est[1] / resolution[1]));
                 }
                 areaOfInterest = areaOfInterest.derive().margin(margin).resize(null).build();
+                // Force rebuilding envelope. Not sure it is really needed however.
                 areaOfInterest = new GridGeometry(
                         areaOfInterest.getExtent(),
                         PixelInCell.CELL_CENTER,
