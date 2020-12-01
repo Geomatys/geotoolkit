@@ -19,29 +19,40 @@ package org.geotoolkit.display2d.style;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage2D;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
+import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
+import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -53,13 +64,17 @@ import org.geotoolkit.style.StyleConstants;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.luaj.vm2.ast.Exp;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
+import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
 
 /**
@@ -366,5 +381,74 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         assertEquals(Color.BLUE.getRGB(), rendering.getRGB(1, 0));
         assertEquals(Color.RED.getRGB(), rendering.getRGB(0, 1));
         assertEquals(Color.GREEN.getRGB(), rendering.getRGB(1, 1));
+    }
+
+    @Test
+    public void disjointCoverageIsPropertyShorted() {
+        final BufferedImage image = new BufferedImage(2, 2, BufferedImage.TYPE_BYTE_GRAY);
+        ImageUtilities.fill(image.getRaster(), 42);
+        final GridGeometry geom = new GridGeometry(
+                new GridExtent(2, 2),
+                PixelInCell.CELL_CENTER,
+                new AffineTransform2D(1, 0, 0,1, 10, 10),
+                CommonCRS.defaultGeographic()
+        );
+
+        final GridCoverage baseData = new GridCoverage2D(geom, null, image);
+
+        final GridGeometry canvasGeom = new GridGeometry(
+                new GridExtent(5, 5),
+                new Envelope2D(CommonCRS.defaultGeographic(), -100, -20, 40, 20),
+                GridOrientation.HOMOTHETY
+        );
+
+        new MockRasterRenderer(canvasGeom)
+                .testObjectiveDisjoint(new InMemoryGridCoverageResource(baseData));
+    }
+
+    private static RenderingContext2D mockRenderingContext(final GridGeometry target) {
+        final RenderingContext2D ctx = new RenderingContext2D(new J2DCanvasBuffered(
+                target.getCoordinateReferenceSystem(),
+                new Dimension(
+                        Math.toIntExact(target.getExtent().getSize(0)),
+                        Math.toIntExact(target.getExtent().getSize(1))
+                )
+        ));
+        final Rectangle shape = new Rectangle(0, 0, 100, 100);
+        ctx.initParameters(target, target, new AffineTransform2D(1, 0, 0, 1, 0, 0), null, shape, shape, shape, shape, 20);
+        return ctx;
+    }
+
+    private static class MockRasterRenderer extends AbstractCoverageSymbolizerRenderer {
+
+        public MockRasterRenderer(final GridGeometry target) {
+            super(null, new CachedSymbolizer<Symbolizer>(new MokSymbolizer() {}, null) {
+                @Override
+                public float getMargin(Object candidate, RenderingContext2D ctx) {
+                    return Float.NaN;
+                }
+
+                @Override
+                protected void evaluate() {
+                    throw new UnsupportedOperationException("Not supported yet");
+                }
+
+                @Override
+                public boolean isVisible(Object candidate) {
+                    throw new UnsupportedOperationException("Not supported yet");
+                }
+            }, mockRenderingContext(target));
+        }
+
+        public void testObjectiveDisjoint(final GridCoverageResource data) {
+            try {
+                getObjectiveCoverage(data, renderingContext.getGridGeometry(), false, null);
+                fail("objective data computing should have failed with a disjoint extent error.");
+            } catch (DisjointExtentException e) {
+                // Expected outcome
+            } catch (Exception e) {
+                throw new AssertionError("Rendering should have been shorted silently, but failed instead", e);
+            }
+        }
     }
 }
