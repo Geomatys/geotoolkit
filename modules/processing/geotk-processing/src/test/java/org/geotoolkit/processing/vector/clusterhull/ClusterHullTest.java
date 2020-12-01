@@ -123,26 +123,9 @@ public class ClusterHullTest extends AbstractProcessTest {
                 Units.KILOMETRE
         );
     }
-    @Test
-    public void testClusterHullWithSmoothing1() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
-        testClusterHullBasic(
-                "C2912_wp.json",
-                "C2912_wp_1000m_tolerance_10m_smooth_expected.json",
-                1000.0,
-                10.0,
-                Units.METRE
-        );
-        testClusterHullBasic(
-                "C2912_wp.json",
-                "C2912_wp_10000m_tolerance_500m_smooth_expected.json",
-                10000.0,
-                500.0,
-                Units.METRE
-        );
-    }
 
     private void testClusterHullBasic(String filename_in, String filename_expected, Double tolerance, Unit<Length> unit) throws URISyntaxException, DataStoreException, NoSuchIdentifierException, ProcessException {
-        testClusterHullBasic(filename_in, filename_expected, tolerance, 0.0, unit);
+        testClusterHullBasic(filename_in, filename_expected, tolerance, null, unit);
     }
 
     private void testClusterHullBasic(String filename_in, String filename_expected, Double tolerance, Double epsilon, Unit<Length> unit) throws URISyntaxException, DataStoreException, NoSuchIdentifierException, ProcessException {

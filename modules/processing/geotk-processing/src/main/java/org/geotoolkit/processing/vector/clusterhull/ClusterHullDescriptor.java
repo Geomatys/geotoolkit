@@ -61,7 +61,7 @@ public final class ClusterHullDescriptor extends AbstractProcessDescriptor {
             .addName("smoothing_epsilon")
             .setRemarks("Tolerance of the smoothing algorithm")
             .setRequired(false)
-            .create(Double.class, 0.0);
+            .create(Double.class, null);
 
     /**
      * Non Mandatory - Unit of tolerance (METER, KILOMETER, STATUTE MILE, NAUTICAL MILE, INCH) default value initialize at METER
