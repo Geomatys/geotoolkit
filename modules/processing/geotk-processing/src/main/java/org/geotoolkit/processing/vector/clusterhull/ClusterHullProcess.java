@@ -40,6 +40,7 @@ import org.opengis.util.FactoryException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.locationtech.jts.geom.Coordinate;
 
 
 /**
