@@ -30,6 +30,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -108,7 +109,7 @@ public class Isoline extends AbstractProcess {
             final GridCoverage coverage = resource.read(null);
             final RenderedImage image = coverage.render(null);
             final GridGeometry gridgeom = coverage.getGridGeometry();
-            gridToCRS = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER);
+            gridToCRS = getImageToCrs(gridgeom, image);
             crs = gridgeom.getCoordinateReferenceSystem();
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = (WritableFeatureSet) featureStore.findResource(type.getName().toString());
@@ -192,4 +193,13 @@ public class Isoline extends AbstractProcess {
         return ftb.build();
     }
 
+    /**
+     * TODO, GridCoverage must define a reliable way to obtain the image to crs transform.
+     */
+    private static MathTransform getImageToCrs(GridGeometry source, RenderedImage sourceImg) {
+        final long[] sourceCorner = source.getExtent().getLow().getCoordinateValues();
+        final MathTransform sourceOffset = MathTransforms.translation((sourceCorner[0] - sourceImg.getMinX()), (sourceCorner[1] - sourceImg.getMinY()));
+        final MathTransform gridSourceToCrs = source.getGridToCRS(PixelInCell.CELL_CENTER);
+        return MathTransforms.concatenate(sourceOffset, gridSourceToCrs);
+    }
 }
