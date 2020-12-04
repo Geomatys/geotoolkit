@@ -38,6 +38,7 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.ExtentSelector;
 import org.apache.sis.storage.*;
 
 
@@ -100,6 +101,14 @@ final class GridCoverageEntry extends Entry {
     @Override
     public String toString() {
         return filename + " @ " + endTime;
+    }
+
+    /**
+     * Submit this entry to the given selector. This is used for choosing which entry
+     * is best match for user-specified area of interest (AOI) and time of interest (TOI).
+     */
+    final void submitTo(final ExtentSelector<GridCoverageEntry> selector) {
+        selector.evaluate(grid.spatialGeometry.getGeographicExtent().orElse(null), startTime, endTime, this);
     }
 
     /**

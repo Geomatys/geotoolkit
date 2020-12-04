@@ -20,11 +20,14 @@ import java.util.List;
 import java.util.Optional;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.referencing.ExtentSelector;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.internal.storage.AbstractGridResource;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
 
 
 final class ProductSubset extends AbstractGridResource {
@@ -49,9 +52,7 @@ final class ProductSubset extends AbstractGridResource {
     private final List<GridCoverageEntry> entries;
 
     /**
-     * An arbitrary element from {@link #entries} list.
-     *
-     * @todo Need a better way than using a representative coverage.
+     * An element from {@link #entries} list which seems the best match for user request.
      */
     private final GridCoverageEntry representative;
 
@@ -59,18 +60,32 @@ final class ProductSubset extends AbstractGridResource {
      * Creates a new subset for the given product.
      */
     ProductSubset(final ProductEntry product, final Envelope areaOfInterest, final double[] resolution,
-            final List<GridCoverageEntry> entries)
+                  final List<GridCoverageEntry> entries) throws DataStoreException, TransformException
     {
         super(null);
         this.product        = product;
         this.areaOfInterest = areaOfInterest;
         this.resolution     = resolution;
         this.entries        = entries;
-        if (Entry.HACK) {
-            representative = entries.get(entries.size() / 2);
-        } else {
-            throw new UnsupportedOperationException();
+        final DefaultExtent extent = new DefaultExtent();
+        extent.addElements(areaOfInterest);
+        final ExtentSelector<GridCoverageEntry> selector = new ExtentSelector<>(extent);
+        entries.forEach(entry -> entry.submitTo(selector));
+        GridCoverageEntry result = selector.best();
+        if (result == null) {
+            /*
+             * Try again without Area Of Interest (AOI) constraint.
+             * We use this fallback when no entry intersect the AOI.
+             */
+            extent.getGeographicElements().clear();
+            selector.setExtentOfInterest(extent, null, null);
+            entries.forEach(entry -> entry.submitTo(selector));
+            result = selector.best();
+            if (result == null) {
+                result = entries.get(entries.size() / 2);
+            }
         }
+        representative = result;
     }
 
     @Override
