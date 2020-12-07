@@ -2,10 +2,10 @@ package org.geotoolkit.processing.vector.clusterhull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.measure.Units;
-import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.FeatureExt;
@@ -14,15 +14,15 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.GeotkProcessingRegistry;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
-import org.geotoolkit.storage.DataStores;
-import static org.geotoolkit.storage.geojson.GeoJSONProvider.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import org.geotoolkit.storage.geojson.GeoJSONProvider;
+import org.geotoolkit.storage.geojson.GeoJSONStore;
 import org.junit.Test;
 import org.locationtech.jts.geom.*;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.GenericName;
 import org.opengis.util.NoSuchIdentifierException;
 
 
@@ -165,12 +165,10 @@ public class ClusterHullTest extends AbstractProcessTest {
     }
 
     private FeatureSet buildFeatureSet(String filename) throws URISyntaxException, DataStoreException {
-        final URI uri = ClusterHullTest.class.getResource("/org.geotoolkit.processing.vector.clusterhull/geojson/" + filename).toURI();
-        ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
-        param.parameter(PATH.getName().getCode()).setValue(uri);
-        final DataStore store = DataStores.open(param);
-        GenericName types = DataStores.getNames(store, true, FeatureSet.class).iterator().next();
-        FeatureSet target = (FeatureSet) store.findResource(types.toString());
-        return target;
+        final String resourceName = "geojson/" + filename;
+        final URL resource = ClusterHullTest.class.getResource(resourceName);
+        if (resource == null) throw new RuntimeException("No resource found for "+resourceName);
+        final URI uri = resource.toURI();
+        return new GeoJSONStore(new GeoJSONProvider(), uri, 7);
     }
 }
