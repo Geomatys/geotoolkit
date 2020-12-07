@@ -135,47 +135,69 @@ public final class GeoTiffMetaDataReader {
 
         final SpatialMetadata spatialMetadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
 
+        boolean mustMockCrs = true, mustMockGrid = true;
+
         if (geoKeyDir != null) {
-            final int[] structure = readTiffShorts(getNodeByLocalName(geoKeyDir, TAG_GEOTIFF_SHORTS));
+            try {
+                final int[] structure = readTiffShorts(getNodeByLocalName(geoKeyDir, TAG_GEOTIFF_SHORTS));
 
-            //first line (4 int) contain the version and number of keys
-            //Header={KeyDirectoryVersion, KeyRevision, MinorRevision, NumberOfKeys}
-            final int directoryVersion  = structure[0];
-            final int keyVersion        = structure[1];
-            final int minorVersion      = structure[2];
-            final int nbKeys            = structure[3];
+                //first line (4 int) contain the version and number of keys
+                //Header={KeyDirectoryVersion, KeyRevision, MinorRevision, NumberOfKeys}
+                final int directoryVersion = structure[0];
+                final int keyVersion = structure[1];
+                final int minorVersion = structure[2];
+                final int nbKeys = structure[3];
 
-            //read all entries
-            final ValueMap entries = new ValueMap();
-            for(int i=0,l=4; i<nbKeys; i++,l+=4){
-                final Object value;
-                final int valueKey      = structure[l+0];
-                final int valuelocation = structure[l+1];
-                final int valueNb       = structure[l+2];
-                final int valueOffset   = structure[l+3];
-                if (valuelocation == 0) {
-                    //value is located in the offset field
-                    value = valueOffset;
-                } else {
-                    //value is in another tag
-                    value = readValue(valuelocation, valueOffset, valueNb);
+                //read all entries
+                final ValueMap entries = new ValueMap();
+                for (int i = 0, l = 4; i < nbKeys; i++, l += 4) {
+                    final Object value;
+                    final int valueKey = structure[l + 0];
+                    final int valuelocation = structure[l + 1];
+                    final int valueNb = structure[l + 2];
+                    final int valueOffset = structure[l + 3];
+                    if (valuelocation == 0) {
+                        //value is located in the offset field
+                        value = valueOffset;
+                    } else {
+                        //value is in another tag
+                        value = readValue(valuelocation, valueOffset, valueNb);
+                    }
+                    entries.put(valueKey, value);
                 }
-                entries.put(valueKey, value);
+
+                //create the spatial metadatas.
+                try {
+                    fillGridMetaDatas(spatialMetadata, entries);
+                    mustMockGrid = false;
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Cannot properly fill grid related metadata", e);
+                }
+
+                try {
+                    final GeoTiffCRSReader crsReader = new GeoTiffCRSReader();
+                    crsReader.fillCRSMetaDatas(spatialMetadata, entries);
+                    mustMockCrs = false;
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Cannot properly convert referencing information into a CRS", e);
+                }
+
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Cannot properly read referencing information from headers", e);
             }
+        }
 
-            //create the spatial metadatas.
-            fillGridMetaDatas(spatialMetadata, entries);
-
-            final GeoTiffCRSReader crsReader = new GeoTiffCRSReader();
-            crsReader.fillCRSMetaDatas(spatialMetadata, entries);
-        } else {
+        if(mustMockCrs) {
             new ReferencingBuilder(spatialMetadata).setCoordinateReferenceSystem(PredefinedCRS.GRID_2D);
+        }
+
+        if (mustMockGrid) {
             GridDomainAccessor gridDomainAccessor = new GridDomainAccessor(spatialMetadata);
             gridDomainAccessor.setAll(AffineTransforms2D.castOrCopy(new Matrix3()), readBounds(),
-                                      CellGeometry.AREA, PixelOrientation.UPPER_LEFT);
-            spatialMetadata.clearInstancesCache();
-
+                    CellGeometry.AREA, PixelOrientation.UPPER_LEFT);
         }
+
+        if (mustMockCrs || mustMockGrid) spatialMetadata.clearInstancesCache();
 
         //-- looks for additional informations
         final ThirdPartyMetaDataReader thirdReader = new ThirdPartyMetaDataReader(imageMetadata);
