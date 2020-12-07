@@ -164,7 +164,8 @@ public final class GO2Utilities {
     public static final Point2D GLYPH_POINT;
     public static final Shape GLYPH_TEXT;
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
+
     /**
      * A tolerance value for black color. Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}
      * to define an applet of black colors to replace with alpha data.

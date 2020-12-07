@@ -26,6 +26,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
@@ -35,6 +36,7 @@ import org.apache.sis.storage.event.StoreListener;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
@@ -48,6 +50,8 @@ import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
+
+import static org.geotoolkit.display2d.GO2Utilities.LOGGER;
 
 /**
  *
@@ -93,14 +97,19 @@ public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<S
     public MapLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         //do not use layer crs here, to long to calculate
         super(canvas, layer, false);
-        weakLayerListener.registerSource(layer);
-        weakResourceListener.registerSource(layer.getResource());
+        try {
+            weakLayerListener.registerSource(layer);
+            weakResourceListener.registerSource(layer.getResource());
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Cannot observe layer for changes.", e);
+        }
     }
 
     @Override
     public void dispose() {
         super.dispose();
         weakLayerListener.dispose();
+        weakResourceListener.dispose();
     }
 
     /**
