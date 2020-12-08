@@ -19,9 +19,6 @@ package org.geotoolkit.processing.coverage.kriging;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
@@ -32,16 +29,16 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.geotoolkit.geometry.math.Vector3d;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
 import static org.geotoolkit.processing.coverage.kriging.KrigingDescriptor.*;
+import org.geotoolkit.processing.image.MarchingSquares;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import org.opengis.coverage.grid.SequenceType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -183,18 +180,6 @@ public class KrigingProcess extends AbstractProcess {
             palier[i] = minz + i*step;
         }
 
-        final IsolineCreator isolineCreator = new IsolineCreator(renderedImage, palier);
-
-        final Map<Vector3d,List<Coordinate>> steps;
-        try {
-//            steps = ob.doContouring(cx, cy, computed, palier);
-            steps = isolineCreator.createIsolines();
-        } catch(Exception ex) {
-            //this task rais some IllegalStateExceptio
-            //TODO, fix objective analysis
-            throw new ProcessException("Creating isolines geometries failed", this, ex);
-        }
-
         final GeometryFactory GF = new GeometryFactory();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("isoline");
@@ -205,16 +190,15 @@ public class KrigingProcess extends AbstractProcess {
         final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
         int inc = 0;
 
-        for (final Vector3d p : steps.keySet()) {
-            final List<Coordinate> cshps = steps.get(p);
+        final PixelIterator rit = PixelIterator.create(renderedImage);
+        for (int i=0; i<palier.length; i++) {
+            final MultiLineString geometry = MarchingSquares.build(rit, palier[i], 0, true);
+//          if (cshps.get(0).x > cshps.get(cshps.size()-1).x) {
+//              // the coordinates are going left, reverse order
+//              Collections.reverse(cshps);
+//          }
 
-            if (cshps.get(0).x > cshps.get(cshps.size()-1).x) {
-                //the coordinates are going left, reverse order
-                Collections.reverse(cshps);
-            }
-
-            final LineString geometry = GF.createLineString(cshps.toArray(new Coordinate[cshps.size()]));
-            final double value = p.z;
+            final double value = palier[i];
 
             final Feature f = type.newInstance();
             f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), String.valueOf(inc++));
