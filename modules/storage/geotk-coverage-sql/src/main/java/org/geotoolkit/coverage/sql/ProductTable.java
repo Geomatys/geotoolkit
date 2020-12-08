@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.Map;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreReferencingException;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.iso.DefaultNameSpace;
 
 
@@ -59,12 +59,6 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      * The column name (including quotes) for product parent.
      */
     private static final String PARENT = "\"parent\"";
-
-    /**
-     * Whether the product grid geometry needs to contain the date of all images.
-     * This is a potentially costly operation.
-     */
-    private static final boolean FETCH_ALL_DATES = true;
 
     /**
      * The table of series.
@@ -104,28 +98,30 @@ final class ProductTable extends CachedTable<String,ProductEntry> {
      */
     @Override
     ProductEntry createEntry(final ResultSet results, final String name) throws SQLException, DataStoreException {
-        final String   parent       = results.getString(2);
-        final int      gridID       = results.getInt(3);
-        final boolean  hasNoGrid    = results.wasNull();
-        final Duration timeRes      = null;                           // TODO results.getString(4);
-        final String   metadata     = results.getString(5);
-        GridGeometry   exportedGrid = null;
+        final String    parent       = results.getString(2);
+        final int       gridID       = results.getInt(3);
+        final boolean   hasNoGrid    = results.wasNull();
+        final Duration  timeRes      = null;                          // TODO results.getString(4);
+        final String    metadata     = results.getString(5);
+        GridGeometry    exportedGrid = null;
+        GeneralEnvelope envelope     = null;
         if (!hasNoGrid) {
             final GridGeometryEntry gridEntry = gridGeometries.getEntry(gridID);
             final double[] timestamps;
             try {
-                if (FETCH_ALL_DATES) {
-                    timestamps = seriesTable.listAllDates(name, gridGeometries);
-                } else {
-                    timestamps = ArraysExt.EMPTY_DOUBLE;
-                }
+                final SeriesTable.Times times = seriesTable.listAllDates(name, gridGeometries);
+                timestamps = times.medians;
                 exportedGrid = gridEntry.getGridGeometry(timestamps);
+                if (times.hasTimeRange() && exportedGrid != null && exportedGrid.isDefined(GridGeometry.ENVELOPE)) {
+                    envelope = new GeneralEnvelope(exportedGrid.getEnvelope());
+                    envelope.setRange(envelope.getDimension() - 1, times.minTime, times.maxTime);
+                }
             } catch (TransformException e) {
                 throw new DataStoreReferencingException(e);
             }
         }
         final FormatEntry format  = seriesTable.getRepresentativeFormat(name);
-        return new ProductEntry(transaction.database, parent, name, exportedGrid, timeRes, format, metadata);
+        return new ProductEntry(transaction.database, parent, name, envelope, exportedGrid, timeRes, format, metadata);
     }
 
     /**
