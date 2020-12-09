@@ -14,9 +14,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import javax.measure.Unit;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Parameters description of ClusterHull process.
@@ -25,6 +22,7 @@ import java.util.List;
  * <ul>
  *     <li>FEATURE_SET_IN "feature_set_in" FeatureCollection source</li>
  *     <li>TOLERANCE_VALUE "tolerance value"  Measure of tolerance used to compute cluster hull</li>
+ *     <li>SMOOTHING_EPSILON "smoothing epsilon" Tolerance used for the DouglasPeucker smoothing algorithm</li>
  *     <li>TOLERANCE_UNIT "tolerance unit"  unit of tolerance used</li>
  * </ul>
  * outputs :
@@ -57,6 +55,15 @@ public final class ClusterHullDescriptor extends AbstractProcessDescriptor {
             .create(Double.class, null);
 
     /**
+     * Non Mandatory - Tolerance used for the DouglasPeucker smoothing algorithm
+     */
+    public static final ParameterDescriptor<Double> SMOOTHING_EPSILON = new ParameterBuilder()
+            .addName("smoothing_epsilon")
+            .setRemarks("Tolerance of the smoothing algorithm")
+            .setRequired(false)
+            .create(Double.class, null);
+
+    /**
      * Non Mandatory - Unit of tolerance (METER, KILOMETER, STATUTE MILE, NAUTICAL MILE, INCH) default value initialize at METER
      */
     static final Unit[] ALLOWED_UNITS = {Units.METRE, Units.KILOMETRE, Units.STATUTE_MILE, Units.NAUTICAL_MILE, Units.INCH};
@@ -77,7 +84,7 @@ public final class ClusterHullDescriptor extends AbstractProcessDescriptor {
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_SET_IN, TOLERANCE_VALUE, TOLERANCE_UNIT);
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_SET_IN, TOLERANCE_VALUE, SMOOTHING_EPSILON, TOLERANCE_UNIT);
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_SET_OUT);
