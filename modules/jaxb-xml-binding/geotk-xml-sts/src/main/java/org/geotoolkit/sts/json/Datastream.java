@@ -36,7 +36,7 @@ public class Datastream implements STSResponse {
 
     private String description = null;
 
-    private Object unitOfMeasure = null;
+    private Object unitOfMeasurement = null;
 
     private String observationType = null;
 
@@ -130,8 +130,8 @@ public class Datastream implements STSResponse {
         this.description = description;
     }
 
-    public Datastream unitOfMeasure(Object unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
+    public Datastream unitOfMeasurement(Object unitOfMeasure) {
+        this.unitOfMeasurement = unitOfMeasure;
         return this;
     }
 
@@ -145,12 +145,12 @@ public class Datastream implements STSResponse {
      * @return unitOfMeasure
   *
      */
-    public Object getUnitOfMeasure() {
-        return unitOfMeasure;
+    public Object getUnitOfMeasurement() {
+        return unitOfMeasurement;
     }
 
-    public void setUnitOfMeasure(Object unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
+    public void setUnitOfMeasurement(Object unitOfMeasure) {
+        this.unitOfMeasurement = unitOfMeasure;
     }
 
     public Datastream observationType(String observationType) {
@@ -422,7 +422,7 @@ public class Datastream implements STSResponse {
         return Objects.equals(this.iotId, datastream.iotId)
                 && Objects.equals(this.iotSelfLink, datastream.iotSelfLink)
                 && Objects.equals(this.description, datastream.description)
-                && Objects.equals(this.unitOfMeasure, datastream.unitOfMeasure)
+                && Objects.equals(this.unitOfMeasurement, datastream.unitOfMeasurement)
                 && Objects.equals(this.observationType, datastream.observationType)
                 && Objects.equals(this.observedArea, datastream.observedArea)
                 && Objects.equals(this.phenomenonTime, datastream.phenomenonTime)
@@ -439,7 +439,7 @@ public class Datastream implements STSResponse {
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, description, unitOfMeasure, observationType, observedArea, phenomenonTime, resultTime, thing, sensor, observedProperty, observations, thingIotNavigationLink, sensorIotNavigationLink, observedPropertyIotNavigationLink, observationsIotNavigationLink);
+        return java.util.Objects.hash(iotId, iotSelfLink, description, unitOfMeasurement, observationType, observedArea, phenomenonTime, resultTime, thing, sensor, observedProperty, observations, thingIotNavigationLink, sensorIotNavigationLink, observedPropertyIotNavigationLink, observationsIotNavigationLink);
     }
 
     @Override
@@ -450,7 +450,7 @@ public class Datastream implements STSResponse {
         sb.append("    iotId: ").append(toIndentedString(iotId)).append("\n");
         sb.append("    iotSelfLink: ").append(toIndentedString(iotSelfLink)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
-        sb.append("    unitOfMeasure: ").append(toIndentedString(unitOfMeasure)).append("\n");
+        sb.append("    unitOfMeasure: ").append(toIndentedString(unitOfMeasurement)).append("\n");
         sb.append("    observationType: ").append(toIndentedString(observationType)).append("\n");
         sb.append("    observedArea: ").append(toIndentedString(observedArea)).append("\n");
         sb.append("    phenomenonTime: ").append(toIndentedString(phenomenonTime)).append("\n");

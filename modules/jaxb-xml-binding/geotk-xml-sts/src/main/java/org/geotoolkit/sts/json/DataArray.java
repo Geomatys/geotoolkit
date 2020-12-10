@@ -26,7 +26,7 @@ import java.util.Objects;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class DataArray implements STSResponse {
+public class DataArray {
 
     @JsonProperty("Datastream@iot.navigationLink")
     private String datastreamIotNavigationLink = null;

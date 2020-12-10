@@ -104,7 +104,7 @@ public class MultiDatastream extends Datastream implements STSResponse {
         sb.append("    iotId: ").append(toIndentedString(super.getIotId())).append("\n");
         sb.append("    iotSelfLink: ").append(toIndentedString(super.getIotSelfLink())).append("\n");
         sb.append("    description: ").append(toIndentedString(super.getDescription())).append("\n");
-        sb.append("    unitOfMeasure: ").append(toIndentedString(super.getUnitOfMeasure())).append("\n");
+        sb.append("    unitOfMeasurement: ").append(toIndentedString(super.getUnitOfMeasurement())).append("\n");
         sb.append("    observationType: ").append(toIndentedString(super.getObservationType())).append("\n");
         sb.append("    observedArea: ").append(toIndentedString(super.getObservedArea())).append("\n");
         sb.append("    phenomenonTime: ").append(toIndentedString(super.getPhenomenonTime())).append("\n");
