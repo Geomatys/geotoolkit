@@ -21,8 +21,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridRoundingMode;
+import org.apache.sis.coverage.grid.IllegalGridGeometryException;
 import org.apache.sis.coverage.grid.PixelTranslation;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -35,16 +38,15 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Static;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -131,7 +133,11 @@ public final class TileMatrices extends Static {
                 if (env == null) {
                     rect = new Rectangle(mosaic.getGridSize());
                 } else {
-                    rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                    try {
+                        rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                    } catch (NoSuchDataException ex) {
+                        continue;
+                    }
                 }
                 for (int x=rect.x, xn=rect.x+rect.width; x<xn; x++) {
                     for (int y=rect.y, yn=rect.y+rect.height; y<yn; y++) {
@@ -289,72 +295,40 @@ public final class TileMatrices extends Static {
      *
      * @param tileMatrix searched mosaic
      * @param wantedEnv searched envelope in mosaic {@link CoordinateReferenceSystem}
-     * @return
+     * @return never null
+     * @throws org.apache.sis.storage.DataStoreException if the grid geometry of the tile matrix isn't well defined
+     * @throws org.apache.sis.storage.NoSuchDataException if envelope do not intersect tile matrix
      */
     public static Rectangle getTilesInEnvelope(TileMatrix tileMatrix, Envelope wantedEnv) throws DataStoreException {
         if (wantedEnv == null) {
             return new Rectangle(tileMatrix.getGridSize());
         }
 
-        final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
-        final Envelope mosEnvelope                = tileMatrix.getEnvelope();
-
-        //-- check CRS conformity
-        if (!(Utilities.equalsIgnoreMetadata(wantedCRS, mosEnvelope.getCoordinateReferenceSystem())))
-            throw new IllegalArgumentException("the wantedEnvelope is not define in same CRS than mosaic. Expected : "
-                                                +mosEnvelope.getCoordinateReferenceSystem()+". Found : "+wantedCRS);
-
-        final DirectPosition upperLeft = tileMatrix.getUpperLeftCorner();
-        assert Utilities.equalsIgnoreMetadata(upperLeft.getCoordinateReferenceSystem(), wantedCRS);
-
-        final int xAxis = CRSUtilities.firstHorizontalAxis(wantedCRS);
-        final int yAxis = xAxis +1;
-
-        //-- convert working into 2D space
-        final CoordinateReferenceSystem mosCRS2D;
-        final GeneralEnvelope wantedEnv2D, mosEnv2D;
-        try {
-            mosCRS2D = CRSUtilities.getCRS2D(wantedCRS);
-            wantedEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(wantedEnv,   mosCRS2D));
-            mosEnv2D    = GeneralEnvelope.castOrCopy(Envelopes.transform(mosEnvelope, mosCRS2D));
-        } catch(Exception ex) {
-            throw new DataStoreException(ex);
-        }
-
-        //-- define appropriate gridToCRS
-//        final Dimension gridSize = mosaic.getGridSize();
+        final SingleCRS crs2d = CRS.getHorizontalComponent(tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
         final Dimension tileSize = tileMatrix.getTileSize();
-//        final double sx          = mosEnv2D.getSpan(0) / (gridSize.width  * tileSize.width);
-//        final double sy          = mosEnv2D.getSpan(1) / (gridSize.height * tileSize.height);
-//        final double offsetX     = upperLeft.getOrdinate(xAxis);
-//        final double offsetY     = upperLeft.getOrdinate(yAxis);
-
-        final MathTransform gridToCrs2D = TileMatrices.getTileGridToCRS2D(tileMatrix, new Point(0, 0), PixelInCell.CELL_CENTER);
-
-        final GeneralEnvelope envelopOfInterest2D = new GeneralEnvelope(wantedEnv2D);
-        envelopOfInterest2D.intersect(mosEnv2D);
-
-        final Envelope gridOfInterest;
+        final Dimension gridSize = tileMatrix.getGridSize();
+        final AffineTransform2D tileGridToCrs = getTileGridToCRS2D(tileMatrix, new Point(0,0), PixelInCell.CELL_CENTER);
+        final GridExtent matrixExtent = new GridExtent((long) tileSize.width*gridSize.width, (long) tileSize.height*gridSize.height);
+        final GridGeometry pixelMatrixGridGeom = new GridGeometry(matrixExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs2d);
+        final GridExtent intersection;
         try {
-            gridOfInterest = Envelopes.transform(gridToCrs2D.inverse(), envelopOfInterest2D);
-        } catch (Exception ex) {
-            throw new DataStoreException(ex);
+            wantedEnv = Envelopes.transform(wantedEnv, pixelMatrixGridGeom.getCoordinateReferenceSystem());
+            final GridGeometry gridMatrixGridGeom = pixelMatrixGridGeom.derive().subsample(tileMatrix.getTileSize().width, tileMatrix.getTileSize().height).build();
+            intersection = gridMatrixGridGeom.derive()
+                    .rounding(GridRoundingMode.ENCLOSING)
+                    .subgrid(wantedEnv)
+                    .getIntersection();
+        } catch (DisjointExtentException ex) {
+            throw new NoSuchDataException(ex.getMessage(), ex);
+        } catch (IllegalGridGeometryException | IllegalStateException | TransformException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
         }
 
-        final long bBoxMinX = StrictMath.round(gridOfInterest.getMinimum(0));
-        final long bBoxMaxX = StrictMath.round(gridOfInterest.getMaximum(0));
-        final long bBoxMinY = StrictMath.round(gridOfInterest.getMinimum(1));
-        final long bBoxMaxY = StrictMath.round(gridOfInterest.getMaximum(1));
-
-        final int tileMinCol = (int) (bBoxMinX / tileSize.width);
-        final int tileMaxCol = (int) StrictMath.ceil(bBoxMaxX / (double) tileSize.width);
-        assert tileMaxCol == ((int)((bBoxMaxX + tileSize.width - 1) / (double) tileSize.width)) : "readSlice() : unexpected comportement maximum column index.";
-
-        final int tileMinRow = (int) (bBoxMinY / tileSize.height);
-        final int tileMaxRow = (int) StrictMath.ceil(bBoxMaxY / (double) tileSize.height);
-        assert tileMaxRow == ((int)((bBoxMaxY + tileSize.height - 1) / (double) tileSize.height)) : "readSlice() : unexpected comportement maximum row index.";
-
-        return new Rectangle(tileMinCol, tileMinRow, (tileMaxCol-tileMinCol), (tileMaxRow-tileMinRow));
+        return new Rectangle(
+                (int) intersection.getLow(0),
+                (int) intersection.getLow(1),
+                (int) intersection.getSize(0),
+                (int) intersection.getSize(1));
     }
 
     /**

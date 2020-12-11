@@ -17,15 +17,18 @@
 package org.geotoolkit.storage.multires;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.NoSuchDataException;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.junit.Assert;
@@ -115,5 +118,30 @@ public class TileMatricesTest {
         }
     }
 
+    @Test
+    public void testTilesInEnvelope() throws DataStoreException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
+        corner.setOrdinate(0, 0);
+        corner.setOrdinate(1, 0);
+        TileMatrix matrix = new DefiningTileMatrix("", corner, 1, new Dimension(1, 1), new Dimension(10, 10));
+
+        final GeneralEnvelope env = new GeneralEnvelope(crs);
+        env.setRange(0, 0.0, 0.1);
+        env.setRange(1, -0.1, -0.0);
+
+        Rectangle rect = TileMatrices.getTilesInEnvelope(matrix, env);
+        Assert.assertEquals(new Rectangle(0, 0, 1, 1), rect);
+
+        env.setRange(0, 100, 120);
+        env.setRange(1, -0.1, -0.0);
+        try {
+            rect = TileMatrices.getTilesInEnvelope(matrix, env);
+            Assert.fail("Request is outside tile matrix, should have failed");
+        } catch (NoSuchDataException ex) {
+            //ok
+        }
+    }
 
 }

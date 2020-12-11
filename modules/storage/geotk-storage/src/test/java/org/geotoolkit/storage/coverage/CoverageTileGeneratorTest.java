@@ -175,7 +175,7 @@ public class CoverageTileGeneratorTest {
                 for (int x = 0; x < gridSize.width; x++) {
                     final ImageTile tile = (ImageTile) tileMatrix.getTile(x, y);
                     final Point tileCoord = new Point(x, y);
-                    final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(tileMatrix, tileCoord, tileMatrix.getUpperLeftCorner().getCoordinateReferenceSystem());
+                    final GridGeometry tileGridGeom = TileMatrices.getTileGridGeometry2D(tileMatrix, tileCoord);
                     final Envelope tileEnv = tileGridGeom.getEnvelope();
                     if (generateEnvelope == null || generateEnvelope.intersects(tileEnv)) {
                         final RenderedImage tileImage = tile.getImage();

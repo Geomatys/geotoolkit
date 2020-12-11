@@ -21,18 +21,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongFunction;
 import java.util.function.Supplier;
@@ -65,18 +60,17 @@ import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
 import org.geotoolkit.storage.multires.EmptyTile;
+import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileInError;
 import org.geotoolkit.storage.multires.TileMatrices;
-import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.util.Streams;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Tile generator splitting a coverage in tiles.
@@ -234,7 +228,12 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         for (final TileMatrix mosaic : mosaics) {
             if (resolutions == null || resolutions.contains(mosaic.getScale())) {
                 final GridCoverageResource source = resource;
-                final Rectangle rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                final Rectangle rect;
+                try {
+                    rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                } catch (NoSuchDataException ex) {
+                    continue;
+                }
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
