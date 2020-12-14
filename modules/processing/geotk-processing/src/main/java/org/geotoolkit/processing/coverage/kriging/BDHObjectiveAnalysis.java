@@ -39,7 +39,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
  * @module
  */
 @Deprecated
-public class BDHObjectiveAnalysis extends org.geotoolkit.math.ObjectiveAnalysis {
+final class BDHObjectiveAnalysis extends org.geotoolkit.math.ObjectiveAnalysis {
 
     /**
      * An arbitrary scale factor applied in the distance computed by {@link #correlation(double)}.
