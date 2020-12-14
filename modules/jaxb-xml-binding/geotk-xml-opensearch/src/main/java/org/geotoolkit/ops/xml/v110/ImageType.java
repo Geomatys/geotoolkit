@@ -71,6 +71,18 @@ public class ImageType {
     @XmlSchemaType(name = "anySimpleType")
     protected String type;
 
+    public ImageType() {
+
+    }
+
+    public ImageType(ImageType that) {
+        if (that != null) {
+            this.value = that.value;
+            this.height = that.height;
+            this.width = that.width;
+            this.type = that.type;
+        }
+    }
     /**
      * Obtient la valeur de la propriété value.
      *

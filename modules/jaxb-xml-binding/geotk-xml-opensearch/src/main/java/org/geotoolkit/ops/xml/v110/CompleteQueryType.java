@@ -69,6 +69,26 @@ public class CompleteQueryType extends InspireQueryType {
     @XmlSchemaType(name = "anyURI")
     private String name;
 
+    public CompleteQueryType() {
+
+    }
+
+    public CompleteQueryType(CompleteQueryType that) {
+        super(that);
+        if (that != null) {
+            this.box = that.box;
+            this.end = that.end;
+            this.gRelation = that.gRelation;
+            this.geometry = that.geometry;
+            this.lat = that.lat;
+            this.lon = that.lon;
+            this.name = that.name;
+            this.radius = that.radius;
+            this.start = that.start;
+            this.tRelation = that.tRelation;
+            this.uid = that.uid;
+        }
+    }
     /**
      * @return the start
      */

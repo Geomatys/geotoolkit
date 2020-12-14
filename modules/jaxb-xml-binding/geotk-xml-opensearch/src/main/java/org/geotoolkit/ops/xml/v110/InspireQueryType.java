@@ -45,9 +45,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InspireQueryType")
-public class InspireQueryType
-    extends QueryType
-{
+public class InspireQueryType extends QueryType {
 
     @XmlAttribute(name = "spatial_dataset_identifier_code", namespace = "http://inspire.ec.europa.eu/schemas/inspire_dls/1.0")
     protected String spatialDatasetIdentifierCode;
@@ -58,6 +56,18 @@ public class InspireQueryType
     @XmlSchemaType(name = "anyURI")
     protected String crs;
 
+    public InspireQueryType() {
+
+    }
+
+    public InspireQueryType(InspireQueryType that) {
+        super(that);
+        if (that != null) {
+            this.crs = that.crs;
+            this.spatialDatasetIdentifierCode = that.spatialDatasetIdentifierCode;
+            this.spatialDatasetIdentifierNamespace = that.spatialDatasetIdentifierNamespace;
+        }
+    }
     /**
      * Obtient la valeur de la propriété spatialDatasetIdentifierCode.
      *
