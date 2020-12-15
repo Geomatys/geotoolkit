@@ -298,9 +298,7 @@ public class NetCDFExtractor {
     }
 
     public static boolean isObservationFile(final String nfilePath) {
-        NetcdfFile file = null;
-        try {
-            file = NetcdfFile.open(nfilePath);
+        try (NetcdfFile file = NetcdfFile.open(nfilePath)) {
             final Attribute ftAtt = file.findGlobalAttribute("featureType");
             if (ftAtt != null) {
                 final String value = ftAtt.getStringValue();

@@ -138,14 +138,14 @@ public final class FeatureTypeUtils extends Static {
         }
 
         if (fts.size() > 1) {
-            JsonGenerator writer = GeoJSONParser.JSON_FACTORY.createGenerator(output, JsonEncoding.UTF8).useDefaultPrettyPrinter();
-            writer.writeStartArray();
-            for (FeatureType ft : fts) {
-                writeFeatureType(ft, output, writer);
+            try (JsonGenerator writer = GeoJSONParser.JSON_FACTORY.createGenerator(output, JsonEncoding.UTF8).useDefaultPrettyPrinter()) {
+                writer.writeStartArray();
+                for (FeatureType ft : fts) {
+                    writeFeatureType(ft, output, writer);
+                }
+                writer.writeEndArray();
+                writer.flush();
             }
-            writer.writeEndArray();
-            writer.flush();
-            writer.close();
         } else {
             writeFeatureType(fts.get(0), output);
         }
@@ -159,10 +159,10 @@ public final class FeatureTypeUtils extends Static {
      * @throws IOException
      */
     public static void writeFeatureType(FeatureType ft, OutputStream output) throws IOException, DataStoreException {
-        JsonGenerator writer = GeoJSONParser.JSON_FACTORY.createGenerator(output, JsonEncoding.UTF8).useDefaultPrettyPrinter();
-        writeFeatureType(ft, output, writer);
-        writer.flush();
-        writer.close();
+        try (JsonGenerator writer = GeoJSONParser.JSON_FACTORY.createGenerator(output, JsonEncoding.UTF8).useDefaultPrettyPrinter()) {
+            writeFeatureType(ft, output, writer);
+            writer.flush();
+        }
     }
 
     private static void writeFeatureType(FeatureType ft, OutputStream output, JsonGenerator writer) throws IOException, DataStoreException {
