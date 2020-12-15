@@ -37,6 +37,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
@@ -45,8 +46,10 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.multires.DeferredTile;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -54,8 +57,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * A utility class which is capable of reading features from a pyramid.
@@ -129,7 +130,11 @@ public class TileMatrixSetFeatureReader {
             } catch (TransformException ex) {
                 throw new DataStoreException(ex.getMessage(), ex);
             }
-            area = TileMatrices.getTilesInEnvelope(mosaic, env);
+            try {
+                area = TileMatrices.getTilesInEnvelope(mosaic, env);
+            } catch (NoSuchDataException ex) {
+                return Stream.empty();
+            }
         } else {
             area = new Rectangle(gridSize);
         }

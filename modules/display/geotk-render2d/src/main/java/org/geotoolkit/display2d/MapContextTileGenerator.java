@@ -48,6 +48,7 @@ import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
@@ -67,12 +68,15 @@ import org.geotoolkit.storage.coverage.ImageTile;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.AbstractTileGenerator;
 import org.geotoolkit.storage.multires.DefaultTileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.Tile;
+import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Displacement;
@@ -83,9 +87,6 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
-import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.storage.multires.TileMatrix;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -275,7 +276,12 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             for (final TileMatrix mosaic : mosaics) {
                 if (resolutions == null || resolutions.contains(mosaic.getScale())) {
 
-                    final Rectangle rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                    final Rectangle rect;
+                    try {
+                        rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                    } catch (NoSuchDataException ex) {
+                        continue;
+                    }
 
                     final CanvasDef canvasDef = new CanvasDef();
                     canvasDef.setBackground(this.canvasDef.getBackground());

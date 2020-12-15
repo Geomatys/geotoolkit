@@ -36,10 +36,10 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.presentation.ShapePresentation;
 import org.geotoolkit.display2d.presentation.TextPresentation2;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
@@ -48,15 +48,16 @@ import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
+import org.geotoolkit.storage.multires.TileMatrix;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.storage.multires.TileMatrix;
 
 /**
  * Renderer for Tile debug symbolizer.
@@ -98,7 +99,12 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                 final CoordinateReferenceSystem crs = m.getUpperLeftCorner().getCoordinateReferenceSystem();
                 final CoordinateReferenceSystem crs2d = CRS.getHorizontalComponent(crs);
 
-                final Rectangle rectangle = TileMatrices.getTilesInEnvelope(m, wantedEnv);
+                final Rectangle rectangle;
+                try {
+                    rectangle = TileMatrices.getTilesInEnvelope(m, wantedEnv);
+                } catch (NoSuchDataException ex) {
+                    continue;
+                }
 
                 for (int x = 0; x < rectangle.width; x++) {
                     for (int y = 0;y < rectangle.height; y++) {
