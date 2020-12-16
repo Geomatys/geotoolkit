@@ -120,7 +120,13 @@ public abstract class AbstractTileGenerator implements TileGenerator {
         mosaics.sort((TileMatrix o1, TileMatrix o2) -> Double.compare(o2.getScale(), o1.getScale()));
         for (final TileMatrix mosaic : mosaics) {
             if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
-                final Rectangle rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+
+                final Rectangle rect;
+                try {
+                    rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                } catch (NoSuchDataException ex) {
+                    continue;
+                }
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
@@ -224,7 +230,12 @@ public abstract class AbstractTileGenerator implements TileGenerator {
                 if (env == null) {
                     count += ((long) m.getGridSize().width) * ((long) m.getGridSize().height);
                 } else {
-                    final Rectangle rect = TileMatrices.getTilesInEnvelope(m, env);
+                    final Rectangle rect;
+                    try {
+                        rect = TileMatrices.getTilesInEnvelope(m, env);
+                    } catch (NoSuchDataException ex) {
+                        continue;
+                    }
                     count += ((long) rect.width) * ((long) rect.height);
                 }
             }

@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.observation;
 
 import java.util.List;
@@ -62,13 +61,18 @@ public interface ObservationStore {
     public abstract TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException;
 
     /**
-     * Extract All the procedures / observations / features of interest / phenoemenon / spatial informations in this store.
+     * Extract All the procedures / observations / features of interest /
+     * phenomenon / spatial informations in this store.
+     *
+     * @return
+     * @throws DataStoreException
      */
     public abstract ExtractionResult getResults() throws DataStoreException;
 
     /**
-     * Extract All the procedures / observations / features of interest / phenoemenon / spatial informations in this store.
-     * Allow to filter by specifying a list of accepted sensor identifiers.
+     * Extract All the procedures / observations / features of interest /
+     * phenomenon / spatial informations in this store. Allow to filter by
+     * specifying a list of accepted sensor identifiers.
      *
      * @param sensorIds a filter on sensor identifiers or {@code null}.
      */
@@ -84,13 +88,14 @@ public interface ObservationStore {
      */
     public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
 
-
     /**
-     * Extract All the procedures / observations / features of interest / phenoemenon / spatial informations in this store.
-     * Allow to filter by specifying a list of accepted sensor identifiers.
-     * If specified the results will be asigned to a new/existing sensor.
+     * Extract All the procedures / observations / features of interest /
+     * phenomenon / spatial informations in this store. Allow to filter by
+     * specifying a list of accepted sensor identifiers. If specified the
+     * results will be asigned to a new/existing sensor.
      *
-     * A set of phenomenon / sampling features can be specified and will be used if similar phenomenons/ sampling features are found in this store.
+     * A set of phenomenon / sampling features can be specified and will be used
+     * if similar phenomenons/ sampling features are found in this store.
      *
      * @param affectedSensorID a assigned sensor identifier or {@code null}.
      * @param sensorIds a filter on sensor identifiers or {@code null}.

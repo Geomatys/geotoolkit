@@ -120,6 +120,25 @@ public class QueryType {
     @XmlSchemaType(name = "anySimpleType")
     protected String outputEncoding;
 
+    public QueryType() {
+
+    }
+
+    public QueryType(QueryType that) {
+        if (that != null) {
+            this.count = that.count;
+            this.inputEncoding = that.inputEncoding;
+            this.language = that.language;
+            this.outputEncoding = that.outputEncoding;
+            this.role = that.role;
+            this.searchTerms = that.searchTerms;
+            this.startIndex = that.startIndex;
+            this.startPage = that.startPage;
+            this.title = that.title;
+            this.totalResults = that.totalResults;
+        }
+    }
+
     /**
      * Obtient la valeur de la propriété role.
      *

@@ -166,7 +166,7 @@ public class StrictStorageConnector implements AutoCloseable {
      * @throws IOException If given operator throws IOException on execution.
      * @throws DataStoreException If an error occurs while fetching queried storage.
      */
-    public <S, T> T useAs(Class<T> storageType, StorageOperatingFunction<S, T> operator) throws IOException, DataStoreException {
+    public <S, T> T useAs(Class<S> storageType, StorageOperatingFunction<? super S, ? extends T> operator) throws IOException, DataStoreException {
         if (ByteBuffer.class.isAssignableFrom(storageType)) return useAsBuffer((StorageOperatingFunction<ByteBuffer, T>) operator);
         else if (ImageInputStream.class.isAssignableFrom(storageType)) return useAsImageInputStream((StorageOperatingFunction<ImageInputStream, T>) operator);
         else if (URI.class.isAssignableFrom(storageType)) return ((StorageOperatingFunction<URI, T>) operator).apply(
