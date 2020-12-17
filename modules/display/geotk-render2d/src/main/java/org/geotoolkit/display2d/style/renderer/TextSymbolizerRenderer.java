@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.geotoolkit.display2d.presentation.TextPresentation;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
@@ -26,7 +25,7 @@ import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
+import org.geotoolkit.display2d.presentation.TextPresentation;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedHalo;
 import org.geotoolkit.display2d.style.CachedLabelPlacement;
@@ -37,6 +36,8 @@ import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 
 
@@ -52,7 +53,7 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) {
 
         //test if the symbol is visible on this feature
         if (!symbol.isVisible(feature)) return Stream.empty();
@@ -139,7 +140,7 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
             tp.labelDesc = descriptor;
             return Stream.of(tp);
         } else {
-            throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
+            return Stream.of(new ExceptionPresentation(layer, layer.getResource(), null, new PortrayalException("Text symbolizer has no label placement, this should not be possible.")));
         }
 
     }

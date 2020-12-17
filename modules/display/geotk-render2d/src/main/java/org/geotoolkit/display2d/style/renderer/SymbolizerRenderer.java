@@ -23,9 +23,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 
@@ -63,10 +63,8 @@ public interface SymbolizerRenderer {
      * @param layer
      * @param resource
      * @return Stream never null, can be empty
-     * @throws PortrayalException
-     * @throws BackingStoreException in stream iteration
      */
-    default Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
+    default Stream<Presentation> presentations(MapLayer layer, Resource resource) {
         if (resource instanceof FeatureSet) {
             final FeatureSet fs = (FeatureSet) resource;
 
@@ -74,32 +72,23 @@ public interface SymbolizerRenderer {
                 return fs.features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
                     @Override
                     public Stream<Presentation> apply(Feature t) {
-                        try {
-                            return presentations(layer, t);
-                        } catch (PortrayalException ex) {
-                            throw new BackingStoreException(ex);
-                        }
+                        return presentations(layer, t);
                     }
                 });
             } catch (DataStoreException ex) {
-                throw new PortrayalException(ex);
+                return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
             }
 
         } else if (resource instanceof Aggregate) {
             final Aggregate agg = (Aggregate) resource;
+            Stream<Presentation> stream = Stream.empty();
             try {
-                return agg.components().stream().flatMap(new Function<Resource, Stream<Presentation>>() {
-                    @Override
-                    public Stream<Presentation> apply(Resource t) {
-                        try {
-                            return presentations(layer, t);
-                        } catch (PortrayalException ex) {
-                            throw new BackingStoreException(ex);
-                        }
-                    }
-                });
+                for (Resource r : agg.components()) {
+                    stream = Stream.concat(stream, presentations(layer, r));
+                }
             } catch (DataStoreException ex) {
-                throw new PortrayalException(ex);
+                stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(layer, resource, null, ex)));
+                return stream;
             }
         }
         return Stream.empty();
@@ -111,10 +100,9 @@ public interface SymbolizerRenderer {
      * @param layer
      * @param feature
      * @return Stream never null, can be empty
-     * @throws PortrayalException
      * @throws BackingStoreException in stream iteration
      */
-    default Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+    default Stream<Presentation> presentations(MapLayer layer, Feature feature) {
         return Stream.empty();
     }
 }

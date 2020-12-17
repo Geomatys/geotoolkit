@@ -37,13 +37,13 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
-import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
+import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.math.Histogram;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -64,7 +64,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
         if (resource instanceof GridCoverageResource) {
             try {
                 final GridCoverageResource covref = (GridCoverageResource) resource;

@@ -23,7 +23,6 @@ import java.awt.image.BufferedImage;
 import java.util.stream.Stream;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.renderer.Presentation;
@@ -32,6 +31,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.renderer.DefaultGroupPresentation;
+import org.geotoolkit.renderer.ExceptionPresentation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPoint;
@@ -58,7 +58,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) {
         final ProjectedFeature pf = new ProjectedFeature(renderingContext, feature);
         final Feature candidate = pf.getCandidate();
 
@@ -66,14 +66,18 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
         if (symbol.isVisible(candidate)) {
             final ProjectedGeometry projectedGeometry = pf.getGeometry(geomPropertyName);
             final DefaultGroupPresentation group = new DefaultGroupPresentation(layer, candidate);
-            if (presentation(group, projectedGeometry, candidate)) {
-                return Stream.of(group);
+            try {
+                if (presentation(group, projectedGeometry, candidate)) {
+                    return Stream.of(group);
+                }
+            } catch (TransformException ex) {
+                return Stream.of(new ExceptionPresentation(layer, layer.getResource(), feature, ex));
             }
         }
         return Stream.empty();
     }
 
-    private boolean presentation(final GroupPresentation group, final ProjectedGeometry projectedGeometry, Object candidate) throws PortrayalException {
+    private boolean presentation(final GroupPresentation group, final ProjectedGeometry projectedGeometry, Object candidate) throws TransformException {
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if (projectedGeometry == null) return false;
@@ -106,12 +110,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
         disps[0] *= coeff ;
         disps[1] *= coeff ;
 
-        final Geometry[] geoms;
-        try {
-            geoms = projectedGeometry.getDisplayGeometryJTS();
-        } catch (TransformException ex) {
-            throw new PortrayalException("Could not calculate display projected geometry",ex);
-        }
+        final Geometry[] geoms = projectedGeometry.getDisplayGeometryJTS();
 
         if (geoms == null) {
             //no geometry

@@ -83,6 +83,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
+import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
@@ -485,7 +486,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Resource rs) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource rs) {
 
         if (rs instanceof GridCoverageResource) {
             GridCoverageResource ref = (GridCoverageResource) rs;
@@ -505,12 +506,10 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
 
                 return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));
 
-            } catch (NoSuchDataException e) {
-                LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
-            } catch (DisjointExtentException e) {
+            } catch (NoSuchDataException | DisjointExtentException e) {
                 LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
             } catch (Exception e) {
-                LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
+                return Stream.of(new ExceptionPresentation(layer, rs, null, e));
             }
         } else {
             return super.presentations(layer, rs);
@@ -520,7 +519,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) {
 
         final RasterSymbolizer sourceSymbol = symbol.getSource();
         final Object candidate = GO2Utilities.evaluate(sourceSymbol.getGeometry(), feature, null, null);

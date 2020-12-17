@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.renderer;
 
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.Feature;
 
 /**
  * Produced by the portrayal engines when an exception occures.
@@ -36,7 +39,8 @@ public class ExceptionPresentation extends AbstractPresentation {
     /**
      * @param exception not null.
      */
-    public ExceptionPresentation(Exception exception) {
+    public ExceptionPresentation(MapLayer layer, Resource resource, Feature feature, Exception exception) {
+        super(layer, resource, feature);
         ArgumentChecks.ensureNonNull("exception", exception);
         this.exception = exception;
     }

@@ -40,6 +40,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -102,11 +103,10 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
      * @param layer
      * @param resource
      * @return Stream never null, can be empty
-     * @throws PortrayalException
      * @throws BackingStoreException in stream iteration
      */
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
         if (resource instanceof FeatureSet) {
             /*
             Optimise case using envelopes filter and limited propery names.
@@ -141,21 +141,22 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
 
             //optimize
             final Rule rule = GO2Utilities.STYLE_FACTORY.rule(symbol.getSource());
-            final Query query = RenderingRoutines.prepareQuery(getRenderingContext(), fs, layer, names, Arrays.asList(rule), symbolsMargin);
+            final Query query;
+            try {
+                query = RenderingRoutines.prepareQuery(getRenderingContext(), fs, layer, names, Arrays.asList(rule), symbolsMargin);
+            } catch (PortrayalException ex) {
+                return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+            }
 
             try {
                 return fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
                     @Override
                     public Stream<Presentation> apply(Feature t) {
-                        try {
-                            return presentations(layer, t);
-                        } catch (PortrayalException ex) {
-                            throw new BackingStoreException(ex);
-                        }
+                        return presentations(layer, t);
                     }
                 });
             } catch (DataStoreException ex) {
-                throw new PortrayalException(ex);
+                return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
             }
 
         }
