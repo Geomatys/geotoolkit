@@ -47,16 +47,24 @@ import javax.measure.quantity.Length;
  * a feature set of polygons that represent the footprints of the set of elements
  * according to tolerance distance.
  * The algorithm takes as input a geometry set and a tolerance parameter. It's about gradually building a clustered geometry set.
- * At the start we consider a set of WorkGeometry, that contains a geometry and his projection by Lambert CRS projection.
- * During each iteration, we split the set into a random WorkGeometry and the rest of the set.
+ * At the start we consider a set of Cluster, that contains a set of geometry which are a geometry and his projection by Lambert CRS projection.
+ * During each iteration, we split the set into the first Cluster and the rest of the set.
  * Then we iterate on the rest of the set:
- *      - if we found an other geometry in the same cluster, we merge them and interrupt the loop.
+ *      - if we found a cluster that intersects the first, we merge them and interrupt the loop.
  *      - if not we consider this one as a complete cluster and send it to the final result.
  * This procedure is apply until the input set is empty.
  *
  * @author Maxime Gavens - décembre 2019
  */
 public class ClusterHullProcess extends AbstractProcess {
+
+    private static final GeometryFactory GF = new GeometryFactory();
+
+    private int increment = 0;
+
+    private int geomSize;
+
+    private int[] roadmap;
 
     /**
      * Measure of tolerance used to compute cluster hull.
@@ -119,6 +127,7 @@ public class ClusterHullProcess extends AbstractProcess {
      * Its interest is to limit the number of projection performs during the process (useful for distance, buffer, Douglas-Peucker)
      */
     private class WorkGeometry {
+        int index;
         Geometry source;
         Geometry buffer;
 
@@ -136,6 +145,49 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
+    private class Cluster {
+        Set<WorkGeometry> group;
+
+        Cluster (final Set<WorkGeometry> group) {
+            this.group = group;
+        }
+
+        Cluster (final WorkGeometry geom) {
+            this.group = new HashSet<>();
+            this.group.add(geom);
+        }
+
+        boolean isIntersect(final Cluster clust) {
+            for (WorkGeometry wg1: this.group) {
+                for (WorkGeometry wg2: clust.group) {
+                    if (roadmap[toFlat(wg1.index, wg2.index)] == 1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        Cluster merge(final Cluster clust) {
+            final Set<WorkGeometry> result = new HashSet<>();
+            result.addAll(this.group);
+            result.addAll(clust.group);
+            return new Cluster(result);
+        }
+
+        WorkGeometry getGeometryCollection() {
+            final int l = this.group.size();
+            final Geometry[] geoms = new Geometry[l];
+            int i = 0;
+            for (WorkGeometry wg: this.group) {
+                geoms[i] = wg.source;
+                i = i + 1;
+            }
+            Geometry result = GF.createGeometryCollection(geoms);
+            return new WorkGeometry(result);
+        }
+    }
+
     /**
      * Compute the cluster hull from a feature set according to the measure of tolerance.
      *
@@ -150,8 +202,12 @@ public class ClusterHullProcess extends AbstractProcess {
             // Extract geometries set from featureSet and smooth geometries with Douglas Peucker algorithm
             Set<WorkGeometry> wgeometries = extractWorkGeometrySetAndApplyDouglasPeucker(inputFeatureSet);
 
+            initRoadmap(wgeometries);
+
+            Set<Cluster> clusters = castToClusterSet(wgeometries);
+
             // Apply the process
-            ApplyClusterHull(wgeometries);
+            ApplyClusterHull(clusters);
 
             // Build feature set result
             final FeatureType type = inputFeatureSet.getType();
@@ -161,6 +217,44 @@ public class ClusterHullProcess extends AbstractProcess {
         } catch (DataStoreException | TransformException | OutOfMemoryError e) {
             throw new ProcessException(e.getMessage(), this, e);
         }
+    }
+
+    private Set<Cluster> castToClusterSet(final Set<WorkGeometry> toCast) {
+        Set<Cluster> result = new HashSet<>();
+
+        for (WorkGeometry wg: toCast) {
+            result.add(new Cluster(wg));
+        }
+        return result;
+    }
+
+    private void initRoadmap(final Set<WorkGeometry> geoms) {
+        this.geomSize = geoms.size();
+        int s2 = this.geomSize * this.geomSize;
+        this.roadmap = new int[s2];
+
+        for (WorkGeometry wg1: geoms) {
+            for (WorkGeometry wg2: geoms) {
+                fillCellRoadmap(wg1, wg2);
+            }
+        }
+    }
+
+    private void fillCellRoadmap(final WorkGeometry wg1, final WorkGeometry wg2) {
+        final int i = wg1.index;
+        final int j = wg2.index;
+        if (i == j) return;
+        final int flat = toFlat(i, j);
+        final int revFlat = toFlat(j, i);
+
+        if (isSameCluster(wg1, wg2)) {
+            this.roadmap[flat] = 1;
+            this.roadmap[revFlat] = 1;
+        }
+    }
+
+    private int toFlat(final int i, final int j) {
+        return i + j * this.geomSize;
     }
 
     private void initConversion(final Double tolerance, final Double epsilon, Unit<Length> unit) {
@@ -199,12 +293,19 @@ public class ClusterHullProcess extends AbstractProcess {
                     .map(f -> f.getPropertyValue(geomName))
                     .filter(value -> value instanceof Geometry)
                     .map(value -> {
-                        final WorkGeometry wgeom = new WorkGeometry((Geometry) value);
-                        return customDouglasPeucker(wgeom);
+                        WorkGeometry wgeom = new WorkGeometry((Geometry) value);
+                        wgeom = customDouglasPeucker(wgeom);
+                        return giveIndex(wgeom);
                     })
                     .collect(Collectors.toSet());
             return geometries;
         }
+    }
+
+    private WorkGeometry giveIndex(final WorkGeometry notIndexed) {
+        notIndexed.index = this.increment;
+        this.increment += 1;
+        return notIndexed;
     }
 
     private WorkGeometry customDouglasPeucker(final WorkGeometry toSmooth) {
@@ -229,25 +330,27 @@ public class ClusterHullProcess extends AbstractProcess {
 
     /**
      * On each recurrence:
-     *      - Extract randomly one geometry "first" from the "clustersRaw"
+     *      - Extract the first one cluster "first" from the "clustersRaw"
      *      - Iterate on "clusterRaw":
-     *          - if current geometry is in the same cluster as "first", merge them and break the loop.
-     *          - if not "first" is a cluster, apply buffer on it, send it to the final result.
+     *          - if current cluster intersect the cluster "first", merge them and break the loop.
+     *          - if not, "first" is a cluster, apply buffer on it, send it to the final result.
      * This procedure is apply until the input set is empty.
      * @param clusterRaw set of workGeometry not yet clustered.
      * @throws TransformException
      */
-    private void ApplyClusterHull(Set<WorkGeometry> clustersRaw) throws TransformException {
+    private void ApplyClusterHull(Set<Cluster> clustersRaw) throws TransformException {
+        System.out.println("length clustersRaw");
+        System.out.println(clustersRaw.size());
         if (clustersRaw.isEmpty()) return;
-        WorkGeometry first = clustersRaw.iterator().next();
+        Cluster first = clustersRaw.iterator().next();
         clustersRaw.remove(first);
-        WorkGeometry merged = null;
+        Cluster merged = null;
 
         // find a geometry who are in a same cluster
-        for (WorkGeometry wg: clustersRaw) {
+        for (Cluster wg: clustersRaw) {
             // check if same cluster
-            if (isSameCluster(first, wg)) {
-                merged = mergeWorkGeometry(first, wg);
+            if (first.isIntersect(wg)) {
+                merged = first.merge(wg);
                 // update the element with the result of the merge
                 clustersRaw.remove(wg);
                 clustersRaw.add(merged);
@@ -268,16 +371,13 @@ public class ClusterHullProcess extends AbstractProcess {
         return wg1.buffer.distance(wg2.buffer) <= this.tolerance;
     }
 
-    private WorkGeometry mergeWorkGeometry(final WorkGeometry wg1, final WorkGeometry wg2) {
-        Geometry result = wg1.source.union(wg2.source);
-
-        return new WorkGeometry(result);
-    }
-
-    private void bufferizeAndSet(final WorkGeometry wg) throws TransformException {
+    private void bufferizeAndSet(final Cluster clust) throws TransformException {
+        final WorkGeometry wg = clust.getGeometryCollection();
         Geometry target = wg.buffer.buffer(this.tolerance);
 
         this.clusters.add(inv.transform(target));
+        System.out.println("BUFFER");
+        System.out.println(this.clusters.size());
     }
 
     private FeatureSet toFeatureSet(final Set<Geometry> geometries, final CoordinateReferenceSystem crs) throws DataStoreException {
