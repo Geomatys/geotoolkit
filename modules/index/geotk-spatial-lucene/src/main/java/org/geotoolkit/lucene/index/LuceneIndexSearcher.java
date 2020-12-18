@@ -119,7 +119,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      *
-     * @throws org.geotoolkit.lucene.IndexingException
+     * @throws org.geotoolkit.index.IndexingException
      */
     public LuceneIndexSearcher(final Path configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
         this(configDir, serviceID, analyzer, false);
@@ -133,7 +133,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      * @param envelopeOnly A flag indicating if all the geometry indexed are envelope.
      *
-     * @throws org.geotoolkit.lucene.IndexingException
+     * @throws org.geotoolkit.index.IndexingException
      */
     public LuceneIndexSearcher(final Path configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly) throws IndexingException {
         super(analyzer);
@@ -194,10 +194,14 @@ public class LuceneIndexSearcher extends IndexLucene {
      */
     private void initSearcher() throws CorruptIndexException, IOException {
         final Path indexDirectory = getFileDirectory();
-        this.rTree = SQLRtreeManager.get(indexDirectory, this);
-        final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
-        searcher                  = new IndexSearcher(reader);
-        LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.toString());
+        if (Files.exists(indexDirectory)) {
+            this.rTree = SQLRtreeManager.get(indexDirectory, this);
+            final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
+            searcher                  = new IndexSearcher(reader);
+            LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.toString());
+        } else {
+            throw new IOException("Trying to refresh an indexer on a unexisting directory.");
+        }
 
     }
 
