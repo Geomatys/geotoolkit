@@ -262,8 +262,7 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
         final J2DCanvasBuffered canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(canvasWidth, canvasHeight));
         canvas.applyTransform(objToDisp);
 
-        final RenderingContext2D context = new RenderingContext2D(canvas);
-        canvas.prepareContext(context, new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB).createGraphics(),
+        final RenderingContext2D context = canvas.prepareContext(new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB).createGraphics(),
                 new Rectangle(0, 0, canvasWidth, canvasHeight));
 
         final ProjectedGeometry pg = new ProjectedGeometry(context);

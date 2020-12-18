@@ -18,14 +18,12 @@ package org.geotoolkit.display.canvas;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.util.Date;
 import java.util.Optional;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * Informations relative to a rendering in progress. A {@code RenderingContext} instance is
@@ -107,54 +105,6 @@ public interface RenderingContext {
      * @see Graphics2D#setTransform
      */
     void setGraphicsCRS(CoordinateReferenceSystem crs) throws TransformException;
-
-    /**
-     * Returns an affine transform between two coordinate reference systems. This method is
-     * equivalents to the following pseudo-code, except for the exception to be thrown if the
-     * transform is not an instance of {@link AffineTransform}.
-     *
-     * <blockquote><pre>
-     * return (AffineTransform) {@link #getMathTransform getMathTransform}(sourceCRS, targetCRS);
-     * </pre></blockquote>
-     *
-     * @param sourceCRS The source coordinate reference system.
-     * @param targetCRS The target coordinate reference system.
-     * @return An affine transform from {@code sourceCRS} to {@code targetCRS}.
-     * @throws FactoryException if the transform can't be created or is not affine.
-     *
-     * @see #getMathTransform
-     * @see BufferedCanvas2D#getImplHint
-     */
-    AffineTransform getAffineTransform(final CoordinateReferenceSystem sourceCRS,
-                                              final CoordinateReferenceSystem targetCRS)
-                                              throws FactoryException;
-
-    /**
-     * Returns a transform between two coordinate systems.
-     * The arguments are usually (but not necessarily) one of the following pairs:
-     *
-     * <ul>
-     *   <li><p><b>({@code graphicCRS}, {@linkplain #objectiveCRS}):</b><br>
-     *       Arbitrary transform from the data CRS (used internally in a {@link GraphicPrimitive2D})
-     *       to the objective CRS (set in {@link BufferedCanvas2D}).</p></li>
-     *
-     *   <li><p><b>({@link #objectiveCRS}, {@link #displayCRS}):</b><br>
-     *       {@linkplain AffineTransform Affine transform} from the objective CRS in "real world"
-     *       units (usually metres or degrees) to the display CRS in dots (usually 1/72 of inch).
-     *       This transform changes every time the zoom (or map scale) changes.</p></li>
-     * </ul>
-     *
-     * @param sourceCRS The source coordinate reference system.
-     * @param targetCRS The target coordinate reference system.
-     * @return A transform from {@code sourceCRS} to {@code targetCRS}.
-     * @throws FactoryException if the transformation can't be created.
-     *
-     * @see #getAffineTransform
-     * @see BufferedCanvas2D#getImplHint
-     */
-    MathTransform getMathTransform(final CoordinateReferenceSystem sourceCRS,
-                                          final CoordinateReferenceSystem targetCRS)
-                                          throws FactoryException;
 
     /**
      * Get the canvas monitor.

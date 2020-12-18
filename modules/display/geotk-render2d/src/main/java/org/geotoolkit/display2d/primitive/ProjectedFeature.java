@@ -18,14 +18,13 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.Collections;
 import java.util.logging.Level;
-import org.apache.sis.internal.storage.query.SimpleQuery;
 import java.util.stream.Stream;
+import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
 import org.geotoolkit.feature.FeatureExt;
@@ -52,13 +51,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
     private final boolean fullFeature;
-
-    public ProjectedFeature(final J2DCanvas canvas, final FeatureMapLayer layer, final Feature feature){
-        super(new RenderingContext2D(canvas),feature);
-        this.layer = layer;
-        canvas.prepareContext(getParameters(), null, null);
-        fullFeature = true;
-    }
 
     public ProjectedFeature(RenderingContext2D params) {
         this(params,null);
