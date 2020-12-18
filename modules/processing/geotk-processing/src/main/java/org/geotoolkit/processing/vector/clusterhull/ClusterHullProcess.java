@@ -18,11 +18,15 @@ import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
+import org.locationtech.jts.operation.overlay.OverlayOp;
+import org.locationtech.jts.geom.TopologyException;
+import org.locationtech.jts.precision.GeometryPrecisionReducer;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.lang.OutOfMemoryError;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.geotoolkit.processing.AbstractProcess;
 
@@ -40,6 +44,7 @@ import org.opengis.util.FactoryException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.locationtech.jts.geom.PrecisionModel;
 
 
 /**
@@ -57,8 +62,6 @@ import javax.measure.quantity.Length;
  * @author Maxime Gavens - décembre 2019
  */
 public class ClusterHullProcess extends AbstractProcess {
-
-    private static final GeometryFactory GF = new GeometryFactory();
 
     private int increment = 0;
 
@@ -128,33 +131,39 @@ public class ClusterHullProcess extends AbstractProcess {
      */
     private class WorkGeometry {
         int index;
-        Geometry source;
-        Geometry buffer;
-
+        //Geometry source;
+        Geometry proj;
+        
         WorkGeometry (final Geometry source) {
-            this.source = source;
-            try {
-                this.buffer = trs.transform(source);
-            } catch (TransformException ex) {
-                throw new RuntimeException(ex);
-            }
+            this(source, false);
         }
-        WorkGeometry (final Geometry source, final Geometry buffer) {
-            this.source = source;
-            this.buffer = buffer;
+
+        WorkGeometry (final Geometry source, final boolean isProj) {
+            if (isProj) {
+                this.proj = source;
+            } else {
+                try {
+                    this.proj = trs.transform(source);
+                } catch (TransformException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }            
         }
     }
 
     private class Cluster {
         Set<WorkGeometry> group;
+        Geometry out;
 
-        Cluster (final Set<WorkGeometry> group) {
+        Cluster (final Set<WorkGeometry> group, Geometry o) {
             this.group = group;
+            this.out = o;
         }
 
         Cluster (final WorkGeometry geom) {
             this.group = new HashSet<>();
             this.group.add(geom);
+            this.out = geom.proj.buffer(tolerance);
         }
 
         boolean isIntersect(final Cluster clust) {
@@ -172,19 +181,25 @@ public class ClusterHullProcess extends AbstractProcess {
             final Set<WorkGeometry> result = new HashSet<>();
             result.addAll(this.group);
             result.addAll(clust.group);
-            return new Cluster(result);
-        }
-
-        WorkGeometry getGeometryCollection() {
-            final int l = this.group.size();
-            final Geometry[] geoms = new Geometry[l];
-            int i = 0;
-            for (WorkGeometry wg: this.group) {
-                geoms[i] = wg.source;
-                i = i + 1;
+            try {
+                Geometry newout = OverlayOp.overlayOp(this.out, clust.out, OverlayOp.UNION);
+                return new Cluster(result, newout);
+            } catch (TopologyException ex) {
+                PrecisionModel pm = new PrecisionModel(10.0);
+                GeometryPrecisionReducer gpr = new GeometryPrecisionReducer(pm);
+                Geometry rp1 = gpr.reduce(this.out);
+                Geometry rp2 = gpr.reduce(clust.out);
+                Geometry newout = OverlayOp.overlayOp(rp1, rp2, OverlayOp.UNION);
+                return new Cluster(result, newout);
             }
-            Geometry result = GF.createGeometryCollection(geoms);
-            return new WorkGeometry(result);
+        }
+        
+        Geometry getResult() {
+            try {
+                return inv.transform(this.out);
+            } catch (TransformException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
@@ -199,26 +214,39 @@ public class ClusterHullProcess extends AbstractProcess {
      */
     private FeatureSet computeClusterHull(final FeatureSet inputFeatureSet) throws ProcessException {
         try {
+            Instant start = Instant.now();
+            System.out.println(start.toString());
             // Extract geometries set from featureSet and smooth geometries with Douglas Peucker algorithm
             Set<WorkGeometry> wgeometries = extractWorkGeometrySetAndApplyDouglasPeucker(inputFeatureSet);
+            
+            System.out.println("Init roadmap");
 
             initRoadmap(wgeometries);
+            
+            System.out.println("cast to cluster");
 
             Set<Cluster> clusters = castToClusterSet(wgeometries);
 
+            System.out.println("Apply the process");
+            
             // Apply the process
             ApplyClusterHull(clusters);
+            
+            System.out.println("Build result");
 
             // Build feature set result
             final FeatureType type = inputFeatureSet.getType();
             CoordinateReferenceSystem crs = FeatureExt.getCRS(type);
+            Instant end = Instant.now();
+            System.out.println(end.toString());
+            System.out.println(Duration.between(start, end));
             return toFeatureSet(this.clusters, crs);
         // Here OutOfMemoryError is catch cause input and treatment use a lot of memory
         } catch (DataStoreException | TransformException | OutOfMemoryError e) {
             throw new ProcessException(e.getMessage(), this, e);
         }
     }
-
+    
     private Set<Cluster> castToClusterSet(final Set<WorkGeometry> toCast) {
         Set<Cluster> result = new HashSet<>();
 
@@ -310,14 +338,8 @@ public class ClusterHullProcess extends AbstractProcess {
 
     private WorkGeometry customDouglasPeucker(final WorkGeometry toSmooth) {
         if (this.epsilon == null) return toSmooth;
-        final Geometry smoothed = DouglasPeuckerSimplifier.simplify(toSmooth.buffer, this.epsilon);
-
-        try {
-            final Geometry result = inv.transform(smoothed);
-            return new WorkGeometry(result, smoothed);
-        } catch (TransformException ex) {
-            throw new RuntimeException(ex);
-        }
+        final Geometry smoothed = DouglasPeuckerSimplifier.simplify(toSmooth.proj, this.epsilon);
+        return new WorkGeometry(smoothed, true);
     }
 
     private Double[] getMedianPoint(final FeatureSet fs) throws DataStoreException {
@@ -339,8 +361,6 @@ public class ClusterHullProcess extends AbstractProcess {
      * @throws TransformException
      */
     private void ApplyClusterHull(Set<Cluster> clustersRaw) throws TransformException {
-        System.out.println("length clustersRaw");
-        System.out.println(clustersRaw.size());
         if (clustersRaw.isEmpty()) return;
         Cluster first = clustersRaw.iterator().next();
         clustersRaw.remove(first);
@@ -362,22 +382,17 @@ public class ClusterHullProcess extends AbstractProcess {
             // first is a cluster on his own
             // apply buffer
             // add it within the global result
-            bufferizeAndSet(first);
+            set(first);
         }
         ApplyClusterHull(clustersRaw);
     }
 
     private boolean isSameCluster(final WorkGeometry wg1, final WorkGeometry wg2) {
-        return wg1.buffer.distance(wg2.buffer) <= this.tolerance;
+        return wg1.proj.distance(wg2.proj) <= this.tolerance;
     }
 
-    private void bufferizeAndSet(final Cluster clust) throws TransformException {
-        final WorkGeometry wg = clust.getGeometryCollection();
-        Geometry target = wg.buffer.buffer(this.tolerance);
-
-        this.clusters.add(inv.transform(target));
-        System.out.println("BUFFER");
-        System.out.println(this.clusters.size());
+    private void set(final Cluster clust) {
+        this.clusters.add(clust.getResult());
     }
 
     private FeatureSet toFeatureSet(final Set<Geometry> geometries, final CoordinateReferenceSystem crs) throws DataStoreException {
