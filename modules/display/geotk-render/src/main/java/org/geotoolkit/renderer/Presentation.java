@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.renderer;
 
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 
@@ -43,6 +44,13 @@ public interface Presentation {
      * @return MapLayer can be null if the presentation is not associated to a layer.
      */
     public MapLayer getLayer();
+
+    /**
+     * Returns the original resource providing the data for this presentation.
+     *
+     * @return Resource, may be different from the layer resource if it is an aggregate.
+     */
+    public Resource getResource();
 
     /**
      * Returns the original feature having this presentation.

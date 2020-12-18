@@ -72,7 +72,6 @@ import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
@@ -81,6 +80,7 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.getCached;
+import static org.geotoolkit.display2d.GO2Utilities.mergeColors;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -90,8 +90,9 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.RenderingRules;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
@@ -100,8 +101,11 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
+import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -112,11 +116,6 @@ import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 import org.opengis.util.FactoryException;
-
-import static org.geotoolkit.display2d.GO2Utilities.mergeColors;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
-import org.geotoolkit.style.MutableStyle;
 
 /**
  * Default implementation of portrayal service.
@@ -476,7 +475,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 final Stream<Presentation> stream = present(canvasDef, sceneDef);
                 presWriter.write(canvasDef, sceneDef, stream, outStream);
 
-            } catch (IOException | DataStoreException ex) {
+            } catch (IOException ex) {
                 throw new PortrayalException(ex.getMessage(), ex);
             } finally {
                 if(outStream!=null && close){
@@ -777,8 +776,7 @@ public final class DefaultPortrayalService implements PortrayalService{
      * @param sceneDef
      * @return stream of Presentation instance.
      */
-    public static Stream<Presentation> present(final CanvasDef canvasDef,
-            final SceneDef sceneDef) throws PortrayalException, DataStoreException{
+    public static Stream<Presentation> present(final CanvasDef canvasDef, final SceneDef sceneDef) throws PortrayalException {
 
         Stream<Presentation> stream = Stream.empty();
 
@@ -790,8 +788,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final J2DCanvasBuffered canvas = new J2DCanvasBuffered(crs,
                 canvasDef.getDimension(),sceneDef.getHints());
         prepareCanvas(canvas, canvasDef, sceneDef);
-        final RenderingContext2D renderContext = new RenderingContext2D(canvas);
-        canvas.prepareContext(renderContext, img.createGraphics(), new Rectangle(canvasDef.getDimension()));
+        final RenderingContext2D renderContext = canvas.prepareContext(img.createGraphics(), new Rectangle(canvasDef.getDimension()));
 
         final MapContext context = sceneDef.getContext();
         final List<MapLayer> layers = context.layers();
@@ -805,7 +802,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return stream;
     }
 
-    public static Stream<Presentation> present(MapLayer layer, Resource resource, RenderingContext2D renderContext) throws DataStoreException, PortrayalException {
+    public static Stream<Presentation> present(MapLayer layer, Resource resource, RenderingContext2D renderContext) {
 
         final MutableStyle style = layer.getStyle();
 
@@ -813,13 +810,21 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         FeatureType type = null;
         if (resource instanceof FeatureSet) {
-            type = ((FeatureSet) resource).getType();
+            try {
+                type = ((FeatureSet) resource).getType();
+            } catch (DataStoreException ex) {
+                return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+            }
         } else if (resource instanceof GridCoverageResource) {
             type = null;
         } else if (resource instanceof Aggregate) {
-            //combine each component resource in the stream
-            for (Resource r : ((Aggregate) resource).components()) {
-                stream = Stream.concat(stream, present(layer, r, renderContext));
+            try {
+                //combine each component resource in the stream
+                for (Resource r : ((Aggregate) resource).components()) {
+                    stream = Stream.concat(stream, present(layer, r, renderContext));
+                }
+            } catch (DataStoreException ex) {
+                stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(layer, resource, null, ex)));
             }
             return stream;
         } else {
@@ -850,9 +855,13 @@ public final class DefaultPortrayalService implements PortrayalService{
                 }
                 if (groupRenderer != null) {
                     if (count > 1) {
-                        throw new PortrayalException("Group symbolizer (" + groupRenderer.getService().getSymbolizerClass().getSimpleName() + ") must be alone in a FeatureTypeStyle element." );
+                        stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(layer, resource, null,
+                                new PortrayalException("Group symbolizer ("
+                                        + groupRenderer.getService().getSymbolizerClass().getSimpleName()
+                                        + ") must be alone in a FeatureTypeStyle element." ))));
+                    } else {
+                        stream = Stream.concat(stream, groupRenderer.presentations(layer, resource));
                     }
-                    stream = Stream.concat(stream, groupRenderer.presentations(layer, resource));
                     continue;
                 }
             }
@@ -926,14 +935,14 @@ public final class DefaultPortrayalService implements PortrayalService{
                 }
 
                 //optimize
-                final Query query = RenderingRoutines.prepareQuery(renderContext, fs, layer, names, rules, symbolsMargin);
+                final Query query;
+                try {
+                    query = RenderingRoutines.prepareQuery(renderContext, fs, layer, names, rules, symbolsMargin);
+                    final Stream<Presentation> s = fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
+                        @Override
+                        public Stream<Presentation> apply(Feature feature) {
 
-                final Stream<Presentation> s = fs.subset(query).features(false).flatMap(new Function<Feature, Stream<Presentation>>() {
-                    @Override
-                    public Stream<Presentation> apply(Feature feature) {
-
-                        Stream<Presentation> stream = Stream.empty();
-                        try {
+                            Stream<Presentation> stream = Stream.empty();
                             boolean painted = false;
                             for (int i = 0; i < renderers.elseRuleIndex; i++) {
                                 final CachedRule rule = renderers.rules[i];
@@ -960,14 +969,15 @@ public final class DefaultPortrayalService implements PortrayalService{
                                     }
                                 }
                             }
-                        } catch (PortrayalException ex) {
-                            throw new BackingStoreException(ex);
-                        }
 
-                        return stream;
-                    }
-                });
-                stream = Stream.concat(stream, s);
+                            return stream;
+                        }
+                    });
+                    stream = Stream.concat(stream, s);
+                } catch (PortrayalException | DataStoreException ex) {
+                    stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(layer, resource, null, ex)));
+                }
+
             }
         }
 

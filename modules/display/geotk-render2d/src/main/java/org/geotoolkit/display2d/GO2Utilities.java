@@ -1586,7 +1586,7 @@ public final class GO2Utilities {
     }
 
     public static boolean mustPreserveAllProperties(final RenderingContext ctx) {
-        return ctx.getCanvas().getHint(GO2Hints.KEY_PRESERVE_PROPERTIES)
+        return ctx.getHint(GO2Hints.KEY_PRESERVE_PROPERTIES)
                 .filter(value -> value instanceof Boolean)
                 .map(value -> (Boolean) value)
                 .orElse(false);

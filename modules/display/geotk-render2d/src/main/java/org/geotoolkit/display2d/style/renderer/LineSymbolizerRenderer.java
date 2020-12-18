@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.geotoolkit.display2d.presentation.PointPresentation;
-import org.geotoolkit.display2d.presentation.ShapePresentation;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -29,10 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
+import org.geotoolkit.display2d.presentation.PointPresentation;
+import org.geotoolkit.display2d.presentation.ShapePresentation;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedGraphicStroke;
 import org.geotoolkit.display2d.style.CachedLineSymbolizer;
@@ -44,6 +42,8 @@ import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.geometry.jts.LineStringTranslator;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -64,18 +64,22 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) {
 
         final ProjectedGeometry projectedGeometry = new ProjectedGeometry(renderingContext);
         projectedGeometry.setDataGeometry(GO2Utilities.getGeometry(feature, symbol.getSource().getGeometry()), null);
 
         final Shape[] j2dShapes;
         float sizeCorrection = 1f;
-        if (dispGeom) {
-            j2dShapes = getShapes(projectedGeometry, feature, sizeCorrection);
-        } else {
-            sizeCorrection = (float) AffineTransforms2D.getScale(renderingContext.getObjectiveToDisplay());
-            j2dShapes = getShapes(projectedGeometry, feature, sizeCorrection);
+        try {
+            if (dispGeom) {
+                j2dShapes = getShapes(projectedGeometry, feature, sizeCorrection);
+            } else {
+                sizeCorrection = (float) AffineTransforms2D.getScale(renderingContext.getObjectiveToDisplay());
+                j2dShapes = getShapes(projectedGeometry, feature, sizeCorrection);
+            }
+        } catch (TransformException ex) {
+            return Stream.of(new ExceptionPresentation(layer, layer.getResource(), feature, ex));
         }
 
         if (j2dShapes == null) {
@@ -89,32 +93,23 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
         return presentations.stream();
     }
 
-    private Shape[] getShapes(ProjectedGeometry projectedGeometry, Object feature, float sizeCorrection) throws PortrayalException {
+    private Shape[] getShapes(ProjectedGeometry projectedGeometry, Object feature, float sizeCorrection) throws TransformException {
         final float offset = symbol.getOffset(feature, coeff) * sizeCorrection;
         final Shape[] j2dShapes;
         if (offset == 0) {
-            try {
-                j2dShapes = projectedGeometry.getDisplayShape();
-            } catch (TransformException ex) {
-                throw new PortrayalException("Could not calculate objective projected geometry",ex);
-            }
+            j2dShapes = projectedGeometry.getDisplayShape();
         } else {
-            try {
-                final Geometry[] geoms = projectedGeometry.getDisplayGeometryJTS();
-                j2dShapes = new Shape[geoms.length];
-                for (int i = 0; i < geoms.length; i++) {
-                    Geometry g = geoms[i];
-                    if (g instanceof LineString) {
-                        g = LineStringTranslator.translateLineString((LineString)g, offset);
-                    } else if(g instanceof MultiLineString) {
-                        g = LineStringTranslator.translateLineString((MultiLineString)g, offset);
-                    }
-                    j2dShapes[i] = new JTSGeometryJ2D(g);
-                    //TODO : clip geometry
+            final Geometry[] geoms = projectedGeometry.getDisplayGeometryJTS();
+            j2dShapes = new Shape[geoms.length];
+            for (int i = 0; i < geoms.length; i++) {
+                Geometry g = geoms[i];
+                if (g instanceof LineString) {
+                    g = LineStringTranslator.translateLineString((LineString)g, offset);
+                } else if(g instanceof MultiLineString) {
+                    g = LineStringTranslator.translateLineString((MultiLineString)g, offset);
                 }
-
-            } catch (TransformException ex) {
-                throw new PortrayalException("Could not calculate objective projected geometry",ex);
+                j2dShapes[i] = new JTSGeometryJ2D(g);
+                //TODO : clip geometry
             }
         }
         return j2dShapes;

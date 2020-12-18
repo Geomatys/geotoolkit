@@ -21,20 +21,17 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.text.NumberFormat;
 import java.util.logging.Level;
 import static javax.swing.SwingConstants.*;
+import org.apache.sis.measure.Units;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
-import org.apache.sis.measure.Units;
 
 /**
  * Java2D graphic object displaying a scalebar.
@@ -82,13 +79,8 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
 
         final Graphics2D g2d = context.getGraphics();
 
-        final double[] center;
-        try {
-            center = context.getCanvas().getObjectiveCenter().getCoordinate();
-        } catch (NoninvertibleTransformException | TransformException ex) {
-            Logging.getLogger("org.geotoolkit.display2d.ext.scalebar").log(Level.WARNING, null, ex);
-            return;
-        }
+        final double[] center = context.getGridGeometry2D().getExtent().getPointOfInterest();
+        context.getDisplayToObjective().transform(center, 0, center, 0, 1);
         final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
 
         final Rectangle bounds = context.getCanvasDisplayBounds();

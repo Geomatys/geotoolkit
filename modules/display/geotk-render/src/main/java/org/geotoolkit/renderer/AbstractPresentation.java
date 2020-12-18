@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.renderer;
 
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 
@@ -37,6 +38,7 @@ import org.opengis.feature.Feature;
 public abstract class AbstractPresentation implements Presentation {
 
     private MapLayer layer;
+    private Resource resource;
     private Feature feature;
 
     public AbstractPresentation() {
@@ -47,6 +49,11 @@ public abstract class AbstractPresentation implements Presentation {
         this.feature = feature;
     }
 
+    public AbstractPresentation(MapLayer layer, Resource resource, Feature feature) {
+        this.layer = layer;
+        this.resource = resource;
+        this.feature = feature;
+    }
     /**
      * Returns the original map layer the feature comes from.
      *
@@ -64,6 +71,15 @@ public abstract class AbstractPresentation implements Presentation {
      */
     public void setLayer(MapLayer layer) {
         this.layer = layer;
+    }
+
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     /**

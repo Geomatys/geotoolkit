@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.renderer.Presentation;
@@ -34,6 +33,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
@@ -52,7 +52,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Cached
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) {
 
         final float offset = symbol.getOffset(feature, coeff);
         final Shape[] shapes;
@@ -93,7 +93,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Cached
                 }
             }
         } catch (TransformException ex) {
-            throw new PortrayalException("Could not calculate projected geometry",ex);
+            return Stream.of(new ExceptionPresentation(layer, layer.getResource(), null, ex));
         }
 
         if (shapes == null) {

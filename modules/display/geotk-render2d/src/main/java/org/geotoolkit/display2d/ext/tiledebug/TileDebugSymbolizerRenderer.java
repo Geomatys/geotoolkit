@@ -38,7 +38,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.ShapePresentation;
 import org.geotoolkit.display2d.presentation.TextPresentation2;
@@ -48,6 +47,7 @@ import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
@@ -71,7 +71,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
 
         if (!(resource instanceof MultiResolutionResource)) {
             return Stream.empty();
@@ -217,7 +217,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
             }
 
         } catch (DataStoreException | TransformException | FactoryException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
+            presentations.add(new ExceptionPresentation(layer, resource, null, ex));
         }
 
         return presentations.stream();

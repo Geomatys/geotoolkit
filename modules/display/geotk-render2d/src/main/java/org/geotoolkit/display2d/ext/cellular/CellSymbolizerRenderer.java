@@ -39,10 +39,8 @@ import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -54,6 +52,8 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -87,7 +87,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
 
         if (symbol.getCachedRule() == null) {
             return Stream.empty();
@@ -102,7 +102,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         }
     }
 
-    private Stream<Presentation> presentations(MapLayer layer, FeatureSet fs) throws PortrayalException {
+    private Stream<Presentation> presentations(MapLayer layer, FeatureSet fs) {
 
         //calculate the cells
         final int cellSize = symbol.getSource().getCellSize();
@@ -210,7 +210,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 }
             }
         } catch (DataStoreException | IOException | TransformException ex) {
-            throw new PortrayalException(ex);
+            return Stream.of(new ExceptionPresentation(layer, fs, null, ex));
         }
 
         if (numericProperties == null) {
@@ -252,14 +252,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final MapLayer subLayer = MapBuilder.createLayer(subfs);
         subLayer.setStyle(GO2Utilities.STYLE_FACTORY.style(rule.symbolizers().toArray(new Symbolizer[0])));
 
-        try {
-            return DefaultPortrayalService.present(subLayer, subfs, renderingContext);
-        } catch (DataStoreException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
-        }
+        return DefaultPortrayalService.present(subLayer, subfs, renderingContext);
     }
 
-    private Stream<Presentation> presentations(MapLayer layer, final GridCoverageResource resource) throws PortrayalException {
+    private Stream<Presentation> presentations(MapLayer layer, final GridCoverageResource resource) {
 
         //adjust envelope, we need cells to start at crs 0,0 to avoid artifacts
         //when building tiles
@@ -280,7 +276,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             //no data on requested area
             return Stream.empty();
         } catch (Exception ex) {
-            throw new PortrayalException(ex);
+            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
         }
         if (coverage != null) {
             coverage = coverage.forConvertedValues(true);
@@ -328,7 +324,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 }
             }
         } catch (TransformException ex) {
-            throw new PortrayalException(ex);
+            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
         }
 
         //prepare the cell feature type
@@ -368,11 +364,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final MapLayer subLayer = MapBuilder.createLayer(fs);
         subLayer.setStyle(GO2Utilities.STYLE_FACTORY.style(rule.symbolizers().toArray(new Symbolizer[0])));
 
-        try {
-            return DefaultPortrayalService.present(subLayer, fs, renderingContext);
-        } catch (DataStoreException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
-        }
+        return DefaultPortrayalService.present(subLayer, fs, renderingContext);
     }
 
 }

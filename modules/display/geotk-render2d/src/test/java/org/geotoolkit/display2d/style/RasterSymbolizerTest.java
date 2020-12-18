@@ -19,11 +19,9 @@ package org.geotoolkit.display2d.style;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,14 +41,13 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -67,11 +64,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.luaj.vm2.ast.Exp;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;
@@ -407,15 +402,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
     }
 
     private static RenderingContext2D mockRenderingContext(final GridGeometry target) {
-        final RenderingContext2D ctx = new RenderingContext2D(new J2DCanvasBuffered(
-                target.getCoordinateReferenceSystem(),
-                new Dimension(
-                        Math.toIntExact(target.getExtent().getSize(0)),
-                        Math.toIntExact(target.getExtent().getSize(1))
-                )
-        ));
-        final Rectangle shape = new Rectangle(0, 0, 100, 100);
-        ctx.initParameters(target, target, new AffineTransform2D(1, 0, 0, 1, 0, 0), null, shape, shape, shape, shape, 20);
+        final RenderingContext2D ctx = new RenderingContext2D(target, new NeverFailMonitor());
         return ctx;
     }
 

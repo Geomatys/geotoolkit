@@ -31,31 +31,30 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
+import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
+import org.geotoolkit.display2d.container.J2DPainter;
+import org.geotoolkit.display2d.container.MapLayerJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.renderer.GroupPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.TransformException;
-
-import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display.container.GraphicContainer;
-import org.geotoolkit.display2d.GraphicVisitor;
-import org.geotoolkit.display2d.container.J2DPainter;
-import org.geotoolkit.display2d.container.MapLayerJ2D;
-import org.geotoolkit.renderer.GroupPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -63,8 +62,6 @@ import org.opengis.referencing.operation.MathTransform;
  * @module
  */
 public abstract class J2DCanvas extends AbstractCanvas2D{
-
-    protected final RenderingContext2D context2D = new RenderingContext2D(this);
 
     protected BackgroundPainter painter = null;
 
@@ -83,7 +80,6 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
     @Override
     public void dispose() {
         super.dispose();
-        context2D.dispose();
     }
 
     /**
@@ -92,8 +88,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
      * You may provide a null Graphic2D if you need to prepare a context for only a "hit"
      * operation.
      */
-    public RenderingContext2D prepareContext(final RenderingContext2D context,
-            final Graphics2D output, Shape paintingDisplayShape) {
+    public RenderingContext2D prepareContext(final Graphics2D output, Shape paintingDisplayShape) {
 
         final Shape canvasDisplayShape = getDisplayBounds();
 
@@ -135,7 +130,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
             dpi = 90;
         }
 
-        context.initParameters(
+        RenderingContext2D context = new RenderingContext2D(this,
                 getGridGeometry(),
                 getGridGeometry2D(),
                 objToDispCorner,
@@ -224,8 +219,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 
         if (container != null) {
 
-            final RenderingContext2D searchContext = context2D;
-            prepareContext(searchContext,null,null);
+            final RenderingContext2D searchContext = prepareContext(null,null);
 
             final SearchAreaJ2D searchMask = J2DCanvas.createSearchArea(searchContext, displayShape);
 
@@ -241,11 +235,11 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 
             for (final Graphic graphic : sorted) {
                 if (graphic instanceof MapLayerJ2D) {
-                    try (Stream<Presentation> presentations = ((MapLayerJ2D) graphic).paintLayer(context2D)) {
+                    try (Stream<Presentation> presentations = ((MapLayerJ2D) graphic).paintLayer(searchContext)) {
                         final Iterator<Presentation> iterator = presentations.iterator();
                         while (iterator.hasNext()) {
                             final Presentation presentation = iterator.next();
-                            visitHit(painter, searchMask, visitor, presentation);
+                            visitHit(searchContext, painter, searchMask, visitor, presentation);
                             if (visitor.isStopRequested()) {
                                 visitor.endVisit();
                                 return;
@@ -261,11 +255,11 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
         visitor.endVisit();
     }
 
-    private void visitHit(J2DPainter painter, SearchAreaJ2D searchMask, GraphicVisitor visitor, Presentation presentation) {
+    private void visitHit(RenderingContext2D context2D, J2DPainter painter, SearchAreaJ2D searchMask, GraphicVisitor visitor, Presentation presentation) {
         if (presentation instanceof GroupPresentation) {
             GroupPresentation gp = (GroupPresentation) presentation;
             for (Presentation p : gp.elements()) {
-                visitHit(painter, searchMask, visitor, p);
+                visitHit(context2D, painter, searchMask, visitor, p);
             }
         } else {
             if (painter.hit(context2D, searchMask, presentation)) {

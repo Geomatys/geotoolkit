@@ -43,6 +43,7 @@ import javax.swing.JLabel;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
@@ -495,10 +496,18 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
     private static class KMLGraphic extends GraphicJ2D {
         private final KmlCache cache;
         private RenderingContext2D context2d;
+        private MathTransform transform;
 
         private KMLGraphic(J2DCanvas canvas, Kml kml) {
             super(canvas);
             cache = new KmlCache(kml);
+        }
+
+        private MathTransform getCrs84Transform() throws FactoryException {
+            if (transform == null) {
+                transform = CRS.findOperation(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS(), null).getMathTransform();
+            }
+            return transform;
         }
 
         @Override
@@ -725,7 +734,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             org.locationtech.jts.geom.Geometry ls = null;
 
             try {
-                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
+                transform = getCrs84Transform();
                 ls = JTS.transform((org.locationtech.jts.geom.LineString) lineString, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -763,7 +772,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             org.locationtech.jts.geom.Geometry pol = null;
 
             try {
-                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
+                transform = getCrs84Transform();
                 pol = JTS.transform((org.locationtech.jts.geom.Polygon) polygon, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -801,7 +810,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             // MathTransform
             MathTransform transform;
             try {
-                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
+                transform = getCrs84Transform();
             } catch (FactoryException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
@@ -840,7 +849,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             org.locationtech.jts.geom.Geometry lr = null;
 
             try {
-                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
+                transform = getCrs84Transform();
                 lr = JTS.transform((org.locationtech.jts.geom.LinearRing) linearRing, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -874,8 +883,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             //Fixed to screen for ScrenOverlays
             if (!fixedToScreen) {
                 try {
-                    transform = context2d.getMathTransform(
-                            CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
+                    transform = getCrs84Transform();
                 } catch (FactoryException ex) {
                     context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                     return;
@@ -1013,16 +1021,6 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                 return;
             }
 
-            // MathTransform
-            MathTransform transform;
-
-            try {
-                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
-            } catch (FactoryException ex) {
-                context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
-                return;
-            }
-
             if (style != null) {
                 final LabelStyle labelStyle = style.getLabelStyle();
                 if (labelStyle != null) {
@@ -1061,7 +1059,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             MathTransform transform;
             final Graphics2D graphic = context2d.getGraphics();
             try {
-                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
+                transform = getCrs84Transform();
             } catch (FactoryException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
