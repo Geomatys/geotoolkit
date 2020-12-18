@@ -25,7 +25,6 @@ import org.locationtech.jts.precision.GeometryPrecisionReducer;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.time.Duration;
 import java.time.Instant;
 
 import org.geotoolkit.processing.AbstractProcess;
@@ -63,11 +62,9 @@ import org.locationtech.jts.geom.PrecisionModel;
  */
 public class ClusterHullProcess extends AbstractProcess {
 
-    private int increment = 0;
+    private int inSize = 0;
 
-    private int geomSize;
-
-    private int[] roadmap;
+    private boolean[][] roadmap;
 
     /**
      * Measure of tolerance used to compute cluster hull.
@@ -131,7 +128,6 @@ public class ClusterHullProcess extends AbstractProcess {
      */
     private class WorkGeometry {
         int index;
-        //Geometry source;
         Geometry proj;
         
         WorkGeometry (final Geometry source) {
@@ -167,9 +163,9 @@ public class ClusterHullProcess extends AbstractProcess {
         }
 
         boolean isIntersect(final Cluster clust) {
-            for (WorkGeometry wg1: this.group) {
-                for (WorkGeometry wg2: clust.group) {
-                    if (roadmap[toFlat(wg1.index, wg2.index)] == 1) {
+            for (WorkGeometry g1: this.group) {
+                for (WorkGeometry g2: clust.group) {
+                    if (roadmap[g1.index][g2.index]) {
                         return true;
                     }
                 }
@@ -185,6 +181,8 @@ public class ClusterHullProcess extends AbstractProcess {
                 Geometry newout = OverlayOp.overlayOp(this.out, clust.out, OverlayOp.UNION);
                 return new Cluster(result, newout);
             } catch (TopologyException ex) {
+                // It can happen when nodes are the same value AND a great precision
+                // Hack this by rounding coordinates to one decimal ( log10(10) )
                 PrecisionModel pm = new PrecisionModel(10.0);
                 GeometryPrecisionReducer gpr = new GeometryPrecisionReducer(pm);
                 Geometry rp1 = gpr.reduce(this.out);
@@ -193,7 +191,7 @@ public class ClusterHullProcess extends AbstractProcess {
                 return new Cluster(result, newout);
             }
         }
-        
+
         Geometry getResult() {
             try {
                 return inv.transform(this.out);
@@ -214,75 +212,48 @@ public class ClusterHullProcess extends AbstractProcess {
      */
     private FeatureSet computeClusterHull(final FeatureSet inputFeatureSet) throws ProcessException {
         try {
-            Instant start = Instant.now();
-            System.out.println(start.toString());
             // Extract geometries set from featureSet and smooth geometries with Douglas Peucker algorithm
-            Set<WorkGeometry> wgeometries = extractWorkGeometrySetAndApplyDouglasPeucker(inputFeatureSet);
-            
-            System.out.println("Init roadmap");
+            Set<Cluster> clusters = extractAndFormat(inputFeatureSet);
 
-            initRoadmap(wgeometries);
-            
-            System.out.println("cast to cluster");
+            // Compute all distances between WorkingGeometry, and keep if they are under the tolerance distance
+            initRoadmap(clusters);
 
-            Set<Cluster> clusters = castToClusterSet(wgeometries);
-
-            System.out.println("Apply the process");
-            
             // Apply the process
             ApplyClusterHull(clusters);
-            
-            System.out.println("Build result");
 
             // Build feature set result
             final FeatureType type = inputFeatureSet.getType();
             CoordinateReferenceSystem crs = FeatureExt.getCRS(type);
             Instant end = Instant.now();
-            System.out.println(end.toString());
-            System.out.println(Duration.between(start, end));
             return toFeatureSet(this.clusters, crs);
         // Here OutOfMemoryError is catch cause input and treatment use a lot of memory
         } catch (DataStoreException | TransformException | OutOfMemoryError e) {
             throw new ProcessException(e.getMessage(), this, e);
         }
     }
-    
-    private Set<Cluster> castToClusterSet(final Set<WorkGeometry> toCast) {
-        Set<Cluster> result = new HashSet<>();
 
-        for (WorkGeometry wg: toCast) {
-            result.add(new Cluster(wg));
-        }
-        return result;
-    }
+    private void initRoadmap(final Set<Cluster> clusters) {
+        this.roadmap = new boolean[this.inSize][this.inSize];
 
-    private void initRoadmap(final Set<WorkGeometry> geoms) {
-        this.geomSize = geoms.size();
-        int s2 = this.geomSize * this.geomSize;
-        this.roadmap = new int[s2];
-
-        for (WorkGeometry wg1: geoms) {
-            for (WorkGeometry wg2: geoms) {
-                fillCellRoadmap(wg1, wg2);
+        for (Cluster c1: clusters) {
+            for (Cluster c2: clusters) {
+                // must have one element each
+                WorkGeometry g1 = c1.group.iterator().next();
+                WorkGeometry g2 = c2.group.iterator().next();
+                fillRoadmap(g1, g2);
             }
         }
     }
 
-    private void fillCellRoadmap(final WorkGeometry wg1, final WorkGeometry wg2) {
-        final int i = wg1.index;
-        final int j = wg2.index;
-        if (i == j) return;
-        final int flat = toFlat(i, j);
-        final int revFlat = toFlat(j, i);
+    private void fillRoadmap(final WorkGeometry g1, final WorkGeometry g2) {
+        final int i1 = g1.index;
+        final int i2 = g2.index;
 
-        if (isSameCluster(wg1, wg2)) {
-            this.roadmap[flat] = 1;
-            this.roadmap[revFlat] = 1;
+        if (i1 == i2) return;
+        if (isSameCluster(g1, g2)) {
+            this.roadmap[i1][i2] = true;
+            this.roadmap[i2][i1] = true;
         }
-    }
-
-    private int toFlat(final int i, final int j) {
-        return i + j * this.geomSize;
     }
 
     private void initConversion(final Double tolerance, final Double epsilon, Unit<Length> unit) {
@@ -314,29 +285,23 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private Set<WorkGeometry> extractWorkGeometrySetAndApplyDouglasPeucker(final FeatureSet fs) throws DataStoreException, TransformException {
+    private Set<Cluster> extractAndFormat(final FeatureSet fs) throws DataStoreException, TransformException {
         String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
         try (Stream<Feature> stream = fs.features(false)) {
-            Set<WorkGeometry> geometries = stream
+            Set<Cluster> clusters = stream
                     .map(f -> f.getPropertyValue(geomName))
                     .filter(value -> value instanceof Geometry)
-                    .map(value -> {
-                        WorkGeometry wgeom = new WorkGeometry((Geometry) value);
-                        wgeom = customDouglasPeucker(wgeom);
-                        return giveIndex(wgeom);
-                    })
+                    .map(value -> (Geometry) value)
+                    .map(WorkGeometry::new)
+                    .map(this::douglasPeucker)
+                    .peek(g -> { g.index = this.inSize; this.inSize += 1; })
+                    .map(Cluster::new)
                     .collect(Collectors.toSet());
-            return geometries;
+            return clusters;
         }
     }
 
-    private WorkGeometry giveIndex(final WorkGeometry notIndexed) {
-        notIndexed.index = this.increment;
-        this.increment += 1;
-        return notIndexed;
-    }
-
-    private WorkGeometry customDouglasPeucker(final WorkGeometry toSmooth) {
+    private WorkGeometry douglasPeucker(final WorkGeometry toSmooth) {
         if (this.epsilon == null) return toSmooth;
         final Geometry smoothed = DouglasPeuckerSimplifier.simplify(toSmooth.proj, this.epsilon);
         return new WorkGeometry(smoothed, true);

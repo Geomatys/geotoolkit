@@ -1,16 +1,8 @@
 package org.geotoolkit.processing.vector.clusterhull;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.stream.Stream;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import org.apache.sis.measure.Units;
@@ -27,10 +19,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.geotoolkit.storage.geojson.GeoJSONProvider;
 import org.geotoolkit.storage.geojson.GeoJSONStore;
-import org.geotoolkit.storage.geojson.GeoJSONStreamWriter;
 import org.junit.Test;
 import org.locationtech.jts.geom.*;
-import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
@@ -133,21 +123,6 @@ public class ClusterHullTest extends AbstractProcessTest {
         );
     }
 
-    @Test
-    public void mainTest0() throws DataStoreException, NoSuchIdentifierException, ProcessException, URISyntaxException {
-        final FeatureSet featureSet = buildFeatureSet("camp-test.json");
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GeotkProcessingRegistry.NAME,"vector:clusterhull");
-        ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        in.parameter("feature_set_in").setValue(featureSet);
-        in.parameter("tolerance_value").setValue(1000);
-        in.parameter("smoothing_epsilon").setValue(10);
-        //in.parameter("tolerance_unit").setValue(unit);
-        org.geotoolkit.process.Process proc = desc.createProcess(in);
-        //Feature set out
-        final FeatureSet out = (FeatureSet) proc.call().parameter("feature_set_out").getValue();
-        write(out, "camp-test_result.json");
-    }
-
     private void testClusterHullBasic(String filename_in, String filename_expected, Double tolerance, Unit<Length> unit) throws URISyntaxException, DataStoreException, NoSuchIdentifierException, ProcessException {
         testClusterHullBasic(filename_in, filename_expected, tolerance, null, unit);
     }
@@ -163,7 +138,6 @@ public class ClusterHullTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
         //Feature set out
         final FeatureSet out = (FeatureSet) proc.call().parameter("feature_set_out").getValue();
-        write(out, filename_expected);
         //Feature set expected
         final FeatureSet expected = buildFeatureSet(filename_expected);
         //Test
@@ -195,28 +169,5 @@ public class ClusterHullTest extends AbstractProcessTest {
         if (resource == null) throw new RuntimeException("No resource found for "+resourceName);
         final URI uri = resource.toURI();
         return new GeoJSONStore(new GeoJSONProvider(), uri, 7);
-    }
-
-    private void write(FeatureSet fs, String file) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        try (GeoJSONStreamWriter featureWriter = new GeoJSONStreamWriter(baos, fs.getType(), JsonEncoding.UTF8, 4, true);
-             Stream<Feature> stream = fs.features(false)) {
-            Iterator<Feature> iterator = stream.iterator();
-            while (iterator.hasNext()) {
-                Feature next = iterator.next();
-                Feature neww = featureWriter.next();
-                FeatureExt.copy(next, neww, false);
-                featureWriter.write();
-            }
-        } catch (DataStoreException ex) {
-            System.out.println(ex.toString());
-        }
-
-        try(OutputStream outputStream = new FileOutputStream(file)) {
-            baos.writeTo(outputStream);
-        } catch (IOException e) {
-            System.out.println(e.toString());
-        }
     }
 }
