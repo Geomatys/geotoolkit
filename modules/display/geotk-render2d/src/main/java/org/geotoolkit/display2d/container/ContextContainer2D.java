@@ -17,32 +17,19 @@
 package org.geotoolkit.display2d.container;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.Utilities;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.container.DefaultGraphicContainer;
 import org.geotoolkit.display.container.MapContextContainer;
 import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
-import org.opengis.display.canvas.CanvasState;
 import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.Displacement;
 import org.opengis.style.Fill;
@@ -65,8 +52,6 @@ import org.opengis.style.Symbolizer;
 public class ContextContainer2D extends DefaultGraphicContainer implements MapContextContainer {
 
     public static final String CONTEXT_PROPERTY = "context";
-
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.container");
 
     public static final Style DEFAULT_SELECTION_STYLE;
     public static final Symbolizer DEFAULT_LINE_SELECTION_SYMBOL;
@@ -137,48 +122,6 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
         if(root!=null){
             root.dispose();
         }
-    }
-
-    /**
-     * Returns an envelope that completely encloses all {@linkplain ReferencedGraphic#getEnvelope()
-     * graphic envelopes} managed by this canvas. Note that there is no guarantee that the returned
-     * envelope is the smallest bounding box that encloses the canvas, only that the canvas lies
-     * entirely within the indicated envelope.
-     * <p>
-     * This envelope is different from
-     * {@link CanvasState#getCenter() }, since the later returns
-     * an envelope that encloses only the <em>visible</em> canvas area and is scale-dependent. This
-     * {@code ReferencedCanvas.getEnvelope()} method is scale-independent. Both envelopes are equal
-     * if the scale is chosen in such a way that all graphics fit exactly in the canvas visible
-     * area.
-     *
-     * @return The envelope for this canvas in terms of {@linkplain AbstractCanvas#getObjectiveCRS() objective CRS}.
-     */
-    public GeneralEnvelope getGraphicsEnvelope(){
-        CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
-        try {
-            crs = CRSUtilities.getCRS2D(crs);
-            final MapContext context = getContext();
-            if(context != null){
-                Envelope env = context.getBounds(true);
-
-                if(env != null){
-                    if ( Utilities.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ) {
-                        return new GeneralEnvelope(env);
-                    } else {
-                        return (GeneralEnvelope) Envelopes.transform(env, crs);
-                    }
-                }
-            }
-
-        } catch (IOException | TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-
-        GeneralEnvelope genv = new GeneralEnvelope(crs);
-        genv.setToInfinite();
-
-        return genv;
     }
 
     /**
