@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
@@ -552,12 +553,9 @@ public class RenderingContext2D implements RenderingContext{
         reset();
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public J2DCanvas getCanvas(){
-        return canvas;
+    public Optional<?> getHint(RenderingHints.Key key) {
+        return canvas.getHint(key);
     }
 
     /**

@@ -17,8 +17,10 @@
 package org.geotoolkit.display.canvas;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.util.Date;
+import java.util.Optional;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -61,11 +63,11 @@ import org.opengis.util.FactoryException;
 public interface RenderingContext {
 
     /**
-     * Returns the canvas who created this renderingContext.
-     *
-     * @return current rendering canvas
+     * Search internal hints for a value associated to provided key.
+     * @param key The key to get a value for. Must not be null
+     * @return Value found for given key, if any.
      */
-    Canvas getCanvas();
+    Optional<?> getHint(final RenderingHints.Key key);
 
     /**
      * Returns the rendering objective CRS. this may not be at all time
