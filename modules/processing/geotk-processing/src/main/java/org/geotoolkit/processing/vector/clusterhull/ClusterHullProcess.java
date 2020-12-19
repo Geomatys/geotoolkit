@@ -43,6 +43,7 @@ import org.opengis.util.FactoryException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.PrecisionModel;
 
 
@@ -159,7 +160,7 @@ public class ClusterHullProcess extends AbstractProcess {
         Cluster (final WorkGeometry geom) {
             this.group = new HashSet<>();
             this.group.add(geom);
-            this.out = geom.proj.buffer(tolerance);
+            this.out = customBuffer(geom.proj);
         }
 
         boolean isIntersect(final Cluster clust) {
@@ -299,6 +300,39 @@ public class ClusterHullProcess extends AbstractProcess {
                     .collect(Collectors.toSet());
             return clusters;
         }
+    }
+    
+    private Geometry customBuffer(Geometry geom) {
+        if (geom.getCoordinates().length < 1000) {
+            return geom.buffer(tolerance);
+        } else {
+            return splitBufferAndMerge(geom);
+        }
+    }
+    
+    private Geometry splitBufferAndMerge(Geometry tooLarge) {
+        Coordinate[] coords = tooLarge.getCoordinates();
+        // first fragment
+        Coordinate[] ff = new Coordinate[]{coords[0], coords[1]};
+        Geometry r = geometryFactory.createLineString(ff).buffer(tolerance);
+        
+        for (int i = 1; i < coords.length - 1; i++) {
+            Coordinate[] fragment = new Coordinate[]{coords[i], coords[i+1]};
+            Geometry buff = geometryFactory.createLineString(fragment).buffer(tolerance);
+            
+            // union
+            try {
+                r = OverlayOp.overlayOp(r, buff, OverlayOp.UNION);
+            } catch (TopologyException ex) {
+                // It can happen when nodes are the same value AND with great precision
+                // Hack this by rounding coordinates to one decimal ( log10(10) )
+                final GeometryPrecisionReducer gpr = new GeometryPrecisionReducer(new PrecisionModel(10.0));
+                final Geometry rp1 = gpr.reduce(r);
+                final Geometry rp2 = gpr.reduce(buff);
+                r = OverlayOp.overlayOp(rp1, rp2, OverlayOp.UNION);
+            }
+        }
+        return r;
     }
 
     private WorkGeometry douglasPeucker(final WorkGeometry toSmooth) {
