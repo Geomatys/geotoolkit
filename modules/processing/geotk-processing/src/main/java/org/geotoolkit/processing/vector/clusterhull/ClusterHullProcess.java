@@ -18,14 +18,11 @@ import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
-import org.locationtech.jts.operation.overlay.OverlayOp;
-import org.locationtech.jts.geom.TopologyException;
-import org.locationtech.jts.precision.GeometryPrecisionReducer;
+import org.locationtech.jts.operation.union.UnaryUnionOp;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.time.Instant;
 
 import org.geotoolkit.processing.AbstractProcess;
 
@@ -44,7 +41,6 @@ import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.PrecisionModel;
 
 
 /**
@@ -65,7 +61,7 @@ public class ClusterHullProcess extends AbstractProcess {
 
     private int inSize = 0;
 
-    private boolean[][] roadmap;
+    private int[][] roadmap;
 
     /**
      * Measure of tolerance used to compute cluster hull.
@@ -130,7 +126,7 @@ public class ClusterHullProcess extends AbstractProcess {
     private class WorkGeometry {
         int index;
         Geometry proj;
-        
+
         WorkGeometry (final Geometry source) {
             this(source, false);
         }
@@ -144,29 +140,26 @@ public class ClusterHullProcess extends AbstractProcess {
                 } catch (TransformException ex) {
                     throw new RuntimeException(ex);
                 }
-            }            
+            }
         }
     }
 
     private class Cluster {
-        Set<WorkGeometry> group;
-        Geometry out;
-
-        Cluster (final Set<WorkGeometry> group, Geometry o) {
-            this.group = group;
-            this.out = o;
-        }
+        List<WorkGeometry> group;
 
         Cluster (final WorkGeometry geom) {
-            this.group = new HashSet<>();
+            this.group = new ArrayList<>();
             this.group.add(geom);
-            this.out = customBuffer(geom.proj);
+        }
+
+        Cluster (final List<WorkGeometry> group) {
+            this.group = group;
         }
 
         boolean isIntersect(final Cluster clust) {
             for (WorkGeometry g1: this.group) {
                 for (WorkGeometry g2: clust.group) {
-                    if (roadmap[g1.index][g2.index]) {
+                    if (computeDistance(g1, g2)) {
                         return true;
                     }
                 }
@@ -174,28 +167,48 @@ public class ClusterHullProcess extends AbstractProcess {
             return false;
         }
 
+        boolean computeDistance(final WorkGeometry g1, final WorkGeometry g2) {
+            final int i1 = g1.index;
+            final int i2 = g2.index;
+
+            // mémoïsation of distance calculation
+            if (roadmap[i1][i2] == -1) {
+                if (isSameCluster(g1, g2)) {
+                    roadmap[i1][i2] = 1;
+                    roadmap[i2][i1] = 1;
+                } else {
+                    roadmap[i1][i2] = 0;
+                    roadmap[i2][i1] = 0;
+                }
+            }
+            return roadmap[i1][i2] == 1 ? true : false;
+        }
+
         Cluster merge(final Cluster clust) {
-            final Set<WorkGeometry> result = new HashSet<>();
+            final List<WorkGeometry> result = new ArrayList<>();
+
             result.addAll(this.group);
             result.addAll(clust.group);
-            try {
-                Geometry newout = OverlayOp.overlayOp(this.out, clust.out, OverlayOp.UNION);
-                return new Cluster(result, newout);
-            } catch (TopologyException ex) {
-                // It can happen when nodes are the same value AND a great precision
-                // Hack this by rounding coordinates to one decimal ( log10(10) )
-                PrecisionModel pm = new PrecisionModel(10.0);
-                GeometryPrecisionReducer gpr = new GeometryPrecisionReducer(pm);
-                Geometry rp1 = gpr.reduce(this.out);
-                Geometry rp2 = gpr.reduce(clust.out);
-                Geometry newout = OverlayOp.overlayOp(rp1, rp2, OverlayOp.UNION);
-                return new Cluster(result, newout);
-            }
+            return new Cluster(result);
         }
 
         Geometry getResult() {
+            // create a geometry of dimension 2
+            Geometry result = geometryFactory.createEmpty(2);
+
+            for (WorkGeometry wg: this.group) {
+                // bufferize the geometry
+                final Geometry buff = customBuffer(wg.proj);
+
+                // assemble them with jts union
+                final List<Geometry> u = new ArrayList<>();
+                u.add(result);
+                u.add(buff);
+                result = UnaryUnionOp.union(u);
+            }
+            // retrieve geospatial coordinates
             try {
-                return inv.transform(this.out);
+                return inv.transform(result);
             } catch (TransformException ex) {
                 throw new RuntimeException(ex);
             }
@@ -217,7 +230,7 @@ public class ClusterHullProcess extends AbstractProcess {
             Set<Cluster> clusters = extractAndFormat(inputFeatureSet);
 
             // Compute all distances between WorkingGeometry, and keep if they are under the tolerance distance
-            initRoadmap(clusters);
+            initRoadmap();
 
             // Apply the process
             ApplyClusterHull(clusters);
@@ -225,7 +238,6 @@ public class ClusterHullProcess extends AbstractProcess {
             // Build feature set result
             final FeatureType type = inputFeatureSet.getType();
             CoordinateReferenceSystem crs = FeatureExt.getCRS(type);
-            Instant end = Instant.now();
             return toFeatureSet(this.clusters, crs);
         // Here OutOfMemoryError is catch cause input and treatment use a lot of memory
         } catch (DataStoreException | TransformException | OutOfMemoryError e) {
@@ -233,27 +245,11 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private void initRoadmap(final Set<Cluster> clusters) {
-        this.roadmap = new boolean[this.inSize][this.inSize];
-
-        for (Cluster c1: clusters) {
-            for (Cluster c2: clusters) {
-                // must have one element each
-                WorkGeometry g1 = c1.group.iterator().next();
-                WorkGeometry g2 = c2.group.iterator().next();
-                fillRoadmap(g1, g2);
-            }
-        }
-    }
-
-    private void fillRoadmap(final WorkGeometry g1, final WorkGeometry g2) {
-        final int i1 = g1.index;
-        final int i2 = g2.index;
-
-        if (i1 == i2) return;
-        if (isSameCluster(g1, g2)) {
-            this.roadmap[i1][i2] = true;
-            this.roadmap[i2][i1] = true;
+    private void initRoadmap() {
+        // fill the roadmap with the value -1
+        this.roadmap = new int[this.inSize][this.inSize];
+        for (int i = 0; i < this.inSize; i++) {
+            Arrays.fill(roadmap[i], -1);
         }
     }
 
@@ -301,7 +297,7 @@ public class ClusterHullProcess extends AbstractProcess {
             return clusters;
         }
     }
-    
+
     private Geometry customBuffer(Geometry geom) {
         if (geom.getCoordinates().length < 1000) {
             return geom.buffer(tolerance);
@@ -309,28 +305,22 @@ public class ClusterHullProcess extends AbstractProcess {
             return splitBufferAndMerge(geom);
         }
     }
-    
+
     private Geometry splitBufferAndMerge(Geometry tooLarge) {
-        Coordinate[] coords = tooLarge.getCoordinates();
+        final Coordinate[] coords = tooLarge.getCoordinates();
         // first fragment
-        Coordinate[] ff = new Coordinate[]{coords[0], coords[1]};
+        final Coordinate[] ff = new Coordinate[]{coords[0], coords[1]};
         Geometry r = geometryFactory.createLineString(ff).buffer(tolerance);
-        
+
         for (int i = 1; i < coords.length - 1; i++) {
-            Coordinate[] fragment = new Coordinate[]{coords[i], coords[i+1]};
-            Geometry buff = geometryFactory.createLineString(fragment).buffer(tolerance);
-            
+            final Coordinate[] fragment = new Coordinate[]{ coords[i], coords[i + 1] };
+            final Geometry buff = geometryFactory.createLineString(fragment).buffer(tolerance);
+
             // union
-            try {
-                r = OverlayOp.overlayOp(r, buff, OverlayOp.UNION);
-            } catch (TopologyException ex) {
-                // It can happen when nodes are the same value AND with great precision
-                // Hack this by rounding coordinates to one decimal ( log10(10) )
-                final GeometryPrecisionReducer gpr = new GeometryPrecisionReducer(new PrecisionModel(10.0));
-                final Geometry rp1 = gpr.reduce(r);
-                final Geometry rp2 = gpr.reduce(buff);
-                r = OverlayOp.overlayOp(rp1, rp2, OverlayOp.UNION);
-            }
+            final List<Geometry> u = new ArrayList<>();
+            u.add(r);
+            u.add(buff);
+            r = UnaryUnionOp.union(u);
         }
         return r;
     }
