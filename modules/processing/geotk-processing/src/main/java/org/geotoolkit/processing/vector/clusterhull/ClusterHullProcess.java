@@ -59,9 +59,9 @@ import org.locationtech.jts.geom.Coordinate;
  */
 public class ClusterHullProcess extends AbstractProcess {
 
-    private int inSize = 0;
-
     private int[][] roadmap;
+
+    private List<WorkGeometry> geomSet;
 
     /**
      * Measure of tolerance used to compute cluster hull.
@@ -124,7 +124,6 @@ public class ClusterHullProcess extends AbstractProcess {
      * Its interest is to limit the number of projection performs during the process (useful for distance, buffer, Douglas-Peucker)
      */
     private class WorkGeometry {
-        int index;
         Geometry proj;
 
         WorkGeometry (final Geometry source) {
@@ -145,21 +144,24 @@ public class ClusterHullProcess extends AbstractProcess {
     }
 
     private class Cluster {
-        List<WorkGeometry> group;
+        Set<Integer> group;
+        Geometry out;
 
-        Cluster (final WorkGeometry geom) {
-            this.group = new ArrayList<>();
-            this.group.add(geom);
+        Cluster (final Integer index) {
+            this.group = new HashSet<>();
+            this.group.add(index);
+            this.out = customBuffer(geomSet.get(index).proj);
         }
 
-        Cluster (final List<WorkGeometry> group) {
+        Cluster (final Set<Integer> group, final Geometry out) {
             this.group = group;
+            this.out = out;
         }
 
         boolean isIntersect(final Cluster clust) {
-            for (WorkGeometry g1: this.group) {
-                for (WorkGeometry g2: clust.group) {
-                    if (computeDistance(g1, g2)) {
+            for (int i1: this.group) {
+                for (int i2: clust.group) {
+                    if (computeDistance(i1, i2)) {
                         return true;
                     }
                 }
@@ -167,9 +169,9 @@ public class ClusterHullProcess extends AbstractProcess {
             return false;
         }
 
-        boolean computeDistance(final WorkGeometry g1, final WorkGeometry g2) {
-            final int i1 = g1.index;
-            final int i2 = g2.index;
+        boolean computeDistance(final int i1, final int i2) {
+            WorkGeometry g1 = geomSet.get(i1);
+            WorkGeometry g2 = geomSet.get(i2);
 
             // mémoïsation of distance calculation
             if (roadmap[i1][i2] == -1) {
@@ -185,30 +187,22 @@ public class ClusterHullProcess extends AbstractProcess {
         }
 
         Cluster merge(final Cluster clust) {
-            final List<WorkGeometry> result = new ArrayList<>();
+            final Set<Integer> groups = new HashSet<>();
+            final Set<Geometry> united = new HashSet<>();
 
-            result.addAll(this.group);
-            result.addAll(clust.group);
-            return new Cluster(result);
+            groups.addAll(this.group);
+            groups.addAll(clust.group);
+
+            united.add(this.out);
+            united.add(clust.out);
+
+            return new Cluster(groups, UnaryUnionOp.union(united));
         }
 
         Geometry getResult() {
-            // create a geometry of dimension 2
-            Geometry result = geometryFactory.createEmpty(2);
-
-            for (WorkGeometry wg: this.group) {
-                // bufferize the geometry
-                final Geometry buff = customBuffer(wg.proj);
-
-                // assemble them with jts union
-                final List<Geometry> u = new ArrayList<>();
-                u.add(result);
-                u.add(buff);
-                result = UnaryUnionOp.union(u);
-            }
             // retrieve geospatial coordinates
             try {
-                return inv.transform(result);
+                return inv.transform(this.out);
             } catch (TransformException ex) {
                 throw new RuntimeException(ex);
             }
@@ -227,13 +221,13 @@ public class ClusterHullProcess extends AbstractProcess {
     private FeatureSet computeClusterHull(final FeatureSet inputFeatureSet) throws ProcessException {
         try {
             // Extract geometries set from featureSet and smooth geometries with Douglas Peucker algorithm
-            Set<Cluster> clusters = extractAndFormat(inputFeatureSet);
+            extractAndFormat(inputFeatureSet);
 
             // Compute all distances between WorkingGeometry, and keep if they are under the tolerance distance
             initRoadmap();
 
             // Apply the process
-            ApplyClusterHull(clusters);
+            ApplyClusterHull(initCluster());
 
             // Build feature set result
             final FeatureType type = inputFeatureSet.getType();
@@ -245,10 +239,20 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
+    private Set<Cluster> initCluster() {
+        Set<Cluster> clusters = new HashSet<>();
+
+        for (int i = 0; i < this.geomSet.size(); i++) {
+            clusters.add(new Cluster(i));
+        }
+        return clusters;
+    }
+
     private void initRoadmap() {
         // fill the roadmap with the value -1
-        this.roadmap = new int[this.inSize][this.inSize];
-        for (int i = 0; i < this.inSize; i++) {
+        int len = this.geomSet.size();
+        this.roadmap = new int[len][len];
+        for (int i = 0; i < len; i++) {
             Arrays.fill(roadmap[i], -1);
         }
     }
@@ -282,19 +286,16 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private Set<Cluster> extractAndFormat(final FeatureSet fs) throws DataStoreException, TransformException {
+    private void extractAndFormat(final FeatureSet fs) throws DataStoreException, TransformException {
         String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
         try (Stream<Feature> stream = fs.features(false)) {
-            Set<Cluster> clusters = stream
+            this.geomSet = stream
                     .map(f -> f.getPropertyValue(geomName))
                     .filter(value -> value instanceof Geometry)
                     .map(value -> (Geometry) value)
                     .map(WorkGeometry::new)
                     .map(this::douglasPeucker)
-                    .peek(g -> { g.index = this.inSize; this.inSize += 1; })
-                    .map(Cluster::new)
-                    .collect(Collectors.toSet());
-            return clusters;
+                    .collect(Collectors.toList());
         }
     }
 
