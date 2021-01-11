@@ -205,10 +205,9 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
         final long time = System.currentTimeMillis();
         int nbEntries = 0;
-        try {
-            final IndexWriterConfig conf = new IndexWriterConfig(analyzer);
-            final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
-            final String serviceID       = getServiceID();
+        final IndexWriterConfig conf = new IndexWriterConfig(analyzer);
+        final String serviceID       = getServiceID();
+        try (final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf)) {
 
             resetTree();
             nbEntries = toIndex.size();
@@ -217,13 +216,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                     indexDocument(writer, entry);
                 } else {
                      LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
-                     stopIndexation(writer, serviceID);
+                     stopIndexation(serviceID);
                      return;
                 }
             }
-            // writer.optimize(); no longer justified
-            writer.close();
-
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
 
@@ -242,12 +238,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     public void createIndex() throws IndexingException {
         LOGGER.log(logLevel, "(light memory) Creating lucene index please wait...");
 
-        final long time  = System.currentTimeMillis();
-        int nbEntries      = 0;
-        try {
-            final IndexWriterConfig conf       = new IndexWriterConfig(analyzer);
-            final IndexWriter writer           = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
-            final String serviceID             = getServiceID();
+        final long time               = System.currentTimeMillis();
+        int nbEntries                 = 0;
+        final IndexWriterConfig conf  = new IndexWriterConfig(analyzer);
+        final String serviceID        = getServiceID();
+        try (final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf)) {
 
             resetTree();
             LOGGER.log(logLevel, "starting indexing...");
@@ -256,14 +251,17 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 final Iterator<E> entries = getEntryIterator();
                 while (entries.hasNext()) {
                     if (!stopIndexing && !indexationToStop.contains(serviceID)) {
-
-                        final E entry = entries.next();
-                        indexDocument(writer, entry);
+                        try {
+                            final E entry = entries.next();
+                            indexDocument(writer, entry);
+                        } catch (IndexingException ex) {
+                            LOGGER.warning("Error while indexing document. moving to next.");
+                        }
                         nbEntries++;
 
                     } else {
                          LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
-                         stopIndexation(writer, serviceID);
+                         stopIndexation( serviceID);
                          return;
                     }
                 }
@@ -284,7 +282,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                         }
                     } else {
                          LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
-                         stopIndexation(writer, serviceID);
+                         stopIndexation(serviceID);
                          return;
                     }
                 }
@@ -292,8 +290,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                     ((CloseableIterator)identifiers).close();
                 }
             }
-            // writer.optimize(); no longer justified
-            writer.close();
 
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
@@ -313,11 +309,17 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param writer An Lucene index writer.
      * @param meta The object to index.
      */
-    protected void indexDocument(final IndexWriter writer, final E meta) throws IndexingException, IOException {
-        final int docId = writer.getDocStats().maxDoc;
-        //adding the document in a specific model. in this case we use a MDwebDocument.
-        writer.addDocument(createDocument(meta, docId));
-        LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
+    protected void indexDocument(final IndexWriter writer, final E meta) throws IndexingException {
+        try {
+            if (meta != null) {
+                final int docId = writer.getDocStats().maxDoc;
+                //adding the document in a specific model. in this case we use a MDwebDocument.
+                writer.addDocument(createDocument(meta, docId));
+                LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
+            }
+        } catch (IOException ex) {
+            throw new IndexingException("Error while writing document into index", ex);
+        }
     }
 
     /**
@@ -358,9 +360,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         stopIndexing = true;
     }
 
-    private void stopIndexation(final IndexWriter writer, final String serviceID) throws IOException {
-        // writer.optimize(); no longer justified
-        writer.close();
+    private void stopIndexation(final String serviceID) throws IOException {
         IOUtilities.deleteRecursively(getFileDirectory());
         if (indexationToStop.contains(serviceID)) {
             indexationToStop.remove(serviceID);
@@ -423,12 +423,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             }
 
             final IndexWriterConfig config = new IndexWriterConfig(analyzer);
-            final IndexWriter writer       = new IndexWriter(dir, config);
-            writer.deleteDocuments(query);
-            LOGGER.log(logLevel, "Metadata: {0} removed from the index", identifier);
-
-            writer.commit();
-            writer.close();
+            try (final IndexWriter writer       = new IndexWriter(dir, config)) {
+                writer.deleteDocuments(query);
+                LOGGER.log(logLevel, "Metadata: {0} removed from the index", identifier);
+                writer.commit();
+            }
 
         } catch (CorruptIndexException ex) {
             LOGGER.log(Level.WARNING, "CorruptIndexException while indexing document: " + ex.getMessage(), ex);
