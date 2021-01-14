@@ -389,16 +389,13 @@ public class ClusterHullProcess extends AbstractProcess {
     }
 
     private FeatureSet toFeatureSet(final Set<Geometry> geometries, final CoordinateReferenceSystem crs) throws DataStoreException {
-        final InMemoryStore store = new InMemoryStore();
         final FeatureType type = createSimpleType(crs);
-        List<Feature> features = new ArrayList<>();
-
-        WritableFeatureSet resource = (WritableFeatureSet) store.add(new DefiningFeatureSet(type, null));
+        final List<Feature> features = new ArrayList<>();
         for (Geometry geometry: geometries) {
             features.add(createDefaultFeatureFromGeometry(geometry, type));
         }
-        resource.add(features.iterator());
-        return resource;
+
+        return new InMemoryFeatureSet(type, features);
     }
 
     private Feature createDefaultFeatureFromGeometry(final Geometry geometry, final FeatureType type) {
