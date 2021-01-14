@@ -364,7 +364,6 @@ public class ClusterHullProcess extends AbstractProcess {
     }
 
     private WorkGeometry douglasPeucker(final WorkGeometry toSmooth) {
-        if (this.epsilon == null) return toSmooth;
         final Geometry smoothed = DouglasPeuckerSimplifier.simplify(toSmooth.proj, this.epsilon);
         return new WorkGeometry(smoothed, true);
     }
