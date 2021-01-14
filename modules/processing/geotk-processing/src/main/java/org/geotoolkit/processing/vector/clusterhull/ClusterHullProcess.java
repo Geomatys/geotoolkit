@@ -289,13 +289,16 @@ public class ClusterHullProcess extends AbstractProcess {
     private void extractAndFormat(final FeatureSet fs) throws DataStoreException, TransformException {
         String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
         try (Stream<Feature> stream = fs.features(false)) {
-            this.geomSet = stream
+            Stream<WorkGeometry> tmp = stream
                     .map(f -> f.getPropertyValue(geomName))
                     .filter(value -> value instanceof Geometry)
                     .map(value -> (Geometry) value)
-                    .map(WorkGeometry::new)
-                    .map(this::douglasPeucker)
-                    .collect(Collectors.toList());
+                    .map(WorkGeometry::new):
+            if (epsilon != null && epsilon > 1e-7) {
+                final double simplificationEpsilon = epsilon;
+                tmp = tmp.map(wg -> douglasPeucker(wg, simplificationEpsilon);
+            }
+            this.geomSet = tmp.collect(Collectors.toList());
         }
     }
 
