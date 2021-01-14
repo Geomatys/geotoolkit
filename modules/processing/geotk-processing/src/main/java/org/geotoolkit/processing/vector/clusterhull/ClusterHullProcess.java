@@ -13,13 +13,10 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.memory.InMemoryStore;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
@@ -45,6 +42,7 @@ import org.opengis.util.FactoryException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.locationtech.jts.geom.Coordinate;
 
 
@@ -294,13 +292,15 @@ public class ClusterHullProcess extends AbstractProcess {
     private void extractAndFormat(final FeatureSet fs) throws DataStoreException, TransformException {
         String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
         try (Stream<Feature> stream = fs.features(false)) {
-            this.geomList = stream
+            Stream<WorkGeometry> tmp = stream
                     .map(f -> f.getPropertyValue(geomName))
                     .filter(value -> value instanceof Geometry)
                     .map(value -> (Geometry) value)
-                    .map(WorkGeometry::new)
-                    .map(this::douglasPeucker)
-                    .collect(Collectors.toList());
+                    .map(WorkGeometry::new);
+            if (epsilon != null && epsilon > 1e-7) {
+                tmp = tmp.map(this::douglasPeucker);
+            }
+            this.geomList = tmp.collect(Collectors.toList());
         }
     }
 
@@ -423,16 +423,13 @@ public class ClusterHullProcess extends AbstractProcess {
     }
 
     private FeatureSet toFeatureSet(final Set<Geometry> geometries, final CoordinateReferenceSystem crs) throws DataStoreException {
-        final InMemoryStore store = new InMemoryStore();
         final FeatureType type = createSimpleType(crs);
-        List<Feature> features = new ArrayList<>();
-
-        WritableFeatureSet resource = (WritableFeatureSet) store.add(new DefiningFeatureSet(type, null));
+        final List<Feature> features = new ArrayList<>();
         for (Geometry geometry: geometries) {
             features.add(createDefaultFeatureFromGeometry(geometry, type));
         }
-        resource.add(features.iterator());
-        return resource;
+
+        return new InMemoryFeatureSet(type, features);
     }
 
     private Feature createDefaultFeatureFromGeometry(final Geometry geometry, final FeatureType type) {
