@@ -17,6 +17,11 @@ import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 
@@ -58,10 +63,15 @@ import org.locationtech.jts.geom.Coordinate;
  * @author Maxime Gavens - décembre 2019
  */
 public class ClusterHullProcess extends AbstractProcess {
+    
+    /**
+     * Used to build the featureSet result.
+     */
+    private static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
     private int[][] roadmap;
 
-    private List<WorkGeometry> geomSet;
+    private List<WorkGeometry> geomList;
 
     /**
      * Measure of tolerance used to compute cluster hull.
@@ -91,11 +101,6 @@ public class ClusterHullProcess extends AbstractProcess {
      * according with central meridian and origin of latitude for the inverse of Lambert CRS projection.
      */
     private GeometryCSTransformer inv;
-
-    /**
-     * Used to build the featureSet result.
-     */
-    private static GeometryFactory geometryFactory = new GeometryFactory();
 
     /**
      * Default constructor.
@@ -147,10 +152,10 @@ public class ClusterHullProcess extends AbstractProcess {
         Set<Integer> group;
         Geometry out;
 
-        Cluster (final Integer index) {
+        Cluster (final Integer index) throws ProcessException {
             this.group = new HashSet<>();
             this.group.add(index);
-            this.out = customBuffer(geomSet.get(index).proj);
+            this.out = customBuffer(geomList.get(index).proj);
         }
 
         Cluster (final Set<Integer> group, final Geometry out) {
@@ -170,8 +175,8 @@ public class ClusterHullProcess extends AbstractProcess {
         }
 
         boolean computeDistance(final int i1, final int i2) {
-            WorkGeometry g1 = geomSet.get(i1);
-            WorkGeometry g2 = geomSet.get(i2);
+            WorkGeometry g1 = geomList.get(i1);
+            WorkGeometry g2 = geomList.get(i2);
 
             // mémoïsation of distance calculation
             if (roadmap[i1][i2] == -1) {
@@ -183,7 +188,7 @@ public class ClusterHullProcess extends AbstractProcess {
                     roadmap[i2][i1] = 0;
                 }
             }
-            return roadmap[i1][i2] == 1 ? true : false;
+            return roadmap[i1][i2] == 1;
         }
 
         Cluster merge(final Cluster clust) {
@@ -239,10 +244,10 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private Set<Cluster> initCluster() {
+    private Set<Cluster> initCluster() throws ProcessException {
         Set<Cluster> clusters = new HashSet<>();
 
-        for (int i = 0; i < this.geomSet.size(); i++) {
+        for (int i = 0; i < this.geomList.size(); i++) {
             clusters.add(new Cluster(i));
         }
         return clusters;
@@ -250,7 +255,7 @@ public class ClusterHullProcess extends AbstractProcess {
 
     private void initRoadmap() {
         // fill the roadmap with the value -1
-        int len = this.geomSet.size();
+        int len = this.geomList.size();
         this.roadmap = new int[len][len];
         for (int i = 0; i < len; i++) {
             Arrays.fill(roadmap[i], -1);
@@ -289,7 +294,7 @@ public class ClusterHullProcess extends AbstractProcess {
     private void extractAndFormat(final FeatureSet fs) throws DataStoreException, TransformException {
         String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
         try (Stream<Feature> stream = fs.features(false)) {
-            this.geomSet = stream
+            this.geomList = stream
                     .map(f -> f.getPropertyValue(geomName))
                     .filter(value -> value instanceof Geometry)
                     .map(value -> (Geometry) value)
@@ -299,23 +304,55 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private Geometry customBuffer(Geometry geom) {
+    private Geometry customBuffer(Geometry geom) throws ProcessException {
         if (geom.getCoordinates().length < 1000) {
-            return geom.buffer(tolerance);
+            return geom.buffer(tolerance, 4);
         } else {
-            return splitBufferAndMerge(geom);
+            if (geom instanceof GeometryCollection) {
+                return this.customBufferCollection((GeometryCollection) geom);
+            } else {
+                return this.customBufferSimple(geom);
+            }
         }
     }
 
-    private Geometry splitBufferAndMerge(Geometry tooLarge) {
+    private Geometry customBufferCollection(GeometryCollection collection) throws ProcessException {
+        Geometry result = GEOMETRY_FACTORY.createEmpty(2);
+
+        for (int i = 0; i < collection.getNumGeometries(); i++) {
+            Geometry g = collection.getGeometryN(i);
+            Geometry buff = g.getCoordinates().length < 1000 ? g.buffer(tolerance, 4) : this.customBufferSimple(g);
+
+            // union
+            final List<Geometry> u = new ArrayList<>();
+            u.add(result);
+            u.add(buff);
+            result = UnaryUnionOp.union(u);
+        }
+        return result;
+    }
+
+    private Geometry customBufferSimple(Geometry geom) throws ProcessException {
+        if (geom instanceof Point) {
+            return geom.buffer(tolerance, 4);
+        } else if (geom instanceof LineString) {
+            return this.bufferLargeLineString((LineString) geom);
+        } else if (geom instanceof Polygon) {
+            return this.bufferLargeLineString(((Polygon) geom).getExteriorRing());
+        } else {
+            throw new ProcessException("Unsupported geometry type for custom buffer operation:" + geom.getGeometryType(), this);
+        }
+    }
+
+    private Geometry bufferLargeLineString(LineString tooLarge) {
         final Coordinate[] coords = tooLarge.getCoordinates();
         // first fragment
         final Coordinate[] ff = new Coordinate[]{coords[0], coords[1]};
-        Geometry r = geometryFactory.createLineString(ff).buffer(tolerance);
+        Geometry r = GEOMETRY_FACTORY.createLineString(ff).buffer(tolerance, 4);
 
         for (int i = 1; i < coords.length - 1; i++) {
             final Coordinate[] fragment = new Coordinate[]{ coords[i], coords[i + 1] };
-            final Geometry buff = geometryFactory.createLineString(fragment).buffer(tolerance);
+            final Geometry buff = GEOMETRY_FACTORY.createLineString(fragment).buffer(tolerance, 4);
 
             // union
             final List<Geometry> u = new ArrayList<>();
@@ -401,7 +438,7 @@ public class ClusterHullProcess extends AbstractProcess {
     private Feature createDefaultFeatureFromGeometry(final Geometry geometry, final FeatureType type) {
         final Feature feature = type.newInstance();
 
-        feature.setPropertyValue("geometry", geometryFactory.createGeometry(geometry));
+        feature.setPropertyValue("geometry", GEOMETRY_FACTORY.createGeometry(geometry));
         return feature;
     }
 
