@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.style;
 
 import java.util.stream.Stream;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
@@ -41,7 +40,7 @@ public class MokSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedMokS
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) {
         called++;
         return Stream.empty();
     }

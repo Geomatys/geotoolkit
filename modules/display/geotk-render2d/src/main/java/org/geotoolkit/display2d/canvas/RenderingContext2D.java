@@ -26,20 +26,27 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
+import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.referencing.provider.Affine;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.crs.DefaultDerivedCRS;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
@@ -50,6 +57,7 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -63,6 +71,10 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -76,6 +88,14 @@ import org.opengis.util.FactoryException;
  * @module
  */
 public class RenderingContext2D implements RenderingContext{
+
+    /**
+     * The operation method used by {@link #getDisplayCRS()}.
+     * This is a temporary constant, as we will probably need to replace the creation
+     * of a {@link DefaultDerivedCRS} by something else. After that replacement, this
+     * constant will be removed.
+     */
+    private static final Affine DISPLAY_TO_OBJECTIVE_OPERATION = new Affine();
 
     /**
      * 50pixels ensure large strokes of graphics won't show on the map.
@@ -93,11 +113,6 @@ public class RenderingContext2D implements RenderingContext{
     private int current = DISPLAY_TRS;
 
     public final GeometryFactory GF = new GeometryFactory();
-
-    /**
-     * The originating canvas.
-     */
-    private final J2DCanvas canvas;
 
     /**
      * The graphics handle to use for painting. This graphics is set by {@link BufferedCanvas2D}
@@ -173,6 +188,7 @@ public class RenderingContext2D implements RenderingContext{
      * The label renderer. Shall be created only once.
      */
     private LabelRenderer labelRenderer = null;
+    private Class labelRendererClass = null;
 
     /**
      * List of coefficients from "Unit" to Objective CRS.
@@ -203,6 +219,8 @@ public class RenderingContext2D implements RenderingContext{
      * It is used only to filter SE rules.
      */
     private double seScale = 1;
+
+    private final Hints hints = new Hints();
 
     private final Date[] temporalRange = new Date[2];
     private final Double[] elevationRange = new Double[2];
@@ -242,11 +260,7 @@ public class RenderingContext2D implements RenderingContext{
      *
      * @param canvas        The canvas which creates this rendering context.
      */
-    public RenderingContext2D(final J2DCanvas canvas) {
-        this.canvas = canvas;
-    }
-
-    public void initParameters(GridGeometry gridGeometry, GridGeometry gridGeometry2d, final AffineTransform2D objToDisp, final CanvasMonitor monitor,
+    public RenderingContext2D(J2DCanvas canvas, GridGeometry gridGeometry, GridGeometry gridGeometry2d, final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
             final Shape canvasDisplayShape, final Shape canvasObjectiveShape, final double dpi){
         this.gridGeometry = gridGeometry;
@@ -266,6 +280,7 @@ public class RenderingContext2D implements RenderingContext{
                 .setTransform(objectiveToDisplay);
 
         this.labelRenderer = null;
+        this.labelRendererClass = (Class)canvas.getRenderingHint(GO2Hints.KEY_LABEL_RENDERER_CLASS);
 
         this.coeffs.clear();
         //set the Pixel coeff = 1
@@ -492,6 +507,118 @@ public class RenderingContext2D implements RenderingContext{
             this.objectiveJTSEnvelope.expandBy(50);
         }
 
+        this.hints.putAll(canvas.getHints(true));
+    }
+
+    public RenderingContext2D(GridGeometry gridGeometry, CanvasMonitor monitor) {
+        this.gridGeometry = gridGeometry;
+
+        //extract 2d grid
+        final int[] space2d = gridGeometry.getExtent().getSubspaceDimensions(2);
+        this.gridGeometry2d = gridGeometry.reduce(space2d);
+
+        this.canvasObjectiveBBox = gridGeometry.getEnvelope();
+        this.objectiveCRS = gridGeometry.getCoordinateReferenceSystem();
+        this.objectiveCRS2D = gridGeometry2d.getCoordinateReferenceSystem();
+        this.displayToObjective = (AffineTransform2D) gridGeometry2d.getGridToCRS(PixelInCell.CELL_CENTER);
+        try {
+            this.objectiveToDisplay = displayToObjective.inverse();
+        } catch (NoninvertibleTransformException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+        this.monitor = monitor;
+        ((CoordinateSequenceMathTransformer)this.objToDisplayTransformer.getCSTransformer())
+                .setTransform(objectiveToDisplay);
+
+        //set the Pixel coeff = 1
+        this.coeffs.put(Units.POINT, 1f);
+        /*
+         * TODO: will need a way to avoid the cast below. In my understanding, DerivedCRS may not be the appropriate
+         *       CRS to create after all, because in ISO 19111 a DerivedCRS is more than just a base CRS with a math
+         *       transform. A DerivedCRS may also "inherit" some characteritics of the base CRS. For example if the
+         *       base CRS is a VerticalCRS, then the DerivedCRS may also implement VerticalCRS.
+         *
+         *       I'm not yet sure what should be the appropriate kind of CRS to create here. ImageCRS? EngineeringCRS?
+         *       How to express the relationship to the base CRS is also not yet determined.
+         */
+        final SingleCRS objCRS2D = (SingleCRS) getObjectiveCRS2D();
+        final Map<String,?> name = Collections.singletonMap(DefaultDerivedCRS.NAME_KEY, "Derived - "+objCRS2D.getName().toString());
+        this.displayCRS = DefaultDerivedCRS.create(name, objCRS2D,
+                new DefaultConversion(name, DISPLAY_TO_OBJECTIVE_OPERATION, getObjectiveToDisplay(), null),
+                objCRS2D.getCoordinateSystem());
+
+        //calculate canvas shape/bounds values ---------------------------------
+        final GridExtent extent = gridGeometry2d.getExtent();
+        this.canvasDisplayShape = new Rectangle2D.Double(extent.getLow(0), extent.getLow(1), extent.getSize(0), extent.getSize(1));
+        final Rectangle2D canvasDisplayBounds = canvasDisplayShape.getBounds2D();
+        this.canvasDisplaybounds = canvasDisplayBounds.getBounds();
+        this.canvasObjectiveShape = displayToObjective.createTransformedShape(canvasDisplayShape);
+        this.displayClipRect = (Rectangle2D) canvasDisplaybounds.clone();
+        this.displayClipRect.setRect(
+                displayClipRect.getX()-CLIP_PIXEL_MARGIN,
+                displayClipRect.getY()-CLIP_PIXEL_MARGIN,
+                displayClipRect.getWidth()+2*CLIP_PIXEL_MARGIN,
+                displayClipRect.getHeight()+2*CLIP_PIXEL_MARGIN);
+        this.displayClip = JTS.toGeometry(canvasDisplaybounds);
+
+        final Rectangle2D canvasObjectiveBounds = canvasObjectiveShape.getBounds2D();
+
+        //calculate the objective bbox with there temporal and elevation parameters ----
+        this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
+        this.canvasObjectiveBBox2DB = new BoundingBox(canvasObjectiveBBox2D);
+
+        //calculate the resolution -----------------------------------------------
+        this.dpi = 90;
+        this.resolution = new double[2]; //-- explicitely exprime resolution only into multidimensional CRS horizontal 2D part
+        this.resolution[0] = canvasObjectiveBounds.getWidth()/canvasDisplayBounds.getWidth();
+        this.resolution[1] = canvasObjectiveBounds.getHeight()/canvasDisplayBounds.getHeight();
+        adjustResolutionWithDPI(resolution);
+
+        //calculate painting shape/bounds values -------------------------------
+        this.paintingDisplayShape = canvasDisplayShape;
+        final Rectangle2D paintingDisplayBounds = paintingDisplayShape.getBounds2D();
+        this.paintingDisplaybounds = paintingDisplayBounds.getBounds();
+        this.paintingObjectiveShape = displayToObjective.createTransformedShape(paintingDisplayShape);
+
+        final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
+        this.paintingObjectiveBBox2D = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
+        this.paintingObjectiveBBox2DB = new BoundingBox(paintingObjectiveBBox2D);
+        this.paintingObjectiveBBox = new GeneralEnvelope(canvasObjectiveBBox);
+        ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(0, paintingObjectiveBounds.getMinX(), paintingObjectiveBounds.getMaxX());
+        ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(1, paintingObjectiveBounds.getMinY(), paintingObjectiveBounds.getMaxY());
+
+        try {
+            geoScale = computeGeographicScale(this.gridGeometry);
+        } catch (TransformException ex) {
+            //could not calculate the geographic scale.
+            geoScale = 1;
+            LOGGER.log(Level.WARNING, null, ex);
+        }
+
+        rotation = AffineTransforms2D.getRotation(objectiveToDisplay);
+
+        //set temporal and elevation range--------------------------------------
+        final Date[] temporal = computeTemporalRange(gridGeometry);
+        if(temporal != null){
+            temporalRange[0] = temporal[0];
+            temporalRange[1] = temporal[1];
+        }else{
+            Arrays.fill(temporalRange, null);
+        }
+
+        final Double[] elevation = computeElevationRange(gridGeometry);
+        if(elevation != null){
+            elevationRange[0] = elevation[0];
+            elevationRange[1] = elevation[1];
+        }else{
+            Arrays.fill(elevationRange, null);
+        }
+
+        //calculate the symbology encoding scale -------------------------------
+        seScale = CanvasUtilities.computeSEScale(
+            getCanvasObjectiveBounds2D(),
+            getObjectiveToDisplay(),
+            getCanvasDisplayBounds());
     }
 
     private static Point2D.Double toVector(Point2D.Double p0, Point2D.Double p1){
@@ -552,12 +679,9 @@ public class RenderingContext2D implements RenderingContext{
         reset();
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public J2DCanvas getCanvas(){
-        return canvas;
+    public Optional<?> getHint(RenderingHints.Key key) {
+        return Optional.ofNullable(hints.get(key));
     }
 
     /**
@@ -648,15 +772,27 @@ public class RenderingContext2D implements RenderingContext{
     }
 
     /**
-     * {@inheritDoc }
+     * Returns an affine transform between two coordinate reference systems. This method is
+     * equivalents to the following pseudo-code, except for the exception to be thrown if the
+     * transform is not an instance of {@link AffineTransform}.
+     *
+     * <blockquote><pre>
+     * return (AffineTransform) {@link #getMathTransform getMathTransform}(sourceCRS, targetCRS);
+     * </pre></blockquote>
+     *
+     * @param sourceCRS The source coordinate reference system.
+     * @param targetCRS The target coordinate reference system.
+     * @return An affine transform from {@code sourceCRS} to {@code targetCRS}.
+     * @throws FactoryException if the transform can't be created or is not affine.
+     *
+     * @see #getMathTransform
+     * @see BufferedCanvas2D#getImplHint
      */
-    @Override
-    public AffineTransform getAffineTransform(final CoordinateReferenceSystem sourceCRS,
+    private AffineTransform getAffineTransform(final CoordinateReferenceSystem sourceCRS,
                                               final CoordinateReferenceSystem targetCRS)
             throws FactoryException {
         final MathTransform mt =
-                canvas.getMathTransform(sourceCRS, targetCRS,
-                        RenderingContext2D.class, "getAffineTransform");
+                getMathTransform(sourceCRS, targetCRS);
         try {
             return (AffineTransform) mt;
         } catch (ClassCastException cause) {
@@ -665,14 +801,32 @@ public class RenderingContext2D implements RenderingContext{
     }
 
     /**
-     * {@inheritDoc }
+     * Returns a transform between two coordinate systems.
+     * The arguments are usually (but not necessarily) one of the following pairs:
+     *
+     * <ul>
+     *   <li><p><b>({@code graphicCRS}, {@linkplain #objectiveCRS}):</b><br>
+     *       Arbitrary transform from the data CRS (used internally in a {@link GraphicPrimitive2D})
+     *       to the objective CRS (set in {@link BufferedCanvas2D}).</p></li>
+     *
+     *   <li><p><b>({@link #objectiveCRS}, {@link #displayCRS}):</b><br>
+     *       {@linkplain AffineTransform Affine transform} from the objective CRS in "real world"
+     *       units (usually metres or degrees) to the display CRS in dots (usually 1/72 of inch).
+     *       This transform changes every time the zoom (or map scale) changes.</p></li>
+     * </ul>
+     *
+     * @param sourceCRS The source coordinate reference system.
+     * @param targetCRS The target coordinate reference system.
+     * @return A transform from {@code sourceCRS} to {@code targetCRS}.
+     * @throws FactoryException if the transformation can't be created.
+     *
+     * @see #getAffineTransform
+     * @see BufferedCanvas2D#getImplHint
      */
-    @Override
-    public MathTransform getMathTransform(final CoordinateReferenceSystem sourceCRS,
+    private MathTransform getMathTransform(final CoordinateReferenceSystem sourceCRS,
                                           final CoordinateReferenceSystem targetCRS)
             throws FactoryException {
-        return canvas.getMathTransform(sourceCRS, targetCRS,
-                RenderingContext2D.class, "getMathTransform");
+        return CRS.findOperation(sourceCRS, targetCRS, null).getMathTransform();
     }
 
     /**
@@ -683,12 +837,7 @@ public class RenderingContext2D implements RenderingContext{
      * @return RenderingContext2D
      */
     public RenderingContext2D create(final Graphics2D g2d) {
-        final RenderingContext2D context = new RenderingContext2D(canvas);
-        context.initParameters(canvas.getGridGeometry(),
-                canvas.getGridGeometry2D(),
-                objectiveToDisplay, monitor,
-                paintingDisplayShape, paintingObjectiveShape,
-                canvasDisplayShape, canvasObjectiveShape, dpi);
+        final RenderingContext2D context = new RenderingContext2D(getGridGeometry(), monitor);
         context.initGraphic(g2d);
         g2d.setRenderingHints(this.graphics.getRenderingHints());
         context.labelRenderer = getLabelRenderer(true);
@@ -702,11 +851,9 @@ public class RenderingContext2D implements RenderingContext{
      */
     public LabelRenderer getLabelRenderer(final boolean create) {
         if(labelRenderer == null && create){
-            Class candidate = (Class)canvas.getRenderingHint(GO2Hints.KEY_LABEL_RENDERER_CLASS);
-
-            if(candidate != null && LabelRenderer.class.isAssignableFrom(candidate)){
+            if(labelRendererClass != null && LabelRenderer.class.isAssignableFrom(labelRendererClass)){
                 try {
-                    labelRenderer = (LabelRenderer) candidate.newInstance();
+                    labelRenderer = (LabelRenderer) labelRendererClass.newInstance();
                     labelRenderer.setRenderingContext(this);
                 } catch (InstantiationException | IllegalAccessException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
@@ -810,21 +957,6 @@ public class RenderingContext2D implements RenderingContext{
         res[0] = (90/dpi) * res[0];
         res[1] = (90/dpi) * res[1];
         return res;
-    }
-
-    /**
-     * Returns the scale factor, or {@link Double#NaN NaN} if the scale is unknow. The scale factor
-     * is usually smaller than 1. For example for a 1:1000 scale, the scale factor will be 0.001.
-     * This scale factor takes in account the physical size of the rendering device (e.g. the
-     * screen size) if such information is available. Note that this scale can't be more accurate
-     * than the {@linkplain java.awt.GraphicsConfiguration#getNormalizingTransform() information
-     * supplied by the underlying system}.
-     *
-     * @return The rendering scale factor as a number between 0 and 1, or {@link Double#NaN}.
-     * @see CanvasController2D#getScale()
-     */
-    public double getScale() {
-        return canvas.getScale();
     }
 
     /**
@@ -1045,4 +1177,72 @@ public class RenderingContext2D implements RenderingContext{
         return sb.toString();
     }
 
+
+    /**
+     * Returns the geographic scale, in a ground unit manner, relation between map display size
+     * and real ground unit meters.
+     *
+     * @throws org.opengis.referencing.operation.TransformException
+     * @throws IllegalStateException If the affine transform used for conversion is in
+     *                               illegal state.
+     */
+    private final double computeGeographicScale(GridGeometry grid) throws TransformException {
+        double[] pointOfInterest = grid.getExtent().getPointOfInterest();
+        return CanvasUtilities.getGeographicScale(new Point2D.Double(pointOfInterest[0], pointOfInterest[1]),
+                getObjectiveToDisplay(), getObjectiveCRS2D());
+    }
+
+    private static final Date[] computeTemporalRange(GridGeometry grid) {
+        final int index = getTemporalAxisIndex(grid);
+        if (index >= 0) {
+            final Envelope envelope = grid.getEnvelope();
+            final Date[] range = new Date[2];
+            final double min = envelope.getMinimum(index);
+            final double max = envelope.getMaximum(index);
+            range[0] = Double.isInfinite(min) ? null : new Date((long)min);
+            range[1] = Double.isInfinite(max) ? null : new Date((long)max);
+            return range;
+        }
+        return null;
+    }
+
+    private static final Double[] computeElevationRange(GridGeometry grid) {
+        final int index = getElevationAxisIndex(grid);
+        if (index >= 0) {
+            final Envelope envelope = grid.getEnvelope();
+            return new Double[]{envelope.getMinimum(index), envelope.getMaximum(index)};
+        }
+        return null;
+    }
+
+    /**
+     * Find the elevation axis index or -1 if there is none.
+     */
+    private static final int getElevationAxisIndex(GridGeometry grid) {
+        final CoordinateReferenceSystem objCrs = grid.getCoordinateReferenceSystem();
+        final CoordinateSystem cs = objCrs.getCoordinateSystem();
+        for (int i = 0, n = cs.getDimension(); i < n; i++) {
+            final AxisDirection direction = cs.getAxis(i).getDirection();
+            final Unit unit = cs.getAxis(i).getUnit();
+            if (direction == AxisDirection.UP || direction == AxisDirection.DOWN && (unit != null && unit.isCompatible(Units.METRE))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Find the temporal axis index or -1 if there is none.
+     */
+    private static final int getTemporalAxisIndex(GridGeometry grid) {
+        final CoordinateReferenceSystem objCrs = grid.getCoordinateReferenceSystem();
+        final CoordinateSystem cs = objCrs.getCoordinateSystem();
+        for (int i = 0, n = cs.getDimension(); i < n; i++) {
+            final AxisDirection direction = cs.getAxis(i).getDirection();
+            if (direction == AxisDirection.FUTURE || direction == AxisDirection.PAST) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

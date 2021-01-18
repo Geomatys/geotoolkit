@@ -199,8 +199,9 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * @throws FactoryException If something goes wrong while analysing source geometry CRS or transform.
      */
     private static Optional<GridGeometry> reduceTo2D(final GridGeometry source) throws FactoryException {
-        if (source.getDimension() == 2) return Optional.of(source);
-        else if (source.isDefined(GridGeometry.EXTENT)) {
+        if (source.getDimension() == 2) {
+            return Optional.of(source);
+        } else if (source.isDefined(GridGeometry.EXTENT)) {
             final int[] space2d = source.getExtent().getSubspaceDimensions(2);
             return Optional.ofNullable(source.reduce(space2d));
         } else if (source.isDefined(GridGeometry.CRS | GridGeometry.GRID_TO_CRS)) {

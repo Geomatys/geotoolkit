@@ -17,17 +17,16 @@
 package org.geotoolkit.display2d.style;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.coverage.grid.GridExtent;
+import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
@@ -56,11 +55,8 @@ public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testMargin() throws FactoryException{
-
-        final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(1, 1));
-        final RenderingContext2D ctx = new RenderingContext2D(canvas);
-        final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        canvas.prepareContext(ctx, img.createGraphics(), new Rectangle(1, 1));
+        final GridGeometry grid = new GridGeometry(new GridExtent(1, 1), CRS.getDomainOfValidity(CommonCRS.WGS84.normalizedGeographic()), GridOrientation.HOMOTHETY);
+        final RenderingContext2D ctx = new RenderingContext2D(grid, null);
 
         {// NO ANCHOR, NO DISPLACEMENT
             final List<GraphicalSymbol> symbols = new ArrayList<>();

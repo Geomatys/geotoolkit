@@ -26,14 +26,14 @@ import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
@@ -57,7 +57,7 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
 
         if (!(resource instanceof FeatureSet)) {
             return Stream.empty();
@@ -112,7 +112,7 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
                     propsPie.vals.put(quarterKey, oldQuarter);
 
                 } catch (Exception ex) {
-                    throw new PortrayalException(ex);
+                    return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
                 }
             }
 
@@ -187,7 +187,7 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
             return Stream.empty();
 
         } catch (DataStoreException | IOException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
+            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
         }
     }
 

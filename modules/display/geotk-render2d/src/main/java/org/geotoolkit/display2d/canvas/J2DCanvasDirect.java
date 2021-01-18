@@ -61,7 +61,6 @@ public final class J2DCanvasDirect extends J2DCanvas {
     @Override
     public void dispose() {
         super.dispose();
-        context2D.dispose();
     }
 
     /**
@@ -75,11 +74,11 @@ public final class J2DCanvasDirect extends J2DCanvas {
         final Graphics2D output = g2d;
         output.addRenderingHints(getHints(true));
 
-        final RenderingContext2D context = prepareContext(context2D, output, null);
+        final RenderingContext2D context = prepareContext(output, null);
 
         //paint background if there is one.
         if (painter != null) {
-            painter.paint(context2D);
+            painter.paint(context);
         }
 
         boolean dataPainted = false;

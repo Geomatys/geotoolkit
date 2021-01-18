@@ -33,7 +33,6 @@ import javax.measure.UnitConverter;
 import javax.measure.Unit;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.renderer.Presentation;
@@ -47,6 +46,7 @@ import org.geotoolkit.display2d.style.renderer.LineSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.renderer.ExceptionPresentation;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -84,7 +84,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Feature feature) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Feature feature) {
 
         final ProjectedGeometry projGeom = new ProjectedGeometry(renderingContext);
         projGeom.setDataGeometry(GO2Utilities.getGeometry(feature, symbol.getSource().getGeometry()), null);
@@ -153,7 +153,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 portray(layer, walker, gradInfos, presentations);
             }
         } catch (TransformException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
+            presentations.add(new ExceptionPresentation(layer, layer.getResource(), feature, ex));
         } catch(IllegalArgumentException ex) {
             //may happen with geodetic calculator when geometry goes outside the valid envelope
         }

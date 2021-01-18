@@ -28,9 +28,7 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
@@ -38,6 +36,8 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
+import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.referencing.operation.TransformException;
 
@@ -54,7 +54,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
     }
 
     @Override
-    public Stream<Presentation> presentations(MapLayer layer, Resource resource) throws PortrayalException {
+    public Stream<Presentation> presentations(MapLayer layer, Resource resource) {
 
         if (!(resource instanceof GridCoverageResource)) {
             return Stream.empty();
@@ -67,7 +67,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         } catch (NoSuchDataException ex) {
             return Stream.empty();
         } catch (DataStoreException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
+            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
         }
 
         if (!Utilities.equalsIgnoreMetadata(CRS.getHorizontalComponent(dataCoverage.getCoordinateReferenceSystem()), renderingContext.getObjectiveCRS())) {
@@ -84,21 +84,13 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         final Map.Entry<FeatureSet, MutableStyle> entry;
         try {
             entry = symbol.getMasks(dataCoverage);
-        } catch (IOException ex) {
-            throw new PortrayalException(ex);
-        } catch (TransformException ex) {
-            throw new PortrayalException(ex);
+        } catch (IOException | TransformException ex) {
+            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
         }
 
         final MapLayer subLayer = MapBuilder.createLayer(entry.getKey());
         subLayer.setStyle(entry.getValue());
 
-        Stream<Presentation> presentations;
-        try {
-            presentations = DefaultPortrayalService.present(subLayer, entry.getKey(), renderingContext);
-        } catch (DataStoreException ex) {
-            throw new PortrayalException(ex.getMessage(), ex);
-        }
-        return presentations;
+        return DefaultPortrayalService.present(subLayer, entry.getKey(), renderingContext);
     }
 }

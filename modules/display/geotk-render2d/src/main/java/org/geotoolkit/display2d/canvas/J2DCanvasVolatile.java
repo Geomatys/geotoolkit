@@ -127,6 +127,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
         if(paintingDisplayShape == null) paintingDisplayShape = getDisplayBounds();
 
         final Graphics2D output;
+        final RenderingContext2D context2D;
 
         synchronized(LOCK){
             VolatileImage buffer;
@@ -180,7 +181,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
             output.setClip(paintingDisplayShape);
 
             //must be called outside of the lock or it may provoque a deadlock
-            prepareContext(context2D, output, paintingDisplayShape);
+            context2D = prepareContext(output, paintingDisplayShape);
 
             //paint background if there is one.
             if(painter != null){

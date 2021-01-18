@@ -139,7 +139,7 @@ public class DisplayElement {
      * @param create, set to true to force map creation if null.
      * @return Hints, can be null
      */
-    protected synchronized Hints getHints(boolean create){
+    public synchronized Hints getHints(boolean create){
         if(create && hints == null) hints = new Hints();
         return hints;
     }

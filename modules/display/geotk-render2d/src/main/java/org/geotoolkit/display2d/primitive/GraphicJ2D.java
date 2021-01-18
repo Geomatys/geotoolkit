@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.primitive.SpatialNode;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -58,6 +59,11 @@ public abstract class GraphicJ2D extends SpatialNode implements Presentation {
     @Override
     public MapLayer getLayer() {
         return layer;
+    }
+
+    @Override
+    public Resource getResource() {
+        return null;
     }
 
     /**

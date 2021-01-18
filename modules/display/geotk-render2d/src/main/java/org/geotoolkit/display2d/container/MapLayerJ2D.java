@@ -51,7 +51,6 @@ import org.geotoolkit.storage.event.StorageListener;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 
-import static org.geotoolkit.display2d.GO2Utilities.LOGGER;
 
 /**
  *
@@ -101,7 +100,7 @@ public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<S
             weakLayerListener.registerSource(layer);
             weakResourceListener.registerSource(layer.getResource());
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Cannot observe layer for changes.", e);
+            GO2Utilities.LOGGER.log(Level.WARNING, "Cannot observe layer for changes.", e);
         }
     }
 
