@@ -18,7 +18,6 @@ package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
-import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.geometry.ImmutableEnvelope;
@@ -29,14 +28,12 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.Query;
 import org.apache.sis.storage.Resource;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
-import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.geometry.Envelope;
 import org.opengis.style.StyleFactory;
@@ -70,8 +67,6 @@ public class MapLayer extends MapItem implements StyleListener {
 
     private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(
             new double[] {-180, -90}, new double[] {180, 90}, CommonCRS.WGS84.normalizedGeographic());
-
-    private final List<GraphicBuilder> builders = new CheckedArrayList<GraphicBuilder>(GraphicBuilder.class);
 
     private final StyleListener.Weak styleListener = new StyleListener.Weak(null, this);
 
@@ -272,37 +267,6 @@ public class MapLayer extends MapItem implements StyleListener {
         }
 
         return env;
-    }
-
-    /**
-     * Returns the living list of all graphic builders linked to this
-     * map layer.
-     *
-     * @return living list of graphic builders
-     */
-    public List<GraphicBuilder> graphicBuilders(){
-        return builders;
-    }
-
-    /**
-     * A layer may provide a graphic builder, this enable
-     * special representations, like wind arrows for coverages.
-     * A layer may have different builder for each kind of Graphic implementation.
-     * This enable the possibility to have custom made graphic representation
-     * and several builder, for 2D, 3D or else...
-     *
-     * @param type : the graphic type wanted
-     * @return graphicBuilder<? extends type> or null
-     */
-    public <T extends Presentation> GraphicBuilder<? extends T> getGraphicBuilder( final Class<T> type ){
-
-        for(GraphicBuilder builder : builders){
-            if(type.isAssignableFrom(builder.getGraphicType())){
-                return builder;
-            }
-        }
-
-        return null;
     }
 
     /**

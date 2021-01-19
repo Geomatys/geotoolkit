@@ -40,7 +40,6 @@ import org.geotoolkit.display2d.container.MapItemJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.color.ColorUtilities;
-import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -316,13 +315,6 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     private static SortedSet<Integer> extractColors(final MapLayer layer, final SortedSet<Integer> buffer){
-
-        final GraphicBuilder customBuilder = layer.getGraphicBuilder(GraphicJ2D.class);
-
-        if(customBuilder != null){
-            //this layer has a custom graphic builder, colors are unpredictable.
-            return null;
-        }
 
         final MutableStyle style = layer.getStyle();
         final ListingColorVisitor visitor = new ListingColorVisitor();

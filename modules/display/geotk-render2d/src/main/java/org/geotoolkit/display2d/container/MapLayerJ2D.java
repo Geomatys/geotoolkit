@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.beans.PropertyChangeEvent;
-import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,9 +39,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
-import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -155,14 +152,7 @@ public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<S
     }
 
     private Stream<Presentation> streamPresentations(final RenderingContext2D context) throws DataStoreException, PortrayalException {
-
-        final GraphicBuilder<? extends GraphicJ2D> builder = item.getGraphicBuilder(GraphicJ2D.class);
-        if (builder != null) {
-            final Collection<? extends GraphicJ2D> graphics = builder.createGraphics(item, canvas);
-            return (Stream) graphics.stream();
-        } else {
-            return DefaultPortrayalService.present(item, item.getResource(), context);
-        }
+        return DefaultPortrayalService.present(item, item.getResource(), context);
     }
 
     /**
@@ -171,20 +161,9 @@ public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<S
      */
     @Override
     public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, List<Graphic> graphics) {
-
-        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
-        if (builder != null) {
-            //this layer hasa special graphic rendering, use it instead of normal rendering
-            final Collection<GraphicJ2D> gras = builder.createGraphics(item, canvas);
-            for (final GraphicJ2D gra : gras) {
-                graphics = gra.getGraphicAt(context, mask, graphics);
-            }
-            return graphics;
-        } else {
-            //since this is a custom layer, we have no way to find a child graphic.
-            graphics.add(this);
-            return graphics;
-        }
+        //since this is a custom layer, we have no way to find a child graphic.
+        graphics.add(this);
+        return graphics;
     }
 
     @Override
