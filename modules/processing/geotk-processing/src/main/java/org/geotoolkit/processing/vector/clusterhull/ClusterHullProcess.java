@@ -61,7 +61,7 @@ import org.locationtech.jts.geom.Coordinate;
  * @author Maxime Gavens - décembre 2019
  */
 public class ClusterHullProcess extends AbstractProcess {
-    
+
     /**
      * Used to build the featureSet result.
      */
@@ -246,6 +246,7 @@ public class ClusterHullProcess extends AbstractProcess {
         Set<Cluster> clusters = new HashSet<>();
 
         for (int i = 0; i < this.geomList.size(); i++) {
+            this.stopIfDismissed();
             clusters.add(new Cluster(i));
         }
         return clusters;
@@ -320,6 +321,7 @@ public class ClusterHullProcess extends AbstractProcess {
         Geometry result = GEOMETRY_FACTORY.createEmpty(2);
 
         for (int i = 0; i < collection.getNumGeometries(); i++) {
+            this.stopIfDismissed();
             Geometry g = collection.getGeometryN(i);
             Geometry buff = g.getCoordinates().length < 1000 ? g.buffer(tolerance, 4) : this.customBufferSimple(g);
 
@@ -340,7 +342,7 @@ public class ClusterHullProcess extends AbstractProcess {
         } else if (geom instanceof Polygon) {
             return this.bufferLargeLineString(((Polygon) geom).getExteriorRing());
         } else {
-            throw new ProcessException("Unsupported geometry type for custom buffer operation:" + geom.getGeometryType(), this);
+            throw new ProcessException("Unsupported geometry type for custom buffer operation: " + geom.getGeometryType(), this);
         }
     }
 
@@ -386,7 +388,7 @@ public class ClusterHullProcess extends AbstractProcess {
      * @param clusterRaw set of workGeometry not yet clustered.
      * @throws TransformException
      */
-    private void ApplyClusterHull(Set<Cluster> clustersRaw) throws TransformException {
+    private void ApplyClusterHull(Set<Cluster> clustersRaw) throws TransformException, ProcessException {
         if (clustersRaw.isEmpty()) return;
         Cluster first = clustersRaw.iterator().next();
         clustersRaw.remove(first);
@@ -394,6 +396,7 @@ public class ClusterHullProcess extends AbstractProcess {
 
         // find a geometry who are in a same cluster
         for (Cluster wg: clustersRaw) {
+            this.stopIfDismissed();
             // check if same cluster
             if (first.isIntersect(wg)) {
                 merged = first.merge(wg);
