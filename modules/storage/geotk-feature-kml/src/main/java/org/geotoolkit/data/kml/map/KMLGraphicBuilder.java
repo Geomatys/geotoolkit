@@ -88,7 +88,6 @@ import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
@@ -106,11 +105,13 @@ import org.opengis.util.FactoryException;
 /**
  * Render KML layer in default geotoolkit rendering engine.
  *
+ * TODO : convert this code to produce a stream of Presentations.
+ *
  * @author Samuel Andrés
  * @author Johann Sorel (Geomatys)
  * @module
  */
-final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
+final class KMLGraphicBuilder {
 
     private static final int LEGEND_OFFSET = 10;
     private static final int LEGEND_HEIGHT_EXT = 30;
@@ -154,7 +155,6 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         FONT_METRICS = g.getFontMetrics();
     }
 
-    @Override
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
         Resource resource = layer.getResource();
         if (resource instanceof Kml && canvas instanceof AbstractCanvas2D) {
@@ -164,12 +164,6 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         }
     }
 
-    @Override
-    public Class<GraphicJ2D> getGraphicType() {
-        return GraphicJ2D.class;
-    }
-
-    @Override
     public Image getLegend(MapLayer layer) throws PortrayalException {
         Kml kml = (Kml) layer.getResource();
         final KmlCache cache = new KmlCache(kml);
