@@ -73,14 +73,11 @@ public class MapLayer extends MapItem implements StyleListener {
     protected Resource resource;
     protected Query query;
     protected MutableStyle style;
-    protected MutableStyle selectionStyle;
-    protected boolean selectable = false;
     private double opacity = 1d;
 
     public MapLayer(final Resource resource){
         this.resource = resource;
         this.desc = StyleConstants.DEFAULT_DESCRIPTION;
-        this.selectionStyle = null;
         final MutableStyleFactory factory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
         setStyle(factory.style());
     }
@@ -184,61 +181,6 @@ public class MapLayer extends MapItem implements StyleListener {
             this.opacity = opacity;
         }
         firePropertyChange(OPACITY_PROPERTY, oldOpacity, this.opacity);
-    }
-
-    /**
-     * Determine whether this layer is selectable on a map pane or whether the
-     * layer is static.
-     *
-     * @return <code>true</code> if the layer is selectable.
-     */
-    public boolean isSelectable() {
-        return this.selectable;
-    }
-
-    /**
-     * Specify whether this layer is selectable on a map pane.
-     * A {@link PropertyChangeEvent} is fired if the selectable changed.
-     *
-     * @param selectable Show the layer if <code>true</code>.
-     */
-    public void setSelectable(final boolean selectable) {
-        final boolean oldSelectable;
-        synchronized (this) {
-            oldSelectable = this.selectable;
-            if(oldSelectable == selectable){
-                return;
-            }
-            this.selectable = selectable;
-        }
-        firePropertyChange(SELECTABLE_PROPERTY, oldSelectable, this.selectable);
-    }
-
-    /**
-     *
-     * @return Style associated for the selected datas
-     */
-    public MutableStyle getSelectionStyle(){
-        return selectionStyle;
-    }
-
-    /**
-     * Set the style associated to selected datas.
-     *
-     * @param style : can be null, the default selection style should used by
-     * rendering engine if this vaue is null.
-     */
-    public void setSelectionStyle(final MutableStyle style){
-
-        final MutableStyle oldStyle;
-        synchronized (this) {
-            oldStyle = this.selectionStyle;
-            if(oldStyle == style){
-                return;
-            }
-            this.selectionStyle = style;
-        }
-        firePropertyChange(SELECTION_STYLE_PROPERTY, oldStyle, this.selectionStyle);
     }
 
     /**

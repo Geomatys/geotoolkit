@@ -16,18 +16,14 @@
  */
 package org.geotoolkit.map;
 
-import java.util.Objects;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.feature.FeatureExt;
-import static org.geotoolkit.map.MapLayer.SELECTION_FILTER_PROPERTY;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
-import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -42,8 +38,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 @Deprecated
 public final class FeatureMapLayer extends MapLayer {
 
-    protected Id selectionFilter = null;
-
     /**
      * Creates a new instance of DefaultFeatureMapLayer
      *
@@ -55,31 +49,6 @@ public final class FeatureMapLayer extends MapLayer {
         ArgumentChecks.ensureNonNull("FeatureSet", collection);
         setStyle(style);
         trySetName(collection);
-    }
-
-    /**
-     * A separate filter for datas that are selected on this layer.
-     * @return Filter, can be null or empty.
-     */
-    public Id getSelectionFilter(){
-        return selectionFilter;
-    }
-
-    /**
-     * Set the selection filter.
-     * @param filter Id
-     */
-    public void setSelectionFilter(final Id filter){
-
-        final Filter oldfilter;
-        synchronized (this) {
-            oldfilter = this.selectionFilter;
-            if(Objects.equals(oldfilter, filter)){
-                return;
-            }
-            this.selectionFilter = filter;
-        }
-        firePropertyChange(SELECTION_FILTER_PROPERTY, oldfilter, this.selectionFilter);
     }
 
     /**
