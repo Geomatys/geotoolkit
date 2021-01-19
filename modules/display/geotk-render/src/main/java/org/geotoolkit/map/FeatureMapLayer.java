@@ -16,35 +16,18 @@
  */
 package org.geotoolkit.map;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.measure.Range;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import static org.geotoolkit.map.MapLayer.SELECTION_FILTER_PROPERTY;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
-import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -59,37 +42,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 @Deprecated
 public final class FeatureMapLayer extends MapLayer {
 
-    public static final String PROP_EXTRA_DIMENSIONS = "extra_dims";
-
     protected Id selectionFilter = null;
-
-    private final List<DimensionDef> extraDims = new NotifiedCheckedList<DimensionDef>(DimensionDef.class) {
-
-        @Override
-        protected void notifyAdd(DimensionDef item, int index) {
-            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
-        }
-
-        @Override
-        protected void notifyAdd(Collection<? extends DimensionDef> items, NumberRange<Integer> range) {
-            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
-        }
-
-        @Override
-        protected void notifyChange(DimensionDef oldItem, DimensionDef newItem, int index) {
-            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
-        }
-
-        @Override
-        protected void notifyRemove(DimensionDef item, int index) {
-            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
-        }
-
-        @Override
-        protected void notifyRemove(Collection<? extends DimensionDef> items, NumberRange<Integer> range) {
-            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
-        }
-    };
 
     /**
      * Creates a new instance of DefaultFeatureMapLayer
@@ -173,102 +126,4 @@ public final class FeatureMapLayer extends MapLayer {
         return env;
     }
 
-    /**
-     * Manage extra dimensions.
-     *
-     * @return live list of dimensiondef, never null.
-     */
-    public List<DimensionDef> getExtraDimensions() {
-        return extraDims;
-    }
-
-    /**
-     * Get all values of given extra dimension.
-     * @return collection never null, can be empty.
-     */
-    public Collection<Range> getDimensionRange(final DimensionDef def) throws DataStoreException {
-        final Expression lower = def.getLower();
-        final Expression upper = def.getUpper();
-
-        final Set<String> properties = new HashSet<>();
-        lower.accept(ListingPropertyVisitor.VISITOR, properties);
-        upper.accept(ListingPropertyVisitor.VISITOR, properties);
-
-        final SimpleQuery qb = new SimpleQuery();
-        final List<SimpleQuery.Column> columns = new ArrayList<>();
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
-        for (String property : properties) {
-            columns.add(new SimpleQuery.Column(ff.property(property)));
-        }
-        qb.setColumns(columns.toArray(new SimpleQuery.Column[0]));
-        final FeatureSet col = getResource().subset(qb);
-
-        try (Stream<Feature> stream = col.features(false)) {
-            return stream
-                    .map(f -> {
-                        return new Range(
-                                Comparable.class,
-                                lower.evaluate(f, Comparable.class),
-                                true,
-                                upper.evaluate(f, Comparable.class),
-                                true
-                        );
-                    })
-                    .collect(Collectors.toList());
-        }
-    }
-
-    public static final class DimensionDef {
-        private final CoordinateReferenceSystem crs;
-        private final Expression lower;
-        private final Expression upper;
-
-        public DimensionDef(CoordinateReferenceSystem crs, Expression lower, Expression upper) {
-            this.crs = crs;
-            this.lower = lower;
-            this.upper = upper;
-        }
-
-        public CoordinateReferenceSystem getCrs() {
-            return crs;
-        }
-
-        public Expression getLower() {
-            return lower;
-        }
-
-        public Expression getUpper() {
-            return upper;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 71 * hash + (this.crs != null ? this.crs.hashCode() : 0);
-            hash = 71 * hash + (this.lower != null ? this.lower.hashCode() : 0);
-            hash = 71 * hash + (this.upper != null ? this.upper.hashCode() : 0);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final DimensionDef other = (DimensionDef) obj;
-            if (!Utilities.equalsIgnoreMetadata(this.crs, other.crs)) {
-                return false;
-            }
-            if (this.lower != other.lower && (this.lower == null || !this.lower.equals(other.lower))) {
-                return false;
-            }
-            if (this.upper != other.upper && (this.upper == null || !this.upper.equals(other.upper))) {
-                return false;
-            }
-            return true;
-        }
-    }
 }

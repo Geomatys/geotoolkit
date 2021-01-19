@@ -36,7 +36,6 @@ import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Query;
@@ -53,7 +52,6 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
-import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -235,47 +233,6 @@ public final class RenderingRoutines {
         }
 
         final Set<String> copy = new HashSet<>();
-
-        //concatenate with temporal range if needed ----------------------------
-        if (layer instanceof FeatureMapLayer) {
-            for (final FeatureMapLayer.DimensionDef def : ((FeatureMapLayer) layer).getExtraDimensions()) {
-                final CoordinateReferenceSystem crs = def.getCrs();
-                final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
-                final Envelope dimEnv;
-                try {
-                    dimEnv = Envelopes.transform(canvasEnv, crs);
-                } catch (TransformException ex) {
-                    continue;
-                }
-
-                Object min = dimEnv.getMinimum(0);
-                Object max = dimEnv.getMaximum(0);
-                if(crs instanceof DefaultTemporalCRS){
-                    min = ((DefaultTemporalCRS)crs).toDate((Double)min);
-                    max = ((DefaultTemporalCRS)crs).toDate((Double)max);
-                }
-
-                final Filter dimFilter = FILTER_FACTORY.and(
-                        FILTER_FACTORY.or(
-                                FILTER_FACTORY.isNull(def.getLower()),
-                                FILTER_FACTORY.lessOrEqual(def.getLower(), FILTER_FACTORY.literal(max) )),
-                        FILTER_FACTORY.or(
-                                FILTER_FACTORY.isNull(def.getUpper()),
-                                FILTER_FACTORY.greaterOrEqual(def.getUpper(), FILTER_FACTORY.literal(min) ))
-                );
-
-                filter = FILTER_FACTORY.and(filter, dimFilter);
-
-                //add extra dimension property name on attributes list for retype.
-                if (def.getLower() instanceof DefaultPropertyName) {
-                    copy.add(((DefaultPropertyName)def.getLower()).getPropertyName());
-                }
-
-                if (def.getUpper() instanceof DefaultPropertyName) {
-                    copy.add(((DefaultPropertyName)def.getUpper()).getPropertyName());
-                }
-            }
-        }
 
         final FeatureType expected;
         final String[] atts;
@@ -489,24 +446,6 @@ public final class RenderingRoutines {
         Query query = layer.getQuery();
         if (query instanceof SimpleQuery) {
             filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
-        }
-
-        //concatenate with temporal range if needed ----------------------------
-        for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
-            final CoordinateReferenceSystem crs = def.getCrs();
-            final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
-            final Envelope dimEnv;
-            try {
-                dimEnv = Envelopes.transform(canvasEnv, crs);
-            } catch (TransformException ex) {
-                continue;
-            }
-
-            final Filter dimFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(FILTER_FACTORY.literal(dimEnv.getMinimum(0)), def.getLower()),
-                    FILTER_FACTORY.greaterOrEqual(FILTER_FACTORY.literal(dimEnv.getMaximum(0)), def.getUpper()));
-
-            filter = FILTER_FACTORY.and(filter, dimFilter);
         }
 
         //optimize the filter---------------------------------------------------
