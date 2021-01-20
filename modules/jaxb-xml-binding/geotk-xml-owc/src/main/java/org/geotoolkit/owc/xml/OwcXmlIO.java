@@ -184,7 +184,6 @@ public class OwcXmlIO {
             final MapLayer layer = (MapLayer) item;
 
             entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createVisible(layer.isVisible()));
-            entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createSelectable(layer.isSelectable()));
             entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createOpacity(layer.getOpacity()));
 
             OfferingType offering = null;
@@ -201,10 +200,6 @@ public class OwcXmlIO {
                 if (layer.getStyle() != null) {
                     final StyleSetType styleBase = toStyleSet(layer.getStyle(), true);
                     offering.getOperationOrContentOrStyleSet().add(OWC_FACTORY.createOfferingTypeStyleSet(styleBase));
-                }
-                if (layer.getSelectionStyle() != null) {
-                    final StyleSetType styleSelection = toStyleSet(layer.getSelectionStyle(), false);
-                    offering.getOperationOrContentOrStyleSet().add(OWC_FACTORY.createOfferingTypeStyleSet(styleSelection));
                 }
             }
 
@@ -385,10 +380,6 @@ public class OwcXmlIO {
             if (baseStyle != null) {
                 ((MapLayer)mapItem).setStyle(baseStyle);
             }
-            if (selectionStyle != null) {
-                ((MapLayer)mapItem).setSelectionStyle(selectionStyle);
-            }
-            ((MapLayer)mapItem).setSelectable(selectable);
             ((MapLayer)mapItem).setOpacity(layerOpacity);
         }
         mapItem.setIdentifier(layerName);

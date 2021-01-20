@@ -563,7 +563,6 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
         final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
-        layer.setSelectable(true);
 
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);

@@ -99,7 +99,6 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
 
         MapLayer layer = MapBuilder.createLayer(collection);
         layer.setStyle(sf.style(sf.polygonSymbolizer()));
-        layer.setSelectable(true);
         layer.setVisible(true);
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.layers().add(layer);
@@ -147,7 +146,6 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
 
 
         final MapLayer cml = MapBuilder.createLayer(new InMemoryGridCoverageResource(gcb.build()));
-        cml.setSelectable(true);
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.layers().add(cml);
 
