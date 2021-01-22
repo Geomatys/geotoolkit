@@ -57,7 +57,13 @@ public final class FeatureMapLayer extends MapLayer {
      * @return The features for this layer, can not be null.
      */
     @Override
+    @Deprecated
     public FeatureSet getResource() {
+        return (FeatureSet) resource;
+    }
+
+    @Override
+    public FeatureSet getData() {
         return (FeatureSet) resource;
     }
 
@@ -66,7 +72,7 @@ public final class FeatureMapLayer extends MapLayer {
      */
     @Override
     public Envelope getBounds() {
-        final FeatureSet featureSet = getResource();
+        final FeatureSet featureSet = getData();
         CoordinateReferenceSystem sourceCrs = null;
         Envelope env = null;
         try {

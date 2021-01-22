@@ -147,7 +147,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     }
 
     private static String getStoreFactoryName(MapLayer layer) {
-        final Resource resource = layer.getResource();
+        final Resource resource = layer.getData();
         if (resource instanceof StoreResource) {
             final DataStore store = ((StoreResource) resource).getOriginator();
             return store.getProvider().getOpenParameters().getName().getCode();
@@ -156,7 +156,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     }
 
     private static ParameterValueGroup getParams(MapLayer layer) {
-        final Resource resource = layer.getResource();
+        final Resource resource = layer.getData();
         if (resource instanceof StoreResource) {
             final DataStore store = ((StoreResource) resource).getOriginator();
             return store.getOpenParameters().orElse(null);
@@ -165,7 +165,7 @@ public class OwcDataStoreExtension extends OwcExtension {
     }
 
     private static String getTypeName(MapLayer layer) {
-        Resource resource = layer.getResource();
+        Resource resource = layer.getData();
         try {
             return resource.getIdentifier().map(Object::toString).orElse(null);
         } catch (DataStoreException ex) {

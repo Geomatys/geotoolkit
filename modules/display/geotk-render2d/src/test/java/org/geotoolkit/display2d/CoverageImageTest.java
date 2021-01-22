@@ -150,7 +150,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
     private void testImageLayer(RenderedImage sourceImage, MapLayer cml) throws PortrayalException{
         //create a mapcontext
         final MapContext context  = MapBuilder.createContext();
-        context.layers().add(cml);
+        context.getComponents().add(cml);
 
         outputImgDim.setSize(proportionalityCoefficient * srcWidth, proportionalityCoefficient * srcHeight);
 

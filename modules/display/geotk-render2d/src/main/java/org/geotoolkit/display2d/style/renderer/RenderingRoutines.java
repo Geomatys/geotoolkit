@@ -405,7 +405,7 @@ public final class RenderingRoutines {
     public static SimpleQuery prepareQuery(final RenderingContext2D renderingContext,
             final FeatureMapLayer layer, double symbolsMargin) throws PortrayalException{
 
-        final FeatureSet fs                      = layer.getResource();
+        final FeatureSet fs                      = layer.getData();
         final FeatureType schema;
         try {
             schema = fs.getType();

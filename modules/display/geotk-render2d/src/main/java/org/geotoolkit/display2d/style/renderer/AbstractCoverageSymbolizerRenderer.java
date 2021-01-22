@@ -49,7 +49,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
-import org.apache.sis.storage.NoSuchDataException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
@@ -180,7 +179,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
 
         final MapLayer coverageLayer = projectedCoverage.getLayer();
-        final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
+        final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getData();
 
         return getObjectiveCoverage(ref, canvasGrid, isElevation, sourceBands);
     }

@@ -44,7 +44,7 @@ public class TMSClientDemo {
         for (Resource cr : DataStores.flatten(store, true, GridCoverageResource.class)) {
             final MapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setTitle(cr.getIdentifier().get().tip().toString());
-            context.layers().add(cml);
+            context.getComponents().add(cml);
         }
 
         //Other available OSM TMS

@@ -59,7 +59,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         layer.setStyle(SF.style(dr));
 
         final MapContext ctx = MapBuilder.createContext();
-        ctx.layers().add(layer);
+        ctx.getComponents().add(layer);
 
         Dimension dim = DefaultLegendService.legendPreferredSize(null, ctx);
 
@@ -79,7 +79,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         layer.setStyle(SF.style());
 
         final MapContext ctx = MapBuilder.createContext();
-        ctx.layers().add(layer);
+        ctx.getComponents().add(layer);
 
         Dimension dim = DefaultLegendService.legendPreferredSize(null, ctx);
 
@@ -99,7 +99,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         layer.setStyle(SF.style(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER));
 
         final MapContext ctx = MapBuilder.createContext();
-        ctx.layers().add(layer);
+        ctx.getComponents().add(layer);
 
         Dimension dim = DefaultLegendService.legendPreferredSize(null, ctx);
 

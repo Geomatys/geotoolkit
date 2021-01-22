@@ -722,7 +722,7 @@ public class Styles {
         layer.setStyle(style);
         layer.setAbstract("world background");
         layer.setTitle("world background");
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         return context;
     }
@@ -744,7 +744,7 @@ public class Styles {
         layer.setStyle(style);
         layer.setAbstract("city");
         layer.setTitle("city");
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         return context;
     }
@@ -758,7 +758,7 @@ public class Styles {
         final MapLayer layer = MapBuilder.createCoverageLayer(cloudFile);
         layer.setTitle("raster");
         layer.setIdentifier("raster");
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         return context;
     }

@@ -38,7 +38,7 @@ public class PostgisDemo {
             final FeatureSet col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n.toString()));
             final MapLayer layer = MapBuilder.createLayer(col);
             layer.setStyle(RandomStyleBuilder.createRandomVectorStyle(col.getType()));
-            context.layers().add(layer);
+            context.getComponents().add(layer);
         }
 
 

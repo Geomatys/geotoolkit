@@ -73,7 +73,7 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
      * if queried area is completely outside this coverage extent.
      */
     public GridCoverage getCoverage(final GridGeometry param, int... bands) throws DataStoreException {
-        Resource resource = layer.getResource();
+        Resource resource = layer.getData();
         if (resource instanceof GridCoverageResource) {
             GridCoverage result = ((GridCoverageResource)resource).read(param, (bands == null || bands.length < 1)? null : bands);
             if (result instanceof GridCoverageStack) {

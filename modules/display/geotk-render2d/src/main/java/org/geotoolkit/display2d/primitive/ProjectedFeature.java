@@ -29,6 +29,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -155,14 +156,14 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
     private Feature getCompleteFeature(final FeatureId id)throws DataStoreException{
 
-        final FeatureMapLayer fml = getLayer();
-        if (fml != null) {
+        final MapLayer fml = getLayer();
+        if (fml != null && fml.getData() instanceof FeatureSet) {
             final Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
             Feature feature = null;
 
             final SimpleQuery query = new SimpleQuery();
             query.setFilter(filter);
-            final FeatureSet collection = fml.getResource().subset(query);
+            final FeatureSet collection = ((FeatureSet) fml.getData()).subset(query);
             try (Stream<Feature> features = collection.features(false)) {
                 feature = features.findAny().orElse(null);
             }

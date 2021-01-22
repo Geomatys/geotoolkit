@@ -158,7 +158,9 @@ public final class MapContext extends MapItem implements ItemListener, Serializa
      * of this list. modifying this list automaticaly updates the tree structure of
      * the parent classe : MapItem.
      * @return the live list
+     * @deprecated method will be removed, class replaced by MapLayers from SIS
      */
+    @Deprecated
     public List<MapLayer> layers() {
         return layers;
     }
@@ -170,22 +172,22 @@ public final class MapContext extends MapItem implements ItemListener, Serializa
      * MapContext coordinate system.
      *
      * @return The bounding box of all layers.
+     * @deprecated method will be removed, class replaced by MapLayers from SIS
      */
+    @Deprecated
     public Envelope getBounds() throws IOException {
-        return getBounds(false);
+        return getEnvelope();
     }
 
     /**
      * Return the envelope of all layers.
-     * @param onlyVisible true to include only visible items in the envelope
      */
-    public Envelope getBounds(boolean onlyVisible) throws IOException {
+    public Envelope getEnvelope() throws IOException {
         GeneralEnvelope result = null;
 
         GeneralEnvelope env;
         CoordinateReferenceSystem sourceCrs;
-        for(final MapLayer layer : layers){
-            if(onlyVisible && !layer.isVisible()) continue;
+        for (final MapLayer layer : layers) {
 
             env = new GeneralEnvelope(layer.getBounds());
             sourceCrs = env.getCoordinateReferenceSystem();

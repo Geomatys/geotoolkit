@@ -104,7 +104,7 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemLis
     public Envelope getEnvelope() {
         if (item instanceof MapContext) {
             try {
-                return ((MapContext) item).getBounds(true);
+                return ((MapContext) item).getEnvelope();
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, ex.getMessage(), ex);
                 return null;

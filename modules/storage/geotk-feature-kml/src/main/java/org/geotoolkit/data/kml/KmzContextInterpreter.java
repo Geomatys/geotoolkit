@@ -56,6 +56,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
@@ -112,12 +113,15 @@ public class KmzContextInterpreter {
         // Creating KML file
         final Path docKml = tempDirectory.resolve("doc.kml");
         final List<Feature> fs = new ArrayList<>();
-        for (final MapLayer layer : context.layers()) {
-            this.writeStyle(layer.getStyle(), folder);
-            if (layer.getResource() instanceof GridCoverageResource) {
-                fs.add(writeCoverageMapLayer(layer));
-            } else if (layer.getResource() instanceof FeatureSet) {
-                fs.add(writeFeatureMapLayer(layer));
+        for (final MapItem item : context.getComponents()) {
+            if (item instanceof MapLayer) {
+                final MapLayer layer = (MapLayer) item;
+                this.writeStyle(layer.getStyle(), folder);
+                if (layer.getData() instanceof GridCoverageResource) {
+                    fs.add(writeCoverageMapLayer(layer));
+                } else if (layer.getData() instanceof FeatureSet) {
+                    fs.add(writeFeatureMapLayer(layer));
+                }
             }
         }
         folder.setPropertyValue(KmlConstants.TAG_FEATURES, fs);
@@ -282,7 +286,7 @@ public class KmzContextInterpreter {
      * Transforms a FeatureMapLAyer in KML Folder.
      */
     private Feature writeFeatureMapLayer(final MapLayer featureMapLayer) throws URISyntaxException, DataStoreException {
-        final FeatureSet resource = (FeatureSet) featureMapLayer.getResource();
+        final FeatureSet resource = (FeatureSet) featureMapLayer.getData();
         final Feature folder = KML_FACTORY.createFolder();
         final List<Feature> fs;
         try (Stream<Feature> stream = resource.features(false)) {
@@ -374,7 +378,7 @@ public class KmzContextInterpreter {
         final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
         final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
-        final GridCoverageResource ref = (GridCoverageResource) coverageMapLayer.getResource();
+        final GridCoverageResource ref = (GridCoverageResource) coverageMapLayer.getData();
         final GridCoverage coverage = ref.read(null);
         final GridCoverage targetCoverage = new ResampleProcess(coverage, targetCrs, null, InterpolationCase.NEIGHBOR, null).executeNow();
         final Envelope envelope = targetCoverage.getGridGeometry().getEnvelope();

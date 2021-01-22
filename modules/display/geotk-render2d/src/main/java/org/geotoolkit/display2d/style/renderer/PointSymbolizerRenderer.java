@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.geotoolkit.display2d.presentation.PointPresentation;
-import org.geotoolkit.renderer.GroupPresentation;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.stream.Stream;
@@ -25,13 +23,15 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
+import org.geotoolkit.display2d.presentation.PointPresentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.renderer.DefaultGroupPresentation;
 import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.GroupPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPoint;
@@ -71,7 +71,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
                     return Stream.of(group);
                 }
             } catch (TransformException ex) {
-                return Stream.of(new ExceptionPresentation(layer, layer.getResource(), feature, ex));
+                return Stream.of(new ExceptionPresentation(layer, layer.getData(), feature, ex));
             }
         }
         return Stream.empty();

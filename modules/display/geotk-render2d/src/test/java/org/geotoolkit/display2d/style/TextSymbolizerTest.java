@@ -107,7 +107,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
         layer.setStyle(style);
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());
         env.setRange(0, -180, +180);

@@ -30,8 +30,8 @@ public class WMSClientDemo {
         final WMSResource layer2 = new WMSResource(wmsServer, "Countries");
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(MapBuilder.createCoverageLayer(layer));
-        context.layers().add(MapBuilder.createCoverageLayer(layer2));
+        context.getComponents().add(MapBuilder.createCoverageLayer(layer));
+        context.getComponents().add(MapBuilder.createCoverageLayer(layer2));
         //context.layers().add(layer3);
 //        FXMapFrame.show(context);
     }

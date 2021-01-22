@@ -177,10 +177,10 @@ public class WMCUtilities {
                     final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(featureSet.getType());
                     final MapLayer layer = MapBuilder.createLayer(featureSet);
                     layer.setStyle(style);
-                    context.layers().add(layer);
+                    context.getComponents().add(layer);
                 } else if (resource instanceof GridCoverageResource) {
                     final MapLayer mapLayer = MapBuilder.createCoverageLayer((GridCoverageResource) resource);
-                    context.layers().add(mapLayer);
+                    context.getComponents().add(mapLayer);
                 }
 
             } catch (DataStoreException ex) {

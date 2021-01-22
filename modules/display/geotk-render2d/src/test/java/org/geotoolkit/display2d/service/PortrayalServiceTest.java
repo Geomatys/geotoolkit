@@ -312,7 +312,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createLayer(collection);
         layer.setStyle(style);
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         final SceneDef sdef = new SceneDef(context);
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -364,7 +364,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         final MapContext context = MapBuilder.createContext();
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage);
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:3857"));
         env.setRange(0, -20037508.342789244, 20037508.342789244);
@@ -413,7 +413,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, SF.style(SF.rasterSymbolizer()), "unnamed");
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
 
         //sanity test, image should be a red vertical band in the middle
@@ -483,7 +483,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(
                 coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
-        context.layers().add(cl);
+        context.getComponents().add(cl);
 
         final SceneDef sceneDef = new SceneDef(context);
         final GridCoverageResource resource = DefaultPortrayalService.asResource(sceneDef);
@@ -525,7 +525,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createLayer(col);
         layer.setStyle(SF.style(symbolizer));
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, 0, 10);
@@ -565,7 +565,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
 
         final GeneralEnvelope viewEnv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -669,8 +669,8 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 
         final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
-        context.layers().add(layer);
-        assertEquals(1, context.layers().size());
+        context.getComponents().add(layer);
+        assertEquals(1, context.getComponents().size());
 
         for(final Envelope env : envelopes){
             for(double[] drange : timestamps){

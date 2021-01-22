@@ -101,7 +101,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         layer.setStyle(sf.style(sf.polygonSymbolizer()));
         layer.setVisible(true);
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
@@ -147,7 +147,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
 
         final MapLayer cml = MapBuilder.createLayer(new InMemoryGridCoverageResource(gcb.build()));
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
-        context.layers().add(cml);
+        context.getComponents().add(cml);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);

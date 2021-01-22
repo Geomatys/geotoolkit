@@ -78,7 +78,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(f));
         layer.setStyle(style);
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         final SceneDef sdef = new SceneDef(context);
         final CanvasDef cdef = new CanvasDef();

@@ -76,7 +76,7 @@ final class PortrayalCoverageResource extends AbstractGridResource {
         //we only know the envelope
         final GridGeometry gridGeom;
         try {
-            gridGeom = new GridGeometry(null, null, scene.getContext().getBounds(), GridRoundingMode.ENCLOSING);
+            gridGeom = new GridGeometry(null, null, scene.getContext().getEnvelope(), GridRoundingMode.ENCLOSING);
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(),ex);
         }

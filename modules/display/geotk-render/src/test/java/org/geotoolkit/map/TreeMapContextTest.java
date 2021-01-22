@@ -47,27 +47,27 @@ public class TreeMapContextTest extends org.geotoolkit.test.TestBase {
 
         MapContext context = MapBuilder.createContext();
 
-        assertEquals(0, context.layers().size());
+        assertEquals(0, context.getComponents().size());
 
         MapLayer layer1 = MapBuilder.createEmptyMapLayer(); layer1.setIdentifier("layer 1");
         MapLayer layer2 = MapBuilder.createEmptyMapLayer(); layer2.setIdentifier("layer 2");
         MapLayer layer3 = MapBuilder.createEmptyMapLayer(); layer3.setIdentifier("layer 3");
 
         //add layers
-        context.layers().add(layer1);
-        assertEquals(1, context.layers().size());
-        context.layers().add(layer2);
-        context.layers().add(layer3);
-        assertEquals(3, context.layers().size());
-        assertEquals(layer1, context.layers().get(0));
-        assertEquals(layer2, context.layers().get(1));
-        assertEquals(layer3, context.layers().get(2));
+        context.getComponents().add(layer1);
+        assertEquals(1, context.getComponents().size());
+        context.getComponents().add(layer2);
+        context.getComponents().add(layer3);
+        assertEquals(3, context.getComponents().size());
+        assertEquals(layer1, context.getComponents().get(0));
+        assertEquals(layer2, context.getComponents().get(1));
+        assertEquals(layer3, context.getComponents().get(2));
 
         //remove a layer
-        context.layers().remove(layer2);
-        assertEquals(2, context.layers().size());
-        assertEquals(layer1, context.layers().get(0));
-        assertEquals(layer3, context.layers().get(1));
+        context.getComponents().remove(layer2);
+        assertEquals(2, context.getComponents().size());
+        assertEquals(layer1, context.getComponents().get(0));
+        assertEquals(layer3, context.getComponents().get(1));
 
     }
 
@@ -156,7 +156,7 @@ public class TreeMapContextTest extends org.geotoolkit.test.TestBase {
 
         //test a layer event
         MapLayer layer = MapBuilder.createEmptyMapLayer();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
         assertEquals(1, listener.itemChangecount);
         assertEquals(1, listener.layerChangecount);
         assertEquals(0, listener.propertyChangecount);
@@ -212,86 +212,6 @@ public class TreeMapContextTest extends org.geotoolkit.test.TestBase {
         assertEquals(MapLayer.STYLE_PROPERTY, pevent.getPropertyName());
         assertEquals(style, pevent.getNewValue());
         listener.reset();
-
-
-    }
-
-    /**
-     * Check that tree like context are correctly created.
-     */
-    @Test
-    public void testTreeStructure(){
-
-        MapContext context = MapBuilder.createContext();
-        assertEquals(0, context.getComponents().size());
-        assertEquals(0, context.layers().size());
-
-        MapContext item1 = MapBuilder.createItem();    item1.setIdentifier("item 1");
-        MapContext item11 = MapBuilder.createItem();   item11.setIdentifier("item 11");
-        MapContext item12 = MapBuilder.createItem();   item12.setIdentifier("item 12");
-        MapContext item2 = MapBuilder.createItem();    item2.setIdentifier("item 2");
-        MapContext item3 = MapBuilder.createItem();    item3.setIdentifier("item 3");
-        MapContext item31 = MapBuilder.createItem();   item31.setIdentifier("item 31");
-        MapContext item32 = MapBuilder.createItem();   item32.setIdentifier("item 32");
-        MapContext item321 = MapBuilder.createItem();  item321.setIdentifier("item 321");
-        MapContext item33 = MapBuilder.createItem();   item33.setIdentifier("item 33");
-        MapLayer layer1 = MapBuilder.createEmptyMapLayer(); layer1.setIdentifier("layer 1");
-        MapLayer layer2 = MapBuilder.createEmptyMapLayer(); layer2.setIdentifier("layer 2");
-        MapLayer layer3 = MapBuilder.createEmptyMapLayer(); layer3.setIdentifier("layer 3");
-
-        assertEquals(0, context.layers().size());
-        context.getComponents().add(item1);
-            item1.getComponents().add(item11);
-            item1.getComponents().add(item12);
-                item12.getComponents().add(layer1);
-        assertEquals(1, context.layers().size());
-        context.getComponents().add(item2);
-        context.getComponents().add(layer2);
-        assertEquals(2, context.layers().size());
-        context.getComponents().add(item3);
-            item3.getComponents().add(item31);
-            item3.getComponents().add(item32);
-                item32.getComponents().add(item321);
-                    item321.getComponents().add(layer3);
-        assertEquals(3, context.layers().size());
-            item3.items().add(item33);
-
-// DefaultMapContext[Description : Title= Abstract=]
-//  ├─DefaultMapItem (item 1) [Description : Title= Abstract=]
-//  │   ├─DefaultMapItem (item 11) [Description : Title= Abstract=]
-//  │   └─DefaultMapItem (item 12) [Description : Title= Abstract=]
-//  │       └─EmptyMapLayer[Description : Title= Abstract=]
-//  ├─DefaultMapItem (item 2) [Description : Title= Abstract=]
-//  ├─EmptyMapLayer[Description : Title= Abstract=]
-//  └─DefaultMapItem (item 3) [Description : Title= Abstract=]
-//      ├─DefaultMapItem (item 31) [Description : Title= Abstract=]
-//      ├─DefaultMapItem (item 32) [Description : Title= Abstract=]
-//      │   └─DefaultMapItem (item 321) [Description : Title= Abstract=]
-//      │       └─EmptyMapLayer[Description : Title= Abstract=]
-//      └─DefaultMapItem (item 33) [Description : Title= Abstract=]
-
-
-        assertEquals(4, context.getComponents().size());
-        assertEquals(2, item1.getComponents().size());
-        assertEquals(0, item11.getComponents().size());
-        assertEquals(1, item12.getComponents().size());
-        assertEquals(0, item2.getComponents().size());
-        assertEquals(3, item3.getComponents().size());
-        assertEquals(0, item31.getComponents().size());
-        assertEquals(1, item32.getComponents().size());
-        assertEquals(1, item321.getComponents().size());
-        assertEquals(0, item33.getComponents().size());
-
-        //layers method from mapcontext must contain the layers
-        assertEquals(3, context.layers().size());
-        assertEquals(layer1, context.layers().get(0));
-        assertEquals(layer2, context.layers().get(1));
-        assertEquals(layer3, context.layers().get(2));
-
-        //check operation on the list
-        context.layers().remove(layer3);
-        assertEquals(2, context.layers().size());
-        assertEquals(0, item321.getComponents().size());
 
     }
 

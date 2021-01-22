@@ -95,7 +95,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
         List<Feature> collection = new ArrayList<>();
         Feature feature = type.newInstance();
-        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getBounds());
+        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getEnvelope());
         cdef.setBackground(Color.RED);
         feature.setPropertyValue("map",new MapDef(
                 cdef,
@@ -125,7 +125,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
         List<Feature> collection = new ArrayList<>();
         Feature feature = type.newInstance();
-        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getBounds());
+        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getEnvelope());
         cdef.setBackground(Color.RED);
         feature.setPropertyValue("map",new MapDef(cdef,
                 new SceneDef(context),
@@ -161,7 +161,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = gcb.build();
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(MapBuilder.createCoverageLayer(coverage,
+        context.getComponents().add(MapBuilder.createCoverageLayer(coverage,
                 SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage"));
         return context;
     }

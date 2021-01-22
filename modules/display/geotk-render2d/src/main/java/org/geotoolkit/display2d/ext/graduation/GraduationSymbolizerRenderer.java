@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.ext.graduation;
 
-import org.locationtech.jts.geom.Geometry;
 import java.awt.Font;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -29,24 +28,25 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-import javax.measure.UnitConverter;
 import javax.measure.Unit;
+import javax.measure.UnitConverter;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.presentation.TextPresentation2;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
-import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.j2d.GeodeticPathWalker;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.LineSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.Presentation;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -153,7 +153,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 portray(layer, walker, gradInfos, presentations);
             }
         } catch (TransformException ex) {
-            presentations.add(new ExceptionPresentation(layer, layer.getResource(), feature, ex));
+            presentations.add(new ExceptionPresentation(layer, layer.getData(), feature, ex));
         } catch(IllegalArgumentException ex) {
             //may happen with geodetic calculator when geometry goes outside the valid envelope
         }

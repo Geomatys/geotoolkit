@@ -304,8 +304,8 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testOpaqueStyleDatas() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(createLayer(Color.BLUE,Color.RED,Color.YELLOW));
-        context.layers().add(createLayer(Color.BLUE,Color.GREEN,Color.GRAY));
+        context.getComponents().add(createLayer(Color.BLUE,Color.RED,Color.YELLOW));
+        context.getComponents().add(createLayer(Color.BLUE,Color.GREEN,Color.GRAY));
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
@@ -341,7 +341,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testRasterData() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(MapBuilder.createCoverageLayer(coverages.get(0), SF.style(SF.rasterSymbolizer()), "test"));
+        context.getComponents().add(MapBuilder.createCoverageLayer(coverages.get(0), SF.style(SF.rasterSymbolizer()), "test"));
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
@@ -411,7 +411,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         //display it
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
-        context.layers().add(cl);
+        context.getComponents().add(cl);
 
         final Envelope envelope = Envelopes.transform(env, CRS.forCode("EPSG:3031"));
 
@@ -457,7 +457,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         //display it
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
-        context.layers().add(cl);
+        context.getComponents().add(cl);
 
         final Envelope envelope = Envelopes.transform(env, CRS.forCode("EPSG:3031"));
 

@@ -89,7 +89,7 @@ public class CoverageReaderDemo {
         //create a mapcontext
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(tempData);
-        context.layers().add(cl);
+        context.getComponents().add(cl);
 
         //display it
 //        FXMapFrame.show(context);
