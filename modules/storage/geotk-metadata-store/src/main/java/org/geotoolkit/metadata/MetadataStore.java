@@ -46,11 +46,9 @@ public abstract class MetadataStore extends DataStore {
         return Optional.ofNullable(params);
     }
 
-    public abstract MetadataReader getReader();
+    protected abstract MetadataReader getReader();
 
-    public abstract MetadataWriter getWriter();
-
-    public abstract void setLogLevel(Level level);
+    protected abstract MetadataWriter getWriter();
 
     /**
      * Return the supported metadata types by this implementations.
@@ -102,6 +100,8 @@ public abstract class MetadataStore extends DataStore {
 
     public abstract boolean deleteSupported();
 
+    public abstract boolean writeSupported();
+
     public abstract boolean existMetadata(final String identifier) throws MetadataIoException;
 
     public abstract List<RecordInfo> getAllEntries() throws MetadataIoException;
@@ -112,8 +112,15 @@ public abstract class MetadataStore extends DataStore {
 
     public abstract int getEntryCount() throws MetadataIoException;
 
+    public boolean supportEntryIterator() {
+        return getReader().useEntryIterator();
+    }
+
     public Iterator<RecordInfo> getEntryIterator() throws MetadataIoException {
         return getReader().getEntryIterator();
     }
 
+    public void clearCache() {
+        getReader().clearCache();
+    }
 }
