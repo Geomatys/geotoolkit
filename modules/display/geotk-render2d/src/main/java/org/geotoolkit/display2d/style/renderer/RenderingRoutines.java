@@ -35,6 +35,7 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.measure.Units;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -54,8 +55,6 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.ViewMapper;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.BoundingBox;
-import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
@@ -224,11 +223,9 @@ public final class RenderingRoutines {
 
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
-            if (layer instanceof FeatureMapLayer) {
-                Query query = ((FeatureMapLayer) layer).getQuery();
-                if (query instanceof SimpleQuery) {
-                    filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
-                }
+            Query query = layer.getQuery();
+            if (query instanceof SimpleQuery) {
+                filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
             }
         }
 
@@ -403,9 +400,9 @@ public final class RenderingRoutines {
      * the appropriate bounding box to filter.
      */
     public static SimpleQuery prepareQuery(final RenderingContext2D renderingContext,
-            final FeatureMapLayer layer, double symbolsMargin) throws PortrayalException{
+            final MapLayer layer, double symbolsMargin) throws PortrayalException{
 
-        final FeatureSet fs                      = layer.getData();
+        final FeatureSet fs = (FeatureSet) layer.getData();
         final FeatureType schema;
         try {
             schema = fs.getType();

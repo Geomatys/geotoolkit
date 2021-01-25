@@ -18,7 +18,7 @@ package org.geotoolkit.renderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.opengis.feature.Feature;
 
 /**

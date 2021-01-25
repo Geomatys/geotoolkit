@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.presentation;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.AbstractPresentation;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

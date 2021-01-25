@@ -19,9 +19,8 @@ package org.geotoolkit.display2d.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.map.MapContext;
 
 /**
  * Scene definition contain of the graphic object that will be
@@ -43,16 +42,16 @@ public class SceneDef {
     };
 
     private Hints hints = new Hints();
-    private MapContext context = null;
+    private MapLayers context = null;
 
     public SceneDef() {
     }
 
-    public SceneDef(final MapContext context) {
+    public SceneDef(final MapLayers context) {
         this(context,null,(List<? extends PortrayalExtension>)null);
     }
 
-    public SceneDef(final MapContext context, final Hints hints, final List<? extends PortrayalExtension> extensions) {
+    public SceneDef(final MapLayers context, final Hints hints, final List<? extends PortrayalExtension> extensions) {
         setContext(context);
         setHints(hints);
         if(extensions != null){
@@ -60,7 +59,7 @@ public class SceneDef {
         }
     }
 
-    public SceneDef(final MapContext context, final Hints hints, final PortrayalExtension ... extensions) {
+    public SceneDef(final MapLayers context, final Hints hints, final PortrayalExtension ... extensions) {
         setContext(context);
         setHints(hints);
         for(PortrayalExtension pe : extensions){
@@ -70,12 +69,11 @@ public class SceneDef {
         }
     }
 
-
-    public MapContext getContext() {
+    public MapLayers getContext() {
         return context;
     }
 
-    public void setContext(final MapContext context) {
+    public void setContext(final MapLayers context) {
         this.context = context;
     }
 

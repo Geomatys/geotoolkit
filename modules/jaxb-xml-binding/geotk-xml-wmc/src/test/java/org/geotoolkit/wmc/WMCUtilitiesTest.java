@@ -4,11 +4,11 @@
  */
 package org.geotoolkit.wmc;
 
-import org.geotoolkit.map.MapContext;
+import org.apache.sis.portrayal.MapLayers;
 import org.junit.AfterClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -32,7 +32,7 @@ public class WMCUtilitiesTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testGetMapContext() throws Exception {
-        MapContext context = WMCUtilities.getMapContext(this.getClass().getResourceAsStream("testWMC_wms.xml"));
+        MapLayers context = WMCUtilities.getMapContext(this.getClass().getResourceAsStream("testWMC_wms.xml"));
         assertNotNull(context);
     }
 }

@@ -37,6 +37,8 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.GridCoverageResource;
@@ -52,8 +54,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -111,7 +111,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(red,green,blue), image);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
 
         final CanvasDef cdef = new CanvasDef(grid);
@@ -147,7 +147,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(rgb), image);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
 
         final CanvasDef cdef = new CanvasDef(grid);
@@ -195,7 +195,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         //create the coverage
         final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, gridEnv, GridOrientation.HOMOTHETY), null, img);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.getComponents().add(cl);
 
@@ -278,7 +278,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         final GridGeometry querygrid = new GridGeometry(queryextent, queryenv);
 
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
 
         final BufferedImage nearest;
@@ -339,7 +339,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         final GridCoverage baseData = new GridCoverage2D(geom, null, image);
 
         MapLayer layer = MapBuilder.createLayer(new InMemoryGridCoverageResource(baseData));
-        final MapContext ctx = MapBuilder.createContext();
+        final MapLayers ctx = MapBuilder.createContext();
         ctx.getComponents().add(layer);
         BufferedImage rendering = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(2, 2), geom.getEnvelope()),

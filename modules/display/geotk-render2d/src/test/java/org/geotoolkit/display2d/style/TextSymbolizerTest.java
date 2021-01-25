@@ -28,6 +28,8 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Hints;
@@ -36,8 +38,6 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
@@ -106,7 +106,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createLayer(collection);
         layer.setStyle(style);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.defaultGeographic());

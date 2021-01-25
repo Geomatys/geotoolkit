@@ -21,6 +21,8 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -28,8 +30,6 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
 import org.junit.Assert;
@@ -77,7 +77,7 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
 
         final MapLayer layer = MapBuilder.createLayer(FeatureStoreUtilities.collection(f));
         layer.setStyle(style);
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
 
         final SceneDef sdef = new SceneDef(context);

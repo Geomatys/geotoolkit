@@ -43,7 +43,7 @@ import org.geotoolkit.display2d.style.renderer.LineSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;

@@ -27,7 +27,7 @@ import org.geotoolkit.display2d.presentation.PointPresentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.DefaultGroupPresentation;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.GroupPresentation;

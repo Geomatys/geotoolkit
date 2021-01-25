@@ -24,7 +24,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;

@@ -38,7 +38,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;

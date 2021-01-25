@@ -20,7 +20,7 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.primitive.SpatialNode;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.Presentation;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;

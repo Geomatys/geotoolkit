@@ -88,7 +88,7 @@ import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.locationtech.jts.geom.Geometry;

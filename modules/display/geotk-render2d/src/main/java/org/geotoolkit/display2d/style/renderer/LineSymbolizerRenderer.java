@@ -41,7 +41,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.geometry.jts.LineStringTranslator;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;

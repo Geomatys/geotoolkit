@@ -25,10 +25,10 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -58,7 +58,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle(SF.style(dr));
 
-        final MapContext ctx = MapBuilder.createContext();
+        final MapLayers ctx = MapBuilder.createContext();
         ctx.getComponents().add(layer);
 
         Dimension dim = DefaultLegendService.legendPreferredSize(null, ctx);
@@ -78,7 +78,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle(SF.style());
 
-        final MapContext ctx = MapBuilder.createContext();
+        final MapLayers ctx = MapBuilder.createContext();
         ctx.getComponents().add(layer);
 
         Dimension dim = DefaultLegendService.legendPreferredSize(null, ctx);
@@ -98,7 +98,7 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle(SF.style(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER));
 
-        final MapContext ctx = MapBuilder.createContext();
+        final MapLayers ctx = MapBuilder.createContext();
         ctx.getComponents().add(layer);
 
         Dimension dim = DefaultLegendService.legendPreferredSize(null, ctx);
@@ -121,15 +121,15 @@ public class LegendSizeTest extends org.geotoolkit.test.TestBase {
         final MapLayer leaf2 = MapBuilder.createEmptyMapLayer();
         leaf2.setStyle(SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 
-        final MapContext node1 = MapBuilder.createItem();
+        final MapLayers node1 = MapBuilder.createItem();
         node1.setIdentifier("bouh");
         node1.getComponents().add(leaf1);
         node1.getComponents().add(leaf2);
 
-        final MapContext node2 = MapBuilder.createItem();
+        final MapLayers node2 = MapBuilder.createItem();
         node2.getComponents().add(leaf1);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(node1);
         context.getComponents().add(node2);
 

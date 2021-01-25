@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;

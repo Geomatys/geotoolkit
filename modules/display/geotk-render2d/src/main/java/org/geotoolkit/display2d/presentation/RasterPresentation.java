@@ -47,7 +47,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;

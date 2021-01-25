@@ -38,6 +38,9 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import org.apache.sis.portrayal.MapItem;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
@@ -45,9 +48,6 @@ import org.geotoolkit.georss.xml.v100.WhereType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapItem;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.owc.gtkext.ObjectFactory;
 import static org.geotoolkit.owc.xml.OwcMarshallerPool.*;
 import org.geotoolkit.owc.xml.v10.ContentType;
@@ -58,6 +58,7 @@ import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.sld.xml.v110.UserStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
+import org.opengis.style.Style;
 import org.opengis.util.FactoryException;
 import org.w3._2005.atom.EntryType;
 import org.w3._2005.atom.FeedType;
@@ -95,7 +96,7 @@ public class OwcXmlIO {
         return EXTENSIONS.clone();
     }
 
-    public static void write(final Object output, final MapContext context) throws PropertyException, JAXBException, FactoryException{
+    public static void write(final Object output, final MapLayers context) throws PropertyException, JAXBException, FactoryException{
         final FeedType feed = write(context);
         final MarshallerPool pool = OwcMarshallerPool.getPool();
 
@@ -118,7 +119,7 @@ public class OwcXmlIO {
         }
     }
 
-    private static FeedType write(final MapContext context) throws FactoryException{
+    private static FeedType write(final MapLayers context) throws FactoryException{
         final FeedType feed = ATOM_FACTORY.createFeedType();
 
         final LinkType link = ATOM_FACTORY.createLinkType();
@@ -203,8 +204,8 @@ public class OwcXmlIO {
                 }
             }
 
-        } else if (item instanceof MapContext) {
-            final MapContext mc = (MapContext) item;
+        } else if (item instanceof MapLayers) {
+            final MapLayers mc = (MapLayers) item;
             final ContentType content = OWC_FACTORY.createContentType();
             content.setType(mc.getIdentifier());
             //encode children
@@ -216,7 +217,7 @@ public class OwcXmlIO {
 
     }
 
-    private static StyleSetType toStyleSet(MutableStyle style, boolean def){
+    private static StyleSetType toStyleSet(Style style, boolean def){
         final StyleSetType styleSet = OWC_FACTORY.createStyleSetType();
         styleSet.setDefault(def);
 
@@ -230,7 +231,7 @@ public class OwcXmlIO {
         return styleSet;
     }
 
-    public static MapContext read(final Object input) throws JAXBException, FactoryException, DataStoreException{
+    public static MapLayers read(final Object input) throws JAXBException, FactoryException, DataStoreException{
         final MarshallerPool pool = OwcMarshallerPool.getPool();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
 
@@ -256,8 +257,8 @@ public class OwcXmlIO {
         return read(feed);
     }
 
-    private static MapContext read(final FeedType feed) throws JAXBException, FactoryException, DataStoreException{
-        final MapContext context = MapBuilder.createContext();
+    private static MapLayers read(final FeedType feed) throws JAXBException, FactoryException, DataStoreException{
+        final MapLayers context = MapBuilder.createContext();
 
         for (Object o : feed.getAuthorOrCategoryOrContributor()) {
             if (o instanceof JAXBElement) {
@@ -276,9 +277,9 @@ public class OwcXmlIO {
                 final MapItem item = readEntry(entry);
                 //find insert parent
                 final String[] path = item.getIdentifier().split("/");
-                MapContext parent = context;
+                MapLayers parent = context;
                 for (int i=0;i<path.length-1;i++) {
-                    parent = (MapContext) findItem(parent, path[i]);
+                    parent = (MapLayers) findItem(parent, path[i]);
                 }
                 item.setIdentifier(path[path.length-1]);
                 parent.getComponents().add(item);
@@ -288,14 +289,14 @@ public class OwcXmlIO {
         return context;
     }
 
-    private static MapItem findItem(MapContext parent, String name) {
+    private static MapItem findItem(MapLayers parent, String name) {
         for (MapItem mi : parent.getComponents()) {
             if (mi.getIdentifier().equals(name)) {
                 return mi;
             }
         }
         //does not exist, create it
-        final MapContext np = MapBuilder.createItem();
+        final MapLayers np = MapBuilder.createItem();
         parent.getComponents().add(np);
         return np;
     }
@@ -387,8 +388,8 @@ public class OwcXmlIO {
         mapItem.setAbstract(layerAbstract);
         mapItem.setVisible(visible);
 
-        if (mapItem instanceof MapContext) {
-            ((MapContext) mapItem).getComponents().addAll(children);
+        if (mapItem instanceof MapLayers) {
+            ((MapLayers) mapItem).getComponents().addAll(children);
         } else if (!children.isEmpty()) {
             throw new IllegalArgumentException("MapLayer can not have children layers.");
         }

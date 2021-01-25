@@ -35,7 +35,7 @@ import org.geotoolkit.display2d.style.CachedTextSymbolizer;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;

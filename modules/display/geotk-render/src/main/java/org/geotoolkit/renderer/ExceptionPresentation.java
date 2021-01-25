@@ -18,7 +18,7 @@ package org.geotoolkit.renderer;
 
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.opengis.feature.Feature;
 
 /**

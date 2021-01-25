@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
@@ -28,8 +29,6 @@ import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
@@ -133,16 +132,6 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
             }
         }
         return false;
-    }
-
-    /**
-     * Get the original FeatureMapLayer from where the feature is from.
-     *
-     * @return FeatureMapLayer
-     */
-    @Override
-    public FeatureMapLayer getLayer() {
-        return (FeatureMapLayer) layer;
     }
 
     /**

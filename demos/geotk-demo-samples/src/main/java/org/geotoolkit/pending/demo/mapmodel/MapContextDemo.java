@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -15,8 +17,6 @@ import org.apache.sis.storage.GridCoverageResource;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.rendering.PortrayalDemo;
 import org.geotoolkit.storage.DataStores;
@@ -40,7 +40,7 @@ public class MapContextDemo {
 
 
         //create a map context
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
 
         //create a feature layer
         final FeatureSet features = openShapeFile();

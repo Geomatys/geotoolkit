@@ -31,7 +31,7 @@ import org.geotoolkit.display2d.presentation.ShapePresentation;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;

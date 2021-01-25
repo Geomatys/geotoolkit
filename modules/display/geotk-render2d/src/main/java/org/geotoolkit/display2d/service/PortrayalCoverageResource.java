@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.service;
 
 import java.awt.Dimension;
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.apache.sis.coverage.SampleDimension;
@@ -74,12 +73,7 @@ final class PortrayalCoverageResource extends AbstractGridResource {
     @Override
     public GridGeometry getGridGeometry() throws DataStoreException, CancellationException {
         //we only know the envelope
-        final GridGeometry gridGeom;
-        try {
-            gridGeom = new GridGeometry(null, null, scene.getContext().getEnvelope(), GridRoundingMode.ENCLOSING);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
-        }
+        final GridGeometry gridGeom = new GridGeometry(null, null, scene.getContext().getEnvelope().get(), GridRoundingMode.ENCLOSING);
         return gridGeom;
     }
 

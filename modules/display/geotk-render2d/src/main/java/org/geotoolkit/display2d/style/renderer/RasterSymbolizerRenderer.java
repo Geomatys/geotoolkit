@@ -53,6 +53,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
 import org.apache.sis.internal.storage.query.SimpleQuery;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -78,8 +80,6 @@ import org.geotoolkit.image.interpolation.Rescaler;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
@@ -325,7 +325,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
                  * The canvas here is created with the geometry of input coverage, because otherwise, we would apply
                  * two times the affine transform to display system.
                  */
-                final MapContext subCtx = MapBuilder.createContext();
+                final MapLayers subCtx = MapBuilder.createContext();
                 subCtx.getComponents().add(MapBuilder.createCoverageLayer(coverage, styleFromStats.get()));
                 resultImage = DefaultPortrayalService.portray(
                         new CanvasDef(coverage.getGridGeometry()),

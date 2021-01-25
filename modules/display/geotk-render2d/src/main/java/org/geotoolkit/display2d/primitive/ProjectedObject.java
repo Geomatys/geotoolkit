@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.filter.expression.Expression;
 

@@ -19,18 +19,13 @@ package org.geotoolkit.display2d.primitive;
 import java.util.logging.Level;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.referencing.CRS;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageStack;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.map.MapLayer;
-import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.Envelope;
 
 /**
  * Convenient representation of a coverage for rendering.
@@ -87,19 +82,6 @@ public class ProjectedCoverage implements ProjectedObject<MapLayer> {
         } else {
             throw new DataStoreException("Resource is not a coverage" + resource);
         }
-    }
-
-    /**
-     * Get the projected geometry representation of the coverage border.
-     *
-     * @return ProjectedGeometry
-     */
-    public ProjectedGeometry getEnvelopeGeometry(RenderingContext2D context) {
-        final Envelope env = layer.getBounds();
-        final Geometry jtsBounds = GeometricUtilities.toJTSGeometry(env, GeometricUtilities.WrapResolution.NONE);
-        final ProjectedGeometry border = new ProjectedGeometry(context);
-        border.setDataGeometry(jtsBounds,CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
-        return border;
     }
 
     /**

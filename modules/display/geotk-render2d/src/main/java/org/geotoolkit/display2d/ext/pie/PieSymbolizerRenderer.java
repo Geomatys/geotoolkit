@@ -31,7 +31,7 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;

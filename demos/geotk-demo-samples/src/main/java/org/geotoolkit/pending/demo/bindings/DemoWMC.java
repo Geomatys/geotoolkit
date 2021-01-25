@@ -7,7 +7,7 @@ package org.geotoolkit.pending.demo.bindings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.map.MapContext;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.wmc.WMCUtilities;
 
 /**
@@ -18,8 +18,8 @@ public class DemoWMC {
 
     public static void main(String[] args) {
         try {
-            MapContext contextWMS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wms.xml"));
-            MapContext contextWFS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wfs.xml"));
+            MapLayers contextWMS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wms.xml"));
+            MapLayers contextWFS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wfs.xml"));
             //MapContext contextWFS1 = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wfs_1.xml"));
 //            FXMapFrame.show(contextWMS);
 //            FXMapFrame.show(contextWFS);

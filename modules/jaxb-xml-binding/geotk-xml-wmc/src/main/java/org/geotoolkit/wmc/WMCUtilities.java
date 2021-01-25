@@ -25,6 +25,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -40,8 +42,6 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -94,7 +94,7 @@ public class WMCUtilities {
      * @return A map context containing informations given by a wmc document.
      * @throws JAXBException if the xml cannot be read.
      */
-    public static MapContext getMapContext(InputStream source) throws JAXBException {
+    public static MapLayers getMapContext(InputStream source) throws JAXBException {
         final MarshallerPool pool = getMarshallerPool();
         final Unmarshaller um = pool.acquireUnmarshaller();
         Object o = um.unmarshal(source);
@@ -104,7 +104,7 @@ public class WMCUtilities {
         //Get needed markups
         ViewContextType root = (ViewContextType) o;
 
-        final MapContext context = getMapContext(root);
+        final MapLayers context = getMapContext(root);
 
         pool.recycle(um);
         return context;
@@ -116,10 +116,10 @@ public class WMCUtilities {
      * @param root The {@link ViewContextType}, root markup of the wmc.
      * @return a {@link MapContext} containing layers extracted from wmc.
      */
-    public static MapContext getMapContext(ViewContextType root) {
+    public static MapLayers getMapContext(ViewContextType root) {
         ArgumentChecks.ensureNonNull("ViewContextType", root);
         CoordinateReferenceSystem srs = CommonCRS.WGS84.normalizedGeographic();
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
 
         //Get needed markups
         GeneralType general = root.getGeneral();
@@ -146,7 +146,6 @@ public class WMCUtilities {
         }
         //set context general values
         context.setIdentifier(root.getId());
-        context.setCoordinateReferenceSystem(srs);
 
         //fill context with layers
         for (final LayerType layerType : layers.getLayer()) {

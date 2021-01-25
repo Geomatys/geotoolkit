@@ -3,13 +3,13 @@ package org.geotoolkit.pending.demo.clients.tms;
 
 import java.net.URL;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -24,14 +24,14 @@ public class TMSClientDemo {
     public static void main(String[] args) throws Exception {
         Demos.init();
 
-        final MapContext context = createOSMTMSContext();
+        final MapLayers context = createOSMTMSContext();
 
 //        FXMapFrame.show(context,false,null);
 
     }
 
-    public static MapContext createOSMTMSContext() throws Exception{
-        final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+    public static MapLayers createOSMTMSContext() throws Exception{
+        final MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
         final Parameters params = Parameters.castOrWrap(TMSProvider.PARAMETERS.createValue());
         params.getOrCreate(TMSProvider.URL).setValue(new URL("http://tile.openstreetmap.org"));

@@ -40,7 +40,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.math.Histogram;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.renderer.Presentation;

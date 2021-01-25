@@ -17,7 +17,7 @@
 package org.geotoolkit.renderer;
 
 import org.apache.sis.storage.Resource;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.opengis.feature.Feature;
 import org.opengis.style.Symbolizer;
 

@@ -26,6 +26,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReportsContext;
 import net.sf.jasperreports.renderers.Graphics2DRenderable;
 import net.sf.jasperreports.renderers.Renderable;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
@@ -33,7 +34,6 @@ import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -51,8 +51,8 @@ public class CanvasRenderer extends J2DCanvas implements Graphics2DRenderable, R
 
     private Graphics2D g2d = null;
 
-    public CanvasRenderer(final MapContext context){
-        super(context.getCoordinateReferenceSystem(),null);
+    public CanvasRenderer(final MapLayers context){
+        super(CommonCRS.WGS84.normalizedGeographic(),null);
         monitor = new NeverFailMonitor();
     }
 

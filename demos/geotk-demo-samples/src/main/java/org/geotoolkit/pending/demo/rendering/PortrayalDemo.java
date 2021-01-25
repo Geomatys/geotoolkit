@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -19,8 +21,6 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.style.MutableStyle;
@@ -37,10 +37,10 @@ public class PortrayalDemo {
 
 
         //generate a map context
-        final MapContext context = createContext();
+        final MapLayers context = createContext();
 
         //prepare the rendering context
-        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), context.getEnvelope());
+        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), context.getEnvelope().get());
         canvasdef.setBackground(Color.WHITE);
         final SceneDef scenedef = new SceneDef(context);
 
@@ -57,9 +57,9 @@ public class PortrayalDemo {
 
     }
 
-    private static MapContext createContext() throws DataStoreException, URISyntaxException {
+    private static MapLayers createContext() throws DataStoreException, URISyntaxException {
         //create a map context
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
 
         //create a feature layer
         final FeatureSet features = openShapeFile();

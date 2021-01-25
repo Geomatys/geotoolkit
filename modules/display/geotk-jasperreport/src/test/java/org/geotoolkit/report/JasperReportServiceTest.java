@@ -34,12 +34,13 @@ import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
 import org.geotoolkit.report.graphic.map.MapDef;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -84,9 +85,9 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testPDF() throws JRException, IOException {
+    public void testPDF() throws JRException, IOException, DataStoreException {
 
-        final MapContext context = createContext();
+        final MapLayers context = createContext();
 
         final URL template = JasperReportServiceTest.class.getResource("/report/MapReport.jrxml");
         final Entry<JasperReport,FeatureType> entry = JasperReportService.prepareTemplate(template);
@@ -95,7 +96,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
         List<Feature> collection = new ArrayList<>();
         Feature feature = type.newInstance();
-        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getEnvelope());
+        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getEnvelope().get());
         cdef.setBackground(Color.RED);
         feature.setPropertyValue("map",new MapDef(
                 cdef,
@@ -114,9 +115,9 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
 
     @Test
-    public void testHTML() throws JRException, IOException {
+    public void testHTML() throws JRException, IOException, DataStoreException {
 
-        final MapContext context = createContext();
+        final MapLayers context = createContext();
 
         final URL template = JasperReportServiceTest.class.getResource("/report/MapReport.jrxml");
         final Entry<JasperReport,FeatureType> entry = JasperReportService.prepareTemplate(template);
@@ -125,7 +126,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
 
         List<Feature> collection = new ArrayList<>();
         Feature feature = type.newInstance();
-        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getEnvelope());
+        CanvasDef cdef = new CanvasDef(new Dimension(1, 1), context.getEnvelope().get());
         cdef.setBackground(Color.RED);
         feature.setPropertyValue("map",new MapDef(cdef,
                 new SceneDef(context),
@@ -142,7 +143,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
     }
 
 
-    private static MapContext createContext(){
+    private static MapLayers createContext(){
 
         //create a coverage for the test
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -160,7 +161,7 @@ public class JasperReportServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setValues(img);
         final GridCoverage coverage = gcb.build();
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(MapBuilder.createCoverageLayer(coverage,
                 SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage"));
         return context;

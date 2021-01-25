@@ -63,6 +63,8 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
@@ -97,23 +99,20 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
 import org.geotoolkit.renderer.ExceptionPresentation;
 import org.geotoolkit.renderer.Presentation;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
+import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 import org.opengis.util.FactoryException;
@@ -173,7 +172,7 @@ public final class DefaultPortrayalService implements PortrayalService{
      * @param canvasDimension : size of the wanted image
      * @return resulting image of the portraying operation
      */
-    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
+    public static BufferedImage portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage)
             throws PortrayalException {
         final CanvasDef canvasDef = new CanvasDef();
@@ -183,7 +182,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return portray(canvasDef, new SceneDef(context));
     }
 
-    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
+    public static BufferedImage portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage, final float azimuth,
             final CanvasMonitor monitor, final Color background)
             throws PortrayalException {
@@ -197,7 +196,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return portray(canvasDef, new SceneDef(context));
     }
 
-    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
+    public static BufferedImage portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, final Hints hints) throws PortrayalException {
@@ -211,7 +210,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return portray(canvasDef, new SceneDef(context, hints));
     }
 
-    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
+    public static BufferedImage portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, final Hints hints, final PortrayalExtension ... extensions) throws PortrayalException{
@@ -279,7 +278,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             }
         }
 
-        final MapContext context = sceneDef.getContext();
+        final MapLayers context = sceneDef.getContext();
         renderer.setContext(context);
 
         GridGeometry gridGeometry = canvasDef.getGridGeometry();
@@ -366,7 +365,7 @@ public final class DefaultPortrayalService implements PortrayalService{
      * @param mime : mime output type
      * @param canvasDimension : size of the wanted image
      */
-    public static void portray(final MapContext context, final Envelope contextEnv,
+    public static void portray(final MapLayers context, final Envelope contextEnv,
             final Object output, final String mime, final Dimension canvasDimension,
             final boolean strechImage) throws PortrayalException {
         final CanvasDef canvasDef = new CanvasDef();
@@ -387,7 +386,7 @@ public final class DefaultPortrayalService implements PortrayalService{
      * @param canvasDimension : size of the wanted image
      * @param hints : canvas hints
      */
-    public static void portray(final MapContext context, final Envelope contextEnv,
+    public static void portray(final MapLayers context, final Envelope contextEnv,
             final Color background, final Object output, final String mime,
             final Dimension canvasDimension, final Hints hints, final boolean strechImage)
             throws PortrayalException {
@@ -399,7 +398,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         portray(canvasDef, new SceneDef(context,hints), new OutputDef(mime, output));
     }
 
-    public static void portray(final MapContext context, final Envelope contextEnv,
+    public static void portray(final MapLayers context, final Envelope contextEnv,
             final Color background, final Object output,
             final String mime, final Dimension canvasDimension, final Hints hints,
             final boolean strechImage, final PortrayalExtension ... extensions) throws PortrayalException {
@@ -411,7 +410,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         portray(canvasDef, new SceneDef(context,hints,extensions), new OutputDef(mime, output));
     }
 
-    public static void portray(final MapContext context, final Envelope contextEnv,
+    public static void portray(final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, final Object output, final String mime, final Hints hints,
@@ -582,11 +581,11 @@ public final class DefaultPortrayalService implements PortrayalService{
         if(!sceneDef.extensions().isEmpty()) return false;
 
         //style must be a default raster style = native original style
-        final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+        final List<? extends FeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
         if(ftss.size() != 1) return false;
-        final List<MutableRule> rules = ftss.get(0).rules();
+        final List<? extends Rule> rules = ftss.get(0).rules();
         if(rules.size() != 1) return false;
-        final List<Symbolizer> symbols = rules.get(0).symbolizers();
+        final List<? extends Symbolizer> symbols = rules.get(0).symbolizers();
         if(symbols.size() != 1) return false;
         final Symbolizer s = symbols.get(0);
         if(!GO2Utilities.isDefaultRasterSymbolizer(s)) return false;
@@ -710,7 +709,7 @@ public final class DefaultPortrayalService implements PortrayalService{
     // VISITING A CONTEXT //////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static void visit( final MapContext context, final Envelope contextEnv,
+    public static void visit( final MapLayers context, final Envelope contextEnv,
             final Dimension canvasDimension, final boolean strechImage, final Hints hints,
             final Shape selectedArea, final GraphicVisitor visitor)
             throws PortrayalException {
@@ -727,7 +726,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final Envelope contextEnv = canvasDef.getEnvelope();
         final Dimension canvasDimension = canvasDef.getDimension();
         final Hints hints = sceneDef.getHints();
-        final MapContext context = sceneDef.getContext();
+        final MapLayers context = sceneDef.getContext();
         final boolean strechImage = canvasDef.isStretchImage();
 
         final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension,hints);
@@ -791,7 +790,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         prepareCanvas(canvas, canvasDef, sceneDef);
         final RenderingContext2D renderContext = canvas.prepareContext(img.createGraphics(), new Rectangle(canvasDef.getDimension()));
 
-        final MapContext context = sceneDef.getContext();
+        final MapLayers context = sceneDef.getContext();
         final List<MapLayer> layers = MapBuilder.getLayers(context);
         for (MapLayer layer : layers) {
             if (!layer.isVisible()) continue;
@@ -805,7 +804,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
     public static Stream<Presentation> present(MapLayer layer, Resource resource, RenderingContext2D renderContext) {
 
-        final MutableStyle style = layer.getStyle();
+        final Style style = layer.getStyle();
 
         Stream<Presentation> stream = Stream.empty();
 
@@ -834,7 +833,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         }
 
         final boolean keepAllProperties = GO2Utilities.mustPreserveAllProperties(renderContext);
-        for (MutableFeatureTypeStyle fts : style.featureTypeStyles()) {
+        for (FeatureTypeStyle fts : style.featureTypeStyles()) {
             final List<Rule> rules = GO2Utilities.getValidRules(fts, renderContext.getSEScale(), type);
             if (rules.isEmpty()) continue;
 

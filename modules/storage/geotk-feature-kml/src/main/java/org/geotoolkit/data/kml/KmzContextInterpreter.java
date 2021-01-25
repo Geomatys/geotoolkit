@@ -35,6 +35,9 @@ import java.util.stream.Stream;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.portrayal.MapItem;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -55,14 +58,8 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapItem;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.style.MutableStyle;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.LineString;
@@ -75,6 +72,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
@@ -103,7 +101,7 @@ public class KmzContextInterpreter {
         Files.createDirectories(filesDirectory);
     }
 
-    public void writeKmz(MapContext context, Path kmzOutput)
+    public void writeKmz(MapLayers context, Path kmzOutput)
             throws Exception {
 
         final Kml kml = KML_FACTORY.createKml();
@@ -154,8 +152,8 @@ public class KmzContextInterpreter {
      * SLD Styles reference thei associated features BUT KML specification is different
      * because each feature references its own style.</p>
      */
-    private Feature writeStyle(MutableStyle style, Feature container) throws URISyntaxException {
-        final List<MutableFeatureTypeStyle> featureTypeStyles = style.featureTypeStyles();
+    private Feature writeStyle(org.opengis.style.Style style, Feature container) throws URISyntaxException {
+        final List<? extends FeatureTypeStyle> featureTypeStyles = style.featureTypeStyles();
         for (int i = 0, num = featureTypeStyles.size(); i < num; i++) {
             container = this.writeFeatureTypeStyle(featureTypeStyles.get(i), container);
         }
@@ -165,10 +163,10 @@ public class KmzContextInterpreter {
     /**
      * Writes a feature type style.
      */
-    private Feature writeFeatureTypeStyle(MutableFeatureTypeStyle featureTypeStyle, Feature container)
+    private Feature writeFeatureTypeStyle(FeatureTypeStyle featureTypeStyle, Feature container)
             throws URISyntaxException
     {
-        final List<MutableRule> rules = featureTypeStyle.rules();
+        final List<? extends Rule> rules = featureTypeStyle.rules();
         final List<AbstractStyleSelector> fs = new ArrayList<>();
         for (int i = 0, num = rules.size(); i < num; i++) {
             fs.add(this.writeRule(rules.get(i)));
@@ -180,9 +178,9 @@ public class KmzContextInterpreter {
     /**
      * Retrieves a KML StyleSelector element mapping SLD Rule.
      */
-    private AbstractStyleSelector writeRule(MutableRule rule) throws URISyntaxException {
+    private AbstractStyleSelector writeRule(Rule rule) throws URISyntaxException {
         final Style styleSelector = KML_FACTORY.createStyle();
-        final List<Symbolizer> symbolizers = rule.symbolizers();
+        final List<? extends Symbolizer> symbolizers = rule.symbolizers();
 
         for (int i = 0, num = symbolizers.size(); i < num; i++) {
             this.writeSymbolizer(symbolizers.get(i), styleSelector);

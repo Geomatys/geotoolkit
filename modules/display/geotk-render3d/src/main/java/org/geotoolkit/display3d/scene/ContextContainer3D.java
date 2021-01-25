@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.display3d.scene;
 
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.display.container.MapContextContainer;
 import org.geotoolkit.display3d.Map3D;
-import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -29,7 +29,7 @@ import org.opengis.util.FactoryException;
  */
 public class ContextContainer3D extends Scene3D implements MapContextContainer{
 
-    private MapContext context;
+    private MapLayers context;
 
     //keep reference of the displayed terrain
     //todo will need to remove this for the generic engine
@@ -55,12 +55,12 @@ public class ContextContainer3D extends Scene3D implements MapContextContainer{
     }
 
     @Override
-    public void setContext(MapContext context) {
+    public void setContext(MapLayers context) {
         this.context = context;
     }
 
     @Override
-    public MapContext getContext() {
+    public MapLayers getContext() {
         return context;
     }
 

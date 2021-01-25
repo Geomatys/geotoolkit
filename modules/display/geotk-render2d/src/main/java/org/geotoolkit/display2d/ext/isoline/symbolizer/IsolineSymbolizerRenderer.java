@@ -31,7 +31,7 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.renderer.*;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.process.*;
 import org.geotoolkit.processing.coverage.isoline.IsolineDescriptor;
 import org.geotoolkit.renderer.ExceptionPresentation;

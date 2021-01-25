@@ -23,12 +23,13 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.beans.PropertyChangeEvent;
-import java.util.EventObject;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
 import org.apache.sis.storage.event.StoreListener;
@@ -40,12 +41,9 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
-import org.geotoolkit.map.LayerListener;
-import org.geotoolkit.map.MapItem;
-import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.WeakMapItemListener;
 import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.event.StorageListener;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 
 
@@ -54,31 +52,14 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<StoreEvent> {
+public final class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<StoreEvent> {
 
-    private final LayerListener ll = new LayerListener() {
-
-        @Override
-        public void styleChange(MapLayer source, EventObject event) {
-            //event is catch in the property change
-        }
-
-        @Override
-        public void itemChange(CollectionChangeEvent<MapItem> event) {
-            //handle by parent
-        }
+    private final PropertyChangeListener ll = new PropertyChangeListener() {
 
         @Override
         public void propertyChange(PropertyChangeEvent event) {
-            if(getCanvas().isAutoRepaint()){
-                final String propName = event.getPropertyName();
-                if(MapLayer.VISIBLE_PROPERTY.equals(propName)){
-                    //handle in StatelessMapItemJ2D
-                } else if (item.isVisible() &&
-                   (  MapLayer.STYLE_PROPERTY.equals(propName)
-                   || MapLayer.SELECTION_FILTER_PROPERTY.equals(propName)
-                   || MapLayer.OPACITY_PROPERTY.equals(propName)
-                   || MapLayer.QUERY_PROPERTY.equals(propName) )){
+            if (getCanvas().isAutoRepaint()) {
+                if (item.isVisible()){
                     //TODO should call a repaint only on this graphic
                     getCanvas().repaint();
                 }
@@ -86,15 +67,18 @@ public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<S
         }
     };
 
-    private final LayerListener.Weak weakLayerListener = new LayerListener.Weak(ll);
+    private final WeakMapItemListener weakLayerListener;
     private final StorageListener.Weak weakResourceListener = new StorageListener.Weak(this);
 
 
     public MapLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         //do not use layer crs here, to long to calculate
         super(canvas, layer, false);
+        weakLayerListener = new WeakMapItemListener(layer, ll,
+                MapLayer.STYLE_PROPERTY,
+                MapLayer.OPACITY_PROPERTY,
+                MapLayer.QUERY_PROPERTY);
         try {
-            weakLayerListener.registerSource(layer);
             weakResourceListener.registerSource(layer.getData());
         } catch (Exception e) {
             GO2Utilities.LOGGER.log(Level.WARNING, "Cannot observe layer for changes.", e);
