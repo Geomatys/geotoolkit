@@ -45,8 +45,6 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
 
     public static final String SCHEMA = "index";
 
-    protected Connection conn;
-
     protected String schemaName;
 
     public LuceneSGBDTreeEltMapper(CoordinateReferenceSystem crs, DataSource source, Path directory) throws SQLException {
@@ -58,9 +56,6 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
             throw new IllegalStateException("could not get schema name from directory name");
         }
-
-        this.conn = source.getConnection();
-        //this.conn.setAutoCommit(false);
     }
 
     protected static String getSchemaName(String absolutePath) throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -122,7 +117,7 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
     @Override
     public int getTreeIdentifier(final NamedEnvelope env) throws IOException {
         int result = -1;
-        try {
+        try (Connection conn = source.getConnection()){
             try (PreparedStatement stmt = conn.prepareStatement("SELECT \"id\" FROM \"" + schemaName + "\".\"records\" WHERE \"identifier\"=?")) {
                 stmt.setString(1, env.getId());
                 try (ResultSet rs = stmt.executeQuery()) {
@@ -144,7 +139,7 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
 
     @Override
     public void setTreeIdentifier(final NamedEnvelope env, final int treeIdentifier) throws IOException {
-        try {
+        try (Connection conn = source.getConnection()){
             if (env != null) {
                 final boolean exist;
                 try (PreparedStatement existStmt = conn.prepareStatement("SELECT \"id\" FROM \"" + schemaName + "\".\"records\" WHERE \"id\"=?")) {
@@ -167,7 +162,6 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
 
                         stmt.executeUpdate();
                     }
-//                    conn.commit();
                 } else {
                     try (final PreparedStatement stmt = conn.prepareStatement("INSERT INTO \"" + schemaName + "\".\"records\" "
                             + "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
@@ -181,14 +175,12 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
 
                         stmt.executeUpdate();
                     }
-//                    conn.commit();
                 }
             } else {
                 try (PreparedStatement remove = conn.prepareStatement("DELETE FROM \"" + schemaName + "\".\"records\" WHERE \"id\"=?")) {
                     remove.setInt(1, treeIdentifier);
                     remove.executeUpdate();
                 }
-//                conn.commit();
             }
         } catch (SQLException ex) {
             throw new IOException("Error while setting tree identifier for envelope :" + env, ex);
@@ -199,7 +191,8 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
     public NamedEnvelope getObjectFromTreeIdentifier(final int treeIdentifier) throws IOException {
         NamedEnvelope result = null;
 
-        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"" + schemaName + "\".\"records\" WHERE \"id\"=?")) {
+        try (Connection conn = source.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"" + schemaName + "\".\"records\" WHERE \"id\"=?")) {
             stmt.setInt(1, treeIdentifier);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -223,7 +216,8 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
     @Override
     public Map<Integer, NamedEnvelope> getFullMap() throws IOException {
         Map<Integer, NamedEnvelope> result = new HashMap<>();
-        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"" + schemaName + "\".\"records\"");
+        try (Connection conn = source.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"" + schemaName + "\".\"records\"");
                 ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 final String identifier = rs.getString("identifier");
@@ -246,9 +240,9 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
 
     @Override
     public void clear() throws IOException {
-        try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM \"" + schemaName + "\".\"records\"")) {
+        try (Connection conn = source.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("DELETE FROM \"" + schemaName + "\".\"records\"")) {
             stmt.executeUpdate();
-//            conn.commit();
         } catch (SQLException ex) {
             throw new IOException("Error while removing all records", ex);
         }
@@ -259,22 +253,16 @@ public abstract class LuceneSGBDTreeEltMapper extends LuceneSQLTreeEltMapper imp
         // do nothing in this implementation
     }
 
+    private boolean closed = false;
+
     @Override
     public void close() throws IOException {
-        if (conn != null) {
-            try {
-                conn.close();
-                conn = null;
-
-            } catch (SQLException ex) {
-                throw new IOException("SQL exception while closing SQL tree mapper", ex);
-            }
-        }
+        closed = true;
     }
 
     @Override
     public boolean isClosed() {
-        return conn == null;
+        return closed;
     }
 
 }
