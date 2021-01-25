@@ -23,10 +23,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.apache.sis.portrayal.MapLayer;
 import org.opengis.feature.Feature;
 
 /**
@@ -39,8 +40,8 @@ public class PointPresentation extends Grid2DPresentation {
     public AffineTransform displayTransform;
     public RenderedImage image;
 
-    public PointPresentation(MapLayer layer, Feature feature) {
-        super(layer,feature);
+    public PointPresentation(MapLayer layer, Resource resource, Feature feature) {
+        super(layer, resource, feature);
     }
 
     @Override

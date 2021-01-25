@@ -19,6 +19,8 @@ package org.geotoolkit.display2d.canvas;
 import java.awt.geom.Rectangle2D;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
@@ -27,8 +29,6 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.CoverageExtractor;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
@@ -71,7 +71,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
         if (graphic == null ) return;
 
-        final Feature feature = graphic.getFeature();
+        final Feature feature = (Feature) graphic.getCandidate();
         final MapLayer layer = graphic.getLayer();
         final Resource resource = layer == null ? null : layer.getData();
 

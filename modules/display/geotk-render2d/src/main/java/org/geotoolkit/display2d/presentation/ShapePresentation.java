@@ -22,10 +22,11 @@ import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Area;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.apache.sis.portrayal.MapLayer;
 import org.opengis.feature.Feature;
 
 /**
@@ -44,8 +45,8 @@ public class ShapePresentation extends Grid2DPresentation {
     public Paint strokePaint;
     public Stroke stroke;
 
-    public ShapePresentation(MapLayer layer, Feature feature) {
-        super(layer, feature);
+    public ShapePresentation(MapLayer layer, Resource resource, Feature feature) {
+        super(layer, resource, feature);
     }
 
     @Override

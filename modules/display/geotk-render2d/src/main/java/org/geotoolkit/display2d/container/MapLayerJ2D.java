@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.event.StoreEvent;
@@ -42,7 +43,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.map.WeakMapItemListener;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.event.StorageListener;
 import org.opengis.display.primitive.Graphic;
 
@@ -127,7 +127,7 @@ public final class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreList
             gcb.setValues(inter);
             final GridCoverage coverage = gcb.build();
 
-            final RasterPresentation rp = new RasterPresentation(layer, coverage);
+            final RasterPresentation rp = new RasterPresentation(layer, null, coverage);
             rp.forGrid(context);
             rp.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) opacity);
 

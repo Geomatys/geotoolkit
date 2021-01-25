@@ -21,6 +21,9 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.util.stream.Stream;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -35,9 +38,6 @@ import org.geotoolkit.display2d.style.CachedTextSymbolizer;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 
 
@@ -114,7 +114,7 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
                 rotation, renderingContext.getDisplayCRS(),
                 projectedGeometry);
 
-            final TextPresentation tp = new TextPresentation(layer, feature);
+            final TextPresentation tp = new TextPresentation(layer, layer.getData(), feature);
             tp.forGrid(renderingContext);
             tp.labelDesc = descriptor;
             return Stream.of(tp);
@@ -135,12 +135,15 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
                     lp.isGeneralizeLine(),
                     projectedGeometry);
 
-            final TextPresentation tp = new TextPresentation(layer, feature);
+            final TextPresentation tp = new TextPresentation(layer, layer.getData(), feature);
             tp.forGrid(renderingContext);
             tp.labelDesc = descriptor;
             return Stream.of(tp);
         } else {
-            return Stream.of(new ExceptionPresentation(layer, layer.getData(), null, new PortrayalException("Text symbolizer has no label placement, this should not be possible.")));
+            ExceptionPresentation ep = new ExceptionPresentation(new PortrayalException("Text symbolizer has no label placement, this should not be possible."));
+            ep.setLayer(layer);
+            ep.setResource(layer.getData());
+            return Stream.of(ep);
         }
 
     }

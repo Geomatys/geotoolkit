@@ -52,6 +52,8 @@ import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.storage.query.SimpleQuery;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
@@ -83,8 +85,6 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.metadata.MetadataUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.ImageStatistics;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
@@ -501,7 +501,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
                 }
 
                 final GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
-                final RasterPresentation rasterPresentation = new RasterPresentation(layer, dataImage);
+                final RasterPresentation rasterPresentation = new RasterPresentation(layer, layer.getData(), dataImage);
                 rasterPresentation.forGrid(renderingContext);
 
                 return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));
@@ -509,7 +509,10 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             } catch (NoSuchDataException | DisjointExtentException e) {
                 LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
             } catch (Exception e) {
-                return Stream.of(new ExceptionPresentation(layer, rs, null, e));
+                ExceptionPresentation ep = new ExceptionPresentation(e);
+                ep.setLayer(layer);
+                ep.setResource(rs);
+                return Stream.of(ep);
             }
         } else {
             return super.presentations(layer, rs);
@@ -542,7 +545,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             }
 
             final GridCoverage2D dataImage = applyStyle(ref, dataCoverage, sourceSymbol);
-            final RasterPresentation rasterPresentation = new RasterPresentation(layer, dataImage);
+            final RasterPresentation rasterPresentation = new RasterPresentation(layer, ref, dataImage);
             rasterPresentation.forGrid(renderingContext);
 
             return Stream.concat(Stream.of(rasterPresentation), outline(layer, dataImage.getGridGeometry()));

@@ -62,6 +62,8 @@ import org.apache.sis.coverage.grid.DisjointExtentException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
@@ -102,8 +104,6 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.bandselect.BandSelectProcess;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
@@ -813,7 +813,10 @@ public final class DefaultPortrayalService implements PortrayalService{
             try {
                 type = ((FeatureSet) resource).getType();
             } catch (DataStoreException ex) {
-                return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(resource);
+                return Stream.of(ep);
             }
         } else if (resource instanceof GridCoverageResource) {
             type = null;
@@ -824,7 +827,10 @@ public final class DefaultPortrayalService implements PortrayalService{
                     stream = Stream.concat(stream, present(layer, r, renderContext));
                 }
             } catch (DataStoreException ex) {
-                stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(layer, resource, null, ex)));
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(resource);
+                return Stream.of(ep);
             }
             return stream;
         } else {
@@ -855,10 +861,12 @@ public final class DefaultPortrayalService implements PortrayalService{
                 }
                 if (groupRenderer != null) {
                     if (count > 1) {
-                        stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(layer, resource, null,
-                                new PortrayalException("Group symbolizer ("
+                        ExceptionPresentation ep = new ExceptionPresentation(new PortrayalException("Group symbolizer ("
                                         + groupRenderer.getService().getSymbolizerClass().getSimpleName()
-                                        + ") must be alone in a FeatureTypeStyle element." ))));
+                                        + ") must be alone in a FeatureTypeStyle element." ));
+                        ep.setLayer(layer);
+                        ep.setResource(resource);
+                        stream = Stream.concat(stream, Stream.of(ep));
                     } else {
                         stream = Stream.concat(stream, groupRenderer.presentations(layer, resource));
                     }
@@ -975,7 +983,10 @@ public final class DefaultPortrayalService implements PortrayalService{
                     });
                     stream = Stream.concat(stream, s);
                 } catch (PortrayalException | DataStoreException ex) {
-                    stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(layer, resource, null, ex)));
+                    ExceptionPresentation ep = new ExceptionPresentation(ex);
+                    ep.setLayer(layer);
+                    ep.setResource(resource);
+                    return Stream.of(ep);
                 }
 
             }

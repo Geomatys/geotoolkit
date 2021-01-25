@@ -28,7 +28,9 @@ import java.util.stream.Stream;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -40,10 +42,8 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.RasterPresentation;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.math.Histogram;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -216,7 +216,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 gcb.setValues(img);
                 final GridCoverage recolored = gcb.build();
 
-                final RasterPresentation presentation = new RasterPresentation(layer, recolored);
+                final RasterPresentation presentation = new RasterPresentation(layer, layer.getData(), recolored);
                 presentation.forGrid(renderingContext);
                 return Stream.of(presentation);
 

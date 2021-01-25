@@ -25,7 +25,10 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.measure.Unit;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.measure.Units;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -39,9 +42,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -145,7 +145,10 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
             try {
                 query = RenderingRoutines.prepareQuery(getRenderingContext(), fs, layer, names, Arrays.asList(rule), symbolsMargin);
             } catch (PortrayalException ex) {
-                return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(resource);
+                return Stream.of(ep);
             }
 
             try {
@@ -156,7 +159,10 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
                     }
                 });
             } catch (DataStoreException ex) {
-                return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(resource);
+                return Stream.of(ep);
             }
 
         }

@@ -26,6 +26,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -41,9 +44,6 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.geometry.jts.LineStringTranslator;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
@@ -79,7 +79,11 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
                 j2dShapes = getShapes(projectedGeometry, feature, sizeCorrection);
             }
         } catch (TransformException ex) {
-            return Stream.of(new ExceptionPresentation(layer, layer.getData(), feature, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(layer.getData());
+            ep.setCandidate(feature);
+            return Stream.of(ep);
         }
 
         if (j2dShapes == null) {
@@ -123,7 +127,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
         if (cachedStroke instanceof CachedStrokeSimple) {
             final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
 
-            final ShapePresentation presentation = new ShapePresentation(layer, feature);
+            final ShapePresentation presentation = new ShapePresentation(layer, layer.getData(), feature);
             presentation.forGrid(ctx);
             presentation.strokeComposite = cs.getJ2DComposite(feature);
             presentation.stroke = cs.getJ2DStroke(feature, coeff);
@@ -167,7 +171,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
                 trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
                 trs.translate(disp[0], -disp[1]);
 
-                final PointPresentation presentation = new PointPresentation(layer, feature);
+                final PointPresentation presentation = new PointPresentation(layer, layer.getData(), feature);
                 presentation.forGrid(ctx);
                 presentation.composite = GO2Utilities.ALPHA_COMPOSITE_1F;
                 presentation.image = img;

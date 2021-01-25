@@ -28,8 +28,11 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.math.Statistics;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -51,9 +54,6 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapBuilder;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -210,7 +210,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 }
             }
         } catch (DataStoreException | IOException | TransformException ex) {
-            return Stream.of(new ExceptionPresentation(layer, fs, null, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(fs);
+            return Stream.of(ep);
         }
 
         if (numericProperties == null) {
@@ -276,7 +279,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             //no data on requested area
             return Stream.empty();
         } catch (Exception ex) {
-            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(resource);
+            return Stream.of(ep);
         }
         if (coverage != null) {
             coverage = coverage.forConvertedValues(true);
@@ -324,7 +330,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 }
             }
         } catch (TransformException ex) {
-            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(resource);
+            return Stream.of(ep);
         }
 
         //prepare the cell feature type

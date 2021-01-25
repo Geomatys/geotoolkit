@@ -19,7 +19,10 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.stream.Stream;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.measure.Units;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -27,11 +30,7 @@ import org.geotoolkit.display2d.presentation.PointPresentation;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
-import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.renderer.DefaultGroupPresentation;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.GroupPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPoint;
@@ -65,19 +64,23 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
         //test if the symbol is visible on this feature
         if (symbol.isVisible(candidate)) {
             final ProjectedGeometry projectedGeometry = pf.getGeometry(geomPropertyName);
-            final DefaultGroupPresentation group = new DefaultGroupPresentation(layer, candidate);
+            final DefaultGroupPresentation group = new DefaultGroupPresentation(layer, layer.getData(), candidate);
             try {
                 if (presentation(group, projectedGeometry, candidate)) {
                     return Stream.of(group);
                 }
             } catch (TransformException ex) {
-                return Stream.of(new ExceptionPresentation(layer, layer.getData(), feature, ex));
+                ExceptionPresentation ep = new ExceptionPresentation(ex);
+                ep.setLayer(layer);
+                ep.setResource(layer.getData());
+                ep.setCandidate(feature);
+                return Stream.of(ep);
             }
         }
         return Stream.empty();
     }
 
-    private boolean presentation(final GroupPresentation group, final ProjectedGeometry projectedGeometry, Object candidate) throws TransformException {
+    private boolean presentation(final DefaultGroupPresentation group, final ProjectedGeometry projectedGeometry, Object candidate) throws TransformException {
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if (projectedGeometry == null) return false;
@@ -142,7 +145,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
                     final AffineTransform positioning = AffineTransform.getTranslateInstance(coord.x, coord.y);
                     positioning.concatenate(rotation);
                     positioning.translate(postx, posty);
-                    final PointPresentation presentation = new PointPresentation(group.getLayer(), group.getFeature());
+                    final PointPresentation presentation = new PointPresentation(group.getLayer(), group.getResource(), (Feature) group.getCandidate());
                     presentation.forGrid(renderingContext);
                     presentation.composite = GO2Utilities.ALPHA_COMPOSITE_1F;
                     presentation.displayTransform = positioning;
@@ -169,7 +172,7 @@ public class PointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPo
                 final AffineTransform positioning = AffineTransform.getTranslateInstance(pcoord.x, pcoord.y);
                 positioning.concatenate(rotation);
                 positioning.translate(postx, posty);
-                final PointPresentation presentation = new PointPresentation(group.getLayer(), group.getFeature());
+                final PointPresentation presentation = new PointPresentation(group.getLayer(), group.getResource(), (Feature) group.getCandidate());
                 presentation.forGrid(renderingContext);
                 presentation.composite = GO2Utilities.ALPHA_COMPOSITE_1F;
                 presentation.displayTransform = positioning;

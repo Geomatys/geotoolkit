@@ -18,15 +18,15 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.opengis.feature.Feature;
 
 
@@ -76,7 +76,7 @@ public interface SymbolizerRenderer {
                     }
                 });
             } catch (DataStoreException ex) {
-                return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+                return Stream.of(new ExceptionPresentation(ex));
             }
 
         } else if (resource instanceof Aggregate) {
@@ -87,7 +87,7 @@ public interface SymbolizerRenderer {
                     stream = Stream.concat(stream, presentations(layer, r));
                 }
             } catch (DataStoreException ex) {
-                stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(layer, resource, null, ex)));
+                stream = Stream.concat(stream, Stream.of(new ExceptionPresentation(ex)));
                 return stream;
             }
         }

@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.display2d.presentation;
 
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.AbstractPresentation;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -31,14 +32,14 @@ import org.opengis.referencing.operation.MathTransform;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class Grid2DPresentation extends AbstractPresentation {
+public abstract class Grid2DPresentation extends Presentation {
 
     public CoordinateReferenceSystem objectiveCrs;
     public CoordinateReferenceSystem displayCrs;
     public MathTransform objToDisplay;
 
-    public Grid2DPresentation(MapLayer layer, Feature feature) {
-        super(layer, feature);
+    public Grid2DPresentation(MapLayer layer, Resource resource, Feature feature) {
+        super(layer, resource, feature);
     }
 
     public void forGrid(RenderingContext2D ctx) {

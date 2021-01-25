@@ -30,8 +30,11 @@ import java.util.List;
 import java.util.stream.Stream;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.measure.Units;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.TextPresentation2;
@@ -43,9 +46,6 @@ import org.geotoolkit.display2d.style.renderer.LineSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -153,7 +153,11 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 portray(layer, walker, gradInfos, presentations);
             }
         } catch (TransformException ex) {
-            presentations.add(new ExceptionPresentation(layer, layer.getData(), feature, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(layer.getData());
+            ep.setCandidate(feature);
+            presentations.add(ep);
         } catch(IllegalArgumentException ex) {
             //may happen with geodetic calculator when geometry goes outside the valid envelope
         }
@@ -250,7 +254,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
         AffineTransform trs = new AffineTransform();
         trs.rotate(angle, end.getX(), end.getY());
 
-        final TextPresentation2 tp = new TextPresentation2(layer, feature);
+        final TextPresentation2 tp = new TextPresentation2(layer, null, feature);
         tp.forGrid(renderingContext);
         tp.text = new AttributedString(text);
         tp.font = font;

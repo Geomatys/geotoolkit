@@ -47,6 +47,7 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
@@ -72,7 +73,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -627,7 +627,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, result.size());
 
         final Presentation presentation = result.get(0);
-        final Feature picked = presentation.getFeature();
+        final Feature picked = (Feature) presentation.getCandidate();
         assertNotNull(picked);
 
         Map<String, Object> expectedProperties = new HashMap<>();
@@ -655,7 +655,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         // By default, don't load un-necessary properties
         scene.getHints().remove(GO2Hints.KEY_PRESERVE_PROPERTIES);
         final List<Object> geometries = DefaultPortrayalService.present(canvas, scene)
-                .map(p -> p.getFeature())
+                .map(p -> (Feature) p.getCandidate())
                 .peek(Assert::assertNotNull)
                 .peek(f -> assertEquals(1, f.getType().getProperties(true).stream().filter(p -> p instanceof AttributeType).count()))
                 .map(f -> f.getPropertyValue("geometry"))

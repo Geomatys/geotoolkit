@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridGeometry;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
@@ -46,9 +49,6 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
-import org.apache.sis.portrayal.MapLayer;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.coverage.TileMatrixSetCoverageReader;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.TileMatrices;
@@ -115,7 +115,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
 
                         Shape shp = new JTSGeometryJ2D(geom);
 
-                        final ShapePresentation border = new ShapePresentation(layer, null);
+                        final ShapePresentation border = new ShapePresentation(layer, resource, null);
                         border.stroke = stroke;
                         border.strokePaint = Color.BLACK;
                         border.shape = shp;
@@ -158,7 +158,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                             as.addAttribute(TextAttribute.FONT, ft);
                             as.addAttribute(TextAttribute.BACKGROUND, bgColor);
 
-                            final TextPresentation2 tp = new TextPresentation2(layer, null);
+                            final TextPresentation2 tp = new TextPresentation2(layer, resource, null);
                             tp.forGrid(renderingContext);
                             tp.text = as;
                             tp.paint = textColor;
@@ -173,7 +173,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                             as.addAttribute(TextAttribute.BACKGROUND, bgColor);
                             txtbbox = fm.getStringBounds(mosaicScale, g2d);
 
-                            final TextPresentation2 tp = new TextPresentation2(layer, null);
+                            final TextPresentation2 tp = new TextPresentation2(layer, resource, null);
                             tp.forGrid(renderingContext);
                             tp.text = as;
                             tp.paint = textColor;
@@ -188,7 +188,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                             as.addAttribute(TextAttribute.BACKGROUND, bgColor);
                             txtbbox = fm.getStringBounds(strX, g2d);
 
-                            final TextPresentation2 tp = new TextPresentation2(layer, null);
+                            final TextPresentation2 tp = new TextPresentation2(layer, resource, null);
                             tp.forGrid(renderingContext);
                             tp.text = as;
                             tp.paint = textColor;
@@ -203,7 +203,7 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
                             as.addAttribute(TextAttribute.BACKGROUND, bgColor);
                             txtbbox = fm.getStringBounds(strY, g2d);
 
-                            final TextPresentation2 tp = new TextPresentation2(layer, null);
+                            final TextPresentation2 tp = new TextPresentation2(layer, resource, null);
                             tp.forGrid(renderingContext);
                             tp.text = as;
                             tp.paint = textColor;
@@ -217,7 +217,10 @@ public final class TileDebugSymbolizerRenderer extends AbstractCoverageSymbolize
             }
 
         } catch (DataStoreException | TransformException | FactoryException ex) {
-            presentations.add(new ExceptionPresentation(layer, resource, null, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(resource);
+            presentations.add(ep);
         }
 
         return presentations.stream();
