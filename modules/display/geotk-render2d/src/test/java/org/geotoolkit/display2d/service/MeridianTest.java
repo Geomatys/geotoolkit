@@ -622,7 +622,8 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, -1, env.getMinimum(0), env.getMaximum(1)), env.getCoordinateReferenceSystem()));
+        gcb.setDomain(new GridGeometry(null, PixelInCell.CELL_CORNER, new AffineTransform2D(1, 0, 0, -1,
+                env.getMinimum(0), env.getMaximum(1)), env.getCoordinateReferenceSystem()));
         gcb.setValues(image);
         final GridCoverage coverage = gcb.build();
 

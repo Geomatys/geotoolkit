@@ -83,7 +83,7 @@ final class GridGeometryEntry extends Entry {
      * The coordinate reference system is the one declared in the {@link GridGeometryTable} for that entry.
      * The envelope must include the vertical range if any, but not the temporal dimension.
      */
-    private final GridGeometry spatialGeometry;
+    final GridGeometry spatialGeometry;
 
     /**
      * Extent of the grid {@linkplain #spatialGeometry} expanded with the {@link #spatioTemporalCRS}.

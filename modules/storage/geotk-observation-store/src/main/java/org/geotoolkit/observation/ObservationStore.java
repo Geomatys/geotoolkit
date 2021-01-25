@@ -75,21 +75,16 @@ public interface ObservationStore {
      * specifying a list of accepted sensor identifiers.
      *
      * @param sensorIds a filter on sensor identifiers or {@code null}.
-     * @return
-     * @throws DataStoreException
      */
     public abstract ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException;
 
     /**
-     * Extract All the procedures / observations / features of interest /
-     * phenomenon / spatial informations in this store. Allow to filter by
-     * specifying a list of accepted sensor identifiers. If specified the
-     * results will be asigned to a new/existing sensor.
+     * Extract All the procedures / observations / features of interest / phenoemenon / spatial informations in this store.
+     * Allow to filter by specifying a list of accepted sensor identifiers.
+     * If specified the results will be asigned to a new/existing sensor.
      *
      * @param affectedSensorID a assigned sensor identifier or {@code null}.
      * @param sensorIds a filter on sensor identifiers or {@code null}.
-     * @return
-     * @throws DataStoreException
      */
     public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
 
@@ -106,8 +101,6 @@ public interface ObservationStore {
      * @param sensorIds a filter on sensor identifiers or {@code null}.
      * @param existingPhenomenons A set of existing phenomenons.
      * @param existingSamplingFeatures A set of existing sampling features.
-     * @return
-     * @throws DataStoreException
      */
     public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds, final Set<Phenomenon> existingPhenomenons, final Set<SamplingFeature> existingSamplingFeatures) throws DataStoreException;
 

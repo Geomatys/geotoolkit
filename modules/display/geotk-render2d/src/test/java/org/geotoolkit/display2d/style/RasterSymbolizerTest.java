@@ -193,7 +193,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         gridEnv.setRange(1, 0, 90);
 
         //create the coverage
-        final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, gridEnv, null), null, img);
+        final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, gridEnv, GridOrientation.HOMOTHETY), null, img);
 
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");

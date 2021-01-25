@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.factory.wkt;
+package org.geotoolkit.coverage.sql;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,11 +46,11 @@ import static org.apache.sis.referencing.IdentifiedObjects.getIdentifier;
 
 
 /**
- * Tests {@link DirectPostgisFactory}.
+ * Tests {@link PostgisFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
  */
-public final strictfp class DirectPostgisFactoryTest extends org.geotoolkit.test.TestBase {
+public final strictfp class PostgisFactoryTest extends org.geotoolkit.test.TestBase {
     /**
      * Gets the connection parameters to the coverage database.
      */
@@ -73,15 +73,15 @@ public final strictfp class DirectPostgisFactoryTest extends org.geotoolkit.test
      * Tests a few CRS using the test database of the {@code geotk-coverage-sql} module,
      * if this database is found.
      *
-     * @throws FactoryException Should not happen.
-     * @throws IOException If an error occurred while reading the properties file.
-     * @throws SQLException If an error occurred while reading the PostGIS tables.
+     * @throws FactoryException should not happen.
+     * @throws IOException if an error occurred while reading the properties file.
+     * @throws SQLException if an error occurred while reading the PostGIS tables.
      */
     @Test
     @Ignore
     public void testUsingCoverageSQL() throws FactoryException, IOException, SQLException {
         final Connection connection = getCoverageDataSource().getConnection();
-        final DirectPostgisFactory factory = new DirectPostgisFactory(connection);
+        final PostgisFactory factory = new PostgisFactory(connection);
         try {
             /*
              * Test general information.
@@ -125,45 +125,6 @@ public final strictfp class DirectPostgisFactoryTest extends org.geotoolkit.test
             assertTrue(Collections.disjoint(geographic, projected));
             assertTrue(Collections.disjoint(geographic, vertical));
             assertTrue(Collections.disjoint(projected,  vertical));
-        } finally {
-            factory.dispose(false);
-        }
-        assertTrue("Connection should be closed.", connection.isClosed());
-    }
-
-    /**
-     * Tests the wrapping of {@link DirectPostgisFactory} in {@link CachingPostgisFactory}.
-     *
-     * @throws FactoryException Should not happen.
-     * @throws IOException If an error occurred while reading the properties file.
-     */
-    @Test
-    @Ignore
-    public void testCaching() throws FactoryException, IOException {
-        final CachingPostgisFactory factory = new CachingPostgisFactory(getCoverageDataSource());
-        try {
-            /*
-             * Test general information.
-             */
-            assertEquals("EPSG", org.apache.sis.metadata.iso.citation.Citations.getIdentifier(factory.getAuthority()));
-            /*
-             * Test fetching a few CRS.
-             */
-            assertEquals("WGS 84", String.valueOf(factory.getDescriptionText("EPSG:4326")));
-
-            final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
-            assertEquals("EPSG:4326",    getIdentifier(geoCRS, Citations.EPSG).toString());
-//          assertEquals("PostGIS:4326", getIdentifier(geoCRS, Citations.POSTGIS).toString());
-            assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), geoCRS, false);
-
-            final ProjectedCRS projCRS = factory.createProjectedCRS("EPSG:3395");
-            assertEquals("EPSG:3395",    getIdentifier(projCRS, Citations.EPSG).toString());
-//          assertEquals("PostGIS:3395", getIdentifier(projCRS, Citations.POSTGIS).toString());
-            assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), projCRS.getBaseCRS(), false);
-
-            final VerticalCRS vertCRS = factory.createVerticalCRS("EPSG:57150");
-            assertEquals("EPSG:57150",   getIdentifier(vertCRS, Citations.EPSG).toString());
-//          assertEquals("PostGIS:6000", getIdentifier(vertCRS, Citations.POSTGIS).toString());
             /*
              * Test the cache.
              */
@@ -171,7 +132,8 @@ public final strictfp class DirectPostgisFactoryTest extends org.geotoolkit.test
             assertSame(projCRS, factory.createProjectedCRS ("EPSG:3395"));
             assertSame(vertCRS, factory.createVerticalCRS  ("EPSG:57150"));
         } finally {
-            factory.close();
+            factory.dispose();
         }
+        assertTrue("Connection should be closed.", connection.isClosed());
     }
 }

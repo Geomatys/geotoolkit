@@ -18,10 +18,10 @@
 package org.geotoolkit.image.io.metadata;
 
 import javax.imageio.metadata.IIOMetadataFormat;
+import org.apache.sis.internal.util.CollectionsExt;
 
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.metadata.ValueRestriction;
 
 
@@ -58,7 +58,7 @@ final class ValidValues extends ValueRestriction {
      * Creates a new {@code ValidValues} instance for the given enumeration.
      */
     ValidValues(final Object[] values) {
-        super(null, null, XCollections.immutableSet(values));
+        super(null, null, CollectionsExt.immutableSet(false, values));
     }
 
     /**

@@ -363,7 +363,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                                        <gmd:onlineResource>\n" +
         "                                            <gmd:CI_OnlineResource>\n" +
         "                                                <gmd:linkage>\n" +
-        "                                                    <gmd:URL>http://www.epsg.org</gmd:URL>\n" +
+        "                                                    <gmd:URL>https://epsg.org/</gmd:URL>\n" +
         "                                                </gmd:linkage>\n" +
         "                                                <gmd:function>\n" +
         "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>\n" +
@@ -400,7 +400,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                        <gmd:onlineResource>\n" +
         "                            <gmd:CI_OnlineResource>\n" +
         "                                <gmd:linkage>\n" +
-        "                                    <gmd:URL>http://www.epsg.org</gmd:URL>\n" +
+        "                                    <gmd:URL>https://epsg.org/</gmd:URL>\n" +
         "                                </gmd:linkage>\n" +
         "                                <gmd:function>\n" +
         "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>\n" +
@@ -502,7 +502,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                                        <gmd:onlineResource>" + '\n' +
         "                                            <gmd:CI_OnlineResource>" + '\n' +
         "                                                <gmd:linkage>" + '\n' +
-        "                                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
+        "                                                    <gmd:URL>https://epsg.org/</gmd:URL>" + '\n' +
         "                                                </gmd:linkage>" + '\n' +
         "                                                <gmd:function>" + '\n' +
         "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
@@ -539,7 +539,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
         "                        <gmd:onlineResource>" + '\n' +
         "                            <gmd:CI_OnlineResource>" + '\n' +
         "                                <gmd:linkage>" + '\n' +
-        "                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
+        "                                    <gmd:URL>https://epsg.org/</gmd:URL>" + '\n' +
         "                                </gmd:linkage>" + '\n' +
         "                                <gmd:function>" + '\n' +
         "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
@@ -605,7 +605,7 @@ public class WmsXmlBindingTest extends org.geotoolkit.test.TestBase {
 
         DefaultResponsibleParty rp = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         rp.setOrganisationName(new SimpleInternationalString("European Petroleum Survey Group"));
-        DefaultOnlineResource or = new DefaultOnlineResource(URI.create("http://www.epsg.org"));
+        DefaultOnlineResource or = new DefaultOnlineResource(URI.create("https://epsg.org/"));
         or.setFunction(OnLineFunction.INFORMATION);
         DefaultContact ct = new DefaultContact(or);
         rp.setContactInfo(ct);

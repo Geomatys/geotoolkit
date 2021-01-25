@@ -19,12 +19,9 @@ package org.geotoolkit.coverage.sql;
 
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
-import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.storage.MetadataBuilder;
 import org.apache.sis.internal.util.CollectionsExt;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreReferencingException;
@@ -33,7 +30,6 @@ import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
-import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameSpace;
@@ -309,27 +305,7 @@ final class ProductEntry extends Entry {
         if (areaOfInterest == null) {
             areaOfInterest = getGridGeometry();
         }
-        /*
-         * Modify envelope: when we encounter a slice, use the median value instead of the slice width
-         * to avoid multiple coverage occurence of coverages at envelope border intersections.
-         */
         Envelope envelope = areaOfInterest.getEnvelope();
-        if (HACK) {
-            int startDim = 0;
-            GeneralEnvelope modified = null;
-            final GridExtent extent = areaOfInterest.getExtent();
-            for (final SingleCRS part : CRS.getSingleComponents(envelope.getCoordinateReferenceSystem())) {
-                final int crsDim = part.getCoordinateSystem().getDimension();
-                if (crsDim == 1 && extent.getSize(startDim) == 1) {
-                    if (modified == null) {
-                        envelope = modified = new GeneralEnvelope(envelope);
-                    }
-                    double m = modified.getMedian(startDim);
-                    modified.setRange(startDim, m, m);
-                }
-                startDim += crsDim;
-            }
-        }
         return subset(envelope, getGridGeometry().getResolution(true)).read(areaOfInterest, bands);
     }
 
@@ -345,11 +321,13 @@ final class ProductEntry extends Entry {
      */
     private ProductSubset subset(final Envelope areaOfInterest, final double[] resolution) throws DataStoreException {
         ensureValid();
-        final List<GridCoverageEntry> entries;
         try (Transaction transaction = database.transaction();
              GridCoverageTable table = new GridCoverageTable(transaction))
         {
-            entries = table.find(name, areaOfInterest);
+            final List<GridCoverageEntry> entries = table.find(name, areaOfInterest);
+            if (!entries.isEmpty()) {
+                return new ProductSubset(this, areaOfInterest, resolution, entries);
+            }
         } catch (DataStoreException exception) {
             throw exception;
         } catch (TransformException exception) {
@@ -358,10 +336,7 @@ final class ProductEntry extends Entry {
         } catch (Exception exception) {
             throw new CatalogException(exception);
         }
-        if (entries.isEmpty()) {
-            throw new DisjointCoverageDomainException("No data in \"" + name + "\" product for the given area of interest.");
-        }
-        return new ProductSubset(this, areaOfInterest, resolution, entries);
+        throw new DisjointCoverageDomainException("No data in \"" + name + "\" product for the given area of interest.");
     }
 
     /**
