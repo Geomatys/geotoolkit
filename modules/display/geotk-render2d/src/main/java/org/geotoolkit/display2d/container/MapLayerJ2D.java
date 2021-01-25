@@ -95,7 +95,7 @@ public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<S
         super(canvas, layer, false);
         try {
             weakLayerListener.registerSource(layer);
-            weakResourceListener.registerSource(layer.getResource());
+            weakResourceListener.registerSource(layer.getData());
         } catch (Exception e) {
             GO2Utilities.LOGGER.log(Level.WARNING, "Cannot observe layer for changes.", e);
         }
@@ -152,7 +152,7 @@ public class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreListener<S
     }
 
     private Stream<Presentation> streamPresentations(final RenderingContext2D context) throws DataStoreException, PortrayalException {
-        return DefaultPortrayalService.present(item, item.getResource(), context);
+        return DefaultPortrayalService.present(item, item.getData(), context);
     }
 
     /**

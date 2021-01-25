@@ -73,7 +73,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
         final Feature feature = graphic.getFeature();
         final MapLayer layer = graphic.getLayer();
-        final Resource resource = layer == null ? null : layer.getResource();
+        final Resource resource = layer == null ? null : layer.getData();
 
         if (feature != null) {
             visit(feature, (RenderingContext2D) context, (SearchAreaJ2D) area);
@@ -100,7 +100,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(1, bounds2D.getCenterY());
 
         final MapLayer layer = projectedCoverage.getLayer();
-        final Resource resource = layer.getResource();
+        final Resource resource = layer.getData();
         if (resource instanceof GridCoverageResource) {
             final GridCoverageResource covRef = (GridCoverageResource) resource;
             final GridCoverage data = covRef.read(context.getGridGeometry()).forConvertedValues(true);

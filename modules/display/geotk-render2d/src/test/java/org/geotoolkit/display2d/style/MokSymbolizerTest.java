@@ -102,7 +102,7 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final MapLayer layer = MapBuilder.createFeatureLayer(col);
         layer.setStyle(SF.style(new MokSymbolizer()));
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
     }
 

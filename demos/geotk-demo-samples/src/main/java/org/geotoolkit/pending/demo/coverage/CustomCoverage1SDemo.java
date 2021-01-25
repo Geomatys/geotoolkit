@@ -49,7 +49,7 @@ public class CustomCoverage1SDemo {
         //display it
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
-        context.layers().add(cl);
+        context.getComponents().add(cl);
 //        FXMapFrame.show(context);
     }
 

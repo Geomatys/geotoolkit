@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.map;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
@@ -26,6 +28,7 @@ import org.apache.sis.storage.DataStores;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
+import org.apache.sis.util.Static;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -42,7 +45,7 @@ import org.opengis.style.StyleFactory;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public final class MapBuilder {
+public final class MapBuilder extends Static {
 
     private MapBuilder(){}
 
@@ -96,6 +99,24 @@ public final class MapBuilder {
         } else {
             return new MapLayer(resource);
         }
+    }
+
+    /**
+     * Extract all MapLayer instances from map item.
+     *
+     * @param mapcontext context to extract layers from
+     * @return list of layers, may be empty but never null
+     */
+    public static List<MapLayer> getLayers(MapContext mapcontext) {
+       final List<MapLayer> layers = new ArrayList<>();
+       for (MapItem mi : mapcontext.getComponents()) {
+           if (mi instanceof MapLayer) {
+               layers.add((MapLayer) mi);
+           } else if (mi instanceof MapContext) {
+               layers.addAll(getLayers((MapContext) mi));
+           }
+       }
+       return layers;
     }
 
     /**

@@ -53,8 +53,8 @@ public class MapContextDemo {
         final MapLayer coverageLayer = MapBuilder.createCoverageLayer(cloudFile);
 
         //add all layers in the context
-        context.layers().add(coverageLayer);
-        context.layers().add(featureLayer);
+        context.getComponents().add(coverageLayer);
+        context.getComponents().add(featureLayer);
 
         //quickly test if it works
 //        FXMapFrame.show(context);

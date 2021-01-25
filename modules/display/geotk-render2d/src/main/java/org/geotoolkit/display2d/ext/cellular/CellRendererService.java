@@ -31,7 +31,6 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
@@ -40,6 +39,7 @@ import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.style.PointSymbolizer;
 
@@ -172,7 +172,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
      * layer and we cannot adapt it.
      */
     private static MapLayer mimicCellLayer(MapLayer layer) {
-        final Resource resource = layer.getResource();
+        final Resource resource = layer.getData();
 
         //fake layer
          if (resource instanceof FeatureSet) {

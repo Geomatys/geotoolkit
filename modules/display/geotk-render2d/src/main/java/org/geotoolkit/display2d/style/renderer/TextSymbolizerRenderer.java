@@ -140,7 +140,7 @@ public class TextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTex
             tp.labelDesc = descriptor;
             return Stream.of(tp);
         } else {
-            return Stream.of(new ExceptionPresentation(layer, layer.getResource(), null, new PortrayalException("Text symbolizer has no label placement, this should not be possible.")));
+            return Stream.of(new ExceptionPresentation(layer, layer.getData(), null, new PortrayalException("Text symbolizer has no label placement, this should not be possible.")));
         }
 
     }

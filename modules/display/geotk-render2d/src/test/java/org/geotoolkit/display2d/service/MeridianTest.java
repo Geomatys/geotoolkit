@@ -584,7 +584,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         layer.setStyle(style);
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
         return context;
     }
 
@@ -610,7 +610,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         layer.setStyle(style);
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
         return context;
     }
 
@@ -632,7 +632,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, style,"test");
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
         return context;
     }
 

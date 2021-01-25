@@ -20,17 +20,16 @@ import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -90,13 +89,13 @@ public class WeakListenerTest extends org.geotoolkit.test.TestBase {
         ContextListener.Weak weak = new ContextListener.Weak(listener);
         weak.registerSource(context);
 
-        context.layers().add(MapBuilder.createEmptyMapLayer());
+        context.getComponents().add(MapBuilder.createEmptyMapLayer());
         assertEquals(1, countLayerChange.get());
         assertEquals(1, countItemChange.get());
         listener = null;
         pause();
 
-        context.layers().add(MapBuilder.createEmptyMapLayer());
+        context.getComponents().add(MapBuilder.createEmptyMapLayer());
         //listener should have desapear now, so the event should not have been send
         assertEquals(1, countLayerChange.get());
     }

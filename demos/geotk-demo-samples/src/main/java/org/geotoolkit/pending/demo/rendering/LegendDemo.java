@@ -86,18 +86,18 @@ public class LegendDemo {
         final MapLayer layer2 = MapBuilder.createEmptyMapLayer();
         layer2.setStyle(style2);
         layer2.setTitle("Highway");
-        context.layers().add(layer2);
+        context.getComponents().add(layer2);
 
         //point styles
         final MapLayer layerMark = MapBuilder.createEmptyMapLayer();
         layerMark.setStyle(Styles.markPoint());
         layerMark.setTitle("Cities");
-        context.layers().add(layerMark);
+        context.getComponents().add(layerMark);
 
         final MapLayer layerImage = MapBuilder.createEmptyMapLayer();
         layerImage.setStyle(Styles.imagePoint());
         layerImage.setTitle("Fishing areas");
-        context.layers().add(layerImage);
+        context.getComponents().add(layerImage);
 
         return context;
     }

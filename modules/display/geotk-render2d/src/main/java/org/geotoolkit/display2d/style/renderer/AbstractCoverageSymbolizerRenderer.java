@@ -179,7 +179,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
 
         final MapLayer coverageLayer = projectedCoverage.getLayer();
-        final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getResource();
+        final GridCoverageResource ref = (GridCoverageResource) coverageLayer.getData();
 
         return getObjectiveCoverage(ref, canvasGrid, isElevation, sourceBands);
     }

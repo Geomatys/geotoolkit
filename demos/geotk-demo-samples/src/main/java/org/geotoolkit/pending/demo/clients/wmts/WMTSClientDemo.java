@@ -50,7 +50,7 @@ public class WMTSClientDemo {
             System.out.println(model);
 
             layer.setTitle(n.tip().toString());
-            context.layers().add(layer);
+            context.getComponents().add(layer);
 
         }
 

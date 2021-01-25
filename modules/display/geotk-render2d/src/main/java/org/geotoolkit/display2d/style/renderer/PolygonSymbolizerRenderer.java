@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import org.geotoolkit.display2d.presentation.ShapePresentation;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -28,12 +27,13 @@ import java.util.stream.Stream;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
+import org.geotoolkit.display2d.presentation.ShapePresentation;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.renderer.ExceptionPresentation;
+import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
@@ -93,7 +93,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Cached
                 }
             }
         } catch (TransformException ex) {
-            return Stream.of(new ExceptionPresentation(layer, layer.getResource(), null, ex));
+            return Stream.of(new ExceptionPresentation(layer, layer.getData(), null, ex));
         }
 
         if (shapes == null) {

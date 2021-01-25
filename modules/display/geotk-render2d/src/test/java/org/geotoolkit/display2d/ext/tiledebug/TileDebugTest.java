@@ -59,12 +59,12 @@ public class TileDebugTest extends org.geotoolkit.test.TestBase {
 
         final InMemoryPyramidResource resource = new InMemoryPyramidResource(Names.createLocalName(null, null, "test"));
         resource.createModel(TileMatrices.createWorldWGS84Template(12));
-        
+
 
         final MapLayer layer = MapBuilder.createCoverageLayer(resource);
         layer.setStyle(style);
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 
         final SceneDef sdef = new SceneDef(context);
         final CanvasDef cdef = new CanvasDef();

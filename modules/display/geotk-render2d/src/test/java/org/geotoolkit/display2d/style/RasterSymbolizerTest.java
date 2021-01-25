@@ -112,7 +112,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(red,green,blue), image);
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
+        context.getComponents().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
 
         final CanvasDef cdef = new CanvasDef(grid);
         final SceneDef sdef = new SceneDef(context);
@@ -148,7 +148,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
         final GridCoverage2D coverage = new GridCoverage2D(grid, Arrays.asList(rgb), image);
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
+        context.getComponents().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
 
         final CanvasDef cdef = new CanvasDef(grid);
         final SceneDef sdef = new SceneDef(context);
@@ -197,7 +197,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final MapContext context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
-        context.layers().add(cl);
+        context.getComponents().add(cl);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.forCode("EPSG:32632"));
         env.setRange(0, -2574823.6832217844, 5487970.783439655);
@@ -279,7 +279,7 @@ public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
 
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
+        context.getComponents().add(MapBuilder.createCoverageLayer(new InMemoryGridCoverageResource(coverage)));
 
         final BufferedImage nearest;
         final BufferedImage bicubic;

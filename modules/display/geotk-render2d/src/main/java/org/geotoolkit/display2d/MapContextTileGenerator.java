@@ -49,7 +49,6 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
-import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -172,8 +171,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
         boolean rasterOptimisation = true;
 
         search:
-        for (MapLayer layer : sceneDef.getContext().layers()) {
-            final Resource resource = layer.getResource();
+        for (MapLayer layer : MapBuilder.getLayers(sceneDef.getContext())) {
             final MutableStyle style = layer.getStyle();
             for (FeatureTypeStyle fts : style.featureTypeStyles()) {
                 for (Rule rule : fts.rules()) {
@@ -354,7 +352,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     r.getModels().add(pm);
 
                     final MapContext mc = MapBuilder.createContext();
-                    mc.layers().add(MapBuilder.createLayer(r));
+                    mc.getComponents().add(MapBuilder.createLayer(r));
                     parent = mc;
                     hints = new Hints(hints);
                     hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);

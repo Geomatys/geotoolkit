@@ -77,7 +77,7 @@ public class PostgisRasterDemo {
         final MapLayer layer = MapBuilder.createLayer(col);
         layer.setStyle(RandomStyleBuilder.createDefaultRasterStyle());
         final MapContext context = MapBuilder.createContext();
-        context.layers().add(layer);
+        context.getComponents().add(layer);
 //        FXMapFrame.show(context);
 
 

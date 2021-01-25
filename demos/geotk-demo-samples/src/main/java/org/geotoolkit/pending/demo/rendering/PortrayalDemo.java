@@ -40,7 +40,7 @@ public class PortrayalDemo {
         final MapContext context = createContext();
 
         //prepare the rendering context
-        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), context.getBounds());
+        final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), context.getEnvelope());
         canvasdef.setBackground(Color.WHITE);
         final SceneDef scenedef = new SceneDef(context);
 
@@ -74,7 +74,7 @@ public class PortrayalDemo {
 
         //add all layers in the context
 //        context.layers().add(coverageLayer);
-        context.layers().add(featureLayer);
+        context.getComponents().add(featureLayer);
 
         return context;
     }

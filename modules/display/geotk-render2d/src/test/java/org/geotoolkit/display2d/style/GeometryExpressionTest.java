@@ -92,7 +92,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final MapContext context = MapBuilder.createContext();
         final MapLayer fml = MapBuilder.createLayer(FeatureStoreUtilities.collection(feature));
         fml.setStyle(style);
-        context.layers().add(fml);
+        context.getComponents().add(fml);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -20, +20);
@@ -156,7 +156,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final MapContext context = MapBuilder.createContext();
         final MapLayer fml = MapBuilder.createLayer(FeatureStoreUtilities.collection(feature));
         fml.setStyle(style);
-        context.layers().add(fml);
+        context.getComponents().add(fml);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs3857);
         final Point pt = (Point) JTS.transform(point, CRS.findOperation(crs2154, crs3857, null).getMathTransform());

@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.style.category;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Polygon;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,19 +27,25 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.feature.Features;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
+import org.apache.sis.storage.Resource;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
-import org.geotoolkit.map.FeatureMapLayer;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.storage.FeatureSet;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.interval.RandomPalette;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -87,7 +88,7 @@ public class CategoryStyleBuilder {
     private Class<? extends Symbolizer> expectedType = null;
     private boolean other = false;
     private PropertyName currentProperty = null;
-    private FeatureMapLayer layer;
+    private MapLayer layer;
 
     private Symbolizer template;
     private RandomPalette palette;
@@ -113,7 +114,12 @@ public class CategoryStyleBuilder {
 
     }
 
-    public void analyze(final FeatureMapLayer layer){
+    public void analyze(final MapLayer layer){
+        Resource resource = layer.getData();
+        if (!(resource instanceof FeatureSet)) {
+            throw new IllegalArgumentException("Layer resource must be a FeatureSet");
+        }
+
         this.layer = layer;
         fts.rules().clear();
 
@@ -121,7 +127,7 @@ public class CategoryStyleBuilder {
         if (layer != null) {
             FeatureType schema;
             try {
-                schema = layer.getResource().getType();
+                schema = ((FeatureSet) resource).getType();
             } catch (DataStoreException ex) {
                 throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
             }
@@ -282,7 +288,7 @@ public class CategoryStyleBuilder {
         //search the different values
         final Set<Object> differentValues = new HashSet<>();
         final PropertyName property = currentProperty;
-        final FeatureSet resource = layer.getResource();
+        final FeatureSet resource = (FeatureSet) layer.getData();
 
         final QueryBuilder builder = new QueryBuilder();
         try {

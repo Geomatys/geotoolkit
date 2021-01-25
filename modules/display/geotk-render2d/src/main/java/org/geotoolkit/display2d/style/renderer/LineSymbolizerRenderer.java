@@ -79,7 +79,7 @@ public class LineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLin
                 j2dShapes = getShapes(projectedGeometry, feature, sizeCorrection);
             }
         } catch (TransformException ex) {
-            return Stream.of(new ExceptionPresentation(layer, layer.getResource(), feature, ex));
+            return Stream.of(new ExceptionPresentation(layer, layer.getData(), feature, ex));
         }
 
         if (j2dShapes == null) {

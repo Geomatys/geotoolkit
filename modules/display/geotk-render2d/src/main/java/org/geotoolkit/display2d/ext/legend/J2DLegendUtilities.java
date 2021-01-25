@@ -230,11 +230,11 @@ public class J2DLegendUtilities {
             // we can use the result of a GetLegendGraphic request instead. It should presents the
             // default style defined on the WMS service for this layer
             wmscase:
-            if (layer.getResource() instanceof GridCoverageResource) {
+            if (layer.getData() instanceof GridCoverageResource) {
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
                 BufferedImage image = null;
                 try {
-                    image = legendResults.get(layer.getResource().getIdentifier().get().tip().toString());
+                    image = legendResults.get(layer.getData().getIdentifier().get().tip().toString());
                 } catch (DataStoreException ex) {
                     //do nothing
                 }

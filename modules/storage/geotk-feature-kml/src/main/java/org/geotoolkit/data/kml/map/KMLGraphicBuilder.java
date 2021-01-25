@@ -156,7 +156,7 @@ final class KMLGraphicBuilder {
     }
 
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
-        Resource resource = layer.getResource();
+        Resource resource = layer.getData();
         if (resource instanceof Kml && canvas instanceof AbstractCanvas2D) {
             return Collections.singleton((GraphicJ2D) new KMLGraphic((J2DCanvas) canvas, (Kml) resource));
         } else {
@@ -165,7 +165,7 @@ final class KMLGraphicBuilder {
     }
 
     public Image getLegend(MapLayer layer) throws PortrayalException {
-        Kml kml = (Kml) layer.getResource();
+        Kml kml = (Kml) layer.getData();
         final KmlCache cache = new KmlCache(kml);
 
         int width = 0, height = 0, y = 0;

@@ -86,8 +86,21 @@ public class MapLayer extends MapItem implements StyleListener {
      * Get layer resource.
      *
      * @return Resource, can be null.
+     * @deprecated method renamed in getData, class replaced by MapLayer from SIS
      */
+    @Deprecated
     public Resource getResource() {
+        return getData();
+    }
+
+    /**
+     * Returns the data (resource) represented by this layer.
+     * The resource should be a {@link DataSet}, but {@link Aggregate} is also accepted.
+     * The behavior in aggregate case depends on the rendering engine.
+     *
+     * @return data to be rendered, or {@code null} is unavailable.
+     */
+    public Resource getData() {
         return resource;
     }
 
@@ -191,7 +204,7 @@ public class MapLayer extends MapItem implements StyleListener {
      * @return - the layer's bounds
      */
     public Envelope getBounds() {
-        final Resource ref = getResource();
+        final Resource ref = getData();
 
         Envelope env = null;
         if (ref instanceof DataSet) {

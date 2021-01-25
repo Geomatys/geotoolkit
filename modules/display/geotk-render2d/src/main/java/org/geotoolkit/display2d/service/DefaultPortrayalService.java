@@ -96,6 +96,7 @@ import org.geotoolkit.display2d.style.renderer.RenderingRoutines;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
@@ -569,12 +570,12 @@ public final class DefaultPortrayalService implements PortrayalService{
             final OutputDef outputDef) throws PortrayalException {
 
         //works for one layer only
-        final List<MapLayer> layers = sceneDef.getContext().layers();
+        final List<MapLayer> layers = MapBuilder.getLayers(sceneDef.getContext());
         if(layers.size() != 1) return false;
 
         //layer must be a coverage
         final MapLayer layer = layers.get(0);
-        final Resource resource = layer.getResource();
+        final Resource resource = layer.getData();
         if(!(resource instanceof GridCoverageResource)) return false;
 
         //we must not have extensions
@@ -791,11 +792,11 @@ public final class DefaultPortrayalService implements PortrayalService{
         final RenderingContext2D renderContext = canvas.prepareContext(img.createGraphics(), new Rectangle(canvasDef.getDimension()));
 
         final MapContext context = sceneDef.getContext();
-        final List<MapLayer> layers = context.layers();
+        final List<MapLayer> layers = MapBuilder.getLayers(context);
         for (MapLayer layer : layers) {
             if (!layer.isVisible()) continue;
 
-            final Resource resource = layer.getResource();
+            final Resource resource = layer.getData();
             stream = Stream.concat(stream, present(layer, resource, renderContext));
         }
 

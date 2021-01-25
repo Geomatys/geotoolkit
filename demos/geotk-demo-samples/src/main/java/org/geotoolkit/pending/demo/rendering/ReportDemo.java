@@ -105,7 +105,7 @@ public class ReportDemo {
                 final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getType());
                 final MapLayer layer = MapBuilder.createLayer(col);
                 layer.setStyle(style);
-                context.layers().add(layer);
+                context.getComponents().add(layer);
 
 
                 try{
@@ -136,7 +136,7 @@ public class ReportDemo {
                     final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), null);
                     canvasDef.setBackground(Color.WHITE);
                     canvasDef.setStretchImage(false);
-                    canvasDef.setEnvelope(Envelopes.transform(context.getBounds(), CRS.forCode("EPSG:3395")));
+                    canvasDef.setEnvelope(Envelopes.transform(context.getEnvelope(), CRS.forCode("EPSG:3395")));
                     final SceneDef sceneDef = new SceneDef(context,null,ext);
                     final MapDef mapdef = new MapDef(canvasDef,sceneDef,null);
                     modified.setPropertyValue("map3",mapdef);

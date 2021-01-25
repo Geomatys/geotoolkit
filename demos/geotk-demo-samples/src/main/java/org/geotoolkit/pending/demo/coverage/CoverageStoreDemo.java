@@ -41,7 +41,7 @@ public class CoverageStoreDemo {
 
         for (Resource ref : DataStores.flatten(store, true, GridCoverageResource.class)) {
             final MapLayer cl = MapBuilder.createCoverageLayer(ref);
-            context.layers().add(cl);
+            context.getComponents().add(cl);
         }
 
         //display it
