@@ -299,12 +299,21 @@ public class ClusterHullProcess extends AbstractProcess {
                     .map(value -> (Geometry) value)
                     .map(WorkGeometry::new);
             if (epsilon != null && epsilon > 1e-7) {
-                tmp = tmp.map(this::douglasPeucker);
+                tmp = tmp.map(wg -> this.douglasPeucker(wg, epsilon));
             }
             this.geomList = tmp.collect(Collectors.toList());
         }
     }
 
+    /**
+     * It seems that the jts operation buffer is very expensive in memory when it is applied to large geometries.
+     * In order too reduce memory used, if a geometry contains at least one thousand coordinates, it is roughly
+     * splitted, buffered and merged together, while preserving the original topology.
+     *
+     * @param geom
+     * @return
+     * @throws ProcessException
+     */
     private Geometry customBuffer(Geometry geom) throws ProcessException {
         if (geom.getCoordinates().length < 1000) {
             return geom.buffer(tolerance, 4);
@@ -340,7 +349,7 @@ public class ClusterHullProcess extends AbstractProcess {
         } else if (geom instanceof LineString) {
             return this.bufferLargeLineString((LineString) geom);
         } else if (geom instanceof Polygon) {
-            return this.bufferLargeLineString(((Polygon) geom).getExteriorRing());
+            return geom.buffer(tolerance, 4); // Not supported yet
         } else {
             throw new ProcessException("Unsupported geometry type for custom buffer operation: " + geom.getGeometryType(), this);
         }
@@ -365,8 +374,8 @@ public class ClusterHullProcess extends AbstractProcess {
         return r;
     }
 
-    private WorkGeometry douglasPeucker(final WorkGeometry toSmooth) {
-        final Geometry smoothed = DouglasPeuckerSimplifier.simplify(toSmooth.proj, this.epsilon);
+    private WorkGeometry douglasPeucker(final WorkGeometry toSmooth, final double eps) {
+        final Geometry smoothed = DouglasPeuckerSimplifier.simplify(toSmooth.proj, eps);
         return new WorkGeometry(smoothed, true);
     }
 
