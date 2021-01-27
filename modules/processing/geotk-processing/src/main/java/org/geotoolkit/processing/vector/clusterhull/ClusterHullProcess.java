@@ -13,16 +13,18 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
-import org.geotoolkit.storage.memory.InMemoryStore;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
+import org.locationtech.jts.operation.union.UnaryUnionOp;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.lang.OutOfMemoryError;
 
 import org.geotoolkit.processing.AbstractProcess;
 
@@ -40,6 +42,8 @@ import org.opengis.util.FactoryException;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
+import org.geotoolkit.storage.memory.InMemoryFeatureSet;
+import org.locationtech.jts.geom.Coordinate;
 
 
 /**
@@ -47,16 +51,25 @@ import javax.measure.quantity.Length;
  * a feature set of polygons that represent the footprints of the set of elements
  * according to tolerance distance.
  * The algorithm takes as input a geometry set and a tolerance parameter. It's about gradually building a clustered geometry set.
- * At the start we consider a set of WorkGeometry, that contains a geometry and his projection by Lambert CRS projection.
- * During each iteration, we split the set into a random WorkGeometry and the rest of the set.
+ * At the start we consider a set of Cluster, that contains a set of geometry which are a geometry and his projection by Lambert CRS projection.
+ * During each iteration, we split the set into the first Cluster and the rest of the set.
  * Then we iterate on the rest of the set:
- *      - if we found an other geometry in the same cluster, we merge them and interrupt the loop.
+ *      - if we found a cluster that intersects the first, we merge them and interrupt the loop.
  *      - if not we consider this one as a complete cluster and send it to the final result.
  * This procedure is apply until the input set is empty.
  *
  * @author Maxime Gavens - décembre 2019
  */
 public class ClusterHullProcess extends AbstractProcess {
+
+    /**
+     * Used to build the featureSet result.
+     */
+    private static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+
+    private int[][] roadmap;
+
+    private List<WorkGeometry> geomList;
 
     /**
      * Measure of tolerance used to compute cluster hull.
@@ -88,11 +101,6 @@ public class ClusterHullProcess extends AbstractProcess {
     private GeometryCSTransformer inv;
 
     /**
-     * Used to build the featureSet result.
-     */
-    private static GeometryFactory geometryFactory = new GeometryFactory();
-
-    /**
      * Default constructor.
      */
     public ClusterHullProcess(final ParameterValueGroup input) {
@@ -119,20 +127,88 @@ public class ClusterHullProcess extends AbstractProcess {
      * Its interest is to limit the number of projection performs during the process (useful for distance, buffer, Douglas-Peucker)
      */
     private class WorkGeometry {
-        Geometry source;
-        Geometry buffer;
+        Geometry proj;
 
         WorkGeometry (final Geometry source) {
-            this.source = source;
+            this(source, false);
+        }
+
+        WorkGeometry (final Geometry source, final boolean isProj) {
+            if (isProj) {
+                this.proj = source;
+            } else {
+                try {
+                    this.proj = trs.transform(source);
+                } catch (TransformException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+    }
+
+    private class Cluster {
+        Set<Integer> group;
+        Geometry out;
+
+        Cluster (final Integer index) throws ProcessException {
+            this.group = new HashSet<>();
+            this.group.add(index);
+            this.out = customBuffer(geomList.get(index).proj);
+        }
+
+        Cluster (final Set<Integer> group, final Geometry out) {
+            this.group = group;
+            this.out = out;
+        }
+
+        boolean isIntersect(final Cluster clust) {
+            for (int i1: this.group) {
+                for (int i2: clust.group) {
+                    if (computeDistance(i1, i2)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        boolean computeDistance(final int i1, final int i2) {
+            WorkGeometry g1 = geomList.get(i1);
+            WorkGeometry g2 = geomList.get(i2);
+
+            // mémoïsation of distance calculation
+            if (roadmap[i1][i2] == -1) {
+                if (isSameCluster(g1, g2)) {
+                    roadmap[i1][i2] = 1;
+                    roadmap[i2][i1] = 1;
+                } else {
+                    roadmap[i1][i2] = 0;
+                    roadmap[i2][i1] = 0;
+                }
+            }
+            return roadmap[i1][i2] == 1;
+        }
+
+        Cluster merge(final Cluster clust) {
+            final Set<Integer> groups = new HashSet<>();
+            final Set<Geometry> united = new HashSet<>();
+
+            groups.addAll(this.group);
+            groups.addAll(clust.group);
+
+            united.add(this.out);
+            united.add(clust.out);
+
+            return new Cluster(groups, UnaryUnionOp.union(united));
+        }
+
+        Geometry getResult() {
+            // retrieve geospatial coordinates
             try {
-                this.buffer = trs.transform(source);
+                return inv.transform(this.out);
             } catch (TransformException ex) {
                 throw new RuntimeException(ex);
             }
-        }
-        WorkGeometry (final Geometry source, final Geometry buffer) {
-            this.source = source;
-            this.buffer = buffer;
         }
     }
 
@@ -148,10 +224,13 @@ public class ClusterHullProcess extends AbstractProcess {
     private FeatureSet computeClusterHull(final FeatureSet inputFeatureSet) throws ProcessException {
         try {
             // Extract geometries set from featureSet and smooth geometries with Douglas Peucker algorithm
-            Set<WorkGeometry> wgeometries = extractWorkGeometrySetAndApplyDouglasPeucker(inputFeatureSet);
+            extractAndFormat(inputFeatureSet);
+
+            // Compute all distances between WorkingGeometry, and keep if they are under the tolerance distance
+            initRoadmap();
 
             // Apply the process
-            ApplyClusterHull(wgeometries);
+            ApplyClusterHull(initCluster());
 
             // Build feature set result
             final FeatureType type = inputFeatureSet.getType();
@@ -160,6 +239,25 @@ public class ClusterHullProcess extends AbstractProcess {
         // Here OutOfMemoryError is catch cause input and treatment use a lot of memory
         } catch (DataStoreException | TransformException | OutOfMemoryError e) {
             throw new ProcessException(e.getMessage(), this, e);
+        }
+    }
+
+    private Set<Cluster> initCluster() throws ProcessException {
+        Set<Cluster> clusters = new HashSet<>();
+
+        for (int i = 0; i < this.geomList.size(); i++) {
+            this.stopIfDismissed();
+            clusters.add(new Cluster(i));
+        }
+        return clusters;
+    }
+
+    private void initRoadmap() {
+        // fill the roadmap with the value -1
+        int len = this.geomList.size();
+        this.roadmap = new int[len][len];
+        for (int i = 0; i < len; i++) {
+            Arrays.fill(roadmap[i], -1);
         }
     }
 
@@ -192,31 +290,93 @@ public class ClusterHullProcess extends AbstractProcess {
         }
     }
 
-    private Set<WorkGeometry> extractWorkGeometrySetAndApplyDouglasPeucker(final FeatureSet fs) throws DataStoreException, TransformException {
+    private void extractAndFormat(final FeatureSet fs) throws DataStoreException, TransformException {
         String geomName = FeatureExt.getDefaultGeometry(fs.getType()).getName().toString();
         try (Stream<Feature> stream = fs.features(false)) {
-            Set<WorkGeometry> geometries = stream
+            Stream<WorkGeometry> tmp = stream
                     .map(f -> f.getPropertyValue(geomName))
                     .filter(value -> value instanceof Geometry)
-                    .map(value -> {
-                        final WorkGeometry wgeom = new WorkGeometry((Geometry) value);
-                        return customDouglasPeucker(wgeom);
-                    })
-                    .collect(Collectors.toSet());
-            return geometries;
+                    .map(value -> (Geometry) value)
+                    .map(WorkGeometry::new);
+            if (epsilon != null && epsilon > 1e-7) {
+                tmp = tmp.map(wg -> this.douglasPeucker(wg, epsilon));
+            }
+            this.geomList = tmp.collect(Collectors.toList());
         }
     }
 
-    private WorkGeometry customDouglasPeucker(final WorkGeometry toSmooth) {
-        if (this.epsilon == null) return toSmooth;
-        final Geometry smoothed = DouglasPeuckerSimplifier.simplify(toSmooth.buffer, this.epsilon);
-
-        try {
-            final Geometry result = inv.transform(smoothed);
-            return new WorkGeometry(result, smoothed);
-        } catch (TransformException ex) {
-            throw new RuntimeException(ex);
+    /**
+     * It seems that the jts operation buffer is very expensive in memory when it is applied to large geometries.
+     * In order too reduce memory used, if a geometry contains at least one thousand coordinates, it is roughly
+     * splitted, buffered and merged together, while preserving the original topology.
+     *
+     * @param geom
+     * @return
+     * @throws ProcessException
+     */
+    private Geometry customBuffer(Geometry geom) throws ProcessException {
+        if (geom.getCoordinates().length < 1000) {
+            return geom.buffer(tolerance, 4);
+        } else {
+            if (geom instanceof GeometryCollection) {
+                return this.customBufferCollection((GeometryCollection) geom);
+            } else {
+                return this.customBufferSimple(geom);
+            }
         }
+    }
+
+    private Geometry customBufferCollection(GeometryCollection collection) throws ProcessException {
+        Geometry result = GEOMETRY_FACTORY.createEmpty(2);
+
+        for (int i = 0; i < collection.getNumGeometries(); i++) {
+            this.stopIfDismissed();
+            Geometry g = collection.getGeometryN(i);
+            Geometry buff = g.getCoordinates().length < 1000 ? g.buffer(tolerance, 4) : this.customBufferSimple(g);
+
+            // union
+            final List<Geometry> u = new ArrayList<>();
+            u.add(result);
+            u.add(buff);
+            result = UnaryUnionOp.union(u);
+        }
+        return result;
+    }
+
+    private Geometry customBufferSimple(Geometry geom) throws ProcessException {
+        if (geom instanceof Point) {
+            return geom.buffer(tolerance, 4);
+        } else if (geom instanceof LineString) {
+            return this.bufferLargeLineString((LineString) geom);
+        } else if (geom instanceof Polygon) {
+            return geom.buffer(tolerance, 4); // Not supported yet
+        } else {
+            throw new ProcessException("Unsupported geometry type for custom buffer operation: " + geom.getGeometryType(), this);
+        }
+    }
+
+    private Geometry bufferLargeLineString(LineString tooLarge) {
+        final Coordinate[] coords = tooLarge.getCoordinates();
+        // first fragment
+        final Coordinate[] ff = new Coordinate[]{coords[0], coords[1]};
+        Geometry r = GEOMETRY_FACTORY.createLineString(ff).buffer(tolerance, 4);
+
+        for (int i = 1; i < coords.length - 1; i++) {
+            final Coordinate[] fragment = new Coordinate[]{ coords[i], coords[i + 1] };
+            final Geometry buff = GEOMETRY_FACTORY.createLineString(fragment).buffer(tolerance, 4);
+
+            // union
+            final List<Geometry> u = new ArrayList<>();
+            u.add(r);
+            u.add(buff);
+            r = UnaryUnionOp.union(u);
+        }
+        return r;
+    }
+
+    private WorkGeometry douglasPeucker(final WorkGeometry toSmooth, final double eps) {
+        final Geometry smoothed = DouglasPeuckerSimplifier.simplify(toSmooth.proj, eps);
+        return new WorkGeometry(smoothed, true);
     }
 
     private Double[] getMedianPoint(final FeatureSet fs) throws DataStoreException {
@@ -229,25 +389,26 @@ public class ClusterHullProcess extends AbstractProcess {
 
     /**
      * On each recurrence:
-     *      - Extract randomly one geometry "first" from the "clustersRaw"
+     *      - Extract the first one cluster "first" from the "clustersRaw"
      *      - Iterate on "clusterRaw":
-     *          - if current geometry is in the same cluster as "first", merge them and break the loop.
-     *          - if not "first" is a cluster, apply buffer on it, send it to the final result.
+     *          - if current cluster intersect the cluster "first", merge them and break the loop.
+     *          - if not, "first" is a cluster, apply buffer on it, send it to the final result.
      * This procedure is apply until the input set is empty.
      * @param clusterRaw set of workGeometry not yet clustered.
      * @throws TransformException
      */
-    private void ApplyClusterHull(Set<WorkGeometry> clustersRaw) throws TransformException {
+    private void ApplyClusterHull(Set<Cluster> clustersRaw) throws TransformException, ProcessException {
         if (clustersRaw.isEmpty()) return;
-        WorkGeometry first = clustersRaw.iterator().next();
+        Cluster first = clustersRaw.iterator().next();
         clustersRaw.remove(first);
-        WorkGeometry merged = null;
+        Cluster merged = null;
 
         // find a geometry who are in a same cluster
-        for (WorkGeometry wg: clustersRaw) {
+        for (Cluster wg: clustersRaw) {
+            this.stopIfDismissed();
             // check if same cluster
-            if (isSameCluster(first, wg)) {
-                merged = mergeWorkGeometry(first, wg);
+            if (first.isIntersect(wg)) {
+                merged = first.merge(wg);
                 // update the element with the result of the merge
                 clustersRaw.remove(wg);
                 clustersRaw.add(merged);
@@ -259,44 +420,33 @@ public class ClusterHullProcess extends AbstractProcess {
             // first is a cluster on his own
             // apply buffer
             // add it within the global result
-            bufferizeAndSet(first);
+            set(first);
         }
         ApplyClusterHull(clustersRaw);
     }
 
     private boolean isSameCluster(final WorkGeometry wg1, final WorkGeometry wg2) {
-        return wg1.buffer.distance(wg2.buffer) <= this.tolerance;
+        return wg1.proj.distance(wg2.proj) <= this.tolerance;
     }
 
-    private WorkGeometry mergeWorkGeometry(final WorkGeometry wg1, final WorkGeometry wg2) {
-        Geometry result = wg1.source.union(wg2.source);
-
-        return new WorkGeometry(result);
-    }
-
-    private void bufferizeAndSet(final WorkGeometry wg) throws TransformException {
-        Geometry target = wg.buffer.buffer(this.tolerance);
-
-        this.clusters.add(inv.transform(target));
+    private void set(final Cluster clust) {
+        this.clusters.add(clust.getResult());
     }
 
     private FeatureSet toFeatureSet(final Set<Geometry> geometries, final CoordinateReferenceSystem crs) throws DataStoreException {
-        final InMemoryStore store = new InMemoryStore();
         final FeatureType type = createSimpleType(crs);
-        List<Feature> features = new ArrayList<>();
-
-        WritableFeatureSet resource = (WritableFeatureSet) store.add(new DefiningFeatureSet(type, null));
+        final List<Feature> features = new ArrayList<>();
         for (Geometry geometry: geometries) {
             features.add(createDefaultFeatureFromGeometry(geometry, type));
         }
-        resource.add(features.iterator());
-        return resource;
+
+        return new InMemoryFeatureSet(type, features);
     }
 
     private Feature createDefaultFeatureFromGeometry(final Geometry geometry, final FeatureType type) {
         final Feature feature = type.newInstance();
 
-        feature.setPropertyValue("geometry", geometryFactory.createGeometry(geometry));
+        feature.setPropertyValue("geometry", GEOMETRY_FACTORY.createGeometry(geometry));
         return feature;
     }
 
