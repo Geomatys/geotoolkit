@@ -24,6 +24,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -80,8 +82,18 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements Propert
                 getChildren().add(gj2d);
             }
         }
+
         //listen to mapitem changes
-        weakListener = new WeakMapItemListener(item, this, MapItem.VISIBLE_PROPERTY, MapLayers.COMPONENTS_PROPERTY);
+        // TODO: To avoid try/catch/logging, we should find a way to configure "static" maps that do not need to be listened.
+        WeakMapItemListener tmpAllocListener = null;
+        try {
+            tmpAllocListener = new WeakMapItemListener(item, this, MapItem.VISIBLE_PROPERTY, MapLayers.COMPONENTS_PROPERTY);
+        } catch (ConcurrentModificationException e) {
+            GO2Utilities.LOGGER.log(Level.WARNING, "Cannot listen map item change due to concurrent access.");
+        } catch (Exception e) {
+            GO2Utilities.LOGGER.log(Level.WARNING, "Cannot listen map item change", e);
+        }
+        weakListener = tmpAllocListener;
     }
 
     @Override
