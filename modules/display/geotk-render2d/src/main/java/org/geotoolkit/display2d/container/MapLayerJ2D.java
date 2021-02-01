@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
@@ -74,21 +75,26 @@ public final class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreList
     public MapLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         //do not use layer crs here, to long to calculate
         super(canvas, layer, false);
-        weakLayerListener = new WeakMapItemListener(layer, ll,
+        WeakMapItemListener tmpAllocListener = null;
+        try {
+            tmpAllocListener = new WeakMapItemListener(layer, ll,
                 MapLayer.STYLE_PROPERTY,
                 MapLayer.OPACITY_PROPERTY,
                 MapLayer.QUERY_PROPERTY);
-        try {
+
             weakResourceListener.registerSource(layer.getData());
+        } catch (ConcurrentModificationException e) {
+            GO2Utilities.LOGGER.log(Level.WARNING, "Cannot observe layer for changes du to concurrent access error.");
         } catch (Exception e) {
             GO2Utilities.LOGGER.log(Level.WARNING, "Cannot observe layer for changes.", e);
         }
+        weakLayerListener = tmpAllocListener;
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        weakLayerListener.dispose();
+        if (weakLayerListener != null) weakLayerListener.dispose();
         weakResourceListener.dispose();
     }
 
