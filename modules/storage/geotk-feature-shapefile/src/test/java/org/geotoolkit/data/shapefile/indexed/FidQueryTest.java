@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.junit.Test;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -29,28 +28,29 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.storage.feature.FeatureIterator;
+import org.geotoolkit.storage.feature.FeatureStoreUtilities;
+import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
-import org.opengis.util.GenericName;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.spatial.BBOX;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.storage.feature.FeatureWriter;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureType;
-import org.opengis.feature.PropertyType;
-import org.opengis.filter.FilterFactory;
+import org.opengis.util.GenericName;
 
 public class FidQueryTest extends FIDTestCase {
 

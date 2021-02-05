@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
-
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.data.shapefile.ShapefileProvider;
 import static org.geotoolkit.data.shapefile.ShapefileProvider.LOGGER;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.QIX;
@@ -34,7 +34,6 @@ import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHP;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
-import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.nio.IOUtilities;
 
 /**
@@ -401,7 +400,7 @@ public final class ShpFiles {
     }
 
     public WritableByteChannel getWriteChannel(final URI uri) throws IOException {
-        return Files.newByteChannel(Paths.get(uri));
+        return Files.newByteChannel(Paths.get(uri), StandardOpenOption.WRITE);
     }
 
     public String getTypeName() {

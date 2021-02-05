@@ -25,11 +25,11 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.storage.feature.FeatureReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -108,7 +108,7 @@ public class ShapefileFeatureReader implements FeatureReader {
 
 
         //check if the attributs are mixed
-        final AttributeType[] readerAtt = getDescriptors(attributeReader);
+        final AttributeType[] readerAtt = attributeReader.getPropertyDescriptors();
         attributIndexes = new String[readerAtt.length];
         for(int i=0; i<readerAtt.length; i++){
             try{
@@ -269,7 +269,7 @@ public class ShapefileFeatureReader implements FeatureReader {
         final FeatureTypeBuilder b = new FeatureTypeBuilder();
         b.setName("noTypeName");
         b.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
-        for(AttributeType at : getDescriptors(attributeReader)){
+        for(AttributeType at : attributeReader.getPropertyDescriptors()){
             b.addAttribute(at);
         }
         return b.build();
@@ -288,7 +288,4 @@ public class ShapefileFeatureReader implements FeatureReader {
         return new ShapefileFeatureReader(attributeReader, fidReader, schema);
     }
 
-    private static AttributeType[] getDescriptors(final ShapefileAttributeReader reader) {
-        return reader.getPropertyDescriptors();
-    }
 }
