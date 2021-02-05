@@ -58,16 +58,6 @@
   <modules>
     <module>geotk-demo-referencing-javadb</module>
     <module>geotk-demo-referencing-wkt</module>
+    <module>geotk-demo-samples</module>
   </modules>
-  <profiles>
-    <profile>
-      <id>javafx</id>
-      <activation>
-        <jdk>1.8</jdk>
-      </activation>
-      <modules>
-        <module>geotk-demo-samples</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>

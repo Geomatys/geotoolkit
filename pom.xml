@@ -131,33 +131,6 @@
       </build>
     </profile>
     <profile>
-      <id>JDK9</id>
-      <activation>
-        <jdk>[9,)</jdk>
-      </activation>
-      <properties>
-        <sis.build.helper.version>${sis.version}</sis.build.helper.version>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-              <release>8</release>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-runtime</artifactId>
-          <scope>compile</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
       <id>sign-artifacts</id>
       <build>
         <plugins>
@@ -211,7 +184,6 @@
     <!-- associated projects dependencies -->
     <geoapi.version>4.0-M15</geoapi.version>
     <sis.version>2.0-M0076</sis.version>
-    <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.non-free.version>1.0</sis.non-free.version>
 
     <!-- third party dependencies versions -->
@@ -234,6 +206,7 @@
     <lucene.version>8.4.0</lucene.version>
     <marineapi.version>0.11.0</marineapi.version>
     <mysql.version>8.0.17</mysql.version>
+    <nashorn.version>15.1.1</nashorn.version>
     <netty.version>3.9.4.Final</netty.version> <!-- Can not upgrade to 3.10.6 because it breaks Geotk build. -->
     <postgis.version>2.3.0</postgis.version>
     <quartz.version>2.3.1</quartz.version>
@@ -521,7 +494,14 @@
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
-        <version>${snakeyaml.version}</version> <!-- keep version aligned with jackson -->
+        <version>${snakeyaml.version}</version>            <!-- keep version aligned with Jackson -->
+      </dependency>
+
+      <!-- JavaScript -->
+      <dependency>
+        <groupId>org.openjdk.nashorn</groupId>
+        <artifactId>nashorn-core</artifactId>
+        <version>${nashorn.version}</version>
       </dependency>
 
       <!-- Data sources -->
@@ -562,6 +542,11 @@
        =========================================================== -->
   <dependencies>
     <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -578,6 +563,11 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.0.0-M3</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -639,6 +629,27 @@
 
 
     <plugins>
+      <!-- JDK requirement for building (not necessarily for running) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>15</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- =======================================================
                Compile Java source files
            ======================================================= -->
@@ -648,6 +659,7 @@
         <configuration>
           <source>${java.source}</source>       <!-- The -source argument for the Java compiler.   -->
           <target>${java.target}</target>       <!-- The -target argument for the Java compiler.   -->
+          <release>${java.target}</release>
           <debug>true</debug>        <!-- Whether to include debugging information.     -->
           <optimize>false</optimize> <!-- Whether to optimize the compiled code.        -->
           <encoding>${project.build.sourceEncoding}</encoding>
@@ -917,7 +929,7 @@
           <tagletArtifact>
             <groupId>org.apache.sis.core</groupId>
             <artifactId>sis-build-helper</artifactId>
-            <version>${sis.build.helper.version}</version>
+            <version>${sis.version}</version>
           </tagletArtifact>
 
           <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->
