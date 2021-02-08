@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.geotoolkit.data.shapefile.lock.StorageFile;
-import org.geotoolkit.data.shapefile.lock.ShpFiles;
-import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,16 +28,15 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
-
+import java.util.Set;
 import org.geotoolkit.ShapeTestData;
-
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
-import org.junit.Before;
-import org.junit.Test;
-
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.StorageFile;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class ShpFilesTestStream {
 
@@ -49,8 +44,7 @@ public class ShpFilesTestStream {
     private Map<ShpFileType, File> map;
     private ShpFiles files;
 
-    @Before
-    public void setUp() throws Exception {
+    public ShpFilesTestStream() throws Exception {
         map = ShpFilesTest.createFiles("shpFiles", ShpFileType.values(), false);
 
         typeName = map.get(SHP).getName();

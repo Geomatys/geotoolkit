@@ -17,12 +17,13 @@
 package org.geotoolkit.renderer;
 
 import java.util.List;
+import org.apache.sis.internal.map.Presentation;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface GroupPresentation extends Presentation {
+public interface GroupPresentation {
 
     List<Presentation> elements();
 }

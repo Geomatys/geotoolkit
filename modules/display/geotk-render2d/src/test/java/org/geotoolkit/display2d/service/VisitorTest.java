@@ -31,6 +31,8 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableFeatureSet;
@@ -40,8 +42,6 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -100,7 +100,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         MapLayer layer = MapBuilder.createLayer(collection);
         layer.setStyle(sf.style(sf.polygonSymbolizer()));
         layer.setVisible(true);
-        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+        MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.getComponents().add(layer);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -146,7 +146,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
 
 
         final MapLayer cml = MapBuilder.createLayer(new InMemoryGridCoverageResource(gcb.build()));
-        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+        MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.getComponents().add(cml);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());

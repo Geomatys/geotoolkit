@@ -21,6 +21,10 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.portrayal.MapItem;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -53,7 +57,7 @@ public final class MapBuilder extends Static {
      * Create a Default Mapcontext object using coordinate reference system : CRS:84.
      * @return MapContext
      */
-    public static MapContext createContext(){
+    public static MapLayers createContext(){
         return createContext(CommonCRS.WGS84.normalizedGeographic());
     }
 
@@ -64,16 +68,18 @@ public final class MapBuilder extends Static {
      * @param crs : mapcontext CoordinateReferenceSystem
      * @return MapContext
      */
-    public static MapContext createContext(final CoordinateReferenceSystem crs){
-        return new MapContext(crs);
+    public static MapLayers createContext(final CoordinateReferenceSystem crs){
+        final MapLayers layers = new MapLayers();
+        layers.setAreaOfInterest(CRS.getDomainOfValidity(crs));
+        return layers;
     }
 
     /**
      * Create a Default MapItem object. It can be used to group layers.
      * @return MapItem
      */
-    public static MapContext createItem(){
-        return new MapContext(CommonCRS.WGS84.normalizedGeographic());
+    public static MapLayers createItem(){
+        return new MapLayers();
     }
 
     /**
@@ -83,7 +89,9 @@ public final class MapBuilder extends Static {
      * @return MapLayer
      */
     public static MapLayer createEmptyMapLayer(){
-        return new MapLayer(null);
+        MapLayer layer = new MapLayer();
+        layer.setOpacity(1.0);
+        return layer;
     }
 
     /**
@@ -97,7 +105,10 @@ public final class MapBuilder extends Static {
         } else if (resource instanceof GridCoverageResource) {
             return createCoverageLayer((GridCoverageResource) resource);
         } else {
-            return new MapLayer(resource);
+            final MapLayer layer = new MapLayer();
+            layer.setData(resource);
+            layer.setOpacity(1.0);
+            return layer;
         }
     }
 
@@ -107,13 +118,13 @@ public final class MapBuilder extends Static {
      * @param mapcontext context to extract layers from
      * @return list of layers, may be empty but never null
      */
-    public static List<MapLayer> getLayers(MapContext mapcontext) {
+    public static List<MapLayer> getLayers(MapLayers mapcontext) {
        final List<MapLayer> layers = new ArrayList<>();
        for (MapItem mi : mapcontext.getComponents()) {
            if (mi instanceof MapLayer) {
                layers.add((MapLayer) mi);
-           } else if (mi instanceof MapContext) {
-               layers.addAll(getLayers((MapContext) mi));
+           } else if (mi instanceof MapLayers) {
+               layers.addAll(getLayers((MapLayers) mi));
            }
        }
        return layers;
@@ -126,7 +137,7 @@ public final class MapBuilder extends Static {
      * @deprecated use createLayer method instead
      */
     @Deprecated
-    public static FeatureMapLayer createFeatureLayer(final FeatureSet collection){
+    public static MapLayer createFeatureLayer(final FeatureSet collection){
         MutableStyle style;
         String name = "";
         String title = null;
@@ -140,10 +151,13 @@ public final class MapBuilder extends Static {
         } catch (DataStoreException ex) {
             style = ((MutableStyleFactory)DefaultFactories.forBuildin(StyleFactory.class)).style(RandomStyleBuilder.createRandomPointSymbolizer());
         }
-        final FeatureMapLayer maplayer = new FeatureMapLayer(collection, style);
+        final MapLayer maplayer = new MapLayer();
+        maplayer.setData(collection);
+        maplayer.setStyle(style);
         maplayer.setIdentifier(name);
         maplayer.setTitle(title);
         maplayer.setAbstract(abstrat);
+        maplayer.setOpacity(1.0);
         return maplayer;
     }
 
@@ -155,8 +169,12 @@ public final class MapBuilder extends Static {
      * @deprecated use createLayer method instead
      */
     @Deprecated
-    public static FeatureMapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style) {
-        return new FeatureMapLayer(collection, style);
+    public static MapLayer createFeatureLayer(final FeatureSet collection, final MutableStyle style) {
+        final MapLayer layer = new MapLayer();
+        layer.setData(collection);
+        layer.setStyle(style);
+        layer.setOpacity(1.0);
+        return layer;
     }
 
     /**
@@ -213,8 +231,10 @@ public final class MapBuilder extends Static {
      */
     @Deprecated
     public static MapLayer createCoverageLayer(final GridCoverageResource ref){
-        MapLayer layer = new MapLayer(ref);
+        final MapLayer layer = new MapLayer();
+        layer.setData(ref);
         layer.setStyle(RandomStyleBuilder.createDefaultRasterStyle());
+        layer.setOpacity(1.0);
         return layer;
     }
 
@@ -227,8 +247,10 @@ public final class MapBuilder extends Static {
      */
     @Deprecated
     public static MapLayer createCoverageLayer(final GridCoverageResource ref, final MutableStyle style){
-        MapLayer layer = new MapLayer(ref);
+        final MapLayer layer = new MapLayer();
+        layer.setData(ref);
         if (style != null) layer.setStyle(style);
+        layer.setOpacity(1.0);
         return layer;
     }
 
@@ -241,8 +263,9 @@ public final class MapBuilder extends Static {
      */
     @Deprecated
     public static MapLayer createCoverageLayer(final Object input, final MutableStyle style){
-        MapLayer layer = createCoverageLayer(input);
+        final MapLayer layer = createCoverageLayer(input);
         if (style != null) layer.setStyle(style);
+        layer.setOpacity(1.0);
         return layer;
     }
  }

@@ -62,7 +62,7 @@ import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;

@@ -20,7 +20,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.opengis.style.Symbolizer;
 
 /**

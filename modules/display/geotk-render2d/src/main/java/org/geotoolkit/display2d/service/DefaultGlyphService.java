@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;

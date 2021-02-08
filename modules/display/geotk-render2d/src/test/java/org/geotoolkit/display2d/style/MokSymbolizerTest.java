@@ -23,6 +23,8 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.display.PortrayalException;
@@ -32,8 +34,6 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -61,7 +61,7 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
 
-    private final MapContext context;
+    private final MapLayers context;
     private final ImmutableEnvelope env;
 
     public MokSymbolizerTest() throws Exception {

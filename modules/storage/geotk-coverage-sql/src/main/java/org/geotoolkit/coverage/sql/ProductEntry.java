@@ -73,6 +73,11 @@ final class ProductEntry extends Entry {
     private final NameSpace namespace;
 
     /**
+     * The {@link #exportedGrid} envelope, potentially slightly bigger in the temporal dimension.
+     */
+    private final Envelope envelope;
+
+    /**
      * The spatiotemporal grid geometry of the datacube to give to users, or {@code null} if none.
      * This information may be {@code null} or only approximate. If {@code null}, then we have no
      * datacube for this product but we may have an aggregate of sub-products.
@@ -115,16 +120,19 @@ final class ProductEntry extends Entry {
      *
      * @param parent              the parent of this product, or {@code null} if none.
      * @param name                the product name.
+     * @param envelope            the {@code exportedGrid} envelope, potentially slightly bigger in temporal dimension.
      * @param exportedGrid        the spatial component of the grid geometry. May be {@code null} or only approximate.
      * @param temporalResolution  typical time interval between images, or {@code null} if unknown.
      * @param metadata            optional entry in {@code metadata.Metadata} table, or {@code null}.
      */
-    ProductEntry(final Database database, final String parent, final String name, final GridGeometry exportedGrid,
-            final Duration temporalResolution, final FormatEntry format, final String metadata)
+    ProductEntry(final Database database, final String parent, final String name, final Envelope envelope,
+                 final GridGeometry exportedGrid, final Duration temporalResolution, final FormatEntry format,
+                 final String metadata)
     {
         this.database           = database;
         this.parent             = parent;
         this.name               = name;
+        this.envelope           = envelope;
         this.exportedGrid       = exportedGrid;
         this.temporalResolution = temporalResolution;
         this.format             = format;
@@ -271,7 +279,7 @@ final class ProductEntry extends Entry {
      */
     public Envelope getEnvelope() throws CatalogException {
         ensureValid();
-        return (exportedGrid != null) ? exportedGrid.getEnvelope() : null;
+        return envelope;
     }
 
     public GridGeometry getGridGeometry() throws CatalogException {

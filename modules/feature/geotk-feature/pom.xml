@@ -97,6 +97,11 @@
           <artifactId>luaj-jse</artifactId>
           <version>3.0.1</version>
       </dependency>
+      <dependency>
+          <groupId>org.openjdk.nashorn</groupId>
+          <artifactId>nashorn-core</artifactId>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
 

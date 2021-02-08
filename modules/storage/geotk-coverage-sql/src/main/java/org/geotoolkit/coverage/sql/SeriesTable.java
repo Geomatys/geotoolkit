@@ -146,21 +146,44 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
     }
 
     /**
+     * Values returned by {@link SeriesTable#listAllDates(String, GridGeometryTable)}.
+     */
+    static final class Times {
+        /** Minimum and maximum time. May be an invalid range if data have no time. */
+        final double minTime, maxTime;
+
+        /** Median time values. */
+        final double[] medians;
+
+        private Times(final double minTime, final double maxTime, final double[] medians) {
+            this.minTime = minTime;
+            this.maxTime = maxTime;
+            this.medians = medians;
+        }
+
+        boolean hasTimeRange() {
+            return minTime <= maxTime;
+        }
+    }
+
+    /**
      * Lists the timestamps of all rasters in the given product.
      * This time returns <em>central</em> date of each raster.
      * It is caller's responsibility to convert from "pixel center" to "pixel corner" convention.
      * The returned time positions use {@link GridGeometryEntry#TEMPORAL_CRS}.
      */
-    final double[] listAllDates(final String product, final GridGeometryTable gridGeometries)
+    final Times listAllDates(final String product, final GridGeometryTable gridGeometries)
             throws SQLException, TransformException, DataStoreException
     {
         final DefaultTemporalCRS crs = transaction.database.temporalCRS;
         final Calendar calendar = newCalendar();
         MathTransform1D timeOffsets = null;
         double[] times = new double[500];
+        double minTime = Double.POSITIVE_INFINITY;
+        double maxTime = Double.NEGATIVE_INFINITY;
         int count = 0;
         final PreparedStatement statement = prepareStatement(
-                "SELECT \"grid\", \"startTime\", (\"startTime\" + (\"endTime\" - \"startTime\")/2) AS \"medianTime\"" +
+                "SELECT \"grid\", \"startTime\", \"endTime\", (\"startTime\" + (\"endTime\" - \"startTime\")/2) AS \"medianTime\"" +
                 "FROM " + SCHEMA + ".\"" + GridCoverageTable.TABLE + "\" " +
                 "INNER JOIN " + SCHEMA + ".\"" + TABLE + "\" ON (\"series\" = \"identifier\") " +
                 "WHERE \"product\"=? AND \"startTime\" IS NOT NULL");
@@ -182,15 +205,17 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
                         numToAdd    = 1;
                     }
                 }
+                final double tMin = crs.toValue(results.getTimestamp(2, calendar));
+                final double tMax = crs.toValue(results.getTimestamp(3, calendar));
+                if (tMin < minTime) minTime = tMin;
+                if (tMax > maxTime) maxTime = tMax;
                 if (count + numToAdd > times.length) {
                     times = Arrays.copyOf(times, Math.max(times.length * 2, count + numToAdd));
                 }
                 if (timeOffsets == null) {
-                    final Timestamp time = results.getTimestamp(3, calendar);
+                    final Timestamp time = results.getTimestamp(4, calendar);
                     times[count++] = crs.toValue(time);
                 } else {
-                    final Timestamp startTime = results.getTimestamp(2, calendar);
-                    final double tMin = crs.toValue(startTime);
                     for (int i=0; i<numToAdd; i++) {
                         times[count++] = tMin + timeOffsets.transform(i + 0.5);
                     }
@@ -201,19 +226,21 @@ final class SeriesTable extends CachedTable<Integer,SeriesEntry> {
          * Sorts, then removes duplicated values.
          */
         if (count == 0) {
-            return ArraysExt.EMPTY_DOUBLE;
-        }
-        Arrays.parallelSort(times, 0, count);
-        double previous = times[0];
-        int n=1;
-        for (int i=1; i<count; i++) {
-            final double t = times[i];
-            if (t != previous) {
-                times[n++] = t;
-                previous = t;
+            times = ArraysExt.EMPTY_DOUBLE;
+        } else {
+            Arrays.parallelSort(times, 0, count);
+            double previous = times[0];
+            int n=1;
+            for (int i=1; i<count; i++) {
+                final double t = times[i];
+                if (t != previous) {
+                    times[n++] = t;
+                    previous = t;
+                }
             }
+            times = ArraysExt.resize(times, n);
         }
-        return ArraysExt.resize(times, n);
+        return new Times(minTime, maxTime, times);
     }
 
     /**

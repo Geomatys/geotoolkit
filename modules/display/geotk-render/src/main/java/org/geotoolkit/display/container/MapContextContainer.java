@@ -17,7 +17,7 @@
 
 package org.geotoolkit.display.container;
 
-import org.geotoolkit.map.MapContext;
+import org.apache.sis.portrayal.MapLayers;
 
 /**
  *
@@ -30,15 +30,15 @@ public interface MapContextContainer {
      * this will remove all previous graphics builded with the context.
      * <b>Caution</b> this should not remove graphics unrelated to the context.
      *
-     * @param context : MapContext to render
+     * @param context : MapLayers to render
      */
-    public void setContext(MapContext context);
+    public void setContext(MapLayers context);
 
     /**
      * Returns the currently renderered map context
      *
-     * @return MapContext or null
+     * @return MapLayers or null
      */
-    public MapContext getContext();
+    public MapLayers getContext();
 
 }

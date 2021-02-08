@@ -16,25 +16,22 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.junit.After;
-
+import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.ShapeTestData;
+import org.junit.After;
+import static org.junit.Assert.*;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
-
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 
 /**

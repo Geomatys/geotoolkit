@@ -20,8 +20,7 @@ import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.primitive.SpatialNode;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.renderer.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 
@@ -33,7 +32,7 @@ import org.opengis.feature.Feature;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public abstract class GraphicJ2D extends SpatialNode implements Presentation {
+public abstract class GraphicJ2D extends SpatialNode {
 
     protected MapLayer layer;
     protected Feature feature;
@@ -51,17 +50,14 @@ public abstract class GraphicJ2D extends SpatialNode implements Presentation {
         return (J2DCanvas)super.getCanvas();
     }
 
-    @Override
     public Feature getFeature() {
         return feature;
     }
 
-    @Override
     public MapLayer getLayer() {
         return layer;
     }
 
-    @Override
     public Resource getResource() {
         return null;
     }

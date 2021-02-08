@@ -20,15 +20,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.sis.internal.map.Presentation;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.presentation.Grid2DPresentation;
-import org.geotoolkit.renderer.GroupPresentation;
-import org.geotoolkit.renderer.Presentation;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.presentation.TextPresentation;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
+import org.geotoolkit.renderer.GroupPresentation;
 import org.opengis.referencing.operation.TransformException;
 
 /**

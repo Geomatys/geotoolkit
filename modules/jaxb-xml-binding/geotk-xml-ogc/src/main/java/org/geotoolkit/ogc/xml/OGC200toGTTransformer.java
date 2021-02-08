@@ -336,9 +336,10 @@ public class OGC200toGTTransformer {
             final String wild = property.getWildCard();
             final String single = property.getSingleChar();
             final String escape = property.getEscape();
+            final boolean matchCase = property.isMatchingCase();
 
             if (OGCJAXBStatics.FILTER_COMPARISON_ISLIKE.equalsIgnoreCase(OpName)) {
-                return filterFactory.like(expr, pattern, wild, single, escape);
+                return filterFactory.like(expr, pattern, wild, single, escape, matchCase);
             }
 
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);

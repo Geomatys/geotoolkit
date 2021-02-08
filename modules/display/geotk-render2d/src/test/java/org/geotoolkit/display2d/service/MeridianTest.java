@@ -33,14 +33,14 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
@@ -89,7 +89,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate( 0,  0)
         });
 
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapLayers context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -118,7 +118,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate(+170, +10)
         });
 
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapLayers context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -148,7 +148,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate(-170, +10)
         });
 
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapLayers context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -178,7 +178,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate(+170, +10)
         });
 
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapLayers context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -208,7 +208,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate(-170, +10)
         });
 
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapLayers context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -240,7 +240,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate(-180, +10)
         });
 
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapLayers context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -267,7 +267,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate( 0,  0)
         });
 
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapLayers context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -297,7 +297,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate( 0,  0)
         });
 
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapLayers context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -323,7 +323,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate(+170, -10)
         });
 
-        final MapContext context = createFeatureLayer(points);
+        final MapLayers context = createFeatureLayer(points);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -353,7 +353,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
             new Coordinate(+170, -10)
         });
 
-        final MapContext context = createFeatureLayer(points);
+        final MapLayers context = createFeatureLayer(points);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -382,7 +382,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
         final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
 
-        final MapContext context = createFeatureLayer(poly, Geometry.class);
+        final MapLayers context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -406,7 +406,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
         final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
 
-        final MapContext context = createFeatureLayer(poly, Geometry.class);
+        final MapLayers context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -429,7 +429,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
         final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
 
-        final MapContext context = createFeatureLayer(poly, Geometry.class);
+        final MapLayers context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -452,7 +452,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
         final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
 
-        final MapContext context = createFeatureLayer(poly, Geometry.class);
+        final MapLayers context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -474,7 +474,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
         final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
 
-        final MapContext context = createFeatureLayer(poly, Geometry.class);
+        final MapLayers context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -497,7 +497,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         covEnv.setRange(0, +170, +190);
         covEnv.setRange(1, -10, +10);
 
-        final MapContext context = createCoverageLayer(covEnv);
+        final MapLayers context = createCoverageLayer(covEnv);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -521,7 +521,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         covEnv.setRange(0, -190, -170);
         covEnv.setRange(1, -10, +10);
 
-        final MapContext context = createCoverageLayer(covEnv);
+        final MapLayers context = createCoverageLayer(covEnv);
         final SceneDef sceneDef = new SceneDef(context);
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
@@ -566,7 +566,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
     }
 
 
-    private static <T extends Geometry> MapContext  createFeatureLayer(T geometry, Class<T> geomClass){
+    private static <T extends Geometry> MapLayers  createFeatureLayer(T geometry, Class<T> geomClass){
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
@@ -583,12 +583,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createLayer(col);
         layer.setStyle(style);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
         return context;
     }
 
-    private static MapContext createFeatureLayer(MultiPoint geometry){
+    private static MapLayers createFeatureLayer(MultiPoint geometry){
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
@@ -609,12 +609,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final MapLayer layer = MapBuilder.createLayer(col);
         layer.setStyle(style);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
         return context;
     }
 
-    private static MapContext createCoverageLayer(Envelope env){
+    private static MapLayers createCoverageLayer(Envelope env){
 
         final BufferedImage image = new BufferedImage((int)env.getSpan(0), (int)env.getSpan(1), BufferedImage.TYPE_INT_RGB);
         final Graphics2D g2d = image.createGraphics();
@@ -631,7 +631,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
         final MutableStyle style = SF.style(symbol);
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, style,"test");
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
         return context;
     }

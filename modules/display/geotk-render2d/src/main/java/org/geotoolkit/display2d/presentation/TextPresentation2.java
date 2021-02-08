@@ -22,11 +22,12 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.text.AttributedString;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 
 /**
@@ -43,8 +44,8 @@ public class TextPresentation2 extends Grid2DPresentation {
     public float x;
     public float y;
 
-    public TextPresentation2(MapLayer layer, Feature feature) {
-        super(layer,feature);
+    public TextPresentation2(MapLayer layer, Resource resource, Feature feature) {
+        super(layer, resource, feature);
     }
 
     @Override

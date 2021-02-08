@@ -27,12 +27,12 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.sis.feature.Features;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
@@ -57,6 +57,7 @@ import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -178,13 +179,13 @@ public class CategoryStyleBuilder {
 
 
             //try to rebuild the previous analyze if it was one
-            List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+            List<? extends FeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
 
             if(ftss.size() == 1){
-                MutableFeatureTypeStyle fts = ftss.get(0);
+                FeatureTypeStyle fts = ftss.get(0);
 
                 //defensive copy avoid synchronization
-                List<MutableRule> candidateRules = new ArrayList<>(fts.rules());
+                List<? extends Rule> candidateRules = new ArrayList<>(fts.rules());
 
                 for(Rule r : candidateRules){
                     //defensive copy avoid synchronization

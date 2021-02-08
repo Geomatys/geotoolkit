@@ -13,6 +13,8 @@ import java.util.Map;
 import javax.measure.Unit;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
@@ -22,8 +24,6 @@ import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -705,8 +705,8 @@ public class Styles {
     // SAMPLE DATA ///////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
 
-    public static MapContext createWorldContext(MutableStyle style) throws DataStoreException, URISyntaxException, MalformedURLException {
-        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+    public static MapLayers createWorldContext(MutableStyle style) throws DataStoreException, URISyntaxException, MalformedURLException {
+        MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setIdentifier("demo context");
         context.setTitle("demo context");
 
@@ -727,8 +727,8 @@ public class Styles {
         return context;
     }
 
-    public static MapContext createPolygonContext(MutableStyle style) throws DataStoreException, URISyntaxException, MalformedURLException {
-        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+    public static MapLayers createPolygonContext(MutableStyle style) throws DataStoreException, URISyntaxException, MalformedURLException {
+        MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setIdentifier("demo context");
         context.setTitle("demo context");
 
@@ -749,8 +749,8 @@ public class Styles {
         return context;
     }
 
-    public static MapContext createRasterContext(MutableStyle style) throws DataStoreException, URISyntaxException {
-        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+    public static MapLayers createRasterContext(MutableStyle style) throws DataStoreException, URISyntaxException {
+        MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setIdentifier("demo context");
         context.setTitle("demo context");
 

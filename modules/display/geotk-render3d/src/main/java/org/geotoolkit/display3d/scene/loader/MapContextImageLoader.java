@@ -18,11 +18,11 @@ package org.geotoolkit.display3d.scene.loader;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
-import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -32,14 +32,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class MapContextImageLoader implements ImageLoader {
 
-    private final MapContext context;
+    private final MapLayers context;
     private CoordinateReferenceSystem outputCRS = null;
 
-    public MapContextImageLoader(MapContext context) {
+    public MapContextImageLoader(MapLayers context) {
         this.context = context;
     }
 
-    public MapContext getContext() {
+    public MapLayers getContext() {
         return context;
     }
 

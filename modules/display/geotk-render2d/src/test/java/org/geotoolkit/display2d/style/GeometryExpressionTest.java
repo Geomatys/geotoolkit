@@ -26,6 +26,8 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.Units;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.PortrayalException;
@@ -35,8 +37,6 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -89,7 +89,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
                 "", geomExp, DEFAULT_DESCRIPTION, DEFAULT_UOM, null, fill, DEFAULT_DISPLACEMENT, LITERAL_ZERO_FLOAT);
         final MutableStyle style = SF.style(symbolizer);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final MapLayer fml = MapBuilder.createLayer(FeatureStoreUtilities.collection(feature));
         fml.setStyle(style);
         context.getComponents().add(fml);
@@ -153,7 +153,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
                 "", geomExp, DEFAULT_DESCRIPTION, Units.METRE, stroke, fill, DEFAULT_DISPLACEMENT, LITERAL_ZERO_FLOAT);
         final MutableStyle style = SF.style(symbolizer);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final MapLayer fml = MapBuilder.createLayer(FeatureStoreUtilities.collection(feature));
         fml.setStyle(style);
         context.getComponents().add(fml);

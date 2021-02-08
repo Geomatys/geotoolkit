@@ -23,7 +23,7 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.opengis.style.Fill;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;

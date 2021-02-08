@@ -38,7 +38,7 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.style.PointSymbolizer;

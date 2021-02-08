@@ -3,6 +3,8 @@ package org.geotoolkit.pending.demo.coverage;
 
 import java.nio.file.Path;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
@@ -10,8 +12,6 @@ import org.geotoolkit.coverage.worldfile.FileCoverageProvider;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
@@ -37,7 +37,7 @@ public class CoverageStoreDemo {
         final DataStore store = DataStores.open(params);
 
         //create a mapcontext
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
 
         for (Resource ref : DataStores.flatten(store, true, GridCoverageResource.class)) {
             final MapLayer cl = MapBuilder.createCoverageLayer(ref);

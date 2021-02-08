@@ -68,6 +68,8 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     private String singleChar;
     @XmlAttribute(required = true)
     private String escapeChar;
+    @XmlAttribute(required = false)
+    private boolean matchCase = true;
 
     /**
      * An empty constructor used by JAXB.
@@ -80,6 +82,10 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      *Build a new Property is like operator
      */
     public PropertyIsLikeType(final String expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
+        this(expr, pattern, wildcard, singleChar, escape, true);
+    }
+
+    public PropertyIsLikeType(final String expr, final String pattern, final String wildcard, final String singleChar, final String escape, final boolean matchCase) {
         this.escapeChar = escape;
         this.expression = new ArrayList<>();
         if (expr != null) {
@@ -92,6 +98,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
             final ObjectFactory factory = new ObjectFactory();
             this.expression.add(factory.createLiteral(new LiteralType(pattern)));
         }
+        this.matchCase    = matchCase;
     }
 
     public PropertyIsLikeType(final PropertyIsLikeType that) {
@@ -117,6 +124,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
             this.escapeChar = that.escapeChar;
             this.singleChar = that.singleChar;
             this.wildCard   = that.wildCard;
+            this.matchCase  = that.matchCase;
         }
     }
 
@@ -272,7 +280,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
     @Override
     public boolean isMatchingCase() {
-        return false;
+        return matchCase;
     }
 
     @Override
@@ -321,7 +329,8 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
             return exp &&
                    Objects.equals(this.escapeChar,   that.escapeChar)   &&
                    Objects.equals(this.singleChar,   that.singleChar)   &&
-                   Objects.equals(this.wildCard,     that.wildCard);
+                   Objects.equals(this.wildCard,     that.wildCard)     &&
+                   (this.matchCase == that.matchCase);
         }
         return false;
     }
@@ -333,6 +342,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         hash = 29 * hash + (this.escapeChar != null ? this.escapeChar.hashCode() : 0);
         hash = 29 * hash + (this.singleChar != null ? this.singleChar.hashCode() : 0);
         hash = 29 * hash + (this.wildCard != null ? this.wildCard.hashCode() : 0);
+        hash = 29 * hash + (this.matchCase ? 1 : 0);
         return hash;
     }
 
@@ -348,7 +358,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
         s.append(" escape=").append(escapeChar);
         s.append(" single=").append(singleChar).append(" wildCard=").append(wildCard);
-
+        s.append(" matchCase=").append(matchCase);
         return s.toString();
     }
 }

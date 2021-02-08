@@ -1,12 +1,12 @@
 package org.geotoolkit.pending.demo.datamodel.postgis;
 
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.db.postgres.PostgresProvider;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.feature.FeatureStore;
@@ -30,7 +30,7 @@ public class PostgisDemo {
 
         final FeatureStore store = (FeatureStore) DataStores.open(parameters);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
 
         for(GenericName n : store.getNames()){
             System.out.println(store.getFeatureType(n.toString()));

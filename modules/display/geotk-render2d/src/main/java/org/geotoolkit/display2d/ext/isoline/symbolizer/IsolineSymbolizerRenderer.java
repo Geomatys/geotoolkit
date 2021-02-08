@@ -19,8 +19,11 @@ package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.storage.query.CoverageQuery;
 import org.apache.sis.parameter.Parameters;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
@@ -31,11 +34,8 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.renderer.*;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.*;
 import org.geotoolkit.processing.coverage.isoline.IsolineDescriptor;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.function.Jenks;
@@ -132,7 +132,10 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
             return stream;
 
         } catch (DataStoreException | ProcessException ex) {
-            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(resource);
+            return Stream.of(ep);
         }
     }
 

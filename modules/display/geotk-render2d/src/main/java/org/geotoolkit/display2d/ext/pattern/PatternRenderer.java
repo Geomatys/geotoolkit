@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
@@ -34,10 +37,7 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.referencing.operation.TransformException;
 
@@ -67,7 +67,10 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         } catch (NoSuchDataException ex) {
             return Stream.empty();
         } catch (DataStoreException ex) {
-            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(resource);
+            return Stream.of(ep);
         }
 
         if (!Utilities.equalsIgnoreMetadata(CRS.getHorizontalComponent(dataCoverage.getCoordinateReferenceSystem()), renderingContext.getObjectiveCRS())) {
@@ -85,7 +88,10 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         try {
             entry = symbol.getMasks(dataCoverage);
         } catch (IOException | TransformException ex) {
-            return Stream.of(new ExceptionPresentation(layer, resource, null, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            ep.setResource(resource);
+            return Stream.of(ep);
         }
 
         final MapLayer subLayer = MapBuilder.createLayer(entry.getKey());

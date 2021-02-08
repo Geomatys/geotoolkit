@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -29,7 +30,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -43,7 +43,7 @@ import org.opengis.util.FactoryException;
  */
 public final class Portrayer {
 
-    private static final MapContext EMPTY_CONTEXT = MapBuilder.createContext();
+    private static final MapLayers EMPTY_CONTEXT = MapBuilder.createContext();
 
     private final J2DCanvasBuffered canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(1, 1));
     private final ContextContainer2D container = new ContextContainer2D(canvas);
@@ -72,7 +72,7 @@ public final class Portrayer {
             canvas.setMonitor(monitor);
         }
 
-        final MapContext context = sceneDef.getContext();
+        final MapLayers context = sceneDef.getContext();
         container.setContext(context);
         try {
             canvas.setObjectiveCRS(crs);

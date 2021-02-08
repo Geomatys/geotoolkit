@@ -421,6 +421,16 @@ public class FilterXmlFactory {
         }
     }
 
+    public static PropertyIsLike buildPropertyIsLike(final String currentVersion, final String propertyName, final String pattern,
+            final String wildChar, final String singleChar, final String escapeChar, final boolean matchCase) {
+
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.PropertyIsLikeType(propertyName, pattern, wildChar, singleChar, escapeChar, matchCase);
+        } else {
+            throw new IllegalArgumentException("unexpected number of arguments: 6");
+        }
+    }
+
     public static PropertyIsNull buildPropertyIsNull(final String currentVersion, final String propertyName) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.PropertyIsNullType(propertyName);

@@ -15,14 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
 import org.geotoolkit.display2d.ext.legend.LegendTemplate;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.symbology.Styles;
 import org.geotoolkit.sld.xml.Specification.SymbologyEncoding;
@@ -41,7 +41,7 @@ public class LegendDemo {
         Demos.init();
 
         //generate a map context
-        final MapContext context = createContext();
+        final MapLayers context = createContext();
 
         //generate a template for the legend
         final LegendTemplate template = new DefaultLegendTemplate(
@@ -76,8 +76,8 @@ public class LegendDemo {
         frm.setVisible(true);
     }
 
-    private static MapContext createContext() throws JAXBException, FactoryException, URISyntaxException{
-        final MapContext context = MapBuilder.createContext();
+    private static MapLayers createContext() throws JAXBException, FactoryException, URISyntaxException{
+        final MapLayers context = MapBuilder.createContext();
 
         final StyleXmlIO xmlutil = new StyleXmlIO();
 

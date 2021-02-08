@@ -35,8 +35,10 @@ import javax.media.jai.OpImage;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.image.ImageProcessor;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -47,7 +49,6 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
@@ -77,8 +78,8 @@ public class RasterPresentation extends Grid2DPresentation {
     public AlphaComposite composite = GO2Utilities.ALPHA_COMPOSITE_1F;
     public GridCoverage coverage;
 
-    public RasterPresentation(MapLayer layer, GridCoverage coverage) {
-        super(layer, null);
+    public RasterPresentation(MapLayer layer, Resource resource, GridCoverage coverage) {
+        super(layer, resource, null);
         this.coverage = coverage;
     }
 

@@ -4,8 +4,8 @@ package org.geotoolkit.pending.demo.clients.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.wms.GetCapabilitiesRequest;
 import org.geotoolkit.wms.GetLegendRequest;
@@ -29,7 +29,7 @@ public class WMSClientDemo {
         //final WMSMapLayer layer3 = new WMSMapLayer(wmsServer, "layerTest2");
         final WMSResource layer2 = new WMSResource(wmsServer, "Countries");
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(MapBuilder.createCoverageLayer(layer));
         context.getComponents().add(MapBuilder.createCoverageLayer(layer2));
         //context.layers().add(layer3);

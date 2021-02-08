@@ -18,19 +18,21 @@ package org.geotoolkit.renderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.storage.Resource;
 import org.opengis.feature.Feature;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultGroupPresentation extends AbstractPresentation implements GroupPresentation {
+public class DefaultGroupPresentation extends Presentation implements GroupPresentation {
 
     public final List<Presentation> elements = new ArrayList<>();
 
-    public DefaultGroupPresentation(MapLayer layer, Feature feature) {
-        super(layer, feature);
+    public DefaultGroupPresentation(MapLayer layer, Resource resource, Feature feature) {
+        super(layer, resource, feature);
     }
 
     @Override

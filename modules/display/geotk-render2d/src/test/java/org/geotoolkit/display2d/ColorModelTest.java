@@ -43,6 +43,8 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
@@ -57,8 +59,6 @@ import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -201,7 +201,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testNoDataCM() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
@@ -222,7 +222,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testSolidColorBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
@@ -242,7 +242,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testSolidColorBackgroundWithAA() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
@@ -262,7 +262,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testAlphaColorBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
@@ -280,7 +280,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testOpaqueUnpredictableBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
@@ -304,7 +304,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testOpaqueStyleDatas() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(createLayer(Color.BLUE,Color.RED,Color.YELLOW));
         context.getComponents().add(createLayer(Color.BLUE,Color.GREEN,Color.GRAY));
 
@@ -341,7 +341,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testRasterData() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(MapBuilder.createCoverageLayer(coverages.get(0), SF.style(SF.rasterSymbolizer()), "test"));
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
@@ -367,7 +367,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testJPEGOutput() throws NoSuchAuthorityCodeException, FactoryException, IOException, PortrayalException{
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
 
         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
@@ -410,7 +410,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, env, GridOrientation.HOMOTHETY), null, img);
 
         //display it
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.getComponents().add(cl);
 
@@ -456,7 +456,7 @@ public class ColorModelTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = new GridCoverage2D(new GridGeometry(null, env, GridOrientation.HOMOTHETY), null, img);
 
         //display it
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.getComponents().add(cl);
 

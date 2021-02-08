@@ -28,12 +28,12 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReportsContext;
 import net.sf.jasperreports.renderers.Graphics2DRenderable;
 import net.sf.jasperreports.renderers.Renderable;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
 import org.geotoolkit.display2d.ext.legend.J2DLegendUtilities;
 import org.geotoolkit.display2d.ext.legend.LegendTemplate;
-import org.geotoolkit.map.MapContext;
 
 /**
  * Jasper Report renderer used to render legend graphic.
@@ -59,7 +59,7 @@ public class LegendRenderer implements Graphics2DRenderable, Renderable {
             new Font("Serial", Font.BOLD, 11));
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
-    private MapContext context;
+    private MapLayers context;
 
     public LegendRenderer(){
     }
@@ -69,7 +69,7 @@ public class LegendRenderer implements Graphics2DRenderable, Renderable {
         return id;
     }
 
-    public void setContext(final MapContext context){
+    public void setContext(final MapLayers context){
         this.context = context;
     }
 

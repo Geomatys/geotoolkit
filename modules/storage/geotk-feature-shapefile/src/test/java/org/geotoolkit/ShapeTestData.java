@@ -159,6 +159,7 @@ public final class ShapeTestData {
         final File path      = new File(name);
         final File directory = new File(TestData.file(caller, null), path.getParent());
         final File file      = new File(directory, path.getName());
+        file.delete(); //force reloading file copy
         if (!file.exists()) {
             if (directory.mkdirs()) {
                 TestData.deleteOnExit(directory, false);

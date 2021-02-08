@@ -21,11 +21,11 @@ import java.awt.Dimension;
 import java.util.Date;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.GeodeticObjectBuilder;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -95,7 +95,7 @@ public class J2DCanvasTest extends org.geotoolkit.test.TestBase {
         env.setRange(2, -50, 150);
         env.setRange(3, 3000, 6000);
 
-        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+        MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
         //was raising an error since we asked a 4D envelope with a 2D context
         //the canvas should change the crs to 2D to pass this test

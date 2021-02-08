@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.apache.sis.portrayal.MapItem;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.util.ArgumentChecks;
@@ -41,14 +44,10 @@ import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapItem;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.style.MutableStyle;
 import org.opengis.style.Description;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
+import org.opengis.style.Style;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
@@ -80,7 +79,7 @@ public class J2DLegendUtilities {
             final LegendTemplate template) {
 
         if (item instanceof MapLayer) {
-            final MapContext context = MapBuilder.createContext();
+            final MapLayers context = MapBuilder.createContext();
             context.getComponents().add(item);
             item = context;
         }
@@ -130,8 +129,8 @@ public class J2DLegendUtilities {
      * @param bounds The graphic area to paint into.
      */
     private static void paintNoTemplate(final MapItem item, final Graphics2D g2d, final Rectangle bounds) {
-        if (item instanceof MapContext) {
-            final MapContext mc = (MapContext) item;
+        if (item instanceof MapLayers) {
+            final MapLayers mc = (MapLayers) item;
             for (MapItem layer : mc.getComponents()) {
                 if (layer instanceof MapLayer) {
                     DefaultGlyphService.render(((MapLayer) layer).getStyle(), bounds, g2d, (MapLayer) layer);
@@ -170,7 +169,7 @@ public class J2DLegendUtilities {
         final Rectangle2D rectangle = new Rectangle2D.Float();
         float moveY = 0;
 
-        final List<MapItem> layers = (item instanceof MapContext) ? ((MapContext) item).getComponents() : Collections.EMPTY_LIST;
+        final List<MapItem> layers = (item instanceof MapLayers) ? ((MapLayers) item).getComponents() : Collections.EMPTY_LIST;
         for (int l = 0, n = layers.size(); l < n; l++) {
             final MapItem currentItem = layers.get(l);
 
@@ -249,15 +248,15 @@ public class J2DLegendUtilities {
                 continue;
             }
 
-            final MutableStyle style = layer.getStyle();
+            final Style style = layer.getStyle();
 
             if (style == null) {
                 continue;
             }
 
             int numElement = 0;
-            for (final MutableFeatureTypeStyle fts : style.featureTypeStyles()) {
-                for (final MutableRule rule : fts.rules()) {
+            for (final FeatureTypeStyle fts : style.featureTypeStyles()) {
+                for (final Rule rule : fts.rules()) {
                     if (numElement != 0) {
                         moveY += gapSize;
                     }
@@ -401,7 +400,7 @@ public class J2DLegendUtilities {
         }
 
         if (mapitem instanceof MapLayer) {
-            final MapContext context = MapBuilder.createContext();
+            final MapLayers context = MapBuilder.createContext();
             context.getComponents().add(mapitem);
             mapitem = context;
         }
@@ -425,8 +424,8 @@ public class J2DLegendUtilities {
      * @param toSet the dimension used to store estimation result.
      */
     private static void estimateNoTemplate(MapItem source, Dimension toSet) {
-        if (source instanceof MapContext) {
-            final MapContext mc = (MapContext) source;
+        if (source instanceof MapLayers) {
+            final MapLayers mc = (MapLayers) source;
             for (MapItem childItem : mc.getComponents()) {
 
                 if (childItem instanceof MapLayer) {
@@ -473,7 +472,7 @@ public class J2DLegendUtilities {
         final int ruleFontHeight = ruleFontMetric.getHeight();
         final Dimension glyphSize = template.getGlyphSize();
 
-        final List<MapItem> childItems = (source instanceof MapContext) ? ((MapContext) source).getComponents() : Collections.EMPTY_LIST;
+        final List<MapItem> childItems = (source instanceof MapLayers) ? ((MapLayers) source).getComponents() : Collections.EMPTY_LIST;
         for (int l = 0, n = childItems.size(); l < n; l++) {
 
             /* If legend template asks for visible items only, we have to proceed
@@ -509,14 +508,14 @@ public class J2DLegendUtilities {
 
             final MapLayer layer = (MapLayer) currentItem;
 
-            final MutableStyle style = layer.getStyle();
+            final Style style = layer.getStyle();
             if (style == null) {
                 continue;
             }
 
             int numElement = 0;
-            for (final MutableFeatureTypeStyle fts : style.featureTypeStyles()) {
-                for (final MutableRule rule : fts.rules()) {
+            for (final FeatureTypeStyle fts : style.featureTypeStyles()) {
+                for (final Rule rule : fts.rules()) {
                     if (numElement != 0) {
                         toSet.height += template.getGapSize();
                     }
@@ -580,8 +579,8 @@ public class J2DLegendUtilities {
     public static boolean isVisible(final MapItem toCheck) {
         ArgumentChecks.ensureNonNull("Map item to check visibility on", toCheck);
         // If it's a visible container, we must check its children.
-        if (toCheck.isVisible() && toCheck instanceof MapContext) {
-            for (final MapItem child : ((MapContext) toCheck).getComponents()) {
+        if (toCheck.isVisible() && toCheck instanceof MapLayers) {
+            for (final MapItem child : ((MapLayers) toCheck).getComponents()) {
                 if (isVisible(child)) {
                     return true;
                 }

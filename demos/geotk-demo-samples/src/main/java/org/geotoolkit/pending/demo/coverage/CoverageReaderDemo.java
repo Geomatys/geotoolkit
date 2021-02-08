@@ -8,12 +8,12 @@ import java.nio.file.Path;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -87,7 +87,7 @@ public class CoverageReaderDemo {
          * USING THE RENDERER.
          */
         //create a mapcontext
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(tempData);
         context.getComponents().add(cl);
 

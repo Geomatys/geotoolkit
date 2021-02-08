@@ -47,9 +47,12 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.map.Presentation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
@@ -70,9 +73,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -236,7 +236,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testEnvelopeNotNull() throws FactoryException, PortrayalException {
-        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.geographic());
+        MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.geographic());
         GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.geographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
@@ -311,7 +311,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
 
         final MapLayer layer = MapBuilder.createLayer(collection);
         layer.setStyle(style);
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
 
         final SceneDef sdef = new SceneDef(context);
@@ -362,7 +362,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         gcb.setValues(img);
         final GridCoverage coverage = gcb.build();
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage);
         context.getComponents().add(layer);
 
@@ -412,7 +412,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         }
 
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, SF.style(SF.rasterSymbolizer()), "unnamed");
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
 
 
@@ -480,7 +480,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final GridCoverage coverage = gcb.build();
 
         //display it
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         final MapLayer cl = MapBuilder.createCoverageLayer(
                 coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.getComponents().add(cl);
@@ -524,7 +524,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final FeatureSet col = new InMemoryFeatureSet(ft, Arrays.asList(feature));
         final MapLayer layer = MapBuilder.createLayer(col);
         layer.setStyle(SF.style(symbolizer));
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
@@ -564,7 +564,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         final GridCoverageResource gcr = new InMemoryGridCoverageResource(coverage);
         final MapLayer layer = MapBuilder.createCoverageLayer(gcr);
 
-        final MapContext context = MapBuilder.createContext();
+        final MapLayers context = MapBuilder.createContext();
         context.getComponents().add(layer);
 
 
@@ -619,7 +619,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         duck.setPropertyValue("geometry", location);
         final MapLayer layer = MapBuilder.createLayer(new InMemoryFeatureSet(duckType, Collections.singleton(duck)));
         final CanvasDef canvas = new CanvasDef(new Dimension(16, 16), new Envelope2D(CommonCRS.defaultGeographic(), 0, 0, 16, 16));
-        final MapContext ctx = MapBuilder.createContext();
+        final MapLayers ctx = MapBuilder.createContext();
         ctx.getComponents().add(layer);
         final SceneDef scene = new SceneDef(ctx);
         scene.getHints().put(GO2Hints.KEY_PRESERVE_PROPERTIES, true);
@@ -627,7 +627,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, result.size());
 
         final Presentation presentation = result.get(0);
-        final Feature picked = presentation.getFeature();
+        final Feature picked = (Feature) presentation.getCandidate();
         assertNotNull(picked);
 
         Map<String, Object> expectedProperties = new HashMap<>();
@@ -655,7 +655,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
         // By default, don't load un-necessary properties
         scene.getHints().remove(GO2Hints.KEY_PRESERVE_PROPERTIES);
         final List<Object> geometries = DefaultPortrayalService.present(canvas, scene)
-                .map(p -> p.getFeature())
+                .map(p -> (Feature) p.getCandidate())
                 .peek(Assert::assertNotNull)
                 .peek(f -> assertEquals(1, f.getType().getProperties(true).stream().filter(p -> p instanceof AttributeType).count()))
                 .map(f -> f.getPropertyValue("geometry"))
@@ -668,7 +668,7 @@ public class PortrayalServiceTest extends org.geotoolkit.test.TestBase {
     private void testRendering(final MapLayer layer) throws Exception {
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 
-        final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+        final MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.getComponents().add(layer);
         assertEquals(1, context.getComponents().size());
 

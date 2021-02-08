@@ -29,6 +29,8 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.image.PixelIterator;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
@@ -39,8 +41,6 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -149,7 +149,7 @@ public class CoverageImageTest extends org.geotoolkit.test.TestBase {
      */
     private void testImageLayer(RenderedImage sourceImage, MapLayer cml) throws PortrayalException{
         //create a mapcontext
-        final MapContext context  = MapBuilder.createContext();
+        final MapLayers context  = MapBuilder.createContext();
         context.getComponents().add(cml);
 
         outputImgDim.setSize(proportionalityCoefficient * srcWidth, proportionalityCoefficient * srcHeight);

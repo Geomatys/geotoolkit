@@ -19,13 +19,13 @@ package org.geotoolkit.display2d.container;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.display.container.DefaultGraphicContainer;
 import org.geotoolkit.display.container.MapContextContainer;
 import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
@@ -99,7 +99,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
 
 
     private GraphicJ2D contextGraphic = null;
-    private MapContext context = null;
+    private MapLayers context = null;
 
     /**
      * CreContextContainer2D with no particular hints.
@@ -132,7 +132,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
      * @param context : MapContext to render
      */
     @Override
-    public void setContext(MapContext context){
+    public void setContext(MapLayers context){
 
         if(this.context != null && context != null){
             if(this.context.equals(context)){
@@ -147,7 +147,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
             contextGraphic.dispose();
         }
 
-        final MapContext oldcontext = this.context;
+        final MapLayers oldcontext = this.context;
         this.context = context;
 
         if(this.context != null){
@@ -165,7 +165,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
      * @return MapContext or null
      */
     @Override
-    public MapContext getContext(){
+    public MapLayers getContext(){
         return context;
     }
 

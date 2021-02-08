@@ -28,7 +28,7 @@ import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedTextSymbolizer;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayer;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.TextSymbolizer;
 

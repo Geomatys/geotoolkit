@@ -25,7 +25,6 @@ import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
-
 /**
  * JUnit test of ClusterHull process
  *

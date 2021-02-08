@@ -27,15 +27,14 @@ import java.util.Set;
 import java.util.stream.Stream;
 import javax.swing.table.AbstractTableModel;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.locationtech.jts.geom.LineString;
@@ -59,6 +58,7 @@ import org.opengis.filter.expression.Divide;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -66,7 +66,9 @@ import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
+import org.opengis.style.Style;
 import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
@@ -90,7 +92,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     private final MutableStyleFactory sf;
     private final FilterFactory ff;
 
-    private FeatureMapLayer layer;
+    private MapLayer layer;
     private PropertyName classification;
     private PropertyName normalize;
     private int nbClasses = 5;
@@ -176,24 +178,24 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         analyze = false;
     }
 
-    public void setLayer(final FeatureMapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         genericAnalyze = false;
         reset();
         isIntervalStyle(layer.getStyle());
     }
 
-    public boolean isIntervalStyle(final MutableStyle style){
+    public boolean isIntervalStyle(final Style style){
         if(style.featureTypeStyles().size() != 1) return false;
-        final MutableFeatureTypeStyle fts = style.featureTypeStyles().get(0);
+        final FeatureTypeStyle fts = style.featureTypeStyles().get(0);
         return isIntervalStyle(fts);
     }
 
-    public boolean isIntervalStyle(final MutableFeatureTypeStyle fts){
+    public boolean isIntervalStyle(final FeatureTypeStyle fts){
 
         if(fts.rules().isEmpty()) return false;
 
-        for(MutableRule r : fts.rules()){
+        for(Rule r : fts.rules()){
 
             Filter f = r.getFilter();
 
@@ -277,7 +279,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     }
 
 
-    public FeatureMapLayer getLayer() {
+    public MapLayer getLayer() {
         return layer;
     }
 
@@ -339,9 +341,14 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the different numeric attributs
+        if (layer.getData() instanceof FeatureSet) {
+            throw new IllegalArgumentException("MapLayer resource must be a FeatureSet");
+        }
+        FeatureSet data = (FeatureSet) layer.getData();
+
         final FeatureType schema;
         try {
-            schema = layer.getData().getType();
+            schema = data.getType();
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
         }
@@ -395,7 +402,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         query.setProperties(qp.toArray(new String[0]));
 
         Iterator<Feature> features = null;
-        try(Stream<Feature> stream = layer.getData().subset(query.buildQuery()).features(false)){
+        try(Stream<Feature> stream = data.subset(query.buildQuery()).features(false)){
             features = stream.iterator();
             List<Double> values = new ArrayList<Double>();
 

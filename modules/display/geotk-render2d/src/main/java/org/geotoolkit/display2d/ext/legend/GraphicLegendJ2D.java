@@ -22,13 +22,12 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.logging.Level;
 import static javax.swing.SwingConstants.*;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
-import org.geotoolkit.map.MapContext;
+import org.apache.sis.portrayal.MapLayers;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -61,7 +60,7 @@ public class GraphicLegendJ2D extends PositionedGraphic2D{
         if(!(container instanceof ContextContainer2D)) return;
 
         final ContextContainer2D cc = (ContextContainer2D) container;
-        final MapContext mapContext = cc.getContext();
+        final MapLayers mapContext = cc.getContext();
 
         final Graphics2D g = context.getGraphics();
         context.switchToDisplayCRS();

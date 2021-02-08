@@ -2,11 +2,11 @@
 package org.geotoolkit.pending.demo.clients.wmts;
 
 import java.net.URL;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
@@ -25,14 +25,14 @@ public class WMTSClientDemo {
     public static void main(String[] args) throws Exception {
         Demos.init();
 
-        final MapContext context = createContext();
+        final MapLayers context = createContext();
 
 //        FXMapFrame.show(context);
 
     }
 
-    public static MapContext createContext() throws Exception{
-        final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
+    public static MapLayers createContext() throws Exception{
+        final MapLayers context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
         final WebMapTileClient server = new WebMapTileClient(
                 new URL("http://localhost:8080/constellation/WS/wmts/test"),

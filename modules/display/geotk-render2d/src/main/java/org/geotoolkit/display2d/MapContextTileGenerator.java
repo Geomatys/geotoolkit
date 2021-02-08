@@ -57,8 +57,8 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -71,7 +71,6 @@ import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
-import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -85,6 +84,7 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Stroke;
+import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -98,7 +98,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
     private final double[] empty;
     private final List<SampleDimension> sampleDimensions = new ArrayList<>();
 
-    public MapContextTileGenerator(MapContext context, Hints hints) {
+    public MapContextTileGenerator(MapLayers context, Hints hints) {
         this(new SceneDef(context, hints), new CanvasDef());
     }
 
@@ -172,7 +172,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
 
         search:
         for (MapLayer layer : MapBuilder.getLayers(sceneDef.getContext())) {
-            final MutableStyle style = layer.getStyle();
+            final Style style = layer.getStyle();
             for (FeatureTypeStyle fts : style.featureTypeStyles()) {
                 for (Rule rule : fts.rules()) {
                     double scaleMin = rule.getMinScaleDenominator();
@@ -262,7 +262,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             final TileMatrix[] mosaics = pyramid.getTileMatrices().toArray(new TileMatrix[0]);
             Arrays.sort(mosaics, (TileMatrix o1, TileMatrix o2) -> Double.compare(o1.getScale(), o2.getScale()));
 
-            MapContext parent = sceneDef.getContext();
+            MapLayers parent = sceneDef.getContext();
             Hints hints = sceneDef.getHints();
 
             final long total = countTiles(pyramid, env, resolutions);
@@ -351,7 +351,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                     r.setSampleDimensions(sampleDimensions);
                     r.getModels().add(pm);
 
-                    final MapContext mc = MapBuilder.createContext();
+                    final MapLayers mc = MapBuilder.createContext();
                     mc.getComponents().add(MapBuilder.createLayer(r));
                     parent = mc;
                     hints = new Hints(hints);

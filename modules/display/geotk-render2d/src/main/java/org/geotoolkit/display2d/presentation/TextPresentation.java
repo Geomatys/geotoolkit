@@ -18,12 +18,13 @@ package org.geotoolkit.display2d.presentation;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.storage.Resource;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
-import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 
 /**
@@ -35,8 +36,8 @@ public class TextPresentation extends Grid2DPresentation {
     public AlphaComposite composite = GO2Utilities.ALPHA_COMPOSITE_1F;
     public LabelDescriptor labelDesc;
 
-    public TextPresentation(MapLayer layer, Feature feature) {
-        super(layer,feature);
+    public TextPresentation(MapLayer layer, Resource resource, Feature feature) {
+        super(layer, resource, feature);
     }
 
     @Override

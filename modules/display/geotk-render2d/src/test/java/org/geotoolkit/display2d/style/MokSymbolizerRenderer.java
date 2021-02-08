@@ -18,11 +18,11 @@
 package org.geotoolkit.display2d.style;
 
 import java.util.stream.Stream;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.renderer.Presentation;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.Feature;
 
 /**

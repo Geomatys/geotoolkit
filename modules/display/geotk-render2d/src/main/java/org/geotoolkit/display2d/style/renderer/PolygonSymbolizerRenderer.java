@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
+import org.apache.sis.internal.map.ExceptionPresentation;
+import org.apache.sis.internal.map.Presentation;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -31,9 +34,6 @@ import org.geotoolkit.display2d.presentation.ShapePresentation;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.renderer.ExceptionPresentation;
-import org.geotoolkit.renderer.Presentation;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
@@ -93,7 +93,9 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Cached
                 }
             }
         } catch (TransformException ex) {
-            return Stream.of(new ExceptionPresentation(layer, layer.getData(), null, ex));
+            ExceptionPresentation ep = new ExceptionPresentation(ex);
+            ep.setLayer(layer);
+            return Stream.of(ep);
         }
 
         if (shapes == null) {
@@ -129,7 +131,7 @@ public class PolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<Cached
             }
 
             if (symbol.isFillVisible(feature)) {
-                final ShapePresentation presentation = new ShapePresentation(layer, feature);
+                final ShapePresentation presentation = new ShapePresentation(layer, layer.getData(), feature);
                 presentation.forGrid(renderingContext);
                 presentation.fillComposite = symbol.getJ2DFillComposite(feature);
                 presentation.fillPaint = symbol.getJ2DFillPaint(feature, x, y,coeff, hints);

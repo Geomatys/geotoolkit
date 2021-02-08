@@ -16,6 +16,8 @@ import java.util.Random;
 import net.sf.jasperreports.engine.JasperReport;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -29,8 +31,6 @@ import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.report.CollectionDataSource;
 import org.geotoolkit.report.JasperReportService;
@@ -101,7 +101,7 @@ public class ReportDemo {
 
                 //create the main map with a single feature ------------------
                 final FeatureCollection col = FeatureStoreUtilities.collection(feature);
-                final MapContext context = MapBuilder.createContext();
+                final MapLayers context = MapBuilder.createContext();
                 final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getType());
                 final MapLayer layer = MapBuilder.createLayer(col);
                 layer.setStyle(style);
@@ -136,7 +136,7 @@ public class ReportDemo {
                     final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), null);
                     canvasDef.setBackground(Color.WHITE);
                     canvasDef.setStretchImage(false);
-                    canvasDef.setEnvelope(Envelopes.transform(context.getEnvelope(), CRS.forCode("EPSG:3395")));
+                    canvasDef.setEnvelope(Envelopes.transform(context.getEnvelope().get(), CRS.forCode("EPSG:3395")));
                     final SceneDef sceneDef = new SceneDef(context,null,ext);
                     final MapDef mapdef = new MapDef(canvasDef,sceneDef,null);
                     modified.setPropertyValue("map3",mapdef);

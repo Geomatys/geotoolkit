@@ -22,11 +22,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import org.apache.sis.portrayal.MapItem;
+import org.apache.sis.portrayal.MapLayers;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.OutputDef;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapItem;
 
 /**
  * Render a complete legend of a mapcontext.
@@ -70,7 +70,7 @@ public class DefaultLegendService {
      * @return buffered image
      * @throws PortrayalException
      */
-    public static void portray(final LegendTemplate template, final MapContext context, final Dimension dim, final OutputDef outputDef)
+    public static void portray(final LegendTemplate template, final MapLayers context, final Dimension dim, final OutputDef outputDef)
             throws PortrayalException{
         final BufferedImage image = portray(template,context,dim);
 

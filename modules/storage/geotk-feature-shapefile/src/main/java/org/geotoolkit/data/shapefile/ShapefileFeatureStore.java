@@ -541,22 +541,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
         name = schema.getName();
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Can not update shapefile schema.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void deleteFeatureType(final String typeName) throws DataStoreException {
-        throw new DataStoreException("Can not delete shapefile schema.");
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // utils ///////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
