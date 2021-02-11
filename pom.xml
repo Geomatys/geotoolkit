@@ -210,7 +210,7 @@
     <nashorn.version>15.1.1</nashorn.version>
     <netty.version>3.9.4.Final</netty.version> <!-- Can not upgrade to 3.10.6 because it breaks Geotk build. -->
     <postgis.version>2.3.0</postgis.version>
-    <quartz.version>2.3.1</quartz.version>
+    <quartz.version>2.3.2</quartz.version>
     <rxtx.version>2.2pre2</rxtx.version>
     <slf4j.version>1.7.22</slf4j.version> <!-- Version used by edu.ucar dependency. -->
     <snakeyaml.version>1.24</snakeyaml.version> <!-- keep version aligned with jackson -->
