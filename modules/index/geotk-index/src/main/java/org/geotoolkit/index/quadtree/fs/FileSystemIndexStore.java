@@ -19,6 +19,7 @@ package org.geotoolkit.index.quadtree.fs;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -98,18 +99,18 @@ public class FileSystemIndexStore implements IndexStore {
 
                 final IndexHeader header = new IndexHeader(byteOrder);
                 header.writeTo(buf);
-                buf.flip();
+                ((Buffer) buf).flip();
                 channel.write(buf);
             }
 
             final ByteOrder order = byteToOrder(this.byteOrder);
 
-            buf.clear();
+            ((Buffer) buf).clear();
             buf.order(order);
 
             buf.putInt(tree.getNumShapes());
             buf.putInt(tree.getMaxDepth());
-            buf.flip();
+            ((Buffer) buf).flip();
 
             channel.write(buf);
 
@@ -157,7 +158,7 @@ public class FileSystemIndexStore implements IndexStore {
         }
 
         buf.putInt(numSubNodes);
-        buf.flip();
+        ((Buffer) buf).flip();
 
         channel.write(buf);
 

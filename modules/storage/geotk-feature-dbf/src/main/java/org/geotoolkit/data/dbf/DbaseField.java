@@ -18,6 +18,7 @@
 package org.geotoolkit.data.dbf;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,6 +26,8 @@ import org.geotoolkit.util.XInteger;
 
 /**
  * Class for holding the information assicated with a record.
+ *
+ * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -191,7 +194,7 @@ abstract class DbaseField {
             // the line....
             int start = 0;
             int end = fieldLength - 1;
-            charBuffer.limit(charBuffer.capacity());
+            ((Buffer) charBuffer).limit(charBuffer.capacity());
             // trim off whitespace and 'zero' chars
             while (start < end) {
                 char c = charBuffer.get(start);
@@ -208,9 +211,9 @@ abstract class DbaseField {
                     break;
             }
             // set up the new indexes for start and end
-            charBuffer.position(start).limit(end + 1);
+            ((Buffer) charBuffer).position(start).limit(end + 1);
             String s = charBuffer.toString();
-            charBuffer.limit(charBuffer.capacity());
+            ((Buffer) charBuffer).limit(charBuffer.capacity());
             return s;
         }
 

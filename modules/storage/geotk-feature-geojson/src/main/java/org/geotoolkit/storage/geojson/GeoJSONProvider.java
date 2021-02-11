@@ -19,6 +19,7 @@ package org.geotoolkit.storage.geojson;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -39,6 +40,8 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
+ * TODO: remove all Buffer cast after migration to JDK9.
+ *
  * @author Quentin Boileau (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @version 2.0
@@ -120,7 +123,7 @@ public final class GeoJSONProvider extends DataStoreProvider {
                 final ByteBuffer buffer = connector.getStorageAs(ByteBuffer.class);
                 final Reader reader;
                 if (buffer != null) {
-                    buffer.mark();
+                    ((Buffer) buffer).mark();
                     reader = null;
                 } else {
                     // User gave us explicitely a Reader (e.g. a StringReader wrapping a String instance).
@@ -135,7 +138,7 @@ public final class GeoJSONProvider extends DataStoreProvider {
                     ok = true;
                 }
                 if (buffer != null) {
-                    buffer.reset();
+                    ((Buffer) buffer).reset();
                 } else {
                     reader.reset();
                 }
