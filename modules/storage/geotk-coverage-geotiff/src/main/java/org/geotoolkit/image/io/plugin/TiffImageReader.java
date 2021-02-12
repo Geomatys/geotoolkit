@@ -32,6 +32,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.lang.reflect.Array;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.InvalidMarkException;
@@ -3823,7 +3824,7 @@ public class TiffImageReader extends SpatialImageReader {
                 }
             }
 
-            buffer.position(0);
+            ((Buffer) buffer).position(0); // TODO: remove cast after migration to JDK9.
             final byte c = buffer.get();
             if (c != buffer.get()) {
                 return false;

@@ -19,6 +19,7 @@ package org.geotoolkit.internal.tree;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channel;
@@ -103,7 +104,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
 //        magicOrderBuffer.order(ByteOrder.BIG_ENDIAN);//-- stand by byte order comportement
 
         inOutChannel.read(magicOrderBuffer);
-        magicOrderBuffer.clear();
+        ((Buffer) magicOrderBuffer).clear();        // TODO: remove cast after migration to JDK9.
 
         assert inOutChannel.position() == 5;
 
@@ -140,7 +141,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         final ByteBuffer headBuffer = ByteBuffer.allocate(33);
 //        headBuffer.order(bO);//-- stand by byte order comportement
         inOutChannel.read(headBuffer);
-        headBuffer.clear();
+        ((Buffer) headBuffer).clear();                  // TODO: remove cast after migration to JDK9.
         assert inOutChannel.position() == 38;
 
         // read version number
@@ -222,12 +223,9 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
      * @param maxElements element number per cell.
-     * @param hilbertOrder
      * @param splitMade define tree node split made.
-     * @param crs
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process.
-     * @throws IOException
      */
     protected ChannelTreeAccess(final SeekableByteChannel byteChannel,
             final int magicNumber,  final double versionNumber, final int maxElements,
@@ -268,7 +266,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
 
         // write bytebuffer order
         magicOrderBuffer.put((byte)(bO == ByteOrder.LITTLE_ENDIAN ? 1 : 0));
-        magicOrderBuffer.flip();
+        ((Buffer) magicOrderBuffer).flip();     // TODO: remove cast after migration to JDK9.
         inOutChannel.write(magicOrderBuffer);
         assert inOutChannel.position() == 5;
         //-------------------------------------------------------
@@ -300,14 +298,14 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
             headBuffer.putInt(crsByteArray.length);
 
             //-- write head
-            headBuffer.flip();
+            ((Buffer) headBuffer).flip();   // TODO: remove cast after migration to JDK9.
             inOutChannel.write(headBuffer);
             assert inOutChannel.position() == 38;
 
             final ByteBuffer crsbuff = ByteBuffer.allocate(crsByteArray.length);
 //            crsbuff.order(bO);//-- stand by byte order comportement
             crsbuff.put(crsByteArray);
-            crsbuff.flip();
+            ((Buffer) crsbuff).flip();      // TODO: remove cast after migration to JDK9.
             inOutChannel.write(crsbuff);//-- write all the crs array
 
             assert inOutChannel.position() == (crsByteArray.length + 38);
@@ -330,17 +328,14 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     /**
      * Adjust buffer position relative to filechanel which contain data,
      * and prepare bytebuffer position and limit for reading or writing action.
-     *
-     * @param treeIdentifier
-     * @throws IOException
      */
     protected void adjustBuffer(final int nodeID) throws IOException {
         assert inOutChannel.position() == currentBufferPosition;
         rwIndex = beginPosition + (nodeID - 1) * nodeSize;
         if (rwIndex < currentBufferPosition || (rwIndex + nodeSize) > currentBufferPosition + bufferLength) { //-- pense ici
             // write current data within bytebuffer in channel.
-            byteBuffer.position(0);
-            byteBuffer.limit(writeBufferLimit);
+            ((Buffer) byteBuffer).position(0);
+            ((Buffer) byteBuffer).limit(writeBufferLimit);      // TODO: remove cast after migration to JDK9.
             int writtenByte = 0;
             while (writtenByte < writeBufferLimit) {
                 writtenByte += inOutChannel.write(byteBuffer);
@@ -352,17 +347,17 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
             writeBufferLimit = 0;
 
             //-- read current data
-            byteBuffer.clear();
+            ((Buffer) byteBuffer).clear();      // TODO: remove cast after migration to JDK9.
             inOutChannel.position(currentBufferPosition);
             inOutChannel.read(byteBuffer);
-            byteBuffer.flip();
+            ((Buffer) byteBuffer).flip();       // TODO: remove cast after migration to JDK9.
 
             //-- get back to appropriate position after reading
             inOutChannel.position(currentBufferPosition);
         }
         rwIndex -= currentBufferPosition;
-        byteBuffer.limit(rwIndex + nodeSize);
-        byteBuffer.position(rwIndex);
+        ((Buffer) byteBuffer).limit(rwIndex + nodeSize);        // TODO: remove cast after migration to JDK9.
+        ((Buffer) byteBuffer).position(rwIndex);                // TODO: remove cast after migration to JDK9.
     }
 
     /**
@@ -375,10 +370,10 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-        byteBuffer.position(byteBuffer.position() + 5);// step properties (1 byte) and step parent ID (int  : 4 byte)
+        ((Buffer) byteBuffer).position(byteBuffer.position() + 5);  // step properties (1 byte) and step parent ID (int  : 4 byte)
         final int sibling = byteBuffer.getInt();
         final int child   = byteBuffer.getInt();
-        byteBuffer.position(byteBuffer.position() + 4);// step child count
+        ((Buffer) byteBuffer).position(byteBuffer.position() + 4);  // step child count
         if (sibling != 0) {
             internalSearch(sibling);
         }
@@ -453,8 +448,8 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     @Override
     public synchronized void rewind() throws IOException {
         super.rewind();
-        byteBuffer.position(0);
-        byteBuffer.limit(writeBufferLimit);
+        ((Buffer) byteBuffer).position(0);                  // TODO: remove cast after migration to JDK9.
+        ((Buffer) byteBuffer).limit(writeBufferLimit);      // TODO: remove cast after migration to JDK9.
         inOutChannel.position(currentBufferPosition);
         int writtenByte = 0;
         while (writtenByte < writeBufferLimit) {
@@ -464,9 +459,9 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         currentBufferPosition = beginPosition;
 
         //-- fill buffer
-        byteBuffer.clear();
+        ((Buffer) byteBuffer).clear();      // TODO: remove cast after migration to JDK9.
         inOutChannel.read(byteBuffer);
-        byteBuffer.flip();
+        ((Buffer) byteBuffer).flip();       // TODO: remove cast after migration to JDK9.
         inOutChannel.position(beginPosition);
         //--
         writeBufferLimit = 0;
@@ -490,8 +485,8 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     @Override
     public void flush() throws IOException {
 
-        byteBuffer.position(0);
-        byteBuffer.limit(writeBufferLimit);
+        ((Buffer) byteBuffer).position(0);                  // TODO: remove cast after migration to JDK9.
+        ((Buffer) byteBuffer).limit(writeBufferLimit);      // TODO: remove cast after migration to JDK9.
         inOutChannel.position(currentBufferPosition);
         int writtenByte = 0;
         while (writtenByte < writeBufferLimit) {
@@ -499,19 +494,19 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         }
 
         // write nodeID
-        byteBuffer.clear();
+        ((Buffer) byteBuffer).clear();      // TODO: remove cast after migration to JDK9.
         inOutChannel.position(22);
         byteBuffer.putInt(nodeId);
         byteBuffer.putInt(treeIdentifier);
         byteBuffer.putInt(eltNumber);
-        byteBuffer.flip();
+        ((Buffer) byteBuffer).flip();       // TODO: remove cast after migration to JDK9.
         inOutChannel.write(byteBuffer);
 
         //-- fill buffer
         inOutChannel.position(currentBufferPosition);
-        byteBuffer.clear();
+        ((Buffer) byteBuffer).clear();      // TODO: remove cast after migration to JDK9.
         inOutChannel.read(byteBuffer);
-        byteBuffer.flip();
+        ((Buffer) byteBuffer).flip();       // TODO: remove cast after migration to JDK9.
         inOutChannel.position(currentBufferPosition);
         writeBufferLimit = 0;
         //--

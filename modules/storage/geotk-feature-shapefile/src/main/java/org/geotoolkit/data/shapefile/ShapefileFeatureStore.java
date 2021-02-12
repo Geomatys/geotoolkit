@@ -21,6 +21,7 @@ package org.geotoolkit.data.shapefile;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -275,7 +276,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
                 shpFile.read(buffer);
             }
 
-            buffer.flip();
+            ((Buffer) buffer).flip();
             final ShapefileHeader header = ShapefileHeader.read(buffer, true);
             final org.locationtech.jts.geom.Envelope env =
                     new org.locationtech.jts.geom.Envelope(
