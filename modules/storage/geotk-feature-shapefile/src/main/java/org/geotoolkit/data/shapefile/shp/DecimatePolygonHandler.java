@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.util.List;
@@ -61,7 +62,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
         holes.clear();
 
         // skip the bounds
-        buffer.position(buffer.position() + 32);
+        ((Buffer)buffer).position( ((Buffer)buffer).position() + 32);
 
         final int numParts = buffer.getInt();
         final int numPoints = buffer.getInt();
