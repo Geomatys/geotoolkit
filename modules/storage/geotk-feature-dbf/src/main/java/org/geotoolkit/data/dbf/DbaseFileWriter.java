@@ -21,6 +21,7 @@
 package org.geotoolkit.data.dbf;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
@@ -94,7 +95,7 @@ public class DbaseFileWriter implements Closeable{
     }
 
     private void write() throws IOException {
-        buffer.position(0);
+        ((Buffer)buffer).position(0);
         int r = buffer.remaining();
         while ((r -= channel.write(buffer)) > 0) {
             // do nothing
@@ -118,7 +119,7 @@ public class DbaseFileWriter implements Closeable{
                     + record.length + " expected " + header.getNumFields());
         }
 
-        buffer.position(0);
+        ((Buffer)buffer).position(0);
 
         // put the 'not-deleted' marker
         buffer.put((byte) ' ');
