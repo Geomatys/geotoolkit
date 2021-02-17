@@ -202,6 +202,7 @@
     <jai.imageio.version>1.1.1</jai.imageio.version>
     <java.source>1.8</java.source>
     <java.target>1.8</java.target>
+    <javax.activation>1.2.2</javax.activation>  <!-- Should be version number used by JAXB. -->
     <jmh.version>1.25.1</jmh.version>
     <log4j.version>1.2.17</log4j.version>
     <lucene.version>8.4.0</lucene.version>
@@ -401,11 +402,16 @@
         <version>${jackson.version}</version>
       </dependency>
 
-      <!-- Web -->
+      <!-- Misc. -->
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.activation</groupId>
+        <artifactId>jakarta.activation-api</artifactId>
+        <version>${javax.activation}</version>
       </dependency>
 
       <!-- Logging -->
