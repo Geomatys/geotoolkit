@@ -19,6 +19,7 @@ package org.geotoolkit.data.shapefile.shp;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -39,6 +40,9 @@ import org.locationtech.jts.geom.Geometry;
  * record will contain the bounds of the shape and will only read the shape when
  * the shape() method is called. This ShapefileReader.Record is the same object
  * every time, so if you need data from the Record, be sure to copy it.
+ *
+ *
+ * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author jamesm
  * @author aaime
@@ -81,7 +85,7 @@ public final class ShapefileReader implements Closeable{
         /** Fetch the shape stored in this record. */
         public Geometry shape() {
             if (shape == null) {
-                buffer.position(start);
+                ((Buffer) buffer).position(start);
                 buffer.order(ByteOrder.LITTLE_ENDIAN);
                 shape = handler.read(buffer, type);
             }
@@ -166,7 +170,7 @@ public final class ShapefileReader implements Closeable{
                 this.useMemoryMappedBuffer = useMemoryMapped;
                 final FileChannel fc = (FileChannel) channel;
                 buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-                buffer.position(100);
+                ((Buffer) buffer).position(100);
                 this.currentOffset = 0;
             } else {
                 // force useMemoryMappedBuffer to false
@@ -174,7 +178,7 @@ public final class ShapefileReader implements Closeable{
                 // start with 8K buffer
                 buffer = ByteBuffer.allocate(8 * 1024);
                 fill(buffer, channel);
-                buffer.flip();
+                ((Buffer) buffer).flip();
                 this.currentOffset = 100;
             }
 
@@ -182,7 +186,7 @@ public final class ShapefileReader implements Closeable{
             headerTransfer.order(ByteOrder.BIG_ENDIAN);
 
             // make sure the record end is set now...
-            record.end = this.toFileOffset(buffer.position());
+            record.end = this.toFileOffset(((Buffer) buffer).position());
         }  catch (IOException | DataStoreException e) {
             if (shxReader != null) {
                 shxReader.close();
@@ -227,7 +231,7 @@ public final class ShapefileReader implements Closeable{
         if (fill(buffer, channel) == -1) {
             throw new EOFException("Premature end of header");
         }
-        buffer.flip();
+        ((Buffer) buffer).flip();
         return ShapefileHeader.read(buffer, strict);
     }
 
@@ -244,11 +248,11 @@ public final class ShapefileReader implements Closeable{
             return buffer;
         }
 
-        int limit = buffer.limit();
+        int limit = ((Buffer) buffer).limit();
         while (limit < size) {
             limit *= 2;
         }
-        if (limit != buffer.limit()) {
+        if (limit != ((Buffer) buffer).limit()) {
             // if (record.ready) {
             buffer = ByteBuffer.allocate(limit);
             // }
@@ -269,7 +273,7 @@ public final class ShapefileReader implements Closeable{
             r = channel.read(buffer);
         }
         if (r == -1) {
-            buffer.limit(buffer.position());
+            ((Buffer) buffer).limit(((Buffer) buffer).position());
         }
         return r;
     }
@@ -346,10 +350,10 @@ public final class ShapefileReader implements Closeable{
             return false;
 
         // mark current position
-        final int position = buffer.position();
+        final int position = ((Buffer) buffer).position();
 
         // ensure the proper position, regardless of read or handler behavior
-        buffer.position(getNextOffset());
+        ((Buffer) buffer).position(getNextOffset());
 
         // no more data left
         if (buffer.remaining() < 8)
@@ -365,7 +369,7 @@ public final class ShapefileReader implements Closeable{
         }
 
         // reset things to as they were
-        buffer.position(position);
+        ((Buffer) buffer).position(position);
 
         return hasNext;
     }
@@ -387,7 +391,7 @@ public final class ShapefileReader implements Closeable{
      */
     public int transferTo(final ShapefileWriter writer, final int recordNum, final double[] bounds) throws IOException {
 
-        buffer.position(this.toBufferOffset(record.end));
+        ((Buffer) buffer).position(this.toBufferOffset(record.end));
         buffer.order(ByteOrder.BIG_ENDIAN);
 
         buffer.getInt(); // record number
@@ -398,26 +402,26 @@ public final class ShapefileReader implements Closeable{
             // capacity is less than required for the record
             // copy the old into the newly allocated
             if (buffer.capacity() < len + 8) {
-                this.currentOffset += buffer.position();
+                this.currentOffset += ((Buffer) buffer).position();
                 final ByteBuffer old = buffer;
                 // ensure enough capacity for one more record header
                 buffer = ensureCapacity(buffer, len + 8, useMemoryMappedBuffer);
                 buffer.put(old);
                 fill(buffer, channel);
-                buffer.position(0);
+                ((Buffer) buffer).position(0);
             } else
             // remaining is less than record length
             // compact the remaining data and read again,
             // allowing enough room for one more record header
             if (buffer.remaining() < len + 8) {
-                this.currentOffset += buffer.position();
+                this.currentOffset += ((Buffer) buffer).position();
                 buffer.compact();
                 fill(buffer, channel);
-                buffer.position(0);
+                ((Buffer) buffer).position(0);
             }
         }
 
-        final int mark = buffer.position();
+        final int mark = ((Buffer) buffer).position();
 
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -433,7 +437,7 @@ public final class ShapefileReader implements Closeable{
         }
 
         // write header to shp and shx
-        headerTransfer.position(0);
+        ((Buffer) headerTransfer).position(0);
         headerTransfer.putInt(recordNum).putInt(recordLenght).position(0);
         writer.shpChannel.write(headerTransfer);
         headerTransfer.putInt(0, writer.offset).position(0);
@@ -441,11 +445,11 @@ public final class ShapefileReader implements Closeable{
         writer.shx.getChannel().write(headerTransfer);
 
         // reset to mark and limit at end of record, then write
-        buffer.position(mark).limit(mark + len);
+        ((Buffer) buffer).position(mark).limit(mark + len);
         writer.shpChannel.write(buffer);
-        buffer.limit(buffer.capacity());
+        ((Buffer) buffer).limit(buffer.capacity());
 
-        record.end = this.toFileOffset(buffer.position());
+        record.end = this.toFileOffset(((Buffer) buffer).position());
         record.number++;
 
         return len;
@@ -460,7 +464,7 @@ public final class ShapefileReader implements Closeable{
     public Record nextRecord() throws IOException {
 
         // need to update position
-        buffer.position(getNextOffset());
+        ((Buffer) buffer).position(getNextOffset());
         if(currentShape != UNKNOWN)
             currentShape++;
 
@@ -478,22 +482,22 @@ public final class ShapefileReader implements Closeable{
             // capacity is less than required for the record
             // copy the old into the newly allocated
             if (buffer.capacity() < recordLength + 8) {
-                this.currentOffset += buffer.position();
+                this.currentOffset += ((Buffer) buffer).position();
                 final ByteBuffer old = buffer;
                 // ensure enough capacity for one more record header
                 buffer = ensureCapacity(buffer, recordLength + 8, useMemoryMappedBuffer);
                 buffer.put(old);
                 fill(buffer, channel);
-                buffer.position(0);
+                ((Buffer) buffer).position(0);
             } else
             // remaining is less than record length
             // compact the remaining data and read again,
             // allowing enough room for one more record header
             if (buffer.remaining() < recordLength + 8) {
-                this.currentOffset += buffer.position();
+                this.currentOffset += ((Buffer) buffer).position();
                 buffer.compact();
                 fill(buffer, channel);
-                buffer.position(0);
+                ((Buffer) buffer).position(0);
             }
         }
 
@@ -513,7 +517,7 @@ public final class ShapefileReader implements Closeable{
         // peek at bounds, then reset for handler
         // many handler's may ignore bounds reading, but we don't want to
         // second guess them...
-        buffer.mark();
+        ((Buffer) buffer).mark();
         if (recordType.isMultiPoint()) {
             record.minX = buffer.getDouble();
             record.minY = buffer.getDouble();
@@ -523,7 +527,7 @@ public final class ShapefileReader implements Closeable{
             record.minX = record.maxX = buffer.getDouble();
             record.minY = record.maxY = buffer.getDouble();
         }
-        buffer.reset();
+        ((Buffer) buffer).reset();
 
         record.offset = record.end;
         // update all the record info.
@@ -531,9 +535,9 @@ public final class ShapefileReader implements Closeable{
         record.type = recordType;
         record.number = recordNumber;
         // remember, we read one int already...
-        record.end = this.toFileOffset(buffer.position()) + recordLength - 4;
+        record.end = this.toFileOffset(((Buffer) buffer).position()) + recordLength - 4;
         // mark this position for the reader
-        record.start = buffer.position();
+        record.start = ((Buffer) buffer).position();
         // clear any cached shape
         record.shape = null;
 
@@ -557,21 +561,21 @@ public final class ShapefileReader implements Closeable{
         disableShxUsage();
         if (randomAccessEnabled) {
             if (useMemoryMappedBuffer) {
-                buffer.position(offset);
+                ((Buffer) buffer).position(offset);
             } else {
                 /*
                  * Check to see if requested offset is already loaded; ensure
                  * that record header is in the buffer
                  */
-                if (currentOffset <= offset && currentOffset + buffer.limit() >= offset + 8) {
-                    buffer.position(toBufferOffset(offset));
+                if (currentOffset <= offset && currentOffset + ((Buffer) buffer).limit() >= offset + 8) {
+                    ((Buffer) buffer).position(toBufferOffset(offset));
                 } else {
                     final FileChannel fc = (FileChannel)channel;
                     fc.position(offset);
                     currentOffset = offset;
-                    buffer.position(0);
+                    ((Buffer) buffer).position(0);
                     fill(buffer, fc);
-                    buffer.position(0);
+                    ((Buffer) buffer).position(0);
                 }
             }
 

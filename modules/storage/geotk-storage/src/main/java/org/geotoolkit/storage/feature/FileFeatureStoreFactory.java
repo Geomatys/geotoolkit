@@ -17,6 +17,7 @@
 package org.geotoolkit.storage.feature;
 
 import java.net.URI;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -34,6 +35,8 @@ import org.geotoolkit.storage.ProviderOnFileSystem;
  * This interface provides a mechanism of discovery for DataStoreFactories
  * which support singular files.
  * </p>
+ *
+ * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author dzwiers
  * @author Johann Sorel (Geomatys)
@@ -91,7 +94,7 @@ public interface FileFeatureStoreFactory extends ProviderOnFileSystem {
         if (buffer != null) {
             for (byte[] signature : signatures) {
                 try {
-                    buffer.mark();
+                    ((Buffer) buffer).mark();
                     if (buffer.remaining() < signature.length) {
                         continue;
                     }
@@ -103,7 +106,7 @@ public interface FileFeatureStoreFactory extends ProviderOnFileSystem {
                         return new ProbeResult(true, mimeType, null);
                     }
                 } finally {
-                    buffer.rewind();
+                    ((Buffer) buffer).rewind();
                 }
             }
         }

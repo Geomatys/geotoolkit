@@ -20,6 +20,7 @@ package org.geotoolkit.data.shapefile.shp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -29,6 +30,8 @@ import org.opengis.feature.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ *
+ * TODO: remove all Buffer cast after migration to JDK9.
  *
  * @author jamesm
  * @author Ian Schneider
@@ -150,7 +153,7 @@ public class ShapefileHeader {
         checkMagic(fileCode,strict);
 
         // skip 5 ints...
-        buffer.position(buffer.position() + 20);
+        ((Buffer) buffer).position(((Buffer) buffer).position() + 20);
 
         final int fileLength = buffer.getInt();
 
@@ -167,7 +170,7 @@ public class ShapefileHeader {
         // skip remaining unused bytes
         buffer.order(ByteOrder.BIG_ENDIAN);
         // well they may not be unused forever...
-        buffer.position(buffer.position() + 32);
+        ((Buffer) buffer).position(((Buffer) buffer).position() + 32);
 
         return new ShapefileHeader(fileLength, version, shapeType, minX, maxX, minY, maxY);
     }
