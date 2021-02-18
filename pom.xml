@@ -194,7 +194,7 @@
     <commons-io.version>1.3.2</commons-io.version>
     <commons-logging.version>1.2</commons-logging.version>
     <groovy.version>2.4.17</groovy.version> <!-- Versions 2.5+ are no longer packaged as JAR files. -->
-    <jackson.version>2.10.3</jackson.version>
+    <jackson.version>2.12.1</jackson.version>
     <jasperreports.version>6.12.2</jasperreports.version>
     <jaxen.version>1.1.2</jaxen.version>
     <jai.core.version>1.1.3</jai.core.version>
