@@ -62,7 +62,7 @@ public class NetCDFUtils {
             }
         } else if (array instanceof ArrayLong.D1) {
             long val =  ((ArrayLong.D1)array).get(i);
-            if (val != N3iosp.NC_FILL_LONG && (fillValue == null || !fillValue.equals(val))) {
+            if (val != N3iosp.NC_FILL_INT64 && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else {
@@ -94,7 +94,7 @@ public class NetCDFUtils {
             }
         } else if (array instanceof ArrayLong.D0) {
             long val =  ((ArrayLong.D0)array).get();
-            if (val != N3iosp.NC_FILL_LONG && (fillValue == null || !fillValue.equals(val))) {
+            if (val != N3iosp.NC_FILL_INT64 && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else {
@@ -132,7 +132,7 @@ public class NetCDFUtils {
             }
         } else if (array instanceof ArrayLong.D2) {
             long val = ((ArrayLong.D2)array).get(i, j);
-            if (val != N3iosp.NC_FILL_LONG && (fillValue == null || !fillValue.equals(val))) {
+            if (val != N3iosp.NC_FILL_INT64 && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else {
@@ -166,7 +166,7 @@ public class NetCDFUtils {
             }
         } else if (array instanceof ArrayLong.D3) {
             long val = ((ArrayLong.D3)array).get(i, j, k);
-            if (val != N3iosp.NC_FILL_LONG && (fillValue == null || !fillValue.equals(val))) {
+            if (val != N3iosp.NC_FILL_INT64 && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else {
