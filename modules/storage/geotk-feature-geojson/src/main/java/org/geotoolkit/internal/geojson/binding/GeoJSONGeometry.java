@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.geojson.GeoJSONConstants;
+import org.geotoolkit.util.DeltaComparable;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
@@ -95,6 +96,15 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
         }
 
         @Override
+        public boolean equals(Object obj, float delta) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONPoint other = (GeoJSONPoint) obj;
+            return DeltaComparable.arrayEquals(this.coordinates, other.coordinates, delta);
+        }
+
+        @Override
         public int hashCode() {
             int hash = super.hashCode();
             hash = 29 * hash + Arrays.hashCode(this.coordinates);
@@ -136,6 +146,15 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             final GeoJSONMultiPoint other = (GeoJSONMultiPoint) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
         }
+
+        @Override
+        public boolean equals(Object obj, float delta) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONMultiPoint other = (GeoJSONMultiPoint) obj;
+            return DeltaComparable.arrayEquals(this.coordinates, other.coordinates, delta);
+        }
     }
 
     /**
@@ -171,6 +190,15 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             }
             final GeoJSONLineString other = (GeoJSONLineString) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
+        }
+
+        @Override
+        public boolean equals(Object obj, float delta) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONLineString other = (GeoJSONLineString) obj;
+            return DeltaComparable.arrayEquals(this.coordinates, other.coordinates, delta);
         }
     }
 
@@ -208,6 +236,15 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             final GeoJSONMultiLineString other = (GeoJSONMultiLineString) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
         }
+
+        @Override
+        public boolean equals(Object obj, float delta) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONMultiLineString other = (GeoJSONMultiLineString) obj;
+            return DeltaComparable.arrayEquals(this.coordinates, other.coordinates, delta);
+        }
     }
 
     /**
@@ -244,6 +281,15 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             final GeoJSONPolygon other = (GeoJSONPolygon) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
         }
+
+        @Override
+        public boolean equals(Object obj, float delta) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONPolygon other = (GeoJSONPolygon) obj;
+            return DeltaComparable.arrayEquals(this.coordinates, other.coordinates, delta);
+        }
     }
 
     /**
@@ -279,6 +325,15 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
             }
             final GeoJSONMultiPolygon other = (GeoJSONMultiPolygon) obj;
             return Arrays.deepEquals(this.coordinates, other.coordinates);
+        }
+
+        @Override
+        public boolean equals(Object obj, float delta) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONMultiPolygon other = (GeoJSONMultiPolygon) obj;
+            return DeltaComparable.arrayEquals(this.coordinates, other.coordinates, delta);
         }
     }
 
@@ -318,6 +373,15 @@ public class GeoJSONGeometry extends GeoJSONObject implements Serializable {
                 return false;
             }
             return true;
+        }
+
+        @Override
+        public boolean equals(Object obj, float delta) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+            final GeoJSONGeometryCollection that = (GeoJSONGeometryCollection) obj;
+            return DeltaComparable.equals(this.geometries, that.geometries, delta);
         }
     }
 
