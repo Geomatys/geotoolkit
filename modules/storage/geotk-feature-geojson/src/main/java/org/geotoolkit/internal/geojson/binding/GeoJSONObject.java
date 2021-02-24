@@ -28,6 +28,7 @@ import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONMultiPoint
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONMultiPolygon;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONPoint;
 import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONPolygon;
+import org.geotoolkit.util.DeltaComparable;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -48,7 +49,7 @@ import org.geotoolkit.internal.geojson.binding.GeoJSONGeometry.GeoJSONPolygon;
     @JsonSubTypes.Type(value = GeoJSONMultiPolygon.class, name = "MultiPolygon"),
     @JsonSubTypes.Type(value = GeoJSONGeometryCollection.class, name = "GeometryCollection")
 })
-public class GeoJSONObject implements Serializable {
+public class GeoJSONObject implements Serializable, DeltaComparable {
 
     private String type;
     private double[] bbox;
@@ -102,16 +103,23 @@ public class GeoJSONObject implements Serializable {
             return false;
         }
         final GeoJSONObject other = (GeoJSONObject) obj;
-        if (!Objects.equals(this.type, other.type)) {
+        return Objects.equals(this.type, other.type) &&
+               Arrays.equals(this.bbox, other.bbox) &&
+               Objects.equals(this.crs, other.crs);
+    }
+
+    @Override
+    public boolean equals(Object obj, float delta) {
+        if (obj == null) {
             return false;
         }
-        if (!Arrays.equals(this.bbox, other.bbox)) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
-        if (!Objects.equals(this.crs, other.crs)) {
-            return false;
-        }
-        return true;
+        final GeoJSONObject other = (GeoJSONObject) obj;
+        return Objects.equals(this.type, other.type) &&
+               DeltaComparable.arrayEquals(this.bbox, other.bbox, delta) &&
+               Objects.equals(this.crs, other.crs);
     }
 
     @Override

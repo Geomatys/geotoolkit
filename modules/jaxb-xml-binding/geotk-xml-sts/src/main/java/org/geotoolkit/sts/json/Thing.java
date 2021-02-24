@@ -20,11 +20,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.util.DeltaComparable;
 
 /**
  * Thing
  */
-public class Thing implements STSResponse {
+public class Thing implements STSResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -387,6 +388,29 @@ public class Thing implements STSResponse {
     @Override
     public int hashCode() {
         return java.util.Objects.hash(iotId, iotSelfLink, description, properties, locations, historicalLocations, datastreams, historicalLocationsIotNavigationLink, datastreamsIotNavigationLink, locationsIotNavigationLink, multiDatastreams, multiDatastreamsIotNavigationLink);
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o, float delta) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Thing thing = (Thing) o;
+        return Objects.equals(this.iotId, thing.iotId)
+                && Objects.equals(this.iotSelfLink, thing.iotSelfLink)
+                && Objects.equals(this.description, thing.description)
+                && Objects.equals(this.properties, thing.properties)
+                && DeltaComparable.equals(this.locations, thing.locations, delta)
+                && DeltaComparable.equals(this.historicalLocations, thing.historicalLocations, delta)
+                && Objects.equals(this.historicalLocationsIotNavigationLink, thing.historicalLocationsIotNavigationLink)
+                && DeltaComparable.equals(this.datastreams, thing.datastreams, delta)
+                && Objects.equals(this.datastreamsIotNavigationLink, thing.datastreamsIotNavigationLink)
+                && DeltaComparable.equals(this.multiDatastreams, thing.multiDatastreams, delta)
+                && Objects.equals(this.multiDatastreamsIotNavigationLink, thing.multiDatastreamsIotNavigationLink)
+                && Objects.equals(this.locationsIotNavigationLink, thing.locationsIotNavigationLink);
     }
 
     @Override

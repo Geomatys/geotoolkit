@@ -20,11 +20,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.util.DeltaComparable;
 
 /**
  * ObservedProperty
  */
-public class ObservedProperty implements STSResponse {
+public class ObservedProperty implements STSResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -264,6 +265,26 @@ public class ObservedProperty implements STSResponse {
     @Override
     public int hashCode() {
         return java.util.Objects.hash(iotId, iotSelfLink, name, definition, description, datastreams, datastreamsIotNavigationLink, multiDatastreams, multiDatastreamsIotNavigationLink);
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o, float delta) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ObservedProperty observedProperty = (ObservedProperty) o;
+        return Objects.equals(this.iotId, observedProperty.iotId)
+                && Objects.equals(this.iotSelfLink, observedProperty.iotSelfLink)
+                && Objects.equals(this.name, observedProperty.name)
+                && Objects.equals(this.definition, observedProperty.definition)
+                && Objects.equals(this.description, observedProperty.description)
+                && DeltaComparable.equals(this.datastreams, observedProperty.datastreams, delta)
+                && Objects.equals(this.datastreamsIotNavigationLink, observedProperty.datastreamsIotNavigationLink)
+                && DeltaComparable.equals(this.multiDatastreams, observedProperty.multiDatastreams, delta)
+                && Objects.equals(this.multiDatastreamsIotNavigationLink, observedProperty.multiDatastreamsIotNavigationLink);
     }
 
     @Override

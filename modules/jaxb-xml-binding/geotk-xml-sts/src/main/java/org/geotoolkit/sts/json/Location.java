@@ -20,11 +20,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.util.DeltaComparable;
 
 /**
  * Location
  */
-public class Location implements STSResponse {
+public class Location implements STSResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -290,6 +291,26 @@ public class Location implements STSResponse {
                 && Objects.equals(this.location, location.location)
                 && Objects.equals(this.things, location.things)
                 && Objects.equals(this.historicalLocations, location.historicalLocations)
+                && Objects.equals(this.thingsIotNavigationLink, location.thingsIotNavigationLink)
+                && Objects.equals(this.historicalLocationsIotNavigationLink, location.historicalLocationsIotNavigationLink);
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o, float delta) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Location location = (Location) o;
+        return Objects.equals(this.iotId, location.iotId)
+                && Objects.equals(this.iotSelfLink, location.iotSelfLink)
+                && Objects.equals(this.description, location.description)
+                && Objects.equals(this.encodingType, location.encodingType)
+                && DeltaComparable.equals(this.location, location.location, delta)
+                && DeltaComparable.equals(this.things, location.things, delta)
+                && DeltaComparable.equals(this.historicalLocations, location.historicalLocations, delta)
                 && Objects.equals(this.thingsIotNavigationLink, location.thingsIotNavigationLink)
                 && Objects.equals(this.historicalLocationsIotNavigationLink, location.historicalLocationsIotNavigationLink);
     }
