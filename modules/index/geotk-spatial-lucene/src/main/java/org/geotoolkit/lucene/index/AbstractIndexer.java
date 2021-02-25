@@ -403,7 +403,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final Directory dir   = LuceneUtils.getAppropriateDirectory(getFileDirectory());
             final Term t          = new Term("id", identifier);
             final TermQuery query = new TermQuery(t);
-            LOGGER.log(logLevel, "Term query:{0}", query);
+            LOGGER.log(Level.FINER, "Term query:{0}", query);
 
             // look for DOC ID for R-Tree removal
             final NamedEnvelope env = new NamedEnvelope(getTreeCrs(), identifier);
@@ -425,7 +425,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriterConfig config = new IndexWriterConfig(analyzer);
             try (final IndexWriter writer       = new IndexWriter(dir, config)) {
                 writer.deleteDocuments(query);
-                LOGGER.log(logLevel, "Metadata: {0} removed from the index", identifier);
+                LOGGER.log(Level.FINER, "Metadata: {0} removed from the index", identifier);
                 writer.commit();
             }
 
