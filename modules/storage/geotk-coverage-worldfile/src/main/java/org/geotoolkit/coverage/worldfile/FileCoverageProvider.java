@@ -191,7 +191,7 @@ public class FileCoverageProvider extends DataStoreProvider {
     public ProbeResult probeContent(StrictStorageConnector conn) throws IOException, DataStoreException {
         try {
             conn.useAsImageInputStream(in -> true);
-        } catch (UnsupportedStorageException e) {
+        } catch (UnsupportedStorageException | UnsupportedOperationException e) {
             // Any image source should be usable through ImageIO API
             return ProbeResult.UNSUPPORTED_STORAGE;
         }
@@ -199,10 +199,15 @@ public class FileCoverageProvider extends DataStoreProvider {
         final Path path = conn.getPath().orElse(null);
         boolean hasPrj = path != null;
         if (hasPrj) {
-            final Object prj = SupportFiles.changeExtension(path, "prj");
-            if (prj == null || !Files.exists((Path)prj)) hasPrj = false;
-            final Object tfw = SupportFiles.changeExtension(path, "tfw");
-            if (tfw == null || !Files.exists((Path)tfw)) hasPrj = false;
+            try {
+                final Object prj = SupportFiles.changeExtension(path, "prj");
+                if (prj == null || !Files.exists((Path) prj)) hasPrj = false;
+                final Object tfw = SupportFiles.changeExtension(path, "tfw");
+                if (tfw == null || !Files.exists((Path) tfw)) hasPrj = false;
+            } catch (UnsupportedOperationException e) {
+                // Can happen on third-party file-systems
+                WarningProducer.LOGGER.log(Level.FINEST, "Cannot: explore path siblings", e);
+            }
         }
 
         for (Entry<ImageReaderSpi,Boolean> entry : SPIS.entrySet()) {
@@ -234,6 +239,8 @@ public class FileCoverageProvider extends DataStoreProvider {
             } catch (EOFException ex) {
                 //reached an EOF while testing file, test next spi
                 WarningProducer.LOGGER.log(Level.FINEST, ex, () -> "Reached end of file while testing image spi: "+spiName);
+            } catch (UnsupportedOperationException e) {
+                WarningProducer.LOGGER.log(Level.FINE, e, () -> "Encountered unsupported operation while testing image spi: "+spiName);
             }
         }
         return ProbeResult.UNSUPPORTED_STORAGE;
