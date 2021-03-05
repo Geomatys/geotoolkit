@@ -43,8 +43,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  */
 public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope>{
 
-    private Connection conRO;
-    private Connection conT;
+    private Connection connection;
 
     static {
         try {
@@ -57,11 +56,7 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
     public LuceneDerbySQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source) throws IOException {
         super(crs, source);
         try {
-            this.conRO = source.getConnection();
-            this.conRO.setReadOnly(true);
-
-            this.conT  = source.getConnection();
-            this.conT.setAutoCommit(false);
+            this.connection = source.getConnection();
         } catch (SQLException ex) {
             throw new IOException("Error while trying to connect the treemap datasource", ex);
         }
@@ -80,10 +75,7 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
         LOGGER.log(Level.INFO, "creating datasource {0}", dbUrl);
         final DataSource source = new DefaultDataSource(dbUrl);
         // Establish connection and create schema if does not exist.
-        Connection con = null;
-        try {
-            con = source.getConnection();
-
+        try (Connection con = source.getConnection()){
             if (!schemaExists(con, "treemap")) {
                 // Load database schema SQL stream.
                 final InputStream stream = getResourceAsStream("org/geotoolkit/index/tree/create-derby-treemap-db.sql");
@@ -95,10 +87,6 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
             }
         } catch (IOException ex) {
             throw new IllegalStateException("Unexpected error occurred while trying to create treemap database schema.", ex);
-        } finally {
-            if (con != null) {
-                con.close();
-            }
         }
         return new LuceneDerbySQLTreeEltMapper(SQLRtreeManager.DEFAULT_CRS, source);
     }
@@ -117,15 +105,13 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
     @Override
     public int getTreeIdentifier(final NamedEnvelope env) throws IOException {
         int result = -1;
-        try {
-            final PreparedStatement stmt = conRO.prepareStatement("SELECT \"id\" FROM \"treemap\".\"records\" WHERE \"identifier\"=?");
+        try (final PreparedStatement stmt = connection.prepareStatement("SELECT \"id\" FROM \"treemap\".\"records\" WHERE \"identifier\"=?")) {
             stmt.setString(1, env.getId());
-            final ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                result = rs.getInt(1);
+            try (final ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    result = rs.getInt(1);
+                }
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             throw new IOException("Error while getting tree identifier for envelope", ex);
         }
@@ -141,55 +127,44 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
     public void setTreeIdentifier(final NamedEnvelope env, final int treeIdentifier) throws IOException {
         try {
             if (env != null) {
-                final PreparedStatement existStmt = conRO.prepareStatement("SELECT \"id\" FROM \"treemap\".\"records\" WHERE \"id\"=?");
-                existStmt.setInt(1, treeIdentifier);
-                final ResultSet rs = existStmt.executeQuery();
-                final boolean exist = rs.next();
-                rs.close();
-                existStmt.close();
+                boolean exist = false;
+                try (final PreparedStatement existStmt = connection.prepareStatement("SELECT \"id\" FROM \"treemap\".\"records\" WHERE \"id\"=?")) {
+                    existStmt.setInt(1, treeIdentifier);
+                    try (final ResultSet rs = existStmt.executeQuery()) {
+                        exist = rs.next();
+                    }
+                }
                 if (exist) {
-                    final PreparedStatement stmt = conT.prepareStatement("UPDATE \"treemap\".\"records\" "
+                    try (final PreparedStatement stmt = connection.prepareStatement("UPDATE \"treemap\".\"records\" "
                                                                            + "SET \"identifier\"=?, \"nbenv\"=?, \"minx\"=?, \"maxx\"=?, \"miny\"=?, \"maxy\"=? "
-                                                                           + "WHERE \"id\"=?");
-                    stmt.setString(1, env.getId());
-                    stmt.setInt(2, env.getNbEnv());
-                    stmt.setDouble(3, env.getMinimum(0));
-                    stmt.setDouble(4, env.getMaximum(0));
-                    stmt.setDouble(5, env.getMinimum(1));
-                    stmt.setDouble(6, env.getMaximum(1));
-                    stmt.setInt(7, treeIdentifier);
-                    try {
+                                                                           + "WHERE \"id\"=?")) {
+                        stmt.setString(1, env.getId());
+                        stmt.setInt(2, env.getNbEnv());
+                        stmt.setDouble(3, env.getMinimum(0));
+                        stmt.setDouble(4, env.getMaximum(0));
+                        stmt.setDouble(5, env.getMinimum(1));
+                        stmt.setDouble(6, env.getMaximum(1));
+                        stmt.setInt(7, treeIdentifier);
                         stmt.executeUpdate();
-                    } finally {
-                        stmt.close();
                     }
-                    conT.commit();
                 } else {
-                    final PreparedStatement stmt = conT.prepareStatement("INSERT INTO \"treemap\".\"records\" "
-                                                                       + "VALUES (?, ?, ?, ?, ?, ?, ?)");
-                    stmt.setInt(1, treeIdentifier);
-                    stmt.setString(2, env.getId());
-                    stmt.setInt(3, env.getNbEnv());
-                    stmt.setDouble(4, env.getMinimum(0));
-                    stmt.setDouble(5, env.getMaximum(0));
-                    stmt.setDouble(6, env.getMinimum(1));
-                    stmt.setDouble(7, env.getMaximum(1));
-                    try {
-                    stmt.executeUpdate();
-                    } finally {
-                        stmt.close();
+                    try (final PreparedStatement stmt = connection.prepareStatement("INSERT INTO \"treemap\".\"records\" "
+                                                                       + "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                        stmt.setInt(1, treeIdentifier);
+                        stmt.setString(2, env.getId());
+                        stmt.setInt(3, env.getNbEnv());
+                        stmt.setDouble(4, env.getMinimum(0));
+                        stmt.setDouble(5, env.getMaximum(0));
+                        stmt.setDouble(6, env.getMinimum(1));
+                        stmt.setDouble(7, env.getMaximum(1));
+                        stmt.executeUpdate();
                     }
-                    conT.commit();
                 }
             } else {
-                final PreparedStatement remove = conT.prepareStatement("DELETE FROM \"treemap\".\"records\" WHERE \"id\"=?");
-                remove.setInt(1, treeIdentifier);
-                try {
+                try (final PreparedStatement remove = connection.prepareStatement("DELETE FROM \"treemap\".\"records\" WHERE \"id\"=?")) {
+                    remove.setInt(1, treeIdentifier);
                     remove.executeUpdate();
-                } finally {
-                    remove.close();
                 }
-                conT.commit();
             }
         } catch (SQLException ex) {
             throw new IOException("Error while setting tree identifier for envelope :" + env, ex);
@@ -199,23 +174,21 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
     @Override
     public NamedEnvelope getObjectFromTreeIdentifier(final int treeIdentifier) throws IOException {
         NamedEnvelope result = null;
-        try {
-            final PreparedStatement stmt = conRO.prepareStatement("SELECT * FROM \"treemap\".\"records\" WHERE \"id\"=?");
+        try (final PreparedStatement stmt = connection.prepareStatement("SELECT * FROM \"treemap\".\"records\" WHERE \"id\"=?")) {
             stmt.setInt(1, treeIdentifier);
-            final ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                final String identifier = rs.getString("identifier");
-                final int nbEnv         = rs.getInt("nbenv");
-                final double minx       = rs.getDouble("minx");
-                final double maxx       = rs.getDouble("maxx");
-                final double miny       = rs.getDouble("miny");
-                final double maxy       = rs.getDouble("maxy");
-                result = new NamedEnvelope(crs, identifier, nbEnv);
-                result.setRange(0, minx, maxx);
-                result.setRange(1, miny, maxy);
+            try (final ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    final String identifier = rs.getString("identifier");
+                    final int nbEnv         = rs.getInt("nbenv");
+                    final double minx       = rs.getDouble("minx");
+                    final double maxx       = rs.getDouble("maxx");
+                    final double miny       = rs.getDouble("miny");
+                    final double maxy       = rs.getDouble("maxy");
+                    result = new NamedEnvelope(crs, identifier, nbEnv);
+                    result.setRange(0, minx, maxx);
+                    result.setRange(1, miny, maxy);
+                }
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             throw new IOException("Error while getting envelope", ex);
         }
@@ -225,9 +198,8 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
     @Override
     public Map<Integer, NamedEnvelope> getFullMap() throws IOException {
         Map<Integer, NamedEnvelope> result = new HashMap<>();
-        try {
-            final PreparedStatement stmt = conRO.prepareStatement("SELECT * FROM \"treemap\".\"records\"");
-            final ResultSet rs = stmt.executeQuery();
+        try (final PreparedStatement stmt = connection.prepareStatement("SELECT * FROM \"treemap\".\"records\"");
+             final ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 final String identifier = rs.getString("identifier");
                 final int treeId        = rs.getInt("id");
@@ -241,8 +213,6 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
                 env.setRange(1, miny, maxy);
                 result.put(treeId, env);
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             throw new IOException("Error while getting envelope", ex);
         }
@@ -252,11 +222,8 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
 
     @Override
     public void clear() throws IOException {
-        try {
-            final PreparedStatement stmt = conT.prepareStatement("DELETE FROM \"treemap\".\"records\"");
+        try (final PreparedStatement stmt = connection.prepareStatement("DELETE FROM \"treemap\".\"records\"")) {
             stmt.executeUpdate();
-            stmt.close();
-            conT.commit();
         } catch (SQLException ex) {
             throw new IOException("Error while removing all records", ex);
         }
@@ -269,11 +236,9 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
 
     @Override
     public void close() throws IOException {
-        if (conRO != null) try {
-            conRO.close();
-            conT.close();
-            conRO = null;
-            conT  = null;
+        if (connection != null) try {
+            connection.close();
+            connection = null;
             if (source instanceof DefaultDataSource) {
                 ((DefaultDataSource)source).shutdown();
             }
@@ -284,7 +249,7 @@ public class LuceneDerbySQLTreeEltMapper extends LuceneSQLTreeEltMapper implemen
 
     @Override
     public boolean isClosed() {
-        return conRO == null;
+        return connection == null;
     }
 
 }
