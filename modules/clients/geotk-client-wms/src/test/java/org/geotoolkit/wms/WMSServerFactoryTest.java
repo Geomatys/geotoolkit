@@ -16,10 +16,17 @@
  */
 package org.geotoolkit.wms;
 
+import java.io.ByteArrayInputStream;
 import java.util.Iterator;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.DataStores;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import org.apache.sis.storage.ProbeResult;
+import org.apache.sis.storage.StorageConnector;
 import org.junit.Test;
 
 /**
@@ -47,5 +54,11 @@ public class WMSServerFactoryTest extends org.geotoolkit.test.TestBase {
         if(!found){
             fail("Factory not found");
         }
+    }
+
+    @Test
+    public void no_error_on_unsupported_input() throws DataStoreException {
+        final ProbeResult probe = new WMSProvider().probeContent(new StorageConnector(new ByteArrayInputStream(new byte[0])));
+        assertEquals(ProbeResult.UNSUPPORTED_STORAGE, probe);
     }
 }
