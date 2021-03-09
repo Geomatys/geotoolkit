@@ -83,11 +83,8 @@ public class CSVUtils extends Static {
             if(inEscape){
 
                 int end = toSplit.indexOf('\"',last);
-                while(end>=0){
-                    if(end>=toSplit.length()){
-                        //found escape end
-                        break;
-                    }else if(toSplit.charAt(end+1)=='\"'){
+                while(end>=0 && end < toSplit.length() - 1){
+                    if(toSplit.charAt(end+1)=='\"' && end < toSplit.length() - 2){
                         //double quote, not an escape
                         end = toSplit.indexOf('\"',end+2);
                     }else{
