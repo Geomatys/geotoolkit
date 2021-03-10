@@ -921,7 +921,7 @@
 
           <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->
           <links>
-            <link>http://sis.apache.org/apidocs</link>>
+            <!--link>http://sis.apache.org/apidocs</link>-->
           </links>
 
           <!-- Enables the Javadoc tool to interpret a simple, one-argument
