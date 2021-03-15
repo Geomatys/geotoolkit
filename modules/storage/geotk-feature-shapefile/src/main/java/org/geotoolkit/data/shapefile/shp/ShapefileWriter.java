@@ -18,6 +18,7 @@
 package org.geotoolkit.data.shapefile.shp;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -93,10 +94,10 @@ public class ShapefileWriter implements Closeable{
      * Drain internal buffers into underlying channels.
      */
     private void drain() throws IOException {
-        shapeBuffer.flip();
+        ((Buffer)shapeBuffer).flip();
         while (shapeBuffer.remaining() > 0)
             shpChannel.write(shapeBuffer);
-        shapeBuffer.flip().limit(shapeBuffer.capacity());
+        ((Buffer)shapeBuffer).flip().limit(shapeBuffer.capacity());
     }
 
     private void writeHeaders(final GeometryCollection geometries, final ShapeType type)
@@ -139,7 +140,7 @@ public class ShapefileWriter implements Closeable{
         if (shapeBuffer == null)
             allocateBuffers();
 
-        shapeBuffer.rewind();
+        ((Buffer)shapeBuffer).rewind();
         ShapefileHeader.write(shapeBuffer, type, fileLength / 2,
                 bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
 
@@ -174,7 +175,7 @@ public class ShapefileWriter implements Closeable{
     public void writeGeometry(final Geometry g) throws IOException {
         if (shapeBuffer == null)
             throw new IOException("Must write headers first");
-        lp = shapeBuffer.position();
+        lp = ((Buffer)shapeBuffer).position();
 
         //see doc for handling null geometries
         //http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf
@@ -185,16 +186,16 @@ public class ShapefileWriter implements Closeable{
             length = writeNonNullGeometry(g);
         }
 
-        assert (length * 2 == (shapeBuffer.position() - lp) - 8);
+        assert (length * 2 == (((Buffer)shapeBuffer).position() - lp) - 8);
 
-        lp = shapeBuffer.position();
+        lp = ((Buffer)shapeBuffer).position();
 
         // write to the shx
         shx.writeRecord(offset, length);
         offset += length + 4;
 
         drain();
-        assert (shapeBuffer.position() == 0);
+        assert (((Buffer)shapeBuffer).position() == 0);
     }
 
     private int writeNonNullGeometry(final Geometry g) {
@@ -264,7 +265,7 @@ public class ShapefileWriter implements Closeable{
 
         writeHeaders(geometries, type);
 
-        lp = shapeBuffer.position();
+        lp = ((Buffer)shapeBuffer).position();
         for (int i = 0, ii = geometries.getNumGeometries(); i < ii; i++) {
             Geometry g = geometries.getGeometryN(i);
 

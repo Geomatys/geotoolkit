@@ -18,12 +18,13 @@ package org.geotoolkit.sts.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
+import org.geotoolkit.util.DeltaComparable;
 
 /**
  * An Observation is act of measuring or otherwise determining the value of a
  * property [OGC and ISO 19156:2011]
  */
-public class Observation implements STSResponse {
+public class Observation implements STSResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -358,6 +359,31 @@ public class Observation implements STSResponse {
     @Override
     public int hashCode() {
         return java.util.Objects.hash(iotId, iotSelfLink, phenomenonTime, result, resultTime, resultQuality, validTime, parameters, datastream, featureOfInterest, datastreamIotNavigationLink, featureOfInterestIotNavigationLink, multiDatastream, multiDatastreamIotNavigationLink);
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o, float delta) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Observation observation = (Observation) o;
+        return Objects.equals(this.iotId, observation.iotId)
+                && Objects.equals(this.iotSelfLink, observation.iotSelfLink)
+                && Objects.equals(this.phenomenonTime, observation.phenomenonTime)
+                && Objects.equals(this.result, observation.result)
+                && Objects.equals(this.resultTime, observation.resultTime)
+                && Objects.equals(this.resultQuality, observation.resultQuality)
+                && Objects.equals(this.validTime, observation.validTime)
+                && Objects.equals(this.parameters, observation.parameters)
+                && DeltaComparable.equals(this.datastream, observation.datastream, delta)
+                && DeltaComparable.equals(this.featureOfInterest, observation.featureOfInterest, delta)
+                && Objects.equals(this.datastreamIotNavigationLink, observation.datastreamIotNavigationLink)
+                && Objects.equals(this.featureOfInterestIotNavigationLink, observation.featureOfInterestIotNavigationLink)
+                && DeltaComparable.equals(this.multiDatastream, observation.multiDatastream, delta)
+                && Objects.equals(this.multiDatastreamIotNavigationLink, observation.multiDatastreamIotNavigationLink);
     }
 
     @Override

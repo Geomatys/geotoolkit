@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.geotoolkit.util.DeltaComparable;
 
 /**
  *
@@ -78,7 +79,7 @@ public class MultiDatastream extends Datastream implements STSResponse {
     }
 
     @Override
-    public boolean equals(java.lang.Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -89,6 +90,16 @@ public class MultiDatastream extends Datastream implements STSResponse {
         return super.equals(o)
                 && Objects.equals(this.multiObservationDataTypes, datastream.multiObservationDataTypes)
                 && Objects.equals(this.observedProperties, datastream.observedProperties);
+    }
+
+    @Override
+    public boolean equals(Object o, float delta) {
+        if (o instanceof MultiDatastream && super.equals(o, delta)) {
+            MultiDatastream that = (MultiDatastream) o;
+            return Objects.equals(this.multiObservationDataTypes, that.multiObservationDataTypes) &&
+                   DeltaComparable.equals(this.observedProperties, that.observedProperties, delta);
+        }
+        return false;
     }
 
     @Override

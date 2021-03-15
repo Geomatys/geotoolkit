@@ -25,6 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.ProbeResult;
 import org.apache.sis.storage.StorageConnector;
+import org.apache.sis.util.Version;
 import org.geotoolkit.client.AbstractClientProvider;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.storage.ResourceType;
@@ -96,19 +97,17 @@ public class WMSProvider extends AbstractClientProvider {
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         try {
             URL url = connector.getStorageAs(java.net.URL.class);
-            String protocol = url.getProtocol();
-
-            if (protocol.startsWith("http")) {
+            if (url!= null && url.getProtocol().startsWith("http")) {
                 try (WebMapClient client = new WebMapClient(url)) {
                     AbstractWMSCapabilities capability = client.getServiceCapabilities();
+                    return new ProbeResult(true, MIME_TYPE, new Version(client.getVersion().getCode()));
                 }
-                return new ProbeResult(true, MIME_TYPE, null);
             }
 
         } catch (IllegalArgumentException | CapabilitiesException ex) {
             //do nothing
         }
-        return new ProbeResult(false, null, null);
+        return ProbeResult.UNSUPPORTED_STORAGE;
     }
 
 }

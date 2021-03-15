@@ -69,6 +69,11 @@
             <version>${sis.version}</version>
             <type>test-jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-utility</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.locationtech.jts</groupId>

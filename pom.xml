@@ -907,7 +907,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.4</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
           <docencoding>${website.encoding}</docencoding>
@@ -920,36 +920,15 @@
           <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
           <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
           <breakiterator>true</breakiterator>
-          <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.apache:org.opengis:com</excludePackageNames>
+          <excludePackageNames>org.geotoolkit.cql:org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.apache:org.opengis:com</excludePackageNames>
           <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
 
           <!-- TODO : fix project javadoc -->
-          <additionalparam>
-            -Xdoclint:none        <!-- pending corrections through the whole codebase. -->
-          </additionalparam>
-
-          <!-- Custom taglets implemented in Java. -->
-          <taglets>
-            <taglet><tagletClass>org.apache.sis.internal.taglet.Module</tagletClass></taglet>
-            <taglet><tagletClass>org.apache.sis.internal.taglet.Preformat</tagletClass></taglet>
-          </taglets>
-          <tagletArtifact>
-            <groupId>org.apache.sis.core</groupId>
-            <artifactId>sis-build-helper</artifactId>
-            <version>${sis.version}</version>
-          </tagletArtifact>
+          <doclint>none</doclint>
 
           <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->
           <links>
-            <link>http://docs.oracle.com/javase/7/docs/api</link>
-            <link>http://www.geoapi.org/snapshot/pending</link>
-            <link>http://sis.apache.org/apidocs</link>
-
-            <link>http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs</link>
-            <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
-            <link>http://download.java.net/media/java3d/javadoc/1.5.2</link>
-            <link>http://jcip.net/annotations/doc</link>
-            <link>http://jscience.org/api</link>
+            <!--link>http://sis.apache.org/apidocs</link>-->
           </links>
 
           <!-- Enables the Javadoc tool to interpret a simple, one-argument
@@ -962,6 +941,8 @@
             <tag><placement>X</placement> <name>level</name>       <head>API level:</head></tag>
             <tag><placement>X</placement> <name>category</name>    <head>Category:</head></tag>
             <tag><placement>a</placement> <name>todo</name>        <head>TODO:</head></tag>
+            <tag><placement>X</placement> <name>module</name>    <head>Module</head></tag>
+            <tag><placement>X</placement> <name>preformat</name> <head>Code</head></tag>
           </tags>
         </configuration>
       </plugin>

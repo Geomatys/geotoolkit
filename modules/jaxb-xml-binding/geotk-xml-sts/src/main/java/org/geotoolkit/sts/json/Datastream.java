@@ -20,13 +20,14 @@ import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.geotoolkit.util.DeltaComparable;
 
 /**
  * A datastream groups a collection of observations that are related in some
  * way. The one constraint is that the observations in a datastream must measure
  * the same observed property (i.e., one phenomenon).
  */
-public class Datastream implements STSResponse {
+public class Datastream implements STSResponse, DeltaComparable {
 
     @JsonProperty("@iot.id")
     private String iotId = null;
@@ -440,6 +441,33 @@ public class Datastream implements STSResponse {
     @Override
     public int hashCode() {
         return java.util.Objects.hash(iotId, iotSelfLink, description, unitOfMeasurement, observationType, observedArea, phenomenonTime, resultTime, thing, sensor, observedProperty, observations, thingIotNavigationLink, sensorIotNavigationLink, observedPropertyIotNavigationLink, observationsIotNavigationLink);
+    }
+
+    @Override
+    public boolean equals(Object o, float delta) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Datastream datastream = (Datastream) o;
+        return Objects.equals(this.iotId, datastream.iotId)
+                && Objects.equals(this.iotSelfLink, datastream.iotSelfLink)
+                && Objects.equals(this.description, datastream.description)
+                && Objects.equals(this.unitOfMeasurement, datastream.unitOfMeasurement)
+                && Objects.equals(this.observationType, datastream.observationType)
+                && DeltaComparable.equals(this.observedArea, datastream.observedArea, delta)
+                && Objects.equals(this.phenomenonTime, datastream.phenomenonTime)
+                && Objects.equals(this.resultTime, datastream.resultTime)
+                && DeltaComparable.equals(this.thing, datastream.thing, delta)
+                && DeltaComparable.equals(this.sensor, datastream.sensor, delta)
+                && DeltaComparable.equals(this.observedProperty, datastream.observedProperty, delta)
+                && DeltaComparable.equals(this.observations, datastream.observations, delta)
+                && Objects.equals(this.thingIotNavigationLink, datastream.thingIotNavigationLink)
+                && Objects.equals(this.sensorIotNavigationLink, datastream.sensorIotNavigationLink)
+                && Objects.equals(this.observedPropertyIotNavigationLink, datastream.observedPropertyIotNavigationLink)
+                && Objects.equals(this.observationsIotNavigationLink, datastream.observationsIotNavigationLink);
     }
 
     @Override
