@@ -20,7 +20,7 @@ import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -60,7 +60,6 @@ import org.opengis.style.TextSymbolizer;
  * Copy and simplify operations
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVisitor{
 
@@ -115,7 +114,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         Stroke stroke = ls.getStroke();
 
         if(offset != null){
-            offset = (Expression) offset.accept(this, o);
+            visit(offset);
         }
         if(stroke != null){
             stroke = (Stroke)stroke.accept(this, o);
@@ -145,7 +144,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
             fill = (Fill) fill.accept(this, o);
         }
         if(offset != null){
-            offset = (Expression) offset.accept(this, o);
+            offset = (Expression) visit(offset);
         }
         if(stroke != null){
             stroke = (Stroke)stroke.accept(this, o);
@@ -177,7 +176,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
             halo = (Halo)halo.accept(this, o);
         }
         if(label != null){
-            label = (Expression)label.accept(this, o);
+            label = (Expression) visit(label);
         }
         if(place != null){
             place = (LabelPlacement)place.accept(this, o);
@@ -205,7 +204,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
     private Expression visitGeometryExpression(Symbolizer symbolizer, Object o){
         final Expression exp = symbolizer.getGeometry();
         if(exp==null) return null;
-        return (Expression) exp.accept(this, o);
+        return (Expression) visit(exp);
     }
 
     @Override
@@ -216,8 +215,8 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
     @Override
     public Object visit(Displacement d, Object o) {
         return SF.displacement(
-                (Expression)d.getDisplacementX().accept(this, o),
-                (Expression)d.getDisplacementY().accept(this, o));
+                (Expression) visit(d.getDisplacementX()),
+                (Expression) visit(d.getDisplacementY()));
     }
 
     @Override
@@ -227,13 +226,13 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         Expression opacity = fill.getOpacity();
 
         if(color != null){
-            color = (Expression)color.accept(this, o);
+            color = (Expression) visit(color);
         }
         if(gra != null){
             gra = (GraphicFill)gra.accept(this, o);
         }
         if(opacity != null){
-            opacity = (Expression)opacity.accept(this, o);
+            opacity = (Expression) visit(opacity);
         }
 
         return SF.fill(gra, color, opacity);
@@ -246,13 +245,13 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         Expression weight = font.getWeight();
 
         if(size != null){
-            size = (Expression)size.accept(this, o);
+            size = (Expression) visit(size);
         }
         if(style != null){
-            style = (Expression)style.accept(this, o);
+            style = (Expression) visit(style);
         }
         if(weight != null){
-            weight = (Expression)weight.accept(this, o);
+            weight = (Expression) visit(weight);
         }
 
         return SF.font(font.getFamily(), style, weight, size);
@@ -270,10 +269,10 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         Expression width = stroke.getWidth();
 
         if(color != null){
-            color = (Expression)color.accept(this, o);
+            color = (Expression) visit(color);
         }
         if(offset != null){
-            offset = (Expression)offset.accept(this, o);
+            offset = (Expression) visit(offset);
         }
         if(grafill != null){
             grafill = (GraphicFill)grafill.accept(this, o);
@@ -282,18 +281,17 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
             grastroke = (GraphicStroke)grastroke.accept(this, o);
         }
         if(cap != null){
-            cap = (Expression)cap.accept(this, o);
+            cap = (Expression) visit(cap);
         }
         if(join != null){
-            join = (Expression)join.accept(this, o);
+            join = (Expression) visit(join);
         }
         if(opacity != null){
-            opacity = (Expression)opacity.accept(this, o);
+            opacity = (Expression) visit(opacity);
         }
         if(width != null){
-            width = (Expression)width.accept(this, o);
+            width = (Expression) visit(width);
         }
-
         if(grafill != null){
             return SF.stroke(grafill, color, opacity, width, join, cap, stroke.getDashArray(), offset);
         }else if(grastroke != null){
@@ -397,5 +395,4 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
     public Object visit(ShadedRelief sr, Object o) {
         return sr;
     }
-
 }

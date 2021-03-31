@@ -28,17 +28,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.Envelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.Expression;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.util.Utilities.listNullEquals;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -68,9 +67,6 @@ import static org.geotoolkit.util.Utilities.listNullEquals;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EnvelopeType", propOrder = {
@@ -121,8 +117,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * build a new envelope.
      *
      * @param id This parameter is deprecated. it will no ne used.
-     * @param lowerCorner
-     * @param upperCorner
      * @param srsName CRS identifier name.
      *
      * @deprecated use the constrcutor without id.
@@ -135,8 +129,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
     /**
      * build a new GML envelope.
      *
-     * @param lowerCorner
-     * @param upperCorner
      * @param srsName CRS identifier name.
      */
     public EnvelopeType(final DirectPositionType lowerCorner, final DirectPositionType upperCorner, final String srsName) {
@@ -147,8 +139,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
 
     /**
      * build a new envelope.
-     * @param pos
-     * @param srsName
      */
     @Deprecated
     public EnvelopeType(final List<DirectPositionType> pos, final String srsName) {
@@ -203,7 +193,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *
      */
     @Override
     public DirectPositionType getLowerCorner() {
@@ -216,7 +205,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *
      */
     public void setLowerCorner(final DirectPositionType value) {
         this.lowerCorner = value;
@@ -228,7 +216,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *
      */
     @Override
     public DirectPositionType getUpperCorner() {
@@ -241,7 +228,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *
      */
     public void setUpperCorner(final DirectPositionType value) {
         this.upperCorner = value;
@@ -253,7 +239,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     @Override
     public String getSrsName() {
@@ -266,7 +251,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     @Override
     public void setSrsName(final String value) {
@@ -279,7 +263,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @return
      *     possible object is
      *     {@link Integer }
-     *
      */
     @Override
     public Integer getSrsDimension() {
@@ -292,7 +275,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *
      */
     @Override
     public void setSrsDimension(final Integer value) {
@@ -337,7 +319,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
 
     /**
      * return true if the envelope is fill with x and y coordinates in upper and lower corner.
-     * @return
      */
     @Override
     public boolean isCompleteEnvelope2D() {
@@ -365,7 +346,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *
      */
     @Deprecated
     @Override
@@ -380,7 +360,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *
      */
     @Deprecated
     public void setCoordinates(final CoordinatesType value) {
@@ -389,7 +368,6 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
 
     /**
      * Verify if this entry est identical to the specified object.
-     * @param object
      */
     @Override
     public boolean equals(final Object object) {
@@ -527,17 +505,22 @@ public class EnvelopeType implements org.opengis.geometry.Envelope, org.geotoolk
     }
 
     @Override
-    public Object evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ScopedName getFunctionName() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object o, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Expression> getParameters() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor ev, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Object apply(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Expression toValueType(Class type) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -52,8 +52,6 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometryOperandsType", propOrder = {
@@ -68,7 +66,6 @@ public class GeometryOperandsType {
      * Empty constructor used by JAXB
      */
     public GeometryOperandsType() {
-
     }
 
     /**
@@ -123,8 +120,6 @@ public class GeometryOperandsType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     *
-     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -134,7 +129,6 @@ public class GeometryOperandsType {
         private QName name;
 
         public GeometryOperand() {
-
         }
 
         public GeometryOperand(final QName name) {
@@ -142,11 +136,6 @@ public class GeometryOperandsType {
         }
         /**
          * Gets the value of the name property.
-         *
-         * @return
-         *     possible object is
-         *     {@link QName }
-         *
          */
         public QName getName() {
             return name;
@@ -154,16 +143,9 @@ public class GeometryOperandsType {
 
         /**
          * Sets the value of the name property.
-         *
-         * @param value
-         *     allowed object is
-         *     {@link QName }
-         *
          */
         public void setName(QName value) {
             this.name = value;
         }
-
     }
-
 }

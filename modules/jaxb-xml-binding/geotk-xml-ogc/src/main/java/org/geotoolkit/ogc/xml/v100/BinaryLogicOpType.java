@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.BinaryLogicOperator;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -47,15 +46,12 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryLogicOpType", propOrder = {
     "comparisonOpsOrSpatialOpsOrLogicOps"
 })
-public abstract class BinaryLogicOpType extends LogicOpsType implements org.opengis.filter.BinaryLogicOperator, BinaryLogicOperator {
+public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperator {
 
     @XmlElementRefs({
         @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class),
@@ -65,12 +61,11 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements org.open
     private List<JAXBElement<?>> comparisonOpsOrSpatialOpsOrLogicOps;
 
     public BinaryLogicOpType() {
-
     }
 
     /**
-      * Build a new Binary logic operator
-      */
+     * Build a new Binary logic operator
+     */
     public BinaryLogicOpType(final BinaryLogicOpType that) {
          if (that != null && that.comparisonOpsOrSpatialOpsOrLogicOps != null) {
             this.comparisonOpsOrSpatialOpsOrLogicOps = new ArrayList<>();
@@ -146,7 +141,6 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements org.open
 
     /**
      * Gets the value of the comparisonOpsOrSpatialOpsOrLogicOps property.
-     *
      */
     public List<JAXBElement<?>> getComparisonOpsOrSpatialOpsOrLogicOps() {
         if (comparisonOpsOrSpatialOpsOrLogicOps == null) {
@@ -170,7 +164,7 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements org.open
     }
 
     @Override
-    public List<Filter> getChildren() {
+    public List<Filter> getOperands() {
         List<Filter> result = new ArrayList<>();
         for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrLogicOps()) {
             result.add((Filter)jb.getValue());
@@ -179,12 +173,7 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements org.open
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean test(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

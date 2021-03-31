@@ -42,7 +42,6 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalNameException;
@@ -60,6 +59,7 @@ import org.geotoolkit.db.reverse.MetaDataConstants.ImportedKey;
 import org.geotoolkit.db.reverse.MetaDataConstants.Index;
 import org.geotoolkit.db.reverse.MetaDataConstants.Schema;
 import org.geotoolkit.db.reverse.MetaDataConstants.Table;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
@@ -88,7 +88,7 @@ public final class DataBaseModel {
     /**
      * Custom factory where types can be modified after they are created.
      */
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     /**
      * Feature type used to mark types which are sub types of others.
@@ -260,10 +260,10 @@ public final class DataBaseModel {
                 cacheImportedKeys = new CachedResultSet();
                 cacheExportedKeys = new CachedResultSet();
 
-                final Iterator<Map> ite = cacheSchemas.filter(Filter.INCLUDE);
+                final Iterator<Map> ite = cacheSchemas.filter(Filter.include());
                 while(ite.hasNext()) {
                     final String schemaName = (String)ite.next().get(Schema.TABLE_SCHEM);
-                    final Filter filter = FF.equals(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
+                    final Filter filter = FF.equal(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
                     final Iterator<Map> tableite = cacheTables.filter(filter);
                     while (tableite.hasNext()) {
                         final Map info = tableite.next();
@@ -291,13 +291,12 @@ public final class DataBaseModel {
                 }
             }
 
-
             ////////////////////////////////////////////////////////////////////////////////
 
             if(databaseSchema!=null){
                 requieredSchemas.add(databaseSchema);
             }else{
-                final Iterator<Map> ite = cacheSchemas.filter(Filter.INCLUDE);
+                final Iterator<Map> ite = cacheSchemas.filter(Filter.include());
                 while(ite.hasNext()) {
                     requieredSchemas.add((String)ite.next().get(Schema.TABLE_SCHEM));
                 }
@@ -330,7 +329,6 @@ public final class DataBaseModel {
             visitedSchemas = null;
             requieredSchemas = null;
         }
-
 
         //build indexes---------------------------------------------------------
         final String baseSchemaName = store.getDatabaseSchema();
@@ -365,7 +363,6 @@ public final class DataBaseModel {
                 throw new DataStoreException("Specifed schema " + baseSchemaName + " does not exist.");
              }
          }
-
     }
 
     private SchemaMetaModel analyzeSchema(final String schemaName, final Connection cx) throws DataStoreException{
@@ -373,30 +370,27 @@ public final class DataBaseModel {
         final SchemaMetaModel schema = new SchemaMetaModel(schemaName);
 
         try {
-            Filter filter = FF.equals(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
+            Filter filter = FF.equal(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
             Parameters params = (Parameters) store.getOpenParameters().get();
             if(params.getValue(AbstractJDBCProvider.TABLE)!=null &&
                !params.getValue(AbstractJDBCProvider.TABLE).isEmpty()){
-                filter = FF.and(filter, FF.equals(FF.property(Table.TABLE_NAME),
+                filter = FF.and(filter, FF.equal(FF.property(Table.TABLE_NAME),
                         FF.literal(params.getValue(AbstractJDBCProvider.TABLE))));
             }
-
             final Iterator<Map> ite = cacheTables.filter(filter);
             while (ite.hasNext()) {
                 final TableMetaModel table = analyzeTable(ite.next(),cx);
                 schema.tables.put(table.name, table);
             }
-
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing database model.", e);
         }
-
         return schema;
     }
 
     private Filter filter(String schemafield, String schemaName, String tablefield, String tableName){
-        return FF.and(      FF.equals(FF.property(schemafield), FF.literal(schemaName)),
-                            FF.equals(FF.property(tablefield), FF.literal(tableName)));
+        return FF.and(FF.equal(FF.property(schemafield), FF.literal(schemaName)),
+                      FF.equal(FF.property(tablefield), FF.literal(tableName)));
     }
 
     private TableMetaModel analyzeTable(final Map tableSet, final Connection cx) throws DataStoreException, SQLException{
@@ -428,7 +422,7 @@ public final class DataBaseModel {
 
                 //look up the type ( should only be one row )
                 final Iterator<Map> cite = cacheColumns.filter(
-                        FF.and(tableFilter, FF.equals(FF.property(Column.COLUMN_NAME), FF.literal(columnName))));
+                        FF.and(tableFilter, FF.equal(FF.property(Column.COLUMN_NAME), FF.literal(columnName))));
                 final Map column = cite.next();
 
                 final int sqlType = ((Number)column.get(Column.DATA_TYPE)).intValue();
@@ -455,7 +449,6 @@ public final class DataBaseModel {
                                 sqlTypeName, columnType, Type.NON_INCREMENTING);
                     }
                 }
-
                 cols.add(col);
             }
 
@@ -539,7 +532,6 @@ public final class DataBaseModel {
                 }
             }
 
-
             if(cols.isEmpty()){
                 if (Table.VALUE_TYPE_TABLE.equals(tableType)) {
                     store.getLogger().log(Level.INFO, "No primary key found for {0}.", tableName);
@@ -557,7 +549,6 @@ public final class DataBaseModel {
                     }
                 }
             }
-
 
             //find imported keys -----------------------------------------------
             Iterator<Map> ite = cacheImportedKeys.filter(filter(ImportedKey.FKTABLE_SCHEM, schemaName, ImportedKey.FKTABLE_NAME, tableName));
@@ -625,7 +616,6 @@ public final class DataBaseModel {
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing table : " + tableName, e);
         }
-
         ftb.setName(tableName);
         table.tableType = ftb;
         return table;
@@ -654,18 +644,11 @@ public final class DataBaseModel {
 
         atb.setMinimumOccurs(Column.VALUE_NO.equalsIgnoreCase(columnNullable) ? 1 : 0);
         atb.setMaximumOccurs(1);
-
         return atb.build();
     }
 
     /**
      * Analyze the metadata of the ResultSet to rebuild a feature type.
-     *
-     * @param result
-     * @param name
-     * @return FeatureType
-     * @throws SQLException
-     * @throws org.apache.sis.storage.DataStoreException
      */
     public FeatureType analyzeResult(final ResultSet result, final String name) throws SQLException, DataStoreException{
         final SQLDialect dialect = store.getDialect();
@@ -724,13 +707,10 @@ public final class DataBaseModel {
                 } finally {
                     closeSafe(store.getLogger(),cx);
                 }
-
                 desc = atb.build();
             }
-
             ftb.addProperty(desc);
         }
-
         return ftb.build();
     }
 
@@ -739,8 +719,6 @@ public final class DataBaseModel {
      */
     private void reverseSimpleFeatureTypes(final Connection cx){
         final SQLDialect dialect = store.getDialect();
-
-
         for(final SchemaMetaModel schema : schemas.values()){
             for(final TableMetaModel table : schema.tables.values()){
                 final String tableName = table.name;
@@ -765,7 +743,7 @@ public final class DataBaseModel {
 
                         //look up the type ( should only be one row )
                         final Filter tableFilter = filter(Table.TABLE_SCHEM, schema.name, Table.TABLE_NAME, tableName);
-                        final Filter colFilter = FF.equals(FF.property(Column.COLUMN_NAME), FF.literal(name));
+                        final Filter colFilter = FF.equal(FF.property(Column.COLUMN_NAME), FF.literal(name));
                         final Iterator<Map> meta = cacheColumns.filter(
                                 FF.and(tableFilter, colFilter));
                         final Map metas = meta.next();
@@ -795,7 +773,7 @@ public final class DataBaseModel {
 
                         //look up the type ( should only be one row )
                         final Filter tableFilter = filter(Table.TABLE_SCHEM, schema.name, Table.TABLE_NAME, tableName);
-                        final Filter colFilter = FF.equals(FF.property(Column.COLUMN_NAME), FF.literal(name));
+                        final Filter colFilter = FF.equal(FF.property(Column.COLUMN_NAME), FF.literal(name));
                         final Iterator<Map> meta = cacheColumns.filter(
                                 FF.and(tableFilter, colFilter));
                         final Map metas = meta.next();
@@ -831,11 +809,9 @@ public final class DataBaseModel {
                         }
                     }
                 }
-
                 table.simpleFeatureType = ftb;
             }
         }
-
     }
 
     /**
@@ -886,8 +862,6 @@ public final class DataBaseModel {
                             }
                         }
                     }
-
-
                     final GenericName relationName = NamesExt.create(relationNameTip);
                     final DBRelationOperation op = new DBRelationOperation(relationName, store, relation, relation.getForeignTable());
                     ftb.addProperty(op);
@@ -895,7 +869,6 @@ public final class DataBaseModel {
                     final Object[] futur = new Object[]{table, relation};
                     secondPass.add(futur);
                 }
-
                 table.complexFeatureType = ftb;
                 table.allType = ftb;
             }
@@ -916,7 +889,6 @@ public final class DataBaseModel {
 //            final FeatureTypeBuilder allt = primaryTable.getType(TableMetaModel.View.ALLCOMPLEX);
 //            modifyField(foreignTable, relation, allt);
 //        }
-
     }
 
 //    private int modifyField(final TableMetaModel foreignTable,
@@ -973,5 +945,4 @@ public final class DataBaseModel {
 //
 //        return index;
 //    }
-
 }

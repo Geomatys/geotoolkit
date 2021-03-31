@@ -20,7 +20,7 @@ import java.util.Objects;
 import org.apache.sis.util.Classes;
 import javax.measure.Unit;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
 import org.opengis.style.ContrastEnhancement;
@@ -32,13 +32,11 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types raster symbolizer.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultRasterSymbolizer extends AbstractSymbolizer implements RasterSymbolizer{
 
@@ -83,7 +81,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
             final String name,
             final Description desc){
         super(uom,geom,name,desc);
-        this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_RASTER_OPACITY : opacity;
+        this.opacity = (opacity == null) ? DEFAULT_RASTER_OPACITY : opacity;
         this.selection = selection;
         this.overlap = (overlap == null) ? DEFAULT_RASTER_OVERLAP : overlap;
         this.colorMap = colorMap;

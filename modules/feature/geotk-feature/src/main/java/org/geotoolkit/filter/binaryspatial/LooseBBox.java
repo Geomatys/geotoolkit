@@ -18,13 +18,13 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import org.locationtech.jts.geom.Geometry;
-import org.geotoolkit.filter.DefaultLiteral;
 import org.apache.sis.referencing.CRS;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.opengis.filter.Literal;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -32,25 +32,19 @@ import org.opengis.geometry.Envelope;
  * the geometry envelope.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class LooseBBox extends DefaultBBox {
 
-    public LooseBBox(final PropertyName property, final DefaultLiteral<BoundingBox> bbox) {
+    public LooseBBox(final ValueReference property, final Literal<Object,BoundingBox> bbox) {
         super(property,bbox);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean evaluate(final Object object) {
+    public boolean test(final Object object) {
         Geometry candidate = toGeometry(object, left);
-
         if (candidate == null) {
             return false;
         }
-
         //we don't know in which crs it is, try to find it
         final CoordinateReferenceSystem candidateCrs = findCRS(object, candidate);
 
@@ -63,5 +57,4 @@ public class LooseBBox extends DefaultBBox {
         final org.locationtech.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
         return boundingEnv.intersects(candidateEnv);
     }
-
 }

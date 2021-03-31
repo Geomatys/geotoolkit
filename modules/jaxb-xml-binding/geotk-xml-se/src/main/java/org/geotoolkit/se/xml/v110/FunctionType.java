@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.ExpressionType;
-import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -39,9 +39,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionType")
@@ -65,13 +62,17 @@ public abstract class FunctionType
     @XmlAttribute(required = true)
     protected String fallbackValue;
 
+    @Override
+    public ScopedName getFunctionName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * Gets the value of the fallbackValue property.
      *
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     public String getFallbackValue() {
         return fallbackValue;
@@ -83,21 +84,8 @@ public abstract class FunctionType
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setFallbackValue(final String value) {
         this.fallbackValue = value;
-    }
-
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

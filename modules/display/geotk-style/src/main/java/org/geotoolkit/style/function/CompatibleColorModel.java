@@ -22,7 +22,7 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import org.opengis.filter.expression.Function;
+import org.opengis.filter.Expression;
 
 /**
  * ColorModel which can calculate color from any sample model.
@@ -30,18 +30,17 @@ import org.opengis.filter.expression.Function;
  * IndexedColorModel should always be used prior to this model.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class CompatibleColorModel extends ColorModel{
 
     private static final int TRANSLUCENT = new Color(255, 255, 255, 0).getRGB();
 
-    private final Function fct;
+    private final Expression fct;
 
     /**
      * @param fct : Interpolate or Categorize function
      */
-    public CompatibleColorModel(final int nbbits, final Function fct){
+    public CompatibleColorModel(final int nbbits, final Expression fct) {
         super(nbbits);
         this.fct = fct;
     }
@@ -79,7 +78,7 @@ public class CompatibleColorModel extends ColorModel{
         } else {
             value = inData;
         }
-        final Color c = fct.evaluate(value, Color.class);
+        final Color c = (Color) fct.apply(value);
         if(c==null){
             return TRANSLUCENT;
         }
@@ -138,5 +137,4 @@ public class CompatibleColorModel extends ColorModel{
     public WritableRaster createCompatibleWritableRaster(int w, int h) {
         return Raster.createPackedRaster(new DataBufferInt(w*h),w,h,16,null);
     }
-
 }

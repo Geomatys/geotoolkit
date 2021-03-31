@@ -42,7 +42,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.Extent;
 import org.opengis.sld.FeatureTypeConstraint;
@@ -220,6 +220,4 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             return mStyles;
         }
     }
-
-
 }

@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -43,9 +42,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometricComplexType", propOrder = {
@@ -66,16 +62,7 @@ public class GeometricComplexType extends AbstractGeometryType {
         return this.element;
     }
 
-    public Object evaluate(final Object arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public <T> T evaluate(final Object arg0, final Class<T> arg1) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    public Object accept(final ExpressionVisitor arg0, final Object arg1) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

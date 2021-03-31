@@ -232,7 +232,7 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
 
         while (features.hasNext()) {
             final Feature feature = features.next();
-            final Path currentFile = file.resolve(FeatureExt.getId(feature).getID()+".gml");
+            final Path currentFile = file.resolve(FeatureExt.getId(feature).getIdentifier()+".gml");
 
             //write feature
             final JAXPStreamFeatureWriter writer = new JAXPStreamFeatureWriter(gmlVersion,"2.0.0",schemaLocations);
@@ -425,7 +425,7 @@ public class GMLSparseStore extends DataStore implements WritableFeatureSet, Res
 
             if(currentFile==null){
                 //append mode
-                currentFile = file.resolve(FeatureExt.getId(currentFeature).getID()+".gml");
+                currentFile = file.resolve(FeatureExt.getId(currentFeature).getIdentifier()+".gml");
             }
 
             //write feature

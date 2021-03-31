@@ -42,6 +42,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.GridCoverageResource;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.Boundary;
@@ -55,7 +56,6 @@ import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.nio.ZipUtilities;
@@ -68,7 +68,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
@@ -270,10 +270,7 @@ public class KmzContextInterpreter {
      * Writes a static expression.
      */
     private Object writeExpression(Expression expression, Class<?> type, Object object) {
-        if (GO2Utilities.isStatic(Expression.NIL)) {
-            return expression.evaluate(object, type);
-        }
-        return null;
+        return ObjectConverters.convert(expression.apply(object), type);
     }
 
     //--------------------------------------------------------------------------
@@ -316,7 +313,7 @@ public class KmzContextInterpreter {
         // Search feature style URI
         for (Entry<Rule, URI> e : IDENTIFICATORS_MAP) {
             final Rule rule = e.getKey();
-            if (rule.getFilter().evaluate(feature)) {
+            if (rule.getFilter().test(feature)) {
                 kmlFeature.setPropertyValue(KmlConstants.TAG_STYLE_URL, e.getValue());
                 for (Symbolizer s : rule.symbolizers()) {
                     if (s instanceof TextSymbolizer) {

@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiGeometry;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -45,8 +44,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiGeometryType", propOrder = {
@@ -60,7 +57,6 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
     private GeometryArrayPropertyType geometryMembers;
 
     public MultiGeometryType() {
-
     }
 
     public MultiGeometryType(List<GeometryPropertyType> geometryMember) {
@@ -69,7 +65,6 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
 
     /**
      * Gets the value of the geometryMember property.
-     *
      */
     @Override
     public List<GeometryPropertyType> getGeometryMember() {
@@ -85,7 +80,6 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
      * @return
      *     possible object is
      *     {@link GeometryArrayPropertyType }
-     *
      */
     public GeometryArrayPropertyType getGeometryMembers() {
         return geometryMembers;
@@ -97,24 +91,8 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
      * @param value
      *     allowed object is
      *     {@link GeometryArrayPropertyType }
-     *
      */
     public void setGeometryMembers(GeometryArrayPropertyType value) {
         this.geometryMembers = value;
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

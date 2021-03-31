@@ -18,7 +18,7 @@
 package org.geotoolkit.style;
 
 import java.awt.Color;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Literal;
 import org.apache.sis.util.ObjectConverters;
 import org.junit.Test;
 
@@ -27,7 +27,6 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class ColorTest extends org.geotoolkit.test.TestBase {
 
@@ -46,10 +45,7 @@ public class ColorTest extends org.geotoolkit.test.TestBase {
         final Literal l = SF.literal(c);
 
         assertTrue(l.getValue() instanceof Color);
-        final Color res = l.evaluate(null, Color.class);
+        final Color res = (Color) l.apply(null);
         assertEquals(c, res);
-
     }
-
-
 }

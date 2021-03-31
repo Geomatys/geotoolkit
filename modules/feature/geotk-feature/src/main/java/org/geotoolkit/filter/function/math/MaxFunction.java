@@ -18,42 +18,33 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class MaxFunction extends AbstractFunction {
 
     public MaxFunction(final Expression expression1, final Expression expression2) {
-        super(MathFunctionFactory.MAX, new Expression[] {expression1, expression2}, null);
+        super(MathFunctionFactory.MAX, expression1, expression2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number1 = parameters.get(0).evaluate(feature, Number.class);
-        if (number1 == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function max argument #0 - expected type double");
-        }
-
-        final Number number2 = parameters.get(1).evaluate(feature, Number.class);
-        if (number2 == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function max argument #1 - expected type double");
-        }
+    public Object apply(final Object feature) {
+        final Object number1 = parameters.get(0).apply(feature);
+        final Object number2 = parameters.get(1).apply(feature);
         if (number1 instanceof Integer && number2 instanceof Integer) {
-            return Math.max(number1.intValue(), number2.intValue());
+            return Math.max((Integer) number1, (Integer) number2);
         }
         if (number1 instanceof Double && number2 instanceof Double) {
-            return Math.max(number1.doubleValue(), number2.doubleValue());
+            return Math.max((Double) number1, (Double) number2);
         }
         if (number1 instanceof Float && number2 instanceof Float) {
-            return Math.max(number1.floatValue(), number2.floatValue());
+            return Math.max((Float) number1, (Float) number2);
         }
         if (number1 instanceof Long && number2 instanceof Long) {
-            return Math.max(number1.longValue(), number2.longValue());
+            return Math.max((Long) number1, (Long) number2);
         }
         if (number1 instanceof Short && number2 instanceof Short) {
-            return Math.max(number1.shortValue(), number2.shortValue());
+            return Math.max((Short) number1, (Short) number2);
         }
         throw new IllegalArgumentException(
                     "Filter Function problem for function abs argument #0 - expected type number");

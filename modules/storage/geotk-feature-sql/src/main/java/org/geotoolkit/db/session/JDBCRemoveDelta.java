@@ -23,7 +23,7 @@ import org.geotoolkit.storage.feature.session.RemoveDelta;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
-import org.opengis.filter.Id;
+import org.opengis.filter.Filter;
 
 /**
  * Makes all queries in JDBC transaction.
@@ -32,7 +32,7 @@ import org.opengis.filter.Id;
  */
 public class JDBCRemoveDelta extends RemoveDelta {
 
-    public JDBCRemoveDelta(Session session, String typeName, Id filter) {
+    public JDBCRemoveDelta(Session session, String typeName, Filter filter) {
         super(session, typeName, filter);
     }
 
@@ -43,5 +43,4 @@ public class JDBCRemoveDelta extends RemoveDelta {
         jdbcstore.removeFeatures(type, removedIds, cnx);
         return null;
     }
-
 }

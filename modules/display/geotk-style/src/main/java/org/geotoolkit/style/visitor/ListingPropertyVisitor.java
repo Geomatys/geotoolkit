@@ -20,9 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -63,7 +62,6 @@ import org.opengis.style.TextSymbolizer;
  * Expression visitor that returns a list of all Feature attributs requiered by this style.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.ListingPropertyVisitor implements StyleVisitor{
 
@@ -81,15 +79,14 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         if(def != null){
             data = def.accept(this, data);
         }
-
         return data;
     }
 
     @Override
     public Object visit(final FeatureTypeStyle featureTypeStyle, Object data) {
-        final Id ids = featureTypeStyle.getFeatureInstanceIDs();
+        final ResourceId ids = featureTypeStyle.getFeatureInstanceIDs();
         if(ids != null){
-            data = ids.accept(this, data);
+            visit(ids, (Collection<String>) data);
         }
         final List<? extends Rule> rules = featureTypeStyle.rules();
         if(rules != null){
@@ -104,7 +101,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     public Object visit(final Rule rule, Object data) {
         final Filter filter = rule.getFilter();
         if(filter != null){
-            data = filter.accept(this, data);
+            visit(filter, (Collection<String>) data);
         }
         final GraphicLegend legend = rule.getLegend();
         if(legend != null){
@@ -122,7 +119,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     private void visitGeomName(Symbolizer symbolizer, Object data){
         final Expression exp = symbolizer.getGeometry();
         if(exp!=null){
-            exp.accept(this, data);
+            visit(exp, (Collection<String>) data);
         }
     }
 
@@ -143,7 +140,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
         final Expression offset = lineSymbolizer.getPerpendicularOffset();
         if(offset != null){
-            data = offset.accept(this, data);
+            visit(offset, (Collection<String>) data);
         }
         final Stroke stroke = lineSymbolizer.getStroke();
         if(stroke != null){
@@ -166,7 +163,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         }
         final Expression offset = polygonSymbolizer.getPerpendicularOffset();
         if(offset != null){
-            data = offset.accept(this, data);
+            visit(offset, (Collection<String>) data);
         }
         final Stroke stroke = polygonSymbolizer.getStroke();
         if(stroke != null){
@@ -193,7 +190,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         }
         final Expression label = textSymbolizer.getLabel();
         if(label != null){
-            data = label.accept(this, data);
+            visit(label, (Collection<String>) data);
         }
         final LabelPlacement place = textSymbolizer.getLabelPlacement();
         if(place != null){
@@ -224,7 +221,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         }
         final Expression opa = rasterSymbolizer.getOpacity();
         if(opa != null){
-            data = opa.accept(this, data);
+            visit(opa, (Collection<String>) data);
         }
         final ShadedRelief shade = rasterSymbolizer.getShadedRelief();
         if(shade != null){
@@ -240,7 +237,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         final Map<String,Expression> exps = extension.getParameters();
         if(exps != null){
             for(Expression exp : exps.values()){
-                data = exp.accept(this, data);
+                visit(exp, (Collection<String>) data);
             }
         }
         return data;
@@ -255,11 +252,11 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     public Object visit(final Displacement displacement, Object data) {
         final Expression x = displacement.getDisplacementX();
         if(x != null){
-            data = x.accept(this, data);
+            visit(x, (Collection<String>) data);
         }
         final Expression y = displacement.getDisplacementY();
         if(y != null){
-            data = y.accept(this, data);
+            visit(y, (Collection<String>) data);
         }
         return data;
     }
@@ -268,7 +265,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     public Object visit(final Fill fill, Object data) {
         final Expression color = fill.getColor();
         if(color != null){
-            data = color.accept(this, data);
+            visit(color, (Collection<String>) data);
         }
         final GraphicFill gf = fill.getGraphicFill();
         if(gf != null){
@@ -276,7 +273,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         }
         final Expression opa = fill.getOpacity();
         if(opa != null){
-            data = opa.accept(this, data);
+            visit(opa, (Collection<String>) data);
         }
         return data;
     }
@@ -286,23 +283,22 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         final List<Expression> families = font.getFamily();
         if(families != null){
             for(Expression family : families){
-                data = family.accept(this, data);
+                visit(family, (Collection<String>) data);
             }
         }
 
         final Expression size = font.getSize();
         if(size != null){
-            data = size.accept(this, data);
+            visit(size, (Collection<String>) data);
         }
         final Expression style = font.getStyle();
         if(style != null){
-            data = style.accept(this, data);
+            visit(style, (Collection<String>) data);
         }
         final Expression weight = font.getWeight();
         if(weight != null){
-            data = weight.accept(this, data);
+            visit(weight, (Collection<String>) data);
         }
-
         return data;
     }
 
@@ -310,44 +306,43 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     public Object visit(final Stroke stroke, Object data) {
         final Expression color = stroke.getColor();
         if(color != null){
-            data = color.accept(this, data);
+            visit(color, (Collection<String>) data);
         }
 
         final Expression offset = stroke.getDashOffset();
         if(offset != null){
-            data = offset.accept(this, data);
+            visit(offset, (Collection<String>) data);
         }
 
         final GraphicFill gf = stroke.getGraphicFill();
         if(gf != null){
-            data = gf.accept(this, data);
+            data = visit(gf, data);
         }
 
         final GraphicStroke gs = stroke.getGraphicStroke();
         if(gs != null){
-            data = gs.accept(this, data);
+            data = visit(gs, data);
         }
 
         final Expression lc = stroke.getLineCap();
         if(lc != null){
-            data = lc.accept(this, data);
+            visit(lc, (Collection<String>) data);
         }
 
         final Expression lj = stroke.getLineJoin();
         if(lj != null){
-            data = lj.accept(this, data);
+            visit(lj, (Collection<String>) data);
         }
 
         final Expression opa = stroke.getOpacity();
         if(opa != null){
-            data = opa.accept(this, data);
+            visit(opa, (Collection<String>) data);
         }
 
         final Expression width = stroke.getWidth();
         if(width != null){
-            data = width.accept(this, data);
+            visit(width, (Collection<String>) data);
         }
-
         return data;
     }
 
@@ -363,15 +358,15 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         }
         final Expression opa = graphic.getOpacity();
         if(opa != null){
-            data = opa.accept(this, data);
+            visit(opa, (Collection<String>) data);
         }
         final Expression rot = graphic.getRotation();
         if(rot != null){
-            data = rot.accept(this, data);
+            visit(rot, (Collection<String>) data);
         }
         final Expression size = graphic.getSize();
         if(size != null){
-            data = size.accept(this, data);
+            visit(size, (Collection<String>) data);
         }
         final List<GraphicalSymbol> symbols = graphic.graphicalSymbols();
         if(symbols != null){
@@ -383,7 +378,6 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
                 }
             }
         }
-
         return data;
     }
 
@@ -397,11 +391,11 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         data = visit((Graphic)graphicStroke, data);
         final Expression gap = graphicStroke.getGap();
         if(gap != null){
-            data = gap.accept(this, data);
+            visit(gap, (Collection<String>) data);
         }
         final Expression igap = graphicStroke.getInitialGap();
         if(igap != null){
-            data = igap.accept(this, data);
+            visit(igap, (Collection<String>) data);
         }
         return data;
     }
@@ -422,7 +416,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         }
         final Expression wkn = mark.getWellKnownName();
         if(wkn != null){
-            data = wkn.accept(this, data);
+            visit(wkn, (Collection<String>) data);
         }
         return data;
     }
@@ -455,7 +449,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         }
         final Expression rot = pointPlacement.getRotation();
         if(rot != null){
-            data = rot.accept(this, data);
+            visit(rot, (Collection<String>) data);
         }
         return data;
     }
@@ -464,12 +458,12 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     public Object visit(final AnchorPoint anchorPoint, Object data) {
         final Expression x = anchorPoint.getAnchorPointX();
         if(x != null){
-            data = x.accept(this, data);
+            visit(x, (Collection<String>) data);
         }
 
         final Expression y = anchorPoint.getAnchorPointY();
         if(y != null){
-            data = y.accept(this, data);
+            visit(y, (Collection<String>) data);
         }
         return data;
     }
@@ -478,17 +472,16 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     public Object visit(final LinePlacement linePlacement, Object data) {
         final Expression gap = linePlacement.getGap();
         if(gap != null){
-            data = gap.accept(this, data);
+            visit(gap, (Collection<String>) data);
         }
         final Expression igap = linePlacement.getInitialGap();
         if(igap != null){
-            data = igap.accept(this, data);
+            visit(igap, (Collection<String>) data);
         }
         final Expression offset = linePlacement.getPerpendicularOffset();
         if(offset != null){
-            data = offset.accept(this, data);
+            visit(offset, (Collection<String>) data);
         }
-
         return data;
     }
 
@@ -503,29 +496,27 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         if(fill != null){
             data = fill.accept(this, data);
         }
-
         final Expression radius = halo.getRadius();
         if(radius != null){
-            data = radius.accept(this, data);
+            visit(radius, (Collection<String>) data);
         }
-
         return data;
     }
 
     @Override
     public Object visit(final ColorMap colorMap, Object data) {
-        final Function fct = colorMap.getFunction();
+        final Expression fct = colorMap.getFunction();
         if(fct != null){
-            data = fct.accept(this, data);
+            visit(fct, (Collection<String>) data);
         }
         return data;
     }
 
     @Override
     public Object visit(final ColorReplacement colorReplacement, Object data) {
-        final Function fct = colorReplacement.getRecoding();
+        final Expression fct = colorReplacement.getRecoding();
         if(fct != null){
-            data = fct.accept(this, data);
+            visit(fct, (Collection<String>) data);
         }
         return data;
     }
@@ -534,7 +525,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     public Object visit(final ContrastEnhancement contrastEnhancement, Object data) {
         final Expression gamma = contrastEnhancement.getGammaValue();
         if(gamma != null){
-            data = gamma.accept(this, data);
+            visit(gamma, (Collection<String>) data);
         }
         return data;
     }
@@ -571,9 +562,8 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     public Object visit(final ShadedRelief shadedRelief, Object data) {
         final Expression exp = shadedRelief.getReliefFactor();
         if(exp != null){
-            data = exp.accept(this, data);
+            visit(exp, (Collection<String>) data);
         }
         return data;
     }
-
 }

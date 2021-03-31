@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -41,9 +40,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ChangeCaseType", propOrder = {
@@ -64,7 +60,6 @@ public class ChangeCaseType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -76,7 +71,6 @@ public class ChangeCaseType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
@@ -88,7 +82,6 @@ public class ChangeCaseType
      * @return
      *     possible object is
      *     {@link DirectionType }
-     *
      */
     public DirectionType getDirection() {
         return direction;
@@ -100,10 +93,8 @@ public class ChangeCaseType
      * @param value
      *     allowed object is
      *     {@link DirectionType }
-     *
      */
     public void setDirection(final DirectionType value) {
         this.direction = value;
     }
-
 }

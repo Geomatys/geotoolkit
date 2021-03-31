@@ -28,8 +28,8 @@ import org.apache.sis.util.logging.Logging;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 
 /**
  * Groovy function.
@@ -37,7 +37,6 @@ import org.opengis.filter.expression.PropertyName;
  * requiered feature properties.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class GroovyFunction extends AbstractFunction {
 
@@ -78,7 +77,7 @@ public class GroovyFunction extends AbstractFunction {
 
     public GroovyFunction(final Expression expression) {
         super(GroovyFunctionFactory.GROOVY, prepare(expression), null);
-        groovy = expression.evaluate(null, String.class);
+        groovy = expression.apply(null).toString();
     }
 
     /**
@@ -87,7 +86,7 @@ public class GroovyFunction extends AbstractFunction {
      * @return Expression[]
      */
     private static Expression[] prepare(final Expression gvFunction){
-        final String str = gvFunction.evaluate(null, String.class);
+        final String str = gvFunction.apply(null).toString();
 
         final List<Expression> properties = new ArrayList<Expression>();
         properties.add(gvFunction);
@@ -111,11 +110,9 @@ public class GroovyFunction extends AbstractFunction {
                 }
             }
         }
-
         if(current != null && !current.isEmpty()){
             properties.add(new DefaultPropertyName(current));
         }
-
         return properties.toArray(new Expression[properties.size()]);
     }
 
@@ -128,16 +125,15 @@ public class GroovyFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
 
         Binding bindings = new Binding();
 
         for(int i=1,n=parameters.size(); i<n; i++){
-            final PropertyName property = (PropertyName) parameters.get(i);
-            final Object value = property.evaluate(feature);
-            bindings.setVariable(VAR_CHARACTER+property.getPropertyName(), value);
+            final ValueReference property = (ValueReference) parameters.get(i);
+            final Object value = property.apply(feature);
+            bindings.setVariable(VAR_CHARACTER+property.getXPath(), value);
         }
-
         try {
             final Script script = getCompiled();
             script.setBinding(bindings);
@@ -145,10 +141,6 @@ public class GroovyFunction extends AbstractFunction {
         } catch (CompilationFailedException ex) {
             Logging.getLogger("org.geotoolkit.filter.function.groovy").log(Level.WARNING, null, ex);
         }
-
         return "";
     }
-
-
-
 }

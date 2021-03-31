@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ogc.xml;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface BinaryComparisonOperator extends ComparisonOperator {
+public interface BinaryComparisonOperator extends ComparisonOperator, org.opengis.filter.BinaryComparisonOperator {
 
     String getPropertyName();
 

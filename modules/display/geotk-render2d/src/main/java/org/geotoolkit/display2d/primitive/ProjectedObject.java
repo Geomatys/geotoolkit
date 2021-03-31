@@ -18,7 +18,7 @@ package org.geotoolkit.display2d.primitive;
 
 import org.apache.sis.portrayal.MapLayer;
 import org.opengis.display.primitive.Graphic;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Convenient representation of a custom object for rendering.

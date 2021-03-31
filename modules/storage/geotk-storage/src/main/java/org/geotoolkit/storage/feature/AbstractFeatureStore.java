@@ -66,9 +66,8 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.SortProperty;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -256,7 +255,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
 
         FeatureWriter writer = null;
         try{
-            writer = getFeatureWriter(QueryBuilder.filtered(typeName, Filter.EXCLUDE));
+            writer = getFeatureWriter(QueryBuilder.filtered(typeName, Filter.exclude()));
             return true;
         }catch(Exception ex){
             //catch anything, log it
@@ -306,8 +305,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
                 if(AttributeConvention.isGeometryAttribute(desc)){
                     names.add(desc.getName().toString());
                 } else if (gquery.getSortBy() != null) {
-                    for (SortBy sortBy : gquery.getSortBy()) {
-                        final String propName = sortBy.getPropertyName().getPropertyName();
+                    for (SortProperty sortBy : gquery.getSortBy()) {
+                        final String propName = sortBy.getValueReference().getXPath();
                         if (desc.getName().toString().equals(propName) ||
                             desc.getName().tip().toString().equals(propName)) {
                             names.add(desc.getName().toString());
@@ -337,7 +336,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
     }
 
     @Override
-    public final List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public final List<ResourceId> addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
         return addFeatures(groupName,newFeatures,new Hints());
     }
 
@@ -434,8 +433,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param name of the schema where features where added.
      * @param ids modified feature ids
      */
-    protected void fireFeaturesAdded(final GenericName name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
+    protected void fireFeaturesAdded(final GenericName name, final Set<ResourceId> ids){
+        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, FeatureStoreContentEvent.resourceId(ids)));
     }
 
     /**
@@ -444,8 +443,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param name of the schema where features where updated.
      * @param ids modified feature ids
      */
-    protected void fireFeaturesUpdated(final GenericName name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
+    protected void fireFeaturesUpdated(final GenericName name, final Set<ResourceId> ids){
+        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, FeatureStoreContentEvent.resourceId(ids)));
     }
 
     /**
@@ -454,8 +453,8 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      * @param name of the schema where features where deleted
      * @param ids modified feature ids
      */
-    protected void fireFeaturesDeleted(final GenericName name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
+    protected void fireFeaturesDeleted(final GenericName name, final Set<ResourceId> ids){
+        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, FeatureStoreContentEvent.resourceId(ids)));
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -519,10 +518,10 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
      *
      * @return list of ids of the features added.
      */
-    protected List<FeatureId> handleAddWithFeatureWriter(final String groupName, final Collection<? extends Feature> newFeatures,
+    protected List<ResourceId> handleAddWithFeatureWriter(final String groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException{
 
-        try(FeatureWriter featureWriter = getFeatureWriter(QueryBuilder.filtered(groupName, Filter.EXCLUDE))) {
+        try(FeatureWriter featureWriter = getFeatureWriter(QueryBuilder.filtered(groupName, Filter.exclude()))) {
             while (featureWriter.hasNext()) {
                 featureWriter.next();
             }
@@ -577,7 +576,7 @@ public abstract class AbstractFeatureStore extends DataStore implements FeatureS
         final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
         final Filter filter = gquery.getFilter();
         final String groupName = gquery.getTypeName();
-        if (Filter.EXCLUDE.equals(filter) ) {
+        if (Filter.exclude().equals(filter) ) {
             return GenericFeatureWriter.wrapAppend(this, groupName);
         } else {
             return GenericFeatureWriter.wrap(this, groupName, filter);

@@ -18,12 +18,10 @@ package org.geotoolkit.ogc.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.opengis.filter.capability.FunctionName;
+import org.geotoolkit.filter.capability.FunctionName;
 
 
 /**
@@ -40,27 +38,23 @@ import org.opengis.filter.capability.FunctionName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Function_NameType", propOrder = {
     "value"
 })
-public class FunctionNameType implements FunctionName {
+public class FunctionNameType extends FunctionName {
 
     @XmlValue
     private String value;
     @XmlAttribute(required = true)
     private String nArgs;
 
+    public FunctionNameType() {
+        super(null, null, 0);
+    }
+
     /**
      * Gets the value of the value property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getValue() {
         return value;
@@ -68,11 +62,6 @@ public class FunctionNameType implements FunctionName {
 
     /**
      * Sets the value of the value property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -80,11 +69,6 @@ public class FunctionNameType implements FunctionName {
 
     /**
      * Gets the value of the nArgs property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getNArgs() {
         return nArgs;
@@ -92,11 +76,6 @@ public class FunctionNameType implements FunctionName {
 
     /**
      * Sets the value of the nArgs property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setNArgs(String value) {
         this.nArgs = value;
@@ -121,5 +100,4 @@ public class FunctionNameType implements FunctionName {
     public String getName() {
         return value;
     }
-
 }

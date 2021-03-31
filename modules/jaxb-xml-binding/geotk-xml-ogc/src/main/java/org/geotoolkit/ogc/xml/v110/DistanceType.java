@@ -37,9 +37,6 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DistanceType", propOrder = {
@@ -69,7 +66,6 @@ public class DistanceType {
 
     /**
      * Gets the value of the value property.
-     *
      */
     public double getValue() {
         return value;
@@ -86,5 +82,4 @@ public class DistanceType {
     public String toString(){
         return "Distance= " + value + " " + units;
     }
-
 }

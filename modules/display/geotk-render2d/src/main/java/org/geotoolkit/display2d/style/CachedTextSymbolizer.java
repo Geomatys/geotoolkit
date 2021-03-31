@@ -25,7 +25,7 @@ import java.awt.RenderingHints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.Halo;
 import org.opengis.style.LabelPlacement;

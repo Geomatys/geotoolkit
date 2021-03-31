@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v110;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeEndsType extends BinaryTemporalOpType implements Ends {
-
+public class TimeEndsType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeEndsType() {
-
     }
 
     public TimeEndsType(final String propertyName, final Object temporal) {
@@ -47,13 +44,7 @@ public class TimeEndsType extends BinaryTemporalOpType implements Ends {
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.ENDS;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

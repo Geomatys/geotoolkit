@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
 

@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v110;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeContainsType extends BinaryTemporalOpType implements TContains {
-
+public class TimeContainsType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeContainsType() {
-
     }
 
     public TimeContainsType(final String propertyName, final Object temporal) {
@@ -47,13 +44,7 @@ public class TimeContainsType extends BinaryTemporalOpType implements TContains 
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.CONTAINS;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

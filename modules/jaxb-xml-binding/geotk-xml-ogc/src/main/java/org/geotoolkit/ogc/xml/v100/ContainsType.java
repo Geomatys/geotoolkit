@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -28,9 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Contains")
 public class ContainsType extends BinarySpatialOpType {
-
     public ContainsType() {
-
     }
 
     public ContainsType(String propertyName, Object geometry) {
@@ -44,6 +43,11 @@ public class ContainsType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new ContainsType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.CONTAINS;
     }
 
     @Override

@@ -18,28 +18,17 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class Atan2Function extends AbstractFunction {
 
     public Atan2Function(final Expression expression1, final Expression expression2) {
-        super(MathFunctionFactory.ATAN2, new Expression[] {expression1, expression2}, null);
+        super(MathFunctionFactory.ATAN2, expression1, expression2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number1 = parameters.get(0).evaluate(feature, Number.class);
-        if (number1 == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function atan2 argument #0 - expected type double");
-        }
-
-        final Number number2 = parameters.get(1).evaluate(feature, Number.class);
-        if (number2 == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function atan2 argument #1 - expected type double");
-        }
-        return Math.atan2(number1.doubleValue(), number2.doubleValue());
+    public Object apply(final Object feature) {
+        return Math.atan2(doubleValue(feature, 0), doubleValue(feature, 1));
     }
 }

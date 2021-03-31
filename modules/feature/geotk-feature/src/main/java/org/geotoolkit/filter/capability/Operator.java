@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.filter.capability;
 
-import org.opengis.filter.capability.Operator;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -27,49 +26,41 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultOperator implements Operator{
+@Deprecated
+public class Operator {
+    public static final Operator
+            LESS_THAN               = new Operator("LessThan"),
+            GREATER_THAN            = new Operator("GreaterThan"),
+            LESS_THAN_EQUAL_TO      = new Operator("LessThanEqualTo"),
+            GREATER_THAN_EQUAL_TO   = new Operator("GreaterThanEqualTo"),
+            EQUAL_TO                = new Operator("EqualTo"),
+            NOT_EQUAL_TO            = new Operator("NotEqualTo"),
+            LIKE                    = new Operator("Like"),
+            BETWEEN                 = new Operator("Between"),
+            NULL_CHECK              = new Operator("NullCheck");
 
     private final String name;
 
-    public DefaultOperator(final String name) {
+    public Operator(final String name) {
         ensureNonNull("operator name", name);
         this.name = name;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultOperator other = (DefaultOperator) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        return true;
+        final Operator other = (Operator) obj;
+        return name.equals(other.name);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
-        return hash;
+        return (5*31) + name.hashCode();
     }
-
 }

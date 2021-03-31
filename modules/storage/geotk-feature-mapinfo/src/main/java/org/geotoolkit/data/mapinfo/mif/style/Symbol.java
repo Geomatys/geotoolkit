@@ -35,7 +35,7 @@ import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.feature.AttributeType;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Java representation of MIF-MID symbol style.

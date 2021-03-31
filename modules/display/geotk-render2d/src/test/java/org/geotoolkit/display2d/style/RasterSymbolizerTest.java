@@ -36,7 +36,6 @@ import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
@@ -51,6 +50,7 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.MapBuilder;
@@ -81,7 +81,7 @@ import org.opengis.util.FactoryException;
 public class RasterSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    protected static final FilterFactory FF = FilterUtilities.FF;
 
     /**
      * Render a coverage with :

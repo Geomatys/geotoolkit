@@ -214,7 +214,7 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
     public void update(Filter filter, Map<String, ?> values) throws DataStoreException {
         if (featureSet instanceof WritableFeatureSet) {
             WritableFeatureSet wfs = (WritableFeatureSet) featureSet;
-            wfs.replaceIf((f)-> filter.evaluate(f), (f) -> updateFeatureProperty(f, values));
+            wfs.replaceIf((f)-> filter.test(f), (f) -> updateFeatureProperty(f, values));
         } else {
             throw new DataStoreException("The feature set is not writable.");
         }
@@ -231,7 +231,7 @@ public class FeatureSetWrapper  extends AbstractCollection<Feature> implements F
     public void remove(Filter filter) throws DataStoreException {
         if (featureSet instanceof WritableFeatureSet) {
             WritableFeatureSet wfs = (WritableFeatureSet) featureSet;
-            wfs.removeIf((f)-> filter.evaluate(f));
+            wfs.removeIf((f)-> filter.test(f));
         } else {
             throw new DataStoreException("The feature set is not writable.");
         }

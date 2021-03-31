@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.apache.sis.feature.Features;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -68,8 +69,8 @@ import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -90,15 +91,10 @@ public final class RenderingRoutines {
     /**
      * Merge a layer style with a selection style.
      * The selection style fts elements will be placed after those of the default style.
-     *
-     * @param style
-     * @param selectionFilter
-     * @param selectionStyle
-     * @return
      */
     public static MutableStyle mergeStyles(MutableStyle style, Filter selectionFilter, MutableStyle selectionStyle) {
 
-        if (selectionFilter == null || Filter.EXCLUDE.equals(selectionFilter) || selectionStyle == null) {
+        if (selectionFilter == null || Filter.exclude().equals(selectionFilter) || selectionStyle == null) {
             //unmodified
             return style;
         }
@@ -108,7 +104,6 @@ public final class RenderingRoutines {
         final MutableStyle result = GO2Utilities.STYLE_FACTORY.style();
 
         for (FeatureTypeStyle fts : style.featureTypeStyles()) {
-
             final MutableFeatureTypeStyle resultfts = GO2Utilities.STYLE_FACTORY.featureTypeStyle();
             resultfts.setDescription(fts.getDescription());
             resultfts.setFeatureInstanceIDs(fts.getFeatureInstanceIDs());
@@ -128,7 +123,6 @@ public final class RenderingRoutines {
                 resultfts.rules().add(modifiedRule);
             }
         }
-
         if (selectionStyle != null) {
             for (FeatureTypeStyle fts : selectionStyle.featureTypeStyles()) {
                 final MutableFeatureTypeStyle resultfts = GO2Utilities.STYLE_FACTORY.featureTypeStyle();
@@ -151,7 +145,6 @@ public final class RenderingRoutines {
                 }
             }
         }
-
         return result;
     }
 
@@ -183,8 +176,8 @@ public final class RenderingRoutines {
             for (Rule r : rules) {
                 for (Symbolizer s : r.symbolizers()) {
                     final Expression expGeom = s.getGeometry();
-                    if (expGeom instanceof PropertyName) {
-                        geomProperties.add( ((PropertyName)expGeom).getPropertyName() );
+                    if (expGeom instanceof ValueReference) {
+                        geomProperties.add( ((ValueReference)expGeom).getXPath() );
                     } else {
                         allDefined = false;
                     }
@@ -194,10 +187,10 @@ public final class RenderingRoutines {
             allDefined = false;
         }
         if (geomDesc!=null && !allDefined) {
-            geomProperties.add(geomDesc.getName().toString());
+            geomProperties.add(Features.getLinkTarget(geomDesc).orElse(geomDesc.getName().toString()));
         }
 
-        Filter filter;
+        Filter<Object> filter;
 
         //final Envelope layerBounds = layer.getBounds();
         //we better not do any call to the layer bounding box before since it can be
@@ -210,22 +203,21 @@ public final class RenderingRoutines {
                 filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
             } else {
                 //make an OR filter with all geometries
-                final List<Filter> geomFilters = new ArrayList<>();
+                final List<Filter<Object>> geomFilters = new ArrayList<>();
                 for (String geomAttName : geomProperties) {
                     geomFilters.add(FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox));
                 }
                 filter = FILTER_FACTORY.or(geomFilters);
             }
-
         } else {
-            filter = Filter.EXCLUDE;
+            filter = Filter.exclude();
         }
 
         //concatenate geographic filter with data filter if there is one
         if (layer != null) {
             Query query = layer.getQuery();
             if (query instanceof SimpleQuery) {
-                filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
+                filter = FILTER_FACTORY.and(filter, (Filter) ((SimpleQuery) query).getFilter());
             }
         }
 
@@ -283,10 +275,8 @@ public final class RenderingRoutines {
                     }
                     sb.append(attName.substring(position));
                     atts[i] = sb.toString();
-
                 }
             }
-
             try {
                 expected = new ViewMapper(schema, atts).getMappedType();
             } catch (MismatchedFeatureException ex) {
@@ -296,7 +286,7 @@ public final class RenderingRoutines {
 
         //combine the filter with rule filters----------------------------------
         if (rules != null) {
-            List<Filter> rulefilters = new ArrayList<>();
+            List<Filter<Object>> rulefilters = new ArrayList<>();
             for (Rule rule : rules) {
                 if(rule.isElseFilter()){
                     //we can't append styling filters, an else rule match all features
@@ -304,7 +294,7 @@ public final class RenderingRoutines {
                     break;
                 }
                 final Filter rf = rule.getFilter();
-                if(rf == null || rf == Filter.INCLUDE){
+                if (rf == null || rf == Filter.include()) {
                     //we can't append styling filters, this rule matchs all features.
                     rulefilters = null;
                     break;
@@ -325,7 +315,7 @@ public final class RenderingRoutines {
                     combined = FILTER_FACTORY.or(rulefilters);
                 }
 
-                if (filter != Filter.INCLUDE) {
+                if (filter != Filter.include()) {
                     filter = FILTER_FACTORY.and(filter,combined);
                 } else {
                     filter = combined;
@@ -429,20 +419,20 @@ public final class RenderingRoutines {
         //optimize the filter.
         //if( ((BoundingBox)bbox).contains(new BoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter
-        //   filter = Filter.INCLUDE;
+        //   filter = Filter.include();
         //}else{
         //make a bbox filter
         if(geomAttName != null){
             filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
         }else{
-            filter = Filter.EXCLUDE;
+            filter = Filter.exclude();
         }
         //}
 
         //concatenate geographic filter with data filter if there is one
         Query query = layer.getQuery();
         if (query instanceof SimpleQuery) {
-            filter = FILTER_FACTORY.and(filter, ((SimpleQuery) query).getFilter());
+            filter = FILTER_FACTORY.and(filter, (Filter) ((SimpleQuery) query).getFilter());
         }
 
         //optimize the filter---------------------------------------------------
@@ -544,7 +534,6 @@ public final class RenderingRoutines {
                 }else{
                     env = new GeneralEnvelope(gbox);
                 }
-
             }catch(Exception ex){
                 //we should not catch this but we must not block the canvas
                 monitor.exceptionOccured(ex, Level.WARNING);
@@ -558,7 +547,6 @@ public final class RenderingRoutines {
 
             bbox = new BoundingBox(env);
         }
-
         return bbox;
     }
 
@@ -617,6 +605,5 @@ public final class RenderingRoutines {
         public void close() throws IOException {
             ite.close();
         }
-
     }
 }

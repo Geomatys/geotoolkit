@@ -18,7 +18,7 @@ package org.geotoolkit.filter.function.geometry;
 
 import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * JTS geometry type name.
@@ -28,19 +28,12 @@ import org.opengis.filter.expression.Expression;
 public class GeometryTypeFunction extends AbstractFunction {
 
     public GeometryTypeFunction(final Expression expr1) {
-        super(GeometryFunctionFactory.GEOMETRYTYPE, new Expression[] {expr1}, null);
+        super(GeometryFunctionFactory.GEOMETRYTYPE, expr1);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Geometry geom;
-
-        try {
-            geom = parameters.get(0).evaluate(feature,Geometry.class);
-        } catch (Exception e){
-            throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
-        }
-
+    public Object apply(final Object feature) {
+        final Geometry geom = geometryValue(feature);
         return geom!=null ? geom.getGeometryType() : null;
     }
 }

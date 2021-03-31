@@ -64,7 +64,6 @@ import org.opengis.referencing.datum.PixelInCell;
  * @module
  */
 public class VisitorTest extends org.geotoolkit.test.TestBase {
-
     /**
      * Feature visitor test.
      */
@@ -96,7 +95,6 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
 
         collection.add(Arrays.asList(f).iterator());
 
-
         MapLayer layer = MapBuilder.createLayer(collection);
         layer.setStyle(sf.style(sf.polygonSymbolizer()));
         layer.setVisible(true);
@@ -115,7 +113,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
 
         assertEquals(1, visitor.features.size());
-        assertEquals("id-0", FeatureExt.getId(visitor.features.get(0)).getID());
+        assertEquals("id-0", FeatureExt.getId(visitor.features.get(0)).getIdentifier());
 
         shparea = new Rectangle(30, 12, 2, 2); //starting at top left corner
         visitor = new ListVisitor();
@@ -125,7 +123,6 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
 
         assertTrue(visitor.features.size() == 0);
-
     }
 
     /**
@@ -159,9 +156,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
 
         assertTrue(visitor.coverages.size() != 0);
-
     }
-
 
     private static class ListVisitor extends AbstractGraphicVisitor {
 

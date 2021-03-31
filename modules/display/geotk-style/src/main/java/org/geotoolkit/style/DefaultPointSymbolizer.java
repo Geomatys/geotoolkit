@@ -27,7 +27,7 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Immutable implementation of Types point symbolizer.

@@ -41,9 +41,6 @@ import org.geotoolkit.ogc.xml.XMLLiteral;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpperBoundaryType", propOrder = {
@@ -55,7 +52,6 @@ public class UpperBoundaryType implements Boundary {
     private JAXBElement<?> expression;
 
     public UpperBoundaryType() {
-
     }
 
     public UpperBoundaryType(final UpperBoundaryType that) {
@@ -78,7 +74,6 @@ public class UpperBoundaryType implements Boundary {
 
     /**
      * Gets the value of the expression property.
-     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -86,7 +81,6 @@ public class UpperBoundaryType implements Boundary {
 
     /**
      * Sets the value of the expression property.
-     *
      */
     public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);

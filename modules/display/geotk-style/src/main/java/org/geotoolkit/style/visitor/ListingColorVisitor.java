@@ -20,8 +20,8 @@ package org.geotoolkit.style.visitor;
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.FeatureTypeStyle;
@@ -155,7 +155,7 @@ public class ListingColorVisitor extends DefaultStyleVisitor{
         if(exp == null || unpredictable){
             return;
         }else if(exp instanceof Literal){
-            final Number n = exp.evaluate(null, Number.class);
+            final Number n = (Number) exp.apply(null);
             if(n != null){
                 final float val = n.floatValue();
                 unpredictable = (val!=1 && val!=0);

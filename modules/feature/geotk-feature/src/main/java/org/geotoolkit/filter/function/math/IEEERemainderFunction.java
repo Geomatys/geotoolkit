@@ -18,28 +18,17 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class IEEERemainderFunction extends AbstractFunction {
 
     public IEEERemainderFunction(final Expression expression1, final Expression expression2) {
-        super(MathFunctionFactory.IEEE_REMAINDER, new Expression[] {expression1, expression2}, null);
+        super(MathFunctionFactory.IEEE_REMAINDER, expression1, expression2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number1 = parameters.get(0).evaluate(feature, Number.class);
-        if (number1 == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function IEEEremainder argument #0 - expected type double");
-        }
-
-        final Number number2 = parameters.get(1).evaluate(feature, Number.class);
-        if (number2 == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function IEEEremainder argument #1 - expected type double");
-        }
-        return Math.IEEEremainder(number1.doubleValue(), number2.doubleValue());
+    public Object apply(final Object feature) {
+        return Math.IEEEremainder(doubleValue(feature, 0), doubleValue(feature, 1));
     }
 }

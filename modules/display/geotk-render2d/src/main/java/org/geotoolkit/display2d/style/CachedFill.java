@@ -24,7 +24,7 @@ import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.GraphicFill;
 

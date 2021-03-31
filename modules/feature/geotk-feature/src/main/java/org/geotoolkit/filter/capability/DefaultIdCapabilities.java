@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.filter.capability;
 
+import java.util.Collection;
 import org.opengis.filter.capability.IdCapabilities;
+import org.opengis.util.LocalName;
 
 /**
  * Immutable id capabilities.
@@ -25,7 +27,8 @@ import org.opengis.filter.capability.IdCapabilities;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultIdCapabilities implements IdCapabilities{
+@Deprecated
+public class DefaultIdCapabilities implements IdCapabilities {
 
     private final boolean eid;
     private final boolean fid;
@@ -35,25 +38,19 @@ public class DefaultIdCapabilities implements IdCapabilities{
         this.fid = fid;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public boolean hasEID() {
         return eid;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public boolean hasFID() {
         return fid;
     }
 
-    /**
-     * {@inheritDoc }
-     */
+    @Override
+    public Collection<? extends LocalName> getResourceIdentifiers() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -72,9 +69,6 @@ public class DefaultIdCapabilities implements IdCapabilities{
         return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -82,5 +76,4 @@ public class DefaultIdCapabilities implements IdCapabilities{
         hash = 67 * hash + (this.fid ? 1 : 0);
         return hash;
     }
-
 }

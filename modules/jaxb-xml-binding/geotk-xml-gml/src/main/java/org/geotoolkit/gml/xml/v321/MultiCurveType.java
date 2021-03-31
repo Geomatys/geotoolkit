@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiCurve;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -45,8 +44,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiCurveType", propOrder = {
@@ -60,7 +57,6 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
     private CurveArrayPropertyType curveMembers;
 
     public MultiCurveType() {
-
     }
 
     public MultiCurveType(final String srsName, final List<CurvePropertyType> curveMember) {
@@ -84,7 +80,6 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
      * @return
      *     possible object is
      *     {@link CurveArrayPropertyType }
-     *
      */
     public CurveArrayPropertyType getCurveMembers() {
         return curveMembers;
@@ -96,24 +91,8 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
      * @param value
      *     allowed object is
      *     {@link CurveArrayPropertyType }
-     *
      */
     public void setCurveMembers(CurveArrayPropertyType value) {
         this.curveMembers = value;
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

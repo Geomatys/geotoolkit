@@ -26,7 +26,6 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.sis.cql.CQLException;
-import org.apache.sis.internal.system.DefaultFactories;
 import static org.geotoolkit.cql.CQLParser.*;
 import org.geotoolkit.cql.CQLParser.CoordinateContext;
 import org.geotoolkit.cql.CQLParser.CoordinateSerieContext;
@@ -41,6 +40,8 @@ import org.geotoolkit.cql.CQLParser.FilterContext;
 import org.geotoolkit.cql.CQLParser.FilterGeometryContext;
 import org.geotoolkit.cql.CQLParser.FilterOrExpressionContext;
 import org.geotoolkit.cql.CQLParser.FilterTermContext;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -51,14 +52,11 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.filter.And;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Or;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.ValueReference;
 
 /**
  *
@@ -143,7 +141,7 @@ public final class CQL {
         if(obj instanceof ExpressionContext){
             tree = (ParseTree)obj;
             if(factory == null){
-                factory = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+                factory = FilterUtilities.FF;
             }
             result = convertExpression(tree, factory);
         }
@@ -160,7 +158,7 @@ public final class CQL {
 
         //bypass parsing for inclusive filter
         if(cql.isEmpty() || "*".equals(cql)){
-            return Filter.INCLUDE;
+            return Filter.include();
         }
 
         final Object obj = compileFilter(cql);
@@ -170,7 +168,7 @@ public final class CQL {
         if(obj instanceof FilterContext){
             tree = (FilterContext)obj;
             if(factory == null){
-                factory = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+                factory = FilterUtilities.FF;
             }
             result = convertFilter(tree, factory);
         }
@@ -183,15 +181,14 @@ public final class CQL {
         if(filter == null) return "";
 
         final StringBuilder sb = new StringBuilder();
-        filter.accept(FilterToCQLVisitor.INSTANCE,sb);
+        FilterToCQLVisitor.INSTANCE.visit(filter, sb);
         return sb.toString();
     }
 
     public static String write(Expression exp){
-        if(exp == null) return "";
-
+        if (exp == null) return "";
         final StringBuilder sb = new StringBuilder();
-        exp.accept(FilterToCQLVisitor.INSTANCE,sb);
+        FilterToCQLVisitor.INSTANCE.visit(exp, sb);
         return sb.toString();
     }
 
@@ -285,7 +282,7 @@ public final class CQL {
                 if (prm == null) {
                     //try to find a function with this name
                     try {
-                        Function fct = ff.function(name, new Expression[0]);
+                        Expression fct = ff.function(name, new Expression[0]);
                         if (fct != null) return fct;
                     } catch (IllegalArgumentException ex) {
                         //we have try
@@ -445,7 +442,7 @@ public final class CQL {
                     final Geometry[] subs = new Geometry[n];
                     for(int i=0; i<n; i++){
                         final ParseTree subTree = eles.get(i);
-                        final Geometry sub = (Geometry)convertExpression(subTree, ff).evaluate(null);
+                        final Geometry sub = (Geometry)convertExpression(subTree, ff).apply(null);
                         subs[i] = sub;
                     }
                     geom = GF.createGeometryCollection(subs);
@@ -528,36 +525,35 @@ public final class CQL {
             final FilterContext exp = (FilterContext) tree;
 
             //| filterTerm
-            if(exp.getChildCount()==1){
+            if (exp.getChildCount() == 1) {
                 return convertFilter(tree.getChild(0), ff);
-            }else if(exp.NOT()!=null){
+            } else if (exp.NOT() != null) {
                 //| NOT (filterTerm | ( LPAREN filter RPAREN ))
-                if(exp.filterTerm()!=null){
+                if (exp.filterTerm() != null) {
                     return ff.not(convertFilter(exp.filterTerm(), ff));
-                }else{
+                } else {
                     return ff.not(convertFilter(exp.filter(0), ff));
                 }
-
-            }else if(!exp.AND().isEmpty()){
+            } else if(!exp.AND().isEmpty()){
                 //: filter (AND filter)+
-                final List<Filter> subs = new ArrayList<Filter>();
-                for(FilterContext f : exp.filter()){
+                final List<Filter<Object>> subs = new ArrayList<>();
+                for (FilterContext f : exp.filter()) {
                     final Filter sub = convertFilter(f, ff);
-                    if(sub instanceof And){
-                        subs.addAll(((And)sub).getChildren());
-                    }else{
+                    if (sub.getOperatorType() == LogicalOperatorName.AND){
+                        subs.addAll(((LogicalOperator) sub).getOperands());
+                    } else {
                         subs.add(sub);
                     }
                 }
                 return ff.and(subs);
-            }else if(!exp.OR().isEmpty()){
+            } else if (!exp.OR().isEmpty()) {
                 //| filter (OR filter)+
-                final List<Filter> subs = new ArrayList<Filter>();
-                for(FilterContext f : exp.filter()){
+                final List<Filter<Object>> subs = new ArrayList<>();
+                for (FilterContext f : exp.filter()) {
                     final Filter sub = convertFilter(f, ff);
-                    if(sub instanceof Or){
-                        subs.addAll(((Or)sub).getChildren());
-                    }else{
+                    if (sub.getOperatorType() == LogicalOperatorName.OR){
+                        subs.addAll(((LogicalOperator) sub).getOperands());
+                    } else {
                         subs.add(sub);
                     }
                 }
@@ -566,7 +562,6 @@ public final class CQL {
                 //| LPAREN filter RPAREN
                 return convertFilter(exp.filter(0), ff);
             }
-
         }else if(tree instanceof FilterTermContext){
             //: expression
             //    (
@@ -599,11 +594,11 @@ public final class CQL {
             if(exp.COMPARE()!=null){
                 // expression COMPARE expression
                 final String text = exp.COMPARE().getText();
-                final Expression left = convertExpression(exps.get(0), ff);
-                final Expression right = convertExpression(exps.get(1), ff);
+                final Expression<Object,?> left = convertExpression(exps.get(0), ff);
+                final Expression<Object,?> right = convertExpression(exps.get(1), ff);
 
                 if("=".equals(text)){
-                    return ff.equals(left, right);
+                    return ff.equal(left, right);
                 }else if("<>".equals(text)){
                     return ff.notEqual(left, right);
                 }else if(">".equals(text)){
@@ -630,13 +625,13 @@ public final class CQL {
                 final int size = subexps.size();
                 final Filter selection;
                 if(size == 0){
-                    selection = Filter.EXCLUDE;
+                    selection = Filter.exclude();
                 }else if(size == 1){
-                    selection = ff.equals(val, subexps.get(0));
+                    selection = ff.equal(val, subexps.get(0));
                 }else{
-                    final List<Filter> filters = new ArrayList<Filter>();
+                    final List<Filter<Object>> filters = new ArrayList<>();
                     for(Expression e : subexps){
-                        filters.add(ff.equals(val, e));
+                        filters.add(ff.equal(val, e));
                     }
                     selection = ff.or(filters);
                 }
@@ -658,9 +653,9 @@ public final class CQL {
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 if(exp.NOT()!=null){
-                    return ff.not(ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",true));
+                    return ff.not(ff.like(left, right.apply(null).toString(), '%', '_', '\\', true));
                 }else{
-                    return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",true);
+                    return ff.like(left, right.apply(null).toString(), '%', '_', '\\', true);
                 }
 
             }else if(exp.ILIKE()!=null){
@@ -668,9 +663,9 @@ public final class CQL {
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 if(exp.NOT()!=null){
-                    return ff.not(ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",false));
+                    return ff.not(ff.like(left, right.apply(null).toString(), '%', '_', '\\', false));
                 }else{
-                    return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",false);
+                    return ff.like(left, right.apply(null).toString(), '%', '_', '\\', false);
                 }
 
             }else if(exp.IS()!=null){
@@ -795,17 +790,17 @@ public final class CQL {
                 final double v4 = unaryAsNumber(exp.expressionUnary(3)).doubleValue();
                 String crs = null;
                 if(exp.TEXT()!=null){
-                    crs = convertExpression(exp.TEXT(),ff).evaluate(null, String.class);
+                    crs = convertExpression(exp.TEXT(),ff).apply(null).toString();
                 }
                 return ff.bbox(prop, v1,v2,v3,v4,crs);
             }else if(exp.BEYOND()!=null){
                 final Expression exp1 = convertExpression(exps.get(0),ff);
                 final Expression exp2 = convertExpression(exps.get(1),ff);
-                final double distance = convertExpression(exps.get(2),ff).evaluate(null, Double.class);
+                final double distance = ((Number) convertExpression(exps.get(2),ff).apply(null)).doubleValue();
                 final Expression unitExp = convertExpression(exps.get(3),ff);
-                final String unit     = (unitExp instanceof PropertyName) ?
-                                            ((PropertyName)unitExp).getPropertyName() :
-                                            unitExp.evaluate(null, String.class);
+                final String unit     = (unitExp instanceof ValueReference) ?
+                                            ((ValueReference)unitExp).getXPath() :
+                                            unitExp.apply(null).toString();
                 return ff.beyond(exp1,exp2,distance,unit);
             }else if(exp.CONTAINS()!=null){
                 final Expression exp1 = convertExpression(exps.get(0),ff);
@@ -822,16 +817,16 @@ public final class CQL {
             }else if(exp.DWITHIN()!=null){
                 final Expression exp1 = convertExpression(exps.get(0),ff);
                 final Expression exp2 = convertExpression(exps.get(1),ff);
-                final double distance = convertExpression(exps.get(2),ff).evaluate(null, Double.class);
+                final double distance = ((Number) convertExpression(exps.get(2),ff).apply(null)).doubleValue();
                 final Expression unitExp = convertExpression(exps.get(3),ff);
-                final String unit     = (unitExp instanceof PropertyName) ?
-                                            ((PropertyName)unitExp).getPropertyName() :
-                                            unitExp.evaluate(null, String.class);
+                final String unit     = (unitExp instanceof ValueReference) ?
+                                            ((ValueReference)unitExp).getXPath() :
+                                            unitExp.apply(null).toString();
                 return ff.dwithin(exp1,exp2,distance,unit);
             }else if(exp.EQUALS()!=null){
                 final Expression exp1 = convertExpression(exps.get(0),ff);
                 final Expression exp2 = convertExpression(exps.get(1),ff);
-                return ff.equal(exp1,exp2);
+                return ff.equals(exp1,exp2);
             }else if(exp.INTERSECTS()!=null){
                 final Expression exp1 = convertExpression(exps.get(0),ff);
                 final Expression exp2 = convertExpression(exps.get(1),ff);

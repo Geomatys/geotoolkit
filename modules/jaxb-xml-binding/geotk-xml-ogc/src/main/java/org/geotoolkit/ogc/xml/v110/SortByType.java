@@ -43,9 +43,6 @@ import org.geotoolkit.ogc.xml.SortBy;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SortByType", propOrder = {
@@ -60,7 +57,6 @@ public class SortByType implements SortBy {
      * An empty constructor used by JAXB
      */
     public SortByType() {
-
     }
 
     /**

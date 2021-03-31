@@ -15,15 +15,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.storage.feature;
 
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureWriter;
 import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
@@ -35,7 +29,6 @@ import org.opengis.filter.Filter;
  *
  * @author Chris Holmes
  * @author Johann Sorel (Geomatys)
- * @module
  */
 @Deprecated
 public class GenericFilterFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
@@ -88,17 +81,14 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
         if (next != null) {
             return true;
         }
-
         Feature peek;
         while (iterator.hasNext()) {
             peek = iterator.next();
-
-            if (filter.evaluate(peek)) {
+            if (filter.test(peek)) {
                 next = peek;
                 return true;
             }
         }
-
         return false;
     }
 
@@ -218,5 +208,4 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
     public static FeatureCollection wrap(final FeatureCollection original, final Filter filter){
         return new GenericFilterFeatureCollection(original, filter);
     }
-
 }

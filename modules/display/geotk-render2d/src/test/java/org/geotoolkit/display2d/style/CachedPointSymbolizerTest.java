@@ -28,6 +28,7 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
 import static org.junit.Assert.*;
@@ -50,7 +51,7 @@ public class CachedPointSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     private static final float DELTA = 0.0000001f;
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
     private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     @Test

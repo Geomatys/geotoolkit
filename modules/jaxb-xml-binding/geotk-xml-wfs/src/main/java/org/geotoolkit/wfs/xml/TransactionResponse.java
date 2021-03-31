@@ -17,7 +17,7 @@
 package org.geotoolkit.wfs.xml;
 
 import java.util.List;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 
 /**
  *
@@ -25,5 +25,5 @@ import org.opengis.filter.identity.FeatureId;
  */
 public interface TransactionResponse {
 
-    List<FeatureId> getInsertedFID();
+    List<ResourceId> getInsertedFID();
 }

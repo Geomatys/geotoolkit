@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -28,9 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Within")
 public class WithinType extends BinarySpatialOpType {
-
     public WithinType() {
-
     }
 
     public WithinType(String propertyName, Object geometry) {
@@ -44,6 +43,11 @@ public class WithinType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new WithinType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.WITHIN;
     }
 
     @Override

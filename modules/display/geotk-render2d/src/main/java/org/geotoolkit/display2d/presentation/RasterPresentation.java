@@ -60,8 +60,8 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.datum.PixelInCell;
@@ -250,7 +250,7 @@ public class RasterPresentation extends Grid2DPresentation {
                             values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
                             final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
                             final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
-                            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
+                            final Expression function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
                                     lookup, values, Method.COLOR, Mode.LINEAR, fallback);
                             final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
                             final ImageLayout layout = new ImageLayout().setColorModel(model);

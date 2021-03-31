@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.filter.capability;
 
-import org.opengis.filter.capability.ArithmeticOperators;
-import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.ScalarCapabilities;
 
 /**
@@ -39,33 +37,21 @@ public class DefaultScalarCapabilities implements ScalarCapabilities {
         this.arithmetics = arithmetics;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean hasLogicalOperators() {
         return logical;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ComparisonOperators getComparisonOperators() {
+    @Deprecated
+    public ComparisonOperators getComparisonOperators2() {
         return comparisons;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
+    @Deprecated
     public ArithmeticOperators getArithmeticOperators() {
         return arithmetics;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -87,9 +73,6 @@ public class DefaultScalarCapabilities implements ScalarCapabilities {
         return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -98,5 +81,4 @@ public class DefaultScalarCapabilities implements ScalarCapabilities {
         hash = 59 * hash + (this.arithmetics != null ? this.arithmetics.hashCode() : 0);
         return hash;
     }
-
 }

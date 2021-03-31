@@ -40,9 +40,9 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.apache.sis.util.logging.Logging;
 import org.junit.Test;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
 import org.opengis.sld.Layer;
@@ -87,7 +87,7 @@ public class Tester {
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
         STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+        FILTER_FACTORY = FilterUtilities.FF;
         SLD_FACTORY = new DefaultSLDFactory();
         SLD_UTILITIES = new JAXBSLDUtilities(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);
     }
@@ -411,16 +411,9 @@ public class Tester {
                         }
                     }
                 }
-
-
             }
         }
-
         System.out.println("VERSION : "+sld.getVersion());
-
         System.out.println("SLD =" + sld);
-
     }
-
-
 }

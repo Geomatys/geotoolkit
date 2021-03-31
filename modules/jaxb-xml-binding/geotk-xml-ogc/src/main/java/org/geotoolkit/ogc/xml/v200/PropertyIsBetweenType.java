@@ -18,6 +18,8 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,9 +27,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -48,8 +49,6 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsBetweenType", propOrder = {
@@ -57,7 +56,7 @@ import org.opengis.filter.expression.Expression;
     "lowerBoundary",
     "upperBoundary"
 })
-public class PropertyIsBetweenType extends ComparisonOpsType  implements PropertyIsBetween {
+public class PropertyIsBetweenType extends ComparisonOpsType  implements BetweenComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -67,7 +66,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
     private UpperBoundaryType upperBoundary;
 
     public PropertyIsBetweenType() {
-
     }
 
     public PropertyIsBetweenType(final PropertyIsBetweenType that) {
@@ -87,7 +85,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
                 }
             }
-
             if (that.lowerBoundary != null) {
                 this.lowerBoundary = new LowerBoundaryType(that.lowerBoundary);
             }
@@ -106,7 +103,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public JAXBElement<?> getExpressionType() {
         return expression;
@@ -121,19 +117,18 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
     }
 
+    @Override
+    public List getExpressions() {
+        return Arrays.asList(getExpression(), getLowerBoundary(), getUpperBoundary());
+    }
+
     /**
      * Gets the value of the lowerBoundary property.
-     *
-     * @return
-     *     possible object is
-     *     {@link LowerBoundaryType }
-     *
      */
     @Override
     public LowerBoundaryType getLowerBoundary() {
@@ -142,11 +137,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
 
     /**
      * Sets the value of the lowerBoundary property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link LowerBoundaryType }
-     *
      */
     public void setLowerBoundary(LowerBoundaryType value) {
         this.lowerBoundary = value;
@@ -154,11 +144,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
 
     /**
      * Gets the value of the upperBoundary property.
-     *
-     * @return
-     *     possible object is
-     *     {@link UpperBoundaryType }
-     *
      */
     @Override
     public UpperBoundaryType getUpperBoundary() {
@@ -167,11 +152,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
 
     /**
      * Sets the value of the upperBoundary property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link UpperBoundaryType }
-     *
      */
     public void setUpperBoundary(UpperBoundaryType value) {
         this.upperBoundary = value;
@@ -189,16 +169,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType  implements Propert
             return new LiteralType(value);
         }
         return null;
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

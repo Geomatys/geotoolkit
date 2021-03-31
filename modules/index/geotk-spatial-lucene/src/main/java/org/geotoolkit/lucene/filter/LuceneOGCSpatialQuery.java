@@ -22,13 +22,12 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 import org.geotoolkit.filter.SpatialFilterType;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.index.tree.Tree;
 import static org.geotoolkit.lucene.LuceneUtils.*;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 
 /**
  * Wrap an OGC filter object in a Lucene filter.
@@ -39,7 +38,7 @@ import org.opengis.filter.expression.PropertyName;
 public class LuceneOGCSpatialQuery extends org.apache.lucene.search.Query implements  org.geotoolkit.lucene.filter.Filter {
 
     public static final String GEOMETRY_FIELD_NAME     = "idx_lucene_geometry";
-    public static final PropertyName GEOMETRY_PROPERTY = DefaultFactories.forBuildin(FilterFactory.class).property(GEOMETRY_FIELD_NAME);
+    public static final ValueReference GEOMETRY_PROPERTY = FilterUtilities.FF.property(GEOMETRY_FIELD_NAME);
 
     private final SpatialFilterType filterType;
 

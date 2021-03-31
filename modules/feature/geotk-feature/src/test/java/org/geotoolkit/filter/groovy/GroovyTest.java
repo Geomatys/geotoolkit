@@ -19,38 +19,36 @@ package org.geotoolkit.filter.groovy;
 
 import java.util.List;
 import javax.script.ScriptException;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.filter.FilterTestConstants;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.filter.FilterUtilities;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class GroovyTest extends org.geotoolkit.test.TestBase {
     @Test
     public void simpleScriptTest() throws ScriptException{
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory ff = FilterUtilities.FF;
 
         Expression exp = ff.literal("return 2 + 3");
-        Function gvFunction = ff.function(GroovyFunctionFactory.GROOVY, exp);
+        Expression gvFunction = ff.function(GroovyFunctionFactory.GROOVY, exp);
 
-        double result = gvFunction.evaluate(null,Number.class).doubleValue();
+        double result = ((Number) gvFunction.apply(null)).doubleValue();
         assertTrue(result == 5);
 
         exp = ff.literal("return $testInteger * $testDouble");
         gvFunction = ff.function(GroovyFunctionFactory.GROOVY, exp);
 
-        result = gvFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
+        result = ((Number) gvFunction.apply(FilterTestConstants.CANDIDATE_1)).doubleValue();
         assertTrue(result == 10201);
 
         exp = ff.literal("x = $testLong - 6*$testFloat;" +
@@ -60,19 +58,19 @@ public class GroovyTest extends org.geotoolkit.test.TestBase {
         assertSerializedEquals(gvFunction); //test serialize
 
         List<Expression> exps = gvFunction.getParameters();
-        PropertyName property1 = (PropertyName) exps.get(1);
-        PropertyName property2 = (PropertyName) exps.get(2);
-        assertTrue(property1.getPropertyName().equals("testLong"));
-        assertTrue(property2.getPropertyName().equals("testFloat"));
+        ValueReference property1 = (ValueReference) exps.get(1);
+        ValueReference property2 = (ValueReference) exps.get(2);
+        assertTrue(property1.getXPath().equals("testLong"));
+        assertTrue(property2.getXPath().equals("testFloat"));
 
 
-        result = gvFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
+        result = ((Number) gvFunction.apply(FilterTestConstants.CANDIDATE_1)).doubleValue();
         assertTrue(result == 10);
     }
 
     @Test
     public void complexeScriptTest() throws ScriptException{
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory ff = FilterUtilities.FF;
 
         Expression exp = ff.literal(
                   "x = $testString.split(\" \")[2];\n"
@@ -84,14 +82,14 @@ public class GroovyTest extends org.geotoolkit.test.TestBase {
                 + " str = str.toUpperCase();\n"
                 + " return str;\n"
                 + "}\n");
-        Function gvFunction = ff.function(GroovyFunctionFactory.GROOVY, exp);
+        Expression gvFunction = ff.function(GroovyFunctionFactory.GROOVY, exp);
         assertSerializedEquals(gvFunction); //test serialize
 
         List<Expression> exps = gvFunction.getParameters();
-        PropertyName property1 = (PropertyName) exps.get(1);
-        assertTrue(property1.getPropertyName().equals("testString"));
+        ValueReference property1 = (ValueReference) exps.get(1);
+        assertTrue(property1.getXPath().equals("testString"));
 
-        Object result = gvFunction.evaluate(FilterTestConstants.CANDIDATE_1);
+        Object result = gvFunction.apply(FilterTestConstants.CANDIDATE_1);
         assertTrue("DETE".equals(result));
     }
 }

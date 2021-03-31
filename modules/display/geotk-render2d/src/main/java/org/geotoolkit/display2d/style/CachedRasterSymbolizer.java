@@ -21,7 +21,7 @@ import java.awt.Composite;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;

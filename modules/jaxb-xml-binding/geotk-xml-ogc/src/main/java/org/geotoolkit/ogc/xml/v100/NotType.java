@@ -16,9 +16,12 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.Collections;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.LogicalOperatorName;
 
 /**
  *
@@ -30,7 +33,11 @@ import javax.xml.bind.annotation.XmlType;
 public class NotType extends UnaryLogicOpType {
 
     public NotType() {
+    }
 
+    @Override
+    public LogicalOperatorName getOperatorType() {
+        return LogicalOperatorName.NOT;
     }
 
     public NotType(final NotType that) {
@@ -45,5 +52,15 @@ public class NotType extends UnaryLogicOpType {
     @Override
     public String getOperator() {
         return "Not";
+    }
+
+    @Override
+    public List getOperands() {
+        return Collections.singletonList(getChild());
+    }
+
+    @Override
+    public boolean test(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

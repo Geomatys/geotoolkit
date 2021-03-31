@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.geotoolkit.ogc.xml.v110.ExpressionType;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
+import org.opengis.util.ScopedName;
 
-import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * @module
@@ -41,9 +41,13 @@ public class ColorItemType extends ExpressionType {
     @XmlElement(name = "Value", required = true)
     protected ParameterValueType value;
 
+    @Override
+    public ScopedName getFunctionName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * Gets the value of the data property.
-     *
      */
     public ParameterValueType getData() {
         return data;
@@ -51,7 +55,6 @@ public class ColorItemType extends ExpressionType {
 
     /**
      * Sets the value of the data property.
-     *
      */
     public void setData(final ParameterValueType value) {
         this.data = value;
@@ -63,7 +66,6 @@ public class ColorItemType extends ExpressionType {
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getValue() {
         return value;
@@ -75,7 +77,6 @@ public class ColorItemType extends ExpressionType {
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setValue(final ParameterValueType value) {
         this.value = value;
@@ -86,10 +87,6 @@ public class ColorItemType extends ExpressionType {
     }
 
     public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

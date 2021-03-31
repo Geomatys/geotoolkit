@@ -17,19 +17,17 @@
 package org.geotoolkit.style;
 
 import java.util.Objects;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ContrastEnhancement;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types contrast enhancement.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultContrastEnhancement implements ContrastEnhancement{
 
@@ -45,7 +43,7 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
      */
     public DefaultContrastEnhancement(final ContrastMethod type, final Expression gamma){
         this.type = (type == null) ? ContrastMethod.NONE : type;
-        this.gamma = (gamma == null || gamma == NIL) ? DEFAULT_CONTRAST_ENHANCEMENT_GAMMA : gamma;
+        this.gamma = (gamma == null) ? DEFAULT_CONTRAST_ENHANCEMENT_GAMMA : gamma;
     }
 
     /**
@@ -116,5 +114,4 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
         builder.append(']');
         return builder.toString();
     }
-
 }

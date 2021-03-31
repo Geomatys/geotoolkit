@@ -60,7 +60,7 @@ import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.Property;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
@@ -79,9 +79,9 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.filter.FilterFactory;
 import org.opengis.util.FactoryException;
 
 /**
@@ -159,12 +159,12 @@ public final class FeatureExt extends Static {
      * @param feature
      * @return FeatureId
      */
-    public static FeatureId getId(Feature feature) {
-        return DefaultFactories.forBuildin(FilterFactory.class).featureId(String.valueOf(feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString())));
+    public static ResourceId getId(Feature feature) {
+        return FilterUtilities.FF.resourceId(String.valueOf(feature.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString())));
     }
 
-    public static void setId(Feature feature, FeatureId id) {
-        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id.getID());
+    public static void setId(Feature feature, ResourceId id) {
+        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id.getIdentifier());
     }
 
     /**

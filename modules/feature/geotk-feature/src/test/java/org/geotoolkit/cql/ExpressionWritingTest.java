@@ -18,7 +18,8 @@ package org.geotoolkit.cql;
 
 import java.text.ParseException;
 import org.apache.sis.cql.CQLException;
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -28,8 +29,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Test writing in CQL expressions.
@@ -38,7 +38,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class ExpressionWritingTest extends org.geotoolkit.test.TestBase {
 
-    private final FilterFactory2 FF = new DefaultFilterFactory2();
+    private final FilterFactory2 FF = FilterUtilities.FF;
     private final GeometryFactory GF = new GeometryFactory();
 
     @Test

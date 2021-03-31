@@ -3,15 +3,15 @@
 package org.geotoolkit.pending.demo.filter;
 
 import org.apache.sis.cql.CQLException;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.cql.CQL;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 public class CQLDemo {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     public static void main(String[] args) throws CQLException {
         Demos.init();

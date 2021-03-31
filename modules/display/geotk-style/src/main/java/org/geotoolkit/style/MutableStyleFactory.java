@@ -33,10 +33,9 @@ import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
 import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -137,7 +136,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     //change return type
     @Override
     MutableFeatureTypeStyle featureTypeStyle(String name,
-            Description description, Id definedFor, Set<GenericName> featureTypeNames,
+            Description description, ResourceId definedFor, Set<GenericName> featureTypeNames,
             Set<SemanticType> types, List<Rule> rules);
 
     MutableRule rule();
@@ -191,9 +190,9 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
 
     ColorMap colorMap();
 
-    ColorMap colorMap(Function function);
+    ColorMap colorMap(Expression function);
 
-    ColorReplacement colorReplacement(Function recode);
+    ColorReplacement colorReplacement(Expression recode);
 
     ContrastEnhancement contrastEnhancement();
 

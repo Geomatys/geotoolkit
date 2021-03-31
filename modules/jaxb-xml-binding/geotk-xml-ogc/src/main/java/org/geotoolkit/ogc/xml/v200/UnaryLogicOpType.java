@@ -27,9 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.UnaryLogicOperator;
-import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -50,8 +48,6 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UnaryLogicOpType", propOrder = {
@@ -83,7 +79,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      * An empty constructor used by JAXB
      */
      public UnaryLogicOpType() {
-
      }
 
      /**
@@ -145,11 +140,9 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
                 final TemporalOpsType temp = that.temporalOps.getValue().getClone();
                 this.temporalOps = FilterType.createTemporalOps(temp);
             }
-
          } else {
              throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
          }
-
      }
 
     /**
@@ -168,7 +161,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      *     {@link JAXBElement }{@code <}{@link PropertyIsNilType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PropertyIsNullType }{@code >}
-     *
      */
     public JAXBElement<? extends ComparisonOpsType> getComparisonOps() {
         return comparisonOps;
@@ -190,7 +182,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      *     {@link JAXBElement }{@code <}{@link PropertyIsNilType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PropertyIsNullType }{@code >}
-     *
      */
     public void setComparisonOps(JAXBElement<? extends ComparisonOpsType> value) {
         this.comparisonOps = ((JAXBElement<? extends ComparisonOpsType> ) value);
@@ -213,7 +204,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-     *
      */
     public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
         return spatialOps;
@@ -236,7 +226,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-     *
      */
     public void setSpatialOps(JAXBElement<? extends SpatialOpsType> value) {
         this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
@@ -262,7 +251,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-     *
      */
     public JAXBElement<? extends TemporalOpsType> getTemporalOps() {
         return temporalOps;
@@ -288,7 +276,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-     *
      */
     public void setTemporalOps(JAXBElement<? extends TemporalOpsType> value) {
         this.temporalOps = ((JAXBElement<? extends TemporalOpsType> ) value);
@@ -303,7 +290,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      *     {@link JAXBElement }{@code <}{@link LogicOpsType }{@code >}
      *     {@link JAXBElement }{@code <}{@link UnaryLogicOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
-     *
      */
     public JAXBElement<? extends LogicOpsType> getLogicOps() {
         return logicOps;
@@ -318,7 +304,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      *     {@link JAXBElement }{@code <}{@link LogicOpsType }{@code >}
      *     {@link JAXBElement }{@code <}{@link UnaryLogicOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
-     *
      */
     public void setLogicOps(JAXBElement<? extends LogicOpsType> value) {
         this.logicOps = ((JAXBElement<? extends LogicOpsType> ) value);
@@ -330,7 +315,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      * @return
      *     possible object is
      *     {@link ExtensionOpsType }
-     *
      */
     public ExtensionOpsType getExtensionOps() {
         return extensionOps;
@@ -342,7 +326,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      * @param value
      *     allowed object is
      *     {@link ExtensionOpsType }
-     *
      */
     public void setExtensionOps(ExtensionOpsType value) {
         this.extensionOps = value;
@@ -354,7 +337,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      * @return
      *     possible object is
      *     {@link FunctionType }
-     *
      */
     public FunctionType getFunction() {
         return function;
@@ -366,7 +348,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      * @param value
      *     allowed object is
      *     {@link FunctionType }
-     *
      */
     public void setFunction(FunctionType value) {
         this.function = value;
@@ -378,8 +359,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link ResourceIdType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractIdType }{@code >}
-     *
-     *
      */
     public List<JAXBElement<? extends AbstractIdType>> getId() {
         if (id == null) {
@@ -390,8 +369,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
 
      /**
      * implements geoAPI interface
-     *
-     * @return
      */
     public Filter getFilter() {
         if (comparisonOps != null) {
@@ -420,15 +397,5 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
         } else {
             return null;
         }
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

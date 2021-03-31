@@ -95,7 +95,7 @@ public class UnionProcess extends AbstractProcess {
             throws TransformException, FactoryException
     {
         final FeatureCollection resultFeatureList =
-                FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getID(), newFeatureType);
+                FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getIdentifier(), newFeatureType);
         /*
          * In order to get all part of Feature, add a second pass with the diffenrence between the FeatureGeometry
          * and united intersections. if return nothing we have all the geometry feature, else we add the difference
@@ -120,9 +120,9 @@ public class UnionProcess extends AbstractProcess {
 
                 //Invert ID order for the second pass (firstpass "inputID U unionID", second pass "unionID U inputID")
                 if (firstPass) {
-                    featureID = FeatureExt.getId(inputFeature).getID() + "-" + FeatureExt.getId(unionFeature).getID();
+                    featureID = FeatureExt.getId(inputFeature).getIdentifier() + "-" + FeatureExt.getId(unionFeature).getIdentifier();
                 } else {
-                    featureID = FeatureExt.getId(unionFeature).getID() + "-" + FeatureExt.getId(inputFeature).getID();
+                    featureID = FeatureExt.getId(unionFeature).getIdentifier() + "-" + FeatureExt.getId(inputFeature).getIdentifier();
                 }
 
                 final Feature resultFeature = unionFeatureToFeature(inputFeature, unionFeature, newFeatureType,
@@ -190,7 +190,7 @@ public class UnionProcess extends AbstractProcess {
          * else we add them into the featureList
          */
         for (final Feature createdFeature : resultFeatureList) {
-            final String createdFeatureID = FeatureExt.getId(createdFeature).getID();
+            final String createdFeatureID = FeatureExt.getId(createdFeature).getIdentifier();
             if (featureList.contains(createdFeatureID)) {
                 featureToRemove.add(createdFeature);
             } else {

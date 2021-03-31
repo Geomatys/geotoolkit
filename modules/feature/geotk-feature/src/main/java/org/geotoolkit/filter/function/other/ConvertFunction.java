@@ -18,20 +18,20 @@ package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.apache.sis.util.ObjectConverters;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class ConvertFunction extends AbstractFunction {
 
     public ConvertFunction(final Expression expr1, final Expression expr2) {
-        super(OtherFunctionFactory.CONVERT, new Expression[]{expr1,expr2}, null);
+        super(OtherFunctionFactory.CONVERT, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
         try {
-            Object arg = parameters.get(0).evaluate(feature);
-            Class target = parameters.get(1).evaluate(feature, Class.class);
+            Object arg = parameters.get(0).apply(feature);
+            Class target = (Class) parameters.get(1).apply(feature);
             return ObjectConverters.convert(arg, target);
         } catch (Exception e) {
             throw new IllegalArgumentException(

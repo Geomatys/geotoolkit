@@ -52,8 +52,6 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperandsType", propOrder = {
@@ -68,18 +66,17 @@ public class TemporalOperandsType {
      * Empty constructor used by JAXB
      */
     public TemporalOperandsType() {
-
     }
 
     /**
      * build a new temporal Operands object with the specified array of TemporalOperand (from geoAPI)
      */
-    public TemporalOperandsType(org.opengis.filter.capability.TemporalOperand[] tmpOperands) {
+    public TemporalOperandsType(org.geotoolkit.filter.capability.TemporalOperand[] tmpOperands) {
         if (tmpOperands == null) {
-            tmpOperands = new org.opengis.filter.capability.TemporalOperand[0];
+            tmpOperands = new org.geotoolkit.filter.capability.TemporalOperand[0];
         }
         temporalOperand = new ArrayList<TemporalOperandsType.TemporalOperand>();
-        for (org.opengis.filter.capability.TemporalOperand g: tmpOperands) {
+        for (org.geotoolkit.filter.capability.TemporalOperand g: tmpOperands) {
             temporalOperand.add(new TemporalOperand(new QName("http://www.opengis.net/fes/2.0", g.name())));
         }
     }
@@ -102,8 +99,6 @@ public class TemporalOperandsType {
      *
      * Objects of the following type(s) are allowed in the list
      * {@link TemporalOperandsType.TemporalOperand }
-     *
-     *
      */
     public List<TemporalOperandsType.TemporalOperand> getTemporalOperand() {
         if (temporalOperand == null) {
@@ -127,8 +122,6 @@ public class TemporalOperandsType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     *
-     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -138,7 +131,6 @@ public class TemporalOperandsType {
         private QName name;
 
         public TemporalOperand() {
-
         }
 
         public TemporalOperand(final QName name) {
@@ -147,11 +139,6 @@ public class TemporalOperandsType {
 
         /**
          * Gets the value of the name property.
-         *
-         * @return
-         *     possible object is
-         *     {@link QName }
-         *
          */
         public QName getName() {
             return name;
@@ -159,16 +146,9 @@ public class TemporalOperandsType {
 
         /**
          * Sets the value of the name property.
-         *
-         * @param value
-         *     allowed object is
-         *     {@link QName }
-         *
          */
         public void setName(QName value) {
             this.name = value;
         }
-
     }
-
 }

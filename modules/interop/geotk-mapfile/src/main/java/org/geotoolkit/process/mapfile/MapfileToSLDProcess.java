@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import javax.xml.bind.JAXBException;
 import javax.measure.Unit;
 
-import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -43,8 +42,8 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Graphic;
 import org.opengis.style.Mark;
@@ -61,10 +60,11 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Symbolizer;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Literal;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.measure.Units;
 import org.apache.sis.parameter.Parameters;
+import org.geotoolkit.filter.FilterUtilities;
 
 import static org.geotoolkit.process.mapfile.MapfileToSLDDescriptor.*;
 import static org.geotoolkit.process.mapfile.MapfileTypes.*;
@@ -79,7 +79,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
 
     private static final MutableSLDFactory SLDF = new DefaultSLDFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final FilterFactory FF = new DefaultFilterFactory2();
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     private Feature mapfileFeature = null;
 
@@ -176,7 +176,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
 
         // Class can act as filter, the classItem is the propertyname on which the class
         // Expression is evaluated
-        final PropertyName classItem = (PropertyName) mflayer.getPropertyValue(LAYER_CLASSITEM.toString());
+        final ValueReference classItem = (ValueReference) mflayer.getPropertyValue(LAYER_CLASSITEM.toString());
         final String classExpression = (String) clazz.getPropertyValue(CLASS_EXPRESSION.toString());
         if(classExpression != null){
             // equivalant to OGC filter : PropertyEquals(name,value)
@@ -228,7 +228,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         }else{
             //mapfile opacity is expressed in %, SE is in 0-1
             if(expOpacity instanceof Literal){
-                Double d= expOpacity.evaluate(null, Double.class);
+                double d= ((Number) expOpacity.apply(null)).doubleValue();
                 d /= 100d;
                 expOpacity = FF.literal(d);
             }else{
@@ -283,7 +283,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         }else{
             //mapfile opacity is expressed in %, SE is in 0-1
             if(expOpacity instanceof Literal){
-                Double d= expOpacity.evaluate(null, Double.class);
+                double d= ((Number) expOpacity.apply(null)).doubleValue();
                 d /= 100d;
                 expOpacity = FF.literal(d);
             }else{

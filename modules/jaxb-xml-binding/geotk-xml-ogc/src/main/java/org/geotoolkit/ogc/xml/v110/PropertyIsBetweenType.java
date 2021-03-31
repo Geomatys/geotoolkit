@@ -16,15 +16,16 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -45,9 +46,6 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,7 +54,7 @@ import org.opengis.filter.expression.Expression;
     "lowerBoundary",
     "upperBoundary"
 })
-public class PropertyIsBetweenType extends ComparisonOpsType implements PropertyIsBetween {
+public class PropertyIsBetweenType extends ComparisonOpsType implements BetweenComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     protected JAXBElement<?> expression;
@@ -71,7 +69,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
      * An empty constructor used by JAXB
      */
     public PropertyIsBetweenType() {
-
     }
 
     /**
@@ -146,7 +143,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
      *     {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     *
      */
     public JAXBElement<?> getExpressionType() {
         return expression;
@@ -179,10 +175,14 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
      *     {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     *
      */
     public void setExpression(final JAXBElement<?> value) {
         this.expression = value;
+    }
+
+    @Override
+    public List getExpressions() {
+        return Arrays.asList(getExpression(), getLowerBoundary(), getUpperBoundary());
     }
 
     /**
@@ -218,7 +218,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
         if (value instanceof String) {
             return (String)value;
         } else if (value instanceof PropertyNameType) {
-            return ((PropertyNameType)value).getPropertyName();
+            return ((PropertyNameType)value).getXPath();
         }
         return null;
     }
@@ -240,13 +240,8 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
     }
 
     @Override
-    public boolean evaluate(final Object object) {
+    public boolean test(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        return visitor.visit(this,extraData);
     }
 
     @Override

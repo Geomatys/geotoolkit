@@ -87,7 +87,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Property;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -482,14 +482,14 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     }
 
     private static String getId(Feature att, String fallback) {
-        final Identifier attId;
+        final ResourceId attId;
         try {
             attId = FeatureExt.getId(att);
         } catch (PropertyNotFoundException ex) {
             return fallback;
         }
         if (attId == null) return fallback;
-        final Object id = attId.getID();
+        final String id = attId.getIdentifier();
         if (id == null) return fallback;
 
         if (id instanceof String) {

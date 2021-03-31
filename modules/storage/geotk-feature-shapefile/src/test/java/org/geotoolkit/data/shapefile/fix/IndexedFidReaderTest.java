@@ -101,7 +101,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         while (features.hasNext()) {
             final Feature next = features.next();
             expectedCount++;
-            expectedFids.add(FeatureExt.getId(next).getID());
+            expectedFids.add(FeatureExt.getId(next).getIdentifier());
         }
         features.close();
 
@@ -124,7 +124,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         while (features.hasNext()) {
             final Feature next = features.next();
             expectedCount++;
-            expectedFids.add(FeatureExt.getId(next).getID());
+            expectedFids.add(FeatureExt.getId(next).getIdentifier());
         }
         features.close();
 

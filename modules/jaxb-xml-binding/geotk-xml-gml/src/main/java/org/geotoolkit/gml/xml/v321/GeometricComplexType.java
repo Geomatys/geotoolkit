@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -46,8 +45,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometricComplexType", propOrder = {
@@ -66,8 +63,6 @@ public class GeometricComplexType extends AbstractGeometryType {
      *
      * Objects of the following type(s) are allowed in the list
      * {@link GeometricPrimitivePropertyType }
-     *
-     *
      */
     public List<GeometricPrimitivePropertyType> getElement() {
         if (element == null) {
@@ -82,7 +77,6 @@ public class GeometricComplexType extends AbstractGeometryType {
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -94,22 +88,8 @@ public class GeometricComplexType extends AbstractGeometryType {
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;
     }
-
-    public Object evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public <T> T evaluate(Object o, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Object accept(ExpressionVisitor ev, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

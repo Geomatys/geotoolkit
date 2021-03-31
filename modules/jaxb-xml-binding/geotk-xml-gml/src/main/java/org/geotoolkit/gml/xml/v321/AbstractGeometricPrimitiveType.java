@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.complex.Composite;
 import org.opengis.geometry.primitive.OrientablePrimitive;
@@ -45,8 +44,6 @@ import org.opengis.geometry.primitive.Primitive;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeometricPrimitiveType")
@@ -58,28 +55,11 @@ import org.opengis.geometry.primitive.Primitive;
 })
 public abstract class AbstractGeometricPrimitiveType extends AbstractGeometryType implements Primitive {
 
-
     public AbstractGeometricPrimitiveType() {
-
     }
 
     public AbstractGeometricPrimitiveType(final String id, final String srsName) {
         super(id, srsName);
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

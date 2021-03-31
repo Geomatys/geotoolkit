@@ -18,7 +18,7 @@ package org.geotoolkit.filter.visitor;
 
 import java.util.Set;
 
-import org.opengis.filter.Id;
+import org.opengis.filter.ResourceId;
 
 /**
  * Gather up all FeatureId strings into a provided HashSet.
@@ -26,24 +26,14 @@ import org.opengis.filter.Id;
  * Example:<code>Set<String> fids = (Set<String>) filter.accept( IdCollectorFilterVisitor.ID_COLLECTOR, new HashSet() );</code>
  * @module
  */
-public class IdCollectorFilterVisitor extends DefaultFilterVisitor {
+public class IdCollectorFilterVisitor extends DefaultFilterVisitor<Set<String>> {
 
-    public static final IdCollectorFilterVisitor ID_COLLECTOR = new IdCollectorFilterVisitor(true);
-    public static final IdCollectorFilterVisitor IDENTIFIER_COLLECTOR = new IdCollectorFilterVisitor(false);
+    public static final IdCollectorFilterVisitor ID_COLLECTOR = new IdCollectorFilterVisitor();
 
-    private final boolean collectCharSequences;
-
-    private IdCollectorFilterVisitor(final boolean collectStringIds){
-        collectCharSequences = collectStringIds;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object visit(final Id filter, final Object data) {
-        final Set set = (Set) data;
-        set.addAll( (collectCharSequences) ? filter.getIDs() : filter.getIdentifiers());
-        return set;
+    private IdCollectorFilterVisitor() {
+        setFilterHandler(AbstractVisitor.RESOURCEID_NAME, (f, data) -> {
+            final ResourceId<Object> filter = (ResourceId<Object>) f;
+            data.add(filter.getIdentifier());
+        });
     }
 }

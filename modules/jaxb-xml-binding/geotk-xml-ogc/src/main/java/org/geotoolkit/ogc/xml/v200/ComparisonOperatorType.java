@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.Operator;
+import org.geotoolkit.filter.capability.Operator;
 
 
 /**
@@ -44,41 +44,32 @@ import org.opengis.filter.capability.Operator;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComparisonOperatorType")
-public class ComparisonOperatorType implements Operator{
+public class ComparisonOperatorType extends Operator {
 
     @XmlAttribute(required = true)
     private String name;
 
     public ComparisonOperatorType() {
-
+        super("");
     }
 
     public ComparisonOperatorType(final String name) {
+        super(name);
         this.name = name;
     }
 
     /**
      * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
+    @Override
     public String getName() {
         return name;
     }
 
     /**
      * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setName(String value) {
         this.name = value;
     }
-
 }

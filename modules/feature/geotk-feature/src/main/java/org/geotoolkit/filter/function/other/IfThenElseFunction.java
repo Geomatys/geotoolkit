@@ -17,23 +17,23 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class IfThenElseFunction extends AbstractFunction {
 
     public IfThenElseFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
-        super(OtherFunctionFactory.IF_THEN_ELSE, new Expression[]{expr1,expr2,expr3}, null);
+        super(OtherFunctionFactory.IF_THEN_ELSE, expr1, expr2, expr3);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
         boolean arg0;
         Object arg1;
         Object arg2;
 
         try { // attempt to get value and perform conversion
-            arg0 = ((Boolean) parameters.get(0).evaluate(feature))
+            arg0 = ((Boolean) parameters.get(0).apply(feature))
                     .booleanValue();
         } catch (Exception e) // probably a type error
         {
@@ -42,7 +42,7 @@ public class IfThenElseFunction extends AbstractFunction {
         }
         if( arg0 ){
             try { // attempt to get value and perform conversion
-                arg1 = (Object) parameters.get(1).evaluate(feature);
+                arg1 = (Object) parameters.get(1).apply(feature);
                 return arg1;
             } catch (Exception e) // probably a type error
             {
@@ -52,7 +52,7 @@ public class IfThenElseFunction extends AbstractFunction {
         }
         else {
             try { // attempt to get value and perform conversion
-                arg2 = (Object) parameters.get(2).evaluate(feature);
+                arg2 = (Object) parameters.get(2).apply(feature);
                 return arg2;
             } catch (Exception e) // probably a type error
             {

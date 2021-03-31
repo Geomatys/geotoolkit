@@ -18,7 +18,8 @@ package org.geotoolkit.cql;
 
 import java.text.ParseException;
 import org.apache.sis.cql.CQLException;
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -33,14 +34,9 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 
 /**
  * Test reading CQL expressions.
@@ -49,40 +45,40 @@ import org.opengis.filter.expression.Subtract;
  */
 public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
 
-    private final FilterFactory2 FF = new DefaultFilterFactory2();
+    private final FilterFactory2 FF = FilterUtilities.FF;
     private final GeometryFactory GF = new GeometryFactory();
 
     @Test
     public void testPropertyName1() throws CQLException{
         final String cql = "geom";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof PropertyName);
-        final PropertyName expression = (PropertyName) obj;
-        assertEquals("geom", expression.getPropertyName());
+        final Expression obj = CQL.parseExpression(cql);
+        assertTrue(obj instanceof ValueReference);
+        final ValueReference expression = (ValueReference) obj;
+        assertEquals("geom", expression.getXPath());
     }
 
     @Test
     public void testPropertyName2() throws CQLException{
         final String cql = "\"geom\"";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof PropertyName);
-        final PropertyName expression = (PropertyName) obj;
-        assertEquals("geom", expression.getPropertyName());
+        final Expression obj = CQL.parseExpression(cql);
+        assertTrue(obj instanceof ValueReference);
+        final ValueReference expression = (ValueReference) obj;
+        assertEquals("geom", expression.getXPath());
     }
 
     @Test
     public void testPropertyName3() throws CQLException{
         final String cql = "ùth{e_$uglY^_pr@perté";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof PropertyName);
-        final PropertyName expression = (PropertyName) obj;
-        assertEquals("ùth{e_$uglY^_pr@perté", expression.getPropertyName());
+        final Expression obj = CQL.parseExpression(cql);
+        assertTrue(obj instanceof ValueReference);
+        final ValueReference expression = (ValueReference) obj;
+        assertEquals("ùth{e_$uglY^_pr@perté", expression.getXPath());
     }
 
     @Test
     public void testInteger() throws CQLException{
         final String cql = "15";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals(Integer.valueOf(15), expression.getValue());
@@ -91,7 +87,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testNegativeInteger() throws CQLException{
         final String cql = "-15";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals(Integer.valueOf(-15), expression.getValue());
@@ -100,7 +96,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testDecimal1() throws CQLException{
         final String cql = "3.14";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals(Double.valueOf(3.14), expression.getValue());
@@ -109,7 +105,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testDecimal2() throws CQLException{
         final String cql = "9e-1";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals(Double.valueOf(9e-1), expression.getValue());
@@ -118,7 +114,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testNegativeDecimal() throws CQLException{
         final String cql = "-3.14";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals(Double.valueOf(-3.14), expression.getValue());
@@ -127,7 +123,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testText() throws CQLException{
         final String cql = "'hello world'";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals("hello world", expression.getValue());
@@ -136,7 +132,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testText2() throws CQLException{
         final String cql = "'Valle d\\'Aosta'";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals("Valle d'Aosta", expression.getValue());
@@ -145,7 +141,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testText3() throws CQLException{
         final String cql = "'Valle d\\'Aosta/Vallée d\\'Aoste'";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals("Valle d'Aosta/Vallée d'Aoste", expression.getValue());
@@ -156,7 +152,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     public void testDate() throws CQLException, ParseException{
         //dates are expected to be formated in ISO 8601 : yyyy-MM-dd'T'HH:mm:ss'Z'
         final String cql = "2012-03-21T05:42:36Z";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), expression.getValue());
@@ -165,83 +161,69 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testDuration() throws CQLException, ParseException{
         final String cql = "P7Y6M5D4H3M2S";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final long duration = (Long) expression.getValue();
-
         assertEquals(236966582000l, duration);
     }
 
     @Test
     public void testDuration2() throws CQLException, ParseException{
         final String cql = "T4H3M2S";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final long duration = (Long) expression.getValue();
-
-        assertEquals(14582000,duration);
+        assertEquals(14582000, duration);
     }
 
     @Test
     public void testAddition() throws CQLException{
         final String cql = "3 + 2";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Add);
-        final Add expression = (Add) obj;
-        assertEquals(FF.add(FF.literal(3), FF.literal(2)), expression);
+        final Expression obj = CQL.parseExpression(cql);
+        assertEquals(FF.add(FF.literal(3), FF.literal(2)), obj);
     }
 
     @Test
     public void testSubstract() throws CQLException{
         final String cql = "3 - 2";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Subtract);
-        final Subtract expression = (Subtract) obj;
-        assertEquals(FF.subtract(FF.literal(3), FF.literal(2)), expression);
+        final Expression obj = CQL.parseExpression(cql);
+        assertEquals(FF.subtract(FF.literal(3), FF.literal(2)), obj);
     }
 
     @Test
     public void testMultiply() throws CQLException{
         final String cql = "3 * 2";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Multiply);
-        final Multiply expression = (Multiply) obj;
-        assertEquals(FF.multiply(FF.literal(3), FF.literal(2)), expression);
+        final Expression obj = CQL.parseExpression(cql);
+        assertEquals(FF.multiply(FF.literal(3), FF.literal(2)), obj);
     }
 
     @Test
     public void testDivide() throws CQLException{
         final String cql = "3 / 2";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Divide);
-        final Divide expression = (Divide) obj;
-        assertEquals(FF.divide(FF.literal(3), FF.literal(2)), expression);
+        final Expression obj = CQL.parseExpression(cql);
+        assertEquals(FF.divide(FF.literal(3), FF.literal(2)), obj);
     }
 
     @Test
     public void testFunction1() throws CQLException{
         final String cql = "max(\"att\",15)";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Function);
-        final Function expression = (Function) obj;
-        assertEquals(FF.function("max",FF.property("att"), FF.literal(15)), expression);
+        final Expression obj = CQL.parseExpression(cql);
+        assertEquals(FF.function("max",FF.property("att"), FF.literal(15)), obj);
     }
 
     @Test
     public void testFunction2() throws CQLException{
         final String cql = "min(\"att\",cos(3.14))";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Function);
-        final Function expression = (Function) obj;
-        assertEquals(FF.function("min",FF.property("att"), FF.function("cos",FF.literal(3.14d))), expression);
+        final Expression obj = CQL.parseExpression(cql);
+        assertEquals(FF.function("min",FF.property("att"), FF.function("cos",FF.literal(3.14d))), obj);
     }
 
     @Test
     public void testGeometryPoint() throws CQLException{
         final String cql = "POINT(15 30)";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom =  GF.createPoint(new Coordinate(15, 30));
@@ -251,7 +233,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryPointEmpty() throws CQLException{
         final String cql = "POINT EMPTY";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom = (Geometry)expression.getValue();
@@ -262,7 +244,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryMPoint() throws CQLException{
         final String cql = "MULTIPOINT(15 30, 45 60)";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom =  GF.createMultiPoint(
@@ -270,13 +252,13 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
                     new Coordinate(15, 30),
                     new Coordinate(45, 60)
                 });
-        assertTrue(geom.equals((Geometry)expression.getValue()));
+        assertEquals(geom, expression.getValue());
     }
 
     @Test
     public void testGeometryMPointEmpty() throws CQLException{
         final String cql = "MULTIPOINT EMPTY";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom = (Geometry)expression.getValue();
@@ -287,7 +269,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryLineString() throws CQLException{
         final String cql = "LINESTRING(10 20, 30 40, 50 60)";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom =  GF.createLineString(
@@ -302,7 +284,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryLineStringEmpty() throws CQLException{
         final String cql = "LINESTRING EMPTY";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom = (Geometry)expression.getValue();
@@ -313,7 +295,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryMLineString() throws CQLException{
         final String cql = "MULTILINESTRING((10 20, 30 40, 50 60),(70 80, 90 100, 110 120))";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom =  GF.createMultiLineString(
@@ -338,7 +320,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryMLineStringEmpty() throws CQLException{
         final String cql = "MULTILINESTRING EMPTY";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom = (Geometry)expression.getValue();
@@ -349,7 +331,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryPolygon() throws CQLException{
         final String cql = "POLYGON((10 20, 30 40, 50 60, 10 20), (70 80, 90 100, 110 120, 70 80))";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom =  GF.createPolygon(
@@ -376,7 +358,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryPolygonEmpty() throws CQLException{
         final String cql = "POLYGON EMPTY";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom = (Geometry)expression.getValue();
@@ -390,7 +372,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
                 + "((10 20, 30 40, 50 60, 10 20), (70 80, 90 100, 110 120, 70 80)),"
                 + "((11 21, 31 41, 51 61, 11 21), (71 81, 91 101, 111 121, 71 81))"
                 + ")";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Polygon geom1 = GF.createPolygon(
@@ -436,7 +418,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryMPolygonEmpty() throws CQLException{
         final String cql = "MULTIPOLYGON EMPTY";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom = (Geometry)expression.getValue();
@@ -447,7 +429,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryCollection() throws CQLException{
         final String cql = "GEOMETRYCOLLECTION( POINT(15 30), LINESTRING(10 20, 30 40, 50 60) )";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom1 =  GF.createPoint(new Coordinate(15, 30));
@@ -467,7 +449,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryCollectionEmpty() throws CQLException{
         final String cql = "GEOMETRYCOLLECTION EMPTY";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom = (Geometry)expression.getValue();
@@ -478,7 +460,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryEnvelope() throws CQLException{
         final String cql = "ENVELOPE(10, 20, 40, 30)";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom =  GF.createPolygon(
@@ -498,7 +480,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testGeometryEnvelopeEmpty() throws CQLException{
         final String cql = "ENVELOPE EMPTY";
-        final Object obj = CQL.parseExpression(cql);
+        final Expression obj = CQL.parseExpression(cql);
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         final Geometry geom = (Geometry)expression.getValue();
@@ -509,9 +491,7 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testCombine1() throws CQLException{
         final String cql = "((3*1)+(2-6))/4";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Divide);
-        final Divide expression = (Divide) obj;
+        final Expression obj = CQL.parseExpression(cql);
         assertEquals(
                 FF.divide(
                     FF.add(
@@ -519,32 +499,26 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
                         FF.subtract(FF.literal(2), FF.literal(6))
                         ),
                     FF.literal(4))
-                , expression);
+                , obj);
     }
 
     @Test
     public void testCombine2() throws CQLException{
         final String cql = "3*1+2/4";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Add);
-        final Add rootAdd = (Add) obj;
-
+        final Expression obj = CQL.parseExpression(cql);
         assertEquals(
                     FF.add(
                         FF.multiply(FF.literal(3), FF.literal(1)),
                         FF.divide(FF.literal(2), FF.literal(4))
                         )
-                , rootAdd);
+                , obj);
 
     }
 
     @Test
     public void testCombine3() throws CQLException{
         final String cql = "3*max(val,15)+2/4";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Add);
-        final Add rootAdd = (Add) obj;
-
+        final Expression obj = CQL.parseExpression(cql);
         assertEquals(
                     FF.add(
                         FF.multiply(
@@ -553,17 +527,14 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
                         ),
                         FF.divide(FF.literal(2), FF.literal(4))
                         )
-                , rootAdd);
+                , obj);
 
     }
 
     @Test
     public void testCombine4() throws CQLException{
         final String cql = "3 * max ( val , 15 ) + 2 / 4";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Add);
-        final Add rootAdd = (Add) obj;
-
+        final Expression obj = CQL.parseExpression(cql);
         assertEquals(
                     FF.add(
                         FF.multiply(
@@ -572,27 +543,22 @@ public class ExpressionReadingTest extends org.geotoolkit.test.TestBase {
                         ),
                         FF.divide(FF.literal(2), FF.literal(4))
                         )
-                , rootAdd);
+                , obj);
 
     }
 
     @Test
     public void testCombine5() throws CQLException{
         final String cql = "(\"NB-Curistes\"*50)/12000";
-        final Object obj = CQL.parseExpression(cql);
-        assertTrue(obj instanceof Divide);
-        final Divide result = (Divide) obj;
-
+        final Expression obj = CQL.parseExpression(cql);
         assertEquals(
                 FF.divide(
                         FF.multiply(
-                                FF.property("NB-Curistes"),
+                                (Expression) FF.property("NB-Curistes"),
                                 FF.literal(50)
                         ),
                         FF.literal(12000)
                 )
-                , result);
-
+                , obj);
     }
-
 }

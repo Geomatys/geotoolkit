@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.opengis.filter.capability.TemporalOperand;
+import org.geotoolkit.filter.capability.TemporalOperand;
 
 
 /**
@@ -43,9 +43,6 @@ import org.opengis.filter.capability.TemporalOperand;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperandsType", propOrder = {
@@ -60,7 +57,6 @@ public class TemporalOperandsType {
      * Empty constructor used by JAXB
      */
     public TemporalOperandsType() {
-
     }
 
     /**
@@ -117,7 +113,6 @@ public class TemporalOperandsType {
         if (object == this) {
             return true;
         }
-
        if (object instanceof TemporalOperandsType) {
            final TemporalOperandsType that = (TemporalOperandsType) object;
 
@@ -132,5 +127,4 @@ public class TemporalOperandsType {
         hash = 37 * hash + (this.temporalOperand != null ? this.temporalOperand.hashCode() : 0);
         return hash;
     }
-
 }

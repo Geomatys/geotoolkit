@@ -39,7 +39,7 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.SortProperty;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -159,7 +159,7 @@ public final class FeatureStreams {
      * @return filtered iterator
      */
     public static <F> Iterator<F> filter(final Iterator<F> iterator, final Filter filter){
-        if (filter==null || Filter.INCLUDE.equals(filter)) return iterator;
+        if (filter==null || Filter.include().equals(filter)) return iterator;
         return GenericFilterIterator.wrap(iterator, filter);
     }
 
@@ -170,7 +170,7 @@ public final class FeatureStreams {
      * @return filtered iterator
      */
     public static FeatureIterator filter(final FeatureIterator iterator, final Filter filter){
-        if (filter==null || Filter.INCLUDE.equals(filter)) return iterator;
+        if (filter==null || Filter.include().equals(filter)) return iterator;
         return GenericFilterFeatureIterator.wrap(iterator, filter);
     }
 
@@ -181,7 +181,7 @@ public final class FeatureStreams {
      * @return filtered reader
      */
     public static FeatureReader filter(final FeatureReader reader, final Filter filter){
-        if (filter==null || Filter.INCLUDE.equals(filter)) return reader;
+        if (filter==null || Filter.include().equals(filter)) return reader;
         return GenericFilterFeatureIterator.wrap(reader, filter);
     }
 
@@ -193,7 +193,7 @@ public final class FeatureStreams {
      * @return filtered writer
      */
     public static FeatureWriter filter(final FeatureWriter writer, final Filter filter){
-        if (filter==null || Filter.INCLUDE.equals(filter)) return writer;
+        if (filter==null || Filter.include().equals(filter)) return writer;
         return GenericFilterFeatureIterator.wrap(writer, filter);
     }
 
@@ -205,7 +205,7 @@ public final class FeatureStreams {
      * @return filtered collection
      */
     public static FeatureCollection filter(final FeatureCollection col, final Filter filter){
-        if (filter==null || Filter.INCLUDE.equals(filter)) return col;
+        if (filter==null || Filter.include().equals(filter)) return col;
         return GenericFilterFeatureIterator.wrap(col, filter);
     }
 
@@ -318,7 +318,7 @@ public final class FeatureStreams {
      * @param orders sorting order
      * @return sorted iterator
      */
-    public static FeatureIterator sort(final FeatureIterator iterator, final SortBy ... orders){
+    public static FeatureIterator sort(final FeatureIterator iterator, final SortProperty ... orders){
         return GenericSortByFeatureIterator.wrap(iterator, orders);
     }
 
@@ -329,7 +329,7 @@ public final class FeatureStreams {
      * @param orders sorting order
      * @return sorted reader
      */
-    public static FeatureReader sort(final FeatureReader reader, final SortBy ... orders){
+    public static FeatureReader sort(final FeatureReader reader, final SortProperty ... orders){
         return GenericSortByFeatureIterator.wrap(reader, orders);
     }
 
@@ -340,7 +340,7 @@ public final class FeatureStreams {
      * @param orders sorting order
      * @return sorted collection
      */
-    public static FeatureCollection sort(final FeatureCollection col, final SortBy ... orders){
+    public static FeatureCollection sort(final FeatureCollection col, final SortProperty ... orders){
         return GenericSortByFeatureIterator.wrap(col, orders);
     }
 
@@ -495,7 +495,7 @@ public final class FeatureStreams {
      * @param iterators : iterators to combine
      * @return FeatureIterator combining all others
      */
-    public static FeatureIterator combine(final SortBy[] sorts, final FeatureIterator ... iterators){
+    public static FeatureIterator combine(final SortProperty[] sorts, final FeatureIterator ... iterators){
         return combine(new SortByComparator(sorts), iterators);
     }
 
@@ -958,6 +958,5 @@ public final class FeatureStreams {
                 active.remove();
             }
         }
-
     }
 }

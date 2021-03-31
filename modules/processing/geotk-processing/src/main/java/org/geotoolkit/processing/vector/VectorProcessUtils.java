@@ -363,7 +363,7 @@ public final class VectorProcessUtils extends Static {
 
         //name of the new collection "<inputFeatureID>-intersection"
         final FeatureCollection resultFeatureList =
-                FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getID() + "-intersection", newType);
+                FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getIdentifier() + "-intersection", newType);
 
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem inputCRS = null;
@@ -447,7 +447,7 @@ public final class VectorProcessUtils extends Static {
                     //create the result Feature
                     final Feature resultFeature = newType.newInstance();
                     resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),
-                            FeatureExt.getId(inputFeature).getID() + "<->" + FeatureExt.getId(outFeature).getID());
+                            FeatureExt.getId(inputFeature).getIdentifier() + "<->" + FeatureExt.getId(outFeature).getIdentifier());
 
                     for (PropertyType property : inputFeature.getType().getProperties(true)) {
                         final String name = property.getName().toString();

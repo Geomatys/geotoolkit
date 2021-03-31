@@ -18,7 +18,7 @@ package org.geotoolkit.filter.visitor;
 
 import org.opengis.filter.Filter;
 import org.junit.Test;
-import org.opengis.filter.Id;
+import org.opengis.filter.ResourceId;
 import org.apache.sis.internal.feature.AttributeConvention;
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
@@ -32,33 +32,30 @@ public class FIDFixVisitorTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testReplacement1(){
-        Filter filter = FF.equals(FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString()),FF.literal("river.1"));
+        Filter filter = FF.equal(FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString()), FF.literal("river.1"));
 
-        FIDFixVisitor visitor = new FIDFixVisitor();
-        filter = (Filter) filter.accept(visitor, null);
+        filter = (Filter) FIDFixVisitor.INSTANCE.visit(filter);
 
         assertNotNull(filter);
-        assertTrue(filter instanceof Id);
+        assertTrue(filter instanceof ResourceId);
 
-        Id fid = (Id) filter;
+        ResourceId fid = (ResourceId) filter;
 
-        assertEquals(1, fid.getIdentifiers().size());
-        assertEquals("river.1", fid.getIdentifiers().iterator().next().getID());
+        assertEquals("river.1", fid.getIdentifier());
     }
 
     @Test
     public void testReplacement2(){
-        Filter filter = FF.equals(FF.literal("river.1"),FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        Filter filter = FF.equal(FF.literal("river.1"),
+                FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
-        FIDFixVisitor visitor = new FIDFixVisitor();
-        filter = (Filter) filter.accept(visitor, null);
+        filter = (Filter) FIDFixVisitor.INSTANCE.visit(filter);
 
         assertNotNull(filter);
-        assertTrue(filter instanceof Id);
+        assertTrue(filter instanceof ResourceId);
 
-        Id fid = (Id) filter;
+        ResourceId fid = (ResourceId) filter;
 
-        assertEquals(1, fid.getIdentifiers().size());
-        assertEquals("river.1", fid.getIdentifiers().iterator().next().getID());
+        assertEquals("river.1", fid.getIdentifier());
     }
 }

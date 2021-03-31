@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ import java.util.stream.Stream;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+import org.apache.sis.internal.filter.FunctionNames;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.util.NamesExt;
@@ -53,8 +55,9 @@ import org.geotoolkit.wfs.xml.WFSVersion;
 import org.geotoolkit.wfs.xml.WFSXmlFactory;
 
 import org.opengis.util.GenericName;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 import org.opengis.filter.Filter;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -294,7 +297,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     }
 
     protected Optional<XMLFilter> prepareFilter() {
-        if (filter == null || Filter.INCLUDE.equals(filter)) {
+        if (filter == null || Filter.include().equals(filter)) {
             return Optional.empty();
         }
 
@@ -310,11 +313,11 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             visitor = new PrefixSwitchVisitor();
             ((PrefixSwitchVisitor)visitor).setPrefix(namespace, prefix);
         } else {
-            visitor = new SimplifyingFilterVisitor();
+            visitor = SimplifyingFilterVisitor.INSTANCE;
         }
 
-        final Object result = filter.accept(visitor, null);
-        if (result == null || Filter.INCLUDE.equals(result)) {
+        final Object result = visitor.visit(filter);
+        if (result == null || Filter.include().equals(result)) {
             return Optional.empty();
         } else if (result instanceof Filter) {
             return Optional.of(FilterMarshallerPool.transform((Filter)result, getFilterVersion()));
@@ -330,6 +333,21 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     protected static class PrefixSwitchVisitor extends SimplifyingFilterVisitor {
         final Map<String, String> namespaceReplacements = new HashMap<>();
 
+        public PrefixSwitchVisitor() {
+            Function<Expression<Object, ?>, Object> fallback = getExpressionHandler(FunctionNames.ValueReference);
+            setExpressionHandler(FunctionNames.ValueReference, (e) -> {
+                final ValueReference expression = (ValueReference) e;
+                final String pName = expression.getXPath();
+                for (final Map.Entry<String, String> replacement : namespaceReplacements.entrySet()) {
+                    final String namespace = replacement.getKey();
+                    if (pName.startsWith(namespace)) {
+                        return ff.property(replacement.getValue() + pName.substring(namespace.length()));
+                    }
+                }
+                return fallback.apply(e);
+            });
+        }
+
         /**
          * Specify a prefix replacement.
          * @param namespace The prefix that must be replaced
@@ -337,19 +355,6 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
          */
         public void setPrefix(final String namespace, final String replacementPrefix) {
             namespaceReplacements.put(namespace, replacementPrefix);
-        }
-
-        @Override
-        public Object visit(PropertyName expression, Object extraData) {
-                final String pName = expression.getPropertyName();
-            for (final Map.Entry<String, String> replacement : namespaceReplacements.entrySet()) {
-                final String namespace = replacement.getKey();
-                if (pName.startsWith(namespace)) {
-                    return getFactory(extraData).property(replacement.getValue() + pName.substring(namespace.length()));
-                }
-            }
-
-            return super.visit(expression, extraData);
         }
     }
 }

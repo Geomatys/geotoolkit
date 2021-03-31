@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.ComparisonOperator;
-import org.opengis.filter.Filter;
 
 
 /**
@@ -37,9 +36,6 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComparisonOpsType")
@@ -47,7 +43,7 @@ import org.opengis.filter.Filter;
              BinaryComparisonOpType.class,
              PropertyIsLikeType.class,
              PropertyIsBetweenType.class})
-public abstract class ComparisonOpsType implements Filter, ComparisonOperator {
+public abstract class ComparisonOpsType implements ComparisonOperator {
 
     @Override
     public String toString() {

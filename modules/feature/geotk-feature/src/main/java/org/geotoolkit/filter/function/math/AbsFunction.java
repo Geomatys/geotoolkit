@@ -18,37 +18,32 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class AbsFunction extends AbstractFunction {
 
     public AbsFunction(final Expression expression) {
-        super(MathFunctionFactory.ABS, new Expression[] {expression}, null);
+        super(MathFunctionFactory.ABS, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number = parameters.get(0).evaluate(feature, Number.class);
-        if (number == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function abs argument #0 - expected type number");
-        }
-
+    public Object apply(final Object feature) {
+        final Object number = parameters.get(0).apply(feature);
         if (number instanceof Integer) {
-            return Math.abs(number.intValue());
+            return Math.abs((Integer) number);
         }
         if (number instanceof Double) {
-            return Math.abs(number.doubleValue());
+            return Math.abs((Double) number);
         }
         if (number instanceof Float) {
-            return Math.abs(number.floatValue());
+            return Math.abs((Float) number);
         }
         if (number instanceof Long) {
-            return Math.abs(number.longValue());
+            return Math.abs((Long) number);
         }
         if (number instanceof Short) {
-            return Math.abs(number.shortValue());
+            return Math.abs((Short) number);
         }
         throw new IllegalArgumentException(
                     "Filter Function problem for function abs argument #0 - expected type number");

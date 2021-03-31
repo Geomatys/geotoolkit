@@ -17,22 +17,19 @@
 package org.geotoolkit.style;
 
 import java.util.Objects;
-import org.geotoolkit.util.Utilities;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.GraphicFill;
 import org.opengis.style.GraphicStroke;
 import org.opengis.style.Stroke;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Stroke.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultStroke implements Stroke{
 
@@ -72,15 +69,15 @@ public class DefaultStroke implements Stroke{
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
         }
 
-        this.fill = null;
-        this.stroke = null;
-        this.color = (color == null || color == NIL) ? DEFAULT_STROKE_COLOR : color;
-        this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_STROKE_OPACITY : opacity;
-        this.width = (width == null || width == NIL) ? DEFAULT_STROKE_WIDTH : width;
-        this.join = (join == null || join == NIL) ? DEFAULT_STROKE_JOIN : join;
-        this.cap = (cap == null || cap == NIL) ? DEFAULT_STROKE_CAP : cap;
-        this.dashes = dashes;
-        this.offset = (offset == null || offset == NIL) ? DEFAULT_STROKE_OFFSET : offset;
+        this.fill    = null;
+        this.stroke  = null;
+        this.color   = (color   == null) ? DEFAULT_STROKE_COLOR : color;
+        this.opacity = (opacity == null) ? DEFAULT_STROKE_OPACITY : opacity;
+        this.width   = (width   == null) ? DEFAULT_STROKE_WIDTH : width;
+        this.join    = (join    == null) ? DEFAULT_STROKE_JOIN : join;
+        this.cap     = (cap     == null) ? DEFAULT_STROKE_CAP : cap;
+        this.dashes  = dashes;
+        this.offset  = (offset  == null) ? DEFAULT_STROKE_OFFSET : offset;
     }
 
     /**
@@ -102,15 +99,15 @@ public class DefaultStroke implements Stroke{
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
         }
 
-        this.fill = fill;
-        this.stroke = null;
-        this.color = (color == null || color == NIL) ? DEFAULT_STROKE_COLOR : color;
-        this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_STROKE_OPACITY : opacity;
-        this.width = (width == null || width == NIL) ? DEFAULT_STROKE_WIDTH : width;
-        this.join = (join == null || join == NIL) ? DEFAULT_STROKE_JOIN : join;
-        this.cap = (cap == null || cap == NIL) ? DEFAULT_STROKE_CAP : cap;
-        this.dashes = dashes;
-        this.offset = (offset == null || offset == NIL) ? DEFAULT_STROKE_OFFSET : offset;
+        this.fill    = fill;
+        this.stroke  = null;
+        this.color   = (color   == null) ? DEFAULT_STROKE_COLOR : color;
+        this.opacity = (opacity == null) ? DEFAULT_STROKE_OPACITY : opacity;
+        this.width   = (width   == null) ? DEFAULT_STROKE_WIDTH : width;
+        this.join    = (join    == null) ? DEFAULT_STROKE_JOIN : join;
+        this.cap     = (cap     == null) ? DEFAULT_STROKE_CAP : cap;
+        this.dashes  = dashes;
+        this.offset  = (offset  == null) ? DEFAULT_STROKE_OFFSET : offset;
     }
 
 
@@ -137,15 +134,15 @@ public class DefaultStroke implements Stroke{
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
         }
 
-        this.fill = null;
-        this.stroke = stroke;
-        this.color = (color == null || color == NIL) ? DEFAULT_STROKE_COLOR : color;
-        this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_STROKE_OPACITY : opacity;
-        this.width = (width == null || width == NIL) ? DEFAULT_STROKE_WIDTH : width;
-        this.join = (join == null || join == NIL) ? DEFAULT_STROKE_JOIN : join;
-        this.cap = (cap == null || cap == NIL) ? DEFAULT_STROKE_CAP : cap;
-        this.dashes = dashes;
-        this.offset = (offset == null || offset == NIL) ? DEFAULT_STROKE_OFFSET : offset;
+        this.fill    = null;
+        this.stroke  = stroke;
+        this.color   = (color   == null) ? DEFAULT_STROKE_COLOR : color;
+        this.opacity = (opacity == null) ? DEFAULT_STROKE_OPACITY : opacity;
+        this.width   = (width   == null) ? DEFAULT_STROKE_WIDTH : width;
+        this.join    = (join    == null) ? DEFAULT_STROKE_JOIN : join;
+        this.cap     = (cap     == null) ? DEFAULT_STROKE_CAP : cap;
+        this.dashes  = dashes;
+        this.offset  = (offset  == null) ? DEFAULT_STROKE_OFFSET : offset;
     }
 
     /**

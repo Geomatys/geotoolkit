@@ -18,27 +18,34 @@
 package org.geotoolkit.filter;
 
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.feature.FeatureExpression;
+import org.apache.sis.internal.filter.FunctionNames;
+import org.apache.sis.referencing.CRS;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.logging.Logging;
+import static org.geotoolkit.filter.AbstractExpression.createName;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
+import org.opengis.util.FactoryException;
+import org.opengis.util.ScopedName;
 
 /**
  * Immutable property name expression.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public class DefaultPropertyName extends AbstractExpression implements PropertyName, FeatureExpression {
+public class DefaultPropertyName extends AbstractExpression implements ValueReference<Object,Object>, FeatureExpression<Object,Object> {
 
     private final String property;
 
@@ -52,11 +59,21 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
         this.property = property;
     }
 
+    @Override
+    public ScopedName getFunctionName() {
+        return createName(FunctionNames.ValueReference);
+    }
+
+    @Override
+    public List getParameters() {
+        return Collections.EMPTY_LIST;
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public String getPropertyName() {
+    public String getXPath() {
         return property;
     }
 
@@ -64,7 +81,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      * {@inheritDoc }
      */
     @Override
-    public Object evaluate(final Object candidate) {
+    public Object apply(final Object candidate) {
 
         final Class cs;
         if(candidate == null){
@@ -74,24 +91,33 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
         }
 
         Binding cp = lastAccessor;
+        final Object value;
         if (cp != null && cp.getBindingClass() != Object.class && cp.getBindingClass().isAssignableFrom(cs)) {
-            return cp.get( candidate, property, null );
+            value = cp.get( candidate, property, null );
+        } else {
+            final Binding accessor = Bindings.getBinding(cs,property);
+            if (accessor == null) {
+                return null;
+            }
+            lastAccessor = accessor;
+            value = accessor.get( candidate, property, null );
         }
-
-        final Binding accessor = Bindings.getBinding(cs,property);
-        if (accessor == null) {
-            return null;
+        /*
+         * Apache SIS is not aware of the SRIDGenerator convention, which adds a (1 << 28) bitmask if
+         * the authority is CRS. For avoiding a "no such EPSG code error", resolve the CRS in advance.
+         */
+        if (value instanceof org.locationtech.jts.geom.Geometry) {
+            final org.locationtech.jts.geom.Geometry g = (org.locationtech.jts.geom.Geometry) value;
+            if (g.getUserData() == null) {
+                int srid = g.getSRID();
+                if (srid != 0) try {
+                    g.setUserData(CRS.forCode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1)));
+                } catch (FactoryException e) {
+                    Logging.unexpectedException(null, getClass(), "apply", e);
+                }
+            }
         }
-        lastAccessor = accessor;
-        return accessor.get( candidate, property, null );
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
+        return value;
     }
 
     /**
@@ -132,7 +158,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
 
     @Override
     public PropertyTypeBuilder expectedType(FeatureType valueType, FeatureTypeBuilder addTo) {
-        PropertyType pt = (PropertyType) evaluate(valueType);
+        PropertyType pt = (PropertyType) apply(valueType);
         if (pt != null) return addTo.addProperty(pt);
         try {
             PropertyType type = valueType.getProperty(property);        // May throw IllegalArgumentException.
@@ -150,6 +176,5 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
         } catch (PropertyNotFoundException ex) {
             return addTo.addAttribute(Object.class).setName(property);
         }
-
     }
 }

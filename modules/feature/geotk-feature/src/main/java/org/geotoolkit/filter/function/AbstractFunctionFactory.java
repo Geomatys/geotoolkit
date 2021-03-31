@@ -12,9 +12,8 @@ import java.util.Set;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
@@ -40,6 +39,11 @@ public class AbstractFunctionFactory implements FunctionFactory{
     }
 
     @Override
+    public String getAuthority() {
+        return "Geotk";
+    }
+
+    @Override
     public String getIdentifier() {
         return identifier;
     }
@@ -50,12 +54,12 @@ public class AbstractFunctionFactory implements FunctionFactory{
     }
 
     @Override
-    public Function create(String name, Expression... parameters) throws IllegalArgumentException {
+    public Expression create(String name, Expression... parameters) throws IllegalArgumentException {
         return createFunction(name, null, parameters);
     }
 
     @Override
-    public Function createFunction(String name, Literal fallback, Expression... parameters) throws IllegalArgumentException {
+    public Expression createFunction(String name, Literal fallback, Expression... parameters) throws IllegalArgumentException {
         final Class clazz = functions.get(name);
         if(clazz == null){
             throw new IllegalArgumentException("Unknowed function name : "+ name);
@@ -68,7 +72,7 @@ public class AbstractFunctionFactory implements FunctionFactory{
         }
 
         try {
-            return (Function) construct.newInstance(cstParams);
+            return (Expression) construct.newInstance(cstParams);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             throw new IllegalArgumentException("Failed to initialize function wih given parameters : "+ name + "  "+ex.getMessage(),ex);
         }
@@ -135,6 +139,4 @@ public class AbstractFunctionFactory implements FunctionFactory{
             return new ParameterBuilder().addName(name).createGroup();
         }
     }
-
-
 }

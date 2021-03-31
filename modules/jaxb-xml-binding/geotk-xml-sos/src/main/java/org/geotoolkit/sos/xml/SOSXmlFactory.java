@@ -64,11 +64,8 @@ import org.geotoolkit.swes.xml.DeleteSensorResponse;
 import org.geotoolkit.swes.xml.DescribeSensor;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
 import org.opengis.filter.Filter;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.SpatialOperator;
+import org.opengis.filter.TemporalOperator;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.observation.CompositePhenomenon;
 import org.opengis.observation.Observation;
@@ -966,7 +963,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static BBOX buildBBOX(final String version, final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+    public static SpatialOperator buildBBOX(final String version, final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.ogc.xml.v200.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
         } else if ("1.0.0".equals(version)) {
@@ -976,7 +973,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static After buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -986,7 +983,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static During buildTimeDuring(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator buildTimeDuring(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeDuringType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -996,7 +993,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static Before buildTimeBefore(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator buildTimeBefore(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeBeforeType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -1006,7 +1003,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static TEquals buildTimeEquals(final String currentVersion, final String propertyName, final Object temporal) {
+    public static TemporalOperator buildTimeEquals(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v200.TimeEqualsType(propertyName, temporal);
         } else if ("1.0.0".equals(currentVersion)) {

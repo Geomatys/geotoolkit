@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.TemporalOperand;
-import org.opengis.filter.capability.TemporalOperator;
+import org.geotoolkit.filter.capability.TemporalOperand;
+import org.geotoolkit.filter.capability.TemporalOperator;
 
 
 /**
@@ -47,14 +47,12 @@ import org.opengis.filter.capability.TemporalOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperatorType", propOrder = {
     "temporalOperands"
 })
-public class TemporalOperatorType implements TemporalOperator {
+public class TemporalOperatorType extends TemporalOperator {
 
     @XmlElement(name = "TemporalOperands")
     private TemporalOperandsType temporalOperands;
@@ -62,20 +60,16 @@ public class TemporalOperatorType implements TemporalOperator {
     private String name;
 
     public TemporalOperatorType() {
-
+        super("");
     }
 
     public TemporalOperatorType(final String name) {
+        super(name);
         this.name = name;
     }
 
     /**
      * Gets the value of the temporalOperands property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TemporalOperandsType }
-     *
      */
     public TemporalOperandsType getTemporalOperandsType() {
         return temporalOperands;
@@ -83,11 +77,6 @@ public class TemporalOperatorType implements TemporalOperator {
 
     /**
      * Sets the value of the temporalOperands property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TemporalOperandsType }
-     *
      */
     public void setTemporalOperands(TemporalOperandsType value) {
         this.temporalOperands = value;
@@ -95,11 +84,6 @@ public class TemporalOperatorType implements TemporalOperator {
 
     /**
      * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getName() {
@@ -108,11 +92,6 @@ public class TemporalOperatorType implements TemporalOperator {
 
     /**
      * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setName(String value) {
         this.name = value;
@@ -120,11 +99,9 @@ public class TemporalOperatorType implements TemporalOperator {
 
     /**
      * Implements SpatialOperator geoAPI interface
-     * @return
      */
-    @Override
-    public Collection<TemporalOperand> getTemporalOperands() {
-        List<TemporalOperand> result = new ArrayList<TemporalOperand>();
+    public Collection<TemporalOperand> getTemporalOperands2() {
+        List<TemporalOperand> result = new ArrayList<>();
         if (temporalOperands != null) {
             for (TemporalOperandsType.TemporalOperand qn: temporalOperands.getTemporalOperand()) {
                 result.add(TemporalOperand.valueOf(/*qn.getName().getNamespaceURI(),*/ qn.getName().getLocalPart()));

@@ -26,12 +26,12 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
 import static org.geotoolkit.storage.feature.AbstractFeatureStore.GML_32_NAMESPACE;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import static org.geotoolkit.feature.xml.GMLConvention.*;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.NamesExt;
 import org.locationtech.jts.geom.Coordinate;
@@ -58,7 +58,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class XmlTestData {
 
-    public static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    public static final FilterFactory FF = FilterUtilities.FF;
 
     public static final FeatureType simpleTypeGeom;
     public static final FeatureType simpleTypeBasic;

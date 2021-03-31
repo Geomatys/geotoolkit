@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractRing;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -41,8 +40,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractRingType")
@@ -53,22 +50,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 public abstract class AbstractRingType extends AbstractGeometryType implements AbstractRing {
 
     public AbstractRingType() {
-
     }
 
     public AbstractRingType(final String srsName) {
         super(srsName);
-    }
-
-    public Object evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public <T> T evaluate(Object o, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Object accept(ExpressionVisitor ev, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.Displacement;
 import org.opengis.style.Graphic;
@@ -30,7 +30,6 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Graphic.
@@ -73,15 +72,14 @@ public class DefaultGraphic implements Graphic{
             this.symbols = UnmodifiableArrayList.wrap(rep);
         }
 
-        this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_GRAPHIC_OPACITY : opacity;
-        this.rotation = (rotation == null || rotation == NIL) ? DEFAULT_GRAPHIC_ROTATION : rotation;
+        this.opacity  = (opacity  == null) ? DEFAULT_GRAPHIC_OPACITY : opacity;
+        this.rotation = (rotation == null) ? DEFAULT_GRAPHIC_ROTATION : rotation;
 
         //size is special since if it null, we must use the graphicsymbol original size
-        this.size = (size == null ) ? Expression.NIL : size;
+        this.size = size;
 
         this.anchor = (anchor == null) ? DEFAULT_ANCHOR_POINT : anchor;
         this.disp = (disp == null) ? DEFAULT_DISPLACEMENT : disp;
-
     }
 
     /**
@@ -193,5 +191,4 @@ public class DefaultGraphic implements Graphic{
         builder.append(']');
         return builder.toString();
     }
-
 }

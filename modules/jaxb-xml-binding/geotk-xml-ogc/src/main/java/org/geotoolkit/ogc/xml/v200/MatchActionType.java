@@ -37,7 +37,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- *
  */
 @XmlType(name = "MatchActionType")
 @XmlEnum
@@ -67,5 +66,4 @@ public enum MatchActionType {
         }
         throw new IllegalArgumentException(v);
     }
-
 }

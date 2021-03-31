@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.db.dialect;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,9 +45,8 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.ValueReference;
+import org.opengis.filter.SortProperty;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -82,7 +80,6 @@ public class SQLQueryBuilder {
      * @param query
      *            the query to be run. The type name and property will be ignored, as they are
      *            supposed to have been already embedded into the provided feature type
-     * @return String
      */
     public String selectSQL(final FeatureType featureType, final Query query) throws SQLException,DataStoreException {
         final StringBuilder sql = new StringBuilder("SELECT ");
@@ -97,7 +94,7 @@ public class SQLQueryBuilder {
 
         // filtering
         final Filter filter = query.getFilter();
-        if (!Filter.INCLUDE.equals(filter)) {
+        if (!Filter.include().equals(filter)) {
             //encode filter
             sql.append(" WHERE ");
             sql.append(dialect.encodeFilter(filter,featureType));
@@ -140,16 +137,8 @@ public class SQLQueryBuilder {
         sql.setLength(sql.length() - 1);
     }
 
-
     /**
      * Generates a 'INSERT INFO' sql statement.
-     *
-     * @param featureType
-     * @param feature
-     * @param keyValues
-     * @param cx
-     * @return
-     * @throws org.apache.sis.storage.DataStoreException
      */
     public String insertSQL(final FeatureType featureType, final Feature feature,
                                final Object[] keyValues, final Connection cx) throws DataStoreException{
@@ -202,7 +191,6 @@ public class SQLQueryBuilder {
                         break;
                     }
                 }
-
                 if(!found){
                     sqlValues.append("null");
                 }
@@ -218,11 +206,9 @@ public class SQLQueryBuilder {
                     dialect.encodeValue(sqlValues, value, binding);
                 }
             }
-
             sqlType.append(',');
             sqlValues.append(',');
         }
-
         sqlType.setLength(sqlType.length() - 1);
         sqlValues.setLength(sqlValues.length() - 1);
         sqlValues.append(")");
@@ -254,15 +240,12 @@ public class SQLQueryBuilder {
                     }
                 }
             }
-
             //the column
             dialect.encodeColumnName(sqlType,attName);
             sqlType.append(',');
         }
-
         sqlType.setLength(sqlType.length() - 1);
         sqlType.append(" ) ");
-
 
         final StringBuilder sqlValues = new StringBuilder();
         sqlValues.append(" VALUES ");
@@ -286,7 +269,6 @@ public class SQLQueryBuilder {
                         }
                     }
                 }
-
                 //the value
                 if (value == null) {
                     //maybe it's an auto generated value from a sequence
@@ -311,13 +293,11 @@ public class SQLQueryBuilder {
                         dialect.encodeValue(sqlValues, value, binding);
                     }
                 }
-
                 sqlValues.append(',');
             }
             sqlValues.setLength(sqlValues.length() - 1);
             sqlValues.append(" ),");
         }
-
         sqlValues.setLength(sqlValues.length() - 1);
         sqlValues.append(';');
 
@@ -329,7 +309,8 @@ public class SQLQueryBuilder {
      * Generates an 'UPDATE' sql statement.
      */
     public String updateSQL(final FeatureType featureType, final Map<String,? extends Object> changes,
-            Filter filter) throws DataStoreException, SQLException{
+            Filter filter) throws DataStoreException, SQLException
+    {
         final StringBuilder sql = new StringBuilder();
         sql.append("UPDATE ");
         dialect.encodeSchemaAndTableName(sql, databaseSchema, featureType.getName().tip().toString());
@@ -353,20 +334,17 @@ public class SQLQueryBuilder {
             } else {
                 dialect.encodeValue(sql, value, valueClass);
             }
-
             sql.append(',');
         }
-
         sql.setLength(sql.length() - 1);
         sql.append(' ');
 
-        if (filter != null && !Filter.INCLUDE.equals(filter)) {
+        if (filter != null && !Filter.include().equals(filter)) {
             //replace any PropertyEqualsTo in true ID filters
-            filter = (Filter) filter.accept(new FIDFixVisitor(), null);
+            filter = (Filter) FIDFixVisitor.INSTANCE.visit(filter);
             sql.append(" WHERE ");
             sql.append(dialect.encodeFilter(filter,featureType));
         }
-
         return sql.toString();
     }
 
@@ -378,13 +356,12 @@ public class SQLQueryBuilder {
         dialect.encodeSchemaAndTableName(sql, databaseSchema, featureType.getName().tip().toString());
 
         //encode filter if needed
-        if(filter != null && !Filter.INCLUDE.equals(filter)){
+        if(filter != null && !Filter.include().equals(filter)){
             //replace any PropertyEqualsTo in true ID filters
-            filter = (Filter) filter.accept(new FIDFixVisitor(), null);
+            filter = (Filter) FIDFixVisitor.INSTANCE.visit(filter);
             sql.append(" WHERE ");
             sql.append(dialect.encodeFilter(filter,featureType));
         }
-
         return sql.toString();
     }
 
@@ -424,14 +401,11 @@ public class SQLQueryBuilder {
             } else {
                 throw new SQLException("Property type not supported : "+desc);
             }
-
             if(FeatureTypeExt.isPartOfPrimaryKey(featureType,desc.getName().toString())){
                 pkeyColumn.add(desc.getName().tip().toString());
             }
         }
-
         final String[] sqlTypeNames = getSQLTypeNames(classes, cx);
-
         for (int i=0; i<sqlTypeNames.length; i++) {
             if (sqlTypeNames[i] == null) {
                 throw new SQLException("Unable to map " + columnNames[i] + "( " + classes[i].getName() + ")");
@@ -468,7 +442,6 @@ public class SQLQueryBuilder {
                 if (length == null || length < 0) {
                     length = 255;
                 }
-
                 dialect.encodeColumnType(sql, sqlTypeNames[i],length);
             } else {
                 dialect.encodeColumnType(sql, sqlTypeNames[i], null);
@@ -487,12 +460,10 @@ public class SQLQueryBuilder {
                 sql.append(", ");
             }
         }
-
         sql.append(" ) ");
 
         //encode anything post create table
         dialect.encodePostCreateTable(sql, tableName);
-
         return sql.toString();
     }
 
@@ -525,12 +496,10 @@ public class SQLQueryBuilder {
         } else {
             dialect.encodeColumnType(sql, sqlTypeName,null);
         }
-
         //nullable
         if (!nillable) {
             sql.append(" NOT NULL ");
         }
-
         return sql.toString();
     }
 
@@ -555,7 +524,6 @@ public class SQLQueryBuilder {
         if(cascade){
             sql.append(" ON DELETE CASCADE");
         }
-
         return sql.toString();
     }
 
@@ -624,42 +592,17 @@ public class SQLQueryBuilder {
 
     /**
      * Encodes the sort-by portion of an sql query.
-     * @param featureType
-     * @param sort
-     * @param key
-     * @param sql
-     * @throws IOException
      */
-    public void encodeSortBy(final FeatureType featureType, final SortBy[] sort, final PrimaryKey key,
-            final StringBuilder sql) throws DataStoreException {
+    public void encodeSortBy(final FeatureType featureType, final SortProperty[] sort, final PrimaryKey key,
+            final StringBuilder sql) throws DataStoreException
+    {
         if ((sort != null) && (sort.length > 0)) {
             sql.append(" ORDER BY ");
-
-            for (final SortBy sortBy : sort) {
-                final String order;
-                if (sortBy.getSortOrder() == SortOrder.DESCENDING) {
-                    order = " DESC";
-                } else {
-                    order = " ASC";
-                }
-
-                if (SortBy.NATURAL_ORDER.equals(sortBy) || SortBy.REVERSE_ORDER.equals(sortBy)) {
-                    if (key.isNull()) {
-                        throw new DataStoreException("Cannot do natural order without a primary key");
-                    }
-
-                    for (ColumnMetaModel col : key.getColumns()) {
-                        dialect.encodeColumnName(sql, col.getName());
-                        sql.append(order);
-                        sql.append(',');
-                    }
-                } else {
-                    dialect.encodeColumnName(sql, getPropertyName(featureType, sortBy.getPropertyName()) );
-                    sql.append(order);
-                    sql.append(',');
-                }
+            for (final SortProperty sortBy : sort) {
+                final String order = sortBy.getSortOrder().toSQL();
+                dialect.encodeColumnName(sql, getPropertyName(featureType, sortBy.getValueReference()));
+                sql.append(order).append(',');
             }
-
             sql.setLength(sql.length() - 1);
         }
     }
@@ -668,8 +611,6 @@ public class SQLQueryBuilder {
      * Encoding a geometry column with respect to hints
      * Supported Hints are provided by {@link SQLDialect#addSupportedHints(Set)}
      *
-     * @param gatt
-     * @param sql
      * @param hints , may be null
      */
     public void encodeGeometryColumn(final AttributeType gatt, final StringBuilder sql,
@@ -710,14 +651,12 @@ public class SQLQueryBuilder {
                 }
             }
         }
-
         return srid;
     }
 
     /**
      * Extracts the eventual native SRID user property from the descriptor,
      * returns -1 if not found
-     * @param descriptor
      */
     public static int getDescriptorSRID(final PropertyType descriptor) {
         // check if we have stored the native srid in the descriptor (we should)
@@ -727,18 +666,15 @@ public class SQLQueryBuilder {
     /**
      * Helper method for executing a property name against a feature type.
      * <p>
-     * This method will fall back on {@link PropertyName#getPropertyName()} if
+     * This method will fall back on {@link ValueReference#getPropertyName()} if
      * it does not evaulate against the feature type.
      * </p>
      */
-    public static String getPropertyName(final FeatureType featureType, final PropertyName propertyName) {
-        final PropertyType att = (PropertyType) propertyName.evaluate(featureType);
-
+    public static String getPropertyName(final FeatureType featureType, final ValueReference propertyName) {
+        final PropertyType att = (PropertyType) propertyName.apply(featureType);
         if (att != null) {
             return att.getName().tip().toString();
         }
-
-        return propertyName.getPropertyName();
+        return propertyName.getXPath();
     }
-
 }

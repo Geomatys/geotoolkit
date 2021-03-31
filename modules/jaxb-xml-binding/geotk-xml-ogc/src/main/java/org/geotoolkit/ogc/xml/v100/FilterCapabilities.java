@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.IdCapabilities;
-import org.opengis.filter.capability.TemporalCapabilities;
+import org.geotoolkit.filter.capability.DefaultIdCapabilities;
+import org.geotoolkit.filter.capability.TemporalCapabilities;
 
 
 /**
@@ -42,8 +42,6 @@ import org.opengis.filter.capability.TemporalCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -51,7 +49,7 @@ import org.opengis.filter.capability.TemporalCapabilities;
     "scalarCapabilities"
 })
 @XmlRootElement(name = "Filter_Capabilities")
-public class FilterCapabilities implements org.opengis.filter.capability.FilterCapabilities {
+public class FilterCapabilities extends org.geotoolkit.filter.capability.FilterCapabilities {
 
     @XmlElement(name = "Spatial_Capabilities", required = true)
     private SpatialCapabilitiesType spatialCapabilities;
@@ -59,7 +57,6 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     private ScalarCapabilitiesType scalarCapabilities;
 
     public FilterCapabilities() {
-
     }
 
     public FilterCapabilities(final SpatialCapabilitiesType spatialCapabilities, final ScalarCapabilitiesType scalarCapabilities) {
@@ -69,11 +66,6 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Gets the value of the spatialCapabilities property.
-     *
-     * @return
-     *     possible object is
-     *     {@link SpatialCapabilitiesType }
-     *
      */
     @Override
     public SpatialCapabilitiesType getSpatialCapabilities() {
@@ -82,11 +74,6 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the spatialCapabilities property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link SpatialCapabilitiesType }
-     *
      */
     public void setSpatialCapabilities(SpatialCapabilitiesType value) {
         this.spatialCapabilities = value;
@@ -94,11 +81,6 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Gets the value of the scalarCapabilities property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ScalarCapabilitiesType }
-     *
      */
     @Override
     public ScalarCapabilitiesType getScalarCapabilities() {
@@ -107,11 +89,6 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the scalarCapabilities property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ScalarCapabilitiesType }
-     *
      */
     public void setScalarCapabilities(ScalarCapabilitiesType value) {
         this.scalarCapabilities = value;
@@ -123,7 +100,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     }
 
     @Override
-    public IdCapabilities getIdCapabilities() {
+    public DefaultIdCapabilities getIdCapabilities() {
         return null;
     }
 
@@ -131,5 +108,4 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public String getVersion() {
         return "1.0.0";
     }
-
 }

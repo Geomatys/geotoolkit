@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiLineString;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -46,9 +45,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiLineStringType", propOrder = {
@@ -60,7 +56,6 @@ public class MultiLineStringType extends AbstractGeometricAggregateType implemen
     private List<LineStringPropertyType> lineStringMember;
 
     public MultiLineStringType() {
-
     }
 
     public MultiLineStringType(final String srsName, final List<LineStringPropertyType> lineStringMember) {
@@ -73,8 +68,6 @@ public class MultiLineStringType extends AbstractGeometricAggregateType implemen
      *
      * Objects of the following type(s) are allowed in the list
      * {@link LineStringPropertyType }
-     *
-     *
      */
     public List<LineStringPropertyType> getLineStringMember() {
         if (lineStringMember == null) {
@@ -94,21 +87,6 @@ public class MultiLineStringType extends AbstractGeometricAggregateType implemen
             }
             this.lineStringMember.add(lineStringMember);
         }
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -133,8 +111,6 @@ public class MultiLineStringType extends AbstractGeometricAggregateType implemen
         hash = 97 * hash + (this.lineStringMember != null ? this.lineStringMember.hashCode() : 0);
         return hash;
     }
-
-
 
     @Override
     public String toString() {

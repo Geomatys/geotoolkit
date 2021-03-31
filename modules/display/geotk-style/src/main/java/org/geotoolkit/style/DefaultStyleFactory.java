@@ -30,7 +30,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
 import javax.swing.Icon;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.DefaultCategorize;
 import org.geotoolkit.style.function.DefaultInterpolate;
@@ -43,12 +42,12 @@ import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -104,7 +103,7 @@ public class DefaultStyleFactory implements MutableStyleFactory {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style");
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     // TEMPORARY FIX ///////////////////////////////////////////////////////////
 
@@ -186,7 +185,7 @@ public class DefaultStyleFactory implements MutableStyleFactory {
 
     @Override
     public MutableFeatureTypeStyle featureTypeStyle(final String name,
-            final Description description, final Id definedFor,
+            final Description description, final ResourceId definedFor,
             final Set<GenericName> featureTypeNames, final Set<SemanticType> types,
             final List<Rule> rules) {
         final MutableFeatureTypeStyle fts = new DefaultMutableFeatureTypeStyle();
@@ -695,7 +694,7 @@ public class DefaultStyleFactory implements MutableStyleFactory {
     }
 
     @Override
-    public ColorMap colorMap(final Function function){
+    public ColorMap colorMap(final Expression function){
         return new DefaultColorMap(function);
     }
 
@@ -706,7 +705,7 @@ public class DefaultStyleFactory implements MutableStyleFactory {
     }
 
     @Override
-    public ColorReplacement colorReplacement(final Function recode){
+    public ColorReplacement colorReplacement(final Expression recode){
         return new DefaultColorReplacement(recode);
     }
 

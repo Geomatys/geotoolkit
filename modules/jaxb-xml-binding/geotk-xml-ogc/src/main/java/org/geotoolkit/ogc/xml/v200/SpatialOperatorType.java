@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.capability.GeometryOperand;
-import org.opengis.filter.capability.SpatialOperator;
+import org.geotoolkit.filter.capability.SpatialOperator;
 
 
 /**
@@ -47,14 +47,12 @@ import org.opengis.filter.capability.SpatialOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialOperatorType", propOrder = {
     "geometryOperands"
 })
-public class SpatialOperatorType implements SpatialOperator{
+public class SpatialOperatorType extends SpatialOperator {
 
     @XmlElement(name = "GeometryOperands")
     private GeometryOperandsType geometryOperands;
@@ -65,27 +63,22 @@ public class SpatialOperatorType implements SpatialOperator{
      * An empty constructor used by JAXB
      */
     public SpatialOperatorType() {
-
+        super("");
     }
 
     /**
      * build a new spatial operator
      */
     public SpatialOperatorType(final String name, final GeometryOperand[] geometryOperands) {
+        super(name, geometryOperands);
         this.name = name;
         if (geometryOperands != null) {
             this.geometryOperands = new GeometryOperandsType(geometryOperands);
         }
-
     }
 
     /**
      * Gets the value of the geometryOperands property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryOperandsType }
-     *
      */
     public GeometryOperandsType getGeometryOperandsType() {
         return geometryOperands;
@@ -93,11 +86,6 @@ public class SpatialOperatorType implements SpatialOperator{
 
     /**
      * Sets the value of the geometryOperands property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryOperandsType }
-     *
      */
     public void setGeometryOperands(GeometryOperandsType value) {
         this.geometryOperands = value;
@@ -105,23 +93,14 @@ public class SpatialOperatorType implements SpatialOperator{
 
     /**
      * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
+    @Override
     public String getName() {
         return name;
     }
 
     /**
      * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setName(String value) {
         this.name = value;
@@ -129,7 +108,6 @@ public class SpatialOperatorType implements SpatialOperator{
 
     /**
      * Implements SpatialOperator geoAPI interface
-     * @return
      */
     public Collection<GeometryOperand> getGeometryOperands() {
         List<GeometryOperand> result = new ArrayList<GeometryOperand>();
@@ -140,5 +118,4 @@ public class SpatialOperatorType implements SpatialOperator{
         }
         return result;
     }
-
 }

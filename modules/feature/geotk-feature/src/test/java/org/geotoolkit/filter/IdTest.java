@@ -18,10 +18,10 @@
 package org.geotoolkit.filter;
 
 import org.junit.Test;
-import org.opengis.filter.identity.FeatureId;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import org.opengis.filter.ResourceId;
 
 /**
  *
@@ -33,17 +33,10 @@ public class IdTest extends org.geotoolkit.test.TestBase {
     public void testFeatureId() {
         String strid = "testFeatureType.1";
 
-        FeatureId id1 = FF.featureId(strid);
-        FeatureId id2 = FF.featureId(strid);
+        ResourceId id1 = FF.resourceId(strid);
+        ResourceId id2 = FF.resourceId(strid);
 
-        assertEquals(strid, id1.getID());
+        assertEquals(strid, id1.getIdentifier());
         assertEquals(id1, id2);
-
-        assertTrue(id1.matches(FEATURE_1));
-    }
-
-    @Test
-    public void testGmlFeatureId() {
-        //geotoolkit doesnt handle GML objects
     }
 }

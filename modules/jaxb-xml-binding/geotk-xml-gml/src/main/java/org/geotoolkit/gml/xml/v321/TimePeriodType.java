@@ -58,8 +58,6 @@ import org.opengis.temporal.Period;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimePeriodType", propOrder = {
@@ -222,7 +220,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *
      */
     public TimePositionType getBeginPosition() {
         return beginPosition;
@@ -234,7 +231,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *
      */
     public void setBeginPosition(TimePositionType value) {
         this.beginPosition = value;
@@ -246,7 +242,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *
      */
     public void setBeginPosition(final Date value) {
         this.beginPosition = new TimePositionType(value);
@@ -268,7 +263,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @return
      *     possible object is
      *     {@link TimeInstantPropertyType }
-     *
      */
     public TimeInstantPropertyType getBegin() {
         return begin;
@@ -280,7 +274,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link TimeInstantPropertyType }
-     *
      */
     public void setBegin(TimeInstantPropertyType value) {
         this.begin = value;
@@ -292,7 +285,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *
      */
     public TimePositionType getEndPosition() {
         return endPosition;
@@ -304,7 +296,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *
      */
     public void setEndPosition(final Date value) {
         this.endPosition = new TimePositionType(value);
@@ -316,7 +307,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *
      */
     public void setEndPosition(final TimeIndeterminateValueType value) {
         this.endPosition = new TimePositionType(value);
@@ -334,7 +324,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *
      */
     public void setEndPosition(TimePositionType value) {
         this.endPosition = value;
@@ -346,7 +335,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @return
      *     possible object is
      *     {@link TimeInstantPropertyType }
-     *
      */
     public TimeInstantPropertyType getEnd() {
         return end;
@@ -358,7 +346,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link TimeInstantPropertyType }
-     *
      */
     public void setEnd(TimeInstantPropertyType value) {
         this.end = value;
@@ -370,7 +357,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @return
      *     possible object is
      *     {@link Duration }
-     *
      */
     public Duration getDuration() {
         return duration;
@@ -382,7 +368,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link Duration }
-     *
      */
     public void setDuration(Duration value) {
         this.duration = value;
@@ -394,7 +379,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @return
      *     possible object is
      *     {@link TimeIntervalLengthType }
-     *
      */
     public TimeIntervalLengthType getTimeInterval() {
         return timeInterval;
@@ -406,7 +390,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * @param value
      *     allowed object is
      *     {@link TimeIntervalLengthType }
-     *
      */
     public void setTimeInterval(TimeIntervalLengthType value) {
         this.timeInterval = value;
@@ -516,7 +499,6 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         if (timeInterval != null) {
             s.append(lineSeparator).append("timeInterval:").append(timeInterval).append(lineSeparator);
         }
-
         return s.toString();
     }
 }

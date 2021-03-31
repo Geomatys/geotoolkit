@@ -18,23 +18,17 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class SinFunction extends AbstractFunction {
 
     public SinFunction(final Expression expression) {
-        super(MathFunctionFactory.SIN, new Expression[] {expression}, null);
+        super(MathFunctionFactory.SIN, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number = parameters.get(0).evaluate(feature, Number.class);
-        if (number == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function sin argument #0 - expected type double");
-        }
-
-        return Math.sin(number.doubleValue());
+    public Object apply(final Object feature) {
+        return Math.sin(doubleValue(feature));
     }
 }

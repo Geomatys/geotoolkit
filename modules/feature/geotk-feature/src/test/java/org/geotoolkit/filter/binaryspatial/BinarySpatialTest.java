@@ -33,23 +33,12 @@ import org.locationtech.jts.geom.LinearRing;
 
 import org.junit.Test;
 
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import org.opengis.filter.Filter;
+import org.opengis.filter.ValueReference;
 
 
 /**
@@ -114,165 +103,149 @@ public class BinarySpatialTest extends org.geotoolkit.test.TestBase {
         coords[1] = new Coordinate(7, 5);
         coords[2] = new Coordinate(9, 3);
         GEOM_TOUCHES = GF.createLineString(coords);
-
     }
 
     @Test
     public void testBBOX() {
-        BBOX bbox = FF.bbox("testGeometry", 1, 1, 6, 6, "EPSG:4326");
-        assertTrue(bbox.evaluate(CANDIDATE_1));
+        Filter bbox = FF.bbox("testGeometry", 1, 1, 6, 6, "EPSG:4326");
+        assertTrue(bbox.test(CANDIDATE_1));
 
         bbox = FF.bbox("testGeometry", -3, -2, 4, 1, "EPSG:4326");
-        assertFalse(bbox.evaluate(CANDIDATE_1));
+        assertFalse(bbox.test(CANDIDATE_1));
     }
 
     @Test
     public void testBeyond() {
         //we can not test units while using jts geometries
 
-        Beyond beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "m");
-        assertFalse(beyond.evaluate(CANDIDATE_1));
+        Filter beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "m");
+        assertFalse(beyond.test(CANDIDATE_1));
 
         beyond = FF.beyond(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "m");
-        assertTrue(beyond.evaluate(CANDIDATE_1));
+        assertTrue(beyond.test(CANDIDATE_1));
     }
 
     @Test
     public void testContains() {
-
-        Contains contains = FF.contains(FF.literal(GEOM_CONTAINS),FF.property("testGeometry"));
-        assertTrue(contains.evaluate(CANDIDATE_1));
+        Filter contains = FF.contains(FF.literal(GEOM_CONTAINS),FF.property("testGeometry"));
+        assertTrue(contains.test(CANDIDATE_1));
 
         contains = FF.contains(FF.literal(GEOM_DISTANCE_1),FF.property("testGeometry"));
-        assertFalse(contains.evaluate(CANDIDATE_1));
+        assertFalse(contains.test(CANDIDATE_1));
 
     }
 
     @Test
     public void testCrosses() {
-
-        Crosses crosses = FF.crosses(FF.literal(GEOM_CONTAINS),FF.property("testGeometry"));
-        assertFalse(crosses.evaluate(CANDIDATE_1));
+        Filter crosses = FF.crosses(FF.literal(GEOM_CONTAINS),FF.property("testGeometry"));
+        assertFalse(crosses.test(CANDIDATE_1));
 
         crosses = FF.crosses(FF.literal(GEOM_CROSSES),FF.property("testGeometry"));
-        assertTrue(crosses.evaluate(CANDIDATE_1));
+        assertTrue(crosses.test(CANDIDATE_1));
 
         crosses = FF.crosses(FF.literal(GEOM_DISTANCE_1),FF.property("testGeometry"));
-        assertFalse(crosses.evaluate(CANDIDATE_1));
-
+        assertFalse(crosses.test(CANDIDATE_1));
     }
 
     @Test
     public void testDWithin() {
         //we can not test units while using jts geometries
 
-        DWithin within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "m");
-        assertTrue(within.evaluate(CANDIDATE_1));
+        Filter within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_1), 1.5d, "m");
+        assertTrue(within.test(CANDIDATE_1));
 
         within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "m");
-        assertFalse(within.evaluate(CANDIDATE_1));
+        assertFalse(within.test(CANDIDATE_1));
     }
 
     @Test
     public void testDisjoint() {
-
-        Disjoint disjoint = FF.disjoint(FF.literal(GEOM_CONTAINS),FF.property("testGeometry"));
-        assertFalse(disjoint.evaluate(CANDIDATE_1));
+        Filter disjoint = FF.disjoint(FF.literal(GEOM_CONTAINS),FF.property("testGeometry"));
+        assertFalse(disjoint.test(CANDIDATE_1));
 
         disjoint = FF.disjoint(FF.literal(GEOM_CROSSES),FF.property("testGeometry"));
-        assertFalse(disjoint.evaluate(CANDIDATE_1));
+        assertFalse(disjoint.test(CANDIDATE_1));
 
         disjoint = FF.disjoint(FF.literal(GEOM_DISTANCE_1),FF.property("testGeometry"));
-        assertTrue(disjoint.evaluate(CANDIDATE_1));
-
+        assertTrue(disjoint.test(CANDIDATE_1));
     }
 
     @Test
     public void testEquals() {
+        Filter equal = FF.equals(FF.literal(GEOM_CONTAINS),FF.property("testGeometry"));
+        assertFalse(equal.test(CANDIDATE_1));
 
-        Equals equal = FF.equal(FF.literal(GEOM_CONTAINS),FF.property("testGeometry"));
-        assertFalse(equal.evaluate(CANDIDATE_1));
+        equal = FF.equals(FF.literal(GEOM_CROSSES),FF.property("testGeometry"));
+        assertFalse(equal.test(CANDIDATE_1));
 
-        equal = FF.equal(FF.literal(GEOM_CROSSES),FF.property("testGeometry"));
-        assertFalse(equal.evaluate(CANDIDATE_1));
-
-        equal = FF.equal(FF.literal(GF.createGeometry(RIGHT_GEOMETRY)),FF.property("testGeometry"));
-        assertTrue(equal.evaluate(CANDIDATE_1));
-
+        equal = FF.equals(FF.literal(GF.createGeometry(RIGHT_GEOMETRY)),FF.property("testGeometry"));
+        assertTrue(equal.test(CANDIDATE_1));
     }
 
     @Test
     public void testIntersect() {
-
-        Intersects intersect = FF.intersects(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
-        assertTrue(intersect.evaluate(CANDIDATE_1));
+        Filter intersect = FF.intersects(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
+        assertTrue(intersect.test(CANDIDATE_1));
 
         intersect = FF.intersects(FF.literal(GEOM_CROSSES), FF.property("testGeometry"));
-        assertTrue(intersect.evaluate(CANDIDATE_1));
+        assertTrue(intersect.test(CANDIDATE_1));
 
         intersect = FF.intersects(FF.literal(GEOM_INTERSECT), FF.property("testGeometry"));
-        assertTrue(intersect.evaluate(CANDIDATE_1));
+        assertTrue(intersect.test(CANDIDATE_1));
 
         intersect = FF.intersects(FF.literal(GEOM_DISTANCE_1), FF.property("testGeometry"));
-        assertFalse(intersect.evaluate(CANDIDATE_1));
+        assertFalse(intersect.test(CANDIDATE_1));
 
         intersect = FF.intersects(FF.literal(GEOM_DISTANCE_3), FF.property("testGeometry"));
-        assertFalse(intersect.evaluate(CANDIDATE_1));
-
+        assertFalse(intersect.test(CANDIDATE_1));
     }
 
     @Test
     public void testOverlaps() {
-
-        Overlaps overlaps = FF.overlaps(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
-        assertFalse(overlaps.evaluate(CANDIDATE_1));
+        Filter overlaps = FF.overlaps(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
+        assertFalse(overlaps.test(CANDIDATE_1));
 
         overlaps = FF.overlaps(FF.literal(GEOM_DISTANCE_1), FF.property("testGeometry"));
-        assertFalse(overlaps.evaluate(CANDIDATE_1));
+        assertFalse(overlaps.test(CANDIDATE_1));
 
         overlaps = FF.overlaps(FF.literal(GEOM_CROSSES), FF.property("testGeometry"));
-        assertFalse(overlaps.evaluate(CANDIDATE_1));
+        assertFalse(overlaps.test(CANDIDATE_1));
 
         overlaps = FF.overlaps(FF.literal(GEOM_INTERSECT), FF.property("testGeometry"));
-        assertTrue(overlaps.evaluate(CANDIDATE_1));
-
+        assertTrue(overlaps.test(CANDIDATE_1));
     }
 
     @Test
     public void testTouches() {
-
-        Touches touches = FF.touches(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
-        assertFalse(touches.evaluate(CANDIDATE_1));
+        Filter touches = FF.touches(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
+        assertFalse(touches.test(CANDIDATE_1));
 
         touches = FF.touches(FF.literal(GEOM_CROSSES), FF.property("testGeometry"));
-        assertFalse(touches.evaluate(CANDIDATE_1));
+        assertFalse(touches.test(CANDIDATE_1));
 
         touches = FF.touches(FF.literal(GEOM_DISTANCE_1), FF.property("testGeometry"));
-        assertFalse(touches.evaluate(CANDIDATE_1));
+        assertFalse(touches.test(CANDIDATE_1));
 
         touches = FF.touches(FF.literal(GEOM_TOUCHES), FF.property("testGeometry"));
-        assertTrue(touches.evaluate(CANDIDATE_1));
-
+        assertTrue(touches.test(CANDIDATE_1));
     }
 
     @Test
     public void testWithin() {
-
-        Within within = FF.within(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
-        assertFalse(within.evaluate(CANDIDATE_1));
+        Filter within = FF.within(FF.literal(GEOM_CONTAINS), FF.property("testGeometry"));
+        assertFalse(within.test(CANDIDATE_1));
 
         within = FF.within(FF.literal(GEOM_CROSSES), FF.property("testGeometry"));
-        assertFalse(within.evaluate(CANDIDATE_1));
+        assertFalse(within.test(CANDIDATE_1));
 
         within = FF.within(FF.literal(GEOM_DISTANCE_1), FF.property("testGeometry"));
-        assertFalse(within.evaluate(CANDIDATE_1));
+        assertFalse(within.test(CANDIDATE_1));
 
         within = FF.within(FF.literal(GEOM_TOUCHES), FF.property("testGeometry"));
-        assertFalse(within.evaluate(CANDIDATE_1));
+        assertFalse(within.test(CANDIDATE_1));
 
         within = FF.within(FF.property("testGeometry"), FF.literal(GEOM_CONTAINS) );
-        assertTrue(within.evaluate(CANDIDATE_1));
-
+        assertTrue(within.test(CANDIDATE_1));
     }
 
     /**
@@ -301,15 +274,15 @@ public class BinarySpatialTest extends org.geotoolkit.test.TestBase {
         esriGeom.setSRID(Integer.parseInt(esriCRS.getIdentifiers().iterator().next().getCode()));
         Envelope2D envelope = new Envelope2D(esriCRS, 0, 0, 10, 10);
 
-        final PropertyName property = FF.property("geometry");
-        final Map<String, Geometry> geometry = Collections.singletonMap(property.getPropertyName(), esriGeom);
+        final ValueReference property = FF.property("geometry");
+        final Map<String, Geometry> geometry = Collections.singletonMap(property.getXPath(), esriGeom);
 
-        BBOX filter = FF.bbox(property, envelope);
-        assertTrue(filter.evaluate(geometry));
+        Filter filter = FF.bbox(property, envelope);
+        assertTrue(filter.test(geometry));
 
         // Ensure no error is raised, even if a reprojection is involved
         envelope = new Envelope2D(CommonCRS.defaultGeographic(), 0, 0, 10, 10);
         filter = FF.bbox(property, envelope);
-        filter.evaluate(geometry);
+        filter.test(geometry);
     }
 }

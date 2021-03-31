@@ -40,8 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Extended_CapabilitiesType", propOrder = {
@@ -54,11 +52,6 @@ public class ExtendedCapabilitiesType {
 
     /**
      * Gets the value of the additionalOperators property.
-     *
-     * @return
-     *     possible object is
-     *     {@link AdditionalOperatorsType }
-     *
      */
     public AdditionalOperatorsType getAdditionalOperators() {
         return additionalOperators;
@@ -66,14 +59,8 @@ public class ExtendedCapabilitiesType {
 
     /**
      * Sets the value of the additionalOperators property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link AdditionalOperatorsType }
-     *
      */
     public void setAdditionalOperators(AdditionalOperatorsType value) {
         this.additionalOperators = value;
     }
-
 }

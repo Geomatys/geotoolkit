@@ -48,25 +48,21 @@ public class ComplexAttributeBinding extends AbstractBinding<Feature>{
         if(candidate==null) return null;
         xpath = stripPrefix(xpath);
         if(ID_PATTERN.matcher(xpath).matches()){
-            return (T) FeatureExt.getId(candidate).getID();
+            return (T) FeatureExt.getId(candidate).getIdentifier();     // TODO: unsafe cast.
         }
-
         if(target != null){
             if(Property.class.isAssignableFrom(target)){
                 return (T) candidate.getPropertyValue(xpath);
             }
         }
-
         if (!xpath.isEmpty() && xpath.charAt(0) == '{') {
             xpath = NamesExt.valueOf(xpath).toString();
         }
-
         try{
             return (T) candidate.getPropertyValue(xpath);
         }catch(PropertyNotFoundException ex){
             return null;
         }
-
     }
 
     @Override
@@ -74,5 +70,4 @@ public class ComplexAttributeBinding extends AbstractBinding<Feature>{
         xpath = stripPrefix(xpath);
         candidate.setPropertyValue(xpath,value);
     }
-
 }

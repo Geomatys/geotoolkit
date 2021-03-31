@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.ComparisonOperators;
-import org.opengis.filter.capability.Operator;
+import org.geotoolkit.filter.capability.ComparisonOperators;
+import org.geotoolkit.filter.capability.Operator;
 
 
 /**
@@ -54,7 +54,7 @@ import org.opengis.filter.capability.Operator;
 @XmlType(name = "ComparisonOperatorsType", propOrder = {
     "comparisonOperator"
 })
-public class ComparisonOperatorsType implements ComparisonOperators {
+public class ComparisonOperatorsType extends ComparisonOperators {
 
     @XmlElement(name = "ComparisonOperator", required = true)
     private List<ComparisonOperatorType> comparisonOperator;
@@ -63,7 +63,6 @@ public class ComparisonOperatorsType implements ComparisonOperators {
      * An empty constructor used by JAXB
      */
     public ComparisonOperatorsType() {
-
     }
 
     /**
@@ -80,7 +79,6 @@ public class ComparisonOperatorsType implements ComparisonOperators {
 
     /**
      * Gets the value of the comparisonOperator property.
-     *
      */
     public List<ComparisonOperatorType> getComparisonOperator() {
         if (comparisonOperator == null) {
@@ -91,9 +89,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
 
     /**
      * Gets the value of the comparisonOperator property.
-     *
      */
-    @Override
     public Collection<Operator> getOperators() {
         List<Operator> result =  new ArrayList<>();
         if (comparisonOperator == null) {
@@ -145,7 +141,6 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         }
         if (object instanceof ComparisonOperatorsType) {
             final ComparisonOperatorsType that = (ComparisonOperatorsType) object;
-
             return Objects.equals(this.comparisonOperator, that.comparisonOperator);
         }
         return false;

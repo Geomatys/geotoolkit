@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.opengis.filter.spatial.Intersects;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -31,13 +31,11 @@ import org.opengis.filter.spatial.Intersects;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Intersects")
 @XmlRootElement(name = "Intersects")
-public class IntersectsType extends BinarySpatialOpType implements Intersects {
-
+public class IntersectsType extends BinarySpatialOpType {
     /**
      * An empty constructor used by JAXB
      */
     public IntersectsType() {
-
     }
 
     /**
@@ -62,6 +60,11 @@ public class IntersectsType extends BinarySpatialOpType implements Intersects {
     @Override
     public SpatialOpsType getClone() {
         return new IntersectsType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.INTERSECTS;
     }
 
     @Override

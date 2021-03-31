@@ -23,11 +23,11 @@ import org.geotoolkit.filter.function.AbstractFunction;
 public class RandomFunction extends AbstractFunction {
 
     public RandomFunction() {
-        super(MathFunctionFactory.RANDOM, null, null);
+        super(MathFunctionFactory.RANDOM);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
         return Math.random();
     }
 }

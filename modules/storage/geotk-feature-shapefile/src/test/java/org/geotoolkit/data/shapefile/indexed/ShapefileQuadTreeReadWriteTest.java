@@ -23,8 +23,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
@@ -45,10 +43,9 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Envelope;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.FeatureId;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.ResourceId;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
@@ -201,10 +198,9 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         params.parameter(ShapefileProvider.CREATE_SPATIAL_INDEX.getName().toString()).setValue(Boolean.TRUE);
         IndexedShapefileFeatureStore ds = (IndexedShapefileFeatureStore) fac.open(params);
 
-        FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+        FilterFactory2 ff = FilterUtilities.FF;
 
-        FeatureId featureId = ff.featureId("streams.84");
-        Id filter = ff.id(Collections.singleton(featureId));
+        ResourceId filter = ff.resourceId("streams.84");
 
         FeatureIterator iter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName().toString(), filter));
         JTSEnvelope2D bounds;
@@ -213,15 +209,8 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         } finally {
             iter.close();
         }
-
-        FeatureId id = featureId;
-        filter = ff.id(Collections.singleton(id));
-
         Query query = QueryBuilder.filtered(ds.getNames().iterator().next().toString(), filter);
-
         Envelope result = (Envelope) ds.getEnvelope(query);
-
         assertTrue(result.equals(bounds));
     }
-
 }

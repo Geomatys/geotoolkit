@@ -23,69 +23,37 @@ import java.util.List;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
-
+import org.apache.sis.internal.filter.FunctionNames;
+import org.apache.sis.internal.filter.Visitor;
+import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.opengis.filter.And;
-import org.opengis.filter.ExcludeFilter;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.ComparisonOperator;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.DistanceOperator;
+import org.opengis.filter.DistanceOperatorName;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.Id;
-import org.opengis.filter.IncludeFilter;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNil;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.NilExpression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.AnyInteracts;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.Meets;
-import org.opengis.filter.temporal.MetBy;
-import org.opengis.filter.temporal.OverlappedBy;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
-import org.opengis.filter.temporal.TOverlaps;
+import org.opengis.filter.Expression;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.Literal;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.NilOperator;
+import org.opengis.filter.NullOperator;
+import org.opengis.filter.SpatialOperator;
+import org.opengis.filter.SpatialOperatorName;
+import org.opengis.filter.TemporalOperator;
+import org.opengis.filter.TemporalOperatorName;
+import org.opengis.filter.ValueReference;
 
 /**
- * Visitor to convert a Filter in CQL.<br>
+ * Visitor to convert a Filter in CQL.
  * Returned object is a StringBuilder containing the CQL text.
  *
- * @author Johann Sorel (Geomatys)
+ * @author  Johann Sorel (Geomatys)
  */
-public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
+public final class FilterToCQLVisitor extends Visitor<Object,StringBuilder> {
 
     public static final FilterToCQLVisitor INSTANCE = new FilterToCQLVisitor();
     private static final TimeZone TZ = new SimpleTimeZone(0, "Out Timezone");
@@ -93,175 +61,399 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     /**
      * Pattern to check for property name to escape against regExp
      */
-    private final Pattern patternPropertyName = Pattern.compile("[,+\\-/*\\t\\n\\r\\d\\s]");
+    private final Pattern patternValueReference = Pattern.compile("[,+\\-/*\\t\\n\\r\\d\\s]");
 
     private FilterToCQLVisitor() {
-    }
 
-    private static StringBuilder toStringBuilder(final Object o){
-        if(o instanceof StringBuilder){
-            return (StringBuilder) o;
-        }
-        return new StringBuilder();
-    }
+        ////////////////////////////////////////////////////////////////////////////
+        // FILTER //////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-
-    ////////////////////////////////////////////////////////////////////////////
-    // FILTER //////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public Object visitNullFilter(final Object o) {
-        throw new UnsupportedOperationException("Null filter not supported in CQL.");
-    }
-
-    @Override
-    public Object visit(final ExcludeFilter filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("1=0");
-        return sb;
-    }
-
-    @Override
-    public Object visit(final IncludeFilter filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("1=1");
-        return sb;
-    }
-
-    @Override
-    public Object visit(final And filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        final List<Filter> filters = filter.getChildren();
-        if(filters != null && !filters.isEmpty()){
-            final int size = filters.size();
-            sb.append('(');
-            for(int i=0,n=size-1;i<n;i++){
-                filters.get(i).accept(this,sb);
-                sb.append(" AND ");
+        setFilterHandler(Filter.exclude().getOperatorType(), (f, sb) -> {
+            sb.append("1=0");
+        });
+        setFilterHandler(Filter.include().getOperatorType(), (f, sb) -> {
+            sb.append("1=1");
+        });
+        setFilterHandler(LogicalOperatorName.AND, (f, sb) -> {
+            final LogicalOperator<Object> filter = (LogicalOperator<Object>) f;
+            final List<Filter<Object>> filters = filter.getOperands();
+            if (!filters.isEmpty()) {
+                final int size = filters.size();
+                sb.append('(');
+                for (int i = 0, n = size - 1; i < n; i++) {
+                    visit(filters.get(i), sb);
+                    sb.append(" AND ");
+                }
+                visit(filters.get(size - 1), sb);
+                sb.append(')');
             }
-            filters.get(size-1).accept(this,sb);
-            sb.append(')');
-        }
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Or filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        final List<Filter> filters = filter.getChildren();
-        if(filters != null && !filters.isEmpty()){
-            final int size = filters.size();
-            sb.append('(');
-            for(int i=0,n=size-1;i<n;i++){
-                filters.get(i).accept(this,sb);
-                sb.append(" OR ");
+        });
+        setFilterHandler(LogicalOperatorName.OR, (f, sb) -> {
+            final LogicalOperator<Object> filter = (LogicalOperator<Object>) f;
+            final List<Filter<Object>> filters = filter.getOperands();
+            if (!filters.isEmpty()) {
+                final int size = filters.size();
+                sb.append('(');
+                for (int i = 0, n = size - 1; i < n; i++) {
+                    visit(filters.get(i), sb);
+                    sb.append(" OR ");
+                }
+                visit(filters.get(size - 1), sb);
+                sb.append(')');
             }
-            filters.get(size-1).accept(this,sb);
+        });
+        setFilterHandler(LogicalOperatorName.NOT, (f, sb) -> {
+            final LogicalOperator<Object> filter = (LogicalOperator<Object>) f;
+            sb.append("NOT ");
+            visit(filter.getOperands().get(0), sb);
+        });
+        setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_BETWEEN), (f, sb) -> {
+            final BetweenComparisonOperator<Object> filter = (BetweenComparisonOperator<Object>) f;
+            visit(filter.getExpression(), sb);
+            sb.append(" BETWEEN ");
+            visit(filter.getLowerBoundary(), sb);
+            sb.append(" AND ");
+            visit(filter.getUpperBoundary(), sb);
+        });
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_EQUAL_TO, (f, sb) -> {
+            final ComparisonOperator<Object> filter = (ComparisonOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" = ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_NOT_EQUAL_TO, (f, sb) -> {
+            final ComparisonOperator<Object> filter = (ComparisonOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" <> ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_GREATER_THAN, (f, sb) -> {
+            final ComparisonOperator<Object> filter = (ComparisonOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" > ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_GREATER_THAN_OR_EQUAL_TO, (f, sb) -> {
+            final ComparisonOperator<Object> filter = (ComparisonOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" >= ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_LESS_THAN, (f, sb) -> {
+            final ComparisonOperator<Object> filter = (ComparisonOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" < ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_LESS_THAN_OR_EQUAL_TO, (f, sb) -> {
+            final ComparisonOperator<Object> filter = (ComparisonOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" <= ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_LIKE), (f, sb) -> {
+            final LikeOperator<Object> filter = (LikeOperator<Object>) f;
+            final char escape = filter.getEscapeChar();
+            final char wildCard = filter.getWildCard();
+            final char singleChar = filter.getSingleChar();
+            final boolean matchingCase = filter.isMatchingCase();
+            final String literal = (String) filter.getExpressions().get(1).apply(null);
+            final String pattern = convertToSQL92(escape, wildCard, singleChar, literal);
+            visit(filter.getExpressions().get(0), sb);
+            if (matchingCase) {
+                sb.append(" LIKE ");
+            } else {
+                sb.append(" ILIKE ");
+            }
+            sb.append('\'');
+            sb.append(pattern);
+            sb.append('\'');
+        });
+        setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_NULL), (f, sb) -> {
+            final NullOperator<Object> filter = (NullOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" IS NULL");
+        });
+        setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_NIL), (f, sb) -> {
+            final NilOperator<Object> filter = (NilOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" IS NIL");
+        });
+
+        ////////////////////////////////////////////////////////////////////////////
+        // GEOMETRY FILTER /////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        setFilterHandler(SpatialOperatorName.BBOX, (f, sb) -> {
+            final SpatialOperator<Object> filter = (SpatialOperator<Object>) f;
+            Expression<Object, ?> exp1 = filter.getExpressions().get(0);
+            Expression<Object, ?> exp2 = filter.getExpressions().get(1);
+            if (exp1 instanceof ValueReference && exp2 instanceof Literal) {
+                //use writing : BBOX(att,v1,v2,v3,v4)
+                Object value = ((Literal) exp2).getValue();
+                BoundingBox e = (BoundingBox) ((Literal) exp2).getValue();
+                sb.append("BBOX(");
+                sb.append(((ValueReference) exp1).getXPath());
+                sb.append(',');
+                sb.append(e.getMinX());
+                sb.append(',');
+                sb.append(e.getMaxX());
+                sb.append(',');
+                sb.append(e.getMinY());
+                sb.append(',');
+                sb.append(e.getMaxY());
+                sb.append(')');
+            } else {
+                //use writing BBOX(exp1,exp2)
+                sb.append("BBOX(");
+                visit(filter.getExpressions().get(0), sb);
+                sb.append(',');
+                visit(filter.getExpressions().get(1), sb);
+                sb.append(')');
+            }
+        });
+        setFilterHandler(DistanceOperatorName.BEYOND, (f, sb) -> {
+            final DistanceOperator<Object> filter = (DistanceOperator<Object>) f;
+            sb.append("BEYOND(");
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(',');
+            visit(filter.getExpressions().get(1), sb);
             sb.append(')');
+        });
+        setFilterHandler(SpatialOperatorName.CONTAINS, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            sb.append("CONTAINS(");
+            visit(filter.getOperand1(), sb);
+            sb.append(',');
+            visit(filter.getOperand2(), sb);
+            sb.append(')');
+        });
+        setFilterHandler(SpatialOperatorName.CROSSES, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            sb.append("CROSSES(");
+            visit(filter.getOperand1(), sb);
+            sb.append(',');
+            visit(filter.getOperand2(), sb);
+            sb.append(')');
+        });
+        setFilterHandler(SpatialOperatorName.DISJOINT, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            sb.append("DISJOINT(");
+            visit(filter.getOperand1(), sb);
+            sb.append(',');
+            visit(filter.getOperand2(), sb);
+            sb.append(')');
+        });
+        setFilterHandler(DistanceOperatorName.WITHIN, (f, sb) -> {
+            final DistanceOperator<Object> filter = (DistanceOperator<Object>) f;
+            sb.append("DWITHIN(");
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(',');
+            visit(filter.getExpressions().get(1), sb);
+            sb.append(')');
+        });
+        setFilterHandler(SpatialOperatorName.EQUALS, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            sb.append("EQUALS(");
+            visit(filter.getOperand1(), sb);
+            sb.append(',');
+            visit(filter.getOperand2(), sb);
+            sb.append(')');
+        });
+        setFilterHandler(SpatialOperatorName.INTERSECTS, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            sb.append("INTERSECTS(");
+            visit(filter.getOperand1(), sb);
+            sb.append(',');
+            visit(filter.getOperand2(), sb);
+            sb.append(')');
+        });
+        setFilterHandler(SpatialOperatorName.OVERLAPS, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            sb.append("OVERLAPS(");
+            visit(filter.getOperand1(), sb);
+            sb.append(',');
+            visit(filter.getOperand2(), sb);
+            sb.append(')');
+        });
+        setFilterHandler(SpatialOperatorName.TOUCHES, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            sb.append("TOUCHES(");
+            visit(filter.getOperand1(), sb);
+            sb.append(',');
+            visit(filter.getOperand2(), sb);
+            sb.append(')');
+        });
+        setFilterHandler(SpatialOperatorName.WITHIN, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            sb.append("WITHIN(");
+            visit(filter.getOperand1(), sb);
+            sb.append(',');
+            visit(filter.getOperand2(), sb);
+            sb.append(')');
+        });
+
+        ////////////////////////////////////////////////////////////////////////////
+        // TEMPORAL FILTER /////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        setFilterHandler(TemporalOperatorName.AFTER, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" AFTER ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.ANY_INTERACTS, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" ANYINTERACTS ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.BEFORE, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" BEFORE ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.BEGINS, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" BEGINS ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.BEGUN_BY, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" BEGUNBY ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.DURING, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" DURING ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.ENDED_BY, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" ENDEDBY ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.ENDS, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" ENDS ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.MEETS, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" MEETS ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.MET_BY, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" METBY ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.OVERLAPPED_BY, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" OVERLAPPEDBY ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.CONTAINS, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" TCONTAINS ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.EQUALS, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" TEQUALS ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+        setFilterHandler(TemporalOperatorName.OVERLAPS, (f, sb) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            visit(filter.getExpressions().get(0), sb);
+            sb.append(" TOVERLAPS ");
+            visit(filter.getExpressions().get(1), sb);
+        });
+
+        ////////////////////////////////////////////////////////////////////////////
+        // EXPRESSIONS /////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        setExpressionHandler(FunctionNames.Literal, (e, sb) -> {
+            final Literal<Object,?> exp = (Literal<Object,?>) e;
+            final Object value = exp.getValue();
+            if (value instanceof Number) {
+                final Number num = (Number) value;
+                sb.append(num.toString());
+            } else if (value instanceof Date) {
+                final Date date = (Date) value;
+                sb.append(TemporalUtilities.toISO8601Z(date,TZ));
+            } else if (value instanceof Geometry) {
+                final Geometry geometry = (Geometry) value;
+                final WKTWriter writer = new WKTWriter();
+                final String wkt = writer.write(geometry);
+                sb.append(wkt);
+            } else {
+                sb.append('\'').append(value != null ? value.toString() : null).append('\'');
+            }
+        });
+        setExpressionHandler(FunctionNames.ValueReference, (e, sb) -> {
+            final ValueReference<Object,?> exp = (ValueReference<Object,?>) e;
+            final String name = exp.getXPath();
+            if (patternValueReference.matcher(name).find()) {
+                //escape for special chars
+                sb.append('"').append(name).append('"');
+            } else {
+                sb.append(name);
+            }
+        });
+        setExpressionHandler(FunctionNames.Add, (e, sb) -> {
+            visit(e.getParameters().get(0), sb);
+            sb.append(" + ");
+            visit(e.getParameters().get(1), sb);
+        });
+        setExpressionHandler(FunctionNames.Divide, (e, sb) -> {
+            visit(e.getParameters().get(0), sb);
+            sb.append(" / ");
+            visit(e.getParameters().get(1), sb);
+        });
+        setExpressionHandler(FunctionNames.Multiply, (e, sb) -> {
+            visit(e.getParameters().get(0), sb);
+            sb.append(" * ");
+            visit(e.getParameters().get(1), sb);
+        });
+        setExpressionHandler(FunctionNames.Subtract, (e, sb) -> {
+            visit(e.getParameters().get(0), sb);
+            sb.append(" - ");
+            visit(e.getParameters().get(1), sb);
+        });
+    }
+
+    @Override
+    protected void typeNotFound(final String type, final Expression<Object, ?> e, final StringBuilder sb) {
+        sb.append(e.getFunctionName().tip()).append('(');
+        final List<Expression<Object,?>> exps = e.getParameters();
+        if (exps != null) {
+            final int size = exps.size();
+            if (size == 1) {
+                visit(exps.get(0), sb);
+            } else if (size > 1) {
+                for (int i = 0, n = size - 1; i < n; i++) {
+                    visit(exps.get(i), sb);
+                    sb.append(" , ");
+                }
+                visit(exps.get(size - 1), sb);
+            }
         }
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Id filter, final Object o) {
-        throw new UnsupportedOperationException("ID filter not supported in CQL.");
-    }
-
-    @Override
-    public Object visit(final Not filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("NOT ");
-        filter.getFilter().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyIsBetween filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression().accept(this,sb);
-        sb.append(" BETWEEN ");
-        filter.getLowerBoundary().accept(this,sb);
-        sb.append(" AND ");
-        filter.getUpperBoundary().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyIsEqualTo filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" = ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyIsNotEqualTo filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" <> ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyIsGreaterThan filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" > ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" >= ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyIsLessThan filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" < ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" <= ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyIsLike filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        final char escape = filter.getEscape().charAt(0);
-        final char wildCard = filter.getWildCard().charAt(0);
-        final char singleChar = filter.getSingleChar().charAt(0);
-        final boolean matchingCase = filter.isMatchingCase();
-        final String literal = filter.getLiteral();
-        final String pattern = convertToSQL92(escape, wildCard, singleChar, literal);
-
-        filter.getExpression().accept(this,sb);
-
-        if(matchingCase){
-            sb.append(" LIKE ");
-        }else{
-            sb.append(" ILIKE ");
-        }
-        sb.append('\'');
-        sb.append(pattern);
-        sb.append('\'');
-        return sb;
+        sb.append(')');
     }
 
     /**
@@ -294,19 +486,14 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
      *        too confusing to have a special char as another special char.
      *        Using this will throw an error  (IllegalArgumentException).
      *
-     * @param escape
-     * @param multi
-     * @param single
-     * @param pattern
-     *
      * @author Rob Hranac, Vision for New York
      */
     public static String convertToSQL92(final char escape, final char multi, final char single, final String pattern)
-            throws IllegalArgumentException {
+            throws IllegalArgumentException
+    {
         if ((escape == '\'') || (multi == '\'') || (single == '\'')) {
             throw new IllegalArgumentException("do not use single quote (') as special char!");
         }
-
         final StringBuffer result = new StringBuffer(pattern.length() + 5);
         for (int i = 0; i < pattern.length(); i++) {
             final char chr = pattern.charAt(i);
@@ -327,401 +514,6 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
                 result.append(chr);
             }
         }
-
         return result.toString();
     }
-
-    @Override
-    public Object visit(final PropertyIsNull filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression().accept(this,sb);
-        sb.append(" IS NULL");
-        return sb;
-    }
-
-    @Override
-    public Object visit(PropertyIsNil filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression().accept(this,sb);
-        sb.append(" IS NIL");
-        return sb;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // GEOMETRY FILTER /////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public Object visit(final BBOX filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-
-        if(filter.getExpression1() instanceof PropertyName
-           && filter.getExpression2() instanceof Literal){
-            //use writing : BBOX(att,v1,v2,v3,v4)
-            sb.append("BBOX(");
-            sb.append(filter.getPropertyName());
-            sb.append(',');
-            sb.append(filter.getMinX());
-            sb.append(',');
-            sb.append(filter.getMaxX());
-            sb.append(',');
-            sb.append(filter.getMinY());
-            sb.append(',');
-            sb.append(filter.getMaxY());
-            sb.append(')');
-
-        }else{
-            //use writing BBOX(exp1,exp2)
-            sb.append("BBOX(");
-            filter.getExpression1().accept(this,sb);
-            sb.append(',');
-            filter.getExpression2().accept(this,sb);
-            sb.append(')');
-        }
-
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Beyond filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("BEYOND(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Contains filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("CONTAINS(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Crosses filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("CROSSES(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Disjoint filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("DISJOINT(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final DWithin filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("DWITHIN(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Equals filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("EQUALS(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Intersects filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("INTERSECTS(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Overlaps filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("OVERLAPS(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Touches filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("TOUCHES(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Within filter, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append("WITHIN(");
-        filter.getExpression1().accept(this,sb);
-        sb.append(',');
-        filter.getExpression2().accept(this,sb);
-        sb.append(')');
-        return sb;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // TEMPORAL FILTER /////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public Object visit(After filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" AFTER ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(AnyInteracts filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" ANYINTERACTS ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(Before filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" BEFORE ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(Begins filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" BEGINS ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(BegunBy filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" BEGUNBY ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(During filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" DURING ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(EndedBy filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" ENDEDBY ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(Ends filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" ENDS ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(Meets filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" MEETS ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(MetBy filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" METBY ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(OverlappedBy filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" OVERLAPPEDBY ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(TContains filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" TCONTAINS ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(TEquals filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" TEQUALS ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(TOverlaps filter, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        filter.getExpression1().accept(this,sb);
-        sb.append(" TOVERLAPS ");
-        filter.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // EXPRESSIONS /////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public Object visit(final Literal exp, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-
-        final Object value = exp.getValue();
-        if(value instanceof Number){
-            final Number num = (Number) value;
-            sb.append(num.toString());
-        }else if(value instanceof Date){
-            final Date date = (Date) value;
-            sb.append(TemporalUtilities.toISO8601Z(date,TZ));
-        }else if(value instanceof Geometry){
-            final Geometry geometry = (Geometry) value;
-            final WKTWriter writer = new WKTWriter();
-            final String wkt = writer.write(geometry);
-            sb.append(wkt);
-        }else{
-            sb.append('\'').append(value != null ? value.toString() : null).append('\'');
-        }
-        return sb;
-    }
-
-    @Override
-    public Object visit(final PropertyName exp, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        final String name = exp.getPropertyName();
-        if(patternPropertyName.matcher(name).find()){
-            //escape for special chars
-            sb.append('"').append(name).append('"');
-        }else{
-            sb.append(name);
-        }
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Add exp, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        exp.getExpression1().accept(this,sb);
-        sb.append(" + ");
-        exp.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Divide exp, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        exp.getExpression1().accept(this,sb);
-        sb.append(" / ");
-        exp.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Multiply exp, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        exp.getExpression1().accept(this,sb);
-        sb.append(" * ");
-        exp.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Subtract exp, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        exp.getExpression1().accept(this,sb);
-        sb.append(" - ");
-        exp.getExpression2().accept(this,sb);
-        return sb;
-    }
-
-    @Override
-    public Object visit(final Function exp, final Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        sb.append(exp.getName());
-        sb.append('(');
-        final List<Expression> exps = exp.getParameters();
-        if(exps != null){
-            final int size = exps.size();
-            if(size==1){
-                exps.get(0).accept(this,sb);
-            }else if(size>1){
-                for(int i=0,n=size-1;i<n;i++){
-                    exps.get(i).accept(this,sb);
-                    sb.append(" , ");
-                }
-                exps.get(size-1).accept(this,sb);
-            }
-        }
-        sb.append(')');
-        return sb;
-    }
-
-    @Override
-    public Object visit(final NilExpression exp, final Object o) {
-        throw new UnsupportedOperationException("NilExpression not supported in CQL.");
-    }
-
 }

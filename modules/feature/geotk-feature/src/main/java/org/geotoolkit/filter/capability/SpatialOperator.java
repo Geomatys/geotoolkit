@@ -18,10 +18,10 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.filter.capability.GeometryOperand;
-import org.opengis.filter.capability.SpatialOperator;
 
 /**
  * Immutable spatial operator.
@@ -29,55 +29,42 @@ import org.opengis.filter.capability.SpatialOperator;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultSpatialOperator extends DefaultOperator implements SpatialOperator{
+@Deprecated
+public class SpatialOperator extends Operator {
 
     private final List<GeometryOperand> operands;
 
-    public DefaultSpatialOperator(final String name, final GeometryOperand[] operands) {
+    protected SpatialOperator(final String name) {
         super(name);
-
-        if(operands == null || operands.length == 0){
-            throw new IllegalArgumentException("Operands list can not be null or empty");
-        }
-
-        //use a threadsafe optimized immutable list
-        this.operands = UnmodifiableArrayList.wrap(operands.clone());
+        operands = Collections.emptyList();
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
+    public SpatialOperator(final String name, final GeometryOperand[] operands) {
+        super(name);
+        if (operands == null) {
+            this.operands = Collections.emptyList();
+        } else if (operands.length != 0) {
+            this.operands = UnmodifiableArrayList.wrap(operands.clone());
+        } else {
+            throw new IllegalArgumentException("Operands list can not be empty");
+        }
+    }
+
     public Collection<GeometryOperand> getGeometryOperands() {
         return operands;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultSpatialOperator other = (DefaultSpatialOperator) obj;
-        if (this.operands != other.operands && (this.operands == null || !this.operands.equals(other.operands))) {
-            return false;
-        }
-        return true;
+        final SpatialOperator other = (SpatialOperator) obj;
+        return operands.equals(other.operands);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 13 * hash + (this.operands != null ? this.operands.hashCode() : 0);
-        return hash;
+        return super.hashCode() + operands.hashCode();
     }
-
 }

@@ -17,19 +17,21 @@
 
 package org.geotoolkit.filter;
 
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.PropertyName;
+import java.util.Collections;
+import java.util.List;
+import org.opengis.filter.ValueReference;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
 import org.opengis.feature.FeatureType;
+import org.opengis.util.ScopedName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-class CachedPropertyName extends AbstractExpression implements PropertyName{
+class CachedPropertyName extends AbstractExpression implements ValueReference<Object,Object> {
 
     private final String property;
 
@@ -43,11 +45,21 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
         this.accessor = fallacc;
     }
 
+    @Override
+    public ScopedName getFunctionName() {
+        return createName("PropertyName");
+    }
+
+    @Override
+    public List getParameters() {
+        return Collections.EMPTY_LIST;
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public String getPropertyName() {
+    public String getXPath() {
         return property;
     }
 
@@ -55,16 +67,8 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
      * {@inheritDoc }
      */
     @Override
-    public Object evaluate(final Object candidate) {
+    public Object apply(final Object candidate) {
         return accessor.get(candidate, property, null);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
     }
 
     /**
@@ -102,5 +106,4 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
         hash = 73 * hash + (this.property != null ? this.property.hashCode() : 0);
         return hash;
     }
-
 }

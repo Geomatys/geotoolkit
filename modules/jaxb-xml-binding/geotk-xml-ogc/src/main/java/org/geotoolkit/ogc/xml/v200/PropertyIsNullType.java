@@ -18,16 +18,16 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.NullOperator;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -46,20 +46,17 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNullType", propOrder = {
     "expression"
 })
-public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsNull {
+public class PropertyIsNullType extends ComparisonOpsType implements NullOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
     public PropertyIsNullType() {
-
     }
 
     public PropertyIsNullType(String propertyName) {
@@ -97,6 +94,10 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
     }
 
     @Override
+    public List getExpressions() {
+        return Collections.singletonList(getExpression());
+    }
+
     public Expression getExpression() {
         if (expression != null && expression.getValue() instanceof String) {
             return new InternalPropertyName((String)expression.getValue());
@@ -113,7 +114,6 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public JAXBElement<?> getJbExpression() {
         return expression;
@@ -128,20 +128,9 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

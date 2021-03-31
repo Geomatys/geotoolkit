@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.opengis.filter.spatial.Contains;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -31,13 +31,11 @@ import org.opengis.filter.spatial.Contains;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "Contains")
-public class ContainsType extends BinarySpatialOpType implements Contains {
-
+public class ContainsType extends BinarySpatialOpType {
     /**
      * An empty constructor used by JAXB
      */
     public ContainsType() {
-
     }
 
     /**
@@ -61,6 +59,11 @@ public class ContainsType extends BinarySpatialOpType implements Contains {
     @Override
     public SpatialOpsType getClone() {
         return new ContainsType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.CONTAINS;
     }
 
     @Override

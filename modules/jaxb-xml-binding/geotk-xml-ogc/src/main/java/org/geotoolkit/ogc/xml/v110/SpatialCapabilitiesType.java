@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.opengis.filter.capability.GeometryOperand;
-import org.opengis.filter.capability.SpatialCapabilities;
-import org.opengis.filter.capability.SpatialOperators;
+import org.geotoolkit.filter.capability.SpatialCapabilities;
+import org.geotoolkit.filter.capability.SpatialOperators;
 
 
 /**
@@ -47,16 +47,13 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Spatial_CapabilitiesType", propOrder = {
     "geometryOperands",
     "spatialOperators"
 })
-public class SpatialCapabilitiesType implements SpatialCapabilities {
+public class SpatialCapabilitiesType extends SpatialCapabilities {
 
     @XmlElement(name = "GeometryOperands", required = true)
     private GeometryOperandsType geometryOperands;
@@ -67,7 +64,6 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
      * empty constructor used by JAXB
      */
     public SpatialCapabilitiesType() {
-
     }
 
     /**
@@ -103,7 +99,6 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * implements SpatialCapabilities geoAPI interface
-     * @return
      */
     @Override
     public Collection<GeometryOperand> getGeometryOperands() {
@@ -153,5 +148,4 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
         hash = 67 * hash + (this.spatialOperators != null ? this.spatialOperators.hashCode() : 0);
         return hash;
     }
-
 }

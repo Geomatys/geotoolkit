@@ -19,59 +19,57 @@ package org.geotoolkit.filter.function.string;
 
 import org.junit.Test;
 
-import org.opengis.filter.expression.Function;
-
 import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import org.opengis.filter.Expression;
 
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class StringFunctionTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testTruncateFirst() {
-        Function f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal(1112),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "112");
+        Expression f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal(1112),FF.literal(3));
+        assertEquals(f.apply(null), "112");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal(998),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "998");
+        assertEquals(f.apply(null), "998");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal(72),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "72");
+        assertEquals(f.apply(null), "72");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal("1112"),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "112");
+        assertEquals(f.apply(null), "112");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal("998"),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "998");
+        assertEquals(f.apply(null), "998");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal("72"),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "72");
+        assertEquals(f.apply(null), "72");
         assertSerializedEquals(f); //test serialize
     }
 
     @Test
     public void testTruncateLast() {
-        Function f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal(1112),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "111");
+        Expression f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal(1112),FF.literal(3));
+        assertEquals(f.apply(null), "111");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal(998),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "998");
+        assertEquals(f.apply(null), "998");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal(72),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "72");
+        assertEquals(f.apply(null), "72");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal("1112"),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "111");
+        assertEquals(f.apply(null), "111");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal("998"),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "998");
+        assertEquals(f.apply(null), "998");
 
         f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal("72"),FF.literal(3));
-        assertEquals(f.evaluate(null, String.class), "72");
+        assertEquals(f.apply(null), "72");
         assertSerializedEquals(f); //test serialize
     }
 }

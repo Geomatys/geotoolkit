@@ -17,27 +17,18 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class RoundDoubleFunction extends AbstractFunction {
 
     public RoundDoubleFunction(final Expression expression) {
-        super(OtherFunctionFactory.ROUND_DOUBLE, new Expression[]{expression}, null);
+        super(OtherFunctionFactory.ROUND_DOUBLE, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        double arg0;
-
-        try { // attempt to get value and perform conversion
-            arg0 = ((Number) parameters.get(0).evaluate(feature)).doubleValue();
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function roundDouble argument #0 - expected type double");
-        }
-
+    public Object apply(final Object feature) {
+        double arg0 = doubleValue(feature, 0);
         return StaticUtils.roundDouble(arg0);
     }
 }

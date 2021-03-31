@@ -23,14 +23,14 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.ValueReference;
+import org.opengis.filter.SortProperty;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -88,7 +88,7 @@ public final class Query extends SimpleQuery {
      */
     Query(final String typeName, final String[] attributs) {
         this(typeName,
-                Filter.INCLUDE,
+                Filter.include(),
                 attributs,
                 null,
                 null,
@@ -100,13 +100,13 @@ public final class Query extends SimpleQuery {
                 null);
     }
 
-    Query(final String typeName, final Filter filter, final String[] attributs, final SortBy[] sort,
+    Query(final String typeName, final Filter filter, final String[] attributs, final SortProperty[] sort,
             final CoordinateReferenceSystem crs, final long startIndex, final long MaxFeature,
             final double[] resolution, Quantity<Length> linearResolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", typeName);
         if (filter == null) {
-            throw new NullArgumentException("Query filter can not be null, did you mean Filter.INCLUDE ?");
+            throw new NullArgumentException("Query filter can not be null, did you mean Filter.include()?");
         }
 
         setFilter(filter);
@@ -116,7 +116,7 @@ public final class Query extends SimpleQuery {
         setLinearResolution(linearResolution);
 
         if (attributs != null && attributs.length > 0) {
-            final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+            final FilterFactory ff = FilterUtilities.FF;
             final List<Column> columns = new ArrayList<>();
             for (String att : attributs) {
                 columns.add(new Column(ff.property(att)));
@@ -219,7 +219,7 @@ public final class Query extends SimpleQuery {
         if (columns == null) return null;
         final String[] names = new String[columns.size()];
         for (int i=0;i<names.length;i++) {
-            names[i] = ((PropertyName)columns.get(i).expression).getPropertyName();
+            names[i] = ((ValueReference)columns.get(i).expression).getXPath();
         }
         return names;
     }
@@ -357,5 +357,4 @@ public final class Query extends SimpleQuery {
         hash = 83 * hash + (this.crs != null ? this.crs.hashCode() : 0);
         return hash;
     }
-
 }

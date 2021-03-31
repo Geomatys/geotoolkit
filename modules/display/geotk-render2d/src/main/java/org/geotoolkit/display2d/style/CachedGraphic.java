@@ -26,7 +26,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;

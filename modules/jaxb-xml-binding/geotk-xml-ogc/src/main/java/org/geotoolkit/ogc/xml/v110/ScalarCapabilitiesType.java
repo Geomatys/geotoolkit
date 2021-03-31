@@ -21,9 +21,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.ArithmeticOperators;
-import org.opengis.filter.capability.ComparisonOperators;
-import org.opengis.filter.capability.ScalarCapabilities;
+import org.geotoolkit.filter.capability.ArithmeticOperators;
+import org.geotoolkit.filter.capability.ComparisonOperators;
+import org.geotoolkit.filter.capability.ScalarCapabilities;
 
 
 /**
@@ -44,9 +44,6 @@ import org.opengis.filter.capability.ScalarCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Scalar_CapabilitiesType", propOrder = {
@@ -54,7 +51,7 @@ import org.opengis.filter.capability.ScalarCapabilities;
     "comparisonOperators",
     "arithmeticOperators"
 })
-public class ScalarCapabilitiesType implements ScalarCapabilities {
+public class ScalarCapabilitiesType extends ScalarCapabilities {
 
     @XmlElement(name = "LogicalOperators")
     private LogicalOperators logicalOperators;

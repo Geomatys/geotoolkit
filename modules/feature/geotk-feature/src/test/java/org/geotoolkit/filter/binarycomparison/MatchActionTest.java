@@ -19,16 +19,16 @@ package org.geotoolkit.filter.binarycomparison;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.filter.DefaultPropertyName;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.MatchAction;
+import static org.geotoolkit.filter.FilterTestConstants.FF;
+import org.opengis.filter.Filter;
+
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class MatchActionTest {
 
@@ -38,18 +38,18 @@ public class MatchActionTest {
         final Map<String,Object> candidate = new HashMap<>();
         candidate.put("name", Arrays.asList("da vinci","polo","galileo"));
 
-        final DefaultPropertyIsEqualTo filter = new DefaultPropertyIsEqualTo(
-                new DefaultPropertyName("name"),
-                new DefaultLiteral("copernic"),
+        final Filter filter = FF.equal(
+                FF.property("name"),
+                FF.literal("copernic"),
                 true, MatchAction.ALL);
 
-        assertFalse(filter.evaluate(candidate));
+        assertFalse(filter.test(candidate));
 
         candidate.put("name", Arrays.asList("da vinci","copernic","galileo"));
-        assertFalse(filter.evaluate(candidate));
+        assertFalse(filter.test(candidate));
 
         candidate.put("name", Arrays.asList("copernic","copernic","copernic"));
-        assertTrue(filter.evaluate(candidate));
+        assertTrue(filter.test(candidate));
     }
 
     @Test
@@ -58,18 +58,18 @@ public class MatchActionTest {
         final Map<String,Object> candidate = new HashMap<>();
         candidate.put("name", Arrays.asList("da vinci","polo","galileo"));
 
-        final DefaultPropertyIsEqualTo filter = new DefaultPropertyIsEqualTo(
-                new DefaultPropertyName("name"),
-                new DefaultLiteral("copernic"),
+        final Filter filter = FF.equal(
+                FF.property("name"),
+                FF.literal("copernic"),
                 true, MatchAction.ANY);
 
-        assertFalse(filter.evaluate(candidate));
+        assertFalse(filter.test(candidate));
 
         candidate.put("name", Arrays.asList("copernic","copernic","copernic"));
-        assertTrue(filter.evaluate(candidate));
+        assertTrue(filter.test(candidate));
 
         candidate.put("name", Arrays.asList("da vinci","copernic","galileo"));
-        assertTrue(filter.evaluate(candidate));
+        assertTrue(filter.test(candidate));
     }
 
     @Test
@@ -78,18 +78,17 @@ public class MatchActionTest {
         final Map<String,Object> candidate = new HashMap<>();
         candidate.put("name", Arrays.asList("da vinci","polo","galileo"));
 
-        final DefaultPropertyIsEqualTo filter = new DefaultPropertyIsEqualTo(
-                new DefaultPropertyName("name"),
-                new DefaultLiteral("copernic"),
+        final Filter filter = FF.equal(
+                FF.property("name"),
+                FF.literal("copernic"),
                 true, MatchAction.ONE);
 
-        assertFalse(filter.evaluate(candidate));
+        assertFalse(filter.test(candidate));
 
         candidate.put("name", Arrays.asList("copernic","copernic","copernic"));
-        assertFalse(filter.evaluate(candidate));
+        assertFalse(filter.test(candidate));
 
         candidate.put("name", Arrays.asList("da vinci","copernic","galileo"));
-        assertTrue(filter.evaluate(candidate));
+        assertTrue(filter.test(candidate));
     }
-
 }

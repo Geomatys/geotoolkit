@@ -23,9 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.UnaryLogicOperator;
-import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -48,9 +46,6 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UnaryLogicOpType", propOrder = {
@@ -71,7 +66,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      * An empty constructor used by JAXB
      */
      public UnaryLogicOpType() {
-
      }
 
      /**
@@ -179,8 +173,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
 
     /**
      * implements geoAPI interface
-     *
-     * @return
      */
     public Filter getFilter() {
         if (comparisonOps != null) {
@@ -238,7 +230,7 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
             } else if (this.spatialOps == null && that.spatialOps == null) {
                 spa = true;
             }
-            /**
+            /*
              * TODO ID
              */
             return  comp && spa && log;
@@ -268,16 +260,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
             s.append("LogicOps: ").append(logicOps.getValue().toString()).append('\n');
         }
         return s.toString();
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

@@ -14,15 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.storage.feature;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
@@ -32,11 +29,9 @@ import org.opengis.filter.Filter;
  * This modify the features that match the given filter and changes the attributes values.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 @Deprecated
 public class GenericModifyFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
-
 
     protected final R iterator;
     protected final Filter filter;
@@ -83,10 +78,9 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
     @Override
     public boolean hasNext() throws FeatureStoreRuntimeException {
         if(nextFeature != null) return true;
-
         if(iterator.hasNext()){
             Feature candidate = iterator.next();
-            if(filter.evaluate(candidate)){
+            if(filter.test(candidate)){
                 candidate = FeatureExt.copy(candidate);
                 //must modify this feature
                 for(final Entry<String,?> entry : values.entrySet()){
@@ -98,10 +92,8 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
                     }
                 }
             }
-
             nextFeature = candidate;
         }
-
         return nextFeature != null;
     }
 
@@ -146,5 +138,4 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
 
         return candidate;
     }
-
 }

@@ -19,17 +19,15 @@ package org.geotoolkit.style.function;
 import java.awt.Color;
 import java.util.Map;
 import org.opengis.annotation.XmlElement;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 
 /**
  *
  * @author Quentin Boileau (Geomatys).
  */
 @XmlElement("Jenks")
-public interface Jenks extends Function {
-
-
+public interface Jenks extends Expression<Object,Object> {
     /**
      * Get number of class.
      */

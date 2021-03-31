@@ -16,18 +16,16 @@
  */
 package org.geotoolkit.style;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.LinePlacement;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Line placement.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultLinePlacement implements LinePlacement{
 
@@ -56,11 +54,11 @@ public class DefaultLinePlacement implements LinePlacement{
     public DefaultLinePlacement(final Expression offset, final Expression initial, final Expression gap,
             final boolean repeated, final boolean aligned, final boolean generalize){
 
-        this.offset = (offset == null || offset == NIL) ? DEFAULT_LINEPLACEMENT_OFFSET : offset;
-        this.initial  = (initial == null || initial == NIL) ? DEFAULT_LINEPLACEMENT_INITIAL_GAP : initial;
-        this.gap = (gap == null || gap == NIL) ? DEFAULT_LINEPLACEMENT_GAP : gap;
-        this.repeated = repeated;
-        this.aligned = aligned;
+        this.offset     = (offset  == null) ? DEFAULT_LINEPLACEMENT_OFFSET : offset;
+        this.initial    = (initial == null) ? DEFAULT_LINEPLACEMENT_INITIAL_GAP : initial;
+        this.gap        = (gap     == null) ? DEFAULT_LINEPLACEMENT_GAP : gap;
+        this.repeated   = repeated;
+        this.aligned    = aligned;
         this.generalize = generalize;
     }
 

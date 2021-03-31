@@ -20,7 +20,7 @@ import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.visitor.ListingPropertyVisitor;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
 import org.apache.sis.measure.Units;
@@ -39,8 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.opengis.filter.FilterFactory;
+import org.geotoolkit.filter.FilterUtilities;
 
 /**
  * Pie symbolizer.
@@ -127,29 +126,29 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
 
         for (final ColorQuarter colorQuarter : colorQuarters) {
             if (colorQuarter.getColor() != null) {
-                colorQuarter.getColor().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(colorQuarter.getColor(), properties);
             }
             if (colorQuarter.getQuarter() != null) {
-                colorQuarter.getQuarter().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(colorQuarter.getQuarter(), properties);
             }
         }
 
         if(getSize() != null){
-            getSize().accept(ListingPropertyVisitor.VISITOR, properties);
+            ListingPropertyVisitor.VISITOR.visit(getSize(), properties);
         }
         if(getGroup() != null){
-            getGroup().accept(ListingPropertyVisitor.VISITOR, properties);
+            ListingPropertyVisitor.VISITOR.visit(getGroup(), properties);
         }
         if(getQuarter() != null){
-            getQuarter().accept(ListingPropertyVisitor.VISITOR, properties);
+            ListingPropertyVisitor.VISITOR.visit(getQuarter(), properties);
         }
         if(getValue() != null){
-            getValue().accept(ListingPropertyVisitor.VISITOR, properties);
+            ListingPropertyVisitor.VISITOR.visit(getValue(), properties);
         }
 
         int i=0;
         for(String str : properties){
-            config.put(String.valueOf(i++), DefaultFactories.forBuildin(FilterFactory.class).property(str));
+            config.put(String.valueOf(i++), FilterUtilities.FF.property(str));
         }
         return config;
     }

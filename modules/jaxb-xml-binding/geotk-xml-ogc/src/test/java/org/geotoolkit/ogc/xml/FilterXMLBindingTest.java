@@ -18,7 +18,6 @@ package org.geotoolkit.ogc.xml;
 
 // J2SE dependencies
 import java.io.IOException;
-import org.opengis.filter.sort.SortOrder;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -33,6 +32,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 
 // Geotoolkit dependencies
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
@@ -137,8 +137,6 @@ public class FilterXMLBindingTest extends org.geotoolkit.test.TestBase {
         LOGGER.log(Level.FINER, "expected: {0}", expResult);
         assertXmlEquals(expResult, result, "xmlns:*");
 
-
-
         ObjectFactory factory = new ObjectFactory();
 
         final BBOXType bbox = new BBOXType("propName", envelope);
@@ -178,7 +176,7 @@ public class FilterXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         //marshaller.marshal(jbSort, System.out);
 
-        sp = new SortPropertyType(arr[0], SortOrder.valueOf(arr[1]));
+        sp = new SortPropertyType(arr[0], FilterUtilities.sortOrder(arr[1]));
         sort = new SortByType(Arrays.asList(sp));
 
         jbSort = factory.createSortBy(sort);

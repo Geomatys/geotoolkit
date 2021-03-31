@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -44,9 +43,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FormatNumberType", propOrder = {
@@ -75,7 +71,6 @@ public class FormatNumberType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getNumericValue() {
         return numericValue;
@@ -87,7 +82,6 @@ public class FormatNumberType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setNumericValue(final ParameterValueType value) {
         this.numericValue = value;
@@ -99,7 +93,6 @@ public class FormatNumberType
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     public String getPattern() {
         return pattern;
@@ -111,7 +104,6 @@ public class FormatNumberType
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setPattern(final String value) {
         this.pattern = value;
@@ -123,7 +115,6 @@ public class FormatNumberType
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     public String getNegativePattern() {
         return negativePattern;
@@ -135,7 +126,6 @@ public class FormatNumberType
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setNegativePattern(final String value) {
         this.negativePattern = value;
@@ -147,7 +137,6 @@ public class FormatNumberType
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     public String getDecimalPoint() {
         if (decimalPoint == null) {
@@ -163,7 +152,6 @@ public class FormatNumberType
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setDecimalPoint(final String value) {
         this.decimalPoint = value;
@@ -175,7 +163,6 @@ public class FormatNumberType
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     public String getGroupingSeparator() {
         if (groupingSeparator == null) {
@@ -191,10 +178,8 @@ public class FormatNumberType
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setGroupingSeparator(final String value) {
         this.groupingSeparator = value;
     }
-
 }

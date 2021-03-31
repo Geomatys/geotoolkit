@@ -17,28 +17,27 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class NotFunction extends AbstractFunction {
 
     public NotFunction(final Expression expression) {
-        super(OtherFunctionFactory.NOT, new Expression[]{expression}, null);
+        super(OtherFunctionFactory.NOT, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
         boolean arg0;
 
         try { // attempt to get value and perform conversion
-            arg0 = ((Boolean) parameters.get(0).evaluate(feature))
+            arg0 = ((Boolean) parameters.get(0).apply(feature))
                     .booleanValue();
         } catch (Exception e) // probably a type error
         {
             throw new IllegalArgumentException(
                     "Filter Function problem for function not argument #0 - expected type boolean");
         }
-
         return StaticUtils.not(arg0);
     }
 }

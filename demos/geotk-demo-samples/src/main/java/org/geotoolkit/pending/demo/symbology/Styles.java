@@ -20,7 +20,7 @@ import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
-import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.map.MapBuilder;
@@ -37,9 +37,8 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -77,7 +76,7 @@ public class Styles {
     /**
      * Factories used in all symbology exemples.
      */
-    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    protected static final FilterFactory<Object,Object,Object> FF = FilterUtilities.FF;
     protected static final MutableSLDFactory SLDF = new DefaultSLDFactory();
     protected static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
@@ -599,7 +598,7 @@ public class Styles {
         values.add( SF.interpolationPoint(4397, SF.literal(new Color(215,244,244 ))));
         final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
         final Literal fallback = DEFAULT_FALLBACK;
-        final Function function = SF.interpolateFunction(
+        final Expression function = SF.interpolateFunction(
                 lookup, values, Method.COLOR, Mode.LINEAR, fallback);
 
         final ChannelSelection selection = null;
@@ -623,14 +622,14 @@ public class Styles {
 
         final Map<Expression, Expression> values = new HashMap<>();
         values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(46,154,88)));
-        values.put( new DefaultLiteral<Number>(1003), SF.literal(new Color(46,154,88)));
-        values.put( new DefaultLiteral<Number>(1800), SF.literal(new Color(251,255,128)));
-        values.put( new DefaultLiteral<Number>(2800), SF.literal(new Color(224,108,31)));
-        values.put( new DefaultLiteral<Number>(3500), SF.literal(new Color(200,55,55)));
-        values.put( new DefaultLiteral<Number>(4397), SF.literal(new Color(215,244,244 )));
+        values.put( FF.literal(1003), SF.literal(new Color(46,154,88)));
+        values.put( FF.literal(1800), SF.literal(new Color(251,255,128)));
+        values.put( FF.literal(2800), SF.literal(new Color(224,108,31)));
+        values.put( FF.literal(3500), SF.literal(new Color(200,55,55)));
+        values.put( FF.literal(4397), SF.literal(new Color(215,244,244 )));
         final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
         final Literal fallback = DEFAULT_FALLBACK;
-        final Function function = SF.categorizeFunction(lookup, values, ThreshholdsBelongTo.SUCCEEDING, fallback);
+        final Expression function = SF.categorizeFunction(lookup, values, ThreshholdsBelongTo.SUCCEEDING, fallback);
 
         final ChannelSelection selection = null;
         final Expression opacity = LITERAL_ONE_FLOAT;

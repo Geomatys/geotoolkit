@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiPolygon;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -46,9 +45,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiPolygonType", propOrder = {
@@ -60,7 +56,6 @@ public class MultiPolygonType extends AbstractGeometricAggregateType implements 
     private List<PolygonPropertyType> polygonMember;
 
     public MultiPolygonType() {
-
     }
 
     public MultiPolygonType(final String srsName, final List<PolygonPropertyType> polygonMember) {
@@ -73,8 +68,6 @@ public class MultiPolygonType extends AbstractGeometricAggregateType implements 
      *
      * Objects of the following type(s) are allowed in the list
      * {@link PolygonPropertyType }
-     *
-     *
      */
     public List<PolygonPropertyType> getPolygonMember() {
         if (polygonMember == null) {
@@ -94,21 +87,6 @@ public class MultiPolygonType extends AbstractGeometricAggregateType implements 
             }
             this.polygonMember.add(polygonMember);
         }
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
      /**
@@ -133,8 +111,6 @@ public class MultiPolygonType extends AbstractGeometricAggregateType implements 
         hash = 97 * hash + (this.polygonMember != null ? this.polygonMember.hashCode() : 0);
         return hash;
     }
-
-
 
     @Override
     public String toString() {

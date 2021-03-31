@@ -25,15 +25,15 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.CharSequences;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 import static org.geotoolkit.process.mapfile.MapfileTypes.*;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -49,7 +49,7 @@ import org.opengis.feature.PropertyType;
 public class MapfileReader {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     private Object in = null;
 
@@ -183,13 +183,13 @@ public class MapfileReader {
         }else if(Point2D.class.isAssignableFrom(clazz)){
             final String[] parts = value.split(" ");
             return new Point2D.Double(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]));
-        }else if(PropertyName.class.isAssignableFrom(clazz)){
+        }else if(ValueReference.class.isAssignableFrom(clazz)){
             //return it as a property name
             return FF.property(value);
         }else if(Expression.class.isAssignableFrom(clazz)){
 
             if(value.startsWith("[")){
-                // like : [ATTRIBUTE] => PropertyName
+                // like : [ATTRIBUTE] => ValueReference
                 value = value.substring(1, value.length()-1);
                 return FF.property(value);
             }

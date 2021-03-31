@@ -20,7 +20,7 @@ import java.util.Objects;
 import org.apache.sis.util.Classes;
 import javax.measure.Unit;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Description;
 import org.opengis.style.Fill;
 import org.opengis.style.Font;

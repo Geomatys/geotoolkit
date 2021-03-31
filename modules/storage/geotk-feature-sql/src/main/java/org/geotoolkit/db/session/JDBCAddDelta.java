@@ -29,7 +29,7 @@ import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.Feature;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 
 /**
  * Makes all queries in JDBC transaction.
@@ -47,7 +47,7 @@ public class JDBCAddDelta extends AddDelta{
         final DefaultJDBCFeatureStore jdbcstore = (DefaultJDBCFeatureStore) store;
         final Connection cnx = ((JDBCSession)session).getTransaction();
 
-        final List<FeatureId> createdIds = jdbcstore.addFeatures(type, features, cnx, null);
+        final List<ResourceId> createdIds = jdbcstore.addFeatures(type, features, cnx, null);
 
         //iterator and list should have the same size
         final Map<String,String> updates = new HashMap<>();
@@ -58,16 +58,14 @@ public class JDBCAddDelta extends AddDelta{
                 while(ite.hasNext()){
                     final Feature f = ite.next();
                     final String id = (String) f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
-                    updates.put(id, createdIds.get(i).getID());
+                    updates.put(id, createdIds.get(i).getIdentifier());
                     i++;
                 }
             }
         }finally{
             ite.close();
         }
-
         features.clear();
         return updates;
     }
-
 }

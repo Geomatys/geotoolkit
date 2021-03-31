@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- *
  */
 @XmlType(name = "SortOrderType")
 @XmlEnum
@@ -49,5 +48,4 @@ public enum SortOrderType {
     public static SortOrderType fromValue(final String v) {
         return valueOf(v);
     }
-
 }

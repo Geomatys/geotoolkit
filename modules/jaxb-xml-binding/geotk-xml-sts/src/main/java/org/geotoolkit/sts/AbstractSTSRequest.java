@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.util.Version;
-import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.SortOrder;
 
 /**
  *

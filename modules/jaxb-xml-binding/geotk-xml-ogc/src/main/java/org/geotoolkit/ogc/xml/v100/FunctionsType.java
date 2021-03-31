@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.capability.Functions;
+import org.geotoolkit.filter.capability.FunctionName;
+import org.geotoolkit.filter.capability.Functions;
 
 
 /**
@@ -43,25 +43,18 @@ import org.opengis.filter.capability.Functions;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionsType", propOrder = {
     "functionNames"
 })
-public class FunctionsType implements Functions {
+public class FunctionsType extends Functions {
 
     @XmlElement(name = "Function_Names", required = true)
     private FunctionNamesType functionNames;
 
     /**
      * Gets the value of the functionNames property.
-     *
-     * @return
-     *     possible object is
-     *     {@link FunctionNamesType }
-     *
      */
     public FunctionNamesType getNames() {
         return functionNames;
@@ -69,11 +62,6 @@ public class FunctionsType implements Functions {
 
     /**
      * Sets the value of the functionNames property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link FunctionNamesType }
-     *
      */
     public void setFunctionNames(FunctionNamesType value) {
         this.functionNames = value;
@@ -100,5 +88,4 @@ public class FunctionsType implements Functions {
         }
         return null;
     }
-
 }

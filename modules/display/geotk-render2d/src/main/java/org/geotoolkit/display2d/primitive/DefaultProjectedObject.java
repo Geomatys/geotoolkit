@@ -21,7 +21,7 @@ import java.util.Map;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.apache.sis.portrayal.MapLayer;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 /**

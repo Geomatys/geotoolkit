@@ -18,9 +18,10 @@ package org.geotoolkit.filter.visitor;
 
 import org.locationtech.jts.geom.Geometry;
 import java.util.logging.Level;
+import org.apache.sis.internal.filter.FunctionNames;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Literal;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.logging.Logging;
@@ -29,35 +30,34 @@ import org.apache.sis.util.logging.Logging;
  * Used to clean PropertyEqualsTo on identifiers.
  *
  * @author Johann Sorel (Geomatys)
- * @module
+ *
+ * @deprecated Not used anymore.
  */
-public class FillCrsVisitor extends DuplicatingFilterVisitor{
+@Deprecated
+public class FillCrsVisitor extends DuplicatingFilterVisitor {
 
-    public static final FillCrsVisitor VISITOR = new FillCrsVisitor();
-
-    @Override
-    public Object visit(Literal expression, Object extraData) {
-        final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) extraData;
-        Object obj = expression.getValue();
-        if(obj instanceof BoundingBox){
-            BoundingBox bbox = (BoundingBox) obj;
-            if(bbox.getCoordinateReferenceSystem() == null){
-                obj = new BoundingBox(bbox,crs);
-            }
-        }else if(obj instanceof Geometry){
-            try {
-                Geometry geo = (Geometry) obj;
-                geo = (Geometry) geo.clone();
-                if(JTS.findCoordinateReferenceSystem(geo) == null){
-                    JTS.setCRS(geo, crs);
+    public FillCrsVisitor(final CoordinateReferenceSystem crs) {
+        setExpressionHandler(FunctionNames.Literal, (e) -> {
+            final Literal<Object,?> expression = (Literal<Object,?>) e;
+            Object obj = expression.getValue();
+            if (obj instanceof BoundingBox) {
+                BoundingBox bbox = (BoundingBox) obj;
+                if (bbox.getCoordinateReferenceSystem() == null) {
+                    obj = new BoundingBox(bbox, crs);
                 }
-                obj = geo;
-            } catch (FactoryException ex) {
-                Logging.getLogger("org.geotoolkit.filter.visitor").log(Level.SEVERE, null, ex);
+            } else if (obj instanceof Geometry) {
+                try {
+                    Geometry geo = (Geometry) obj;
+                    geo = (Geometry) geo.clone();
+                    if (JTS.findCoordinateReferenceSystem(geo) == null) {
+                        JTS.setCRS(geo, crs);
+                    }
+                    obj = geo;
+                } catch (FactoryException ex) {
+                    Logging.getLogger("org.geotoolkit.filter.visitor").log(Level.SEVERE, null, ex);
+                }
             }
-        }
-
-        return getFactory(extraData).literal(obj);
+            return ff.literal(obj);
+        });
     }
-
 }

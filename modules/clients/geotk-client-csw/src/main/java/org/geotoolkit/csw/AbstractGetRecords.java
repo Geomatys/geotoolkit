@@ -43,9 +43,9 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.filter.Filter;
-import org.opengis.filter.sort.SortOrder;
-import static org.opengis.filter.sort.SortOrder.ASCENDING;
-import static org.opengis.filter.sort.SortOrder.DESCENDING;
+import org.opengis.filter.SortOrder;
+import static org.opengis.filter.SortOrder.ASCENDING;
+import static org.opengis.filter.SortOrder.DESCENDING;
 
 /**
  * Abstract implementation of {@link GetRecordsRequest}, which defines the

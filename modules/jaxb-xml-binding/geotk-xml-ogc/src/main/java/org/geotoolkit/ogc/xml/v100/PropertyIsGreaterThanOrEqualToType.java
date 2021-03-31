@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
+import org.opengis.filter.ComparisonOperatorName;
 
 /**
  *
@@ -30,10 +30,9 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsGreaterThanOrEqualTo")
 @XmlRootElement(name = "PropertyIsGreaterThanOrEqualTo")
-public class PropertyIsGreaterThanOrEqualToType extends BinaryComparisonOpType implements PropertyIsGreaterThanOrEqualTo {
+public class PropertyIsGreaterThanOrEqualToType extends BinaryComparisonOpType {
 
     public PropertyIsGreaterThanOrEqualToType() {
-
     }
 
     /**
@@ -50,5 +49,10 @@ public class PropertyIsGreaterThanOrEqualToType extends BinaryComparisonOpType i
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsGreaterThanOrEqualToType(this);
+    }
+
+    @Override
+    public ComparisonOperatorName getOperatorType() {
+        return ComparisonOperatorName.PROPERTY_IS_GREATER_THAN_OR_EQUAL_TO;
     }
 }

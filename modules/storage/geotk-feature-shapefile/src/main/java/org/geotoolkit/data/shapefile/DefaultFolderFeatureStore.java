@@ -47,7 +47,7 @@ import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -98,7 +98,6 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
             singleFileDefaultParameters.getOrCreate((ParameterDescriptor)pdesc)
                     .setValue(folderParameters.getValue((ParameterDescriptor) pdesc));
         }
-
     }
 
     /**
@@ -303,7 +302,7 @@ public class DefaultFolderFeatureStore<T extends DataStoreFactory & FileFeatureS
      * {@inheritDoc}
      */
     @Override
-    public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
+    public List<ResourceId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         typeCheck(groupName);
         final FeatureStore store = stores.get(this, groupName);

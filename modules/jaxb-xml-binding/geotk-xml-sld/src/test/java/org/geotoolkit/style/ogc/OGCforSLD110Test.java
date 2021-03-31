@@ -20,18 +20,21 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.junit.Test;
 import org.opengis.filter.Filter;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
-import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
+import org.opengis.filter.SortProperty;
+import org.opengis.filter.SortOrder;
+import org.opengis.filter.BinarySpatialOperator;
 import org.geotoolkit.geometry.BoundingBox;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
@@ -47,42 +50,43 @@ public class OGCforSLD110Test {
         StyleXmlIO util = new StyleXmlIO();
         final Filter filter = util.readFilter(OGCforSLD110Test.class.getResource("/org/geotoolkit/test/filter/filterbbox.xml"), org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
 
-        assertTrue(filter instanceof Or);
+        assertEquals(LogicalOperatorName.OR, filter.getOperatorType());
 
-        final Or or = (Or) filter;
-        final Filter f1 = or.getChildren().get(0);
-        final Filter f2 = or.getChildren().get(1);
-        assertTrue(f1 instanceof PropertyIsEqualTo);
-        assertTrue(f2 instanceof BBOX);
+        final LogicalOperator<Object> or = (LogicalOperator) filter;
+        final Filter f1 = or.getOperands().get(0);
+        final Filter f2 = or.getOperands().get(1);
+        assertEquals(ComparisonOperatorName.PROPERTY_IS_EQUAL_TO, f1.getOperatorType());
+        assertEquals(SpatialOperatorName.BBOX, f2.getOperatorType());
 
-        final PropertyIsEqualTo ff1 = (PropertyIsEqualTo) f1;
-        final BBOX ff2 = (BBOX) f2;
+        final BinaryComparisonOperator<Object> ff1 = (BinaryComparisonOperator) f1;
+        final BinarySpatialOperator<Object> ff2 = (BinarySpatialOperator) f2;
 
-        assertTrue(ff1.getExpression1() instanceof PropertyName);
-        assertTrue(ff1.getExpression2() instanceof Literal);
-        assertTrue(ff2.getExpression1() instanceof PropertyName);
-        assertTrue(ff2.getExpression2() instanceof Literal);
+        assertTrue(ff1.getOperand1() instanceof ValueReference);
+        assertTrue(ff1.getOperand2() instanceof Literal);
+        assertTrue(ff2.getOperand1() instanceof ValueReference);
+        assertTrue(ff2.getOperand2() instanceof Literal);
 
-        assertEquals("sf:str4Property", ((PropertyName)ff1.getExpression1()).getPropertyName());
-        assertEquals("abc3", ((Literal)ff1.getExpression2()).getValue());
-        assertEquals("sf:attribut.Géométrie", ((PropertyName)ff2.getExpression1()).getPropertyName());
+        assertEquals("sf:str4Property", ((ValueReference)ff1.getOperand1()).getXPath());
+        assertEquals("abc3", ((Literal)ff1.getOperand2()).getValue());
+        assertEquals("sf:attribut.Géométrie", ((ValueReference)ff2.getOperand1()).getXPath());
 
-        final BoundingBox geom = (BoundingBox) ((Literal)ff2.getExpression2()).getValue();
+        final BoundingBox geom = (BoundingBox) ((Literal)ff2.getOperand2()).getValue();
         assertEquals(34d,geom.getMinX(),1e-7);
         assertEquals(40d,geom.getMaxX(),1e-7);
         assertEquals(15d,geom.getMinY(),1e-7);
         assertEquals(19d,geom.getMaxY(),1e-7);
         final CoordinateReferenceSystem crs = geom.getCoordinateReferenceSystem();
         assertEquals(CommonCRS.WGS84.geographic(), crs);
-
     }
 
     @Test
     public void testCustom2() throws JAXBException, FactoryException {
         StyleXmlIO util = new StyleXmlIO();
-        final SortBy sort = util.readSortBy(OGCforSLD110Test.class.getResource("/org/geotoolkit/test/filter/sortby.xml"), org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
+        final SortProperty sort = util.readSortBy(
+                OGCforSLD110Test.class.getResource("/org/geotoolkit/test/filter/sortby.xml"),
+                org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
 
-        assertEquals("sf:str4Property", sort.getPropertyName().getPropertyName());
+        assertEquals("sf:str4Property", sort.getValueReference().getXPath());
         assertEquals(SortOrder.ASCENDING, sort.getSortOrder());
     }
 }

@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v110;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeOverlappedByType extends BinaryTemporalOpType implements OverlappedBy {
-
+public class TimeOverlappedByType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeOverlappedByType() {
-
     }
 
     public TimeOverlappedByType(final String propertyName, final Object temporal) {
@@ -47,13 +44,7 @@ public class TimeOverlappedByType extends BinaryTemporalOpType implements Overla
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.OVERLAPPED_BY;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

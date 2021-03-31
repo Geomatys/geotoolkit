@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.ArithmeticOperators;
-import org.opengis.filter.capability.Functions;
+import org.geotoolkit.filter.capability.ArithmeticOperators;
+import org.geotoolkit.filter.capability.Functions;
 
 
 /**
@@ -51,7 +51,7 @@ import org.opengis.filter.capability.Functions;
     "simpleArithmetic",
     "functions"
 })
-public class ArithmeticOperatorsType implements ArithmeticOperators {
+public class ArithmeticOperatorsType extends ArithmeticOperators {
 
     @XmlElement(name = "Functions")
     private FunctionType functions;
@@ -62,13 +62,13 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
      * An empty constructor used by JAXB
      */
     public ArithmeticOperatorsType() {
-
     }
 
     /**
      * Build a new Arithmetic Operators
      */
     public ArithmeticOperatorsType(final boolean simple, final Functions functions) {
+        super(simple, functions);
         if (simple) {
             this.simpleArithmetic = new SimpleArithmetic();
         }

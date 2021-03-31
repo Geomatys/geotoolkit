@@ -16,12 +16,19 @@
  */
 package org.geotoolkit.filter.capability;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.iso.Names;
+import org.opengis.filter.TemporalOperatorName;
 import org.opengis.filter.capability.TemporalCapabilities;
-import org.opengis.filter.capability.TemporalOperand;
-import org.opengis.filter.capability.TemporalOperators;
+import org.opengis.util.CodeList;
+import org.opengis.util.LocalName;
+import org.opengis.util.ScopedName;
 
 /**
  * Immutable temporal capabilities
@@ -29,12 +36,13 @@ import org.opengis.filter.capability.TemporalOperators;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultTemporalCapabilities implements TemporalCapabilities{
+@Deprecated
+public class DefaultTemporalCapabilities implements TemporalCapabilities {
 
-    private final Collection<TemporalOperand> operands;
+    private final Collection<CodeList<?>> operands;
     private final TemporalOperators operators;
 
-    public DefaultTemporalCapabilities(final TemporalOperand[] operands, final TemporalOperators operators) {
+    public DefaultTemporalCapabilities(final CodeList<?>[] operands, final TemporalOperators operators) {
         ensureNonNull("operands", operands);
         ensureNonNull("temporal operators", operators);
         if(operands == null){
@@ -45,14 +53,39 @@ public class DefaultTemporalCapabilities implements TemporalCapabilities{
         this.operators = operators;
     }
 
+    private static List<ScopedName> getTemporalOperands(final Collection<CodeList<?>> operands) {
+        final LocalName scope = Names.createLocalName(null, null, "geotk");
+        final List<ScopedName> names = new ArrayList<>(operands.size());
+        for (final CodeList<?> op : operands) {
+            names.add(Names.createScopedName(scope, ":", op.identifier()));
+        }
+        return names;
+    }
+
     @Override
-    public Collection<TemporalOperand> getTemporalOperands() {
+    public Collection<? extends ScopedName> getTemporalOperands() {
+        return getTemporalOperands(operands);
+    }
+
+    public Collection<CodeList<?>> getTemporalOperands2() {
         return operands;
     }
 
     @Override
-    public TemporalOperators getTemporalOperators() {
-        return operators;
+    public Map<TemporalOperatorName, List<? extends ScopedName>> getTemporalOperators() {
+        final Map<TemporalOperatorName, List<? extends ScopedName>> names = new HashMap<>();
+        for (final TemporalOperator op : operators.getOperators()) {
+            final String name = op.getName();
+            final TemporalOperatorName key = TemporalOperatorName.valueOf(TemporalOperatorName.class,
+                    (c) -> name.equalsIgnoreCase(c.identifier()), null);
+            if (key != null) {
+                names.put(key, getTemporalOperands(op.getTemporalOperands()));
+            }
+        }
+        return names;
     }
 
+    public TemporalOperators getTemporalOperators2() {
+        return operators;
+    }
 }

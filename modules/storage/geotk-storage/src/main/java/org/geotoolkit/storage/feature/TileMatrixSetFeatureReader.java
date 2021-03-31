@@ -115,7 +115,7 @@ public class TileMatrixSetFeatureReader {
             Filter filter = query.getFilter();
             if (filter != null) {
                 JTSEnvelope2D e = new JTSEnvelope2D(pyramid.getCoordinateReferenceSystem());
-                filter.accept(ExtractBoundsFilterVisitor.BOUNDS_VISITOR, e);
+                e = (JTSEnvelope2D) ExtractBoundsFilterVisitor.bbox(filter, e);
                 if (!e.isEmpty() && !e.isNull()) {
                     env = e;
                 }

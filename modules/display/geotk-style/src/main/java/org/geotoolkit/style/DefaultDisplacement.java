@@ -16,18 +16,16 @@
  */
 package org.geotoolkit.style;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Displacement;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types displacement.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultDisplacement implements Displacement{
 
@@ -42,8 +40,8 @@ public class DefaultDisplacement implements Displacement{
      * @param dispY : if null or Expression.NIL will be replaced by default value.
      */
     public DefaultDisplacement(final Expression dispX, final Expression dispY){
-        this.dispX = (dispX == null || dispX == NIL) ? DEFAULT_DISPLACEMENT_X : dispX;
-        this.dispY = (dispY == null || dispY == NIL) ? DEFAULT_DISPLACEMENT_Y : dispY;
+        this.dispX = (dispX == null) ? DEFAULT_DISPLACEMENT_X : dispX;
+        this.dispY = (dispY == null) ? DEFAULT_DISPLACEMENT_Y : dispY;
     }
 
     /**
@@ -88,7 +86,6 @@ public class DefaultDisplacement implements Displacement{
 
         return this.dispX.equals(other.dispX)
                 && this.dispY.equals(other.dispY);
-
     }
 
     /**
@@ -112,5 +109,4 @@ public class DefaultDisplacement implements Displacement{
         builder.append(']');
         return builder.toString();
     }
-
 }

@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.opengis.filter.spatial.Crosses;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -31,13 +31,11 @@ import org.opengis.filter.spatial.Crosses;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Crosses")
 @XmlRootElement(name = "Crosses")
-public class CrossesType extends BinarySpatialOpType implements Crosses {
-
+public class CrossesType extends BinarySpatialOpType {
     /**
      * An empty constructor used by JAXB
      */
     public CrossesType() {
-
     }
 
     /**
@@ -61,6 +59,11 @@ public class CrossesType extends BinarySpatialOpType implements Crosses {
     @Override
     public SpatialOpsType getClone() {
         return new CrossesType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.CROSSES;
     }
 
     @Override

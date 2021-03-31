@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.LinearRing;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -58,9 +57,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LinearRingType", propOrder = {
@@ -83,7 +79,6 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
     private List<CoordType> coord;
 
     public LinearRingType() {
-
     }
 
     public LinearRingType(final String srsName, final DirectPositionListType posList) {
@@ -98,8 +93,6 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     *
-     *
      */
     public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
         if (posOrPointPropertyOrPointRep == null) {
@@ -114,7 +107,6 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -126,7 +118,6 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *
      */
     public void setPosList(final DirectPositionListType value) {
         this.posList = value;
@@ -138,7 +129,6 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -150,7 +140,6 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
@@ -162,29 +151,12 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
      *
      * Objects of the following type(s) are allowed in the list
      * {@link CoordType }
-     *
-     *
      */
     public List<CoordType> getCoord() {
         if (coord == null) {
             coord = new ArrayList<CoordType>();
         }
         return this.coord;
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

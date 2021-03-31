@@ -16,18 +16,16 @@
  */
 package org.geotoolkit.style;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types AnchorPoint.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultAnchorPoint implements AnchorPoint{
 
@@ -42,8 +40,8 @@ public class DefaultAnchorPoint implements AnchorPoint{
      * @param anchorY : if null or Expression.NIL will be replaced by default value.
      */
     public DefaultAnchorPoint(final Expression anchorX, final Expression anchorY){
-        this.anchorX = (anchorX == null || anchorX == NIL) ? DEFAULT_ANCHOR_POINT_X : anchorX;
-        this.anchorY = (anchorY == null || anchorY == NIL) ? DEFAULT_ANCHOR_POINT_Y : anchorY;
+        this.anchorX = (anchorX == null) ? DEFAULT_ANCHOR_POINT_X : anchorX;
+        this.anchorY = (anchorY == null) ? DEFAULT_ANCHOR_POINT_Y : anchorY;
     }
 
     /**
@@ -88,7 +86,6 @@ public class DefaultAnchorPoint implements AnchorPoint{
 
         return this.anchorX.equals(other.anchorX)
                 && this.anchorY.equals(other.anchorY);
-
     }
 
     /**

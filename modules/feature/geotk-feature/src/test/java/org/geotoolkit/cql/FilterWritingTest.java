@@ -17,10 +17,10 @@
 package org.geotoolkit.cql;
 
 import java.text.ParseException;
-import java.util.Collections;
 import org.apache.sis.cql.CQLException;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -29,7 +29,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
 
 /**
  * Test writing in CQL filters.
@@ -38,7 +37,7 @@ import org.opengis.filter.FilterFactory2;
  */
 public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
-    private final FilterFactory2 FF = new DefaultFilterFactory2();
+    private final FilterFactory2 FF = FilterUtilities.FF;
     private final GeometryFactory GF = new GeometryFactory();
     private final Geometry baseGeometry = GF.createPolygon(
                 GF.createLinearRing(
@@ -53,7 +52,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testExcludeFilter() throws CQLException {
-        final Filter filter = Filter.EXCLUDE;
+        final Filter filter = Filter.exclude();
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("1=0", cql);
@@ -61,7 +60,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testIncludeFilter() throws CQLException {
-        final Filter filter = Filter.INCLUDE;
+        final Filter filter = Filter.include();
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("1=1", cql);
@@ -70,10 +69,10 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testAnd() throws CQLException {
         final Filter filter = FF.and(
-                UnmodifiableArrayList.wrap(new Filter[] {(Filter)
-                    FF.equals(FF.property("att1"), FF.literal(15)),
-                    FF.equals(FF.property("att2"), FF.literal(30)),
-                    FF.equals(FF.property("att3"), FF.literal(50))
+                UnmodifiableArrayList.<Filter<? super Object>>wrap(new Filter[] {(Filter)
+                    FF.equal(FF.property("att1"), FF.literal(15)),
+                    FF.equal(FF.property("att2"), FF.literal(30)),
+                    FF.equal(FF.property("att3"), FF.literal(50))
                 }));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
@@ -83,10 +82,10 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testOr() throws CQLException {
         final Filter filter = FF.or(
-                UnmodifiableArrayList.wrap(new Filter[] {(Filter)
-                    FF.equals(FF.property("att1"), FF.literal(15)),
-                    FF.equals(FF.property("att2"), FF.literal(30)),
-                    FF.equals(FF.property("att3"), FF.literal(50))
+                UnmodifiableArrayList.<Filter<? super Object>>wrap(new Filter[] {(Filter)
+                    FF.equal(FF.property("att1"), FF.literal(15)),
+                    FF.equal(FF.property("att2"), FF.literal(30)),
+                    FF.equal(FF.property("att3"), FF.literal(50))
                 }));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
@@ -95,7 +94,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testId() throws CQLException {
-        final Filter filter = FF.id(Collections.singleton(FF.featureId("test-1")));
+        final Filter filter = FF.resourceId("test-1");
         try{
             final String cql = CQL.write(filter);
             fail("ID filter does not exist in CQL");
@@ -106,7 +105,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testNot() throws CQLException {
-        final Filter filter = FF.not(FF.equals(FF.property("att"), FF.literal(15)));
+        final Filter filter = FF.not(FF.equal(FF.property("att"), FF.literal(15)));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("NOT att = 15", cql);
@@ -122,7 +121,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testPropertyIsEqualTo() throws CQLException {
-        final Filter filter = FF.equals(FF.property("att"), FF.literal(15));
+        final Filter filter = FF.equal(FF.property("att"), FF.literal(15));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("att = 15", cql);
@@ -170,7 +169,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testPropertyIsLike() throws CQLException {
-        final Filter filter = FF.like(FF.property("att"),"%hello", "%", "?", "\\", false);
+        final Filter filter = FF.like(FF.property("att"),"%hello", '%', '?', '\\', false);
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("att ILIKE '%hello'", cql);
@@ -234,7 +233,7 @@ public class FilterWritingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testEquals() throws CQLException {
-        final Filter filter = FF.equal(FF.property("att"), FF.literal(baseGeometry));
+        final Filter filter = FF.equals(FF.property("att"), FF.literal(baseGeometry));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("EQUALS(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);

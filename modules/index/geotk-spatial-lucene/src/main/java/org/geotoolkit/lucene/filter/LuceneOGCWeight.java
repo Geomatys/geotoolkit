@@ -19,9 +19,11 @@ package org.geotoolkit.lucene.filter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.Quantity;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
@@ -48,10 +50,11 @@ import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import static org.geotoolkit.lucene.LuceneUtils.getExtendedReprojectedEnvelope;
 import static org.geotoolkit.lucene.LuceneUtils.getReprojectedEnvelope;
 import static org.geotoolkit.lucene.LuceneUtils.getSpatialFilterType;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-import org.opengis.filter.spatial.DistanceBufferOperator;
+import org.opengis.filter.Literal;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.DistanceOperator;
+import org.opengis.filter.DistanceOperatorName;
+import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 
@@ -73,7 +76,7 @@ public class LuceneOGCWeight extends Weight {
         ID_FIELDS.add(IDENTIFIER_FIELD_NAME);
     }
     private final Tree tree;
-    private final org.opengis.filter.Filter filter;
+    private final org.opengis.filter.Filter<Object> filter;
     private final SpatialFilterType filterType;
 
     private boolean envelopeOnly;
@@ -116,14 +119,18 @@ public class LuceneOGCWeight extends Weight {
             /*
              * For distance buffer filter no envelope only mode
              */
-            if (filter instanceof DistanceBufferOperator) {
+            List<Expression<Object,?>> expressions = filter.getExpressions();
+            Expression e2 = (expressions.size() >= 2) ? expressions.get(1) : null;
+            if (filter instanceof DistanceOperator) {
                 distanceFilter = true;
-                reverse        = filter instanceof Beyond;
-                final DistanceBufferOperator sp = (DistanceBufferOperator)filter;
-                if (sp.getExpression2() instanceof Literal) {
+                reverse        = filter.getOperatorType() == DistanceOperatorName.BEYOND;
+                final DistanceOperator sp = (DistanceOperator) filter;
+                if (e2 instanceof Literal) {
                     try {
-                        final Literal lit = (Literal) sp.getExpression2();
-                        final GeneralEnvelope bound = getExtendedReprojectedEnvelope(lit.getValue(), tree.getCrs(), sp.getDistanceUnits(), sp.getDistance());
+                        final Literal lit = (Literal) e2;
+                        Quantity distance = sp.getDistance();
+                        final GeneralEnvelope bound = getExtendedReprojectedEnvelope(lit.getValue(), tree.getCrs(),
+                                distance.getUnit().toString(), distance.getValue().doubleValue());
                         final int[] resultID = tree.searchID(bound);
                         Arrays.sort(resultID);
                         treeMatching.clear();
@@ -146,13 +153,12 @@ public class LuceneOGCWeight extends Weight {
                         }
                     }
                 } else {
-                    LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
+                    LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", e2);
                 }
-
             } else if (filter instanceof BinarySpatialOperator) {
                 final BinarySpatialOperator sp = (BinarySpatialOperator)filter;
-                if (sp.getExpression2() instanceof Literal) {
-                    final Literal lit = (Literal) sp.getExpression2();
+                if (e2 instanceof Literal) {
+                    final Literal lit = (Literal) e2;
                     final Envelope boundFilter = getReprojectedEnvelope(lit.getValue(), tree.getCrs());
                     try {
                         if (filterType == SpatialFilterType.CROSSES || !envelopeOnly) {
@@ -193,7 +199,7 @@ public class LuceneOGCWeight extends Weight {
                         }
                     }
                 } else {
-                    LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
+                    LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", e2);
                 }
             } else {
                 LOGGER.log(Level.WARNING, "not a spatial operator:{0}", filter.getClass().getName());
@@ -222,7 +228,7 @@ public class LuceneOGCWeight extends Weight {
                         set.set(docId);
                     } else {
                         final Document geoDoc = reader.document(docId, GEOMETRY_FIELDS);
-                        if (filter.evaluate(geoDoc)) {
+                        if (filter.test(geoDoc)) {
                             set.set(docId);
                         }
                     }

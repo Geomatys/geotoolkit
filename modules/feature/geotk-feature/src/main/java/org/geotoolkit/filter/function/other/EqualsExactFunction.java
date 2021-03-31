@@ -18,36 +18,19 @@ package org.geotoolkit.filter.function.other;
 
 import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class EqualsExactFunction extends AbstractFunction {
 
     public EqualsExactFunction(final Expression expr1, final Expression expr2) {
-        super(OtherFunctionFactory.EQUALS_EXACT, new Expression[]{expr1,expr2}, null);
+        super(OtherFunctionFactory.EQUALS_EXACT, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        Geometry arg0;
-        Geometry arg1;
-
-        try { // attempt to get value and perform conversion
-            arg0 = (Geometry) parameters.get(0).evaluate(feature);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function equalsExact argument #0 - expected type Geometry");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg1 = (Geometry) parameters.get(1).evaluate(feature);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function equalsExact argument #1 - expected type Geometry");
-        }
-
+    public Object apply(final Object feature) {
+        Geometry arg0 = geometryValue(feature, 0);
+        Geometry arg1 = geometryValue(feature, 1);
         return StaticUtils.equalsExact(arg0, arg1);
     }
 }

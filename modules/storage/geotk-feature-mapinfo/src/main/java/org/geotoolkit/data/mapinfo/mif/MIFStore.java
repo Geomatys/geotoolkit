@@ -126,7 +126,7 @@ public class MIFStore extends DataStore implements WritableAggregate, ResourceOn
             final MIFFeatureSet fs = (MIFFeatureSet) resource;
             final GenericName name = fs.getType().getName();
             manager.deleteSchema(name.toString());
-            fs.removeIf(Filter.INCLUDE::evaluate);
+            fs.removeIf(Filter.include()::test);
         } else {
             throw new DataStoreException("Unexpected resource type");
         }

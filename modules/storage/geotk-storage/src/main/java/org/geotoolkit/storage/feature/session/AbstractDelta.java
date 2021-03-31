@@ -17,12 +17,16 @@
 
 package org.geotoolkit.storage.feature.session;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
-import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.Filter;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
 
 /**
  *
@@ -31,7 +35,7 @@ import org.opengis.filter.FilterFactory2;
  */
 abstract class AbstractDelta implements Delta{
 
-    protected static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+    protected static final FilterFactory2 FF = FilterUtilities.FF;
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.session");
 
@@ -45,6 +49,16 @@ abstract class AbstractDelta implements Delta{
         this.type = type;
     }
 
+    static List<Filter<Object>> list(final Filter<Object> filter) {
+        if (filter.getOperatorType() == LogicalOperatorName.OR) {
+            return ((LogicalOperator) filter).getOperands();
+        } else if (filter == Filter.exclude()) {
+            return Collections.emptyList();
+        } else {
+            return Collections.singletonList(filter);
+        }
+    }
+
     @Override
     public String getType() {
         return type;
@@ -53,5 +67,4 @@ abstract class AbstractDelta implements Delta{
     protected Logger getLogger(){
         return LOGGER;
     }
-
 }

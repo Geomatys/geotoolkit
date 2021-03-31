@@ -18,6 +18,7 @@
 package org.geotoolkit.storage.feature.session;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.storage.feature.FeatureStore;
@@ -26,8 +27,9 @@ import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.Identifier;
+import static org.geotoolkit.storage.feature.session.AbstractDelta.list;
+import org.opengis.filter.Filter;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -39,9 +41,9 @@ import org.opengis.geometry.Envelope;
  */
 public class RemoveDelta extends AbstractDelta{
 
-    protected Id removedIds;
+    protected Filter removedIds;
 
-    public RemoveDelta(final Session session, final String typeName, final Id filter){
+    public RemoveDelta(final Session session, final String typeName, final Filter filter){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         ensureNonNull("filter", filter);
@@ -54,22 +56,21 @@ public class RemoveDelta extends AbstractDelta{
     @Override
     public void update(Map<String, String> idUpdates) {
         if(idUpdates == null || idUpdates.isEmpty())return;
-
-        final Set<Identifier> ids = removedIds.getIdentifiers();
-        final Set<Identifier> newIds = new HashSet<Identifier>();
-
-        for(final Identifier id : ids){
-            String newId = idUpdates.get(id.getID().toString());
-            if(newId != null){
+        final List<Filter<Object>> ids = list(removedIds);
+        final Set<Filter<Object>> newIds = new HashSet<>();
+        for (Filter<Object> id : ids) {
+            String newId = idUpdates.get(((ResourceId) id).getIdentifier());
+            if (newId != null) {
                 //id has change
-                newIds.add(FF.featureId(newId));
-            }else{
-                //this id did not change
-                newIds.add(id);
+                id = FF.resourceId(newId);
             }
+            newIds.add(id);
         }
-
-        removedIds = FF.id(newIds);
+        switch (newIds.size()) {
+            case 0: removedIds = Filter.exclude(); break;
+            case 1: removedIds = newIds.iterator().next(); break;
+            case 2: removedIds = FF.or(newIds);
+        }
     }
 
     /**

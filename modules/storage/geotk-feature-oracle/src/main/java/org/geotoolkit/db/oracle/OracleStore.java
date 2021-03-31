@@ -38,7 +38,8 @@ public class OracleStore extends DefaultJDBCFeatureStore {
     }
 
     private static ParameterValueGroup toParameters(String host, int port,
-            String database, String schema, String user, String password){
+            String database, String schema, String user, String password)
+    {
         final Parameters params = Parameters.castOrWrap(OracleProvider.PARAMETERS_DESCRIPTOR.createValue());
         params.getOrCreate(OracleProvider.HOST).setValue(host);
         params.getOrCreate(OracleProvider.PORT).setValue(port);
@@ -53,5 +54,4 @@ public class OracleStore extends DefaultJDBCFeatureStore {
     public void setDataSource(DataSource ds) {
         super.setDataSource(ds);
     }
-
 }

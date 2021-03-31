@@ -20,7 +20,7 @@ package org.geotoolkit.ogc.xml;
  *
  * @author guilhem
  */
-public interface LogicOperator {
+public interface LogicOperator extends org.opengis.filter.LogicalOperator {
 
     String getOperator();
 

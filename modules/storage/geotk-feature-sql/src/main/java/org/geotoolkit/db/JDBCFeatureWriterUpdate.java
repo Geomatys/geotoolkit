@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.feature.FeatureExt;
@@ -39,7 +38,7 @@ import org.opengis.feature.PropertyType;
 
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
+import org.opengis.filter.ResourceId;
 
 public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements FeatureWriter {
 
@@ -64,8 +63,7 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
             throw new FeatureStoreRuntimeException("Cursor is not on a record.");
         }
 
-        final Filter filter = store.getFilterFactory().id(
-                Collections.singleton(FeatureExt.getId(last)));
+        final Filter filter = FeatureExt.getId(last);
         try {
             store.delete(type, filter, st.getConnection());
         } catch (SQLException e) {
@@ -87,7 +85,7 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
             final String fid = key.encodeFID(rs);
 
             final FilterFactory ff = store.getFilterFactory();
-            final Id filter = ff.id(Collections.singleton(ff.featureId(fid)));
+            final ResourceId filter = ff.resourceId(fid);
 
             //figure out which attributes changed
             final Map<String,Object> changes = new HashMap<>();
@@ -98,7 +96,6 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
                     //not a writable property
                     continue;
                 }
-
                 changes.put(att.getName().tip().toString(), last.getPropertyValue(att.getName().toString()));
             }
 

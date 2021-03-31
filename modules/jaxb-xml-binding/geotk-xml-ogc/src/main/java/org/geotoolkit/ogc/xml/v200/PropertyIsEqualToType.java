@@ -19,7 +19,7 @@ package org.geotoolkit.ogc.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.ComparisonOperatorName;
 
 /**
  *
@@ -28,13 +28,12 @@ import org.opengis.filter.PropertyIsEqualTo;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsEqualTo")
-public class PropertyIsEqualToType extends BinaryComparisonOpType implements PropertyIsEqualTo {
+public class PropertyIsEqualToType extends BinaryComparisonOpType {
 
     /**
      * Empty constructor used by JAXB
      */
     public PropertyIsEqualToType() {
-
     }
 
     /**
@@ -51,5 +50,10 @@ public class PropertyIsEqualToType extends BinaryComparisonOpType implements Pro
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsEqualToType(this);
+    }
+
+    @Override
+    public ComparisonOperatorName getOperatorType() {
+        return ComparisonOperatorName.PROPERTY_IS_EQUAL_TO;
     }
 }

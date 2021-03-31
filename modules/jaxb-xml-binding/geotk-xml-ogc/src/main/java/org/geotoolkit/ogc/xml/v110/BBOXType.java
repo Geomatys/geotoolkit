@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.EnvelopeWithTimePeriodType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.SpatialOperatorName;
 
 
 /**
@@ -48,9 +50,6 @@ import org.opengis.filter.spatial.BBOX;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BBOXType", propOrder = {
@@ -58,7 +57,7 @@ import org.opengis.filter.spatial.BBOX;
     "envelope",
     "envelopeWithTimePeriod"
 })
-public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc.xml.BBOX {
+public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, org.geotoolkit.ogc.xml.BBOX {
     private static final String DEFAULT_SRS = "EPSG:4326";
 
     @XmlElement(name = "PropertyName")
@@ -72,7 +71,6 @@ public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc
      * An empty constructor used by JAXB
      */
     public BBOXType() {
-
     }
 
     /**
@@ -100,6 +98,11 @@ public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc
                 this.envelopeWithTimePeriod = new EnvelopeWithTimePeriodType(that.envelopeWithTimePeriod);
             }
         }
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.BBOX;
     }
 
     /**
@@ -214,28 +217,23 @@ public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc
     }
 
     @Override
-    public Expression getExpression1() {
+    public List getExpressions() {
+        return Arrays.asList(getOperand1(), getOperand2());
+    }
+
+    @Override
+    public Expression getOperand1() {
         return new PropertyNameType(propertyName);
     }
 
     @Override
-    public Expression getExpression2() {
+    public Expression getOperand2() {
         if (envelope != null) {
             return new LiteralType(envelope);
         } else if (envelopeWithTimePeriod != null) {
             return new LiteralType(envelopeWithTimePeriod);
         }
         return null;
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        return visitor.visit(this,extraData);
     }
 
     @Override
@@ -277,5 +275,4 @@ public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc
     public String getOperator() {
         return "BBOX";
     }
-
 }

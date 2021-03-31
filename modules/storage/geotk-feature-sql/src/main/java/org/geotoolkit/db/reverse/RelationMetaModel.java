@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.db.reverse;
 
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 
 /**
  * Description of a relation between two tables.
@@ -30,7 +30,7 @@ import org.opengis.filter.expression.PropertyName;
  */
 public class RelationMetaModel {
 
-    public static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    public static final FilterFactory FF = FilterUtilities.FF;
 
     private final String relationName;
     private final String currentColumn;
@@ -41,7 +41,7 @@ public class RelationMetaModel {
     private final boolean deleteCascade;
 
     //for filter
-    private final PropertyName property;
+    private final ValueReference property;
 
     public RelationMetaModel(final String relationName,final String currentColumn, final String foreignSchema,
             final String foreignTable, final String foreignColumn,
@@ -96,7 +96,7 @@ public class RelationMetaModel {
     }
 
     public Filter toFilter(final Object value){
-        return FF.equals(property, FF.literal(value));
+        return FF.equal(property, FF.literal(value));
     }
 
     @Override

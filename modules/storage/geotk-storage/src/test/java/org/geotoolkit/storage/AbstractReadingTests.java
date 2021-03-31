@@ -27,13 +27,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.IllegalNameException;
 import org.apache.sis.storage.Resource;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
@@ -44,9 +44,10 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.SortOrder;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.util.GenericName;
@@ -60,7 +61,7 @@ import org.opengis.util.GenericName;
 public abstract class AbstractReadingTests {
 
     protected static final double DELTA = 0.000000001d;
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     public static class ExpectedResult{
 
@@ -260,7 +261,7 @@ public abstract class AbstractReadingTests {
             }
 
             final SimpleQuery query = new SimpleQuery();
-            query.setSortBy(FF.sort(desc.getName().tip().toString(), SortOrder.ASCENDING));
+            query.setSortBy(FF.sort(FF.property(desc.getName().tip().toString()), SortOrder.ASCENDING));
             FeatureSet subset = featureSet.subset(query);
 
             //count should not change with a sort by
@@ -287,7 +288,7 @@ public abstract class AbstractReadingTests {
                 }
             }
 
-            query.setSortBy(FF.sort(desc.getName().tip().toString(), SortOrder.DESCENDING));
+            query.setSortBy(FF.sort(FF.property(desc.getName().tip().toString()), SortOrder.DESCENDING));
             subset = featureSet.subset(query);
 
             //count should not change with a sort by
@@ -318,7 +319,7 @@ public abstract class AbstractReadingTests {
         //start ----------------------------------------------------------------
         if (candidate.size > 1) {
 
-            List<FeatureId> ids = new ArrayList<>();
+            List<ResourceId> ids = new ArrayList<>();
             try (Stream<Feature> stream = featureSet.features(false)) {
                 final Iterator<Feature> ite = stream.iterator();
                 while (ite.hasNext()) {
@@ -362,7 +363,7 @@ public abstract class AbstractReadingTests {
         //we just make a few tests here for sanity check
         //todo should we make more deep tests ?
 
-        Set<FeatureId> ids = new HashSet<>();
+        Set<ResourceId> ids = new HashSet<>();
         try (Stream<Feature> stream = featureSet.features(false)) {
             final Iterator<Feature> ite = stream.iterator();
             //peek only one on two ids
@@ -376,18 +377,21 @@ public abstract class AbstractReadingTests {
             }
         }
 
-        Set<FeatureId> remaining = new HashSet<>(ids);
+        Set<ResourceId> remaining = new HashSet<>(ids);
         final SimpleQuery query = new SimpleQuery();
-        query.setFilter(FF.id(ids));
+        final Filter f;
+        switch (ids.size()) {
+            case 0: f = Filter.exclude(); break;
+            case 1: f = ids.iterator().next(); break;
+            default: f = FF.or(ids); break;
+        }
+        query.setFilter(f);
         try (Stream<Feature> stream = featureSet.subset(query).features(false)) {
             final Iterator<Feature> ite = stream.iterator();
             while (ite.hasNext()) {
                 remaining.remove(FeatureExt.getId(ite.next()));
             }
         }
-
-         assertTrue(remaining.isEmpty() );
-
+        assertTrue(remaining.isEmpty() );
     }
-
 }

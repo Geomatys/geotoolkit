@@ -17,14 +17,13 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -43,9 +42,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryOperatorType", propOrder = {
@@ -56,6 +52,11 @@ public class BinaryOperatorType extends ExpressionType {
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
 
+    @Override
+    public ScopedName getFunctionName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * Gets the value of the expression property.
      */
@@ -64,18 +65,6 @@ public class BinaryOperatorType extends ExpressionType {
             expression = new ArrayList<JAXBElement<?>>();
         }
         return this.expression;
-    }
-
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -99,5 +88,4 @@ public class BinaryOperatorType extends ExpressionType {
         hash = 53 * hash + (this.expression != null ? this.expression.hashCode() : 0);
         return hash;
     }
-
 }

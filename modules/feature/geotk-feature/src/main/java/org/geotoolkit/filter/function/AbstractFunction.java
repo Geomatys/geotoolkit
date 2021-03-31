@@ -20,62 +20,112 @@ package org.geotoolkit.filter.function;
 import java.util.List;
 import org.geotoolkit.filter.AbstractExpression;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.StringUtilities;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.util.ScopedName;
 
 /**
  * Immutable abstract function.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public abstract class AbstractFunction extends AbstractExpression implements Function {
+public abstract class AbstractFunction extends AbstractExpression {
 
     protected final String name;
-    protected final List<Expression> parameters;
+    private final ScopedName scoped;
+    protected final List<Expression<Object,?>> parameters;
     protected final Literal fallback;
 
-    public AbstractFunction(final String name, final Expression[] parameters, final Literal fallback) {
+    protected AbstractFunction(final String name, final Expression<Object,?>[] parameters, final Literal<Object,?> fallback) {
         ensureNonNull("name", name);
         this.name = name;
         this.parameters = UnmodifiableArrayList.wrap(parameters);
         this.fallback = fallback;
+        scoped = createName(name);
+    }
+
+    protected AbstractFunction(final String name) {
+        this(name, new Expression[0], null);
+    }
+
+    protected AbstractFunction(final String name, final Expression expression) {
+        this(name, new Expression[] {expression}, null);
+    }
+
+    protected AbstractFunction(final String name, final Expression expr1, final Expression expr2) {
+        this(name, new Expression[] {expr1, expr2}, null);
+    }
+
+    protected AbstractFunction(final String name, final Expression expr1, final Expression expr2, final Expression expr3) {
+        this(name, new Expression[] {expr1, expr2, expr3}, null);
+    }
+
+    protected AbstractFunction(final String name, final Expression expr1, final Expression expr2, final Expression expr3, final Expression expr4) {
+        this(name, new Expression[] {expr1, expr2, expr3, expr4}, null);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public String getName() {
-        return name;
+    public ScopedName getFunctionName() {
+        return scoped;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<Expression> getParameters() {
+    public List<Expression<Object,?>> getParameters() {
         return parameters;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Literal getFallbackValue() {
-        return fallback;
+    protected final Geometry geometryValue(final Object feature) {
+        return geometryValue(feature, 0);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
+    protected final Geometry geometryValue(final Object feature, final int index) {
+        final Object value = parameters.get(index).apply(feature);
+        if (value instanceof Geometry) {
+            return (Geometry) value;
+        }
+        throw new IllegalArgumentException("Filter Function problem for argument #" + index +
+                " - expected type Geometry but got " + Classes.getClass(value));
+    }
+
+    protected final double doubleValue(final Object feature) {
+        return doubleValue(feature, 0);
+    }
+
+    protected final double doubleValue(final Object feature, final int index) {
+        final Object value = parameters.get(index).apply(feature);
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+        throw new IllegalArgumentException("Filter Function problem for argument #" + index +
+                " - expected type double but got " + Classes.getClass(value));
+    }
+
+    protected final String stringValue(final Object feature, final int index) {
+        final Object value = parameters.get(index).apply(feature);
+        return (value != null) ? value.toString() : null;
+    }
+
+    protected final String[] stringValues(final Object feature) {
+        return stringValues(feature, parameters.size());
+    }
+
+    protected final String[] stringValues(final Object feature, final int length) {
+        final String[] args = new String[length];
+        for (int i=0; i<length; i++) {
+            final Object value = parameters.get(0).apply(feature);
+            if (value != null) args[i] = value.toString();
+        }
+        return args;
     }
 
     @Override
@@ -110,7 +160,6 @@ public abstract class AbstractFunction extends AbstractExpression implements Fun
 
     @Override
     public String toString() {
-        return StringUtilities.toStringTree(getName(), parameters);
+        return StringUtilities.toStringTree(getFunctionName(), parameters);
     }
-
 }

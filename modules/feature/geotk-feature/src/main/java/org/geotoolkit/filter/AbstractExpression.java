@@ -19,37 +19,45 @@ package org.geotoolkit.filter;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.sis.util.ObjectConverters;
-
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.opengis.filter.expression.Expression;
+import org.apache.sis.util.iso.Names;
+import org.opengis.filter.Expression;
+import org.opengis.util.LocalName;
+import org.opengis.util.ScopedName;
 
 /**
  * Override evaluate(Object,Class) by using the converters system.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 @XmlTransient
-public abstract class AbstractExpression implements Expression,Serializable {
+public abstract class AbstractExpression implements Expression<Object,Object>, Serializable {
+
+    private static final LocalName ns = Names.createLocalName(null, null, "geotk");
+
+    protected static ScopedName createName(String name) {
+        return Names.createScopedName(ns, null, name);
+    }
 
     /**
-     * {@inheritDoc }
      * Use the converters utility class to convert the default result object
      * to the wished class.
      */
-    @Override
     public <T> T evaluate(final Object candidate, final Class<T> target) {
-        final Object value = evaluate(candidate);
+        final Object value = apply(candidate);
         if (target == null) {
             return (T) value; // TODO - unsafe cast!!!!
         }
-        try{
+        try {
             return ObjectConverters.convert(value, target);
-        }catch (UnconvertibleObjectException ex){
+        } catch (UnconvertibleObjectException ex) {
             return null;
         }
     }
 
+    @Override
+    public <N> Expression<Object,N> toValueType(Class<N> type) {
+        throw new UnsupportedOperationException();
+    }
 }

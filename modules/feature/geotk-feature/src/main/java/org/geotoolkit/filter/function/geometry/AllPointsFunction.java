@@ -19,7 +19,7 @@ package org.geotoolkit.filter.function.geometry;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Extract all geometry points.
@@ -29,19 +29,12 @@ import org.opengis.filter.expression.Expression;
 public class AllPointsFunction extends AbstractFunction {
 
     public AllPointsFunction(final Expression expr1) {
-        super(GeometryFunctionFactory.ALLPOINTS, new Expression[] {expr1}, null);
+        super(GeometryFunctionFactory.ALLPOINTS, expr1);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Geometry geom;
-
-        try {
-            geom = parameters.get(0).evaluate(feature,Geometry.class);
-        } catch (Exception e){
-            throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
-        }
-
+    public Object apply(final Object feature) {
+        final Geometry geom = geometryValue(feature);
         if(geom==null) return null;
         final Geometry pt = getPoints(geom);
         if(pt==null) return null;
@@ -58,5 +51,4 @@ public class AllPointsFunction extends AbstractFunction {
             return geom.getFactory().createMultiPoint(coordinates);
         }
     }
-
 }

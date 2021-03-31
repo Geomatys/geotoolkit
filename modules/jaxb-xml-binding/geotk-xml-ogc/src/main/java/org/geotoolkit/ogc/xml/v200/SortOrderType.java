@@ -51,5 +51,4 @@ public enum SortOrderType {
     public static SortOrderType fromValue(String v) {
         return valueOf(v);
     }
-
 }

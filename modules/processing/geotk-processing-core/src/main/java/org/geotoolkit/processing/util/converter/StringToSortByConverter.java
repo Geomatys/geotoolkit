@@ -17,22 +17,22 @@
 package org.geotoolkit.processing.util.converter;
 
 
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 import org.geotoolkit.feature.util.converter.SimpleConverter;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.SortProperty;
+import org.opengis.filter.SortOrder;
 
 
 /**
- * Implementation of ObjectConverter to convert a String into a SortBy array.
+ * Implementation of ObjectConverter to convert a String into a SortProperty array.
  *
  * @author Quentin Boileau
  * @module
  */
-public class StringToSortByConverter extends SimpleConverter<String, SortBy[]> {
+public class StringToSortByConverter extends SimpleConverter<String, SortProperty[]> {
 
     private static StringToSortByConverter INSTANCE;
 
@@ -49,11 +49,11 @@ public class StringToSortByConverter extends SimpleConverter<String, SortBy[]> {
     }
 
     @Override
-    public Class<SortBy[]> getTargetClass() {
-        return SortBy[].class;
+    public Class<SortProperty[]> getTargetClass() {
+        return SortProperty[].class;
     }
     /**
-     *Convert a String into an SortBy array.
+     *Convert a String into an SortProperty array.
      *
      * <p> The input String must be format like :
      *  "property1:asc/desc, property2:asc/desc, ..."
@@ -68,14 +68,14 @@ public class StringToSortByConverter extends SimpleConverter<String, SortBy[]> {
      *
      */
     @Override
-    public SortBy[] apply(final String s) throws UnconvertibleObjectException {
+    public SortProperty[] apply(final String s) throws UnconvertibleObjectException {
 
-        if(s == null) throw new UnconvertibleObjectException("Empty SortBy");
+        if(s == null) throw new UnconvertibleObjectException("Empty SortProperty");
 
         final String[] sorters = s.split(",");
         final int nbSorter = sorters.length;
 
-        final SortBy[] sortBy = new SortBy[nbSorter];
+        final SortProperty[] sortBy = new SortProperty[nbSorter];
         //each sorter
         for(int i = 0 ; i<nbSorter; i++){
             //one property sorter "property:order"
@@ -83,12 +83,13 @@ public class StringToSortByConverter extends SimpleConverter<String, SortBy[]> {
 
             final String property = aSorter[0];
 
+            FilterFactory FF = FilterUtilities.FF;
             if(aSorter[1].equalsIgnoreCase("asc")){
-                sortBy[i] = DefaultFactories.forBuildin(FilterFactory.class).sort(property, SortOrder.ASCENDING);
+                sortBy[i] = FF.sort(FF.property(property), SortOrder.ASCENDING);
             }else if(aSorter[1].equalsIgnoreCase("desc")){
-                sortBy[i] = DefaultFactories.forBuildin(FilterFactory.class).sort(property, SortOrder.DESCENDING);
+                sortBy[i] = FF.sort(FF.property(property), SortOrder.DESCENDING);
             }else{
-                throw new UnconvertibleObjectException("Invalid SortBy");
+                throw new UnconvertibleObjectException("Invalid SortProperty");
             }
         }
         return sortBy;

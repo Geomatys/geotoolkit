@@ -24,9 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -47,9 +45,6 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryLogicOpType", propOrder = {
@@ -58,7 +53,7 @@ import org.opengis.filter.FilterVisitor;
     "spatialOps",
     "temporalOps"
 })
-public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperator, org.geotoolkit.ogc.xml.BinaryLogicOperator {
+public abstract class BinaryLogicOpType extends LogicOpsType implements org.geotoolkit.ogc.xml.BinaryLogicOperator {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<? extends ComparisonOpsType>> comparisonOps;
@@ -73,7 +68,6 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
      * An empty constructor used by JAXB
      */
      public BinaryLogicOpType() {
-
      }
 
      /**
@@ -114,7 +108,6 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
                  throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
              }
          }
-
      }
 
      /**
@@ -182,7 +175,7 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
     }
 
     @Override
-    public List<Filter> getChildren() {
+    public List<Filter> getOperands() {
         List<Filter> result = new ArrayList<>();
         for (JAXBElement jb: getComparisonOps()) {
             result.add((Filter)jb.getValue());
@@ -215,16 +208,6 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
             result.add(jb.getValue());
         }
         return result;
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public List<JAXBElement<? extends ComparisonOpsType>> getComparisonOps() {

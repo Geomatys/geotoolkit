@@ -17,48 +17,44 @@
  */
 package org.geotoolkit.filter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.junit.Test;
 
 import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
-import org.opengis.filter.Not;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.opengis.feature.Feature;
+import org.opengis.filter.LogicalOperator;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class FilterTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testId() {
-        Set<Identifier> ids = new HashSet<>();
-        ids.add(FF.featureId("dummyid"));
-        ids.add(FF.featureId("dummyid2"));
-        ids.add(FF.featureId("dummyid45"));
+        List<Filter<Object>> ids = new ArrayList<>();
+        ids.add(FF.resourceId("dummyid"));
+        ids.add(FF.resourceId("dummyid2"));
+        ids.add(FF.resourceId("dummyid45"));
 
-        Id id = FF.id(ids);
+        LogicalOperator<Object> id = FF.or(ids);
 
         //test serialize
         assertSerializedEquals(id);
 
-        assertFalse(id.evaluate(CANDIDATE_1));
+        assertFalse(id.test(CANDIDATE_1));
 
-        ids.add(FF.featureId("testFeatureType.1"));
-        id = FF.id(ids);
+        ids.add(FF.resourceId("testFeatureType.1"));
+        id = FF.or(ids);
 
-        assertTrue(id.evaluate(CANDIDATE_1));
+        assertTrue(id.test(CANDIDATE_1));
     }
 
     /**
@@ -66,11 +62,11 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testId2() {
-        Set<Identifier> ids = new HashSet<>();
-        ids.add(FF.featureId("13"));
-        ids.add(FF.featureId("42"));
+        List<Filter<Object>> ids = new ArrayList<>();
+        ids.add(FF.resourceId("13"));
+        ids.add(FF.resourceId("42"));
 
-        Id id = FF.id(ids);
+        LogicalOperator<Object> id = FF.or(ids);
 
         //test against string identifier
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -78,7 +74,7 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
         final Feature feat1 = ftb.build().newInstance();
         feat1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "13");
-        assertTrue(id.evaluate(feat1));
+        assertTrue(id.test(feat1));
 
         //test against long identifier
         ftb = new FeatureTypeBuilder();
@@ -86,7 +82,7 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(Long.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
         final Feature feat2 = ftb.build().newInstance();
         feat2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), 42l);
-        assertTrue(id.evaluate(feat2));
+        assertTrue(id.test(feat2));
     }
 
     @Test
@@ -111,14 +107,14 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testNot(){
-        Filter filter = FF.equals(FF.property("testString"), FF.literal("test string data"));
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        Filter filter = FF.equal(FF.property("testString"), FF.literal("test string data"));
+        assertTrue(filter.test(CANDIDATE_1));
 
         //test serialize
         assertSerializedEquals(filter);
 
-        Not not = FF.not(filter);
-        assertFalse(not.evaluate(CANDIDATE_1));
+        Filter not = FF.not(filter);
+        assertFalse(not.test(CANDIDATE_1));
 
         //test serialize
         assertSerializedEquals(not);
@@ -126,39 +122,39 @@ public class FilterTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testIsLike(){
-        PropertyName testAttribute = FF.property("testString");
+        ValueReference testAttribute = FF.property("testString");
 
-        PropertyIsLike filter = FF.like(testAttribute, "test*", "*", ".", "!");
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        Filter filter = FF.like(testAttribute, "test*", '*', '.', '!', true);
+        assertTrue(filter.test(CANDIDATE_1));
         assertSerializedEquals(filter); //test serialize
 
         // Test for false positive.
-        filter = FF.like(testAttribute, "cows*", "*", ".", "!");
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        filter = FF.like(testAttribute, "cows*", '*', '.', '!', true);
+        assertFalse(filter.test(CANDIDATE_1));
 
         // Test we don't match if single character is missing
-        filter = FF.like(testAttribute, "test*a.", "*", ".", "!");
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        filter = FF.like(testAttribute, "test*a.", '*', '.', '!', true);
+        assertFalse(filter.test(CANDIDATE_1));
 
         // Test we do match if the single char is there
-        filter = FF.like(testAttribute, "test*dat.", "*", ".", "!");
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        filter = FF.like(testAttribute, "test*dat.", '*', '.', '!', true);
+        assertTrue(filter.test(CANDIDATE_1));
     }
 
     @Test
     public void testIsNull(){
         Filter filter = FF.isNull(FF.property("testNull"));
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertTrue(filter.test(CANDIDATE_1));
 
         filter = FF.isNull(FF.property("testString"));
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.test(CANDIDATE_1));
         assertSerializedEquals(filter); //test serialize
     }
 
     @Test
     public void testPropertyName(){
         Expression exp = FF.property("testString");
-        assertEquals(exp.evaluate(CANDIDATE_1), "test string data");
+        assertEquals(exp.apply(CANDIDATE_1), "test string data");
         assertSerializedEquals(exp); //test serialize
     }
 }

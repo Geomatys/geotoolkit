@@ -32,9 +32,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.BinarySpatialOperator;
 
 
 /**
@@ -57,8 +56,6 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinarySpatialOpType", propOrder = {
@@ -77,11 +74,10 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
     @XmlAnyElement(lax = true)
     private List<Object> any;
 
-     /**
+    /**
      * An empty constructor used by JAXB
      */
     public BinarySpatialOpType() {
-
     }
 
     /**
@@ -92,7 +88,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
         if (geometry != null) {
             this.any = Arrays.asList(geometry);
         }
-
     }
 
     public BinarySpatialOpType(final BinarySpatialOpType that) {
@@ -112,7 +107,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
                     throw new IllegalArgumentException("Unexpected type for expression in BinarySpatialOpType:" + expression.getClass().getName());
                 }
             }
-
             if (that.any != null) {
                 this.any = new ArrayList<>();
                 for (Object obj : that.any) {
@@ -124,18 +118,12 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
                     }
                 }
             }
-
             this.valueReference = that.valueReference;
         }
     }
 
     /**
      * Gets the value of the valueReference property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getValueReference() {
         return valueReference;
@@ -143,11 +131,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Sets the value of the valueReference property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setValueReference(String value) {
         this.valueReference = value;
@@ -162,7 +145,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -177,7 +159,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -185,7 +166,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Gets the value of the any property.
-     *
      */
     public Object getAny() {
         cleanAny();
@@ -197,7 +177,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Sets the value of the any property.
-     *
      */
     public void setAny(final Object value) {
         this.any = Arrays.asList(value);
@@ -226,7 +205,12 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
     }
 
     @Override
-     public Expression getExpression1() {
+    public List getExpressions() {
+        return Arrays.asList(getOperand1(), getOperand2());
+    }
+
+    @Override
+     public Expression getOperand1() {
         if (valueReference != null) {
             return new InternalPropertyName(valueReference);
         }
@@ -234,7 +218,7 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
     }
 
     @Override
-    public Expression getExpression2() {
+    public Expression getOperand2() {
         if (expression != null) {
             if (expression.getValue() instanceof Expression) {
                 return (Expression)expression.getValue();
@@ -251,16 +235,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -300,7 +274,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
                     }
                 }
             }
-
             return  Objects.equals(this.valueReference, that.valueReference) && env && anyEq;
         }
         return false;

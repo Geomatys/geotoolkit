@@ -26,7 +26,6 @@ import javax.measure.Unit;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
@@ -37,6 +36,7 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -51,7 +51,7 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Description;
 import org.opengis.style.Fill;
 import org.opengis.style.Font;
@@ -69,7 +69,7 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    protected static final FilterFactory FF = FilterUtilities.FF;
 
     /**
      * Render a label at check it is correctly located in the image.

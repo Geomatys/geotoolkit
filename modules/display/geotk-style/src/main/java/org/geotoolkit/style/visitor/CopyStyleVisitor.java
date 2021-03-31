@@ -89,5 +89,4 @@ public class CopyStyleVisitor extends DefaultStyleVisitor{
         }
         return copy;
     }
-
 }

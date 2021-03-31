@@ -14,5 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+@XmlAccessorType(XmlAccessType.NONE)
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opengis.net/ogc", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.geotoolkit.ogc.xml.v100;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;

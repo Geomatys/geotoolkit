@@ -17,7 +17,7 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.opengis.filter.spatial.Touches;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -25,13 +25,11 @@ import org.opengis.filter.spatial.Touches;
  * @module
  */
 @XmlRootElement(name = "Touches")
-public class TouchesType extends BinarySpatialOpType implements Touches {
-
+public class TouchesType extends BinarySpatialOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TouchesType() {
-
     }
 
     /**
@@ -48,6 +46,11 @@ public class TouchesType extends BinarySpatialOpType implements Touches {
     @Override
     public SpatialOpsType getClone() {
         return new TouchesType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.TOUCHES;
     }
 
     @Override

@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.XMLLiteral;
-import org.opengis.filter.expression.ExpressionVisitor;
+import org.geotoolkit.ogc.xml.AbstractExpression;
 
 
 /**
@@ -50,14 +50,12 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LiteralType", propOrder = {
     "content"
 })
-public class LiteralType implements XMLLiteral {
+public class LiteralType extends AbstractExpression implements XMLLiteral {
 
     @XmlMixed
     @XmlAnyElement(lax = true)
@@ -69,7 +67,6 @@ public class LiteralType implements XMLLiteral {
      * an empty constructor used by JAXB
      */
     public LiteralType() {
-
     }
 
     public LiteralType(final LiteralType that) {
@@ -110,8 +107,6 @@ public class LiteralType implements XMLLiteral {
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
      * {@link String }
-     *
-     *
      */
     @Override
     public List<Object> getContent() {
@@ -167,46 +162,16 @@ public class LiteralType implements XMLLiteral {
     }
 
     @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object evaluate(final Object object, final Class context) {
+    public Object apply(final Object object) {
        Object literal = null;
        if (content != null && !content.isEmpty()) {
             literal = content.get(0);
        }
-
-       if (literal == null || literal.getClass().equals(context)) {
-            return context.cast( literal );
-       } else {
-            return null;
-       }
-    }
-
-    /**
-     * Used by FilterVisitors to perform some action on this filter instance.
-     * Typicaly used by Filter decoders, but may also be used by any thing
-     * which needs infomration from filter structure. Implementations should
-     * always call: visitor.visit(this); It is importatant that this is not
-     * left to a parent class unless the parents API is identical.
-     *
-     * @param visitor The visitor which requires access to this filter, the
-     *        method must call visitor.visit(this);
-     */
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this,extraData);
+       return literal;
     }
 
     /**
      * Gets the value of the type property.
-     *
-     * @return
-     *     possible object is
-     *     {@link QName }
-     *
      */
     public QName getType() {
         return type;
@@ -214,11 +179,6 @@ public class LiteralType implements XMLLiteral {
 
     /**
      * Sets the value of the type property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link QName }
-     *
      */
     public void setType(QName value) {
         this.type = value;
@@ -265,7 +225,6 @@ public class LiteralType implements XMLLiteral {
                     }
                 }
             }
-
             return contentEquals &&
                    Objects.equals(this.type,    that.type);
         }

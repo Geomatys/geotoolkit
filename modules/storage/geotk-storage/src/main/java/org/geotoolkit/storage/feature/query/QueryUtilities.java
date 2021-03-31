@@ -24,13 +24,13 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.SortProperty;
 
 /**
  *
@@ -39,7 +39,7 @@ import org.opengis.filter.sort.SortBy;
  */
 public class QueryUtilities {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     private QueryUtilities(){}
 
@@ -47,7 +47,7 @@ public class QueryUtilities {
         return     query.retrieveAllProperties()
                 && query.getCoordinateSystemReproject() == null
                 && query.getCoordinateSystemReproject() == null
-                && query.getFilter() == Filter.INCLUDE
+                && query.getFilter() == Filter.include()
                 && query.getLimit() == -1
                 && query.getSortBy() == null
                 && query.getOffset() == 0;
@@ -95,9 +95,9 @@ public class QueryUtilities {
         Filter filter = original.getFilter();
         Filter filter2 = second.getFilter();
 
-        if ( filter.equals(Filter.INCLUDE) ){
+        if ( filter.equals(Filter.include()) ){
             filter = filter2;
-        } else if ( !filter2.equals(Filter.INCLUDE) ){
+        } else if ( !filter2.equals(Filter.include()) ){
             filter = FF.and(filter, filter2);
         }
         qb.setFilter(filter);
@@ -107,8 +107,8 @@ public class QueryUtilities {
         qb.setOffset(start);
 
         //ordering -------------------------------------------------------------
-        final List<SortBy> sorts = new ArrayList<>();
-        SortBy[] sts = original.getSortBy();
+        final List<SortProperty> sorts = new ArrayList<>();
+        SortProperty[] sts = original.getSortBy();
         if (sts != null) {
             sorts.addAll(Arrays.asList(sts));
         }
@@ -117,7 +117,7 @@ public class QueryUtilities {
         if (sts != null) {
             sorts.addAll(Arrays.asList(sts));
         }
-        qb.setSortBy(sorts.toArray(new SortBy[sorts.size()]));
+        qb.setSortBy(sorts.toArray(new SortProperty[sorts.size()]));
 
 
         //copy the resolution parameter-----------------------------------------
@@ -179,9 +179,9 @@ public class QueryUtilities {
         Filter filter = original.getFilter();
         Filter filter2 = second.getFilter();
 
-        if ( filter.equals(Filter.INCLUDE) ){
+        if ( filter.equals(Filter.include()) ){
             filter = filter2;
-        } else if ( !filter2.equals(Filter.INCLUDE) ){
+        } else if ( !filter2.equals(Filter.include()) ){
             filter = FF.and(filter, filter2);
         }
         qb.setFilter(filter);
@@ -191,8 +191,8 @@ public class QueryUtilities {
         qb.setOffset(start);
 
         //ordering -------------------------------------------------------------
-        final List<SortBy> sorts = new ArrayList<SortBy>();
-        SortBy[] sts = original.getSortBy();
+        final List<SortProperty> sorts = new ArrayList<SortProperty>();
+        SortProperty[] sts = original.getSortBy();
         if(sts != null){
             sorts.addAll(Arrays.asList(sts));
         }
@@ -203,7 +203,7 @@ public class QueryUtilities {
         }
 
         if(sorts != null){
-            qb.setSortBy(sorts.toArray(new SortBy[sorts.size()]));
+            qb.setSortBy(sorts.toArray(new SortProperty[sorts.size()]));
         }
 
         //hints of the second query---------------------------------------------
@@ -303,9 +303,9 @@ public class QueryUtilities {
         Filter filter = firstQuery.getFilter();
         Filter filter2 = secondQuery.getFilter();
 
-        if ((filter == null) || filter.equals(Filter.INCLUDE)) {
+        if ((filter == null) || filter.equals(Filter.include())) {
             filter = filter2;
-        } else if ((filter2 != null) && !filter2.equals(Filter.INCLUDE)) {
+        } else if ((filter2 != null) && !filter2.equals(Filter.include())) {
             filter = FF.and(filter, filter2);
         }
 

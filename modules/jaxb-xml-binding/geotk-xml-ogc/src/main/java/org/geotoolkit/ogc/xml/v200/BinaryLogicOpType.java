@@ -26,10 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.XMLFilter;
-import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -48,14 +45,12 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryLogicOpType", propOrder = {
     "comparisonOpsOrSpatialOpsOrTemporalOps"
 })
-public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperator, org.geotoolkit.ogc.xml.BinaryLogicOperator {
+public abstract class BinaryLogicOpType extends LogicOpsType implements org.geotoolkit.ogc.xml.BinaryLogicOperator {
 
     @XmlElementRefs({
         @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class),
@@ -69,11 +64,11 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
     private List<JAXBElement<?>> comparisonOpsOrSpatialOpsOrTemporalOps;
 
     public BinaryLogicOpType() {
-
     }
+
     /**
-      * Build a new Binary logic operator
-      */
+     * Build a new Binary logic operator
+     */
      public BinaryLogicOpType(final Object... operators) {
          this.comparisonOpsOrSpatialOpsOrTemporalOps = new ArrayList<>();
 
@@ -111,7 +106,6 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
                  throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
              }
          }
-
      }
 
      private void treatFilter(final FilterType filter) {
@@ -246,8 +240,6 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
      * {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      * {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      * {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-     *
-     *
      */
     public List<JAXBElement<?>> getComparisonOpsOrSpatialOpsOrTemporalOps() {
         if (comparisonOpsOrSpatialOpsOrTemporalOps == null) {
@@ -257,7 +249,7 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
     }
 
     @Override
-    public List<Filter> getChildren() {
+    public List<Filter> getOperands() {
         List<Filter> result = new ArrayList<>();
         for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrTemporalOps()) {
             result.add((Filter)jb.getValue());
@@ -276,15 +268,5 @@ public abstract class BinaryLogicOpType extends LogicOpsType implements BinaryLo
 
     public List<JAXBElement<?>> getLogicOps() {
         return getComparisonOpsOrSpatialOpsOrTemporalOps();
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

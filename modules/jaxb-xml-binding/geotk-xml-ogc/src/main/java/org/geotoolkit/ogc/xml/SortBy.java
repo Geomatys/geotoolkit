@@ -24,5 +24,5 @@ import java.util.List;
  */
 public interface SortBy {
 
-    List<? extends org.opengis.filter.sort.SortBy> getSortProperty();
+    List<? extends org.opengis.filter.SortProperty> getSortProperty();
 }

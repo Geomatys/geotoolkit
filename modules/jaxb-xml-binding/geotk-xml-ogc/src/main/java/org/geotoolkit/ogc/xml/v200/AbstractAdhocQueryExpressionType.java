@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.SortBy;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 
 
@@ -53,8 +52,6 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractAdhocQueryExpressionType", propOrder = {
@@ -79,9 +76,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
     private List<String> aliases;
 
     public AbstractAdhocQueryExpressionType() {
-
     }
-
 
     public AbstractAdhocQueryExpressionType(final AbstractAdhocQueryExpressionType that) {
         super(that);
@@ -104,7 +99,6 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
                 } else {
                     throw new IllegalArgumentException("Unexpected Selection type:" + value.getClass().getName());
                 }
-
             }
             if (that.abstractSortingClause != null) {
                 final Object value = that.abstractSortingClause.getValue();
@@ -331,8 +325,6 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         hash = 37 * hash + (this.aliases != null ? this.aliases.hashCode() : 0);
         return hash;
     }
-
-
 
     @Override
     public String toString() {

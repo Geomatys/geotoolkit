@@ -42,8 +42,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AvailableFunctionsType", propOrder = {
@@ -82,5 +80,4 @@ public class AvailableFunctionsType {
         }
         return this.function;
     }
-
 }

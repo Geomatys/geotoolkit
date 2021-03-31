@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.*;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
+import org.opengis.util.CodeList;
 
 
 /**
@@ -47,9 +47,6 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FilterType", propOrder = {
@@ -80,7 +77,6 @@ public class FilterType implements Filter, XMLFilter {
      * An empty constructor used by JAXB
      */
     public FilterType() {
-
     }
 
     /**
@@ -139,7 +135,6 @@ public class FilterType implements Filter, XMLFilter {
                     this.featureId.add(new FeatureIdType(fid.getFid()));
                 }
             }
-
         } else if (obj != null) {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         } else {
@@ -148,7 +143,6 @@ public class FilterType implements Filter, XMLFilter {
     }
 
      public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(final ComparisonOpsType operator) {
-
         if (operator instanceof PropertyIsLessThanOrEqualToType) {
             return FACTORY.createPropertyIsLessThanOrEqualTo((PropertyIsLessThanOrEqualToType) operator);
         } else if (operator instanceof PropertyIsLessThanType) {
@@ -175,7 +169,6 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     public static JAXBElement<? extends LogicOpsType> createLogicOps(final LogicOpsType operator) {
-
         if (operator instanceof OrType) {
             return FACTORY.createOr((OrType) operator);
         } else if (operator instanceof NotType) {
@@ -190,7 +183,6 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     public static JAXBElement<? extends SpatialOpsType> createSpatialOps(final SpatialOpsType operator) {
-
         if (operator instanceof BeyondType) {
             return FACTORY.createBeyond((BeyondType) operator);
         } else if (operator instanceof DWithinType) {
@@ -222,7 +214,6 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Gets the value of the spatialOps property.
-     *
      */
     public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
         return spatialOps;
@@ -230,7 +221,6 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Sets the value of the spatialOps property.
-     *
      */
     public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> value) {
         this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
@@ -238,7 +228,6 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Gets the value of the comparisonOps property.
-     *
      */
     public JAXBElement<? extends ComparisonOpsType> getComparisonOps() {
         return comparisonOps;
@@ -261,7 +250,6 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Sets the value of the logicOps property.
-     *
      */
     public void setLogicOps(final JAXBElement<? extends LogicOpsType> value) {
         this.logicOps = ((JAXBElement<? extends LogicOpsType> ) value);
@@ -269,7 +257,6 @@ public class FilterType implements Filter, XMLFilter {
 
     /**
      * Gets the value of the featureId property.
-     *
      */
     public List<FeatureIdType> getFeatureId() {
         if (featureId == null) {
@@ -314,12 +301,20 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public CodeList<?> getOperatorType() {
+        if (logicOps != null) return logicOps.getValue().getOperatorType();
+        return null;
     }
 
     @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        return extraData;
+    public List getExpressions() {
+        if (logicOps != null) return logicOps.getValue().getExpressions();
+        return null;
+    }
+
+    @Override
+    public boolean test(final Object object) {
+        if (logicOps != null) return logicOps.getValue().test(object);
+        return false;
     }
 }

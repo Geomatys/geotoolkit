@@ -95,10 +95,11 @@ import org.opengis.coverage.grid.SequenceType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.CoverageDescription;
@@ -228,7 +229,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             }
 
             // gamma correction ------------------------------------------------
-            final Double gamma = ce.getGammaValue().evaluate(null, Double.class);
+            final Double gamma = doubleValue(ce.getGammaValue());
             if (gamma != null && gamma != 1) {
                 //Specification : page 35
                 // A “GammaValue” tells how much to brighten (values greater than 1.0) or dim (values less than 1.0) an image.
@@ -236,6 +237,11 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             }
         }
         return image;
+    }
+
+    private static Double doubleValue(final Expression e) {
+        final Number v = (Number) e.apply(null);
+        return (v != null) ? v.doubleValue() : null;
     }
 
     /**
@@ -337,7 +343,7 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
             //color map is applied on geophysics view
             //if there is no geophysic, the same coverage is returned
             coverage = coverage.forConvertedValues(true);
-            resultImage = recolor.getFunction().evaluate(coverage.render(null), RenderedImage.class);
+            resultImage = (RenderedImage) recolor.getFunction().apply(coverage.render(null));
         }
 
         assert resultImage != null : "applyColorMapStyle : image can't be null.";
@@ -466,21 +472,20 @@ public class RasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer
         if (query instanceof SimpleQuery) {
             SimpleQuery sq = (SimpleQuery) query;
             // visit the filter to extract all values
-            final FilterVisitor fv = new DefaultFilterVisitor() {
-
-                @Override
-                public Object visit(PropertyIsEqualTo filter, Object data) {
-                    final Map<String,Double> values = (Map<String,Double>) data;
-                    final String expr1 = ((PropertyName)filter.getExpression1()).getPropertyName();
-                    final Double expr2 = Double.valueOf(((Literal)filter.getExpression2()).getValue().toString());
-                    values.put(expr1, expr2);
-                    return values;
+            final DefaultFilterVisitor fv = new DefaultFilterVisitor() {
+                {
+                    setFilterHandler(ComparisonOperatorName.PROPERTY_IS_EQUAL_TO, (f, data) -> {
+                        final BinaryComparisonOperator<Object> filter = (BinaryComparisonOperator) f;
+                        final Map<String,Double> map = (Map<String,Double>) data;
+                        final String expr1 = ((ValueReference)filter.getOperand1()).getXPath();
+                        final Double expr2 = Double.valueOf(((Literal)filter.getOperand2()).getValue().toString());
+                        map.put(expr1, expr2);
+                    });
                 }
-
             };
-
             final Filter filter = sq.getFilter();
-            values = (Map<String,Double>) filter.accept(fv, new HashMap<>());
+            values = new HashMap<>();
+            fv.visit(filter, values);
         }
         return values;
     }

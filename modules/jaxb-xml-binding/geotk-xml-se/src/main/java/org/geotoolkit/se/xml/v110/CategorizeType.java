@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -51,9 +50,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CategorizeType", propOrder = {
@@ -83,7 +79,6 @@ public class CategorizeType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getLookupValue() {
         return lookupValue;
@@ -95,7 +90,6 @@ public class CategorizeType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setLookupValue(final ParameterValueType value) {
         this.lookupValue = value;
@@ -107,7 +101,6 @@ public class CategorizeType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getValue() {
         return value;
@@ -119,7 +112,6 @@ public class CategorizeType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setValue(final ParameterValueType value) {
         this.value = value;
@@ -145,8 +137,6 @@ public class CategorizeType
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}
      * {@link JAXBElement }{@code <}{@link ParameterValueType }{@code >}
-     *
-     *
      */
     public List<JAXBElement<ParameterValueType>> getThresholdAndTValue() {
         if (thresholdAndTValue == null) {
@@ -161,7 +151,6 @@ public class CategorizeType
      * @return
      *     possible object is
      *     {@link ThreshholdsBelongToType }
-     *
      */
     public ThreshholdsBelongToType getThreshholdsBelongTo() {
         return threshholdsBelongTo;
@@ -173,10 +162,8 @@ public class CategorizeType
      * @param value
      *     allowed object is
      *     {@link ThreshholdsBelongToType }
-     *
      */
     public void setThreshholdsBelongTo(final ThreshholdsBelongToType value) {
         this.threshholdsBelongTo = value;
     }
-
 }

@@ -18,15 +18,18 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
-import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.NilOperator;
 
 
 /**
@@ -46,14 +49,12 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNilType", propOrder = {
     "expression"
 })
-public class PropertyIsNilType extends ComparisonOpsType {
+public class PropertyIsNilType extends ComparisonOpsType implements NilOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -61,7 +62,6 @@ public class PropertyIsNilType extends ComparisonOpsType {
     private String nilReason;
 
     public PropertyIsNilType() {
-
     }
 
     public PropertyIsNilType(final PropertyIsNilType that) {
@@ -86,11 +86,21 @@ public class PropertyIsNilType extends ComparisonOpsType {
         }
     }
 
+    @Override
+    public ComparisonOperatorName getOperatorType() {
+        return ComparisonOperatorName.valueOf("PROPERTY_IS_NIL");
+    }
+
     public String getPropertyName() {
         if (expression != null && expression.getValue() instanceof String) {
             return (String) expression.getValue();
         }
         return null;
+    }
+
+    @Override
+    public List getExpressions() {
+        return Collections.singletonList(getExpression());
     }
 
     /**
@@ -100,7 +110,6 @@ public class PropertyIsNilType extends ComparisonOpsType {
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -115,7 +124,6 @@ public class PropertyIsNilType extends ComparisonOpsType {
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -123,23 +131,14 @@ public class PropertyIsNilType extends ComparisonOpsType {
 
     /**
      * Gets the value of the nilReason property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
-    public String getNilReason() {
-        return nilReason;
+    @Override
+    public Optional<String> getNilReason() {
+        return Optional.ofNullable(nilReason);
     }
 
     /**
      * Sets the value of the nilReason property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setNilReason(String value) {
         this.nilReason = value;
@@ -148,16 +147,6 @@ public class PropertyIsNilType extends ComparisonOpsType {
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsNilType(this);
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

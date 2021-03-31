@@ -17,7 +17,7 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.opengis.filter.spatial.Overlaps;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -25,13 +25,11 @@ import org.opengis.filter.spatial.Overlaps;
  * @module
  */
 @XmlRootElement(name = "Overlaps")
-public class OverlapsType extends BinarySpatialOpType implements Overlaps {
-
+public class OverlapsType extends BinarySpatialOpType {
     /**
      * An empty constructor used by JAXB
      */
     public OverlapsType() {
-
     }
 
     /**
@@ -48,6 +46,11 @@ public class OverlapsType extends BinarySpatialOpType implements Overlaps {
     @Override
     public SpatialOpsType getClone() {
         return new OverlapsType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.OVERLAPS;
     }
 
     @Override

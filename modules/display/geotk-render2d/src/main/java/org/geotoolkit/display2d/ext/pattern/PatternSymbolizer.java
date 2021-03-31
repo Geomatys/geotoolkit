@@ -44,8 +44,8 @@ import org.geotoolkit.sld.xml.GTtoSLD110Transformer;
 import org.geotoolkit.sld.xml.SLD110toGTTransformer;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
@@ -73,8 +73,8 @@ public final class PatternSymbolizer extends SymbolizerType implements Extension
             }else if(right == null || right.getValue() == null){
                 return +1;
             }else{
-                final Number leftN = left.evaluate(null,Number.class);
-                final Number righN = right.evaluate(null,Number.class);
+                final Number leftN = (Number) left.apply(null);
+                final Number righN = (Number) right.apply(null);
                 final double res = leftN.doubleValue() - righN.doubleValue();
                 if(res < 0){
                     return -1;
@@ -85,7 +85,6 @@ public final class PatternSymbolizer extends SymbolizerType implements Extension
                 }
             }
         }
-
     }
 
 
@@ -211,8 +210,6 @@ public final class PatternSymbolizer extends SymbolizerType implements Extension
                 sb.append(" - - " + s);
             }
         }
-
         return sb.toString();
     }
-
 }

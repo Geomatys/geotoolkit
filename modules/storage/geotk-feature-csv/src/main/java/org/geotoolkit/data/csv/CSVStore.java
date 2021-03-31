@@ -49,7 +49,6 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.ResourceOnFileSystem;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -66,6 +65,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.util.NamesExt;
@@ -75,7 +75,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
@@ -99,7 +99,7 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csv");
 
-    protected final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    protected final FilterFactory FF = FilterUtilities.FF;
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
 
@@ -468,18 +468,17 @@ public class CSVStore extends DataStore implements WritableFeatureSet, ResourceO
         }
     }
 
-    void fireDataChangeEvents(Set<Identifier> addedIds, Set<Identifier> updatedIds, Set<Identifier> deletedIds) {
+    void fireDataChangeEvents(Set<ResourceId> addedIds, Set<ResourceId> updatedIds, Set<ResourceId> deletedIds) {
         if (!addedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds)));
+            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), addedIds));
         }
 
         if (!updatedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds)));
+            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), updatedIds));
         }
 
         if (!deletedIds.isEmpty()) {
-            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds)));
+            sendEvent(new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), deletedIds));
         }
     }
-
 }

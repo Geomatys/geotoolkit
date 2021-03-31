@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opengis.filter.identity.GmlObjectId;
 
 
 /**
@@ -41,13 +40,10 @@ import org.opengis.filter.identity.GmlObjectId;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GmlObjectIdType")
-public class GmlObjectIdType extends AbstractIdType implements GmlObjectId {
+public class GmlObjectIdType extends AbstractIdType {
 
     @XmlAttribute(namespace = "http://www.opengis.net/gml", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -59,7 +55,6 @@ public class GmlObjectIdType extends AbstractIdType implements GmlObjectId {
      * An empty constructor used by JAXB
      */
     public GmlObjectIdType() {
-
     }
 
     /**
@@ -75,12 +70,10 @@ public class GmlObjectIdType extends AbstractIdType implements GmlObjectId {
         }
     }
 
-    @Override
     public String getID() {
         return id;
     }
 
-    @Override
     public boolean matches(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

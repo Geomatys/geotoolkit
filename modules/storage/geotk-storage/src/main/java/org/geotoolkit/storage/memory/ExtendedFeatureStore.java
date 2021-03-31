@@ -48,7 +48,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -210,7 +210,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public List<FeatureId> addFeatures(final String typeName,
+    public List<ResourceId> addFeatures(final String typeName,
             final Collection<? extends Feature> newFeatures, final Hints hints) throws DataStoreException {
         if(queries.get(this, typeName)!=null){
             throw new DataStoreException("Group name corresponed to a stored query, it can not be updated.");

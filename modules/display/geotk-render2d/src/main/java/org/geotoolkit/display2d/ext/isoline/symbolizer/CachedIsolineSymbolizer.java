@@ -27,8 +27,7 @@ import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
+import org.opengis.filter.Expression;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
 
@@ -138,7 +137,7 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
 
         if (rasterSymbolizer != null && rasterSymbolizer.getColorMap() != null) {
             ColorMap colorMap = rasterSymbolizer.getColorMap();
-            Function function = colorMap.getFunction();
+            Expression function = colorMap.getFunction();
 
             if (function instanceof Interpolate) {
                 Interpolate interpolate = (Interpolate) function;
@@ -153,9 +152,9 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
                 Map<Expression, Expression> thresholds = categorize.getThresholds();
                 for (Map.Entry<Expression, Expression> entry : thresholds.entrySet()) {
                     Expression key = entry.getKey();
-                    Double step = key.evaluate(null, Double.class);
-                    if (step!= null && !step.isNaN() && !step.isInfinite()) {
-                        steps.add(step);
+                    Number step = (Number) key.apply(null);
+                    if (step!= null && Double.isFinite(step.doubleValue())) {
+                        steps.add(step.doubleValue());
                     }
                 }
                 dynamicColorMap = false;
@@ -180,7 +179,6 @@ public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer>
         while (iterator.hasNext()) {
             stepsArray[i++] = iterator.next();
         }
-
         return stepsArray;
     }
 }

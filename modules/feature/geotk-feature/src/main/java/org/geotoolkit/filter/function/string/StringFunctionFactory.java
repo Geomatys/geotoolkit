@@ -26,7 +26,6 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module
  */
 public class StringFunctionFactory extends AbstractFunctionFactory{
 
@@ -66,11 +65,9 @@ public class StringFunctionFactory extends AbstractFunctionFactory{
         FUNCTIONS.put(TRIM,                 TrimFunction.class);
         FUNCTIONS.put(TRUNCATE_FIRST,       TruncateFirstFunction.class);
         FUNCTIONS.put(TRUNCATE_LAST,        TruncateLastFunction.class);
-
     }
 
     public StringFunctionFactory() {
         super("string", FUNCTIONS);
     }
-
 }

@@ -24,7 +24,6 @@ import java.util.Map;
  */
 public interface XMLFilter {
 
-
     Object getFilterObject();
 
     Map<String, String> getPrefixMapping();

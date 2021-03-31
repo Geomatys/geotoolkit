@@ -20,7 +20,7 @@ import java.util.Objects;
 import javax.measure.Unit;
 import org.apache.sis.util.Classes;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Description;
 import org.opengis.style.Displacement;
 import org.opengis.style.Fill;

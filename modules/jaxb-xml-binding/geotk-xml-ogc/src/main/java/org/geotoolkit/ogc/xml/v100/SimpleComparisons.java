@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.Operator;
 
 
 /**
@@ -36,15 +35,12 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "Simple_Comparisons")
-public class SimpleComparisons implements Operator {
+public class SimpleComparisons {
 
-    @Override
     public String getName() {
         return "Simple_Comparisons";
     }

@@ -176,7 +176,7 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
         }
         final Filter filter = constraint.getFilter();
         if(filter != null){
-            data = filter.accept(this, data);
+            visit(filter, data);
         }
         return data;
     }

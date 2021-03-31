@@ -26,10 +26,10 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.Functions;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.filter.capability.Functions;
+import org.opengis.filter.Expression;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -49,15 +49,12 @@ import org.opengis.filter.expression.Function;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionType", propOrder = {
     "expression"
 })
-public class FunctionType extends ExpressionType implements Function {
+public class FunctionType extends ExpressionType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "Add", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class),
@@ -84,7 +81,6 @@ public class FunctionType extends ExpressionType implements Function {
      * An empty constructor used by JAXB
      */
      public FunctionType() {
-
      }
 
     /**
@@ -104,14 +100,12 @@ public class FunctionType extends ExpressionType implements Function {
      */
      public FunctionType(final Functions functions) {
          this.expression = new ArrayList<>();
-
          throw new UnsupportedOperationException("Operation Not supported yet");
      }
 
      public FunctionType(final FunctionType that) {
         if (that != null) {
             this.name = that.name;
-
             if (that.expression != null) {
                 this.expression = new ArrayList<>();
                 for (JAXBElement<?> jb : that.expression) {
@@ -132,6 +126,11 @@ public class FunctionType extends ExpressionType implements Function {
         }
     }
 
+    @Override
+    public ScopedName getFunctionName() {
+        return Names.createScopedName(Names.createLocalName(null, null, "Geotk"), null, name);
+    }
+
     /**
      * Gets the value of the expression property.
      */
@@ -145,7 +144,6 @@ public class FunctionType extends ExpressionType implements Function {
     /**
      * Gets the value of the name property.
      */
-    @Override
     public String getName() {
         return name;
     }
@@ -156,30 +154,4 @@ public class FunctionType extends ExpressionType implements Function {
     public void setName(final String value) {
         this.name = value;
     }
-
-    @Override
-    public LiteralType getFallbackValue() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Expression> getParameters() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

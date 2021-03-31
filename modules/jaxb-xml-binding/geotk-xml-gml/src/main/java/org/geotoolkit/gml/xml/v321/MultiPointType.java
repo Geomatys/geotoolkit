@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.MultiPoint;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -47,8 +46,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiPointType", propOrder = {
@@ -62,7 +59,6 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
     private PointArrayPropertyType pointMembers;
 
     public MultiPointType() {
-
     }
 
     public MultiPointType(final String srsName, final List<PointPropertyType> pointMember) {
@@ -127,21 +123,6 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
         this.pointMembers = value;
     }
 
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -166,7 +147,6 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
         hash = 19 * hash + (this.pointMembers != null ? this.pointMembers.hashCode() : 0);
         return hash;
     }
-
 
     @Override
     public String toString() {

@@ -32,7 +32,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.junit.Ignore;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.Feature;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 
 
 /**
@@ -44,10 +44,8 @@ public class XPathBindingTest extends org.geotoolkit.test.TestBase {
     @Ignore
     @Test
     public void testJaxenXPath() throws JaxenException {
-
         List lst = null;
         String exp;
-
 
         // flat attribut test //////////////////////////////////////////////////
 
@@ -113,17 +111,16 @@ public class XPathBindingTest extends org.geotoolkit.test.TestBase {
     public void testDoubleSlashXPath(){
 
         final String exp = "//gml:testString";
-        final PropertyName pn = new DefaultPropertyName(exp);
-        final Object result = pn.evaluate(FilterTestConstants.FEATURE_1, null);
+        final ValueReference pn = new DefaultPropertyName(exp);
+        final Object result = pn.apply(FilterTestConstants.FEATURE_1);
         assertEquals("test string data", result);
     }
 
     @Test
     public void testStarXPath(){
-
         final String exp = "*[10]";
-        final PropertyName pn = new DefaultPropertyName(exp);
-        final Object result = pn.evaluate(FilterTestConstants.FEATURE_1, null);
+        final ValueReference pn = new DefaultPropertyName(exp);
+        final Object result = pn.apply(FilterTestConstants.FEATURE_1);
         assertEquals("test string data", result);
     }
 }

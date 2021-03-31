@@ -18,7 +18,6 @@ package org.geotoolkit.ogc.xml.v110;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
-import org.opengis.filter.capability.Operator;
 
 
 /**
@@ -41,10 +40,9 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- *
  */
 @XmlEnum
-public enum ComparisonOperatorType implements Operator {
+public enum ComparisonOperatorType {
 
     @XmlEnumValue("LessThan")
     LESS_THAN("LessThan"),
@@ -82,14 +80,4 @@ public enum ComparisonOperatorType implements Operator {
         }
         throw new IllegalArgumentException(v.toString());
     }
-
-    /**
-     * Implements Operator interface.
-     *
-     * @return the value of the element of the enumeration
-     */
-    public String getName() {
-        return value;
-    }
-
 }

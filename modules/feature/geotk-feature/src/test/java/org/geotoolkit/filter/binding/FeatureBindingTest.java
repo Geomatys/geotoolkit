@@ -41,9 +41,6 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  */
 public class FeatureBindingTest extends org.geotoolkit.test.TestBase {
 
-    public FeatureBindingTest() {
-    }
-
     @Test
     public void testFactories(){
         final Binding[] factories = Bindings.getBindings();
@@ -84,7 +81,7 @@ public class FeatureBindingTest extends org.geotoolkit.test.TestBase {
         accessor = Bindings.getBinding(Feature.class, AttributeConvention.IDENTIFIER_PROPERTY.toString());
         assertNotNull(accessor);
         Object id = accessor.get(FEATURE_1, AttributeConvention.IDENTIFIER_PROPERTY.toString(), null);
-        assertEquals(FeatureExt.getId(FEATURE_1).getID(), id);
+        assertEquals(FeatureExt.getId(FEATURE_1).getIdentifier(), id);
 
         //test xpath index------------------------------------------------------
         accessor = Bindings.getBinding(Feature.class, "*[10]");
@@ -227,7 +224,6 @@ public class FeatureBindingTest extends org.geotoolkit.test.TestBase {
         val = accessor.get(CX_FEATURE_TYPE, "/{http://test.com}attString", null);
         assertEquals(CX_FEATURE_TYPE.getProperty("http://test.com:attString"), val);
 
-
         // sub path attribut ///////////////////////////////////////////////////
         accessor = Bindings.getBinding(FeatureType.class, "/{http://test.com}attCpx/{http://test.com}attString");
         assertNotNull(accessor);
@@ -245,7 +241,6 @@ public class FeatureBindingTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testAttributeAccessor(){
-
         Binding accessor = Bindings.getBinding(Attribute.class, ".");
         assertNotNull(accessor);
         Property prop = FEATURE_1.getProperty("testGeometry");

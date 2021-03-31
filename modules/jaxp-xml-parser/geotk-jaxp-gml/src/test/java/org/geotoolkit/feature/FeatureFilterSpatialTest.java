@@ -28,7 +28,6 @@ import org.locationtech.jts.geom.Point;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
-import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
@@ -38,8 +37,6 @@ import org.junit.Test;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.referencing.CommonCRS;
@@ -47,13 +44,15 @@ import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.BinarySpatialOperator;
 
 /**
  * Testing filters used on ISO/JTS geometries.
  */
 public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
 
-    private static final FilterFactory FF = new DefaultFilterFactory2();
+    private static final FilterFactory<Object,Object,Object> FF = FilterUtilities.FF;
 
     public FeatureFilterSpatialTest() {
     }
@@ -238,8 +237,8 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(70.83, 29.86), crs));
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(68.87, 31.08), crs));
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(71.96, 32.19), crs));
-        Equals equalsfilter = FF.equals("{http://cite.opengeospatial.org/gmlsf}multiPointProperty", multiPoint);
-        boolean match = equalsfilter.evaluate(aggregateGeoFeature1);
+        BinarySpatialOperator equalsfilter = FF.equals(FF.property("{http://cite.opengeospatial.org/gmlsf}multiPointProperty"), FF.literal(multiPoint));
+        boolean match = equalsfilter.test(aggregateGeoFeature1);
         assertTrue(match);
 
         /*
@@ -250,15 +249,14 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(38.83, 16.22), crs));
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(62.07, 2.48), crs));
 
-        Intersects intfilter = FF.intersects("{http://cite.opengeospatial.org/gmlsf}attribut.Géométrie", multiPoint);
-        match = intfilter.evaluate(entiteGenerique1);
+        BinarySpatialOperator intfilter = FF.intersects(FF.property("{http://cite.opengeospatial.org/gmlsf}attribut.Géométrie"), FF.literal(multiPoint));
+        match = intfilter.test(entiteGenerique1);
         assertFalse(match);
 
-        match = intfilter.evaluate(entiteGenerique2);
+        match = intfilter.test(entiteGenerique2);
         assertFalse(match);
 
-        match = intfilter.evaluate(entiteGenerique3);
+        match = intfilter.test(entiteGenerique3);
         assertFalse(match);
     }
-
 }

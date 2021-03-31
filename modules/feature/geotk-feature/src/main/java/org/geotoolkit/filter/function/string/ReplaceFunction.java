@@ -18,67 +18,24 @@ package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.filter.function.other.StaticUtils;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class ReplaceFunction extends AbstractFunction {
 
     public ReplaceFunction(final Expression expr1, final Expression expr2, final Expression expr3, final Expression expr4) {
-        super(StringFunctionFactory.REPLACE, new Expression[]{expr1,expr2,expr3,expr4}, null);
+        super(StringFunctionFactory.REPLACE, expr1, expr2, expr3, expr4);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String arg0;
-        String arg1;
-        String arg2;
-        Boolean arg3 = null;
-
-        try { // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature, String.class); // extra
-            // protection
-            // for
-            // strings
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strMatches argument #0 - expected type String");
+    public Object apply(final Object feature) {
+        final String[] args = stringValues(feature, 3);
+        Boolean arg3 = Boolean.FALSE;
+        try {
+            arg3 = (Boolean) parameters.get(3).apply(feature);
+        } catch (Exception e) {
+            // TODO: really ignore?
         }
-
-        try { // attempt to get value and perform conversion
-            arg1 = parameters.get(1).evaluate(feature, String.class); // extra
-            // protection
-            // for
-            // strings
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strMatches argument #1 - expected type String");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg2 = parameters.get(2).evaluate(feature, String.class); // extra
-            // protection
-            // for
-            // strings
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strMatches argument #1 - expected type String");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg3 = parameters.get(3).evaluate(feature, Boolean.class); // extra
-            // protection
-            // for
-            // strings
-        } catch (Exception e) // probably a type error
-        {
-        }
-
-        if ( arg3 == null ) {
-            arg3 = Boolean.FALSE;
-        }
-        return StaticUtils.strReplace(arg0, arg1, arg2, arg3);
+        return StaticUtils.strReplace(args[0], args[1], args[2], arg3);
     }
 }

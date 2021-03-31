@@ -18,39 +18,25 @@ package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.filter.function.other.StaticUtils;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class SubstringStartFunction extends AbstractFunction {
 
     public SubstringStartFunction(final Expression expr1, final Expression expr2) {
-        super(StringFunctionFactory.SUBSTRING_START, new Expression[]{expr1,expr2}, null);
+        super(StringFunctionFactory.SUBSTRING_START, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String arg0;
+    public Object apply(final Object feature) {
+        final String[] args = stringValues(feature, 1);
         int arg1;
-
-        try { // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature, String.class); // extra
-                                                                    // protection
-                                                                    // for
-                                                                    // strings
-        } catch (Exception e) // probably a type error
-        {
+        try {
+            arg1 = ((Number) parameters.get(1).apply(feature)).intValue();
+        } catch (Exception e) {
             throw new IllegalArgumentException(
-                    "Filter Function problem for function strSubstringStart argument #0 - expected type String");
+                    "Filter Function problem for function strSubstringStart argument #1 - expected type int", e);
         }
-
-        try { // attempt to get value and perform conversion
-            arg1 = ((Number) parameters.get(1).evaluate(feature)).intValue();
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strSubstringStart argument #1 - expected type int");
-        }
-
-        return StaticUtils.strSubstringStart(arg0, arg1);
+        return StaticUtils.strSubstringStart(args[0], arg1);
     }
 }

@@ -19,35 +19,22 @@ package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.filter.function.other.StaticUtils;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class TruncateLastFunction extends AbstractFunction {
 
     public TruncateLastFunction(final Expression expression, final Expression lenghtExp) {
-        super(StringFunctionFactory.TRUNCATE_LAST, new Expression[]{expression,lenghtExp}, null);
+        super(StringFunctionFactory.TRUNCATE_LAST, expression, lenghtExp);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String arg0;
-
-        try {
-            // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature, String.class);
-            // extra protection forstrings
-        } catch (Exception e) {
-            // probably a type error
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strTruncate argument #0 - expected type String");
-        }
-
-        final int length = parameters.get(1).evaluate(feature, Integer.class);
-
-        return StaticUtils.strTruncateLast(arg0, length);
+    public Object apply(final Object feature) {
+        final String[] args = stringValues(feature, 1);
+        final int length = (Integer) parameters.get(1).apply(feature);
+        return StaticUtils.strTruncateLast(args[0], length);
     }
 }

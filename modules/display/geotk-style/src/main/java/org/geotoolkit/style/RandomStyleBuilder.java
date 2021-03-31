@@ -26,6 +26,7 @@ import org.apache.sis.feature.Features;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
@@ -37,8 +38,8 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.style.*;
 
 /**
@@ -66,7 +67,7 @@ public class RandomStyleBuilder {
     };
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     private RandomStyleBuilder() {}
 
@@ -166,18 +167,18 @@ public class RandomStyleBuilder {
 
             final MutableRule rulePoint = SF.rule(pointSymbol.get());
             rulePoint.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Point")),
-                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPoint"))
+                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Point")),
+                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPoint"))
                                 ));
             final MutableRule ruleLine = SF.rule(lineSymbol.get());
             ruleLine.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("LineString")),
-                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiLineString"))
+                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("LineString")),
+                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiLineString"))
                                 ));
             final MutableRule rulePolygon = SF.rule(polygonSymbol.get());
             rulePolygon.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Polygon")),
-                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPolygon"))
+                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Polygon")),
+                                    FF.equal(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPolygon"))
                                 ));
 
             fts.rules().add(rulePoint);

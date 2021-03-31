@@ -16,15 +16,16 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -48,16 +49,13 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsLikeType", propOrder = {
     "propertyName",
     "literal"
 })
-public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsLike {
+public class PropertyIsLikeType extends ComparisonOpsType implements LikeOperator {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -76,7 +74,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * An empty constructor used by JAXB.
      */
     public PropertyIsLikeType() {
-
     }
 
     /**
@@ -106,7 +103,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     }
 
     /**
-     *Build a new Property is like operator
+     * Build a new Property is like operator
      */
     public PropertyIsLikeType(final Expression expr, final String pattern, final String wildcard, final String singleChar, final String escape, final Boolean matchCase) {
         this.escapeChar   = escape;
@@ -135,6 +132,16 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
             }
         }
     }
+
+    @Override
+    public List getExpressions() {
+        return Arrays.asList(getExpression(), getLiteral());
+    }
+
+    public Expression getExpression() {
+        return propertyName;
+    }
+
     /**
      * Gets the value of the propertyName property.
      */
@@ -152,7 +159,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      * Gets the value of the literal property.
      */
-    @Override
     public String getLiteral() {
         if (literal != null) {
             return literal.getStringValue();
@@ -171,14 +177,18 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         return literal;
     }
 
+    public String getEscape() {
+        return escapeChar;
+    }
+
     /**
      * Gets the value of the escapeChar property.
      */
-    public String getEscapeChar() {
+    public char getEscapeChar() {
         if (escapeChar == null) {
             escapeChar = "\\";
         }
-        return escapeChar;
+        return escapeChar.charAt(0);
     }
 
     /**
@@ -207,8 +217,8 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * Gets the value of the singleChar property.
      */
     @Override
-    public String getSingleChar() {
-        return singleChar;
+    public char getSingleChar() {
+        return singleChar.charAt(0);
     }
 
     /**
@@ -222,8 +232,8 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * Gets the value of the wildCard property.
      */
     @Override
-    public String getWildCard() {
-        return wildCard;
+    public char getWildCard() {
+        return wildCard.charAt(0);
     }
 
     /**
@@ -243,8 +253,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         }
         if (object instanceof PropertyIsLikeType) {
             final PropertyIsLikeType that = (PropertyIsLikeType) object;
-
-
             return Objects.equals(this.escapeChar,   that.escapeChar)   &&
                    Objects.equals(this.literal,      that.literal)      &&
                    Objects.equals(this.matchCase,    that.matchCase)    &&
@@ -275,37 +283,19 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         } else {
             s.append("PropertyName null").append('\n');
         }
-
         if (literal != null) {
            s.append("Litteral= ").append(literal.toString()).append('\n');
         } else {
             s.append("Literal null").append('\n');
         }
-
         s.append("matchCase= ").append(matchCase).append(" escape=").append(escapeChar);
         s.append(" single=").append(singleChar).append(" wildCard=").append(wildCard);
-
         return s.toString();
     }
 
     @Override
-    public Expression getExpression() {
-        return propertyName;
-    }
-
-    @Override
-    public String getEscape() {
-        return escapeChar;
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
+    public boolean test(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        return visitor.visit(this,extraData);
     }
 
     @Override

@@ -69,12 +69,11 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.Identifier;
-import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.ResourceId;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import org.opengis.filter.SpatialOperatorName;
 
 
 /**
@@ -88,10 +87,10 @@ import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
  */
 public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
-    private static final Comparator<Identifier> IDENTIFIER_COMPARATOR = new Comparator<Identifier>(){
+    private static final Comparator<ResourceId> IDENTIFIER_COMPARATOR = new Comparator<ResourceId>() {
         @Override
-        public int compare(Identifier o1, Identifier o2){
-            return o1.toString().compareTo(o2.toString());
+        public int compare(ResourceId o1, ResourceId o2){
+            return o1.getIdentifier().toString().compareTo(o2.getIdentifier().toString());
         }
     };
 
@@ -129,8 +128,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * @param createIndex enable/disable automatic index creation if needed
      * @param treeType The type of index used
      * @param dbfCharset {@link Charset} used to decode strings from the DBF
-     *
-     * @throws MalformedURLException
      */
     public IndexedShapefileFeatureStore(final URI uri, final boolean useMemoryMappedBuffer,
             final boolean createIndex, final IndexType treeType, final Charset dbfCharset)
@@ -159,7 +156,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             ShapefileProvider.LOGGER.log(Level.WARNING, e
                     .getLocalizedMessage());
         }
-
     }
 
     /**
@@ -167,11 +163,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      */
     public final void createSpatialIndex() throws IOException {
         buildQuadTree(maxDepth);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
     }
 
     /**
@@ -223,7 +214,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
             //add filter properties
             final FilterAttributeExtractor fae = new FilterAttributeExtractor();
-            queryFilter.accept(fae, null);
+            fae.visit(queryFilter, null);
             final Set<GenericName> filterPropertyNames = fae.getAttributeNameSet();
             for (GenericName n : filterPropertyNames) {
                 final PropertyType cdt = baseType.getProperty(n.toString());
@@ -249,24 +240,22 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             }
             readType = FeatureTypeExt.createSubType(baseType,readPropertyNames);
 
-            if(queryFilter instanceof BBOX){
+            if (queryFilter.getOperatorType() == SpatialOperatorName.BBOX) {
                 //in case we have a BBOX filter only, which is very commun, we can speed
                 //the process by relying on the quadtree estimations
-                final Envelope bbox = (Envelope) queryFilter.accept(
-                        ExtractBoundsFilterVisitor.BOUNDS_VISITOR, new JTSEnvelope2D());
+                final Envelope bbox = ExtractBoundsFilterVisitor.bbox(queryFilter, null);
                 final boolean loose = (queryFilter instanceof LooseBBox);
-                queryFilter = Filter.INCLUDE;
+                queryFilter = Filter.include();
                 final List<AttributeType> attsProperties = new ArrayList<>(readProperties);
                 attsProperties.remove(idAttribute);
                 reader = createFeatureReader(
                         getBBoxAttributesReader(attsProperties, bbox, loose, queryHints,read3D,queryRes),
                         readType, queryHints);
 
-            }else if(queryFilter instanceof Id && ((Id)queryFilter).getIdentifiers().isEmpty()){
-                //in case we have an empty id set
+            } else if (queryFilter instanceof ResourceId && ((ResourceId) queryFilter).getIdentifier() == null) {
+                // in case we have an empty id set (TODO: should never happen, maybe we should remove this case).
                 return FeatureStreams.emptyReader(getFeatureType());
-
-            }else{
+            } else {
                 final List<AttributeType> attsProperties = new ArrayList<>(readProperties);
                 attsProperties.remove(idAttribute);
                 reader = createFeatureReader(
@@ -311,11 +300,11 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         final AccessManager locker = shpFiles.createLocker();
 
         CloseableCollection<ShpData> goodRecs = null;
-        if (filter instanceof Id && shpFiles.isWritable() && shpFiles.exists(FIX)) {
-            final Id fidFilter = (Id) filter;
+        if (filter instanceof ResourceId && shpFiles.isWritable() && shpFiles.exists(FIX)) {
+            final ResourceId fidFilter = (ResourceId) filter;
 
-            final TreeSet<Identifier> idsSet = new TreeSet<>(IDENTIFIER_COMPARATOR);
-            idsSet.addAll(fidFilter.getIdentifiers());
+            final TreeSet<String> idsSet = new TreeSet<>();
+            idsSet.add(fidFilter.getIdentifier());
             try {
                 goodRecs = queryFidIndex(idsSet);
             } catch (IOException ex) {
@@ -328,8 +317,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             if (filter != null) {
                 // Add additional bounds from the filter
                 // will be null for Filter.EXCLUDES
-                bbox = (Envelope) filter.accept(
-                        ExtractBoundsFilterVisitor.BOUNDS_VISITOR, bbox);
+                bbox = ExtractBoundsFilterVisitor.bbox(filter, null);
                 if (bbox == null) {
                     bbox = new JTSEnvelope2D();
                     // we hit Filter.EXCLUDES consider returning an empty
@@ -361,7 +349,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             throw new DataStoreException(ex);
         }
     }
-
 
     protected IndexedShapefileAttributeReader getBBoxAttributesReader(final List<AttributeType> properties,
             final Envelope bbox, final boolean loose, final Hints hints, final boolean read3D, final double[] res) throws DataStoreException {
@@ -409,15 +396,11 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * @param fids
      *                the fids of the features to find.  If the set is sorted by alphabet the performance is likely to be better.
      * @return a list of Data objects
-     * @throws IOException
-     * @throws TreeException
      */
-    private CloseableCollection<ShpData> queryFidIndex(final Set<Identifier> idsSet) throws IOException {
-
+    private CloseableCollection<ShpData> queryFidIndex(final Set<String> idsSet) throws IOException {
         if (!indexUseable(FIX)) {
             return null;
         }
-
         final AccessManager locker = shpFiles.createLocker();
 
         final IndexedFidReader reader = locker.getFIXReader(null);
@@ -426,9 +409,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         try {
             final ShxReader shx = locker.getSHXReader(useMemoryMappedBuffer);
             try {
-
-                for (Identifier identifier : idsSet) {
-                    String fid = String.valueOf(identifier.getID());
+                for (String fid : idsSet) {
                     long recno = reader.findFid(fid);
                     if (recno == -1){
                         if(getLogger().isLoggable(Level.FINEST)){
@@ -456,7 +437,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         } finally {
             reader.close();
         }
-
         return records;
     }
 
@@ -504,12 +484,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * QuadTree Query
-     *
-     * @param bbox
-     *
-     * @throws DataSourceException
-     * @throws IOException
-     * @throws TreeException DOCUMENT ME!
      */
     private CloseableCollection<ShpData> queryQuadTree(final AccessManager locker, final Envelope bbox)
             throws DataStoreException, IOException, TreeException {
@@ -538,7 +512,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * Convenience method for opening a QuadTree index.
      *
      * @return A new QuadTree
-     * @throws StoreException
      */
     protected QuadTree openQuadTree() throws StoreException {
         return shpFiles.getQIX();
@@ -562,7 +535,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         //we read all properties
         final IndexedShapefileAttributeReader attReader = getAttributesReader(
-                getAttributes(schema,false),Filter.INCLUDE,true,null);
+                getAttributes(schema,false),Filter.include(), true, null);
 
         try{
             final FeatureReader reader = createFeatureReader(attReader, schema, null);
@@ -582,13 +555,13 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         final org.geotoolkit.storage.feature.query.Query gquery = (org.geotoolkit.storage.feature.query.Query) query;
 
         final Filter filter = gquery.getFilter();
-        if (filter == Filter.INCLUDE || QueryUtilities.queryAll(gquery) ) {
+        if (filter == Filter.include() || QueryUtilities.queryAll(gquery) ) {
             //use the generic envelope calculation
             return super.getEnvelope(gquery);
         }
 
-        final Set<Identifier> fids = (Set<Identifier>) filter.accept(
-                IdCollectorFilterVisitor.IDENTIFIER_COLLECTOR, new TreeSet<>(IDENTIFIER_COMPARATOR));
+        final Set<String> fids = new TreeSet<>();
+        IdCollectorFilterVisitor.ID_COLLECTOR.visit(filter, fids);
 
         final Set records = new HashSet();
         if (!fids.isEmpty()) {
@@ -639,7 +612,6 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * will index when required
      *
      * @param maxDepth depth of the tree. if < 0 then a best guess is made.
-     * @throws TreeException
      */
     public void buildQuadTree(final int maxDepth) throws TreeException {
         if (shpFiles.isWritable()) {
@@ -687,6 +659,5 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         } catch (IOException e) {
             ShapefileProvider.LOGGER.log(Level.WARNING, e.getLocalizedMessage());
         }
-
     }
 }

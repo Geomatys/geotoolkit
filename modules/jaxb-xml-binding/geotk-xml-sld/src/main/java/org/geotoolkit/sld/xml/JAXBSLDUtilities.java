@@ -31,7 +31,7 @@ import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.util.FactoryException;
 import javax.xml.bind.JAXBContext;

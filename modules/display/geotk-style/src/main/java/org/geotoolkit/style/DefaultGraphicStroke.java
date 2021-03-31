@@ -19,7 +19,7 @@ package org.geotoolkit.style;
 import java.util.List;
 import java.util.Objects;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.Displacement;
 import org.opengis.style.GraphicStroke;
@@ -27,13 +27,11 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Graphic Stroke.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStroke{
 
@@ -64,8 +62,8 @@ public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStrok
             final Expression gap){
         super(symbols,opacity,size,rotation,anchor,disp);
 
-        this.gap = (gap == null || gap == NIL) ? DEFAULT_GRAPHIC_STROKE_GAP : gap;
-        this.initial = (initial == null || initial == NIL) ? DEFAULT_GRAPHIC_STROKE_INITIAL_GAP : initial;
+        this.gap = (gap == null) ? DEFAULT_GRAPHIC_STROKE_GAP : gap;
+        this.initial = (initial == null) ? DEFAULT_GRAPHIC_STROKE_INITIAL_GAP : initial;
     }
 
     /**

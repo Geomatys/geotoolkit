@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.LogicOperator;
-import org.opengis.filter.Filter;
+import org.opengis.filter.LogicalOperator;
 
 
 /**
@@ -37,9 +37,6 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LogicOpsType")
@@ -47,7 +44,12 @@ import org.opengis.filter.Filter;
     BinaryLogicOpType.class,
     UnaryLogicOpType.class
 })
-public abstract class LogicOpsType implements Filter, LogicOperator {
+public abstract class LogicOpsType implements LogicalOperator, LogicOperator {
+
+    @Override
+    public boolean test(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public String toString() {

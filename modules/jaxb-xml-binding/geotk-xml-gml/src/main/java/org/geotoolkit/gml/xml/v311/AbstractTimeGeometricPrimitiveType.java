@@ -16,16 +16,17 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.Expression;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.util.ScopedName;
 
 /**
  * The abstract supertype for temporal geometric primitives.
@@ -47,9 +48,6 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimeGeometricPrimitiveType")
@@ -64,7 +62,6 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     private String frame;
 
     public AbstractTimeGeometricPrimitiveType() {
-
     }
 
     public AbstractTimeGeometricPrimitiveType(final String id) {
@@ -84,7 +81,6 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     public String getFrame() {
         return frame;
@@ -96,7 +92,6 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setFrame(final String value) {
         this.frame = value;
@@ -113,17 +108,22 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     }
 
     @Override
-    public Object evaluate(Object o) {
+    public ScopedName getFunctionName() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object o, Class<T> type) {
+    public List<Expression> getParameters() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor ev, Object o) {
+    public Object apply(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Expression toValueType(Class type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

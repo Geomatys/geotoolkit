@@ -37,8 +37,7 @@ import org.geotoolkit.version.Version;
 import org.opengis.feature.Feature;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 
 /**
  * Provide JDBC transaction support for asynchrone sessions.
@@ -71,7 +70,7 @@ public class JDBCSession extends DefaultSession {
     }
 
     @Override
-    protected ModifyDelta createModifyDelta(Session session, String typeName, Id filter, Map<String, ? extends Object> values) {
+    protected ModifyDelta createModifyDelta(Session session, String typeName, Filter filter, Map<String, ? extends Object> values) {
         if(isAsynchrone()){
             return new JDBCModifyDelta(session, typeName, filter, values);
         }else{
@@ -81,7 +80,7 @@ public class JDBCSession extends DefaultSession {
     }
 
     @Override
-    protected RemoveDelta createRemoveDelta(Session session, String typeName, Id filter) {
+    protected RemoveDelta createRemoveDelta(Session session, String typeName, Filter filter) {
         if(isAsynchrone()){
             return new JDBCRemoveDelta(session, typeName, filter);
         }else{
@@ -169,33 +168,14 @@ public class JDBCSession extends DefaultSession {
 
         if(isAsynchrone()){
 
-            List<Id> removeIdFilters = new ArrayList<Id>();
+            List<Filter<Object>> removeIdFilters = new ArrayList<>();
 
             //split Id filter
-            if(filter instanceof Id) {
-                final Id removed = (Id)filter;
-                if (removed.getIDs().size() > MAX_ID_IN_REQUEST) {
-
-                    Set<Identifier> identifiers = new HashSet<Identifier>();
-                    for (Identifier id : removed.getIdentifiers()) {
-                        identifiers.add(id);
-
-                        //flush in list of filters
-                        if (identifiers.size() == MAX_ID_IN_REQUEST) {
-                            removeIdFilters.add(FF.id(identifiers));
-                            identifiers.clear();
-                        }
-                    }
-                    if(!identifiers.isEmpty()) {
-                        removeIdFilters.add(FF.id(identifiers));
-                    }
-
-                } else {
-                    removeIdFilters.add(removed);
-                }
-
+            if(filter instanceof ResourceId) {
+                final ResourceId removed = (ResourceId)filter;
+                removeIdFilters.add(removed);
             } else {
-                Set<Identifier> identifiers = new HashSet<Identifier>();
+                Set<ResourceId<Object>> identifiers = new HashSet<>();
                 final QueryBuilder qb = new QueryBuilder(groupName);
                 qb.setFilter(filter);
                 final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
@@ -205,25 +185,22 @@ public class JDBCSession extends DefaultSession {
 
                         //flush in list of filters
                         if (identifiers.size() == MAX_ID_IN_REQUEST) {
-                            removeIdFilters.add(FF.id(identifiers));
+                            removeIdFilters.addAll(identifiers);
                             identifiers.clear();
                         }
                     }
-
                     if(!identifiers.isEmpty()) {
-                        removeIdFilters.add(FF.id(identifiers));
+                        removeIdFilters.addAll(identifiers);
                     }
                 }finally{
                     ite.close();
                 }
-
                 if(removeIdFilters.isEmpty()){
                     //no feature match this filter, no need to create to remove delta
                     return;
                 }
             }
-
-            for (final Id removeIdFilter : removeIdFilters) {
+            for (final Filter removeIdFilter : removeIdFilters) {
                 getDiff().add(createRemoveDelta(this, groupName, removeIdFilter));
             }
             fireSessionChanged();
@@ -231,5 +208,4 @@ public class JDBCSession extends DefaultSession {
             store.removeFeatures(groupName, filter);
         }
     }
-
 }

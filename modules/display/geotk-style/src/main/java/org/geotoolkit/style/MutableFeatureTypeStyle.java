@@ -19,7 +19,7 @@ package org.geotoolkit.style;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import org.opengis.filter.Id;
+import org.opengis.filter.ResourceId;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
@@ -52,7 +52,7 @@ public interface MutableFeatureTypeStyle extends FeatureTypeStyle{
     /**
      * Set the feature ids.
      */
-    void setFeatureInstanceIDs(Id id);
+    void setFeatureInstanceIDs(ResourceId id);
 
     /**
      * {@inheritDoc }

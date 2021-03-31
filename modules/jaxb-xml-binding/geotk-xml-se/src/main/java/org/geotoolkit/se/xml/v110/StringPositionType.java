@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -42,9 +41,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StringPositionType", propOrder = {
@@ -68,7 +64,6 @@ public class StringPositionType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getLookupString() {
         return lookupString;
@@ -80,7 +75,6 @@ public class StringPositionType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setLookupString(final ParameterValueType value) {
         this.lookupString = value;
@@ -92,7 +86,6 @@ public class StringPositionType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -104,7 +97,6 @@ public class StringPositionType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
@@ -116,7 +108,6 @@ public class StringPositionType
      * @return
      *     possible object is
      *     {@link SearchDirectionType }
-     *
      */
     public SearchDirectionType getSearchDirection() {
         return searchDirection;
@@ -128,10 +119,8 @@ public class StringPositionType
      * @param value
      *     allowed object is
      *     {@link SearchDirectionType }
-     *
      */
     public void setSearchDirection(final SearchDirectionType value) {
         this.searchDirection = value;
     }
-
 }

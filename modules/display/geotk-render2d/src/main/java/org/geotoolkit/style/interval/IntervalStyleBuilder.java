@@ -32,6 +32,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.style.MutableRule;
@@ -47,17 +48,15 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.And;
+import org.opengis.filter.LogicalOperator;
 import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.ComparisonOperatorName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.ValueReference;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
@@ -88,13 +87,13 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     };
 
 
-    public final PropertyName noValue;
+    public final ValueReference noValue;
     private final MutableStyleFactory sf;
     private final FilterFactory ff;
 
     private MapLayer layer;
-    private PropertyName classification;
-    private PropertyName normalize;
+    private ValueReference classification;
+    private ValueReference normalize;
     private int nbClasses = 5;
     private double[] values = new double[0];
     private Double[] allValues = new Double[0];
@@ -102,7 +101,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
     private boolean genericAnalyze = false;
     private boolean analyze = false;
-    private final List<PropertyName> properties = new ArrayList<>();
+    private final List<ValueReference> properties = new ArrayList<>();
     private long count = 0;
     private double minimum = 0;
     private double maximum = 0;
@@ -121,13 +120,11 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         }else{
             sf = styleFactory;
         }
-
         if(filterFactory == null){
-             ff = DefaultFactories.forBuildin(FilterFactory.class);
+             ff = FilterUtilities.FF;
         }else{
             ff = filterFactory;
         }
-
         noValue = ff.property("-");
     }
 
@@ -192,104 +189,82 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     }
 
     public boolean isIntervalStyle(final FeatureTypeStyle fts){
-
         if(fts.rules().isEmpty()) return false;
-
-        for(Rule r : fts.rules()){
-
+        for (Rule r : fts.rules()) {
             Filter f = r.getFilter();
-
-            if(f == null || r.isElseFilter()) return false;
-
-            if(r.symbolizers().size() != 1) return false;
-
-            if(f instanceof And){
-                And and = (And) f;
-
-                if(and.getChildren().size() != 2) return false;
-
-                Filter op1 = and.getChildren().get(0);
-                Filter op2 = and.getChildren().get(1);
-
-                if(op2 instanceof PropertyIsGreaterThanOrEqualTo){
+            if (f == null || r.isElseFilter()) return false;
+            if (r.symbolizers().size() != 1) return false;
+            if (f.getOperatorType() == LogicalOperatorName.AND){
+                LogicalOperator<Object> and = (LogicalOperator) f;
+                if(and.getOperands().size() != 2) return false;
+                Filter<Object> op1 = and.getOperands().get(0);
+                Filter<Object> op2 = and.getOperands().get(1);
+                if(op2.getOperatorType() == ComparisonOperatorName.PROPERTY_IS_GREATER_THAN_OR_EQUAL_TO){
                     //flip order
                     op1 = op2;
-                    op2 = and.getChildren().get(0);
+                    op2 = and.getOperands().get(0);
                 }
-
-                if(op1 instanceof PropertyIsGreaterThanOrEqualTo){
-                    PropertyIsGreaterThanOrEqualTo under = (PropertyIsGreaterThanOrEqualTo) op1;
-                    Expression exp1 = under.getExpression1();
-                    Expression exp2 = under.getExpression2();
-
-                    if(exp1 instanceof Divide){
-                        Divide div = (Divide) exp1;
-                        if(!properties.contains(div.getExpression1())) return false;
-                        if(!properties.contains(div.getExpression2())) return false;
-                    }else if(exp1 instanceof PropertyName){
-                        PropertyName name = (PropertyName) exp1;
+                if (op1.getOperatorType() == ComparisonOperatorName.PROPERTY_IS_GREATER_THAN_OR_EQUAL_TO) {
+                    BinaryComparisonOperator under = (BinaryComparisonOperator) op1;
+                    Expression exp1 = under.getOperand1();
+                    Expression exp2 = under.getOperand2();
+                    if (exp1.getFunctionName().tip().toString().equals("Divide")) {
+                        List parameters = exp1.getParameters();
+                        if(!properties.contains(parameters.get(0))) return false;
+                        if(!properties.contains(parameters.get(1))) return false;
+                    } else if (exp1 instanceof ValueReference) {
+                        ValueReference name = (ValueReference) exp1;
                         if(!properties.contains(name)) return false;
-                    }else{
+                    } else {
                         return false;
                     }
-
-                    if(!(exp2 instanceof Literal)){
+                    if (!(exp2 instanceof Literal)) {
                         return false;
                     }
-
-                    if(op2 instanceof PropertyIsLessThan || op2 instanceof PropertyIsLessThanOrEqualTo){
+                    if (op2.getOperatorType() == ComparisonOperatorName.PROPERTY_IS_LESS_THAN ||
+                        op2.getOperatorType() == ComparisonOperatorName.PROPERTY_IS_LESS_THAN_OR_EQUAL_TO)
+                    {
                         BinaryComparisonOperator bc = (BinaryComparisonOperator)op2;
-                        Expression ex1 = under.getExpression1();
-                        Expression ex2 = under.getExpression2();
-
-                        if(ex1 instanceof Divide){
-                            Divide div = (Divide) ex1;
-                            if(!properties.contains(div.getExpression1())) return false;
-                            if(!properties.contains(div.getExpression2())) return false;
-                        }else if(ex1 instanceof PropertyName){
-                            PropertyName name = (PropertyName) ex1;
+                        Expression ex1 = under.getOperand1();
+                        Expression ex2 = under.getOperand2();
+                        if (exp1.getFunctionName().tip().toString().equals("Divide")) {
+                            List parameters = exp1.getParameters();
+                            if(!properties.contains(parameters.get(0))) return false;
+                            if(!properties.contains(parameters.get(1))) return false;
+                        } else if (exp1 instanceof ValueReference) {
+                            ValueReference name = (ValueReference) ex1;
                             if(!properties.contains(name)) return false;
                         }else{
                             return false;
                         }
-
-                        if(!(ex2 instanceof Literal)){
+                        if (!(ex2 instanceof Literal)) {
                             return false;
                         }
-
-
-                    }else{
+                    } else {
                         return false;
                     }
-
-                }else{
+                } else {
                     return false;
                 }
-
-
             }
-
             template = r.symbolizers().get(0);
         }
-
         method = METHOD.MANUAL;
         nbClasses = fts.rules().size()+1;
-
         return true;
     }
-
 
     public MapLayer getLayer() {
         return layer;
     }
 
-    public void setClassification(final PropertyName classification) {
+    public void setClassification(final ValueReference classification) {
         this.classification = classification;
         genericAnalyze = false;
         reset();
     }
 
-    public void setNormalize(final PropertyName normalize) {
+    public void setNormalize(final ValueReference normalize) {
         this.normalize = normalize;
         genericAnalyze = false;
         reset();
@@ -313,7 +288,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         return nbClasses;
     }
 
-    public List<PropertyName> getProperties() {
+    public List<ValueReference> getProperties() {
         analyze();
         return properties;
     }
@@ -376,7 +351,6 @@ public class IntervalStyleBuilder extends AbstractTableModel{
             return;
         }
 
-
         if(template==null){
             if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
                 template = createPolygonTemplate();
@@ -387,7 +361,6 @@ public class IntervalStyleBuilder extends AbstractTableModel{
             }
         }
 
-
         //search the extreme values
         final QueryBuilder query = new QueryBuilder(schema.getName().toString());
 
@@ -395,9 +368,9 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         if(!properties.contains(classification)) return;
 
         final Set<String> qp = new HashSet<String>();
-        qp.add(classification.getPropertyName());
+        qp.add(classification.getXPath());
         if(normalize != null && !normalize.equals(noValue)){
-            qp.add(normalize.getPropertyName());
+            qp.add(normalize.getXPath());
         }
         query.setProperties(qp.toArray(new String[0]));
 
@@ -410,7 +383,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 Feature sf = features.next();
                 count++;
 
-                Number classifValue = classification.evaluate(sf, Number.class);
+                Number classifValue = (Number) classification.apply(sf);
                 double value;
 
                 if(classifValue==null){
@@ -421,7 +394,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 if(normalize == null || normalize.equals(noValue)){
                     value = classifValue.doubleValue();
                 }else{
-                    Number normalizeValue = normalize.evaluate(sf, Number.class);
+                    Number normalizeValue = (Number) normalize.apply(sf);
                     value = classifValue.doubleValue() / normalizeValue.doubleValue();
                 }
 
@@ -434,9 +407,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 if(value > maximum){
                     maximum = value;
                 }
-
             }
-
             mean = (minimum+maximum) / 2;
 
             //find the median
@@ -450,11 +421,9 @@ public class IntervalStyleBuilder extends AbstractTableModel{
             } else {
                 median = allValues[allValues.length / 2];
             }
-
         }catch(DataStoreException ex){
             ex.printStackTrace();
         }
-
     }
 
     private void analyze(){
@@ -479,8 +448,6 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 values = Arrays.copyOf(values, nbClasses+1);
             }
         }
-
-
         analyze = true;
     }
 
@@ -519,11 +486,10 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         }else{
             throw new IllegalArgumentException("unexpected symbolizer type : " + symbol);
         }
-
     }
 
     public List<MutableRule> generateRules(final IntervalPalette palette){
-        return generateRules(palette, Filter.INCLUDE);
+        return generateRules(palette, Filter.include());
     }
 
     public List<MutableRule> generateRules(final IntervalPalette palette, Filter combinedFilter){
@@ -558,7 +524,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 interval = ff.and(above, under);
                 title = "[ " + FORMAT.format(start) + " -> " + FORMAT.format(end) + " [";
             }
-            if(Filter.INCLUDE.equals(combinedFilter) || combinedFilter==null){
+            if(Filter.include().equals(combinedFilter) || combinedFilter==null){
                 rule.setFilter(interval);
             }else{
                 rule.setFilter(ff.and(combinedFilter,interval));
@@ -572,7 +538,6 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
             rules.add(rule);
         }
-
         return rules;
     }
 
@@ -624,5 +589,4 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         final Fill fill = sf.fill(Color.BLUE);
         return sf.polygonSymbolizer(stroke,fill,null);
     }
-
 }

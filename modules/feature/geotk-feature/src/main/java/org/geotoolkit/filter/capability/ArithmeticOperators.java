@@ -17,47 +17,37 @@
  */
 package org.geotoolkit.filter.capability;
 
-import org.opengis.filter.capability.ArithmeticOperators;
-import org.opengis.filter.capability.Functions;
-
-import static org.apache.sis.util.ArgumentChecks.*;
-
 /**
  * Immutable arithmetic operators.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultArithmeticOperators implements ArithmeticOperators {
+@Deprecated
+public class ArithmeticOperators {
 
     private final boolean simple;
     private final Functions functions;
 
-    public DefaultArithmeticOperators(final boolean simple, final Functions functions) {
-        ensureNonNull("functions", functions);
+    /** For JAXB. */
+    protected ArithmeticOperators() {
+        simple = false;
+        functions = null;
+    }
+
+    public ArithmeticOperators(final boolean simple, final Functions functions) {
         this.simple = simple;
         this.functions = functions;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public boolean hasSimpleArithmetic() {
         return simple;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Functions getFunctions() {
         return functions;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -66,7 +56,7 @@ public class DefaultArithmeticOperators implements ArithmeticOperators {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DefaultArithmeticOperators other = (DefaultArithmeticOperators) obj;
+        final ArithmeticOperators other = (ArithmeticOperators) obj;
         if (this.simple != other.simple) {
             return false;
         }
@@ -76,9 +66,6 @@ public class DefaultArithmeticOperators implements ArithmeticOperators {
         return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
         int hash = 5;
@@ -86,5 +73,4 @@ public class DefaultArithmeticOperators implements ArithmeticOperators {
         hash = 53 * hash + (this.functions != null ? this.functions.hashCode() : 0);
         return hash;
     }
-
 }

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.LogicOperator;
+import org.opengis.filter.LogicalOperator;
 
 
 /**
@@ -35,13 +36,10 @@ import org.geotoolkit.ogc.xml.LogicOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LogicOpsType")
-public abstract class LogicOpsType implements LogicOperator {
+public abstract class LogicOpsType implements LogicalOperator, LogicOperator {
 
     public abstract LogicOpsType getClone();
 }

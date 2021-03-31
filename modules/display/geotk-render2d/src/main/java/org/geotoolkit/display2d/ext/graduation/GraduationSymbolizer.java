@@ -30,8 +30,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.system.DefaultFactories;
-import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.se.xml.v110.FontType;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.StrokeType;
@@ -39,14 +37,15 @@ import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.visitor.ListingPropertyVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.Font;
 import org.opengis.style.Stroke;
 import org.opengis.style.StyleVisitor;
 import org.apache.sis.measure.Units;
-import org.opengis.filter.FilterFactory;
+import org.geotoolkit.filter.FilterUtilities;
+import static org.geotoolkit.filter.FilterUtilities.FF;
 
 /**
  * Draw graduation along a LineStrings or polygon boundary.
@@ -57,13 +56,12 @@ import org.opengis.filter.FilterFactory;
 @XmlType(name = "GraduationSymbolizerType")
 @XmlRootElement(name="GraduationSymbolizer",namespace="http://geotoolkit.org")
 public class GraduationSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
+    public static final Literal SIDE_LEFT  = FF.literal("LEFT");
+    public static final Literal SIDE_RIGHT = FF.literal("RIGHT");
+    public static final Literal SIDE_BOTH  = FF.literal("BOTH");
 
-    public static final Literal SIDE_LEFT = new DefaultLiteral("LEFT");
-    public static final Literal SIDE_RIGHT = new DefaultLiteral("RIGHT");
-    public static final Literal SIDE_BOTH = new DefaultLiteral("BOTH");
-
-    public static final Literal DIRECTION_FORWARD = new DefaultLiteral(false);
-    public static final Literal DIRECTION_REVERSE = new DefaultLiteral(true);
+    public static final Literal DIRECTION_FORWARD = FF.literal(false);
+    public static final Literal DIRECTION_REVERSE = FF.literal(true);
 
     /**
      * Definition of each graduation.
@@ -102,34 +100,34 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
 
         for (final Graduation graduation : graduations) {
             if (graduation.getOffset()!= null) {
-                graduation.getOffset().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(graduation.getOffset(), properties);
             }
             if (graduation.getReverse()!= null) {
-                graduation.getReverse().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(graduation.getReverse(), properties);
             }
             if (graduation.getSide()!= null) {
-                graduation.getSide().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(graduation.getSide(), properties);
             }
             if (graduation.getStart()!= null) {
-                graduation.getStart().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(graduation.getStart(), properties);
             }
             if (graduation.getStep()!= null) {
-                graduation.getStep().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(graduation.getStep(), properties);
             }
             if (graduation.getUnit()!= null) {
-                graduation.getUnit().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(graduation.getUnit(), properties);
             }
             if (graduation.getFont()!= null) {
-                graduation.getFont().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(graduation.getFont(), properties);
             }
             if (graduation.getStroke()!= null) {
-                graduation.getStroke().accept(ListingPropertyVisitor.VISITOR, properties);
+                ListingPropertyVisitor.VISITOR.visit(graduation.getStroke(), properties);
             }
         }
 
         int i=0;
         for(String str : properties){
-            config.put(String.valueOf(i++), DefaultFactories.forBuildin(FilterFactory.class).property(str));
+            config.put(String.valueOf(i++), FilterUtilities.FF.property(str));
         }
         return config;
     }
@@ -196,14 +194,14 @@ public class GraduationSymbolizer extends SymbolizerType implements ExtensionSym
         private Stroke strokeExp;
 
         public Graduation() {
-            setSize(new DefaultLiteral(10));
+            setSize(FF.literal(10));
             setStart(StyleConstants.LITERAL_ZERO_FLOAT);
             setReverse(DIRECTION_FORWARD);
             setSide(SIDE_RIGHT);
             setOffset(StyleConstants.LITERAL_ZERO_FLOAT);
-            setStep(new DefaultLiteral(100));
-            setUnit(new DefaultLiteral("km"));
-            setFormat(new DefaultLiteral("###"));
+            setStep(FF.literal(100));
+            setUnit(FF.literal("km"));
+            setFormat(FF.literal("###"));
             setFont(StyleConstants.DEFAULT_FONT);
             setStroke(StyleConstants.DEFAULT_STROKE);
         }

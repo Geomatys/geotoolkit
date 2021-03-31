@@ -13,15 +13,15 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.junit.Test;
-import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.measure.Units;
+import org.geotoolkit.filter.FilterUtilities;
 import static org.junit.Assert.*;
-import org.opengis.filter.FilterFactory;
 import org.opengis.style.StyleFactory;
 
 /**
@@ -30,7 +30,7 @@ import org.opengis.style.StyleFactory;
  */
 public class InlineImageTest extends org.geotoolkit.test.TestBase {
 
-    public static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+    public static final FilterFactory2 FF = FilterUtilities.FF;
     public static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     @Test
@@ -62,7 +62,5 @@ public class InlineImageTest extends org.geotoolkit.test.TestBase {
         assertNotNull(ri);
         assertEquals(20,ri.getIconWidth());
         assertEquals(10,ri.getIconHeight());
-
     }
-
 }

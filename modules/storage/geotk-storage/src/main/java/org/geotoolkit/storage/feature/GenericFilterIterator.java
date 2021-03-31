@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.storage.feature;
 
 import java.util.Iterator;
@@ -26,7 +25,6 @@ import org.opengis.filter.Filter;
  * Basic support for a Iterator that filter objects based on the given filter.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 @Deprecated
 public class GenericFilterIterator<F> implements Iterator<F> {
@@ -69,17 +67,15 @@ public class GenericFilterIterator<F> implements Iterator<F> {
         if (next != null) {
             return true;
         }
-
         F peek;
         while (iterator.hasNext()) {
             peek = iterator.next();
 
-            if (filter.evaluate(peek)) {
+            if (filter.test(peek)) {
                 next = peek;
                 return true;
             }
         }
-
         return false;
     }
 
@@ -107,5 +103,4 @@ public class GenericFilterIterator<F> implements Iterator<F> {
     public static <F> Iterator<F> wrap(final Iterator<F> reader, final Filter filter){
         return new GenericFilterIterator(reader, filter);
     }
-
 }

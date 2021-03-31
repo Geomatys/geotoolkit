@@ -73,8 +73,6 @@ public class AdditionalOperatorsType {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ExtensionOperatorType }
-     *
-     *
      */
     public List<ExtensionOperatorType> getOperator() {
         if (operator == null) {
@@ -82,5 +80,4 @@ public class AdditionalOperatorsType {
         }
         return this.operator;
     }
-
 }

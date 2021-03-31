@@ -32,11 +32,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.AbstractTimeObjectType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.temporal.BinaryTemporalOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.TemporalOperator;
+import org.opengis.filter.TemporalOperatorName;
 
 
 /**
@@ -59,8 +57,6 @@ import org.opengis.filter.temporal.BinaryTemporalOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryTemporalOpType", propOrder = {
@@ -68,7 +64,7 @@ import org.opengis.filter.temporal.BinaryTemporalOperator;
     "expression",
     "any"
 })
-public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemporalOperator {
+public class BinaryTemporalOpType extends TemporalOpsType implements TemporalOperator {
 
     @XmlElement(name = "ValueReference", required = true)
     private String valueReference;
@@ -79,11 +75,10 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
     @XmlAnyElement(lax = true)
     private List<Object> any;
 
-     /**
+    /**
      * An empty constructor used by JAXB
      */
     public BinaryTemporalOpType() {
-
     }
 
     /**
@@ -94,7 +89,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         if (temporal != null) {
             this.any = Arrays.asList(temporal);
         }
-
     }
 
     public BinaryTemporalOpType(final BinaryTemporalOpType that) {
@@ -114,7 +108,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
                     throw new IllegalArgumentException("Unexpected type for expression in BinaryTemporalOpType:" + expression.getClass().getName());
                 }
             }
-
             if (that.any != null) {
                 this.any = new ArrayList<>();
                 for (Object obj : that.any) {
@@ -126,18 +119,12 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
                     }
                 }
             }
-
             this.valueReference = that.valueReference;
         }
     }
 
     /**
      * Gets the value of the valueReference property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getValueReference() {
         return valueReference;
@@ -145,11 +132,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
 
     /**
      * Sets the value of the valueReference property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setValueReference(String value) {
         this.valueReference = value;
@@ -164,7 +146,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -179,7 +160,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -187,11 +167,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
 
     /**
      * Gets the value of the any property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *
      */
     public Object getAny() {
         cleanAny();
@@ -203,11 +178,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
 
     /**
      * Sets the value of the any property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *
      */
     public void setAny(final Object value) {
         this.any = Arrays.asList(value);
@@ -236,16 +206,10 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
     }
 
     @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List getExpressions() {
+        return Arrays.asList(getExpression1(), getExpression2());
     }
 
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public Expression getExpression1() {
         if (valueReference != null) {
             return new InternalPropertyName(valueReference);
@@ -253,7 +217,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         return null;
     }
 
-    @Override
     public Expression getExpression2() {
         if (expression != null && expression.getValue() instanceof Expression) {
             return (Expression) expression.getValue();
@@ -287,7 +250,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         if (object instanceof BinaryTemporalOpType) {
             final BinaryTemporalOpType that = (BinaryTemporalOpType) object;
 
-
             boolean env = false;
             if (this.expression != null && that.expression != null) {
                 env = Objects.equals(this.expression.getValue(), that.expression.getValue());
@@ -313,7 +275,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
                     }
                 }
             }
-
             return  Objects.equals(this.valueReference, that.valueReference) && env && anyEq;
         }
         return false;
@@ -338,7 +299,6 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         if (expression != null && expression.getValue() != null) {
             s.append("expression: ").append(expression.getValue().toString()).append('\n');
         }
-
         cleanAny();
         if (any != null) {
             for (Object obj : any) {
@@ -350,5 +310,10 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
             }
         }
         return s.toString();
+    }
+
+    @Override
+    public TemporalOperatorName getOperatorType() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
 }

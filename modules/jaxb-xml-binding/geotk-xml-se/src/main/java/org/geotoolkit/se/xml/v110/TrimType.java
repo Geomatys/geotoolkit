@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -42,9 +41,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TrimType", propOrder = {
@@ -67,7 +63,6 @@ public class TrimType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -79,7 +74,6 @@ public class TrimType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
@@ -91,7 +85,6 @@ public class TrimType
      * @return
      *     possible object is
      *     {@link StripOffPositionType }
-     *
      */
     public StripOffPositionType getStripOffPosition() {
         return stripOffPosition;
@@ -103,7 +96,6 @@ public class TrimType
      * @param value
      *     allowed object is
      *     {@link StripOffPositionType }
-     *
      */
     public void setStripOffPosition(final StripOffPositionType value) {
         this.stripOffPosition = value;
@@ -115,7 +107,6 @@ public class TrimType
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     public String getStripOffChar() {
         return stripOffChar;
@@ -127,10 +118,8 @@ public class TrimType
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setStripOffChar(final String value) {
         this.stripOffChar = value;
     }
-
 }

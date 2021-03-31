@@ -25,7 +25,7 @@ import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.internal.feature.FeatureExpression;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Create a list of values.
@@ -35,14 +35,14 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ListFunction extends AbstractFunction implements FeatureExpression {
+public class ListFunction extends AbstractFunction implements FeatureExpression<Object,Object> {
 
     public ListFunction(final Expression expression) {
         super(OtherFunctionFactory.LIST, expression == null ? new Expression[0] : new Expression[]{expression}, null);
     }
 
     @Override
-    public Object evaluate(Object candidate) {
+    public Object apply(Object candidate) {
 
         if (candidate == null) return null;
 
@@ -59,7 +59,7 @@ public class ListFunction extends AbstractFunction implements FeatureExpression 
             final List lst = new ArrayList();
             while (ite.hasNext()) {
                 Object f = ite.next();
-                lst.add(exp.evaluate(f));
+                lst.add(exp.apply(f));
             }
             return lst;
         }
@@ -79,5 +79,4 @@ public class ListFunction extends AbstractFunction implements FeatureExpression 
                     .setName(OtherFunctionFactory.LIST);
         }
     }
-
 }

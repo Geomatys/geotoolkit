@@ -25,20 +25,19 @@ import java.util.logging.Logger;
 
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.AbstractExpression;
-import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.image.classification.Classification;
 import static org.geotoolkit.style.StyleConstants.*;
 
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 
 import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
+import static org.geotoolkit.filter.FilterUtilities.FF;
 import org.geotoolkit.image.palette.Palette;
 import org.geotoolkit.image.palette.PaletteFactory;
+import org.opengis.util.ScopedName;
 
 /**
  * Jenks ColorMap function.
@@ -62,8 +61,8 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
     }
 
     public DefaultJenks(final Literal classNumber, final Literal paletteName, final Literal fallback, List<Literal> noDataLiteral) {
-        this.classNumber = (classNumber == null) ? new DefaultLiteral(10) : classNumber;
-        this.paletteName = (paletteName == null) ? new DefaultLiteral("rainbow") : paletteName;
+        this.classNumber = (classNumber == null) ? FF.literal(10) : classNumber;
+        this.paletteName = (paletteName == null) ? FF.literal("rainbow") : paletteName;
         this.fallback = (fallback == null) ? DEFAULT_FALLBACK : fallback;
         colorMap = new TreeMap<Double, Color>();
 
@@ -94,28 +93,27 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
     }
 
     @Override
-    public String getName() {
-        return "Jenks";
+    public ScopedName getFunctionName() {
+        return createName("Jenks");
     }
 
     @Override
-    public List<Expression> getParameters() {
-        final List<Expression> params = new ArrayList<Expression>();
+    public List<Expression<Object,?>> getParameters() {
+        final List<Expression<Object,?>> params = new ArrayList<>();
         params.add(classNumber);
         params.add(paletteName);
         for (int i = 0; i < noData.length; i++) {
-            params.add(new DefaultLiteral(noData[i]));
+            params.add(FF.literal(noData[i]));
         }
         return params;
     }
 
-    @Override
     public Literal getFallbackValue() {
         return fallback;
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object apply(Object object) {
         return evaluate(object, Object.class);
     }
 
@@ -220,11 +218,6 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
-        return visitor.visit(this, extraData);
-    }
-
-    @Override
     public Map<Double, Color> getColorMap() {
         return colorMap;
     }
@@ -232,7 +225,7 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
     /**
      * Internal function used in CompatibleColorModel to recolor input image.
      */
-    private class JenksCategorize implements Function {
+    private class JenksCategorize implements Expression<Object,Object> {
 
         private TreeMap<Double,Color> values = new TreeMap<Double,Color>();
 
@@ -241,29 +234,22 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
         }
 
         @Override
-        public String getName() {
-            return "JenksNumber";
+        public ScopedName getFunctionName() {
+            return createName("JenksNumber");
         }
 
         @Override
-        public List<Expression> getParameters() {
-            return null;
+        public List<Expression<Object,?>> getParameters() {
+            return Collections.emptyList();
         }
 
-        @Override
         public Literal getFallbackValue() {
             return DEFAULT_FALLBACK;
         }
 
         @Override
-        public Object evaluate(Object object) {
-            return evaluate(object, Object.class);
-        }
-
-        @Override
-        public Object evaluate(final Object object, final Class c) {
+        public Object apply(Object object) {
             if (object instanceof Number) {
-
                 Number value = (Number) object;
                 return values.headMap(value.doubleValue(),false).lastEntry().getValue();
             }
@@ -271,9 +257,8 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
         }
 
         @Override
-        public Object accept(ExpressionVisitor visitor, Object extraData) {
-            return visitor.visit(this, extraData);
+        public <N> Expression<Object, N> toValueType(Class<N> type) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
-
 }

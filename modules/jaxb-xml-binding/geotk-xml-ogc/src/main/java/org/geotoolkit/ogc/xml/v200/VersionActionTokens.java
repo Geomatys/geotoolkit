@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- *
  */
 @XmlType(name = "VersionActionTokens")
 @XmlEnum
@@ -57,5 +56,4 @@ public enum VersionActionTokens {
     public static VersionActionTokens fromValue(String v) {
         return valueOf(v);
     }
-
 }

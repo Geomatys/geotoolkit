@@ -44,7 +44,7 @@ public abstract class AbstractSQLDialect implements SQLDialect {
     public Filter[] splitFilter(Filter filter, FeatureType type) {
         final CapabilitiesFilterSplitter splitter = new CapabilitiesFilterSplitter(
                 (DefaultFilterCapabilities)getFilterCapabilities(), type);
-        filter.accept(splitter, null);
+        splitter.visit(filter, null);
         return new Filter[]{splitter.getPreFilter(),splitter.getPostFilter()};
     }
 

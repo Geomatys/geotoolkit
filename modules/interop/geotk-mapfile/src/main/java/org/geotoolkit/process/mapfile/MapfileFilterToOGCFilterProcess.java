@@ -19,13 +19,13 @@ package org.geotoolkit.process.mapfile;
 import java.util.List;
 import java.util.ArrayList;
 import org.geotoolkit.process.mapfile.MapfileExpressionTokenizer.Token;
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.filter.FilterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -38,7 +38,7 @@ import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.
 public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final FilterFactory FF = new DefaultFilterFactory2();
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     public MapfileFilterToOGCFilterProcess(final ParameterValueGroup input){
         super(INSTANCE, input);
@@ -88,7 +88,7 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 final List<Filter> filters = new ArrayList<Filter>();
                 while(true){
                     token = tokens.get(++index);
-                    final Filter f = FF.equals(ref, FF.literal(token.value));
+                    final Filter f = FF.equal(ref, FF.literal(token.value));
                     filters.add(f);
                     token = tokens.get(++index);
                     if("/".equals(token.value)){
@@ -121,7 +121,7 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                     index++;
                 }
 
-                result = FF.equals(left, right);
+                result = FF.equal(left, right);
 
             }else if("and".equalsIgnoreCase(token.value)){
                 //and operand
@@ -160,7 +160,7 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 //a single value
                 if(ref != null){
                     //it's a property equal to
-                    result = FF.equals(ref,literal);
+                    result = FF.equal(ref, literal);
                 }else{
                     //it's a literal
                     result = literal;

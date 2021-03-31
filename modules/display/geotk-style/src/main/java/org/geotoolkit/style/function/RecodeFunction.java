@@ -23,10 +23,10 @@ import java.util.List;
 
 import org.geotoolkit.filter.AbstractExpression;
 
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Literal;
+import org.geotoolkit.filter.capability.FunctionName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.util.ScopedName;
 
 /**
  * Implementation of "Recode" as a normal function.
@@ -47,7 +47,6 @@ import org.opengis.filter.expression.Literal;
  * In reality any expression will do.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class RecodeFunction extends AbstractExpression implements Recode {
 
@@ -65,31 +64,11 @@ public class RecodeFunction extends AbstractExpression implements Recode {
      * Make the instance of FunctionName available in
      * a consistent spot.
      */
-    public static final FunctionName NAME = new Name();
-
-
-    /**
-     * Describe how this function works.
-     * (should be available via FactoryFinder lookup...)
-     */
-    public static class Name implements FunctionName {
-
-        public int getArgumentCount() {
-            return -2; // indicating unbounded, 2 minimum
-        }
-
-        public List<String> getArgumentNames() {
-            return Arrays.asList(new String[]{
-                        "LookupValue",
-                        "Data 1", "Value 1",
-                        "Data 2", "Value 2"
-                    });
-        }
-
-        public String getName() {
-            return "Recode";
-        }
-    };
+    public static final FunctionName NAME = new FunctionName("Recode", Arrays.asList(
+            "LookupValue",
+            "Data 1", "Value 1",
+            "Data 2", "Value 2"),
+            -2);    // indicating unbounded, 2 minimum
 
     public RecodeFunction(final List<MapItem> items, final Expression lookup, final Literal fallback){
         this.items = items;
@@ -108,22 +87,17 @@ public class RecodeFunction extends AbstractExpression implements Recode {
     }
 
     @Override
-    public String getName() {
-        return "Recode";
+    public ScopedName getFunctionName() {
+        return createName("Recode");
     }
 
     @Override
-    public List<Expression> getParameters() {
+    public List<Expression<Object,?>> getParameters() {
         return Collections.emptyList();
     }
 
     @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
+    public Object apply(final Object object) {
         final Expression lookupExp = lookup;
 
         if(object instanceof Image){
@@ -132,12 +106,9 @@ public class RecodeFunction extends AbstractExpression implements Recode {
         }else{
             throw new IllegalArgumentException("unexpected type : " + object + ", need Image.");
         }
-
     }
 
-    @Override
     public Literal getFallbackValue() {
         return fallback;
     }
-
 }

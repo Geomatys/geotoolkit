@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiCurve;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -47,9 +46,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiCurveType", propOrder = {
@@ -63,7 +59,6 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
     private CurveArrayPropertyType curveMembers;
 
     public MultiCurveType() {
-
     }
 
     public MultiCurveType(final List<CurvePropertyType> curveMember) {
@@ -75,8 +70,6 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
      *
      * Objects of the following type(s) are allowed in the list
      * {@link CurvePropertyType }
-     *
-     *
      */
     public List<CurvePropertyType> getCurveMember() {
         if (curveMember == null) {
@@ -91,7 +84,6 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
      * @return
      *     possible object is
      *     {@link CurveArrayPropertyType }
-     *
      */
     public CurveArrayPropertyType getCurveMembers() {
         return curveMembers;
@@ -103,25 +95,9 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
      * @param value
      *     allowed object is
      *     {@link CurveArrayPropertyType }
-     *
      */
     public void setCurveMembers(final CurveArrayPropertyType value) {
         this.curveMembers = value;
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
      /**
@@ -148,10 +124,6 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
         hash = 97 * hash + (this.curveMembers != null ? this.curveMembers.hashCode() : 0);
         return hash;
     }
-
-
-
-
 
     @Override
     public String toString() {

@@ -33,7 +33,6 @@ import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataSet;
 import org.apache.sis.storage.DataStoreException;
@@ -44,6 +43,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.storage.memory.GenericMappingFeatureCollection;
@@ -65,7 +65,7 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.ContentInformation;
@@ -158,14 +158,13 @@ public class FeatureStoreUtilities {
      * send by the writer.
      *
      * @param writer, writer will not be closed
-     * @param collection
      * @return List of generated FeatureId. Can be empty if output data type has
      * no identifier property.
      * @throws FeatureStoreRuntimeException
      */
-    public static List<FeatureId> write(final FeatureWriter writer, final Collection<? extends Feature> collection)
+    public static List<ResourceId> write(final FeatureWriter writer, final Collection<? extends Feature> collection)
             throws FeatureStoreRuntimeException {
-        final List<FeatureId> ids = new ArrayList<>();
+        final List<ResourceId> ids = new ArrayList<>();
         boolean withId = false;
         // Check if there's identifiers to report.
         try {
@@ -216,9 +215,9 @@ public class FeatureStoreUtilities {
      * no identifier property.
      * @throws FeatureStoreRuntimeException
      */
-    public static List<FeatureId> write(final FeatureWriter writer, final FeatureSet collection)
+    public static List<String> write(final FeatureWriter writer, final FeatureSet collection)
             throws FeatureStoreRuntimeException {
-        final List<FeatureId> ids = new ArrayList<>();
+        final List<String> ids = new ArrayList<>();
         boolean withId = false;
         // Check if there's identifiers to report.
         try {
@@ -236,7 +235,7 @@ public class FeatureStoreUtilities {
                 FeatureExt.copy(f, candidate, false);
                 writer.write();
                 if (withId) {
-                    ids.add(FeatureExt.getId(candidate));
+                    ids.add(FeatureExt.getId(candidate).getIdentifier());
                 }
             }
         } catch (DataStoreException ex) {
@@ -471,7 +470,7 @@ public class FeatureStoreUtilities {
      */
     public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, GenericName geomPropName, boolean adaptType, Class ... geomClasses) throws DataStoreException{
 
-        final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory FF = FilterUtilities.FF;
         final FeatureType baseType = col.getType();
         final GenericName name = baseType.getName();
         final PropertyType geomDesc = baseType.getProperty(geomPropName.toString());
@@ -494,7 +493,7 @@ public class FeatureStoreUtilities {
         final FeatureCollection[] cols = new FeatureCollection[geomClasses.length];
         for (int i=0; i<geomClasses.length;i++) {
             final Class geomClass = geomClasses[i];
-            Filter filter = FF.equals(
+            Filter filter = FF.equal(
                     FF.function("geometryType", FF.property(geomPropName.tip().toString())),
                     FF.literal(geomClass.getSimpleName()));
 
@@ -502,19 +501,19 @@ public class FeatureStoreUtilities {
             if (adaptType) {
                 if (geomClass == MultiPolygon.class && !lstClasses.contains(Polygon.class)) {
                     filter = FF.or(filter,
-                            FF.equals(
+                            FF.equal(
                                 FF.function("geometryType", FF.property(geomPropName.tip().toString())),
                                 FF.literal(Polygon.class.getSimpleName()))
                             );
                 } else if (geomClass == MultiLineString.class && !lstClasses.contains(LineString.class)) {
                     filter = FF.or(filter,
-                            FF.equals(
+                            FF.equal(
                                 FF.function("geometryType", FF.property(geomPropName.tip().toString())),
                                 FF.literal(LineString.class.getSimpleName()))
                             );
                 } else if (geomClass == MultiPoint.class && !lstClasses.contains(Point.class)) {
                     filter = FF.or(filter,
-                            FF.equals(
+                            FF.equal(
                                 FF.function("geometryType", FF.property(geomPropName.tip().toString())),
                                 FF.literal(Point.class.getSimpleName()))
                             );

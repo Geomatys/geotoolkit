@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.opengis.filter.spatial.Equals;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -31,13 +31,12 @@ import org.opengis.filter.spatial.Equals;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Equals")
 @XmlRootElement(name = "Equals")
-public class EqualsType extends BinarySpatialOpType implements Equals {
+public class EqualsType extends BinarySpatialOpType {
 
     /**
      * An empty constructor used by JAXB
      */
     public EqualsType() {
-
     }
 
     /**
@@ -61,6 +60,11 @@ public class EqualsType extends BinarySpatialOpType implements Equals {
     @Override
     public SpatialOpsType getClone() {
         return new EqualsType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.EQUALS;
     }
 
     @Override

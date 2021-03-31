@@ -82,5 +82,4 @@ public class ArgumentsType {
         }
         return this.argument;
     }
-
 }

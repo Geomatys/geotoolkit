@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -41,8 +40,6 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractQueryExpressionType")
@@ -56,7 +53,6 @@ public abstract class AbstractQueryExpressionType {
     private String handle;
 
     public AbstractQueryExpressionType() {
-
     }
 
     public AbstractQueryExpressionType(final String handle) {
@@ -71,11 +67,6 @@ public abstract class AbstractQueryExpressionType {
 
     /**
      * Gets the value of the handle property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getHandle() {
         return handle;
@@ -83,11 +74,6 @@ public abstract class AbstractQueryExpressionType {
 
     /**
      * Sets the value of the handle property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setHandle(String value) {
         this.handle = value;
@@ -115,8 +101,6 @@ public abstract class AbstractQueryExpressionType {
         hash = 37 * hash + (this.handle != null ? this.handle.hashCode() : 0);
         return hash;
     }
-
-
 
     @Override
     public String toString() {

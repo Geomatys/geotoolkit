@@ -24,7 +24,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.filter.FilterUtilities;
 import org.junit.Test;
 
 import static org.geotoolkit.test.Assert.*;
@@ -39,7 +39,7 @@ import org.opengis.feature.Feature;
 public class ReaderTest extends org.geotoolkit.test.TestBase {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     public ReaderTest() {
     }
@@ -167,7 +167,7 @@ public class ReaderTest extends org.geotoolkit.test.TestBase {
         assertEquals(1,                                 label.getProperty("OUTLINEWIDTH").getValue());
         assertEquals(false,                             label.getProperty("PARTIALS").getValue());
         assertEquals("cc",                              label.getProperty("POSITION").getValue());
-        assertEquals(FF.literal(8),                     label.getProperty("SIZE").getValue());
+        assertEquals(FF.literal(8d),                    label.getProperty("SIZE").getValue());
         assertEquals("TRUETYPE",                        label.getProperty("TYPE").getValue());
 
 

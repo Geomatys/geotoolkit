@@ -18,11 +18,9 @@ package org.geotoolkit.processing.vector.nearest;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.feature.FeatureExt;
@@ -37,9 +35,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.identity.Identifier;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -53,7 +50,7 @@ import org.opengis.util.FactoryException;
  */
 public class NearestProcess extends AbstractProcess {
 
-    private static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory2 FF = FilterUtilities.FF;
 
     /**
      * Default constructor
@@ -91,7 +88,7 @@ public class NearestProcess extends AbstractProcess {
             geomCrs = FeatureExt.getCRS(original.getType());
         }
         double dist = Double.POSITIVE_INFINITY;
-        final Collection<Identifier> listID = new ArrayList<>();
+        final Collection<Filter<Object>> listID = new ArrayList<>();
         try (final Stream<Feature> stream = original.features(false)) {
             Iterator<Feature> iter = stream.iterator();
             while (iter.hasNext()) {
@@ -117,7 +114,7 @@ public class NearestProcess extends AbstractProcess {
                 }
             }
         }
-        final Filter filter = FF.id(new HashSet<>(listID));
+        final Filter filter = FF.or(listID);
         return QueryBuilder.filtered("nearest", filter);
     }
 }

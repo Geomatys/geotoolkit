@@ -22,7 +22,6 @@ import org.geotoolkit.storage.event.FeatureStoreManagementEvent;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,7 +31,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.IllegalFeatureTypeException;
@@ -59,10 +57,8 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.SortProperty;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -212,9 +208,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     @Override
     public void update(Feature feature) throws DataStoreException {
         if(feature == null) return;
-        FeatureId fid = FeatureExt.getId(feature);
-        final Filter filter = DefaultFactories.forBuildin(FilterFactory.class).id(Collections.singleton(fid));
-
+        ResourceId filter = FeatureExt.getId(feature);
         final Map<String,Object> map = new HashMap<>();
         for(PropertyType pt : feature.getType().getProperties(true)){
             if(pt instanceof AttributeType){
@@ -233,7 +227,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         final long max = remainingParameters.getLimit();
         final Filter filter = remainingParameters.getFilter();
         final String[] properties = remainingParameters.getPropertyNames();
-        final SortBy[] sorts = remainingParameters.getSortBy();
+        final SortProperty[] sorts = remainingParameters.getSortBy();
         final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
         final Hints hints = remainingParameters.getHints();
@@ -254,8 +248,8 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
 
         //wrap filter ----------------------------------------------------------
         //we must keep the filter first since it impacts the start index and max feature
-        if(filter != null && filter != Filter.INCLUDE){
-            if(filter == Filter.EXCLUDE){
+        if(filter != null && filter != Filter.include()){
+            if(filter == Filter.exclude()){
                 //filter that exclude everything, use optimzed reader
                 result = FeatureStreams.emptyCollection(result);
             }else{
@@ -412,7 +406,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param name of the schema where features where added.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesAdded(final GenericName name, final Id ids){
+    protected void fireFeaturesAdded(final GenericName name, final ResourceId ids){
         sendEvent(FeatureStoreContentEvent.createAddEvent(this, name,ids));
     }
 
@@ -422,7 +416,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param name of the schema where features where updated.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesUpdated(final GenericName name, final Id ids){
+    protected void fireFeaturesUpdated(final GenericName name, final ResourceId ids){
         sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
@@ -432,7 +426,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param name of the schema where features where deleted
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesDeleted(final GenericName name, final Id ids){
+    protected void fireFeaturesDeleted(final GenericName name, final ResourceId ids){
         sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 

@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v110;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.MetBy;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeMetByType extends BinaryTemporalOpType implements MetBy {
-
+public class TimeMetByType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeMetByType() {
-
     }
 
     public TimeMetByType(final String propertyName, final Object temporal) {
@@ -47,13 +44,7 @@ public class TimeMetByType extends BinaryTemporalOpType implements MetBy {
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.MET_BY;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

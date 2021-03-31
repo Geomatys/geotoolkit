@@ -53,7 +53,6 @@ public class FunctionsType {
 
     /**
      * Gets the value of the functionNames property.
-     *
      */
     public FunctionNamesType getFunctionNames() {
         return functionNames;
@@ -61,10 +60,8 @@ public class FunctionsType {
 
     /**
      * Sets the value of the functionNames property.
-     *
      */
     public void setFunctionNames(final FunctionNamesType value) {
         this.functionNames = value;
     }
-
 }

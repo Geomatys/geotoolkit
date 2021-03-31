@@ -17,8 +17,11 @@
 
 package org.geotoolkit.storage.event;
 
+import java.util.Set;
 import org.apache.sis.storage.Resource;
-import org.opengis.filter.Id;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.Filter;
+import org.opengis.filter.ResourceId;
 import org.opengis.util.GenericName;
 
 /**
@@ -44,14 +47,28 @@ public class FeatureStoreContentEvent extends StorageEvent {
 
     private final Type type;
     private final GenericName name;
-    private Id ids;
+    private Filter ids;
 
-    public FeatureStoreContentEvent(final Resource source, final Type type, final GenericName name, final Id candidates){
+    public FeatureStoreContentEvent(final Resource source, final Type type, final GenericName name, final Filter identifiers) {
         super(source);
-
         this.type = type;
         this.name = name;
-        this.ids = candidates;
+        this.ids = identifiers;
+    }
+
+    public FeatureStoreContentEvent(final Resource source, final Type type, final GenericName name, final Set<ResourceId> ids){
+        this(source, type, name, resourceId(ids));
+    }
+
+    public static Filter resourceId(final Set<ResourceId> ids) {
+        if (ids == null) {
+            return null;
+        }
+        switch (ids.size()) {
+            case 0:  return Filter.exclude();
+            case 1:  return ids.iterator().next();
+            default: return FilterUtilities.FF.or((Set) ids);
+        }
     }
 
     /**
@@ -73,9 +90,9 @@ public class FeatureStoreContentEvent extends StorageEvent {
     /**
      * Get the modified feature ids related to this event.
      * This object may be null if the ids could not be retrieved.
-     * @return Id or null
+     * @return ResourceId or null
      */
-    public Id getIds() {
+    public Filter getIds() {
         return ids;
     }
 
@@ -83,20 +100,19 @@ public class FeatureStoreContentEvent extends StorageEvent {
         return new FeatureStoreContentEvent(source, type, name, ids);
     }
 
-    public static FeatureStoreContentEvent createAddEvent(final Resource source, final GenericName name, final Id ids){
+    public static FeatureStoreContentEvent createAddEvent(final Resource source, final GenericName name, final Filter ids){
         return new FeatureStoreContentEvent(source, Type.ADD, name, ids);
     }
 
-    public static FeatureStoreContentEvent createUpdateEvent(final Resource source, final GenericName name, final Id ids){
+    public static FeatureStoreContentEvent createUpdateEvent(final Resource source, final GenericName name, final Filter ids){
         return new FeatureStoreContentEvent(source, Type.UPDATE, name, ids);
     }
 
-    public static FeatureStoreContentEvent createDeleteEvent(final Resource source, final GenericName name, final Id ids){
+    public static FeatureStoreContentEvent createDeleteEvent(final Resource source, final GenericName name, final Filter ids){
         return new FeatureStoreContentEvent(source, Type.DELETE, name, ids);
     }
 
     public static FeatureStoreContentEvent createSessionEvent(final Resource source){
-        return new FeatureStoreContentEvent(source, Type.SESSION, null, null);
+        return new FeatureStoreContentEvent(source, Type.SESSION, null, (ResourceId) null);
     }
-
 }

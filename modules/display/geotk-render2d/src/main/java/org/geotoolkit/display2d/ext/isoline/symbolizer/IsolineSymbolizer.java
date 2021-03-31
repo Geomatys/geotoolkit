@@ -27,7 +27,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.visitor.ListingPropertyVisitor;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.*;
 import org.apache.sis.measure.Units;
 import javax.measure.quantity.Length;
@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.filter.FilterUtilities;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -48,7 +48,7 @@ import org.apache.sis.internal.system.DefaultFactories;
 public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbolizer {
 
     @XmlTransient
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     @XmlElement(name = "Raster", namespace = "http://geotoolkit.org")
     public RasterSymbolizerType rasterSymbolizerType;
@@ -134,7 +134,7 @@ public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbol
 
         int i = 0;
         for (String str : properties) {
-            config.put(String.valueOf(i++), DefaultFactories.forBuildin(FilterFactory.class).property(str));
+            config.put(String.valueOf(i++), FF.property(str));
         }
         return config;
     }

@@ -23,9 +23,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyNotFoundException;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 
 /**
  * A new function to check if a property exists.
@@ -34,26 +34,23 @@ import org.opengis.filter.expression.PropertyName;
 public class PropertyExistsFunction extends AbstractFunction {
 
     public PropertyExistsFunction(final Expression parameter) {
-        super(OtherFunctionFactory.PROPERTY_EXISTS, new Expression []{parameter}, null);
+        super(OtherFunctionFactory.PROPERTY_EXISTS, parameter);
     }
 
     private String getPropertyName() {
         Expression expr = (Expression) getParameters().get(0);
-
         return getPropertyName(expr);
     }
 
     private String getPropertyName(final Expression expr) {
         String propertyName;
-
         if (expr instanceof Literal) {
             propertyName = String.valueOf(((Literal) expr).getValue());
-        } else if (expr instanceof PropertyName) {
-            propertyName = ((PropertyName) expr).getPropertyName();
+        } else if (expr instanceof ValueReference) {
+            propertyName = ((ValueReference) expr).getXPath();
         } else {
             throw new IllegalStateException("Not a property name expression: " + expr);
         }
-
         return propertyName;
     }
 
@@ -80,7 +77,7 @@ public class PropertyExistsFunction extends AbstractFunction {
      *         conventions for getters. {@link Boolean#FALSE} otherwise.
      */
     @Override
-    public Object evaluate(final Object bean) {
+    public Object apply(final Object bean) {
         if (bean instanceof Feature) {
             return evaluate((Feature) bean);
         }

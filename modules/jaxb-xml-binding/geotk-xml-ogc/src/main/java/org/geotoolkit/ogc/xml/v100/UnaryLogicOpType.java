@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.UnaryLogicOperator;
-import org.geotoolkit.ogc.xml.XMLFilter;
 
 
 /**
@@ -45,9 +44,6 @@ import org.geotoolkit.ogc.xml.XMLFilter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UnaryLogicOpType", propOrder = {
@@ -68,7 +64,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
      * An empty constructor used by JAXB
      */
      public UnaryLogicOpType() {
-
      }
 
      /**
@@ -106,7 +101,6 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
          } else {
              throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
          }
-
      }
 
     /**
@@ -169,5 +163,4 @@ public abstract class UnaryLogicOpType extends LogicOpsType implements UnaryLogi
             return null;
         }
     }
-
 }

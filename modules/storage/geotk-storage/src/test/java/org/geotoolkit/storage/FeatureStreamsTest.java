@@ -29,7 +29,6 @@ import java.util.NoSuchElementException;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -40,6 +39,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.TransformMapper;
 import org.geotoolkit.feature.ViewMapper;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
@@ -56,8 +56,8 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.SortProperty;
+import org.opengis.filter.SortOrder;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -71,7 +71,7 @@ import org.opengis.util.GenericName;
 public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000001d;
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
     private static final GeometryFactory GF = new GeometryFactory();
     private static final Integer COMPLEX_ID_1 = 11;
     private static final Integer COMPLEX_ID_2 = 12;
@@ -275,15 +275,15 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFilterIterator(){
         FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureIterator ite = FeatureStreams.filter(collection.iterator(), Filter.INCLUDE);
+        FeatureIterator ite = FeatureStreams.filter(collection.iterator(), Filter.include());
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = FeatureStreams.filter(collection.iterator(), Filter.EXCLUDE);
+        ite = FeatureStreams.filter(collection.iterator(), Filter.exclude());
         assertEquals(0, FeatureStoreUtilities.calculateCount(ite));
 
-        ite = FeatureStreams.filter(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
+        ite = FeatureStreams.filter(collection.iterator(), FF.equal(FF.literal("aaa"), FF.property("att_string")));
         assertEquals(1, FeatureStoreUtilities.calculateCount(ite));
-        ite = FeatureStreams.filter(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
+        ite = FeatureStreams.filter(collection.iterator(), FF.equal(FF.literal("aaa"), FF.property("att_string")));
 
         assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         try{
@@ -294,13 +294,13 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         }
 
         //check has next do not iterate
-        ite = FeatureStreams.filter(collection.iterator(), Filter.INCLUDE);
+        ite = FeatureStreams.filter(collection.iterator(), Filter.include());
         testIterationOnNext(ite, 3);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
-        ite = FeatureStreams.filter(checkIte, Filter.INCLUDE);
+        ite = FeatureStreams.filter(checkIte, Filter.include());
         while(ite.hasNext()) ite.next();
         ite.close();
         assertTrue(checkIte.isClosed());
@@ -341,7 +341,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
     public void testModifyIterator(){
         FeatureCollection collection = buildSimpleFeatureCollection();
         FeatureType originalType = collection.getType();
-        Filter filter = Filter.INCLUDE;
+        Filter filter = Filter.include();
         Map<String,Object> values = new HashMap<>();
         values.put("att_string", "toto");
 
@@ -354,7 +354,7 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         }
 
 
-        filter = FF.equals(FF.literal("aaa"), FF.property("att_string"));
+        filter = FF.equal(FF.literal("aaa"), FF.property("att_string"));
         ite = FeatureStreams.update(collection.iterator(), filter, values);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
@@ -592,8 +592,8 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testSortByIterator(){
-        SortBy[] sorts = new SortBy[]{
-            FF.sort("att_string", SortOrder.ASCENDING)
+        SortProperty[] sorts = new SortProperty[]{
+            FF.sort(FF.property("att_string"), SortOrder.ASCENDING)
         };
 
         FeatureCollection collection = buildSimpleFeatureCollection();
@@ -632,8 +632,8 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         FeatureCollection collectionComplex = buildComplexFeatureCollection();
         FeatureCollection collection = buildSimpleFeatureCollection();
         //test string sort -----------------------------------------------------
-        SortBy[] sorts = new SortBy[]{
-            FF.sort("att_string", SortOrder.DESCENDING)
+        SortProperty[] sorts = new SortProperty[]{
+            FF.sort(FF.property("att_string"), SortOrder.DESCENDING)
         };
 
         FeatureIterator ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
@@ -651,8 +651,8 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         }
 
         //test string sort -----------------------------------------------------
-        sorts = new SortBy[]{
-            FF.sort("att_double", SortOrder.DESCENDING)
+        sorts = new SortProperty[]{
+            FF.sort(FF.property("att_double"), SortOrder.DESCENDING)
         };
 
         ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);
@@ -670,8 +670,8 @@ public class FeatureStreamsTest extends org.geotoolkit.test.TestBase {
         }
 
         //test double sort -----------------------------------------------------
-        sorts = new SortBy[]{
-            FF.sort("att_double", SortOrder.ASCENDING)
+        sorts = new SortProperty[]{
+            FF.sort(FF.property("att_double"), SortOrder.ASCENDING)
         };
 
         ite = FeatureStreams.sort(collectionComplex.iterator(), sorts);

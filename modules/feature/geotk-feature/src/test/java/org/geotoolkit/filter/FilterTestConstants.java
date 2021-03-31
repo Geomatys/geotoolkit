@@ -31,12 +31,9 @@ import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
-import org.opengis.filter.FilterFactory;
 
 
 /**
@@ -46,7 +43,7 @@ import org.opengis.filter.FilterFactory;
  * @module
  */
 public class FilterTestConstants {
-    public static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+    public static final FilterFactory2 FF = FilterUtilities.FF;
     public static final GeometryFactory GF = new GeometryFactory();
 
     public static final Geometry RIGHT_GEOMETRY;

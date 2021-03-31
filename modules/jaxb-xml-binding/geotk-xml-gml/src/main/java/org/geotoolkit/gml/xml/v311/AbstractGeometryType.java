@@ -36,7 +36,7 @@ import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
@@ -46,6 +46,7 @@ import org.opengis.geometry.primitive.PrimitiveBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.ScopedName;
 
 
 
@@ -453,4 +454,24 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         }
         return sb.toString();
      }
+
+    @Override
+    public ScopedName getFunctionName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<Expression> getParameters() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object apply(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Expression toValueType(Class type) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

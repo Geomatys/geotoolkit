@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
+import org.opengis.util.CodeList;
 
 
 /**
@@ -53,9 +53,6 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FilterType", propOrder = {
@@ -92,7 +89,6 @@ public class FilterType implements Filter, XMLFilter {
      * An empty constructor used by JAXB
      */
     public FilterType() {
-
     }
 
     /**
@@ -139,7 +135,7 @@ public class FilterType implements Filter, XMLFilter {
                         final GmlObjectIdType raid = (GmlObjectIdType) aid;
                         this.id.add(FACTORY.createGmlObjectId(new GmlObjectIdType(raid)));
                     } else if (aid != null) {
-                        throw new IllegalArgumentException("Unexpected ID type in filter:" + aid.getClass().getName());
+                        throw new IllegalArgumentException("Unexpected ID type in filter: " + aid.getClass().getName());
                     } else {
                         throw new NullArgumentException("ID Filter object must be specified");
                     }
@@ -157,7 +153,7 @@ public class FilterType implements Filter, XMLFilter {
                 this.spatialOps = createSpatialOps(spa);
             }
         } else if (obj != null) {
-            throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+            throw new IllegalArgumentException("This kind of object is not allowed: " + obj.getClass().getName());
         } else {
             throw new NullArgumentException("Filter object must be specified");
         }
@@ -325,17 +321,33 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public CodeList<?> getOperatorType() {
+        if (spatialOps    != null) return spatialOps   .getValue().getOperatorType();
+        if (comparisonOps != null) return comparisonOps.getValue().getOperatorType();
+        if (temporalOps   != null) return temporalOps  .getValue().getOperatorType();
+        if (logicOps      != null) return logicOps     .getValue().getOperatorType();
+        return null;
     }
 
     @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        return extraData;
+    public List getExpressions() {
+        if (spatialOps    != null) return spatialOps   .getValue().getExpressions();
+        if (comparisonOps != null) return comparisonOps.getValue().getExpressions();
+        if (temporalOps   != null) return temporalOps  .getValue().getExpressions();
+        if (logicOps      != null) return logicOps     .getValue().getExpressions();
+        return null;
+    }
+
+    @Override
+    public boolean test(final Object object) {
+        if (spatialOps    != null) return spatialOps   .getValue().test(object);
+        if (comparisonOps != null) return comparisonOps.getValue().test(object);
+        if (temporalOps   != null) return temporalOps  .getValue().test(object);
+        if (logicOps      != null) return logicOps     .getValue().test(object);
+        return false;
     }
 
     public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(final ComparisonOpsType operator) {
-
         if (operator instanceof PropertyIsLessThanOrEqualToType) {
             return FACTORY.createPropertyIsLessThanOrEqualTo((PropertyIsLessThanOrEqualToType) operator);
         } else if (operator instanceof PropertyIsLessThanType) {
@@ -362,7 +374,6 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     public static JAXBElement<? extends LogicOpsType> createLogicOps(final LogicOpsType operator) {
-
         if (operator instanceof OrType) {
             return FACTORY.createOr((OrType) operator);
         } else if (operator instanceof NotType) {
@@ -377,7 +388,6 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     public static JAXBElement<? extends SpatialOpsType> createSpatialOps(final SpatialOpsType operator) {
-
         if (operator instanceof BeyondType) {
             return FACTORY.createBeyond((BeyondType) operator);
         } else if (operator instanceof DWithinType) {
@@ -408,7 +418,6 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     public static JAXBElement<? extends TemporalOpsType> createTemporalOps(final TemporalOpsType operator) {
-
         if (operator instanceof TimeAfterType) {
             return FACTORY.createTAfter((TimeAfterType) operator);
         } else if (operator instanceof TimeBeforeType) {
@@ -459,7 +468,6 @@ public class FilterType implements Filter, XMLFilter {
     }
 
     public static JAXBElement<? extends AbstractIdType> createIdOps(final AbstractIdType operator) {
-
         if (operator instanceof FeatureIdType) {
             return FACTORY.createFeatureId((FeatureIdType) operator);
         } else if (operator instanceof GmlObjectIdType) {
@@ -507,7 +515,7 @@ public class FilterType implements Filter, XMLFilter {
             } else if (this.temporalOps == null && that.temporalOps == null) {
                 temp = true;
             }
-            /**
+            /*
              * TODO ID
              */
             return  comp && spa && log && temp;

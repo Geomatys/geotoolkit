@@ -19,7 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.PropertyIsGreaterThan;
+import org.opengis.filter.ComparisonOperatorName;
 
 /**
  *
@@ -28,10 +28,9 @@ import org.opengis.filter.PropertyIsGreaterThan;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsGreaterThan")
-public class PropertyIsGreaterThanType extends BinaryComparisonOpType implements PropertyIsGreaterThan {
+public class PropertyIsGreaterThanType extends BinaryComparisonOpType {
 
     public PropertyIsGreaterThanType() {
-
     }
 
     /**
@@ -48,5 +47,10 @@ public class PropertyIsGreaterThanType extends BinaryComparisonOpType implements
     @Override
     public ComparisonOpsType getClone() {
         return new PropertyIsGreaterThanType(this);
+    }
+
+    @Override
+    public ComparisonOperatorName getOperatorType() {
+        return ComparisonOperatorName.PROPERTY_IS_GREATER_THAN;
     }
 }

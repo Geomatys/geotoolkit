@@ -18,16 +18,14 @@
 
 package org.geotoolkit.storage.feature.query;
 
-import org.geotoolkit.storage.feature.query.Query;
-import org.geotoolkit.storage.feature.query.QueryBuilder;
 import java.util.Collections;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.memory.InMemoryFeatureSet;
 import org.geotoolkit.util.NamesExt;
 import org.junit.Assert;
@@ -40,8 +38,8 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.SortProperty;
+import org.opengis.filter.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -52,7 +50,7 @@ import org.opengis.util.GenericName;
  */
 public class QueryTest {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
     private static final GeometryFactory GF = new GeometryFactory();
     private static final double DELTA = 0.00001;
 
@@ -80,14 +78,14 @@ public class QueryTest {
         }
 
         try{
-            QueryBuilder.filtered(null, Filter.EXCLUDE);
+            QueryBuilder.filtered(null, Filter.exclude());
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
         }
 
         try{
-            QueryBuilder.sorted(null, new SortBy[]{FF.sort("att1", SortOrder.DESCENDING)});
+            QueryBuilder.sorted(null, new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
@@ -101,10 +99,10 @@ public class QueryTest {
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
-        assertEquals(query.getFilter(), Filter.INCLUDE);
+        assertEquals(query.getFilter(), Filter.include());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortBy[0]);
+        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //only ids--------------------------------------------------------------
@@ -112,35 +110,35 @@ public class QueryTest {
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
-        assertEquals(query.getFilter(), Filter.INCLUDE);
+        assertEquals(query.getFilter(), Filter.include());
         assertEquals(query.getLimit(), -1);
         assertNotNull(query.getPropertyNames()); //must be an empty array, not null
         assertTrue(query.getPropertyNames().length == 1); //must have only one value
-        assertArrayEquals(query.getSortBy(), new SortBy[0]);
+        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //only filter-----------------------------------------------------------
-        query = QueryBuilder.filtered(name.toString(), Filter.EXCLUDE);
+        query = QueryBuilder.filtered(name.toString(), Filter.exclude());
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
-        assertEquals(query.getFilter(), Filter.EXCLUDE);
+        assertEquals(query.getFilter(), Filter.exclude());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortBy[0]);
+        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //only sort by----------------------------------------------------------
-        query = QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("att1", SortOrder.DESCENDING)});
+        query = QueryBuilder.sorted(name.toString(), new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
-        assertEquals(query.getFilter(), Filter.INCLUDE);
+        assertEquals(query.getFilter(), Filter.include());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
         assertNotNull(query.getSortBy());
         assertTrue(query.getSortBy().length == 1);
-        assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
+        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 0);
 
     }
@@ -167,10 +165,10 @@ public class QueryTest {
         qb.setTypeName(name);
         qb.setCRS(CommonCRS.WGS84.normalizedGeographic());
         qb.setResolution(new double[]{45,31});
-        qb.setFilter(Filter.EXCLUDE);
+        qb.setFilter(Filter.exclude());
         qb.setLimit(10);
         qb.setProperties(new String[]{"att1","att2"});
-        qb.setSortBy(new SortBy[]{FF.sort("att1", SortOrder.DESCENDING)});
+        qb.setSortBy(new SortProperty[]{FF.sort(FF.property("att1"), SortOrder.DESCENDING)});
         qb.setOffset(5);
         query = qb.buildQuery();
 
@@ -178,11 +176,11 @@ public class QueryTest {
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d,DELTA);
         assertEquals(query.getResolution()[1], 31d,DELTA);
-        assertEquals(query.getFilter(), Filter.EXCLUDE);
+        assertEquals(query.getFilter(), Filter.exclude());
         assertEquals(query.getLimit(), 10l);
         assertEquals(query.getPropertyNames()[0], "att1");
         assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
+        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 5);
 
         query2 = query;
@@ -195,10 +193,10 @@ public class QueryTest {
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
-        assertEquals(query.getFilter(), Filter.INCLUDE);
+        assertEquals(query.getFilter(), Filter.include());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortBy[0]);
+        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
         //test copy-------------------------------------------------------------
@@ -209,11 +207,11 @@ public class QueryTest {
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d, DELTA);
         assertEquals(query.getResolution()[1], 31d, DELTA);
-        assertEquals(query.getFilter(), Filter.EXCLUDE);
+        assertEquals(query.getFilter(), Filter.exclude());
         assertEquals(query.getLimit(), 10l);
         assertEquals(query.getPropertyNames()[0], "att1");
         assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
+        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 5);
 
         //test constructor with query-------------------------------------------
@@ -224,11 +222,11 @@ public class QueryTest {
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d, DELTA);
         assertEquals(query.getResolution()[1], 31d, DELTA);
-        assertEquals(query.getFilter(), Filter.EXCLUDE);
+        assertEquals(query.getFilter(), Filter.exclude());
         assertEquals(query.getLimit(), 10l);
         assertEquals(query.getPropertyNames()[0], "att1");
         assertEquals(query.getPropertyNames()[1], "att2");
-        assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
+        assertEquals(query.getSortBy()[0], FF.sort(FF.property("att1"), SortOrder.DESCENDING));
         assertEquals(query.getOffset(), 5);
 
         //test constructor with name--------------------------------------------
@@ -238,10 +236,10 @@ public class QueryTest {
         assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
-        assertEquals(query.getFilter(), Filter.INCLUDE);
+        assertEquals(query.getFilter(), Filter.include());
         assertEquals(query.getLimit(), -1);
         assertArrayEquals(query.getPropertyNames(), null);
-        assertArrayEquals(query.getSortBy(), new SortBy[0]);
+        assertArrayEquals(query.getSortBy(), new SortProperty[0]);
         assertEquals(query.getOffset(), 0);
 
     }
@@ -277,7 +275,5 @@ public class QueryTest {
         Assert.assertEquals(10.0, geom1.getY(), 0.0);
         Assert.assertEquals(30.0, geom2.getX(), 0.0);
         Assert.assertEquals(10.0, geom2.getY(), 0.0);
-
     }
-
 }

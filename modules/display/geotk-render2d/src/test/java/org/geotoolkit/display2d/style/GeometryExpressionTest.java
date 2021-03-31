@@ -48,8 +48,8 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
+import org.geotoolkit.filter.FilterFactory2;
+import org.opengis.filter.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Fill;
 import org.opengis.style.PolygonSymbolizer;
@@ -76,7 +76,6 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         ftb.setName("test");
         ftb.addAttribute(Point.class).setName("geom").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         final FeatureType type = ftb.build();
-
 
         final Point point = GO2Utilities.JTS_FACTORY.createPoint(new Coordinate(0, 0));
         JTS.setCRS(point, crs);
@@ -120,7 +119,6 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         Assert.assertEquals(red, image.getRGB(20, 20));
         Assert.assertEquals(red, image.getRGB(29, 20));
         Assert.assertEquals(white, image.getRGB(31, 20));
-
     }
 
     /**
@@ -146,7 +144,7 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
         final Feature feature = type.newInstance();
         feature.setPropertyValue("geom", point);
 
-        final Expression geomExp = FF.function("bufferGeo", FF.property("geom"), FF.literal(100), FF.literal("m"));
+        final Expression geomExp = FF.function("bufferGeo", new Expression[] {FF.property("geom"), FF.literal(100), FF.literal("m")});
         final Stroke stroke = SF.stroke(Color.BLACK,10);
         final Fill fill = SF.fill(Color.RED);
         final PolygonSymbolizer symbolizer = SF.polygonSymbolizer(

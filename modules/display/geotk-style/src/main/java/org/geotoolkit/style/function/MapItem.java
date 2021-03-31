@@ -17,7 +17,7 @@
 package org.geotoolkit.style.function;
 
 import org.opengis.annotation.XmlElement;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -29,8 +29,7 @@ import org.opengis.filter.expression.Expression;
  * @module
  */
 @XmlElement("MapItem")
-public interface MapItem extends Expression{
-
+public interface MapItem extends Expression<Object,Object> {
     /**
      * Get value.
      *
@@ -49,5 +48,4 @@ public interface MapItem extends Expression{
      */
     @XmlElement("Data")
     double getData();
-
 }

@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.Meets;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeMeetsType extends BinaryTemporalOpType implements Meets {
-
+public class TimeMeetsType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeMeetsType() {
-
     }
 
     public TimeMeetsType(final String propertyName, final Object temporal) {
@@ -47,13 +44,7 @@ public class TimeMeetsType extends BinaryTemporalOpType implements Meets {
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.MEETS;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

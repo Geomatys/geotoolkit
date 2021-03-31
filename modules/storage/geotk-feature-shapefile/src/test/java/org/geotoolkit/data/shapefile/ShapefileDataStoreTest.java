@@ -37,7 +37,7 @@ import org.geotoolkit.storage.feature.FeatureCollection;
 import org.geotoolkit.storage.feature.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -60,15 +60,13 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.apache.sis.feature.builder.AttributeRole;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.filter.FilterUtilities;
 import org.junit.Assume;
-import org.opengis.filter.FilterFactory;
 
 /**
  *
- * @version $Id$
  * @author Ian Schneider
  * @module
  */
@@ -78,7 +76,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     static final String STREAM = "shapes/stream.shp";
     static final String DANISH = "shapes/danish_point.shp";
     static final String CHINESE = "shapes/chinese_poly.shp";
-    static final FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+    static final FilterFactory2 ff = FilterUtilities.FF;
 
     protected FeatureCollection loadFeatures(final String resource, Query query)
             throws Exception {
@@ -104,7 +102,6 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         }else{
             return s.createSession(true).getFeatureCollection(q);
         }
-
     }
 
     protected FeatureCollection loadFeatures(final ShapefileFeatureStore s)
@@ -491,10 +488,8 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testGetCount() throws Exception {
-        assertTrue(copyShapefiles(STREAM).canRead()); // The following test
-                                                        // seems to fail in the
-                                                        // URL point into the
-                                                        // JAR file.
+        assertTrue(copyShapefiles(STREAM).canRead());
+        // The following test seems to fail in the URL point into the JAR file.
         ShapefileFeatureStore store = (ShapefileFeatureStore) new ShapefileProvider()
                 .createDataStore(TestData.url(AbstractTestCaseSupport.class, STREAM).toURI());
         int count = 0;
@@ -510,8 +505,6 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     /**
      * Checks if feature reading optimizations still allow to execute the
      * queries or not
-     *
-     * @throws Exception
      */
     @Test
     public void testGetReaderOptimizations() throws Exception {
@@ -521,7 +514,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         // attributes other than geometry can be ignored here
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(s.getNames().iterator().next());
-        builder.setFilter(Filter.INCLUDE);
+        builder.setFilter(Filter.include());
         builder.setProperties(new String[]{"the_geom"});
         Query query = builder.buildQuery();
 
@@ -556,8 +549,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         // here not, we need state_name in the feature type, so open the dbf
         // file please
-        Filter cf = ff
-                .equals(ff.property("STATE_NAME"), ff.literal("Illinois"));
+        Filter cf = ff.equal(ff.property("STATE_NAME"), ff.literal("Illinois"));
 
         builder.reset();
         builder.setTypeName(s.getNames().iterator().next());
@@ -589,8 +581,6 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         feature.setPropertyValue("b",bigDecimal);
         feature.setPropertyValue("c",bigInteger);
 
-
-
         // store features
         File tmpFile = getTempFile();
         tmpFile.createNewFile();
@@ -598,7 +588,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         s.createFeatureType(type);
 
 //        // was failing in GEOT-2427
-//        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = s.getFeatureWriter(s.getNames().iterator().next(),Filter.INCLUDE);
+//        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = s.getFeatureWriter(s.getNames().iterator().next(), Filter.include());
 //        SimpleFeature feature1 = writer.next();
 //        writer.close();
 
@@ -759,28 +749,5 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     private ShapefileFeatureStore createDataStore() throws Exception {
         return createDataStore(getTempFile());
-    }
-
-    /**
-     * This is useful to dump a UTF16 character to an UT16 escape sequence,
-     * basically the only way to represent the chars we don't have on the
-     * keyboard (such as chinese ones :))
-     *
-     * @param c
-     * @return
-     */
-    static public String charToHex(final char c) {
-        // Returns hex String representation of char c
-        byte hi = (byte) (c >>> 8);
-        byte lo = (byte) (c & 0xff);
-        return byteToHex(hi) + byteToHex(lo);
-    }
-
-    static public String byteToHex(final byte b) {
-        // Returns hex String representation of byte b
-        char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                'a', 'b', 'c', 'd', 'e', 'f' };
-        char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
-        return new String(array);
     }
 }

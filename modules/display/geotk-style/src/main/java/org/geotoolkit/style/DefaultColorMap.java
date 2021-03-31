@@ -17,7 +17,7 @@
 package org.geotoolkit.style;
 
 import java.util.Objects;
-import org.opengis.filter.expression.Function;
+import org.opengis.filter.Expression;
 import org.opengis.style.ColorMap;
 import org.opengis.style.StyleVisitor;
 
@@ -30,14 +30,14 @@ import org.opengis.style.StyleVisitor;
  */
 public class DefaultColorMap implements ColorMap{
 
-    private final Function function;
+    private final Expression function;
 
     /**
      * Create a default immutable color map.
      *
      * @param function : should not be null.
      */
-    public DefaultColorMap(final Function function){
+    public DefaultColorMap(final Expression function){
 //        if(function == null){
 //            throw new NullPointerException("A color map must have a function");
 //        }
@@ -48,7 +48,7 @@ public class DefaultColorMap implements ColorMap{
      * {@inheritDoc }
      */
     @Override
-    public Function getFunction() {
+    public Expression getFunction() {
         return function;
     }
 

@@ -45,7 +45,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
@@ -65,7 +65,6 @@ import org.apache.sis.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery.*;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
 
-import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Envelope;
 
@@ -74,6 +73,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 
 /**
@@ -85,7 +85,7 @@ import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final FilterFactory2 FF = new DefaultFilterFactory2();
+    private static final FilterFactory2 FF = FilterUtilities.FF;
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
     private static final double TOLERANCE = 0.001;
 
@@ -560,7 +560,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         double max1[] = { 50,  15};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
-        filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(bbox));
+        filter = FF.equals(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
@@ -582,7 +582,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
             new Coordinate(25, 0),
         });
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
-        filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
+        filter = FF.equals(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
@@ -603,7 +603,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
          */
         geom = GF.createPoint(new Coordinate(-10, 10));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
-        filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
+        filter = FF.equals(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query

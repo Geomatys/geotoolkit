@@ -23,17 +23,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureIterator;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.memory.WrapFeatureCollection;
 import org.geotoolkit.storage.feature.query.SortByComparator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.SortProperty;
 
 /**
  * Basic support for a  FeatureIterator that will sort features using the given sort by
@@ -60,7 +56,7 @@ public class GenericSortByFeatureIterator<R extends FeatureIterator> implements 
      * @param iterator FeatureReader to sort
      * @param orders sorting orders
      */
-    private GenericSortByFeatureIterator(final R iterator, final SortBy[] orders) {
+    private GenericSortByFeatureIterator(final R iterator, final SortProperty[] orders) {
         this.iterator = iterator;
         this.comparator = new SortByComparator(orders);
     }
@@ -136,7 +132,7 @@ public class GenericSortByFeatureIterator<R extends FeatureIterator> implements 
      */
     private static final class GenericSortByFeatureReader extends GenericSortByFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private GenericSortByFeatureReader(final FeatureReader reader,final SortBy[] orders){
+        private GenericSortByFeatureReader(final FeatureReader reader,final SortProperty[] orders){
             super(reader,orders);
         }
 
@@ -149,9 +145,9 @@ public class GenericSortByFeatureIterator<R extends FeatureIterator> implements 
 
     private static final class GenericSortByFeatureCollection extends WrapFeatureCollection{
 
-        private final SortBy[] order;
+        private final SortProperty[] order;
 
-        private GenericSortByFeatureCollection(final FeatureCollection original, final SortBy[] order){
+        private GenericSortByFeatureCollection(final FeatureCollection original, final SortProperty[] order){
             super(original);
             this.order = order;
         }
@@ -171,14 +167,14 @@ public class GenericSortByFeatureIterator<R extends FeatureIterator> implements 
     /**
      * Wrap a FeatureReader will a sort by order.
      */
-    public static FeatureReader wrap(final FeatureReader reader, final SortBy[] orders){
+    public static FeatureReader wrap(final FeatureReader reader, final SortProperty[] orders){
         return new GenericSortByFeatureReader(reader, orders);
     }
 
     /**
      * Wrap a FeatureIterator will a sort by order.
      */
-    public static FeatureIterator wrap(final FeatureIterator reader, final SortBy[] orders){
+    public static FeatureIterator wrap(final FeatureIterator reader, final SortProperty[] orders){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,orders);
         }else{
@@ -189,7 +185,7 @@ public class GenericSortByFeatureIterator<R extends FeatureIterator> implements 
     /**
      * Wrap a FeatureCollection will a sort by order.
      */
-    public static FeatureCollection wrap(final FeatureCollection original, final SortBy[] orders){
+    public static FeatureCollection wrap(final FeatureCollection original, final SortProperty[] orders){
         return new GenericSortByFeatureCollection(original,orders);
     }
 

@@ -19,7 +19,7 @@ package org.geotoolkit.ogc.xml.v110;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.Expression;
+import org.geotoolkit.ogc.xml.AbstractExpression;
 
 
 /**
@@ -37,11 +37,8 @@ import org.opengis.filter.expression.Expression;
  * </pre>
  *
  * @author Guilhem Legal
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExpressionType")
-public abstract class ExpressionType implements Expression {
-
-
+public abstract class ExpressionType extends AbstractExpression {
 }

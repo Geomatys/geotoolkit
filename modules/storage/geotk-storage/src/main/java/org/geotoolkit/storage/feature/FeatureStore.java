@@ -37,7 +37,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -229,7 +229,7 @@ public interface FeatureStore extends AutoCloseable, Resource {
      * if the feature store can not handle persistent ids.
      * @throws org.apache.sis.storage.DataStoreException if an error occurs or if store is in read-only.
      */
-    default List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    default List<ResourceId> addFeatures(String groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
         return addFeatures(groupName,newFeatures,new Hints());
     }
 
@@ -245,7 +245,7 @@ public interface FeatureStore extends AutoCloseable, Resource {
      * if the feature store can not handle persistent ids.
      * @throws org.apache.sis.storage.DataStoreException if an error occurs or if store is in read-only.
      */
-    default List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    default List<ResourceId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new ReadOnlyStorageException("Writing operations not supported.");
     }
 
@@ -305,5 +305,4 @@ public interface FeatureStore extends AutoCloseable, Resource {
     }
 
     void close() throws DataStoreException;
-
 }

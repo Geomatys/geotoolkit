@@ -3,19 +3,19 @@
 package org.geotoolkit.pending.demo.filter;
 
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 
 
 public class JavascriptFunctionDemo {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     public static void main(String[] args) {
         Demos.init();
@@ -33,11 +33,8 @@ public class JavascriptFunctionDemo {
         final Literal formula = FF.literal(mathematicText);
         final Expression exp = FF.function(JavaScriptFunctionFactory.JAVASCRIPT, formula);
 
-        final Object result = exp.evaluate(feature);
+        final Object result = exp.apply(feature);
         System.out.println("JavaScript result = " + result);
-
-
-
     }
 
     private static Feature aFeature(){
@@ -58,5 +55,4 @@ public class JavascriptFunctionDemo {
 
         return feature1;
     }
-
 }

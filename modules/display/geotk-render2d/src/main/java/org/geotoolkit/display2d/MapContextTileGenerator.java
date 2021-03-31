@@ -72,7 +72,7 @@ import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.storage.multires.TileMatrix;
 import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -163,6 +163,11 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
         }
     }
 
+    private static Double doubleValue(final Expression e) {
+        final Number v = (Number) e.apply(null);
+        return (v != null) ? v.doubleValue() : null;
+    }
+
     @Override
     public void generate(TileMatrixSet pyramid, Envelope env, NumberRange resolutions,
             ProcessListener listener) throws DataStoreException, InterruptedException {
@@ -199,23 +204,23 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
                             Expression perpendicularOffset = ps.getPerpendicularOffset();
 
                             if (displacement != null) {
-                                Double dx = displacement.getDisplacementX().evaluate(null, Double.class);
-                                Double dy = displacement.getDisplacementX().evaluate(null, Double.class);
+                                Double dx = doubleValue(displacement.getDisplacementX());
+                                Double dy = doubleValue(displacement.getDisplacementX());
                                 if ( (dx != null && dx != 0.0) || (dy != null && dy != 0.0)) {
                                     rasterOptimisation = false;
                                     break search;
                                 }
                             }
                             if (perpendicularOffset != null) {
-                                Double off = perpendicularOffset.evaluate(null, Double.class);
+                                Double off = doubleValue(perpendicularOffset);
                                 if (off != null && off != 0.0) {
                                     rasterOptimisation = false;
                                     break search;
                                 }
                             }
                             if (stroke != null) {
-                                Double op = stroke.getOpacity().evaluate(null, Double.class);
-                                Double wd = stroke.getWidth().evaluate(null, Double.class);
+                                Double op = doubleValue(stroke.getOpacity());
+                                Double wd = doubleValue(stroke.getWidth());
                                 if ( (op == null || op == 0.0) || (wd == null || wd == 0.0)) {
                                     //not visible
                                 } else {

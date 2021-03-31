@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.util.logging.Logging;
@@ -35,15 +34,14 @@ import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryUtilities;
 import org.geotoolkit.storage.feature.session.Session;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.FilterFactory;
 
 /**
  * Feature collection that takes it's source from a single selector.
@@ -171,7 +169,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 
         if(isWritable()){
             if(o instanceof Feature){
-                Id filter = DefaultFactories.forBuildin(FilterFactory.class).id(Collections.singleton(FeatureExt.getId((Feature)o)));
+                ResourceId filter = FeatureExt.getId((Feature) o);
                 try {
                     getSession().removeFeatures(query.getTypeName(), filter);
                     return true;
@@ -194,14 +192,13 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
     public boolean removeAll(final Collection<?> clctn) {
 
         if(isWritable()){
-            final Set<Identifier> ids = new HashSet<Identifier>();
-
+            final Set<Filter<Object>> ids = new HashSet<>();
             final Iterator<?> ite = clctn.iterator();
             try{
                 while(ite.hasNext()){
                     final Object o = ite.next();
                     if(o instanceof Feature){
-                        ids.add(FeatureExt.getId((Feature)o));
+                        ids.add(FeatureExt.getId((Feature) o));
                     }
                 }
             }finally{
@@ -210,14 +207,17 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
                 }
             }
 
-            if(!ids.isEmpty()){
-                Id filter = DefaultFactories.forBuildin(FilterFactory.class).id(ids);
-                try {
-                    getSession().removeFeatures(query.getTypeName(), filter);
-                    return true;
-                } catch (DataStoreException ex) {
-                    throw new FeatureStoreRuntimeException(ex);
-                }
+            Filter filter;
+            switch (ids.size()) {
+                case 0:  filter = null; break;
+                case 1:  filter = ids.iterator().next(); break;
+                default: filter = FilterUtilities.FF.or(ids); break;
+            }
+            if (filter != null) try {
+                getSession().removeFeatures(query.getTypeName(), filter);
+                return true;
+            } catch (DataStoreException ex) {
+                throw new FeatureStoreRuntimeException(ex);
             }
 
         }else{
@@ -228,7 +228,6 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 
     @Override
     public void clear() {
-
         if(isWritable()){
             try {
                 getSession().removeFeatures(query.getTypeName(), query.getFilter());
@@ -245,10 +244,10 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
      */
     @Override
     public void update(final Filter filter, final Map<String,?> values) throws DataStoreException {
-        if(filter == Filter.INCLUDE){
+        if (filter == Filter.include()) {
             getSession().updateFeatures(query.getTypeName(),query.getFilter(),values);
         }else{
-            getSession().updateFeatures(query.getTypeName(),DefaultFactories.forBuildin(FilterFactory.class).and(query.getFilter(), filter),values);
+            getSession().updateFeatures(query.getTypeName(), FilterUtilities.FF.and((Filter) query.getFilter(), filter),values);
         }
     }
 
@@ -257,11 +256,10 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
      */
     @Override
     public void remove(final Filter filter) throws DataStoreException {
-        if(filter == Filter.INCLUDE){
+        if (filter == Filter.include()) {
             getSession().removeFeatures(query.getTypeName(),query.getFilter());
         }else{
-            getSession().removeFeatures(query.getTypeName(),DefaultFactories.forBuildin(FilterFactory.class).and(query.getFilter(), filter));
+            getSession().removeFeatures(query.getTypeName(), FilterUtilities.FF.and((Filter) query.getFilter(), filter));
         }
     }
-
 }

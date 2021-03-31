@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -41,9 +40,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SubstringType", propOrder = {
@@ -68,7 +64,6 @@ public class SubstringType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -80,7 +75,6 @@ public class SubstringType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
@@ -92,7 +86,6 @@ public class SubstringType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getPosition() {
         return position;
@@ -104,7 +97,6 @@ public class SubstringType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setPosition(final ParameterValueType value) {
         this.position = value;
@@ -116,7 +108,6 @@ public class SubstringType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getLength() {
         return length;
@@ -128,10 +119,8 @@ public class SubstringType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setLength(final ParameterValueType value) {
         this.length = value;
     }
-
 }

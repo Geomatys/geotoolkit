@@ -436,7 +436,7 @@ public class JAXPStreamTransactionWriter {
     }
 
     private static void writeFilter(Filter filter, final FilterVersion outputVersion, final XMLStreamWriter output) throws JAXBException {
-        if (filter == null || filter == Filter.INCLUDE) {
+        if (filter == null || filter == Filter.include()) {
             return;
         }
 

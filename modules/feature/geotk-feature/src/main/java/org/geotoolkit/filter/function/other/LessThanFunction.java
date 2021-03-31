@@ -17,36 +17,19 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class LessThanFunction extends AbstractFunction {
 
     public LessThanFunction(final Expression expr1, final Expression expr2) {
-        super(OtherFunctionFactory.LESS_THAN, new Expression[]{expr1,expr2}, null);
+        super(OtherFunctionFactory.LESS_THAN, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        Object arg0;
-        Object arg1;
-
-        try { // attempt to get value and perform conversion
-            arg0 = (Object) parameters.get(0).evaluate(feature);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function lessThan argument #0 - expected type Object");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg1 = (Object) parameters.get(1).evaluate(feature);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function lessThan argument #1 - expected type Object");
-        }
-
+    public Object apply(final Object feature) {
+        Object arg0 = parameters.get(0).apply(feature);
+        Object arg1 = parameters.get(1).apply(feature);
         return StaticUtils.lessThan(arg0, arg1);
     }
 }

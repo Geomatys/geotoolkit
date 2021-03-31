@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeBeginsType extends BinaryTemporalOpType implements Begins {
-
+public class TimeBeginsType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeBeginsType() {
-
     }
 
     public TimeBeginsType(final String propertyName, final Object temporal) {
@@ -47,13 +44,7 @@ public class TimeBeginsType extends BinaryTemporalOpType implements Begins {
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.BEGINS;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

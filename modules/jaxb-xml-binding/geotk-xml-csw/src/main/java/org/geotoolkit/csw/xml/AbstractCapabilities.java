@@ -17,7 +17,7 @@
 package org.geotoolkit.csw.xml;
 
 import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
-import org.opengis.filter.capability.FilterCapabilities;
+import org.geotoolkit.filter.capability.FilterCapabilities;
 
 /**
  * TODO this interface duplicate a lot from AbstractCapabiltiesBase because of CSWResponse.

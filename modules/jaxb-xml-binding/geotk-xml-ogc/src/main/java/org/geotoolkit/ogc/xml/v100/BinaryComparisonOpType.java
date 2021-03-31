@@ -17,6 +17,7 @@
 package org.geotoolkit.ogc.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,9 +26,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.XMLLiteral;
 import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.MatchAction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -46,9 +46,6 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
@@ -62,7 +59,6 @@ public abstract class BinaryComparisonOpType extends ComparisonOpsType implement
     private static final ObjectFactory FACTORY = new ObjectFactory();
 
     public BinaryComparisonOpType() {
-
     }
 
     /**
@@ -103,9 +99,9 @@ public abstract class BinaryComparisonOpType extends ComparisonOpsType implement
             }
         }
     }
+
     /**
      * Gets the value of the expression property.
-     *
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
@@ -120,7 +116,17 @@ public abstract class BinaryComparisonOpType extends ComparisonOpsType implement
     }
 
     @Override
+    public List getExpressions() {
+        return Arrays.asList(getOperand1(), getOperand2());
+    }
+
+    @Override
     public Expression getExpression1() {
+        return getOperand1();
+    }
+
+    @Override
+    public Expression getOperand1() {
         for (JAXBElement<?> elem : getExpression()) {
             final Object value = elem.getValue();
             if (value instanceof String) {
@@ -134,7 +140,7 @@ public abstract class BinaryComparisonOpType extends ComparisonOpsType implement
     }
 
     @Override
-    public Expression getExpression2() {
+    public Expression getOperand2() {
         for (JAXBElement<?> elem : getExpression()) {
             if (elem.getValue() instanceof LiteralType) {
                 return (LiteralType)elem.getValue();
@@ -154,13 +160,8 @@ public abstract class BinaryComparisonOpType extends ComparisonOpsType implement
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean test(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -171,7 +172,7 @@ public abstract class BinaryComparisonOpType extends ComparisonOpsType implement
                 return (String) value;
             }
             if (value instanceof PropertyNameType) {
-                return ((PropertyNameType) value).getPropertyName();
+                return ((PropertyNameType) value).getXPath();
             }
         }
         return null;
@@ -187,5 +188,4 @@ public abstract class BinaryComparisonOpType extends ComparisonOpsType implement
         }
         return null;
     }
-
 }

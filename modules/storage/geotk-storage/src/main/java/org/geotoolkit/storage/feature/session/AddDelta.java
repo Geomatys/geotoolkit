@@ -42,8 +42,8 @@ import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.SortProperty;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -97,8 +97,6 @@ public class AddDelta extends AbstractDelta{
                 }
             }
         }
-
-
     }
 
     /**
@@ -121,11 +119,11 @@ public class AddDelta extends AbstractDelta{
         //we can not filter here since some modify operation can follow
         //and change the filter result
         final QueryBuilder qb = new QueryBuilder(query);
-        qb.setFilter(Filter.INCLUDE);
+        qb.setFilter(Filter.include());
 
         final FeatureIterator affected = features.subset(qb.buildQuery()).iterator();
 
-        final SortBy[] sort = query.getSortBy();
+        final SortProperty[] sort = query.getSortBy();
         if(sort != null && sort.length > 0){
             return FeatureStreams.combine(query.getSortBy(), reader, affected);
         }else{
@@ -164,7 +162,7 @@ public class AddDelta extends AbstractDelta{
      */
     @Override
     public Map<String, String> commit(final FeatureStore store) throws DataStoreException {
-        final List<FeatureId> createdIds = store.addFeatures(type.toString(), features);
+        final List<ResourceId> createdIds = store.addFeatures(type.toString(), features);
 
         //iterator and list should have the same size
         final Map<String,String> updates = new HashMap<String, String>();
@@ -174,15 +172,14 @@ public class AddDelta extends AbstractDelta{
             if(createdIds != null && !createdIds.isEmpty()){
                 while(ite.hasNext()){
                     final Feature f = ite.next();
-                    final String id = FeatureExt.getId(f).getID();
-                        updates.put(id, createdIds.get(i).getID());
+                    final String id = FeatureExt.getId(f).getIdentifier();
+                    updates.put(id, createdIds.get(i).getIdentifier());
                     i++;
                 }
             }
         }finally{
             ite.close();
         }
-
         features.clear();
         return updates;
     }
@@ -199,5 +196,4 @@ public class AddDelta extends AbstractDelta{
     public void update(Map<String, String> idUpdates) {
         //nothing to update
     }
-
 }

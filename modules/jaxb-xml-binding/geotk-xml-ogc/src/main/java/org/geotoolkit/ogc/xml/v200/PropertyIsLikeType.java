@@ -19,6 +19,8 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBElement;
@@ -27,9 +29,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -51,14 +52,12 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsLikeType", propOrder = {
     "expression"
 })
-public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsLike {
+public class PropertyIsLikeType extends ComparisonOpsType implements LikeOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
@@ -75,7 +74,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * An empty constructor used by JAXB.
      */
     public PropertyIsLikeType() {
-
     }
 
     /**
@@ -128,7 +126,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         }
     }
 
-    @Override
     public Expression getExpression() {
         String pname = getPropertyName();
         if (pname != null) {
@@ -145,14 +142,25 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * {@link JAXBElement }{@code <}{@link Object }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
-     *
      */
-    public List<JAXBElement<?>> getExpressions() {
+    public List<JAXBElement<?>> getElements() {
         if (expression == null) {
             expression = new ArrayList<>();
         }
         return this.expression;
+    }
+
+    @Override
+    public List getExpressions() {
+        if (expression == null) return Collections.emptyList();
+        final Object[] ex = new Object[expression.size()];
+        for (int i=0; i<ex.length; i++) {
+            ex[i] = expression.get(i).getValue();
+            if (ex[i] instanceof String) {
+                ex[i] = new InternalPropertyName((String) ex[i]);
+            }
+        }
+        return Arrays.asList(ex);
     }
 
     public String getPropertyName() {
@@ -166,10 +174,9 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         return null;
     }
 
-     /**
+    /**
      * Gets the value of the literal property.
      */
-    @Override
     public String getLiteral() {
         if (expression != null) {
             for (JAXBElement<?> elem : expression) {
@@ -205,24 +212,14 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
     /**
      * Gets the value of the wildCard property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
-    public String getWildCard() {
-        return wildCard;
+    public char getWildCard() {
+        return wildCard.charAt(0);
     }
 
     /**
      * Sets the value of the wildCard property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setWildCard(String value) {
         this.wildCard = value;
@@ -230,24 +227,14 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
     /**
      * Gets the value of the singleChar property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
-    public String getSingleChar() {
-        return singleChar;
+    public char getSingleChar() {
+        return singleChar.charAt(0);
     }
 
     /**
      * Sets the value of the singleChar property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setSingleChar(String value) {
         this.singleChar = value;
@@ -255,24 +242,14 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
     /**
      * Gets the value of the escapeChar property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
-    public String getEscape() {
-        return escapeChar;
+    public char getEscapeChar() {
+        return escapeChar.charAt(0);
     }
 
     /**
      * Sets the value of the escapeChar property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setEscape(String value) {
         this.escapeChar = value;
@@ -281,16 +258,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     @Override
     public boolean isMatchingCase() {
         return matchCase;
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -355,7 +322,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
                 s.append(jb.getValue()).append("\n");
             }
         }
-
         s.append(" escape=").append(escapeChar);
         s.append(" single=").append(singleChar).append(" wildCard=").append(wildCard);
         s.append(" matchCase=").append(matchCase);

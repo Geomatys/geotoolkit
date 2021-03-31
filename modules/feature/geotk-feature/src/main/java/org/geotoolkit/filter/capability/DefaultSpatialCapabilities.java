@@ -17,13 +17,19 @@
  */
 package org.geotoolkit.filter.capability;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.iso.Names;
+import org.opengis.filter.SpatialOperatorName;
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;
-import org.opengis.filter.capability.SpatialOperators;
+import org.opengis.util.LocalName;
+import org.opengis.util.ScopedName;
 
 /**
  * Immutable spatial capabilities
@@ -31,7 +37,7 @@ import org.opengis.filter.capability.SpatialOperators;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultSpatialCapabilities implements SpatialCapabilities{
+public class DefaultSpatialCapabilities implements SpatialCapabilities {
 
     private final List<GeometryOperand> operands;
     private final SpatialOperators operators;
@@ -47,25 +53,44 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
         this.operators = operators;
     }
 
-    /**
-     * {@inheritDoc }
-     */
+    private static List<ScopedName> getGeometryOperands(final Collection<GeometryOperand> operands) {
+        final LocalName scope = Names.createLocalName(null, null, "geotk");
+        final List<ScopedName> names = new ArrayList<>(operands.size());
+        for (final GeometryOperand op : operands) {
+            names.add(Names.createScopedName(scope, ":", op.identifier()));
+        }
+        return names;
+    }
+
     @Override
-    public Collection<GeometryOperand> getGeometryOperands() {
+    public Collection<ScopedName> getGeometryOperands() {
+        return getGeometryOperands(operands);
+    }
+
+    @Deprecated
+    public Collection<GeometryOperand> getGeometryOperands2() {
         return operands;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public SpatialOperators getSpatialOperators() {
+    public Map<SpatialOperatorName, List<? extends ScopedName>> getSpatialOperators() {
+        final Map<SpatialOperatorName, List<? extends ScopedName>> names = new HashMap<>();
+        for (final SpatialOperator op : operators.getOperators()) {
+            final String name = op.getName();
+            final SpatialOperatorName key = SpatialOperatorName.valueOf(SpatialOperatorName.class,
+                    (c) -> name.equalsIgnoreCase(c.identifier()), null);
+            if (key != null) {
+                names.put(key, getGeometryOperands(op.getGeometryOperands()));
+            }
+        }
+        return names;
+    }
+
+    @Deprecated
+    public SpatialOperators getSpatialOperators2() {
         return operators;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -84,9 +109,6 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
         return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -94,5 +116,4 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
         hash = 71 * hash + (this.operators != null ? this.operators.hashCode() : 0);
         return hash;
     }
-
 }

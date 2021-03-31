@@ -21,19 +21,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.measure.Unit;
-import org.apache.sis.internal.system.DefaultFactories;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.function.DefaultInterpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -215,7 +214,7 @@ public final class StyleConstants {
 
     static {
         final MutableStyleFactory SF = new DefaultStyleFactory();
-        final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory FF = FilterUtilities.FF;
         LITERAL_ZERO_FLOAT = FF.literal(0);
         LITERAL_HALF_FLOAT = FF.literal(0.5f);
         LITERAL_ONE_FLOAT = FF.literal(1);
@@ -264,7 +263,7 @@ public final class StyleConstants {
         DEFAULT_FONT_STYLE = FONT_STYLE_NORMAL;
         DEFAULT_FONT_WEIGHT = FONT_WEIGHT_NORMAL;
         DEFAULT_FONT_SIZE = FF.literal(10);
-        DEFAULT_FONT = new DefaultFont(Collections.singletonList((Expression)new DefaultLiteral<>("Serif")), DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_SIZE);
+        DEFAULT_FONT = new DefaultFont(Collections.singletonList((Expression)FF.literal("Serif")), DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_SIZE);
 
         DEFAULT_HALO_RADIUS = LITERAL_ONE_FLOAT;
         DEFAULT_HALO_FILL = new DefaultFill(null, SF.literal(Color.WHITE), DEFAULT_FILL_OPACITY);

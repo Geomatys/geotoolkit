@@ -18,31 +18,29 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class RoundFunction extends AbstractFunction {
 
     public RoundFunction(final Expression expression) {
-        super(MathFunctionFactory.ROUND, new Expression[] {expression}, null);
+        super(MathFunctionFactory.ROUND, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number = parameters.get(0).evaluate(feature, Number.class);
-        if (number == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function round argument #0 - expected type number");
-        }
-
+    public Object apply(final Object feature) {
+        final Object number = parameters.get(0).apply(feature);
         if (number instanceof Double) {
-            return Math.round(number.doubleValue());
+            return Math.round((Double) number);
         }
         if (number instanceof Float) {
-            return Math.round(number.floatValue());
+            return Math.round((Float) number);
         }
-
-        //no round needed
-        return number;
+        if (number instanceof Number) {
+            // TODO: should check if the number is an integer type.
+            return number;
+        }
+        throw new IllegalArgumentException(
+                "Filter Function problem for function round argument #0 - expected type number");
     }
 }

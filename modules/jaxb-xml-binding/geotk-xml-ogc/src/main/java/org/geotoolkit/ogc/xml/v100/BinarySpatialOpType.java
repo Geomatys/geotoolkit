@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,10 +26,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v212.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v212.BoxType;
-import org.geotoolkit.ogc.xml.v200.InternalPropertyName;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.BinarySpatialOperator;
 
 
 /**
@@ -50,9 +50,6 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinarySpatialOpType", propOrder = {
@@ -70,7 +67,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
     private BoxType box;
 
     public BinarySpatialOpType() {
-
     }
 
     public BinarySpatialOpType(String propertyName, Object geometry) {
@@ -106,7 +102,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Gets the value of the propertyName property.
-     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -114,7 +109,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Sets the value of the propertyName property.
-     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
@@ -122,7 +116,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Gets the value of the geometry property.
-     *
      */
     public JAXBElement<? extends AbstractGeometryType> getGeometry() {
         return geometry;
@@ -130,7 +123,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Sets the value of the geometry property.
-     *
      */
     public void setGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.geometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
@@ -138,7 +130,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Gets the value of the box property.
-     *
      */
     public BoxType getBox() {
         return box;
@@ -146,7 +137,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
 
     /**
      * Sets the value of the box property.
-     *
      */
     public void setBox(final BoxType value) {
         this.box = value;
@@ -158,22 +148,22 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
     }
 
     @Override
-    public boolean evaluate(final Object object) {
+    public boolean test(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List getExpressions() {
+        return Arrays.asList(getOperand1(), getOperand2());
     }
 
     @Override
-     public Expression getExpression1() {
+     public Expression getOperand1() {
         return propertyName;
     }
 
     @Override
-    public Expression getExpression2() {
+    public Expression getOperand2() {
         if (geometry != null) {
             if (geometry.getValue() instanceof Expression) {
                 return (Expression)geometry.getValue();

@@ -41,8 +41,6 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOpsType")
@@ -52,6 +50,11 @@ import org.opengis.filter.Filter;
 public abstract class TemporalOpsType implements Filter, TemporalOperator {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ogc.xml.v200");
+
+    @Override
+    public boolean test(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     public abstract TemporalOpsType getClone();
 }

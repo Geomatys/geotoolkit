@@ -18,9 +18,9 @@
 package org.geotoolkit.filter.binaryexpression;
 
 import org.junit.Test;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 
 import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
@@ -36,33 +36,33 @@ public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
         final double correctResult = 151;
         final Literal combineLiteral = FF.literal(50);
 
-        PropertyName property;
+        ValueReference property;
         Expression exp;
         double result;
 
         property = FF.property("testShort");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testInteger");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testLong");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testFloat");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testDouble");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         assertSerializedEquals(exp); //test serialize
@@ -73,33 +73,33 @@ public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
         final double correctResult = 25.25;
         final Literal combineLiteral = FF.literal(4);
 
-        PropertyName property;
+        ValueReference property;
         Expression exp;
         double result;
 
         property = FF.property("testShort");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testInteger");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testLong");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testFloat");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testDouble");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         assertSerializedEquals(exp); //test serialize
@@ -110,33 +110,33 @@ public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
         final double correctResult = 303;
         final Literal combineLiteral = FF.literal(3);
 
-        PropertyName property;
+        ValueReference property;
         Expression exp;
         double result;
 
         property = FF.property("testShort");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testInteger");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testLong");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testFloat");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testDouble");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         assertSerializedEquals(exp); //test serialize
@@ -147,33 +147,33 @@ public class BinaryExpressionTest extends org.geotoolkit.test.TestBase {
         final double correctResult = 31;
         final Literal combineLiteral = FF.literal(70);
 
-        PropertyName property;
+        ValueReference property;
         Expression exp;
         double result;
 
         property = FF.property("testShort");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testInteger");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testLong");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testFloat");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testDouble");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(CANDIDATE_1, Double.class);
+        result = ((Number) exp.apply(CANDIDATE_1)).doubleValue();
         assertEquals(result, correctResult, 0.0000001d);
 
         assertSerializedEquals(exp); //test serialize

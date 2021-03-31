@@ -62,7 +62,8 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
+import org.opengis.filter.MatchAction;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -96,8 +97,8 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
                     return +1;
                 }
 
-                double d1 = t1.evaluate(null, Double.class);
-                double d2 = t2.evaluate(null, Double.class);
+                double d1 = ((Number) t1.apply(null)).doubleValue();
+                double d2 = ((Number) t2.apply(null)).doubleValue();
                 double res = d1-d2;
                 if (res < 0) {
                     return -1;
@@ -116,7 +117,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         int i=0;
         int index = 0;
         for (;i<steps.length-1;i++) {
-            end = steps[i+1].evaluate(null,Double.class);
+            end = ((Number) steps[i+1].apply(null)).doubleValue();
             interval = NumberRange.create(last, true, end, false);
             styles.put(interval,categorizes.get(steps[i]));
             stylesIndexes.put(interval, index++);
@@ -130,7 +131,25 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         stylesIndexes.put(lastRange, index++);
 
         //calculate the polygons -----------------------------------------------
-        final Geometry[] polygons = computeOld(coverage, styles);
+        final ProcessDescriptor descriptor = CoverageToVectorDescriptor.INSTANCE;
+
+        final Integer band = ((Number) styleElement.getChannel().apply(null)).intValue();
+
+        final ParameterValueGroup input = descriptor.getInputDescriptor().createValue();
+        input.parameter(CoverageToVectorDescriptor.COVERAGE.getName().getCode()).setValue(coverage);
+        final Set<NumberRange> nrs = styles.keySet();
+        input.parameter(CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(nrs.toArray(new NumberRange[nrs.size()]));
+        input.parameter(CoverageToVectorDescriptor.BAND.getName().getCode()).setValue(band);
+        final Process process = descriptor.createProcess(input);
+
+        final Geometry[] polygons;
+        try {
+            polygons = (Geometry[]) process.call().parameter(
+                CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).getValue();
+        } catch (ProcessException ex) {
+            Logging.getLogger("org.geotoolkit.display2d.ext.pattern").log(Level.WARNING, null, ex);
+            throw new IOException(ex.getMessage(), ex);
+        }
 
         //build the global style -----------------------------------------------
         final MutableStyle style = GO2Utilities.STYLE_FACTORY.style();
@@ -141,7 +160,10 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         for (List<Symbolizer> lst : styles.values()) {
             MutableRule rule = GO2Utilities.STYLE_FACTORY.rule();
             rule.symbolizers().addAll(lst);
-            rule.setFilter(GO2Utilities.FILTER_FACTORY.equals(GO2Utilities.FILTER_FACTORY.property("category"), GO2Utilities.FILTER_FACTORY.literal(idx)));
+            rule.setFilter(GO2Utilities.FILTER_FACTORY.equal(
+                    GO2Utilities.FILTER_FACTORY.property("category"),
+                    GO2Utilities.FILTER_FACTORY.literal(idx),
+                    true, MatchAction.ANY));
             fts.rules().add(rule);
             idx++;
         }
@@ -178,7 +200,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
 
         final ProcessDescriptor descriptor = CoverageToVectorDescriptor.INSTANCE;
 
-        final Integer band = styleElement.getChannel().evaluate(null,Integer.class);
+        final Integer band = (Integer) styleElement.getChannel().apply(null);
 
         final ParameterValueGroup input = descriptor.getInputDescriptor().createValue();
         input.parameter(CoverageToVectorDescriptor.COVERAGE.getName().getCode()).setValue(coverage);

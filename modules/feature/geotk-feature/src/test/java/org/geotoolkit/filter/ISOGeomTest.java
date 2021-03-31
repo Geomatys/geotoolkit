@@ -24,10 +24,10 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
 import org.junit.Test;
-import org.opengis.filter.spatial.Equals;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.filter.BinarySpatialOperator;
 import org.apache.sis.referencing.CommonCRS;
 
 import static org.junit.Assert.*;
@@ -54,8 +54,8 @@ public class ISOGeomTest extends org.geotoolkit.test.TestBase {
         isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(70.83, 29.86), crs));
         isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(68.87, 31.08), crs));
         isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(71.96, 32.19), crs));
-        Equals filter = FF.equal(FF.literal(jtsGeom), FF.literal(isoGeom));
-        boolean match = filter.evaluate(null);
+        BinarySpatialOperator<Object> filter = FF.equals(FF.literal(jtsGeom), FF.literal(isoGeom));
+        boolean match = filter.test(null);
 
         assertTrue(match);
     }

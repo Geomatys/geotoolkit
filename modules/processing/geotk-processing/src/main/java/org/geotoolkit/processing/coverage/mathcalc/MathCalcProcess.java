@@ -20,21 +20,18 @@ package org.geotoolkit.processing.coverage.mathcalc;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.cql.CQLException;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.WritableGridCoverageResource;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.cql.CQL;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
-import org.geotoolkit.filter.WrapFilterFactory2;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.AbstractProcess;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
+import org.opengis.filter.Expression;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -78,7 +75,7 @@ public class MathCalcProcess extends AbstractProcess {
         }
 
         //create expression
-        final FilterFactory2 ff = new ExtFilterFactory();
+        final FilterFactory2 ff = FilterUtilities.FF;
         final Expression exp;
         try {
             exp = CQL.parseExpression(inFormula, ff);
@@ -108,38 +105,17 @@ public class MathCalcProcess extends AbstractProcess {
         } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-
     }
-
-    //TODO, for later, handle offsets on axis with syntax U(x,y+10,z) and U(gx-20,gy,gz)
-    private static class ExtFilterFactory extends WrapFilterFactory2 {
-
-        public ExtFilterFactory() {
-            super((FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class));
-        }
-
-        @Override
-        public Function function(String name, Expression... args) {
-            return super.function(name, args);
-        }
-    }
-
 
     /**
      * Find common crs which can be used for mathcalc process.
-     *
-     * @param crss
-     * @return
-     * @throws IllegalArgumentException
      */
     public static CoordinateReferenceSystem findCommunCrs(CoordinateReferenceSystem ... crss) throws IllegalArgumentException{
-
         CoordinateReferenceSystem result = null;
-
         for(CoordinateReferenceSystem crs : crss){
-            if(result==null){
+            if (result == null) {
                 result = crs;
-            }else{
+            } else {
                 final int nbr = result.getCoordinateSystem().getDimension();
                 final int nbc = crs.getCoordinateSystem().getDimension();
 
@@ -150,9 +126,6 @@ public class MathCalcProcess extends AbstractProcess {
                 }
             }
         }
-
         return result;
     }
-
-
 }

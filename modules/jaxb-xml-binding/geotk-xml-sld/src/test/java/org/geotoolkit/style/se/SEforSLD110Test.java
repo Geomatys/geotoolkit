@@ -45,9 +45,9 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.function.Interpolate;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.Expression;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.Graphic;
 import org.opengis.style.LineSymbolizer;
@@ -65,7 +65,6 @@ import org.opengis.util.FactoryException;
  * Test class for style jaxb marshelling and unmarshelling.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class SEforSLD110Test {
 
@@ -78,9 +77,8 @@ public class SEforSLD110Test {
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
         STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+        FILTER_FACTORY = FilterUtilities.FF;
     }
-
 
     private static MarshallerPool POOL;
     private static final SE110toGTTransformer TRANSFORMER_GT;
@@ -112,7 +110,6 @@ public class SEforSLD110Test {
     private static File TEST_FILE_SE_STYLE;
     private static File TEST_FILE_SE_FTS;
     private static File TEST_FILE_SE_RULE;
-
 
     static{
 
@@ -172,8 +169,6 @@ public class SEforSLD110Test {
             TEST_FILE_SE_FTS.deleteOnExit();
             TEST_FILE_SE_RULE.deleteOnExit();
         }
-
-
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -326,6 +321,18 @@ public class SEforSLD110Test {
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR SYMBOLIZERS /////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    private static String stringValue(Expression e) {
+        return e.apply(null).toString();
+    }
+
+    private static float floatValue(Expression e) {
+        return ((Number) e.apply(null)).floatValue();
+    }
+
+    private static Color colorValue(Expression e) {
+        return (Color) e.apply(null);
+    }
+
     @Test
     public void testPointSymbolizer() throws JAXBException{
 
@@ -344,20 +351,20 @@ public class SEforSLD110Test {
         assertEquals(Units.POINT, pointSymbol.getUnitOfMeasure());
         assertNotNull(pointSymbol.getGraphic());
 
-        assertEquals(pointSymbol.getGraphic().getOpacity().evaluate(null, Float.class), 0.7f, DELTA);
-        assertEquals(pointSymbol.getGraphic().getRotation().evaluate(null, Float.class), 110f, DELTA);
-        assertEquals(pointSymbol.getGraphic().getSize().evaluate(null, Float.class), 32f, DELTA);
+        assertEquals(floatValue(pointSymbol.getGraphic().getOpacity()), 0.7f, DELTA);
+        assertEquals(floatValue(pointSymbol.getGraphic().getRotation()), 110f, DELTA);
+        assertEquals(floatValue(pointSymbol.getGraphic().getSize()), 32f, DELTA);
         Mark mark = (Mark) pointSymbol.getGraphic().graphicalSymbols().get(0);
-        assertEquals(mark.getWellKnownName().evaluate(null, String.class), "square");
-        assertEquals(mark.getStroke().getWidth().evaluate(null, Float.class), 13f, DELTA);
-        assertEquals(mark.getStroke().getOpacity().evaluate(null, Float.class), 0.4f, DELTA);
-        assertEquals(mark.getStroke().getLineJoin().evaluate(null, String.class), "bevel");
-        assertEquals(mark.getStroke().getLineCap().evaluate(null, String.class), "butt");
-        assertEquals(mark.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f, DELTA);
-        assertEquals(mark.getStroke().getColor().evaluate(null, Color.class), ObjectConverters.convert("#404040",Color.class));
+        assertEquals(stringValue(mark.getWellKnownName()), "square");
+        assertEquals(floatValue(mark.getStroke().getWidth()), 13f, DELTA);
+        assertEquals(floatValue(mark.getStroke().getOpacity()), 0.4f, DELTA);
+        assertEquals(stringValue(mark.getStroke().getLineJoin()), "bevel");
+        assertEquals(stringValue(mark.getStroke().getLineCap()), "butt");
+        assertEquals(floatValue(mark.getStroke().getDashOffset()), 2.3f, DELTA);
+        assertEquals(colorValue(mark.getStroke().getColor()), ObjectConverters.convert("#404040",Color.class));
 
-        assertEquals(mark.getFill().getOpacity().evaluate(null, Float.class), 1.0f, DELTA);
-        assertEquals(mark.getFill().getColor().evaluate(null, Color.class), ObjectConverters.convert("#808080",Color.class));
+        assertEquals(floatValue(mark.getFill().getOpacity()), 1.0f, DELTA);
+        assertEquals(colorValue(mark.getFill().getColor()), ObjectConverters.convert("#808080",Color.class));
 
         //Write test
         JAXBElement<org.geotoolkit.se.xml.v110.PointSymbolizerType> pvt = TRANSFORMER_OGC.visit(pointSymbol,null);
@@ -397,12 +404,12 @@ public class SEforSLD110Test {
         assertEquals(Units.METRE, lineSymbol.getUnitOfMeasure());
         assertNotNull(lineSymbol.getStroke());
 
-        assertEquals(lineSymbol.getStroke().getWidth().evaluate(null, Float.class), 13f, DELTA);
-        assertEquals(lineSymbol.getStroke().getOpacity().evaluate(null, Float.class), 0.4f, DELTA);
-        assertEquals(lineSymbol.getStroke().getLineJoin().evaluate(null, String.class), "bevel");
-        assertEquals(lineSymbol.getStroke().getLineCap().evaluate(null, String.class), "butt");
-        assertEquals(lineSymbol.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f, DELTA);
-        assertEquals(lineSymbol.getStroke().getColor().evaluate(null, Color.class), ObjectConverters.convert("#FF0000",Color.class));
+        assertEquals(floatValue(lineSymbol.getStroke().getWidth()), 13f, DELTA);
+        assertEquals(floatValue(lineSymbol.getStroke().getOpacity()), 0.4f, DELTA);
+        assertEquals(stringValue(lineSymbol.getStroke().getLineJoin()), "bevel");
+        assertEquals(stringValue(lineSymbol.getStroke().getLineCap()), "butt");
+        assertEquals(floatValue(lineSymbol.getStroke().getDashOffset()), 2.3f, DELTA);
+        assertEquals(colorValue(lineSymbol.getStroke().getColor()), ObjectConverters.convert("#FF0000",Color.class));
 
         //Write test
         JAXBElement<org.geotoolkit.se.xml.v110.LineSymbolizerType> pvt = TRANSFORMER_OGC.visit(lineSymbol,null);
@@ -435,15 +442,15 @@ public class SEforSLD110Test {
         assertEquals(Units.FOOT, polySymbol.getUnitOfMeasure());
         assertNotNull(polySymbol.getStroke());
 
-        assertEquals(polySymbol.getStroke().getWidth().evaluate(null, Float.class), 13f, DELTA);
-        assertEquals(polySymbol.getStroke().getOpacity().evaluate(null, Float.class), 0.4f, DELTA);
-        assertEquals(polySymbol.getStroke().getLineJoin().evaluate(null, String.class), "bevel");
-        assertEquals(polySymbol.getStroke().getLineCap().evaluate(null, String.class), "butt");
-        assertEquals(polySymbol.getStroke().getDashOffset().evaluate(null, Float.class), 2.3f, DELTA);
-        assertEquals(polySymbol.getStroke().getColor().evaluate(null, Color.class), ObjectConverters.convert("#FF0000",Color.class));
+        assertEquals(floatValue(polySymbol.getStroke().getWidth()), 13f, DELTA);
+        assertEquals(floatValue(polySymbol.getStroke().getOpacity()), 0.4f, DELTA);
+        assertEquals(stringValue(polySymbol.getStroke().getLineJoin()), "bevel");
+        assertEquals(stringValue(polySymbol.getStroke().getLineCap()), "butt");
+        assertEquals(floatValue(polySymbol.getStroke().getDashOffset()), 2.3f, DELTA);
+        assertEquals(colorValue(polySymbol.getStroke().getColor()), ObjectConverters.convert("#FF0000",Color.class));
 
-        assertEquals(polySymbol.getFill().getOpacity().evaluate(null, Float.class), 1.0f, DELTA);
-        assertEquals(polySymbol.getFill().getColor().evaluate(null, Color.class), ObjectConverters.convert("#0000FF",Color.class));
+        assertEquals(floatValue(polySymbol.getFill().getOpacity()), 1.0f, DELTA);
+        assertEquals(colorValue(polySymbol.getFill().getColor()), ObjectConverters.convert("#0000FF",Color.class));
 
         //Write test
         JAXBElement<org.geotoolkit.se.xml.v110.PolygonSymbolizerType> pvt = TRANSFORMER_OGC.visit(polySymbol,null);
@@ -477,19 +484,19 @@ public class SEforSLD110Test {
         assertEquals(Units.FOOT, textSymbol.getUnitOfMeasure());
         assertNotNull(textSymbol.getFill());
 
-        assertEquals(textSymbol.getFill().getOpacity().evaluate(null, Float.class), 1.0f, DELTA);
-        assertEquals(textSymbol.getFill().getColor().evaluate(null, Color.class), ObjectConverters.convert("#FFC800",Color.class));
+        assertEquals(floatValue(textSymbol.getFill().getOpacity()), 1.0f, DELTA);
+        assertEquals(colorValue(textSymbol.getFill().getColor()), ObjectConverters.convert("#FFC800",Color.class));
 
-        assertEquals(textSymbol.getHalo().getRadius().evaluate(null, Float.class), 5f, DELTA);
-        assertEquals(textSymbol.getHalo().getFill().getOpacity().evaluate(null, Float.class), 0.52f, DELTA);
+        assertEquals(floatValue(textSymbol.getHalo().getRadius()), 5f, DELTA);
+        assertEquals(floatValue(textSymbol.getHalo().getFill().getOpacity()), 0.52f, DELTA);
 
-        assertEquals(textSymbol.getLabel().toString(), "aField");
+        assertEquals(stringValue(textSymbol.getLabel()), "aField");
 
-        assertEquals(textSymbol.getFont().getFamily().get(0).evaluate(null,String.class), "arial");
-        assertEquals(textSymbol.getFont().getFamily().get(1).evaluate(null,String.class), "serif");
-        assertEquals(textSymbol.getFont().getSize().evaluate(null,Float.class), 17f, DELTA);
-        assertEquals(textSymbol.getFont().getStyle().evaluate(null,String.class), "italic");
-        assertEquals(textSymbol.getFont().getWeight().evaluate(null,String.class), "bold");
+        assertEquals(stringValue(textSymbol.getFont().getFamily().get(0)), "arial");
+        assertEquals(stringValue(textSymbol.getFont().getFamily().get(1)), "serif");
+        assertEquals(floatValue(textSymbol.getFont().getSize()), 17f, DELTA);
+        assertEquals(stringValue(textSymbol.getFont().getStyle()), "italic");
+        assertEquals(stringValue(textSymbol.getFont().getWeight()), "bold");
 
         //Write test
         JAXBElement<org.geotoolkit.se.xml.v110.TextSymbolizerType> pvt = TRANSFORMER_OGC.visit(textSymbol,null);
@@ -531,19 +538,19 @@ public class SEforSLD110Test {
 
         assertNotNull(rasterSymbol.getContrastEnhancement());
         assertEquals(rasterSymbol.getContrastEnhancement().getMethod(), ContrastMethod.NORMALIZE);
-        assertEquals(rasterSymbol.getContrastEnhancement().getGammaValue().evaluate(null,Float.class), 3f, DELTA);
+        assertEquals(floatValue(rasterSymbol.getContrastEnhancement().getGammaValue()), 3f, DELTA);
 
         assertNotNull(rasterSymbol.getImageOutline());
 
         assertNotNull(rasterSymbol.getOpacity());
-        assertEquals(rasterSymbol.getOpacity().evaluate(null,Float.class), 0.32f, DELTA);
+        assertEquals(floatValue(rasterSymbol.getOpacity()), 0.32f, DELTA);
 
         assertNotNull(rasterSymbol.getOverlapBehavior());
         assertEquals(rasterSymbol.getOverlapBehavior(), OverlapBehavior.EARLIEST_ON_TOP);
 
         assertNotNull(rasterSymbol.getShadedRelief());
         assertEquals(rasterSymbol.getShadedRelief().isBrightnessOnly(), true);
-        assertEquals(rasterSymbol.getShadedRelief().getReliefFactor().evaluate(null, Float.class), 5f, DELTA);
+        assertEquals(floatValue(rasterSymbol.getShadedRelief().getReliefFactor()), 5f, DELTA);
 
 
         //Write test
@@ -615,5 +622,4 @@ public class SEforSLD110Test {
 
         POOL.recycle(UNMARSHALLER);
     }
-
 }

@@ -136,7 +136,7 @@ public class DefaultFeatureResource extends AbstractResource implements Writable
      */
     @Override
     public void add(Iterator<? extends Feature> features) throws ReadOnlyStorageException, DataStoreException {
-        try (final FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(query.getTypeName(), Filter.EXCLUDE))) {
+        try (final FeatureWriter writer = store.getFeatureWriter(QueryBuilder.filtered(query.getTypeName(), Filter.exclude()))) {
             while (features.hasNext()) {
                 FeatureExt.copy(features.next(), writer.next(), true);
                 writer.write();

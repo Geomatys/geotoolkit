@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.ArithmeticOperators;
+import org.geotoolkit.filter.capability.ArithmeticOperators;
 
 
 /**
@@ -43,14 +43,12 @@ import org.opengis.filter.capability.ArithmeticOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Arithmetic_OperatorsType", propOrder = {
     "simpleArithmeticOrFunctions"
 })
-public class ArithmeticOperatorsType implements ArithmeticOperators {
+public class ArithmeticOperatorsType extends ArithmeticOperators {
 
     @XmlElements({
         @XmlElement(name = "Simple_Arithmetic", type = SimpleArithmetic.class),
@@ -65,8 +63,6 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
      * Objects of the following type(s) are allowed in the list
      * {@link SimpleArithmetic }
      * {@link FunctionsType }
-     *
-     *
      */
     public List<Object> getSimpleArithmeticOrFunctions() {
         if (simpleArithmeticOrFunctions == null) {
@@ -94,5 +90,4 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
         }
         return null;
     }
-
 }

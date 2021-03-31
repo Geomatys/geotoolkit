@@ -83,9 +83,9 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
                          )
                   );
         filter = ff.and(filter, tempFilter);
-        filter = (Filter)filter.accept(new SimplifyingFilterVisitor(),null);
+        filter = (Filter) SimplifyingFilterVisitor.INSTANCE.visit(filter);
 
-        if (!Filter.INCLUDE.equals(filter)) {
+        if (!Filter.include().equals(filter)) {
             //encode filter
             sql.append(" WHERE ");
             sql.append(dialect.encodeFilter(filter,featureType));

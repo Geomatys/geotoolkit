@@ -20,29 +20,22 @@ package org.geotoolkit.filter.visitor;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.internal.filter.FunctionNames;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-
 import org.opengis.util.GenericName;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 
 
 /**
  * A simple visitor that extracts every attribute used by a filter or an expression
- * @module
  */
-public class FilterAttributeExtractor extends DefaultFilterVisitor {
-
-    /*
+public class FilterAttributeExtractor extends DefaultFilterVisitor<Set<GenericName>> {
+    /**
      * Last set visited
      */
     private final Set<GenericName> attributeNames = new HashSet<>();
-
-    /**
-     * feature type to evaluate against
-     */
-    private final FeatureType featureType;
 
     /**
      * Just extract the property names; don't check against a feature type.
@@ -54,17 +47,33 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
     /**
      * Use the provided feature type as a sanity check when extracting
      * property names.
-     *
-     * @param featureType
      */
     public FilterAttributeExtractor(final FeatureType featureType) {
-        this.featureType = featureType;
+        setExpressionHandler(FunctionNames.ValueReference, (e, data) -> {
+            final ValueReference<Object,?> expression = (ValueReference<Object,?>) e;
+            if (data != null && data != attributeNames) {
+                attributeNames.addAll(data);
+            }
+            if (featureType != null) {
+                // evaluate against the feature type instead of using straight name
+                // since the path from the property name may be an xpath or a
+                // namespace prefixed string
+                PropertyType type = (PropertyType) expression.apply(featureType);
+                if (type != null) {
+                   attributeNames.add( type.getName() );
+                } else {
+                   attributeNames.add(NamesExt.valueOf(expression.getXPath()));
+                }
+            } else {
+                attributeNames.add(NamesExt.valueOf(expression.getXPath()));
+            }
+        });
     }
 
     /**
      * @return an unmofiable set of the attribute names found so far during the visit
      */
-    public Set getAttributeNameSet() {
+    public Set<GenericName> getAttributeNameSet() {
         return Collections.unmodifiableSet(attributeNames);
     }
 
@@ -72,7 +81,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
      * @return an array of the attribute names found so far during the visit
      */
     public GenericName[] getAttributeNames() {
-        return (GenericName[]) attributeNames.toArray(new GenericName[attributeNames.size()]);
+        return attributeNames.toArray(new GenericName[attributeNames.size()]);
     }
 
     /**
@@ -80,28 +89,5 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
      */
     public void clear() {
         attributeNames.clear();
-    }
-
-    @Override
-    public Object visit(final PropertyName expression, final Object data) {
-        if (data != null && data != attributeNames && data instanceof Set) {
-            attributeNames.addAll((Set) data);
-        }
-
-        if (featureType != null) {
-            //evaluate against the feature type instead of using straight name
-            // since the path from the property name may be an xpath or a
-            // namespace prefixed string
-            PropertyType type = (PropertyType) expression.evaluate(featureType);
-            if(type != null) {
-               attributeNames.add( type.getName() );
-            }else{
-               attributeNames.add(NamesExt.valueOf(expression.getPropertyName()) );
-            }
-        }else{
-            attributeNames.add(NamesExt.valueOf(expression.getPropertyName()) );
-        }
-
-        return attributeNames;
     }
 }

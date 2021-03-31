@@ -19,40 +19,38 @@ package org.geotoolkit.filter.lua;
 
 import java.util.List;
 import javax.script.ScriptException;
-import org.apache.sis.internal.system.DefaultFactories;
 
 import static org.apache.sis.test.Assert.*;
 
 import org.geotoolkit.filter.FilterTestConstants;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.lua.LuaFunctionFactory;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class LuaTest extends org.geotoolkit.test.TestBase {
     @Test
     public void simpleScriptTest() throws ScriptException{
 
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory ff = FilterUtilities.FF;
 
         Expression exp = ff.literal("return 2 + 3");
-        Function luaFunction = ff.function(LuaFunctionFactory.LUA, exp);
+        Expression luaFunction = ff.function(LuaFunctionFactory.LUA, exp);
 
-        double result = luaFunction.evaluate(null,Number.class).doubleValue();
+        double result = ((Number) luaFunction.apply(null)).doubleValue();
         assertTrue(result == 5);
 
         exp = ff.literal("return _testInteger * _testDouble");
         luaFunction = ff.function(LuaFunctionFactory.LUA, exp);
 
-        result = luaFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
+        result = ((Number) luaFunction.apply(FilterTestConstants.CANDIDATE_1)).doubleValue();
         assertTrue(result == 10201);
 
         exp = ff.literal("x = _testLong - 6 * _testFloat\n" +
@@ -64,13 +62,12 @@ public class LuaTest extends org.geotoolkit.test.TestBase {
         assertSerializedEquals(luaFunction); //test serialize
 
         List<Expression> exps = luaFunction.getParameters();
-        PropertyName property1 = (PropertyName) exps.get(1);
-        PropertyName property2 = (PropertyName) exps.get(2);
-        assertTrue(property1.getPropertyName().equals("testLong"));
-        assertTrue(property2.getPropertyName().equals("testFloat"));
+        ValueReference property1 = (ValueReference) exps.get(1);
+        ValueReference property2 = (ValueReference) exps.get(2);
+        assertTrue(property1.getXPath().equals("testLong"));
+        assertTrue(property2.getXPath().equals("testFloat"));
 
-
-        result = luaFunction.evaluate(FilterTestConstants.CANDIDATE_1, Number.class).doubleValue();
+        result = ((Number) luaFunction.apply(FilterTestConstants.CANDIDATE_1)).doubleValue();
         assertTrue(result == 10);
     }
 }

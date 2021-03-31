@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.ExpressionType;
-import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -41,9 +41,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InterpolationPointType", propOrder = {
@@ -59,9 +56,13 @@ public class InterpolationPointType
     @XmlElement(name = "Value", required = true)
     protected ParameterValueType value;
 
+    @Override
+    public ScopedName getFunctionName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * Gets the value of the data property.
-     *
      */
     public double getData() {
         return data;
@@ -69,7 +70,6 @@ public class InterpolationPointType
 
     /**
      * Sets the value of the data property.
-     *
      */
     public void setData(final double value) {
         this.data = value;
@@ -81,7 +81,6 @@ public class InterpolationPointType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getValue() {
         return value;
@@ -93,7 +92,6 @@ public class InterpolationPointType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setValue(final ParameterValueType value) {
         this.value = value;
@@ -104,10 +102,6 @@ public class InterpolationPointType
     }
 
     public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -18,23 +18,17 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class ExpFunction extends AbstractFunction {
 
     public ExpFunction(final Expression expression) {
-        super(MathFunctionFactory.EXP, new Expression[] {expression}, null);
+        super(MathFunctionFactory.EXP, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number = parameters.get(0).evaluate(feature, Number.class);
-        if (number == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function exp argument #0 - expected type double");
-        }
-
-        return Math.exp(number.doubleValue());
+    public Object apply(final Object feature) {
+        return Math.exp(doubleValue(feature));
     }
 }

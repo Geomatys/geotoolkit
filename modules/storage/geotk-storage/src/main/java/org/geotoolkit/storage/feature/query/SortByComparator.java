@@ -22,22 +22,22 @@ import java.util.Comparator;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.ValueReference;
+import org.opengis.filter.SortProperty;
+import org.opengis.filter.SortOrder;
 
 /**
- * Comparator to sort Features with a given array of query SortBy[].
+ * Comparator to sort Features with a given array of query SortProperty[].
  *
  * @author Johann Sorel (Geomatys)
  */
 public class SortByComparator implements Comparator<Feature> {
 
-    private final SortBy[] orders;
+    private final SortProperty[] orders;
 
-    public SortByComparator(final SortBy[] orders) {
+    public SortByComparator(final SortProperty[] orders) {
         if (orders == null || orders.length == 0) {
-            throw new IllegalArgumentException("SortBy array can not be null or empty.");
+            throw new IllegalArgumentException("SortProperty array can not be null or empty.");
         }
 
         this.orders = orders;
@@ -49,10 +49,10 @@ public class SortByComparator implements Comparator<Feature> {
     @Override
     public int compare(final Feature f1, final Feature f2) {
 
-        for (final SortBy order : orders) {
-            final PropertyName property = order.getPropertyName();
-            Object val1 = property.evaluate(f1);
-            Object val2 = property.evaluate(f2);
+        for (final SortProperty order : orders) {
+            final ValueReference property = order.getValueReference();
+            Object val1 = property.apply(f1);
+            Object val2 = property.apply(f2);
             if (val1 instanceof Collection) {
                 //TODO find a correct way to compare collection values
                 //pick the first value

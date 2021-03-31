@@ -35,9 +35,6 @@ import org.geotoolkit.ogc.xml.SpatialOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialOpsType")

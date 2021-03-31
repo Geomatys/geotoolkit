@@ -27,11 +27,11 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import static org.junit.Assert.*;
 import static java.awt.Color.*;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -48,7 +48,7 @@ public class InterpolateTest extends org.geotoolkit.test.TestBase {
     public void interpolate(){
         final String attribut = "att_value";
 
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory ff = FilterUtilities.FF;
         final MutableStyleFactory sf = new DefaultStyleFactory();
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
@@ -77,14 +77,14 @@ public class InterpolateTest extends org.geotoolkit.test.TestBase {
 
         Interpolate interpolate = new DefaultInterpolate(Lookup, values, Method.COLOR, Mode.CUBIC, null);
 
-        Color c = interpolate.evaluate(f1,Color.class);
+        Color c = (Color) interpolate.apply(f1);
         assertEquals(c, BLACK);
-        c = interpolate.evaluate(f2,Color.class);
+        c = (Color) interpolate.apply(f2);
         assertEquals(c.getAlpha(), 255);
         assertEquals(c.getRed(), 127);
         assertEquals(c.getGreen(), 0);
         assertEquals(c.getBlue(), 0);
-        c = interpolate.evaluate(f3,Color.class);
+        c = (Color) interpolate.apply(f3);
         assertEquals(c, RED);
 
         //test color interpolation ---------------------------------------------
@@ -95,14 +95,14 @@ public class InterpolateTest extends org.geotoolkit.test.TestBase {
 
         interpolate = new DefaultInterpolate(Lookup, values, Method.COLOR, Mode.CUBIC, null);
 
-        c = interpolate.evaluate(f1,Color.class);
+        c = (Color) interpolate.apply(f1);
         assertEquals(c, BLACK);
-        c = interpolate.evaluate(f2,Color.class);
+        c = (Color) interpolate.apply(f2);
         assertEquals(c.getAlpha(), 255);
         assertEquals(c.getRed(), 127);
         assertEquals(c.getGreen(), 0);
         assertEquals(c.getBlue(), 0);
-        c = interpolate.evaluate(f3,Color.class);
+        c = (Color) interpolate.apply(f3);
         assertEquals(c, RED);
 
 
@@ -114,22 +114,20 @@ public class InterpolateTest extends org.geotoolkit.test.TestBase {
 
         interpolate = new DefaultInterpolate(Lookup, values, Method.COLOR, Mode.CUBIC, null);
 
-        Double d = interpolate.evaluate(f1,Double.class);
+        Double d = (Double) interpolate.apply(f1);
         assertEquals(d.doubleValue(), 0d, 0d);
-        d = interpolate.evaluate(f2,Double.class);
+        d = (Double) interpolate.apply(f2);
         assertEquals(d.doubleValue(), 50d, 0d);
-        d = interpolate.evaluate(f3,Double.class);
+        d = (Double) interpolate.apply(f3);
         assertEquals(d.doubleValue(), 100d, 0d);
-        d = interpolate.evaluate(f4,Double.class);
+        d = (Double) interpolate.apply(f4);
         assertEquals(d.doubleValue(), 75d, 0d);
 
         //test get lookup property
         Collection<String> requieredAttributs = new HashSet<String>();
-        interpolate.accept(ListingPropertyVisitor.VISITOR, requieredAttributs);
+        ListingPropertyVisitor.VISITOR.visit(interpolate, requieredAttributs);
 
         assertEquals(requieredAttributs.size(), 1);
         assertEquals(requieredAttributs.iterator().next(), attribut);
-
     }
-
 }

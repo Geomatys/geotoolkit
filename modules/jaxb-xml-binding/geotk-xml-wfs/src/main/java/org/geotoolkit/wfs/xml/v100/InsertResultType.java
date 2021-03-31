@@ -44,8 +44,6 @@ import org.geotoolkit.ogc.xml.v100.FeatureIdType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertResultType", propOrder = {
@@ -59,7 +57,6 @@ public class InsertResultType {
     private String handle;
 
     public InsertResultType() {
-
     }
 
     public InsertResultType(final List<FeatureIdType> featureId, final String handle) {
@@ -74,7 +71,6 @@ public class InsertResultType {
 
     /**
      * Gets the value of the featureId property.
-     *
      */
     public List<FeatureIdType> getFeatureId() {
         if (featureId == null) {
@@ -85,11 +81,6 @@ public class InsertResultType {
 
     /**
      * Gets the value of the handle property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getHandle() {
         return handle;
@@ -97,14 +88,8 @@ public class InsertResultType {
 
     /**
      * Sets the value of the handle property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setHandle(String value) {
         this.handle = value;
     }
-
 }

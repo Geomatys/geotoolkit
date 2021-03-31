@@ -24,8 +24,8 @@ import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.FilterUtilities;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.FeatureType;
@@ -34,9 +34,9 @@ import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.SortProperty;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
@@ -57,9 +57,9 @@ public final class QueryBuilder {
 
     private String typeName = null;
 
-    private Filter filter = Filter.INCLUDE;
+    private Filter filter = Filter.include();
     private String[] properties = null;
-    private SortBy[] sortBy = null;
+    private SortProperty[] sortBy = null;
     private CoordinateReferenceSystem crs = null;
     private long startIndex = 0;
     private long maxFeatures = -1;
@@ -81,7 +81,7 @@ public final class QueryBuilder {
 
     public void reset(){
         typeName = null;
-        filter = Filter.INCLUDE;
+        filter = Filter.include();
         properties = null;
         sortBy = null;
         crs = null;
@@ -134,11 +134,11 @@ public final class QueryBuilder {
         this.properties = properties;
     }
 
-    public SortBy[] getSortBy() {
+    public SortProperty[] getSortBy() {
         return sortBy;
     }
 
-    public void setSortBy(final SortBy[] sortBy) {
+    public void setSortBy(final SortProperty[] sortBy) {
         this.sortBy = sortBy;
     }
 
@@ -221,8 +221,6 @@ public final class QueryBuilder {
     /**
      * Create a simple query with only a filter parameter.
      *
-     * @param name
-     * @param filter
      * @return Immutable query
      */
     public static Query filtered(final String name, final Filter filter){
@@ -235,11 +233,9 @@ public final class QueryBuilder {
     /**
      * Create a simple query with only a sorted parameter.
      *
-     * @param name
-     * @param filter
      * @return Immutable query
      */
-    public static Query sorted(final String name, final SortBy ... sorts){
+    public static Query sorted(final String name, final SortProperty ... sorts){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setSortBy(sorts);
@@ -276,8 +272,6 @@ public final class QueryBuilder {
     /**
      * Create a simple query with only a reproject crs.
      *
-     * @param name
-     * @param filter
      * @return Immutable query
      */
     public static Query reprojected(final String name, final CoordinateReferenceSystem crs){
@@ -288,36 +282,11 @@ public final class QueryBuilder {
     }
 
     /**
-     *
-     * @param sortBy array or null
-     * @return true is the given array of sort by operand is equal to natural sort by
-     */
-    public static boolean isNaturalSortBy(SortBy[] sortBy){
-        if(sortBy == null || sortBy.length == 0){
-            return true;
-        }
-
-        for(SortBy sb : sortBy){
-            if(sb != SortBy.NATURAL_ORDER){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Create a simple query with columns which transform all geometric types to the given crs.
-     *
-     * @param type
-     * @param crs
-     * @return
      */
     public static SimpleQuery reproject(FeatureType type, final CoordinateReferenceSystem crs) {
-
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory ff = FilterUtilities.FF;
         final Literal crsLiteral = ff.literal(crs);
-
 
         final SimpleQuery query = new SimpleQuery();
         final List<SimpleQuery.Column> columns = new ArrayList<>();
@@ -331,19 +300,15 @@ public final class QueryBuilder {
             while (result instanceof Operation) {
                 result = ((Operation) result).getResult();
             }
-
             if (result instanceof AttributeType) {
                 AttributeType at = (AttributeType) result;
                 if (Geometry.class.isAssignableFrom(at.getValueClass())) {
                     property = ff.function("ST_Transform", property, crsLiteral);
                 }
             }
-
             columns.add(new SimpleQuery.Column(property, name));
         }
-
         query.setColumns(columns.toArray(new SimpleQuery.Column[0]));
         return query;
     }
-
 }

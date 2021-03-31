@@ -65,9 +65,8 @@ import static org.geotoolkit.db.postgres.PostgresProvider.*;
 import static org.junit.Assert.*;
 import org.geotoolkit.storage.DataStores;
 import org.junit.After;
-import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.query.SQLQuery;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -78,6 +77,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.ResourceId;
 
 /**
  *
@@ -86,7 +86,7 @@ import org.opengis.filter.FilterFactory;
 @Ignore
 public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
 
-    private final FilterFactory FF = new DefaultFilterFactory2();
+    private final FilterFactory FF = FilterUtilities.FF;
 
     /** driver types */
     private static final FeatureType FTYPE_DRIVER;
@@ -167,7 +167,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(GeometryCollection.class).setName("geometrycollection").setCRS(CommonCRS.WGS84.normalizedGeographic());
         FTYPE_GEOMETRY = ftb.build();
 
-
         ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
         ftb.setName("Stop");
@@ -188,7 +187,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         ftb.addAssociation(FTYPE_STOP).setName("stops").setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
         FTYPE_COMPLEX = ftb.build();
 
-
         ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
         ftb.setName("Data");
@@ -207,7 +205,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         ftb.addAssociation(FTYPE_RECORD).setName("records").setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
         FTYPE_COMPLEX2 = ftb.build();
 
-
         ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
         ftb.setName("Data");
@@ -221,7 +218,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         ftb.addAssociation(FTYPE_SDATA).setName("data2");
         ftb.addAssociation(FTYPE_SDATA).setName("data3");
         FTYPE_COMPLEX3 = ftb.build();
-
     }
 
     private PostgresStore store;
@@ -232,9 +228,9 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
     private static Parameters params;
 
     /**
-     * <p>Find JDBC connection parameters in specified file at
-     * "/home/.geotoolkit.org/test-pgfeature.properties".<br/>
-     * If properties file doesn't find all tests are skipped.</p>
+     * Find JDBC connection parameters in specified file at
+     * "/home/.geotoolkit.org/test-pgfeature.properties".
+     * If properties file doesn't find all tests are skipped.
      *
      * <p>To lunch tests user should create file with this architecture<br/>
      * for example : <br/>
@@ -318,7 +314,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         assertEquals(Integer.class, ((AttributeType)ct.getProperty("ident")).getValueClass());
         assertNotNull(ct.getProperty("field"));
         assertEquals(Double.class, ((AttributeType)ct.getProperty("field")).getValueClass());
-
     }
 
     @Test
@@ -332,7 +327,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         final GenericName name = store.getNames().iterator().next();
         final FeatureType created = store.getFeatureType(name.toString());
         lazyCompare(refType, created);
-
     }
 
     @Test
@@ -346,7 +340,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         final GenericName name = store.getNames().iterator().next();
         final FeatureType created = store.getFeatureType(name.toString());
         lazyCompare(refType, created);
-
     }
 
     @Test
@@ -391,10 +384,10 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         stop3.setPropertyValue("time",new Date(7000000));
         voyage.setPropertyValue("stops", Arrays.asList(stop1,stop2,stop3));
 
-        List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(voyage));
+        List<ResourceId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(voyage));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("Voyage.1"), addedIds.get(0));
+        assertEquals(FF.resourceId("Voyage.1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -430,13 +423,10 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
                     fail("Unexpected property \n"+stop);
                 }
             }
-
             for(boolean b : found) assertTrue(b);
-
         }finally{
             ite.close();
         }
-
     }
 
     /**
@@ -470,11 +460,10 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
 
         sounding.setPropertyValue("records", Arrays.asList(record1,record2));
 
-
-        List<FeatureId> addedIds = store.addFeatures(soundingType.getName().toString(), Collections.singleton(sounding));
+        List<ResourceId> addedIds = store.addFeatures(soundingType.getName().toString(), Collections.singleton(sounding));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("Sounding.1"), addedIds.get(0));
+        assertEquals(FF.resourceId("Sounding.1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName().toString()));
@@ -486,7 +475,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
             assertNotNull(resFeature);
 
             assertEquals(120l, resFeature.getPropertyValue("identifier"));
-
 
             final Collection<Feature> records = (Collection<Feature>) resFeature.getPropertyValue("records");
             assertEquals(2, records.size());
@@ -526,15 +514,11 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
                         }
                     }
                     for(boolean b : dfound) assertTrue(b);
-
-
                 }else{
                     fail("Unexpected property \n"+record);
                 }
             }
-
             for(boolean b : found) assertTrue(b);
-
         }finally{
             ite.close();
         }
@@ -563,10 +547,10 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         data3.setPropertyValue("value",15f);
         record.setPropertyValue("datas", Arrays.asList(data1,data2,data3));
 
-        List<FeatureId> addedIds = store.addFeatures(recordType.getName().toString(), Collections.singleton(record));
+        List<ResourceId> addedIds = store.addFeatures(recordType.getName().toString(), Collections.singleton(record));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("Record.1"), addedIds.get(0));
+        assertEquals(FF.resourceId("Record.1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(recordType.getName().toString()));
@@ -588,14 +572,10 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         }finally{
             ite.close();
         }
-
     }
 
     /**
      * Test hand made query.
-     *
-     * @throws DataStoreException
-     * @throws VersioningException
      */
     @Test
     public void testHandMadeSQLQuery() throws Exception{
@@ -624,10 +604,10 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         stop3.setPropertyValue("time",new Date(7000000));
         voyage.setPropertyValue("stops", Arrays.asList(stop1,stop2,stop3));
 
-        List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(voyage));
+        List<ResourceId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(voyage));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("Voyage.1"), addedIds.get(0));
+        assertEquals(FF.resourceId("Voyage.1"), addedIds.get(0));
 
         final org.apache.sis.storage.Query query = new SQLQuery("SELECT * FROM \"Stop\"", "s1");
         final FeatureReader ite = store.getFeatureReader(query);
@@ -660,9 +640,7 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
         }finally{
             ite.close();
         }
-
         for(boolean b : found) assertTrue(b);
-
     }
 
     private void lazyCompare(final FeatureType refType, final FeatureType candidate){
@@ -678,7 +656,6 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
                 final PropertyType cdesc = cct.getProperty(desc.getName().toString());
                 assertEquals(desc, cdesc);
             }
-
         }else{
             final AttributeType at = (AttributeType) refType;
             final AttributeType cat = (AttributeType) candidate;
@@ -689,5 +666,4 @@ public class PostgresComplexTypeTest extends org.geotoolkit.test.TestBase {
             }
         }
     }
-
 }

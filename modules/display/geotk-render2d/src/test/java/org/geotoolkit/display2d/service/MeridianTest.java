@@ -37,7 +37,8 @@ import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
@@ -54,7 +55,6 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.FilterFactory2;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.style.Graphic;
@@ -72,7 +72,7 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final DefaultStyleFactory SF = new DefaultStyleFactory();
-    private static final FilterFactory2 FF = new DefaultFilterFactory2();
+    private static final FilterFactory2 FF = FilterUtilities.FF;
 
     /**
      * Sanity test.

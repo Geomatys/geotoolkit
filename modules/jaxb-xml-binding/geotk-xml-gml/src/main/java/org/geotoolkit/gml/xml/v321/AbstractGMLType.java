@@ -195,7 +195,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *
      */
     @Override
     public String getDescription() {
@@ -211,7 +210,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *
      */
     public void setDescription(final StringOrRefType value) {
         this.description = value;
@@ -228,7 +226,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *
      */
     @Override
     public ReferenceType getDescriptionReference() {
@@ -241,7 +238,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *
      */
     public void setDescriptionReference(ReferenceType value) {
         this.descriptionReference = value;
@@ -253,7 +249,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @return
      *     possible object is
      *     {@link CodeWithAuthorityType }
-     *
      */
     @Override
     public String getIdentifier() {
@@ -273,7 +268,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @param value
      *     allowed object is
      *     {@link CodeWithAuthorityType }
-     *
      */
     public void setIdentifier(CodeWithAuthorityType value) {
         this.identifier = value;
@@ -281,7 +275,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
 
     /**
      * Gets the value of the name property.
-     *
      */
     public List<Identifier> getNames() {
         if (name == null) {
@@ -298,10 +291,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return null;
     }
 
-    /**
-     *
-     * @param name
-     */
     @Override
     public void setName(final Identifier name) {
         if (this.name == null) {
@@ -319,7 +308,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     @Override
     public String getId() {
@@ -335,7 +323,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     @Override
     public void setId(String value) {

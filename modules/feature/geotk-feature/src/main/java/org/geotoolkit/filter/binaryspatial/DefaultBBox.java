@@ -25,11 +25,8 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
-import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.util.StringUtilities;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -39,10 +36,11 @@ import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.ValueReference;
 import org.geotoolkit.geometry.BoundingBox;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.Literal;
+import org.opengis.filter.SpatialOperatorName;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -54,10 +52,10 @@ import org.opengis.util.FactoryException;
  * Immutable "BBOX" filter.
  *
  * @author Johann Sorel (Geomatys).
- * @module
  */
-public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,DefaultLiteral<BoundingBox>> implements BBOX {
-
+public class DefaultBBox extends AbstractBinarySpatialOperator<ValueReference, Literal<Object,BoundingBox>>
+        implements BinarySpatialOperator<Object>
+{
     private static final LinearRing[] EMPTY_RINGS = new LinearRing[0];
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
@@ -67,7 +65,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
     protected final org.locationtech.jts.geom.Envelope boundingEnv;
     protected final CoordinateReferenceSystem crs;
 
-    public DefaultBBox(final PropertyName property, final DefaultLiteral<BoundingBox> bbox) {
+    public DefaultBBox(final ValueReference property, final Literal<Object,BoundingBox> bbox) {
         super(nonNullPropertyName(property),bbox);
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
@@ -87,7 +85,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         return boundingGeometry;
     }
 
-    private static PropertyName nonNullPropertyName(final PropertyName proper) {
+    private static ValueReference nonNullPropertyName(final ValueReference proper) {
         if (proper == null)
             return new DefaultPropertyName("");
         return proper;
@@ -106,11 +104,10 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         }catch(FactoryException ex){
             LOGGER.log(Level.WARNING, null, ex);
         }
-
         if(crs == null && base instanceof Feature){
             //try to find it on the base
             final Feature att = (Feature) base;
-            final String propertyName = left.getPropertyName();
+            final String propertyName = left.getXPath();
             if (propertyName.isEmpty()) {
                 crs = FeatureExt.getCRS(att.getType());
             } else {
@@ -121,70 +118,44 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
                 }
             }
         }
-
         return crs;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public String getPropertyName() {
-        return left.getPropertyName();
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.BBOX;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
+    public String getPropertyName() {
+        return left.getXPath();
+    }
+
     public String getSRS() {
         return IdentifiedObjects.getIdentifierOrName(right.getValue().getCoordinateReferenceSystem());
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public double getMinX() {
         return right.getValue().getMinimum(0);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public double getMinY() {
         return right.getValue().getMinimum(1);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public double getMaxX() {
         return right.getValue().getMaximum(0);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public double getMaxY() {
         return right.getValue().getMaximum(1);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean evaluate(final Object object) {
+    public boolean test(final Object object) {
         Geometry candidate = toGeometry(object, left);
-
         if(candidate == null){
             return false;
         }
-
-
         //we don't know in which crs it is, try to find it
         final CoordinateReferenceSystem candidateCrs = findCRS(object, candidate);
 
@@ -200,10 +171,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
                 }
             }
         }
-
-
         final org.locationtech.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
-
         if(boundingEnv.contains(candidateEnv) || candidateEnv.contains(boundingEnv)) {
             return true;
         } else if(boundingEnv.intersects(candidateEnv)) {
@@ -211,20 +179,8 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         } else {
             return false;
         }
-
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BBOX");
@@ -232,9 +188,6 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -253,9 +206,6 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
         int hash = 15;
@@ -266,8 +216,6 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
 
     /**
      * Utility method to transform an envelope in geometry.
-     * @param env
-     * @return Geometry
      */
     private static PreparedGeometry toGeometry(final Envelope env){
 

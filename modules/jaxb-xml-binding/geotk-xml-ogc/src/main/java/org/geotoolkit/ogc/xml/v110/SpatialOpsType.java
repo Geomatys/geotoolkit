@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.SpatialOperator;
-import org.opengis.filter.Filter;
 
 
 /**
@@ -37,14 +36,16 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialOpsType")
 @XmlSeeAlso({BBOXType.class, DistanceBufferType.class, BinarySpatialOpType.class})
-public abstract class SpatialOpsType implements Filter, SpatialOperator {
+public abstract class SpatialOpsType implements SpatialOperator {
+
+    @Override
+    public boolean test(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public String toString() {

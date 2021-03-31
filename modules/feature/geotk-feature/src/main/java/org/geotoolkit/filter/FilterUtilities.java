@@ -27,10 +27,12 @@ import org.geotoolkit.lang.Static;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.SortOrder;
+import org.opengis.filter.ValueReference;
+
 
 /**
  * Utility methods for filters.
@@ -38,6 +40,7 @@ import org.opengis.filter.expression.PropertyName;
  * @author Johann Sorel (Geomatys)
  */
 public final class FilterUtilities extends Static {
+    public static final FilterFactory2 FF = DefaultFactories.forBuildin(FilterFactory.class, FilterFactory2.class);
 
     /**
      * Avoid instanciation.
@@ -53,7 +56,7 @@ public final class FilterUtilities extends Static {
     public static Filter prepare(final Filter filter, final Class objectClazz,final FeatureType expectedType){
         if(filter == null) return null;
         final PrepareFilterVisitor visitor = new PrepareFilterVisitor(objectClazz,expectedType);
-        return (Filter) filter.accept(visitor, null);
+        return (Filter) visitor.visit(filter);
     }
 
     /**
@@ -66,20 +69,19 @@ public final class FilterUtilities extends Static {
      *      will be used.
      * @return prepared property name expression.
      */
-    public static PropertyName prepare(final PropertyName exp, final Class objectClazz, final FeatureType expectedType){
-        return new CachedPropertyName(exp.getPropertyName(), objectClazz,expectedType);
+    public static ValueReference prepare(final ValueReference exp, final Class objectClazz, final FeatureType expectedType){
+        return new CachedPropertyName(exp.getXPath(), objectClazz,expectedType);
     }
 
     /**
      * Test if an expression is static.
      * Static is the way no expressions use the candidate object for evaluation.
      *
-     * @param exp
      * @return true if expression is static
      */
     public static boolean isStatic(final Expression exp){
         ensureNonNull("expression", exp);
-        return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
+        return IsStaticExpressionVisitor.VISITOR.visit(exp);
     }
 
     /**
@@ -87,22 +89,31 @@ public final class FilterUtilities extends Static {
      *
      * (a OR b) =  NOT (NOT a AND NOT b)
      *
-     * @param filter
-     * @param ff
      * @return Not filter
      */
-    public static Not orToAnd(final Or filter, FilterFactory ff) {
-        if(ff==null) ff = DefaultFactories.forBuildin(FilterFactory.class);
+    public static LogicalOperator orToAnd(final LogicalOperator filter, FilterFactory ff) {
+        if(ff==null) ff = FF;
 
-        final List<Filter> children = filter.getChildren();
+        final List<Filter> children = filter.getOperands();
         final int size = children.size();
         final List<Filter> newChildren = new ArrayList<>(size);
         for(int i=0;i<size;i++) {
             Filter f = children.get(i);
-            f = (f instanceof Not) ? ((Not)f).getFilter() : ff.not(f);
+            f = (f.getOperatorType() == LogicalOperatorName.NOT) ? ((LogicalOperator<?>) f).getOperands().get(0) : ff.not(f);
             newChildren.add(f);
         }
         return ff.not(ff.and(newChildren));
     }
 
+    /**
+     * Returns the sort order enumeration value for the given name.
+     * This method recognizes de SQL "ASC" and "DESC" names in addition
+     * to the enumeration names.
+     */
+    public static SortOrder sortOrder(final String name) {
+        if (name == null) return null;
+        if (name.equalsIgnoreCase("ASC"))  return SortOrder.ASCENDING;
+        if (name.equalsIgnoreCase("DESC")) return SortOrder.DESCENDING;
+        return SortOrder.valueOf(name);
+    }
 }

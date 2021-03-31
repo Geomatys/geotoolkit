@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.process.ProcessException;
@@ -30,8 +29,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -41,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class IntersectProcess extends AbstractProcess {
 
-    private static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory2 FF = FilterUtilities.FF;
 
     /**
      * Default constructor
@@ -77,7 +76,7 @@ public class IntersectProcess extends AbstractProcess {
      * @return the intersect filter
      */
     private Filter createFilter(FeatureType ft, final Geometry interGeom) {
-        final List<Filter> filterList = new ArrayList<Filter>();
+        final List<Filter<Object>> filterList = new ArrayList<>();
         for (final PropertyType property : ft.getProperties(true)) {
             if (AttributeConvention.isGeometryAttribute(property)) {
                 final Filter filter = FF.intersects(FF.property(property.getName()), FF.literal(interGeom));

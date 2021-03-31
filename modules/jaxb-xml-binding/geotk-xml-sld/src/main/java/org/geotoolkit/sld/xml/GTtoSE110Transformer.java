@@ -94,9 +94,8 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -248,8 +247,6 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
         return new QName(name.scope().isGlobal() ? null : name.scope().name().toString(), name.toString());
     }
 
-
-
     /**
      * Transform a Unit to the corresponding SLD string.
      */
@@ -300,7 +297,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
             if (fts.semanticTypeIdentifiers().contains(SemanticType.RASTER)) {
                 isCoverage = true;
             } else if (fts.semanticTypeIdentifiers().contains(SemanticType.ANY) || fts.semanticTypeIdentifiers().isEmpty()) {
-                if (fts.getFeatureInstanceIDs() == null || fts.getFeatureInstanceIDs().getIdentifiers().isEmpty()) {
+                if (fts.getFeatureInstanceIDs() == null) {
 
                     //try to find a coverage style
                     ruleLoop:
@@ -954,7 +951,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
 //TODO Fix that when better undestanding raster functions.
         final org.geotoolkit.se.xml.v110.ColorMapType cmt = se_factory.createColorMapType();
 
-        final Function fct = colorMap.getFunction();
+        final Expression fct = colorMap.getFunction();
         if (fct instanceof Categorize) {
             cmt.setCategorize(visit((Categorize) fct));
         } else if (fct instanceof Interpolate) {
@@ -1041,7 +1038,7 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
     @Override
     public ColorReplacementType visit(final ColorReplacement colorReplacement, final Object data) {
         final ColorReplacementType crt = se_factory.createColorReplacementType();
-        final Function fct = colorReplacement.getRecoding();
+        final Expression fct = colorReplacement.getRecoding();
 
         if (fct instanceof RecolorFunction) {
             final RecolorFunction rf = (RecolorFunction) fct;
@@ -1085,7 +1082,8 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
     @Override
     public ContrastEnhancementType visit(final ContrastEnhancement contrastEnhancement, final Object data) {
         final ContrastEnhancementType cet = se_factory.createContrastEnhancementType();
-        cet.setGammaValue(contrastEnhancement.getGammaValue().evaluate(null, Double.class));
+        final Number gamma = (Number) contrastEnhancement.getGammaValue().apply(null);
+        cet.setGammaValue(gamma != null ? gamma.doubleValue() : null);
 
         final ContrastMethod cm = contrastEnhancement.getMethod();
         if (ContrastMethod.HISTOGRAM.equals(cm)) {
@@ -1153,7 +1151,8 @@ public class GTtoSE110Transformer extends FilterToOGC110Converter implements Sty
     public ShadedReliefType visit(final ShadedRelief shadedRelief, final Object data) {
         final ShadedReliefType srt = se_factory.createShadedReliefType();
         srt.setBrightnessOnly(shadedRelief.isBrightnessOnly());
-        srt.setReliefFactor(shadedRelief.getReliefFactor().evaluate(null, Double.class));
+        final Number rf = (Number) shadedRelief.getReliefFactor().apply(null);
+        srt.setReliefFactor(rf != null ? rf.doubleValue() : null);
         return srt;
     }
 }

@@ -19,11 +19,6 @@ package org.geotoolkit.storage.feature;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.storage.feature.AbstractFeatureCollection;
-import org.geotoolkit.storage.feature.FeatureCollection;
-import org.geotoolkit.storage.feature.FeatureReader;
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeExt;
@@ -35,7 +30,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
-import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.SortProperty;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -51,7 +46,7 @@ public class GenericQueryFeatureIterator {
         final long max = remainingParameters.getLimit();
         final Filter filter = remainingParameters.getFilter();
         final String[] properties = remainingParameters.getPropertyNames();
-        final SortBy[] sorts = remainingParameters.getSortBy();
+        final SortProperty[] sorts = remainingParameters.getSortBy();
         final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
         final Hints hints = remainingParameters.getHints();
@@ -72,8 +67,8 @@ public class GenericQueryFeatureIterator {
 
         //wrap filter ----------------------------------------------------------
         //we must keep the filter first since it impacts the start index and max feature
-        if(filter != null && filter != Filter.INCLUDE){
-            if(filter == Filter.EXCLUDE){
+        if(filter != null && filter != Filter.include()){
+            if (filter == Filter.exclude()) {
                 //filter that exclude everything, use optimzed reader
                 reader = FeatureStreams.emptyReader(reader.getFeatureType());
                 //close original reader

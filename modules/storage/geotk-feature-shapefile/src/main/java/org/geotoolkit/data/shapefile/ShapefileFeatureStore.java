@@ -91,7 +91,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -683,10 +683,10 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
-            final Hints hints) throws DataStoreException {
-        final List<FeatureId> ids = handleAddWithFeatureWriter(groupName, newFeatures, hints);
-        return ids;
+    public List<ResourceId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
+            final Hints hints) throws DataStoreException
+    {
+        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     /**

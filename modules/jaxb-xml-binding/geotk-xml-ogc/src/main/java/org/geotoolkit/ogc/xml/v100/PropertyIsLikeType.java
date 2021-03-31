@@ -16,14 +16,15 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -46,16 +47,13 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsLikeType", propOrder = {
     "propertyName",
     "literal"
 })
-public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsLike {
+public class PropertyIsLikeType extends ComparisonOpsType implements LikeOperator {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -72,7 +70,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * An empty constructor used by JAXB.
      */
     public PropertyIsLikeType() {
-
     }
 
     /**
@@ -115,9 +112,13 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         }
     }
 
+    @Override
+    public List getExpressions() {
+        return Arrays.asList(getExpression(), getLiteral());
+    }
+
     /**
      * Gets the value of the propertyName property.
-     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -125,13 +126,11 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
     /**
      * Sets the value of the propertyName property.
-     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
     }
 
-    @Override
     public Expression getExpression() {
         return propertyName;
     }
@@ -139,7 +138,6 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      * Gets the value of the literal property.
      */
-    @Override
     public String getLiteral() {
         if (literal != null) {
             return literal.getStringValue();
@@ -160,24 +158,21 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
     /**
      * Sets the value of the literal property.
-     *
-    */
+     */
     public void setLiteral(final LiteralType value) {
         this.literal = value;
     }
 
     /**
      * Gets the value of the escape property.
-     *
      */
     @Override
-    public String getEscape() {
-        return escape;
+    public char getEscapeChar() {
+        return escape.charAt(0);
     }
 
     /**
      * Sets the value of the escape property.
-     *
      */
     public void setEscape(final String value) {
         this.escape = value;
@@ -185,16 +180,14 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
     /**
      * Gets the value of the singleChar property.
-     *
      */
     @Override
-    public String getSingleChar() {
-        return singleChar;
+    public char getSingleChar() {
+        return singleChar.charAt(0);
     }
 
     /**
      * Sets the value of the singleChar property.
-     *
      */
     public void setSingleChar(final String value) {
         this.singleChar = value;
@@ -202,16 +195,14 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
 
     /**
      * Gets the value of the wildCard property.
-     *
      */
     @Override
-    public String getWildCard() {
-        return wildCard;
+    public char getWildCard() {
+        return wildCard.charAt(0);
     }
 
     /**
      * Sets the value of the wildCard property.
-     *
      */
     public void setWildCard(final String value) {
         this.wildCard = value;
@@ -228,12 +219,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean test(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

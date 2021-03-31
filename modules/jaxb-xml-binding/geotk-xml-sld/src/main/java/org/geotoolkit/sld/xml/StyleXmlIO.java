@@ -54,9 +54,9 @@ import org.apache.sis.xml.MarshallerPool;
 
 // Types dependencies
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.sort.SortBy;
+import org.geotoolkit.filter.FilterFactory2;
+import org.opengis.filter.ValueReference;
+import org.opengis.filter.SortProperty;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
 import org.opengis.sld.StyledLayerDescriptor;
@@ -69,11 +69,11 @@ import org.xml.sax.InputSource;
 import static java.nio.file.StandardOpenOption.*;
 import org.apache.sis.internal.system.DefaultFactories;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.ogc.xml.FilterMarshallerPool;
 import org.geotoolkit.ogc.xml.FilterToOGC200Converter;
 import org.geotoolkit.ogc.xml.FilterVersion;
 import org.geotoolkit.ogc.xml.v200.ObjectFactory;
-import org.opengis.filter.FilterFactory;
 import org.opengis.style.StyleFactory;
 
 /**
@@ -100,7 +100,7 @@ public final class StyleXmlIO {
 
     public StyleXmlIO() {
         this.styleFactory = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-        this.filterFactory = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+        this.filterFactory = FilterUtilities.FF;
         this.sldFactory = new DefaultSLDFactory();
     }
 
@@ -191,11 +191,9 @@ public final class StyleXmlIO {
                 Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                 return null;
             }
-
         }else{
             throw new IllegalArgumentException("Source object is not a valid class :" + source.getClass());
         }
-
     }
 
     public Object unmarshall(final Object source, final Specification.StyledLayerDescriptor version) throws JAXBException{
@@ -266,11 +264,6 @@ public final class StyleXmlIO {
 
     /**
      * This method do the same marshalling process like the first marshallV100 method with an option to format or not the output.
-     * @param target
-     * @param jaxElement
-     * @param namespace
-     * @param isformatted
-     * @throws javax.xml.bind.JAXBException
      */
     private void marshallV100(final Object target, final Object jaxElement, final boolean isformatted) throws JAXBException {
         final Marshaller marshaller = getJaxbContext100().acquireMarshaller();
@@ -292,8 +285,6 @@ public final class StyleXmlIO {
      * Read a SLD source and parse it in GT SLD object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public MutableStyledLayerDescriptor readSLD(final Object source,
             final Specification.StyledLayerDescriptor version) throws JAXBException, FactoryException{
@@ -331,15 +322,12 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-
     }
 
     /**
      * Write a GT SLD.
      * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public void writeSLD(final Object target, final StyledLayerDescriptor sld,
             final Specification.StyledLayerDescriptor version) throws JAXBException{
@@ -361,7 +349,6 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-
     }
 
     /**
@@ -400,8 +387,6 @@ public final class StyleXmlIO {
      * Read a SLD UserStyle source and parse it in GT Style object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public MutableStyle readStyle(final Object source,
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
@@ -434,15 +419,12 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-
     }
 
     /**
      * Write a GT Style.
      * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public void writeStyle(final Object target, final Style style,
             final Specification.StyledLayerDescriptor version) throws JAXBException{
@@ -464,15 +446,12 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-
     }
 
     /**
      * Read a SE FeatureTypeStyle source and parse it in GT FTS object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public MutableFeatureTypeStyle readFeatureTypeStyle(final Object source,
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
@@ -503,15 +482,12 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-
     }
 
     /**
      * Write a GT FeatureTypeStyle.
      * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public void writeFeatureTypeStyle(final Object target, final FeatureTypeStyle fts,
             final Specification.SymbologyEncoding version) throws JAXBException{
@@ -538,15 +514,12 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-
     }
 
     /**
      * Read a SE Rule source and parse it in GT Rule object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public MutableRule readRule(final Object source,
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
@@ -577,15 +550,12 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-
     }
 
     /**
      * Write a GT Rule.
      * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public void writeRule(final Object target, final Rule rule,
             final Specification.SymbologyEncoding version) throws JAXBException{
@@ -610,7 +580,6 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-
     }
 
 
@@ -622,9 +591,8 @@ public final class StyleXmlIO {
      * XMLEventReader, XMLStreamReader or OnlineResource
      *
      * @todo implement it correctly for wfs
-     * @throws javax.xml.bind.JAXBException
      */
-    public SortBy readSortBy(final Object source,
+    public SortProperty readSortBy(final Object source,
             final Specification.Filter version) throws JAXBException{
         ensureNonNull("source",source);
         ensureNonNull("version",version);
@@ -642,7 +610,7 @@ public final class StyleXmlIO {
                 }
 
                 if(obj instanceof org.geotoolkit.ogc.xml.v110.SortByType){
-                    final List<SortBy> sorts = transformerGTv110.visitSortBy( (org.geotoolkit.ogc.xml.v110.SortByType) obj);
+                    final List<SortProperty> sorts = transformerGTv110.visitSortBy( (org.geotoolkit.ogc.xml.v110.SortByType) obj);
                     return sorts.get(0);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SortBy v1.1.0 : " + obj);
@@ -650,15 +618,12 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-
     }
 
     /**
      * Read a Filter source and parse it in GT Filter object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     *
-     * @throws javax.xml.bind.JAXBException
      */
     public Filter readFilter(final Object source,
             final Specification.Filter version) throws JAXBException, FactoryException{
@@ -691,7 +656,6 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-
     }
 
     /**
@@ -699,7 +663,6 @@ public final class StyleXmlIO {
      * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
      * TODO : unify with {@link FilterVersion}.
-     * @throws javax.xml.bind.JAXBException
      */
     public void writeFilter(final Object target, final Filter filter,
             final Specification.Filter version) throws JAXBException{
@@ -725,11 +688,10 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-
     }
 
     // OGC property ------------------------------------------------------------
-    public PropertyName readPropertyName(final Object source,
+    public ValueReference readPropertyName(final Object source,
             final Specification.Filter version) throws JAXBException{
         ensureNonNull("source",source);
         ensureNonNull("version",version);
@@ -755,5 +717,4 @@ public final class StyleXmlIO {
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
     }
-
 }

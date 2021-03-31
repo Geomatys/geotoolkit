@@ -19,12 +19,10 @@ package org.geotoolkit.ogc.xml.v110;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.capability.Functions;
+import org.geotoolkit.filter.capability.FunctionName;
+import org.geotoolkit.filter.capability.Functions;
 
 
 /**
@@ -43,25 +41,19 @@ import org.opengis.filter.capability.Functions;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionNamesType", propOrder = {
     "functionNames"
 })
-public class FunctionNamesType implements Functions {
+public class FunctionNamesType extends Functions {
 
     @XmlElement(name = "FunctionName", required = true)
     private List<FunctionNameType> functionNames;
-
 
     /**
      * Empty construtor used by JAXB
      */
     public FunctionNamesType() {
-
     }
 
     /**
@@ -71,6 +63,7 @@ public class FunctionNamesType implements Functions {
         this.functionNames = functionNames;
     }
 
+    @Override
     public Collection<FunctionName> getFunctionNames() {
         List<FunctionName> result = new ArrayList<FunctionName>();
         if (functionNames == null) {
@@ -82,6 +75,7 @@ public class FunctionNamesType implements Functions {
         return result;
     }
 
+    @Override
     public FunctionName getFunctionName(final String name) {
        if (functionNames == null) {
             functionNames = new ArrayList<FunctionNameType>();
@@ -91,5 +85,4 @@ public class FunctionNamesType implements Functions {
        }
        return null;
     }
-
 }

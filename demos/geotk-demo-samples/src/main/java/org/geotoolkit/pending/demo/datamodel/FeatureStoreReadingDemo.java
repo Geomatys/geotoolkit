@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.geotoolkit.data.shapefile.ShapefileProvider;
 import org.geotoolkit.db.postgres.PostgresProvider;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.Feature;
@@ -23,7 +23,7 @@ import org.opengis.util.FactoryException;
 
 public class FeatureStoreReadingDemo {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     public static void main(String[] args) throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, URISyntaxException {
         Demos.init();
@@ -46,7 +46,7 @@ public class FeatureStoreReadingDemo {
                     new SimpleQuery.Column(FF.function("ST_Transform", FF.property("the_geom"), FF.literal("EPSG:3395")) ),
                     new SimpleQuery.Column(FF.property("LONG_NAME")),
                     new SimpleQuery.Column(FF.property("SQKM")));
-            qb.setFilter(FF.equals(FF.property("CURR_TYPE"), FF.literal("Norwegian Krone")));
+            qb.setFilter(FF.equal(FF.property("CURR_TYPE"), FF.literal("Norwegian Krone")));
 
             FeatureSet collection = fs.subset(qb);
             System.out.println(collection.getType());

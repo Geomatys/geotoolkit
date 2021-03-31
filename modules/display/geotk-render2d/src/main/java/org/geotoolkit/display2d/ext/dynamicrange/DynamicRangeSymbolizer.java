@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
 
@@ -39,7 +39,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArgumentChecks;
 
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
@@ -212,7 +212,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
                 valueExp = new StyleXmlIO().getTransformer110().visitExpression(value);
             }
             if(valueExp==null){
-                valueExp = new DefaultLiteral<>(10);
+                valueExp = FilterUtilities.FF.literal(10);
             }
             return valueExp;
         }

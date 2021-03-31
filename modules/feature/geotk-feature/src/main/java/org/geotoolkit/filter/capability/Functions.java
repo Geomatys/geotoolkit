@@ -18,10 +18,9 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.capability.Functions;
 
 /**
  * Immutable functions.
@@ -29,61 +28,45 @@ import org.opengis.filter.capability.Functions;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultFunctions implements Functions{
+@Deprecated
+public class Functions {
 
-    private final Map<String,FunctionName> functions = new HashMap<String, FunctionName>();
+    private final Map<String, FunctionName> functions;
 
-    public DefaultFunctions(final FunctionName[] functions) {
+    /** For JAXB. */
+    protected Functions() {
+        functions = Collections.emptyMap();
+    }
+
+    public Functions(final FunctionName[] functions) {
         if(functions == null){
             throw new IllegalArgumentException("Functions must not be null");
         }
-        for(FunctionName fn : functions){
+        this.functions = new HashMap<>();
+        for (FunctionName fn : functions) {
             this.functions.put(fn.getName(), fn);
         }
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Collection<FunctionName> getFunctionNames() {
         return functions.values();
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public FunctionName getFunctionName(final String name) {
         return functions.get(name);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultFunctions other = (DefaultFunctions) obj;
-        if (this.functions != other.functions && (this.functions == null || !this.functions.equals(other.functions))) {
-            return false;
-        }
-        return true;
+        final Functions other = (Functions) obj;
+        return functions.equals(other.functions);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + (this.functions != null ? this.functions.hashCode() : 0);
-        return hash;
+        return (7*23) + functions.hashCode();
     }
-
 }

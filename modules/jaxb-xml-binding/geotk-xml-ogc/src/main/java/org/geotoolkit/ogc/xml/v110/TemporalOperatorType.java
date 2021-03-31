@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.opengis.filter.capability.TemporalOperand;
-import org.opengis.filter.capability.TemporalOperator;
+import org.geotoolkit.filter.capability.TemporalOperand;
+import org.geotoolkit.filter.capability.TemporalOperator;
 
 
 /**
@@ -47,15 +47,12 @@ import org.opengis.filter.capability.TemporalOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperatorType", propOrder = {
     "temporalOperands"
 })
-public class TemporalOperatorType implements TemporalOperator {
+public class TemporalOperatorType extends TemporalOperator {
 
     @XmlElement(name = "TemporalOperands")
     private TemporalOperandsType temporalOperands;
@@ -63,16 +60,16 @@ public class TemporalOperatorType implements TemporalOperator {
     private TemporalOperatorNameType name;
 
     public TemporalOperatorType() {
-
+        super("");
     }
 
     public TemporalOperatorType(final TemporalOperatorNameType name) {
+        super("");
         this.name = name;
     }
 
     /**
      * Gets the value of the temporalOperands property.
-     *
      */
     public TemporalOperandsType getTemporalOperandsType() {
         return temporalOperands;
@@ -80,7 +77,6 @@ public class TemporalOperatorType implements TemporalOperator {
 
     /**
      * Sets the value of the temporalOperands property.
-     *
      */
     public void setTemporalOperands(final TemporalOperandsType value) {
         this.temporalOperands = value;
@@ -88,10 +84,8 @@ public class TemporalOperatorType implements TemporalOperator {
 
     /**
      * Implements SpatialOperator geoAPI interface
-     * @return
      */
-    @Override
-    public Collection<TemporalOperand> getTemporalOperands() {
+    public Collection<TemporalOperand> getTemporalOperands2() {
         List<TemporalOperand> result = new ArrayList<TemporalOperand>();
         if (temporalOperands != null) {
             for (QName qn: temporalOperands.getTemporalOperand()) {
@@ -111,7 +105,6 @@ public class TemporalOperatorType implements TemporalOperator {
 
     /**
      * Sets the value of the name property.
-     *
      */
     public void setName(final TemporalOperatorNameType value) {
         this.name = value;
@@ -137,10 +130,8 @@ public class TemporalOperatorType implements TemporalOperator {
         if (object == this) {
             return true;
         }
-
        if (object instanceof TemporalOperatorType) {
            final TemporalOperatorType that = (TemporalOperatorType) object;
-
             return Objects.equals(this.temporalOperands, that.temporalOperands) &&
                    Objects.equals(this.name, that.name);
         }
@@ -154,5 +145,4 @@ public class TemporalOperatorType implements TemporalOperator {
         hash = 23 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
-
 }

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 
 
 /**
@@ -54,9 +54,6 @@ import org.opengis.filter.identity.FeatureId;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransactionResponseType", propOrder = {
@@ -89,11 +86,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the transactionSummary property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TransactionSummaryType }
-     *
      */
     public TransactionSummaryType getTransactionSummary() {
         return transactionSummary;
@@ -101,11 +93,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the transactionSummary property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TransactionSummaryType }
-     *
      */
     public void setTransactionSummary(final TransactionSummaryType value) {
         this.transactionSummary = value;
@@ -113,11 +100,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the transactionResults property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TransactionResultsType }
-     *
      */
     public TransactionResultsType getTransactionResults() {
         return transactionResults;
@@ -125,11 +107,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the transactionResults property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TransactionResultsType }
-     *
      */
     public void setTransactionResults(final TransactionResultsType value) {
         this.transactionResults = value;
@@ -137,11 +114,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the insertResults property.
-     *
-     * @return
-     *     possible object is
-     *     {@link InsertResultsType }
-     *
      */
     public InsertResultsType getInsertResults() {
         return insertResults;
@@ -149,11 +121,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the insertResults property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link InsertResultsType }
-     *
      */
     public void setInsertResults(final InsertResultsType value) {
         this.insertResults = value;
@@ -161,11 +128,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the version property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getVersion() {
         if (version == null) {
@@ -177,19 +139,14 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the version property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setVersion(final String value) {
         this.version = value;
     }
 
     @Override
-    public List<FeatureId> getInsertedFID() {
-        final List<FeatureId> ids = new ArrayList<FeatureId>();
+    public List<ResourceId> getInsertedFID() {
+        final List<ResourceId> ids = new ArrayList<ResourceId>();
         if (insertResults != null) {
             final List<InsertedFeatureType> inserted = insertResults.getFeature();
             if (inserted != null) {

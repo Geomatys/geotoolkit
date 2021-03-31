@@ -37,15 +37,16 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOpsType")
 @XmlSeeAlso({ BinaryTemporalOpType.class })
 public abstract class TemporalOpsType implements Filter, TemporalOperator {
 
+    @Override
+    public boolean test(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     public abstract TemporalOpsType getClone();
 }

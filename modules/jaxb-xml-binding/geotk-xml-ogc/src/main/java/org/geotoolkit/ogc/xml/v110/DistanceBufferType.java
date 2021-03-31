@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Arrays;
+import java.util.List;
+import javax.measure.Quantity;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,6 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CurveType;
 import org.geotoolkit.gml.xml.v311.LineStringType;
@@ -33,14 +38,14 @@ import org.geotoolkit.gml.xml.v311.MultiPointType;
 import org.geotoolkit.gml.xml.v311.MultiPolygonType;
 import org.geotoolkit.gml.xml.v311.MultiSolidType;
 import org.geotoolkit.gml.xml.v311.MultiSurfaceType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.OrientableSurfaceType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
 import org.geotoolkit.gml.xml.v311.RingType;
-import org.opengis.filter.spatial.DistanceBufferOperator;
+import org.opengis.filter.DistanceOperator;
+import org.opengis.geometry.Geometry;
 
 
 /**
@@ -61,9 +66,6 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DistanceBufferType", propOrder = {
@@ -71,7 +73,7 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
     "abstractGeometry",
     "distance"
 })
-public abstract class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
+public abstract class DistanceBufferType extends SpatialOpsType implements DistanceOperator {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -87,7 +89,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
      * An empty constructor used by JAXB
      */
     public DistanceBufferType() {
-
     }
 
     /**
@@ -104,7 +105,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
             if (that.propertyName != null) {
                 this.propertyName = new PropertyNameType(that.propertyName);
             }
-
             if (that.abstractGeometry != null) {
                 try {
                     final AbstractGeometryType geom = that.abstractGeometry.getValue().clone();
@@ -112,7 +112,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
                     throw new IllegalArgumentException("Clone is not supported on type:" + that.abstractGeometry.getValue().getClass().getName());
                 }
             }
-
             if (that.distance != null) {
                 this.distance = new DistanceType(that.distance.getValue(), that.distance.getUnits());
             }
@@ -169,12 +168,16 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         this.propertyName = propertyName;
     }
 
-
     /**
      * Gets the value of the propertyName property.
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
+    }
+
+    @Override
+    public Geometry getGeometry() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -184,7 +187,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         return abstractGeometry;
     }
 
-
     /**
      * Gets the value of the distance property.
      */
@@ -193,14 +195,13 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
     }
 
     @Override
-    public double getDistance() {
+    public Quantity getDistance() {
         if (distance != null) {
-            return distance.getValue();
+            return Quantities.create(distance.getValue(), Units.valueOf(distance.getUnits()));
         }
-        return 0.0;
+        return Quantities.create(0, Units.METRE);
     }
 
-    @Override
     public String getDistanceUnits() {
         if (distance != null) {
             return distance.getUnits();
@@ -209,11 +210,14 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
     }
 
     @Override
+    public List getExpressions() {
+        return Arrays.asList(getExpression1(), getExpression2());
+    }
+
     public Expression getExpression1() {
         return propertyName;
     }
 
-    @Override
     public Expression getExpression2() {
         if (abstractGeometry != null) {
             return abstractGeometry.getValue();
@@ -239,16 +243,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
             s.append("distance null").append('\n');
         }
         return s.toString();
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -280,5 +274,4 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         hash = 23 * hash + (this.distance != null ? this.distance.hashCode() : 0);
         return hash;
     }
-
 }

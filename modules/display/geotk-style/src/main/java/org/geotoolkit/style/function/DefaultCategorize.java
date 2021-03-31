@@ -36,16 +36,16 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.filter.AbstractExpression;
-import org.geotoolkit.filter.DefaultLiteral;
+import static org.geotoolkit.filter.FilterUtilities.FF;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.expression.Expression;
-import static org.opengis.filter.expression.Expression.*;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Literal;
+import org.geotoolkit.filter.capability.FunctionName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.util.ScopedName;
 
 /**
  * Implementation of "Categorize" as a normal function.
@@ -68,7 +68,6 @@ import org.opengis.filter.expression.Literal;
  * In reality any expression will do.
  * @author Jody Garnett
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultCategorize extends AbstractExpression implements Categorize {
 
@@ -85,8 +84,8 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
                 //categorize less is always first
                 return +1;
             } else {
-                final double d1 = exp1.evaluate(null, Double.class);
-                final double d2 = exp2.evaluate(null, Double.class);
+                final double d1 = ((Number) exp1.apply(null)).doubleValue();
+                final double d2 = ((Number) exp2.apply(null)).doubleValue();
 
                 //put NaN at the end
                 if (Double.isNaN(d1)) return +1;
@@ -115,35 +114,13 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * Make the instance of FunctionName available in
      * a consistent spot.
      */
-    public static final FunctionName NAME = new Name();
-
-    /**
-     * Describe how this function works.
-     * (should be available via FactoryFinder lookup...)
-     */
-    public static class Name implements FunctionName {
-
-        @Override
-        public int getArgumentCount() {
-            return 2; // indicating unbounded, 2 minimum
-        }
-
-        @Override
-        public List<String> getArgumentNames() {
-            return Arrays.asList(new String[]{
-                        "LookupValue",
-                        "Value",
-                        "Threshold 1", "Value 1",
-                        "Threshold 2", "Value 2",
-                        "succeeding or preceding"
-                    });
-        }
-
-        @Override
-        public String getName() {
-            return "Categorize";
-        }
-    };
+    public static final FunctionName NAME = new FunctionName("Categorize", Arrays.asList(
+            "LookupValue",
+            "Value",
+            "Threshold 1", "Value 1",
+            "Threshold 2", "Value 2",
+            "succeeding or preceding"),
+            2);     // indicating unbounded, 2 minimum
 
     public DefaultCategorize(final Expression ... expressions) {
 
@@ -160,7 +137,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             for (int i=2;i<expressions.length-1;i+=2) {
                 this.values.put(expressions[i], expressions[i+1]);
             }
-            final ThreshholdsBelongTo to = ThreshholdsBelongTo.parse(expressions[expressions.length-1].evaluate(null, String.class));
+            final ThreshholdsBelongTo to = ThreshholdsBelongTo.parse(expressions[expressions.length-1].apply(null).toString());
             this.belongTo = (to==null) ? ThreshholdsBelongTo.SUCCEEDING : to;
         }
 
@@ -169,7 +146,6 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         if (this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY) {
             throw new  IllegalArgumentException("Values must hold at least one key : CATEGORIZE_LESS_INFINITY");
         }
-
     }
 
     /**
@@ -183,7 +159,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             throw new IllegalArgumentException("Values can't be empty");
         }
 
-        this.lookup = (LookUpValue == null || LookUpValue == NIL) ?  DEFAULT_CATEGORIZE_LOOKUP : LookUpValue;
+        this.lookup = (LookUpValue == null) ?  DEFAULT_CATEGORIZE_LOOKUP : LookUpValue;
         this.values.putAll(values);
         this.belongTo = (belongs == null) ? ThreshholdsBelongTo.SUCCEEDING :belongs;
         this.fallback = (fallback == null) ? DEFAULT_FALLBACK : fallback;
@@ -191,7 +167,6 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         if (this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY) {
             throw new  IllegalArgumentException("Values must hold at least one key : CATEGORIZE_LESS_INFINITY");
         }
-
     }
 
     /**
@@ -222,16 +197,16 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * {@inheritDoc }
      */
     @Override
-    public String getName() {
-        return NAME.getName();
+    public ScopedName getFunctionName() {
+        return createName(NAME.getName());
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<Expression> getParameters() {
-        final List<Expression> params = new ArrayList<Expression>();
+    public List<Expression<Object,?>> getParameters() {
+        final List<Expression<Object,?>> params = new ArrayList<>();
         params.add(lookup);
         int i=0;
         for (Entry<Expression,Expression> entry : values.entrySet()) {
@@ -243,7 +218,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             }
             i++;
         }
-        params.add(new DefaultLiteral(belongTo.name().toLowerCase()));
+        params.add(FF.literal(belongTo.name().toLowerCase()));
         return params;
     }
 
@@ -251,15 +226,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * {@inheritDoc }
      */
     @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object evaluate(final Object object) {
+    public Object apply(final Object object) {
         return evaluate(object, Object.class);
     }
 
@@ -267,17 +234,17 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     public Object evaluate(final Object object, final Class c) {
 
         final Object candidate;
-        final Double value;
+        final double value;
         if (object instanceof Feature) {
 
             candidate = (Feature)object;
-            value = lookup.evaluate(candidate,Double.class);
-            final Expression exp = new DefaultLiteral<>(value);
+            value = ((Double) lookup.apply(candidate)).doubleValue();
+            final Expression exp = FF.literal(value);
 
             final boolean b = this.belongTo == ThreshholdsBelongTo.SUCCEEDING;
 
             final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
-            return closest.evaluate(candidate,c);
+            return ObjectConverters.convert(closest.apply(candidate), c);
 
         } else if (object instanceof RenderedImage) {
             return evaluateImage((RenderedImage) object);
@@ -285,17 +252,17 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             candidate = null;
             value = ((Number)object).doubleValue();
         } else if (fallback != null) {
-            return fallback.evaluate(object,c);
+            return ObjectConverters.convert(fallback.apply(object), c);
         } else {
             return null;
         }
 
-        final Expression exp = new DefaultLiteral<>(value);
+        final Expression exp = FF.literal(value);
 
         final boolean b = this.belongTo == ThreshholdsBelongTo.SUCCEEDING;
 
         final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
-        return closest.evaluate(candidate,c);
+        return ObjectConverters.convert(closest.apply(candidate), c);
     }
 
     /**
@@ -415,15 +382,15 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         for (Map.Entry<Expression,Expression> entry : entries) {
             if (l == 0) {
                 SE_VALUES[0] = Double.NEGATIVE_INFINITY;
-                SE_ARGB[0] = entry.getValue().evaluate(null, Color.class).getRGB();
+                SE_ARGB[0] = ((Color) entry.getValue().apply(null)).getRGB();
             } else {
                 // CATEGORIZE LESS INFINITY CASE
                 try {
-                    SE_VALUES[l] = entry.getKey().evaluate(null, Double.class);
+                    SE_VALUES[l] = ((Number) entry.getKey().apply(null)).doubleValue();
                 } catch (Exception e) {
                     SE_VALUES[l] = Double.NEGATIVE_INFINITY;
                 }
-                SE_ARGB[l] = entry.getValue().evaluate(null, Color.class).getRGB();
+                SE_ARGB[l] = ((Color) entry.getValue().apply(null)).getRGB();
             }
             l++;
         }
@@ -452,7 +419,6 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         return ARGB;
     }
 
-
     /**
      * {@inheritDoc }
      */
@@ -460,5 +426,4 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     public Literal getFallbackValue() {
         return fallback;
     }
-
 }

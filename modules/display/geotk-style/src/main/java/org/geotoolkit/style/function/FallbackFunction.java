@@ -18,50 +18,48 @@ package org.geotoolkit.style.function;
 
 import java.util.Collections;
 import java.util.List;
+import org.geotoolkit.filter.AbstractExpression;
 
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.util.ScopedName;
 
 /**
  * Class for review: initial implementation for a normal categorize function;
  * note problem with variable number of agruments (from commit at r30500).
  *
  * @author Jody Garnett
- * @module
  */
-public class FallbackFunction implements Function {
-    private List<Expression> parameters;
+public class FallbackFunction extends AbstractExpression implements Expression<Object,Object> {
+    private List<Expression<Object,?>> parameters;
     private Literal fallback;
     private String name;
 
-    public FallbackFunction( final String name, final List<Expression> parameters, final Literal fallback ){
+    public FallbackFunction( final String name, final List<Expression<Object,?>> parameters, final Literal fallback ){
         this.name = name;
         this.parameters = parameters;
         this.fallback = fallback;
     }
+
     public String getName() {
         return name;
     }
 
-    public List<Expression> getParameters() {
+    @Override
+    public ScopedName getFunctionName() {
+        return createName(name);
+    }
+
+    public List<Expression<Object,?>> getParameters() {
         return Collections.unmodifiableList( parameters );
     }
 
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit( this, extraData );
+    @Override
+    public Object apply(final Object object) {
+        return fallback.apply(object);
     }
 
-    public Object evaluate(final Object object) {
-        return fallback.evaluate(object);
-    }
-
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        return fallback.evaluate(object,context);
-    }
     public Literal getFallbackValue() {
         return fallback;
     }
-
 }

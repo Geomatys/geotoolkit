@@ -18,7 +18,7 @@ package org.geotoolkit.style;
 
 import java.util.Objects;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ExternalMark;
 import org.opengis.style.Fill;
 import org.opengis.style.Mark;
@@ -26,13 +26,11 @@ import org.opengis.style.Stroke;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Mark.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultMark implements Mark{
 
@@ -52,10 +50,10 @@ public class DefaultMark implements Mark{
      * @param stroke : if null will be replaced by default value.
      */
     public DefaultMark(final Expression wkn, final Fill fill, final Stroke stroke){
-        this.wkn = (wkn == null || wkn == NIL) ? DEFAULT_MARK_WKN : wkn;
+        this.wkn      = (wkn    == null) ? DEFAULT_MARK_WKN : wkn;
         this.external = null;
-        this.fill = (fill == null) ? DEFAULT_FILL : fill;
-        this.stroke = (stroke == null) ? DEFAULT_STROKE : stroke;
+        this.fill     = (fill   == null) ? DEFAULT_FILL : fill;
+        this.stroke   = (stroke == null) ? DEFAULT_STROKE : stroke;
     }
 
     /**
@@ -139,7 +137,6 @@ public class DefaultMark implements Mark{
                 && Objects.equals(this.wkn, other.wkn)
                 && Objects.equals(this.fill, other.fill)
                 && Objects.equals(this.stroke, other.stroke);
-
     }
 
     /**

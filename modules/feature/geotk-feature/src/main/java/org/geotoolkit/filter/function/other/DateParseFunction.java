@@ -21,7 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -35,31 +35,13 @@ import org.opengis.filter.expression.Expression;
 public class DateParseFunction extends AbstractFunction {
 
     public DateParseFunction(final Expression expr1, final Expression expr2) {
-        super(OtherFunctionFactory.DATE_PARSE, new Expression[]{expr1,expr2}, null);
+        super(OtherFunctionFactory.DATE_PARSE, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String format;
-        String date;
-
-        try {
-            // attempt to get value and perform conversion
-            format  = parameters.get(0).evaluate(feature, String.class);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function dateParse argument #0 - expected type String");
-        }
-
-        try { // attempt to get value and perform conversion
-            date = parameters.get(1).evaluate(feature, String.class);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function dateParse argument #1 - expected type String");
-        }
-
+    public Object apply(final Object feature) {
+        String format = stringValue(feature, 0);
+        String date = stringValue(feature, 1);
         DateFormat dateFormat = new SimpleDateFormat(format);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         try {
@@ -68,7 +50,4 @@ public class DateParseFunction extends AbstractFunction {
             throw new IllegalArgumentException("Invalid date, could not parse", e);
         }
     }
-
-
-
 }

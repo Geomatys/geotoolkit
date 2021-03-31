@@ -27,9 +27,9 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 
 /**
  * Declares all mapfile types.
@@ -538,7 +538,7 @@ public final class MapfileTypes {
         LAYER_CLASS                 = CLASS.getName();
                                       ftb.addAssociation(CLASS).setName(CLASS.getName()).setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
         LAYER_CLASSGROUP            = addAttribute(ftb,NamesExt.create(NAMESPACE, "CLASSGROUP"),       String.class);
-        LAYER_CLASSITEM             = addAttribute(ftb,NamesExt.create(NAMESPACE, "CLASSITEM"),        PropertyName.class);
+        LAYER_CLASSITEM             = addAttribute(ftb,NamesExt.create(NAMESPACE, "CLASSITEM"),        ValueReference.class);
         LAYER_CLUSTER               = CLUSTER.getName();
                                       ftb.addAssociation(CLUSTER).setName(CLUSTER.getName());
         LAYER_CONNECTION            = addAttribute(ftb,NamesExt.create(NAMESPACE, "CONNECTION"),       String.class);
@@ -550,7 +550,7 @@ public final class MapfileTypes {
         LAYER_FEATURE               = FEATURE.getName();
                                       ftb.addAssociation(FEATURE).setName(FEATURE.getName());
         LAYER_FILTER                = addAttribute(ftb,NamesExt.create(NAMESPACE, "FILTER"),           String.class);
-        LAYER_FILTERITEM            = addAttribute(ftb,NamesExt.create(NAMESPACE, "FILTERITEM"),       PropertyName.class);
+        LAYER_FILTERITEM            = addAttribute(ftb,NamesExt.create(NAMESPACE, "FILTERITEM"),       ValueReference.class);
         LAYER_FOOTER                = addAttribute(ftb,NamesExt.create(NAMESPACE, "FOOTER"),           String.class);
         LAYER_GRID                  = GRID.getName();
                                       ftb.addAssociation(GRID).setName(GRID.getName());
@@ -558,15 +558,15 @@ public final class MapfileTypes {
         LAYER_HEADER                = addAttribute(ftb,NamesExt.create(NAMESPACE, "HEADER"),           String.class);
         LAYER_JOIN                  = JOIN.getName();
                                       ftb.addAssociation(JOIN).setName(JOIN.getName());
-        LAYER_LABELANGLEITEM        = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELANGLEITEM"),   PropertyName.class);
+        LAYER_LABELANGLEITEM        = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELANGLEITEM"),   ValueReference.class);
         LAYER_LABELCACHE            = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELCACHE"),       Boolean.class);
-        LAYER_LABELITEM             = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELITEM"),        PropertyName.class);
+        LAYER_LABELITEM             = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELITEM"),        ValueReference.class);
         LAYER_LABELMAXSCALEDENOM    = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELMAXSCALEDENOM"),Double.class);
         LAYER_LABELMAXSCALE         = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELMAXSCALE"),    Double.class); //deprecated
         LAYER_LABELMINSCALEDENOM    = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELMINSCALEDENOM"),Double.class);
         LAYER_LABELMINSCALE         = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELMINSCALE"),    Double.class); //deprecated
         LAYER_LABELREQUIRES         = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELREQUIRES"),    String.class);
-        LAYER_LABELSIZEITEM         = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELSIZEITEM"),    PropertyName.class); //deprecated
+        LAYER_LABELSIZEITEM         = addAttribute(ftb,NamesExt.create(NAMESPACE, "LABELSIZEITEM"),    ValueReference.class); //deprecated
         LAYER_MAXFEATURES           = addAttribute(ftb,NamesExt.create(NAMESPACE, "MAXFEATURES"),      Integer.class);
         LAYER_MAXGEOWIDTH           = addAttribute(ftb,NamesExt.create(NAMESPACE, "MAXGEOWIDTH"),      Double.class);
         LAYER_MAXSCALEDENOM         = addAttribute(ftb,NamesExt.create(NAMESPACE, "MAXSCALEDENOM"),    Double.class);
@@ -585,12 +585,12 @@ public final class MapfileTypes {
         LAYER_REQUIRES              = addAttribute(ftb,NamesExt.create(NAMESPACE, "REQUIRES"),         String.class);
         LAYER_SIZEUNITS             = addAttribute(ftb,NamesExt.create(NAMESPACE, "SIZEUNITS"),        String.class);
         LAYER_STATUS                = addAttribute(ftb,NamesExt.create(NAMESPACE, "STATUS"),           String.class);
-        LAYER_STYLEITEM             = addAttribute(ftb,NamesExt.create(NAMESPACE, "STYLEITEM"),        PropertyName.class);
+        LAYER_STYLEITEM             = addAttribute(ftb,NamesExt.create(NAMESPACE, "STYLEITEM"),        ValueReference.class);
         LAYER_SYMBOLSCALEDENOM      = addAttribute(ftb,NamesExt.create(NAMESPACE, "SYMBOLSCALEDENOM"), Double.class);
         LAYER_SYMBOLSCALE           = addAttribute(ftb,NamesExt.create(NAMESPACE, "SYMBOLSCALE"),      Double.class); //deprecated
         LAYER_TEMPLATE              = addAttribute(ftb,NamesExt.create(NAMESPACE, "TEMPLATE"),         String.class);
         LAYER_TILEINDEX             = addAttribute(ftb,NamesExt.create(NAMESPACE, "TILEINDEX"),        String.class);
-        LAYER_TILEITEM              = addAttribute(ftb,NamesExt.create(NAMESPACE, "TILEITEM"),         PropertyName.class);
+        LAYER_TILEITEM              = addAttribute(ftb,NamesExt.create(NAMESPACE, "TILEITEM"),         ValueReference.class);
         LAYER_TOLERANCE             = addAttribute(ftb,NamesExt.create(NAMESPACE, "TOLERANCE"),        Double.class);
         LAYER_TOLERANCEUNITS        = addAttribute(ftb,NamesExt.create(NAMESPACE, "TOLERANCEUNITS"),   String.class);
         LAYER_TRANSPARENCY          = addAttribute(ftb,NamesExt.create(NAMESPACE, "TRANSPARENCY"),     String.class); //deprecated

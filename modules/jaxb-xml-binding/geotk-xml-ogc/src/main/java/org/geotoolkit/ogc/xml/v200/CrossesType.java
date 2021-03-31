@@ -17,7 +17,7 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.opengis.filter.spatial.Crosses;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -25,13 +25,11 @@ import org.opengis.filter.spatial.Crosses;
  * @module
  */
 @XmlRootElement(name = "Crosses")
-public class CrossesType extends BinarySpatialOpType implements Crosses {
-
+public class CrossesType extends BinarySpatialOpType {
     /**
      * An empty constructor used by JAXB
      */
     public CrossesType() {
-
     }
 
     /**
@@ -48,6 +46,11 @@ public class CrossesType extends BinarySpatialOpType implements Crosses {
     @Override
     public SpatialOpsType getClone() {
         return new CrossesType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.CROSSES;
     }
 
     @Override

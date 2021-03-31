@@ -18,21 +18,17 @@
 package org.geotoolkit.filter.visitor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.ComparisonOperatorName;
 
-import org.opengis.filter.And;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.Id;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.GmlObjectId;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.Literal;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.ResourceId;
 
 /**
  * Takes a filter and returns a simplified, equivalent one. At the moment the filter simplifies out
@@ -55,10 +51,11 @@ import org.opengis.filter.identity.Identifier;
  * @author Gabriel Roldan (OpenGeo)
  * @module
  * @since 2.5.x
- * @version $Id$
+ *
+ * @deprecated Use {@link org.apache.sis.filter.Optimization} instead.
  */
+@Deprecated
 public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
-
     /**
      * Defines a simple means of assessing whether a feature id in an {@link Id} filter is
      * structurally valid and hence can be send down to the backend with confidence it will not
@@ -124,138 +121,84 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
         this.fidValidator = validator == null ? ANY_FID_VALID : validator;
     }
 
-    @Override
-    public Object visit(final And filter, final Object extraData) {
-        // scan, clone and simplify the children
-        final List<Filter> children = filter.getChildren();
-        final List<Filter> newChildren = new ArrayList<Filter>(children.size());
+    public static final SimplifyingFilterVisitor INSTANCE = new SimplifyingFilterVisitor();
 
-        for (Filter child : children) {
-            final Filter cloned = (Filter) child.accept(this, extraData);
+    protected SimplifyingFilterVisitor() {
+        setFilterHandler(LogicalOperatorName.AND, (f) -> {
+            final LogicalOperator<Object> filter = (LogicalOperator<Object>) f;
+            // scan, clone and simplify the children
+            final List<Filter<? super Object>> children = filter.getOperands();
+            final List<Filter<Object>> newChildren = new ArrayList<>(children.size());
+            for (Filter<? super Object> child : children) {
+                final Filter cloned = (Filter) visit(child);
 
-            // if any of the child filters is exclude,
-            // the whole chain of AND is equivalent to EXCLUDE
-            if(cloned == Filter.EXCLUDE)
-                return Filter.EXCLUDE;
+                // if any of the child filters is exclude,
+                // the whole chain of AND is equivalent to EXCLUDE
+                if (cloned == Filter.exclude()) return Filter.exclude();
 
-            // these can be skipped
-            if(cloned == Filter.INCLUDE)
-                continue;
-
-            newChildren.add(cloned);
-        }
-
-        // we might end up with an empty list
-        if(newChildren.size() == 0)
-            return Filter.INCLUDE;
-
-        // remove the logic we have only one filter
-        if(newChildren.size() == 1)
-            return newChildren.get(0);
-
-        // else return the cloned and simplified up list
-        return getFactory(extraData).and(newChildren);
-    }
-
-    @Override
-    public Object visit(final Or filter, final Object extraData) {
-     // scan, clone and simplify the children
-        final List<Filter> children = filter.getChildren();
-        final List<Filter> newChildren = new ArrayList<Filter>(children.size());
-
-        Set<Identifier> mergedIds = null;
-        Id regroupedIds = null;
-
-        for (Filter child : children) {
-            final Filter cloned = (Filter) child.accept(this, extraData);
-
-            // if any of the child filters is include,
-            // the whole chain of OR is equivalent to INCLUDE
-            if(cloned == Filter.INCLUDE)
-                return Filter.INCLUDE;
-
-            // these can be skipped
-            if(cloned == Filter.EXCLUDE)
-                continue;
-
-            if(cloned instanceof Id){
-                //merge id filters
-                if(regroupedIds == null && mergedIds == null){
-                    regroupedIds = (Id) cloned;
-                }else{
-                    if(mergedIds == null){
-                        mergedIds = new HashSet<Identifier>(regroupedIds.getIdentifiers());
-                    }
-                    regroupedIds = null;
-                    mergedIds.addAll( ((Id)cloned).getIdentifiers() );
-                }
-            }else{
+                // these can be skipped
+                if (cloned == Filter.include()) continue;
                 newChildren.add(cloned);
             }
-        }
 
-        if(regroupedIds != null){
-            newChildren.add(regroupedIds);
-        }else if(mergedIds != null){
-            newChildren.add(ff.id(mergedIds));
-        }
+            // we might end up with an empty list
+            if (newChildren.isEmpty()) return Filter.include();
 
+            // remove the logic we have only one filter
+            if (newChildren.size() == 1) return newChildren.get(0);
 
-        // we might end up with an empty list
-        if(newChildren.size() == 0)
-            return Filter.EXCLUDE;
+            // else return the cloned and simplified up list
+            return ff.and(newChildren);
+        });
+        setFilterHandler(LogicalOperatorName.OR, (f) -> {
+            final LogicalOperator<Object> filter = (LogicalOperator<Object>) f;
+            // scan, clone and simplify the children
+            final List<Filter<? super Object>> children = filter.getOperands();
+            final List<Filter<Object>> newChildren = new ArrayList<>(children.size());
+            for (Filter<? super Object> child : children) {
+                final Filter cloned = (Filter) visit(child);
 
-        // remove the logic we have only one filter
-        if(newChildren.size() == 1)
-            return newChildren.get(0);
+                // if any of the child filters is include,
+                // the whole chain of OR is equivalent to INCLUDE
+                if( cloned == Filter.include()) return Filter.include();
 
-        // else return the cloned and simplified up list
-        return getFactory(extraData).or(newChildren);
-    }
-
-    /**
-     * Uses the current {@link FIDValidator} to wipe out illegal feature ids from the returned
-     * filters.
-     *
-     * @return a filter containing only valid fids as per the current {@link FIDValidator}, may be
-     *         {@link Filter#EXCLUDE} if none matches or the filter is already empty
-     */
-    @Override
-    public Object visit(final Id filter, final Object extraData) {
-        // if the set of ID is empty, it's actually equivalent to Filter.EXCLUDE
-        if (filter.getIDs().size() == 0) {
-            return Filter.EXCLUDE;
-        }
-
-        final Set<Identifier> validFids = new HashSet<Identifier>();
-
-        for (Identifier id : filter.getIdentifiers()) {
-            if(id instanceof FeatureId || id instanceof GmlObjectId){
-                // both FeatureId an GmlObjectId.getID() return String, but Identifier.getID()
-                // returns Object. Yet, FeatureId and GmlObjectId are the only known subclasses of
-                // Identifier that apply to Feature land
-                if (fidValidator.isValid((String)id.getID())) {
-                    validFids.add(id);
-                }
+                // these can be skipped
+                if (cloned == Filter.exclude()) continue;
+                newChildren.add(cloned);
             }
-        }
+            // we might end up with an empty list
+            if (newChildren.isEmpty()) return Filter.exclude();
 
-        if (validFids.size() == 0) {
-            return Filter.EXCLUDE;
-        } else {
-            return getFactory(extraData).id(validFids);
-        }
+            // remove the logic we have only one filter
+            if (newChildren.size() == 1) return newChildren.get(0);
+
+            // else return the cloned and simplified up list
+            return ff.or(newChildren);
+        });
+        /*
+         * Uses the current {@link FIDValidator} to wipe out illegal feature ids from the returned filters.
+         * Returns a filter containing only valid fids as per the current {@link FIDValidator},
+         * may be {@link Filter#EXCLUDE} if none matches or the filter is already empty.
+         */
+        setFilterHandler(RESOURCEID_NAME, (f) -> {
+            final ResourceId<Object> filter = (ResourceId<Object>) f;
+            final String id = filter.getIdentifier();
+            if (fidValidator.isValid(id)) {
+                return ff.resourceId(id, filter.getVersion().orElse(null), filter.getStartTime().orElse(null), filter.getEndTime().orElse(null));
+            } else {
+                return Filter.exclude();
+            }
+        });
+        final Function<Filter<Object>, Object> previous = getFilterHandler(ComparisonOperatorName.PROPERTY_IS_EQUAL_TO);
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_EQUAL_TO, (f) -> {
+            final BinaryComparisonOperator<Object> filter = (BinaryComparisonOperator<Object>) f;
+            if (  filter.getOperand1() instanceof Literal
+               && filter.getOperand2() instanceof Literal){
+                //we can preevaluate this one
+                return (filter.test(null)) ? Filter.include() : Filter.exclude();
+            } else {
+                return previous.apply(f);
+            }
+        });
     }
-
-    @Override
-    public Object visit(PropertyIsEqualTo filter, Object extraData) {
-        if(   filter.getExpression1() instanceof Literal
-           && filter.getExpression2() instanceof Literal){
-            //we can preevaluate this one
-            return (filter.evaluate(null)) ? Filter.INCLUDE : Filter.EXCLUDE;
-        }else{
-            return super.visit(filter, extraData);
-        }
-    }
-
 }

@@ -23,7 +23,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.ogc.xml.v100.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v100.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
@@ -39,40 +38,29 @@ import org.geotoolkit.ogc.xml.v100.UnaryLogicOpType;
 import org.apache.sis.xml.MarshallerPool;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
+import org.geotoolkit.filter.FilterFactory2;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.NullOperator;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
+import org.opengis.filter.Expression;
 
 /**
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class OGC100Test {
 
     private static final double DELTA = 0.00000001;
 
-    private static final FilterFactory2 FILTER_FACTORY;
+    private static final FilterFactory2 FILTER_FACTORY = org.geotoolkit.filter.FilterUtilities.FF;
 
-    static {
-        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
-    }
-
-    private static MarshallerPool POOL;
+    private static final MarshallerPool POOL;
     private static final OGC100toGTTransformer TRANSFORMER_GT;
     private static final FilterToOGC100Converter TRANSFORMER_OGC;
 
@@ -149,7 +137,6 @@ public class OGC100Test {
     static {
 
         POOL = FilterMarshallerPool.getInstance(FilterVersion.V100);
-
 
         TRANSFORMER_GT = new OGC100toGTTransformer(FILTER_FACTORY);
         assertNotNull(TRANSFORMER_GT);
@@ -293,8 +280,6 @@ public class OGC100Test {
             TEST_FILE_FIL_SPA_TOUCHES.deleteOnExit();
             TEST_FILE_FIL_SPA_WITHIN.deleteOnExit();
         }
-
-
     }
 
     private static void numberEquals(Number reference, Object candidate){
@@ -316,17 +301,16 @@ public class OGC100Test {
         assertNotNull(obj);
 
         JAXBElement<BinaryOperatorType> jax = (JAXBElement<BinaryOperatorType>) obj;
-        Add exp = (Add) TRANSFORMER_GT.visitExpression(jax);
+        Expression exp = (Expression) TRANSFORMER_GT.visitExpression(jax);
         assertNotNull(exp);
 
-        PropertyName left = (PropertyName) exp.getExpression1();
-        Literal right = (Literal) exp.getExpression2();
+        ValueReference left = (ValueReference) exp.getParameters().get(0);
+        Literal right = (Literal) exp.getParameters().get(1);
         assertNotNull(left);
         assertNotNull(right);
 
-        assertEquals(left.getPropertyName(), valueStr);
-        assertEquals(right.evaluate( null, Float.class ), valueF, DELTA);
-
+        assertEquals(left.getXPath(), valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue(), valueF, DELTA);
 
         //Write test
         jax = (JAXBElement<BinaryOperatorType>) TRANSFORMER_OGC.extract(exp);
@@ -354,17 +338,16 @@ public class OGC100Test {
         assertNotNull(obj);
 
         JAXBElement<BinaryOperatorType> jax = (JAXBElement<BinaryOperatorType>) obj;
-        Divide exp = (Divide) TRANSFORMER_GT.visitExpression(jax);
+        Expression exp = (Expression) TRANSFORMER_GT.visitExpression(jax);
         assertNotNull(exp);
 
-        PropertyName left = (PropertyName) exp.getExpression1();
-        Literal right = (Literal) exp.getExpression2();
+        ValueReference left = (ValueReference) exp.getParameters().get(0);
+        Literal right = (Literal) exp.getParameters().get(1);
         assertNotNull(left);
         assertNotNull(right);
 
-        assertEquals(left.getPropertyName(), valueStr);
-        assertEquals(right.evaluate( null, Float.class ), valueF, DELTA);
-
+        assertEquals(left.getXPath(), valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue(), valueF, DELTA);
 
         //Write test
         jax = (JAXBElement<BinaryOperatorType>) TRANSFORMER_OGC.extract(exp);
@@ -395,7 +378,7 @@ public class OGC100Test {
         Literal exp = (Literal) TRANSFORMER_GT.visitExpression(jax);
         assertNotNull(exp);
 
-        float val = exp.evaluate( null, Float.class );
+        float val = ((Number) exp.apply(null)).floatValue();
         assertEquals(val, valueF, DELTA);
 
         //Write test
@@ -422,17 +405,16 @@ public class OGC100Test {
         assertNotNull(obj);
 
         JAXBElement<BinaryOperatorType> jax = (JAXBElement<BinaryOperatorType>) obj;
-        Multiply exp = (Multiply) TRANSFORMER_GT.visitExpression(jax);
+        Expression exp = (Expression) TRANSFORMER_GT.visitExpression(jax);
         assertNotNull(exp);
 
-        PropertyName left = (PropertyName) exp.getExpression1();
-        Literal right = (Literal) exp.getExpression2();
+        ValueReference left = (ValueReference) exp.getParameters().get(0);
+        Literal right = (Literal) exp.getParameters().get(1);
         assertNotNull(left);
         assertNotNull(right);
 
-        assertEquals(left.getPropertyName(), valueStr);
-        assertEquals(right.evaluate( null, Float.class ), valueF, DELTA);
-
+        assertEquals(left.getXPath(), valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue(), valueF, DELTA);
 
         //Write test
         jax = (JAXBElement<BinaryOperatorType>) TRANSFORMER_OGC.extract(exp);
@@ -460,10 +442,10 @@ public class OGC100Test {
         assertNotNull(obj);
 
         JAXBElement<PropertyNameType> jax = (JAXBElement<PropertyNameType>) obj;
-        PropertyName exp = (PropertyName) TRANSFORMER_GT.visitExpression(jax);
+        ValueReference exp = (ValueReference) TRANSFORMER_GT.visitExpression(jax);
         assertNotNull(exp);
 
-        String val = exp.getPropertyName().trim();
+        String val = exp.getXPath().trim();
         assertEquals(val, valueStr);
 
         //Write test
@@ -490,17 +472,16 @@ public class OGC100Test {
         assertNotNull(obj);
 
         JAXBElement<BinaryOperatorType> jax = (JAXBElement<BinaryOperatorType>) obj;
-        Subtract exp = (Subtract) TRANSFORMER_GT.visitExpression(jax);
+        Expression exp = (Expression) TRANSFORMER_GT.visitExpression(jax);
         assertNotNull(exp);
 
-        PropertyName left = (PropertyName) exp.getExpression1();
-        Literal right = (Literal) exp.getExpression2();
+        ValueReference left = (ValueReference) exp.getParameters().get(0);
+        Literal right = (Literal) exp.getParameters().get(1);
         assertNotNull(left);
         assertNotNull(right);
 
-        assertEquals(left.getPropertyName(), valueStr);
-        assertEquals(right.evaluate( null, Float.class ), valueF, DELTA);
-
+        assertEquals(left.getXPath(), valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue(), valueF, DELTA);
 
         //Write test
         JAXBElement<BinaryOperatorType> pvt = (JAXBElement<BinaryOperatorType>) TRANSFORMER_OGC.extract(exp);
@@ -538,14 +519,14 @@ public class OGC100Test {
         Filter filter = TRANSFORMER_GT.visitFilter(jaxfilter.getValue());
         assertNotNull(filter);
 
-        PropertyIsBetween prop = (PropertyIsBetween) filter;
-        PropertyName center = (PropertyName) prop.getExpression();
+        BetweenComparisonOperator prop = (BetweenComparisonOperator) filter;
+        ValueReference center = (ValueReference) prop.getExpression();
         Literal lower = (Literal) prop.getLowerBoundary();
         Literal upper = (Literal) prop.getUpperBoundary();
 
-        assertEquals( center.getPropertyName() , valueStr);
-        assertEquals( lower.evaluate(null, Float.class) , 455f, DELTA);
-        assertEquals( upper.evaluate(null, Float.class) , 457f, DELTA);
+        assertEquals( center.getXPath() , valueStr);
+        assertEquals(((Number) lower.apply(null)).floatValue() , 455f, DELTA);
+        assertEquals(((Number) upper.apply(null)).floatValue() , 457f, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -584,11 +565,11 @@ public class OGC100Test {
         assertNotNull(filter);
 
         BinaryComparisonOperator prop = (BinaryComparisonOperator) filter;
-        PropertyName left = (PropertyName) prop.getExpression1();
-        Literal right = (Literal) prop.getExpression2();
+        ValueReference left = (ValueReference) prop.getOperand1();
+        Literal right = (Literal) prop.getOperand2();
 
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -626,11 +607,11 @@ public class OGC100Test {
         assertNotNull(filter);
 
         BinaryComparisonOperator prop = (BinaryComparisonOperator) filter;
-        PropertyName left = (PropertyName) prop.getExpression1();
-        Literal right = (Literal) prop.getExpression2();
+        ValueReference left = (ValueReference) prop.getOperand1();
+        Literal right = (Literal) prop.getOperand2();
 
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -668,11 +649,11 @@ public class OGC100Test {
         assertNotNull(filter);
 
         BinaryComparisonOperator prop = (BinaryComparisonOperator) filter;
-        PropertyName left = (PropertyName) prop.getExpression1();
-        Literal right = (Literal) prop.getExpression2();
+        ValueReference left = (ValueReference) prop.getOperand1();
+        Literal right = (Literal) prop.getOperand2();
 
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -709,11 +690,11 @@ public class OGC100Test {
         assertNotNull(filter);
 
         BinaryComparisonOperator prop = (BinaryComparisonOperator) filter;
-        PropertyName left = (PropertyName) prop.getExpression1();
-        Literal right = (Literal) prop.getExpression2();
+        ValueReference left = (ValueReference) prop.getOperand1();
+        Literal right = (Literal) prop.getOperand2();
 
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -750,11 +731,11 @@ public class OGC100Test {
         assertNotNull(filter);
 
         BinaryComparisonOperator prop = (BinaryComparisonOperator) filter;
-        PropertyName left = (PropertyName) prop.getExpression1();
-        Literal right = (Literal) prop.getExpression2();
+        ValueReference left = (ValueReference) prop.getOperand1();
+        Literal right = (Literal) prop.getOperand2();
 
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -790,18 +771,18 @@ public class OGC100Test {
         Filter filter = TRANSFORMER_GT.visitFilter(jaxfilter.getValue());
         assertNotNull(filter);
 
-        PropertyIsLike prop = (PropertyIsLike) filter;
-        PropertyName exp = (PropertyName) prop.getExpression();
-        String escape = prop.getEscape();
-        String literal = prop.getLiteral();
-        String single = prop.getSingleChar();
-        String wild = prop.getWildCard();
+        LikeOperator prop = (LikeOperator) filter;
+        ValueReference exp = (ValueReference) prop.getExpressions().get(0);
+        char escape = prop.getEscapeChar();
+        String literal = (String) ((Literal) prop.getExpressions().get(1)).getValue();
+        char single = prop.getSingleChar();
+        char wild = prop.getWildCard();
 
-        assertEquals( exp.getPropertyName() , "LAST_NAME");
+        assertEquals( exp.getXPath() , "LAST_NAME");
         assertEquals( literal , "JOHN*");
-        assertEquals( escape , "!");
-        assertEquals( single , "#");
-        assertEquals( wild , "*");
+        assertEquals( escape , '!');
+        assertEquals( single , '#');
+        assertEquals( wild , '*');
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -812,21 +793,20 @@ public class OGC100Test {
 
         PropertyNameType lf = pibt.getPropertyName();
         LiteralType lt = pibt.getLiteralType();
-        String esc = pibt.getEscape();
-        String sin = pibt.getSingleChar();
-        String wi = pibt.getWildCard();
+        char esc = pibt.getEscapeChar();
+        char sin = pibt.getSingleChar();
+        char wi = pibt.getWildCard();
 
         assertEquals(lf.getContent(), "LAST_NAME");
         assertEquals( lt.getContent().get(0).toString().trim() , "JOHN*");
-        assertEquals( esc , "!");
-        assertEquals( sin , "#");
-        assertEquals( wi , "*");
+        assertEquals( esc , '!');
+        assertEquals( sin , '#');
+        assertEquals( wi , '*');
 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLIKE);
 
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
-
     }
 
     @Test
@@ -845,11 +825,11 @@ public class OGC100Test {
         assertNotNull(filter);
 
         BinaryComparisonOperator prop = (BinaryComparisonOperator) filter;
-        PropertyName left = (PropertyName) prop.getExpression1();
-        Literal right = (Literal) prop.getExpression2();
+        ValueReference left = (ValueReference) prop.getOperand1();
+        Literal right = (Literal) prop.getOperand2();
 
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , valueF, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -868,7 +848,6 @@ public class OGC100Test {
 
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
-
     }
 
     @Test
@@ -886,10 +865,10 @@ public class OGC100Test {
         Filter filter = TRANSFORMER_GT.visitFilter(jaxfilter.getValue());
         assertNotNull(filter);
 
-        PropertyIsNull prop = (PropertyIsNull) filter;
-        PropertyName center = (PropertyName) prop.getExpression();
+        NullOperator prop = (NullOperator) filter;
+        ValueReference center = (ValueReference) prop.getExpressions().get(0);
 
-        assertEquals( center.getPropertyName() , valueStr);
+        assertEquals( center.getXPath() , valueStr);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -906,7 +885,6 @@ public class OGC100Test {
 
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
-
     }
 
 
@@ -930,19 +908,19 @@ public class OGC100Test {
         Filter filter = TRANSFORMER_GT.visitFilter(jaxfilter.getValue());
         assertNotNull(filter);
 
-        And prop = (And) filter;
-        BinaryComparisonOperator leftop =  (BinaryComparisonOperator) prop.getChildren().get(0);
-        BinaryComparisonOperator rightop = (BinaryComparisonOperator) prop.getChildren().get(1);
+        LogicalOperator prop = (LogicalOperator) filter;
+        BinaryComparisonOperator leftop =  (BinaryComparisonOperator) prop.getOperands().get(0);
+        BinaryComparisonOperator rightop = (BinaryComparisonOperator) prop.getOperands().get(1);
 
-        PropertyName left = (PropertyName) leftop.getExpression1();
-        Literal right = (Literal) leftop.getExpression2();
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , 455f, DELTA);
+        ValueReference left = (ValueReference) leftop.getOperand1();
+        Literal right = (Literal) leftop.getOperand2();
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , 455f, DELTA);
 
-        left = (PropertyName) rightop.getExpression1();
-        right = (Literal) rightop.getExpression2();
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , 457f, DELTA);
+        left = (ValueReference) rightop.getOperand1();
+        right = (Literal) rightop.getOperand2();
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , 457f, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -990,19 +968,19 @@ public class OGC100Test {
         Filter filter = TRANSFORMER_GT.visitFilter(jaxfilter.getValue());
         assertNotNull(filter);
 
-        Or prop = (Or) filter;
-        BinaryComparisonOperator leftop =  (BinaryComparisonOperator) prop.getChildren().get(0);
-        BinaryComparisonOperator rightop = (BinaryComparisonOperator) prop.getChildren().get(1);
+        LogicalOperator prop = (LogicalOperator) filter;
+        BinaryComparisonOperator leftop =  (BinaryComparisonOperator) prop.getOperands().get(0);
+        BinaryComparisonOperator rightop = (BinaryComparisonOperator) prop.getOperands().get(1);
 
-        PropertyName left = (PropertyName) leftop.getExpression1();
-        Literal right = (Literal) leftop.getExpression2();
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , 455f, DELTA);
+        ValueReference left = (ValueReference) leftop.getOperand1();
+        Literal right = (Literal) leftop.getOperand2();
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , 455f, DELTA);
 
-        left = (PropertyName) rightop.getExpression1();
-        right = (Literal) rightop.getExpression2();
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , 457f, DELTA);
+        left = (ValueReference) rightop.getOperand1();
+        right = (Literal) rightop.getOperand2();
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , 457f, DELTA);
 
         //write test
         FilterType ft = TRANSFORMER_OGC.apply(filter);
@@ -1050,13 +1028,13 @@ public class OGC100Test {
         Filter filter = TRANSFORMER_GT.visitFilter(jaxfilter.getValue());
         assertNotNull(filter);
 
-        Not prop = (Not) filter;
-        BinaryComparisonOperator subfilter =  (BinaryComparisonOperator) prop.getFilter();
+        LogicalOperator prop = (LogicalOperator) filter;
+        BinaryComparisonOperator subfilter =  (BinaryComparisonOperator) prop.getOperands().get(0);
 
-        PropertyName left = (PropertyName) subfilter.getExpression1();
-        Literal right = (Literal) subfilter.getExpression2();
-        assertEquals( left.getPropertyName() , valueStr);
-        assertEquals( right.evaluate(null, Float.class) , valueF, DELTA);
+        ValueReference left = (ValueReference) subfilter.getOperand1();
+        Literal right = (Literal) subfilter.getOperand2();
+        assertEquals( left.getXPath() , valueStr);
+        assertEquals(((Number) right.apply(null)).floatValue() , valueF, DELTA);
 
 
         //write test
@@ -1080,66 +1058,4 @@ public class OGC100Test {
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
     }
-
-
-
-    ////////////////////////////////////////////////////////////////////////////
-    // JAXB TEST MARSHELLING AND UNMARSHELLING FOR SPATIAL FILTERS /////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    public void testFilterSpatialBBOX() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialBeyond() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialContains() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialCrosses() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialDWithin() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialDisjoint() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialEquals() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialIntersects() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialOverlaps() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialTouches() throws JAXBException{
-
-    }
-
-    @Test
-    public void testFilterSpatialWithin() throws JAXBException{
-
-    }
-
 }

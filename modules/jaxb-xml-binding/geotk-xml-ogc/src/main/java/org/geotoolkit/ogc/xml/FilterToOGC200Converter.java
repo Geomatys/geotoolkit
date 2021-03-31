@@ -5,12 +5,10 @@ import org.locationtech.jts.geom.Geometry;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
+import javax.measure.Quantity;
 import javax.xml.bind.JAXBElement;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
@@ -62,46 +60,25 @@ import org.geotoolkit.ogc.xml.v200.WithinType;
 import org.geotoolkit.ogc.xml.v200.ObjectFactory;
 import org.geotoolkit.ogc.xml.v200.ResourceIdType;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.BinaryExpression;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.NilExpression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.NullOperator;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.DistanceOperator;
+import org.opengis.filter.DistanceOperatorName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.SpatialOperatorName;
+import org.opengis.filter.ValueReference;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.CodeList;
 import org.opengis.util.FactoryException;
 
 /**
@@ -112,7 +89,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
 
     private final ObjectFactory ogc_factory;
     private final org.geotoolkit.gml.xml.v321.ObjectFactory gml_factory;
-    private final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private final FilterFactory FF = org.geotoolkit.filter.FilterUtilities.FF;
 
     public FilterToOGC200Converter() {
         this.ogc_factory = new ObjectFactory();
@@ -120,14 +97,12 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
     }
 
     public JAXBElement visit(Filter filter) {
-        if (filter.equals(Filter.INCLUDE) || filter.equals(Filter.EXCLUDE)) {
+        if (filter.equals(Filter.include()) || filter.equals(Filter.exclude())) {
             return null;
-        } else if (filter instanceof FilterType) {
-
         }
-
-        if (filter instanceof PropertyIsBetween) {
-            final PropertyIsBetween pib = (PropertyIsBetween) filter;
+        final CodeList<?> type = filter.getOperatorType();
+        if (filter instanceof BetweenComparisonOperator) {
+            final BetweenComparisonOperator pib = (BetweenComparisonOperator) filter;
             final LowerBoundaryType lbt = ogc_factory.createLowerBoundaryType();
             lbt.setExpression(extract(pib.getLowerBoundary()));
             final UpperBoundaryType ubt = ogc_factory.createUpperBoundaryType();
@@ -138,107 +113,102 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             bot.setLowerBoundary(lbt);
             bot.setUpperBoundary(ubt);
             return ogc_factory.createPropertyIsBetween(bot);
-        } else if (filter instanceof PropertyIsEqualTo) {
+        } else if (type == ComparisonOperatorName.PROPERTY_IS_EQUAL_TO) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsEqualToType bot = new PropertyIsEqualToType();
-            bot.getExpression().add(extract(pit.getExpression1()));
-            bot.getExpression().add(extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getOperand1()));
+            bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsEqualTo(bot);
-        } else if (filter instanceof PropertyIsGreaterThan) {
+        } else if (type == ComparisonOperatorName.PROPERTY_IS_GREATER_THAN) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsGreaterThanType bot = new PropertyIsGreaterThanType();
-            bot.getExpression().add(extract(pit.getExpression1()));
-            bot.getExpression().add(extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getOperand1()));
+            bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsGreaterThan(bot);
-        } else if (filter instanceof PropertyIsGreaterThanOrEqualTo) {
+        } else if (type == ComparisonOperatorName.PROPERTY_IS_GREATER_THAN_OR_EQUAL_TO) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsGreaterThanOrEqualToType bot = new PropertyIsGreaterThanOrEqualToType();
-            bot.getExpression().add(extract(pit.getExpression1()));
-            bot.getExpression().add(extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getOperand1()));
+            bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsGreaterThanOrEqualTo(bot);
-        } else if (filter instanceof PropertyIsLessThan) {
+        } else if (type == ComparisonOperatorName.PROPERTY_IS_LESS_THAN) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsLessThanType bot = new PropertyIsLessThanType();
-            bot.getExpression().add(extract(pit.getExpression1()));
-            bot.getExpression().add(extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getOperand1()));
+            bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsLessThan(bot);
-        } else if (filter instanceof PropertyIsLessThanOrEqualTo) {
+        } else if (type == ComparisonOperatorName.PROPERTY_IS_LESS_THAN_OR_EQUAL_TO) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsLessThanOrEqualToType bot = new PropertyIsLessThanOrEqualToType();
-            bot.getExpression().add(extract(pit.getExpression1()));
-            bot.getExpression().add(extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getOperand1()));
+            bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsLessThanOrEqualTo(bot);
-        } else if (filter instanceof PropertyIsLike) {
-            final PropertyIsLike pis = (PropertyIsLike) filter;
+        } else if (filter instanceof LikeOperator) {
+            final LikeOperator pis = (LikeOperator) filter;
+            final List<Expression> expressions = filter.getExpressions();
             final PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
-            bot.setEscape(pis.getEscape());
+            bot.setEscape(String.valueOf(pis.getEscapeChar()));
             final LiteralType lt = ogc_factory.createLiteralType();
-            lt.setContent(pis.getLiteral());
-            bot.getExpressions().add(ogc_factory.createLiteral(lt));
-            if (!(pis.getExpression() instanceof PropertyName)) {
-                throw new IllegalArgumentException("PropertyIsLike can support PropertyName only, but was a " + pis.getExpression());
+            lt.setContent(((Literal) expressions.get(1)).getValue());
+            bot.getElements().add(ogc_factory.createLiteral(lt));
+            final Expression expression = expressions.get(0);
+            if (!(expression instanceof ValueReference)) {
+                throw new IllegalArgumentException("LikeOperator can support ValueReference only, but was a " + expression);
             }
-            bot.getExpressions().add(0, extract(pis.getExpression()));
-            bot.setSingleChar(pis.getSingleChar());
-            bot.setWildCard(pis.getWildCard());
+            bot.getElements().add(0, extract(expression));
+            bot.setSingleChar(String.valueOf(pis.getSingleChar()));
+            bot.setWildCard(String.valueOf(pis.getWildCard()));
             return ogc_factory.createPropertyIsLike(bot);
-        } else if (filter instanceof PropertyIsNotEqualTo) {
+        } else if (type == ComparisonOperatorName.PROPERTY_IS_NOT_EQUAL_TO) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsNotEqualToType bot = new PropertyIsNotEqualToType();
-            bot.getExpression().add(extract(pit.getExpression1()));
-            bot.getExpression().add(extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getOperand1()));
+            bot.getExpression().add(extract(pit.getOperand2()));
             return ogc_factory.createPropertyIsNotEqualTo(bot);
-        } else if (filter instanceof PropertyIsNull) {
-            final PropertyIsNull pis = (PropertyIsNull) filter;
+        } else if (filter instanceof NullOperator) {
+            final NullOperator pis = (NullOperator) filter;
             final PropertyIsNullType bot = ogc_factory.createPropertyIsNullType();
-            bot.setExpression(extract(pis.getExpression()));
-
+            bot.setExpression(extract((Expression) pis.getExpressions().get(0)));
             return ogc_factory.createPropertyIsNull(bot);
-        } else if (filter instanceof And) {
-            final And and = (And) filter;
+        } else if (type == LogicalOperatorName.AND) {
+            final LogicalOperator and = (LogicalOperator) filter;
             final List<JAXBElement> lot = new ArrayList<>();
-            for (final Filter f : and.getChildren()) {
+            for (final Filter f : (List<Filter>) and.getOperands()) {
                 final JAXBElement<?> ele = visit(f);
                 if (ele != null && ele.getValue() instanceof LogicOpsType) {
                     lot.add(ele);
                 }
             }
-
             return ogc_factory.createAnd(new AndType(lot.toArray()));
-        } else if (filter instanceof Or) {
-            final Or or = (Or) filter;
+        } else if (type == LogicalOperatorName.OR) {
+            final LogicalOperator or = (LogicalOperator) filter;
             final List<JAXBElement> lot = new ArrayList<>();
-            for (final Filter f : or.getChildren()) {
+            for (final Filter f : (List<Filter>) or.getOperands()) {
                 final JAXBElement subFilter = visit(f);
                 if (subFilter != null) {
                     lot.add(subFilter);
                 }
             }
             return ogc_factory.createOr(new OrType(lot.toArray()));
-        } else if (filter instanceof Not) {
-            final Not not = (Not) filter;
-            final JAXBElement<?> sf = visit(not.getFilter());
-
+        } else if (type == LogicalOperatorName.NOT) {
+            final LogicalOperator not = (LogicalOperator) filter;
+            final JAXBElement<?> sf = visit((Filter) not.getOperands().get(0));
             //should not happen
             return ogc_factory.createNot(new NotType(sf));
-        } else if (filter instanceof FeatureId) {
+        } else if (filter instanceof ResourceId) {
             throw new IllegalArgumentException("Not parsed yet : " + filter);
-        } else if (filter instanceof BBOX) {
-            final BBOX bbox = (BBOX) filter;
-
-            final Expression left = bbox.getExpression1();
-            final Expression right = bbox.getExpression2();
-
+        } else if (type == SpatialOperatorName.BBOX) {
+            final BBOX bbox = BBOX.wrap((BinarySpatialOperator) filter);
+            final Expression left = bbox.getOperand1();
+            final Expression right = bbox.getOperand2();
             final String property;
             final double minx;
             final double maxx;
             final double miny;
             final double maxy;
             String srs;
-
-            if (left instanceof PropertyName) {
-                property = ((PropertyName) left).getPropertyName();
-
+            if (left instanceof ValueReference) {
+                property = ((ValueReference) left).getXPath();
                 final Object objGeom = ((Literal) right).getValue();
                 if (objGeom instanceof org.opengis.geometry.Envelope) {
                     final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) objGeom;
@@ -265,10 +235,8 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                 } else {
                     throw new IllegalArgumentException("invalid bbox element : " + filter);
                 }
-
-            } else if (right instanceof PropertyName) {
-                property = ((PropertyName) right).getPropertyName();
-
+            } else if (right instanceof ValueReference) {
+                property = ((ValueReference) right).getXPath();
                 final Object objGeom = ((Literal) left).getValue();
                 if (objGeom instanceof org.opengis.geometry.Envelope) {
                     final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) objGeom;
@@ -298,49 +266,31 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             } else {
                 throw new IllegalArgumentException("invalid bbox element : " + filter);
             }
-
             final BBOXType bbtype = new BBOXType(property, minx, miny, maxx, maxy, srs);
-
             return ogc_factory.createBBOX(bbtype);
-        } else if (filter instanceof Id) {
-            final PropertyName n = FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString());
-            Id idFilter = (Id) filter;
-            final Set<Identifier> identifiers = idFilter.getIdentifiers();
-            if (identifiers.isEmpty()) {
-                throw new IllegalArgumentException("Cannot filter an empty identifier.");
-            } else if (identifiers.size() > 1) {
-                throw new IllegalArgumentException("Multiple Identifier matching is not supported by Filter 2.0");
-            }
-
-            final Identifier id = identifiers.iterator().next();
-            if (id.getID() instanceof String) {
-                final ResourceIdType rId = ogc_factory.createResourceIdType();
-                rId.setRid((String) id.getID());
-                return ogc_factory.createResourceId(rId);
-            } else {
-                throw new IllegalArgumentException("Given identifier is not a string:" + (id.getID() == null ? "null" : id.getID().getClass()));
-            }
-
+        } else if (filter instanceof ResourceId) {
+            final ValueReference n = FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            ResourceId idFilter = (ResourceId) filter;
+            final String id = idFilter.getIdentifier();
+            final ResourceIdType rId = ogc_factory.createResourceIdType();
+            rId.setRid(id);
+            return ogc_factory.createResourceId(rId);
         } else if (filter instanceof BinarySpatialOperator) {
             final BinarySpatialOperator spatialOp = (BinarySpatialOperator) filter;
-
-            Expression exp1 = spatialOp.getExpression1();
-            Expression exp2 = spatialOp.getExpression2();
-
-            if (!(exp1 instanceof PropertyName)) {
+            Expression exp1 = spatialOp.getOperand1();
+            Expression exp2 = spatialOp.getOperand2();
+            if (!(exp1 instanceof ValueReference)) {
                 //flip order
                 final Expression ex = exp1;
                 exp1 = exp2;
                 exp2 = ex;
             }
-
-            if (!(exp1 instanceof PropertyName)) {
+            if (!(exp1 instanceof ValueReference)) {
                 throw new IllegalArgumentException("Filter can not be transformed in xml filter, "
                         + "expression are not of the required type ");
             } else if (!(exp2 instanceof Literal)) {
                 throw new IllegalArgumentException("Spatial operator should use a literal object containing the filtering geometry.");
             }
-
             final JAXBElement pnt = extract(exp1);
             final String pName;
             if (pnt.getValue() instanceof String) {
@@ -348,9 +298,7 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
             } else {
                 throw new IllegalArgumentException("Property name cannot be cast to string.");
             }
-
             final JAXBElement<?> geometryExpression;
-
             final Object geom = ((Literal) exp2).getValue();
             if (geom instanceof Geometry) {
                 final Geometry jts = (Geometry) geom;
@@ -362,14 +310,12 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                     Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                     crs = null;
                 }
-
                 final AbstractGeometry gmlGeom;
                 try {
                     gmlGeom = JTStoGeometry.toGML("3.2.1", jts);
                 } catch (FactoryException ex) {
                     throw new IllegalArgumentException(ex);
                 }
-
                 // TODO use gml method to return any JAXBElement
                 if (gmlGeom instanceof PointType) {
                     geometryExpression = gml_factory.createPoint((PointType) gmlGeom);
@@ -392,18 +338,13 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                 } else {
                     throw new IllegalArgumentException("Unexpected Geometry type:" + gmlGeom.getClass().getName());
                 }
-
             } else if (geom instanceof org.opengis.geometry.Geometry) {
                 throw new UnsupportedOperationException("No valid ISO implementation avaiable for now.");
-
             } else if (geom instanceof org.opengis.geometry.Envelope) {
                 final org.opengis.geometry.Envelope genv = (org.opengis.geometry.Envelope) geom;
                 EnvelopeType ee = gml_factory.createEnvelopeType();
-
                 ee.setSrsDimension(genv.getDimension());
-
                 if (genv.getCoordinateReferenceSystem() != null) {
-
                     String urn;
                     try {
                         urn = IdentifiedObjects.lookupURN(genv.getCoordinateReferenceSystem(), null);
@@ -411,114 +352,111 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                         Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                         urn = null;
                     }
-
                     if (urn == null) {
                         urn = IdentifiedObjects.getIdentifierOrName(genv.getCoordinateReferenceSystem());
                     }
-
                     if (urn != null) {
                         ee.setSrsName(urn);
                     }
                 }
-
                 ee.setLowerCorner(new DirectPositionType(genv.getLowerCorner(), false));
                 ee.setUpperCorner(new DirectPositionType(genv.getUpperCorner(), false));
-
                 geometryExpression = gml_factory.createEnvelope(ee);
-
             } else {
                 throw new IllegalArgumentException("Type is neither geometric nor envelope.");
             }
-
-            if (filter instanceof Beyond) {
+            if (type == DistanceOperatorName.BEYOND) {
                 throw new UnsupportedOperationException();
-
-            } else if (filter instanceof Contains) {
+            } else if (type == SpatialOperatorName.CONTAINS) {
                 return ogc_factory.createContains(new ContainsType(pName, geometryExpression));
-            } else if (filter instanceof Crosses) {
+            } else if (type == SpatialOperatorName.CROSSES) {
                 ogc_factory.createCrosses(new CrossesType(pName, geometryExpression));
-            } else if (filter instanceof DWithin) {
-                DWithin f = (DWithin) filter;
-                return ogc_factory.createDWithin(new DWithinType(pName, geometryExpression, f.getDistance(), f.getDistanceUnits()));
-            } else if (filter instanceof Disjoint) {
+            } else if (type == DistanceOperatorName.WITHIN) {
+                Quantity q = ((DistanceOperator) filter).getDistance();
+                return ogc_factory.createDWithin(new DWithinType(pName, geometryExpression, q.getValue().doubleValue(), q.getUnit().toString()));
+            } else if (type == SpatialOperatorName.DISJOINT) {
                 return ogc_factory.createDisjoint(new DisjointType(pName, geometryExpression));
-            } else if (filter instanceof Equals) {
+            } else if (type == SpatialOperatorName.EQUALS) {
                 return ogc_factory.createEquals(new EqualsType(pName, geometryExpression));
-            } else if (filter instanceof Intersects) {
+            } else if (type == SpatialOperatorName.INTERSECTS) {
                 return ogc_factory.createIntersects(new IntersectsType(pName, geometryExpression));
-            } else if (filter instanceof Overlaps) {
+            } else if (type == SpatialOperatorName.OVERLAPS) {
                 return ogc_factory.createOverlaps(new OverlapsType(pName, geometryExpression));
-            } else if (filter instanceof Touches) {
+            } else if (type == SpatialOperatorName.TOUCHES) {
                 return ogc_factory.createTouches(new TouchesType(pName, geometryExpression));
-            } else if (filter instanceof Within) {
+            } else if (type == SpatialOperatorName.WITHIN) {
                 return ogc_factory.createWithin(new WithinType(pName, geometryExpression));
             }
-
             throw new IllegalArgumentException("Unknown filter element : " + filter + " class :" + filter.getClass());
         }
-
         throw new IllegalArgumentException("Unknown filter element : " + filter + " class :" + filter.getClass());
     }
 
     public JAXBElement<?> extract(final Expression exp) {
-        JAXBElement<?> jax = null;
-
-        if (exp instanceof org.opengis.filter.expression.Function) {
-            final org.opengis.filter.expression.Function function = (org.opengis.filter.expression.Function) exp;
-            final FunctionType ft = ogc_factory.createFunctionType();
-            ft.setName(function.getName());
-            for (final Expression ex : function.getParameters()) {
-                ft.getExpression().add(extract(ex));
+        final JAXBElement<?> jax;
+        final List<Expression<? super Object, ?>> parameters = exp.getParameters();
+        switch (exp.getFunctionName().tip().toString()) {
+            case "Literal": {
+                final LiteralType literal = ogc_factory.createLiteralType();
+                Object val = ((Literal) exp).getValue();
+                if (val instanceof Color) {
+                    val = FilterUtilities.toString((Color)val);
+                }
+                literal.setContent(val == null? null : val.toString());
+                jax = ogc_factory.createLiteral(literal);
+                break;
             }
-            jax = ogc_factory.createFunction(ft);
-        } else if (exp instanceof Literal) {
-            final LiteralType literal = ogc_factory.createLiteralType();
-            Object val = ((Literal) exp).getValue();
-            if (val instanceof Color) {
-                val = FilterUtilities.toString((Color)val);
+            case "Multiply": {
+                final FunctionType function = convert(exp);
+                function.setName(OGCJAXBStatics.EXPRESSION_MUL);
+                jax = ogc_factory.createFunction(function);
+                break;
             }
-            literal.setContent(val == null? null : val.toString());
-            jax = ogc_factory.createLiteral(literal);
-
-        } else if (exp instanceof Multiply) {
-            final FunctionType function = convert((Multiply) exp);
-            function.setName(OGCJAXBStatics.EXPRESSION_MUL);
-            jax = ogc_factory.createFunction(function);
-        } else if (exp instanceof Add) {
-            final FunctionType function = convert((Add) exp);
-            function.setName(OGCJAXBStatics.EXPRESSION_ADD);
-            jax = ogc_factory.createFunction(function);
-        } else if (exp instanceof Divide) {
-            final FunctionType function = convert((Divide) exp);
-            function.setName(OGCJAXBStatics.EXPRESSION_DIV);
-            jax = ogc_factory.createFunction(function);
-        } else if (exp instanceof Subtract) {
-            final FunctionType function = convert((Subtract) exp);
-            function.setName(OGCJAXBStatics.EXPRESSION_SUB);
-            jax = ogc_factory.createFunction(function);
-        } else if (exp instanceof PropertyName) {
-            jax = ogc_factory.createValueReference(((PropertyName) exp).getPropertyName());
-        } else if (exp instanceof NilExpression) {
-            //DO nothing on NILL expression
-        } else {
-            throw new IllegalArgumentException("Unknown expression element :" + exp);
+            case "Add": {
+                final FunctionType function = convert(exp);
+                function.setName(OGCJAXBStatics.EXPRESSION_ADD);
+                jax = ogc_factory.createFunction(function);
+                break;
+            }
+            case "Divide": {
+                final FunctionType function = convert(exp);
+                function.setName(OGCJAXBStatics.EXPRESSION_DIV);
+                jax = ogc_factory.createFunction(function);
+                break;
+            }
+            case "Subtract": {
+                final FunctionType function = convert(exp);
+                function.setName(OGCJAXBStatics.EXPRESSION_SUB);
+                jax = ogc_factory.createFunction(function);
+                break;
+            }
+            case "PropertyName":
+            case "ValueReference": {
+                jax = ogc_factory.createValueReference(((ValueReference) exp).getXPath());
+                break;
+            }
+            default: {
+                final FunctionType ft = ogc_factory.createFunctionType();
+                ft.setName(exp.getFunctionName().tip().toString());
+                for (final Expression ex : parameters) {
+                    ft.getExpression().add(extract(ex));
+                }
+                jax = ogc_factory.createFunction(ft);
+                break;
+            }
         }
-
         return jax;
     }
 
-    public List<JAXBElement<? extends AbstractIdType>> visit(final Id filter) {
-        return filter.getIdentifiers().stream()
-                .map(Identifier::getID)
-                .map(id -> new ResourceIdType(id == null? null : id.toString()))
-                .map(rid -> ogc_factory.createResourceId(rid))
-                .collect(Collectors.toList());
+    public JAXBElement<? extends AbstractIdType> visit(final ResourceId filter) {
+        return ogc_factory.createResourceId(new ResourceIdType(filter.getIdentifier()));
     }
 
-    private FunctionType convert(final BinaryExpression source) {
+    private FunctionType convert(final Expression source) {
+        List<Expression> parameters = source.getParameters();
         final FunctionType function = ogc_factory.createFunctionType();
-        function.getExpression().add(extract(source.getExpression1()));
-        function.getExpression().add(extract(source.getExpression2()));
+        function.getExpression().add(extract(parameters.get(0)));
+        function.getExpression().add(extract(parameters.get(1)));
         return function;
     }
 
@@ -527,14 +465,11 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
         if (filter instanceof FilterType) {
             return (FilterType) filter;
         }
-
         final FilterType ft = ogc_factory.createFilterType();
-
-        if (filter instanceof Id) {
-            ft.getId().addAll(visit((Id)filter));
+        if (filter instanceof ResourceId) {
+            ft.getId().add(visit((ResourceId)filter));
         } else {
             final JAXBElement<?> sf = visit(filter);
-
             if (sf == null) {
                 return null;
             } else if (sf.getValue() instanceof ComparisonOpsType) {
@@ -548,7 +483,6 @@ public class FilterToOGC200Converter implements FilterToOGCConverter<FilterType>
                 throw new IllegalArgumentException("invalid filter element : " + sf);
             }
         }
-
         return ft;
     }
 }

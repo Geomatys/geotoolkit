@@ -19,7 +19,7 @@ package org.geotoolkit.ogc.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.Or;
+import org.opengis.filter.LogicalOperatorName;
 
 /**
  *
@@ -28,13 +28,11 @@ import org.opengis.filter.Or;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Or")
-public class OrType extends BinaryLogicOpType implements Or {
-
+public class OrType extends BinaryLogicOpType {
     /**
      * An empty constructor used by JAXB
      */
     public OrType() {
-
     }
 
     /**
@@ -52,6 +50,11 @@ public class OrType extends BinaryLogicOpType implements Or {
     @Override
     public LogicOpsType getClone() {
         return new OrType(this);
+    }
+
+    @Override
+    public LogicalOperatorName getOperatorType() {
+        return LogicalOperatorName.OR;
     }
 
     @Override

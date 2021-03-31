@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.ScalarCapabilities;
+import org.geotoolkit.filter.capability.ScalarCapabilities;
 
 
 /**
@@ -44,14 +44,12 @@ import org.opengis.filter.capability.ScalarCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Scalar_CapabilitiesType", propOrder = {
     "logicalOperatorsOrComparisonOperatorsOrArithmeticOperators"
 })
-public class ScalarCapabilitiesType implements ScalarCapabilities {
+public class ScalarCapabilitiesType extends ScalarCapabilities {
 
     @XmlElements({
         @XmlElement(name = "Arithmetic_Operators", type = ArithmeticOperatorsType.class),
@@ -67,8 +65,6 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
      * {@link ArithmeticOperatorsType }
      * {@link ComparisonOperatorsType }
      * {@link LogicalOperators }
-     *
-     *
      */
     public List<Object> getLogicalOperatorsOrComparisonOperatorsOrArithmeticOperators() {
         if (logicalOperatorsOrComparisonOperatorsOrArithmeticOperators == null) {
@@ -106,5 +102,4 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
         }
         return null;
     }
-
 }

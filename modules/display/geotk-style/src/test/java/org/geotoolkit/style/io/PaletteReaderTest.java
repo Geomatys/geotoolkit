@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
@@ -32,7 +33,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ColorMap;
 import org.opengis.style.StyleFactory;
 
@@ -43,7 +44,7 @@ import org.opengis.style.StyleFactory;
  */
 public class PaletteReaderTest {
 
-    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    protected static final FilterFactory FF = FilterUtilities.FF;
     protected static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     @Test
@@ -110,12 +111,12 @@ public class PaletteReaderTest {
             Entry<Expression,Expression> expected = null;
             switch (i) {
                 case  0 : expected = new AbstractMap.SimpleEntry(StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(0f,0f,0f,0f))); break;
-                case  1 : expected = new AbstractMap.SimpleEntry(FF.literal(0), SF.literal(new Color(  0,  0,143))); break;
-                case  2 : expected = new AbstractMap.SimpleEntry(FF.literal(1), SF.literal(new Color(  0,  0,159))); break;
-                case  3 : expected = new AbstractMap.SimpleEntry(FF.literal(2), SF.literal(new Color( 50,  0,175))); break;
-                case  4 : expected = new AbstractMap.SimpleEntry(FF.literal(3), SF.literal(new Color(  0, 12,191))); break;
-                case  5 : expected = new AbstractMap.SimpleEntry(FF.literal(4), SF.literal(new Color(  0,  0,207))); break;
-                case  6 : expected = new AbstractMap.SimpleEntry(FF.literal(5), SF.literal(new Color(  0,  0,223))); break;
+                case  1 : expected = new AbstractMap.SimpleEntry(FF.literal(0d), SF.literal(new Color(  0,  0,143))); break;
+                case  2 : expected = new AbstractMap.SimpleEntry(FF.literal(1d), SF.literal(new Color(  0,  0,159))); break;
+                case  3 : expected = new AbstractMap.SimpleEntry(FF.literal(2d), SF.literal(new Color( 50,  0,175))); break;
+                case  4 : expected = new AbstractMap.SimpleEntry(FF.literal(3d), SF.literal(new Color(  0, 12,191))); break;
+                case  5 : expected = new AbstractMap.SimpleEntry(FF.literal(4d), SF.literal(new Color(  0,  0,207))); break;
+                case  6 : expected = new AbstractMap.SimpleEntry(FF.literal(5d), SF.literal(new Color(  0,  0,223))); break;
                 case  7 : expected = new AbstractMap.SimpleEntry(FF.literal(Double.NaN), SF.literal(new Color(  0,  0, 0, 0))); break;
                 default : fail("Unexpected number of elements.");
             }
@@ -159,26 +160,26 @@ public class PaletteReaderTest {
             Entry<Expression,Expression> expected = null;
             switch (i) {
                 case  0 : expected = new AbstractMap.SimpleEntry(StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(0f,0f,0f,0f))); break;
-                case  1 : expected = new AbstractMap.SimpleEntry(FF.literal(-6000), SF.literal(Color.getHSBColor(255f / 360f, 0.6f, 1))); break;
-                case  2 : expected = new AbstractMap.SimpleEntry(FF.literal(-5500), SF.literal(Color.getHSBColor(240f / 360f, 0.6f, 1))); break;
-                case  3 : expected = new AbstractMap.SimpleEntry(FF.literal(-5000), SF.literal(Color.getHSBColor(225f / 360f, 0.6f, 1))); break;
-                case  4 : expected = new AbstractMap.SimpleEntry(FF.literal(-4500), SF.literal(Color.getHSBColor(210f / 360f, 0.6f, 1))); break;
-                case  5 : expected = new AbstractMap.SimpleEntry(FF.literal(-4000), SF.literal(Color.getHSBColor(195f / 360f, 0.6f, 1))); break;
-                case  6 : expected = new AbstractMap.SimpleEntry(FF.literal(-3500), SF.literal(Color.getHSBColor(180f / 360f, 0.6f, 1))); break;
-                case  7 : expected = new AbstractMap.SimpleEntry(FF.literal(-3000), SF.literal(Color.getHSBColor(165f / 360f, 0.6f, 1))); break;
-                case  8 : expected = new AbstractMap.SimpleEntry(FF.literal(-2500), SF.literal(Color.getHSBColor(150f / 360f, 0.6f, 1))); break;
-                case  9 : expected = new AbstractMap.SimpleEntry(FF.literal(-2000), SF.literal(Color.getHSBColor(135f / 360f, 0.6f, 1))); break;
-                case 10 : expected = new AbstractMap.SimpleEntry(FF.literal(-1500), SF.literal(Color.getHSBColor(120f / 360f, 0.6f, 1))); break;
-                case 11 : expected = new AbstractMap.SimpleEntry(FF.literal(-1000), SF.literal(Color.getHSBColor(105f / 360f, 0.6f, 1))); break;
-                case 12 : expected = new AbstractMap.SimpleEntry(FF.literal( -500), SF.literal(Color.getHSBColor( 90f / 360f, 0.6f, 1))); break;
-                case 13 : expected = new AbstractMap.SimpleEntry(FF.literal(    0), SF.literal(Color.getHSBColor( 75f / 360f, 0.6f, 1))); break;
+                case  1 : expected = new AbstractMap.SimpleEntry(FF.literal(-6000d), SF.literal(Color.getHSBColor(255f / 360f, 0.6f, 1))); break;
+                case  2 : expected = new AbstractMap.SimpleEntry(FF.literal(-5500d), SF.literal(Color.getHSBColor(240f / 360f, 0.6f, 1))); break;
+                case  3 : expected = new AbstractMap.SimpleEntry(FF.literal(-5000d), SF.literal(Color.getHSBColor(225f / 360f, 0.6f, 1))); break;
+                case  4 : expected = new AbstractMap.SimpleEntry(FF.literal(-4500d), SF.literal(Color.getHSBColor(210f / 360f, 0.6f, 1))); break;
+                case  5 : expected = new AbstractMap.SimpleEntry(FF.literal(-4000d), SF.literal(Color.getHSBColor(195f / 360f, 0.6f, 1))); break;
+                case  6 : expected = new AbstractMap.SimpleEntry(FF.literal(-3500d), SF.literal(Color.getHSBColor(180f / 360f, 0.6f, 1))); break;
+                case  7 : expected = new AbstractMap.SimpleEntry(FF.literal(-3000d), SF.literal(Color.getHSBColor(165f / 360f, 0.6f, 1))); break;
+                case  8 : expected = new AbstractMap.SimpleEntry(FF.literal(-2500d), SF.literal(Color.getHSBColor(150f / 360f, 0.6f, 1))); break;
+                case  9 : expected = new AbstractMap.SimpleEntry(FF.literal(-2000d), SF.literal(Color.getHSBColor(135f / 360f, 0.6f, 1))); break;
+                case 10 : expected = new AbstractMap.SimpleEntry(FF.literal(-1500d), SF.literal(Color.getHSBColor(120f / 360f, 0.6f, 1))); break;
+                case 11 : expected = new AbstractMap.SimpleEntry(FF.literal(-1000d), SF.literal(Color.getHSBColor(105f / 360f, 0.6f, 1))); break;
+                case 12 : expected = new AbstractMap.SimpleEntry(FF.literal( -500d), SF.literal(Color.getHSBColor( 90f / 360f, 0.6f, 1))); break;
+                case 13 : expected = new AbstractMap.SimpleEntry(FF.literal(    0d), SF.literal(Color.getHSBColor( 75f / 360f, 0.6f, 1))); break;
                 case 14 : expected = new AbstractMap.SimpleEntry(FF.literal(Math.nextUp(0.0)), SF.literal(Color.getHSBColor( 60f / 360f, 0.35f, 1))); break;
-                case 15 : expected = new AbstractMap.SimpleEntry(FF.literal(  500), SF.literal(Color.getHSBColor( 40f / 360f, 0.35f, 1))); break;
-                case 16 : expected = new AbstractMap.SimpleEntry(FF.literal( 1000), SF.literal(Color.getHSBColor( 20f / 360f, 0.35f, 1))); break;
-                case 17 : expected = new AbstractMap.SimpleEntry(FF.literal( 1500), SF.literal(Color.getHSBColor(  0f / 360f, 0.35f, 1))); break;
-                case 18 : expected = new AbstractMap.SimpleEntry(FF.literal( 2000), SF.literal(Color.getHSBColor(345f / 360f, 0.3f, 1))); break;
-                case 19 : expected = new AbstractMap.SimpleEntry(FF.literal( 2500), SF.literal(Color.getHSBColor(330f / 360f, 0.25f, 1))); break;
-                case 20 : expected = new AbstractMap.SimpleEntry(FF.literal( 3000), SF.literal(Color.getHSBColor(315f / 360f,  0.2f, 1))); break;
+                case 15 : expected = new AbstractMap.SimpleEntry(FF.literal(  500d), SF.literal(Color.getHSBColor( 40f / 360f, 0.35f, 1))); break;
+                case 16 : expected = new AbstractMap.SimpleEntry(FF.literal( 1000d), SF.literal(Color.getHSBColor( 20f / 360f, 0.35f, 1))); break;
+                case 17 : expected = new AbstractMap.SimpleEntry(FF.literal( 1500d), SF.literal(Color.getHSBColor(  0f / 360f, 0.35f, 1))); break;
+                case 18 : expected = new AbstractMap.SimpleEntry(FF.literal( 2000d), SF.literal(Color.getHSBColor(345f / 360f, 0.3f, 1))); break;
+                case 19 : expected = new AbstractMap.SimpleEntry(FF.literal( 2500d), SF.literal(Color.getHSBColor(330f / 360f, 0.25f, 1))); break;
+                case 20 : expected = new AbstractMap.SimpleEntry(FF.literal( 3000d), SF.literal(Color.getHSBColor(315f / 360f,  0.2f, 1))); break;
                 case 21 : expected = new AbstractMap.SimpleEntry(FF.literal(Double.NaN), SF.literal(new Color(  0,  0, 0, 0))); break;
                 default : fail("Unexpected number of elements.");
             }
@@ -207,12 +208,12 @@ public class PaletteReaderTest {
             Entry<Expression,Expression> expected = null;
             switch (i) {
                 case  0 : expected = new AbstractMap.SimpleEntry(StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(143,0,0))); break;
-                case  1 : expected = new AbstractMap.SimpleEntry(FF.literal(   0), SF.literal(new Color(244,  0,  0))); break;
-                case  2 : expected = new AbstractMap.SimpleEntry(FF.literal( 500), SF.literal(new Color(255, 89,  0))); break;
-                case  3 : expected = new AbstractMap.SimpleEntry(FF.literal(1000), SF.literal(new Color(236,255, 34))); break;
-                case  4 : expected = new AbstractMap.SimpleEntry(FF.literal(3500), SF.literal(new Color(  0,  0,244))); break;
-                case  5 : expected = new AbstractMap.SimpleEntry(FF.literal(4500), SF.literal(new Color(  0,  0,143))); break;
-                case  6 : expected = new AbstractMap.SimpleEntry(FF.literal(5000), SF.literal(new Color(0f,0f,0f,0f))); break;
+                case  1 : expected = new AbstractMap.SimpleEntry(FF.literal(   0d), SF.literal(new Color(244,  0,  0))); break;
+                case  2 : expected = new AbstractMap.SimpleEntry(FF.literal( 500d), SF.literal(new Color(255, 89,  0))); break;
+                case  3 : expected = new AbstractMap.SimpleEntry(FF.literal(1000d), SF.literal(new Color(236,255, 34))); break;
+                case  4 : expected = new AbstractMap.SimpleEntry(FF.literal(3500d), SF.literal(new Color(  0,  0,244))); break;
+                case  5 : expected = new AbstractMap.SimpleEntry(FF.literal(4500d), SF.literal(new Color(  0,  0,143))); break;
+                case  6 : expected = new AbstractMap.SimpleEntry(FF.literal(5000d), SF.literal(new Color(0f,0f,0f,0f))); break;
                 case  7 : expected = new AbstractMap.SimpleEntry(FF.literal(Double.NaN), SF.literal(new Color(  0,  0, 0, 0))); break;
                 default : fail("Unexpected number of elements.");
             }

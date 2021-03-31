@@ -50,7 +50,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.store.Directory;
 
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
@@ -64,7 +64,6 @@ import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCSpatialQuery.*;
 
-import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.junit.*;
@@ -74,6 +73,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.index.tree.manager.postgres.PGDataSource;
 
 /**
@@ -86,7 +86,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final FilterFactory2 FF = new DefaultFilterFactory2();
+    private static final FilterFactory2 FF = FilterUtilities.FF;
     private static final double TOLERANCE = 0.001;
 
     private static final Path directory = Paths.get("luceneEnvolopeOnlyTest");
@@ -138,7 +138,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void BBOXTest() throws Exception {
-
         /*
          * first bbox
          */
@@ -147,7 +146,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
         //we perform a lucene query
         TopDocs docs = searcher.search(serialQuery, 15);
@@ -164,11 +163,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-
         /*
          * The same box in a diferent crs
          */
@@ -180,7 +178,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -198,11 +196,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-
         /*
          * second bbox
          */
@@ -211,7 +208,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -229,12 +226,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
          //we verify that we obtain the correct results
-        assertEquals(nbResults.value, 4);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 5"));
-
         /*
          * third bbox
          */
@@ -243,7 +239,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -261,7 +257,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
          //we verify that we obtain the correct results
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 5"));
     }
 
@@ -284,7 +280,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
         //we perform a lucene query
         TopDocs docs = searcher.search(serialQuery, 15);
@@ -301,11 +297,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 2"  ));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"  ));
-
         /*
          * case 2: The same box in a diferent crs.
          */
@@ -318,7 +313,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -336,11 +331,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 2"  ));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"  ));
-
         /*
          * case 3: line
          */
@@ -354,7 +348,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -362,8 +356,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-
 
         results = new ArrayList<>();
         for (int i = 0; i < nbResults.value; i++) {
@@ -373,12 +365,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
-
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-
         /*
          * case 4: same line diferent CRS
          */
@@ -392,7 +382,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -410,10 +400,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 2"  ));
         assertTrue(results.contains("box 2 projected"));
-
         /*
          * case 5: another line
          */
@@ -426,7 +415,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -444,9 +433,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 3"  ));
-
         /*
          * case 6: same line another CRS
          */
@@ -459,7 +447,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -477,7 +465,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 3"  ));
     }
 
@@ -486,7 +474,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void equalsTest() throws Exception {
-
         /*
          * case 1: bbox.
          */
@@ -494,11 +481,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         double max1[] = { 50,  15};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
         bbox.setCoordinateReferenceSystem(CommonCRS.defaultGeographic());
-        filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(bbox));
+        filter = FF.equals(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -516,10 +503,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 3"));
-
-
         /*
          * case 2: line
          */
@@ -528,11 +513,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
             new Coordinate(25, 0),
         });
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
-        filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
+        filter = FF.equals(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -550,19 +535,17 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
-
+        assertEquals(0, nbResults.value);
         /*
          * case 3: point
          */
         geom = GF.createPoint(new Coordinate(-10, 10));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
-        filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
+        filter = FF.equals(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -580,7 +563,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
          //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
+        assertEquals(0, nbResults.value);
     }
 
     /**
@@ -588,7 +571,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void containsTest() throws Exception {
-
         /*
          * case 1: BOX/BOX.
          */
@@ -600,7 +582,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -618,9 +600,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 1"));
-
         /*
          * case 2: BOX/Line
          */
@@ -633,7 +614,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -651,9 +632,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 4"));
-
         /*
          * case 3: BOX/point
          */
@@ -663,7 +643,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -681,9 +661,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 4"));
-
         /*
          * case 4: Line/point
          */
@@ -693,7 +672,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -710,10 +689,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
-
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
+        assertEquals(0, nbResults.value);
         /*
          * case 5: Line/Line
          */
@@ -726,7 +703,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -744,7 +721,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
+        assertEquals(0, nbResults.value);
     }
 
     /**
@@ -752,10 +729,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void disjointTest() throws Exception {
-
         /*
          * case 1: point
-         *
          */
         geom = GF.createPoint(new Coordinate(-25, 5));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -763,7 +738,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -781,17 +756,15 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 5);
+        assertEquals(5, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 2: another point intersecting with the two registered lines.
          *  (equals to point 3)
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -799,7 +772,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -817,17 +790,15 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 6);
+        assertEquals(6, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 3: a line
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(-40, 0),
@@ -838,7 +809,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -856,15 +827,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 4);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 4: another line
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(7, 40),
@@ -875,7 +844,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -893,15 +862,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 4);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 5: a BBOX
-         *
          */
         double min1[] = {-20, -20};
         double max1[] = { 20,  20};
@@ -911,7 +878,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -929,14 +896,12 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 1"  ));
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 6: another BBOX
-         *
          */
         double min2[] = {-50, -60};
         double max2[] = { -5,  60};
@@ -946,7 +911,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -964,13 +929,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 4);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
-
-
     }
 
      /**
@@ -978,10 +941,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void touchesTest() throws Exception {
-
         /*
          * case 1: point (equals to point 3)
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -989,7 +950,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1007,11 +968,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
+        assertEquals(0, nbResults.value);
         /*
          * case 2: another point
-         *
          */
         geom = GF.createPoint(new Coordinate(-30, 5));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1019,7 +978,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1037,12 +996,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 4"));
-
         /*
          * case 3: another point
-         *
          */
         geom = GF.createPoint(new Coordinate(-25, -50));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1050,7 +1007,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1068,12 +1025,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 1"));
-
         /*
          * case 4: another point
-         *
          */
         geom = GF.createPoint(new Coordinate(0, -10));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1081,9 +1036,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
-
 
         //we perform a lucene query
         docs = searcher.search(serialQuery, 15);
@@ -1100,12 +1054,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-//        assertTrue(results.contains("line 2")); //point intersect or in within, it is not consider "touches" in jts
-
+        assertEquals(0, nbResults.value);
+        assertFalse(results.contains("line 2")); //point intersect or in within, it is not consider "touches" in jts
         /*
          * case 5: another point
-         *
          */
         geom = GF.createPoint(new Coordinate(40, 20));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1113,7 +1065,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1131,12 +1083,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-//        assertTrue(results.contains("point 4")); //same point intersect,within,overlaps but not consider "touches"
-
+        assertEquals(0, nbResults.value);
+        assertFalse(results.contains("point 4")); //same point intersect,within,overlaps but not consider "touches"
         /*
          * case 6: a line
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(7, 30),
@@ -1147,7 +1097,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1165,11 +1115,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
+        assertEquals(0, nbResults.value);
         /*
          * case 7: another line
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(-15, 3),
@@ -1180,7 +1128,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1198,14 +1146,12 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
-
-         /*
+        /*
          * case 8: another line
          *
-
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(0, 0),
             new Coordinate(-40, -40),
@@ -1215,7 +1161,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getSpatialFilter(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1233,12 +1179,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 1")); */
-
         /*
          * case 9: a BBOX
-         *
          */
         double min1[] = {-15,   0};
         double max1[] = { 30,  50};
@@ -1248,7 +1192,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1266,7 +1210,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("box 4"  ));
     }
@@ -1276,7 +1220,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void withinTest() throws Exception {
-
         /*
          * case 1: BBOX
          */
@@ -1288,7 +1231,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1306,10 +1249,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-
         /*
          * case 2: another BBOX.
          */
@@ -1321,7 +1263,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1339,13 +1281,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-
         /*
          * case 6: a line
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(-40, 30),
@@ -1356,7 +1296,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1374,9 +1314,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-//        assertTrue(results.contains("point 4")); //intersect or crosses but not within
-//        assertTrue(results.contains("point 5")); // within is only when a point in between two nodes
+        assertEquals(0, nbResults.value);
+        assertFalse(results.contains("point 4")); //intersect or crosses but not within
+        assertFalse(results.contains("point 5")); // within is only when a point in between two nodes
     }
 
     /**
@@ -1384,10 +1324,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void crossesTest() throws Exception {
-
         /*
          * case 1: a line
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(40, 10),
@@ -1398,7 +1336,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1416,13 +1354,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 3"));
-//        assertTrue(results.contains("point 4")); //a point cant not cross anything
-
+        assertFalse(results.contains("point 4")); //a point cant not cross anything
         /*
          * case 2: another line
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(40, 10),
@@ -1433,7 +1369,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1451,12 +1387,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 3"));
-
         /*
          * case 3: another line
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(-25, 5),
@@ -1467,7 +1401,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1485,13 +1419,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 1"));
-
         /*
          * case 4: point (equals to point 3)
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1499,7 +1431,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1517,15 +1449,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-//        assertTrue(results.contains("point 3")); // crossing a point is not possible
-//        assertTrue(results.contains("line 1"));
-//        assertTrue(results.contains("line 1 projected"));
-//        assertTrue(results.contains("line 2"));
-
+        assertEquals(0, nbResults.value);
+        assertFalse(results.contains("point 3")); // crossing a point is not possible
+        assertFalse(results.contains("line 1"));
+        assertFalse(results.contains("line 1 projected"));
+        assertFalse(results.contains("line 2"));
         /*
          * case 5: another point
-         *
          */
         geom = GF.createPoint(new Coordinate(5, 13));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1533,7 +1463,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1551,13 +1481,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-//        assertTrue(results.contains("box 2"));            //crossing a point is not possible
-//        assertTrue(results.contains("box 2 projected"));
-
+        assertEquals(0, nbResults.value);
+        assertFalse(results.contains("box 2"));            //crossing a point is not possible
+        assertFalse(results.contains("box 2 projected"));
         /*
          * case 6: a BBOX
-         *
          */
         double min1[] = {-10, -20};
         double max1[] = { 20,   5};
@@ -1567,7 +1495,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         //we perform a lucene query
@@ -1585,8 +1513,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-//        assertTrue(results.contains("point 2"));     //points can not cross anything
+        assertEquals(0, nbResults.value);
+        assertFalse(results.contains("point 2"));     //points can not cross anything
     }
 
     /**
@@ -1594,10 +1522,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void mulitpleFilterTest() throws Exception {
-
-         /*
+        /*
          * case 1: a BBOX TOUCHES filter OR a BBOX filter
-         *
          */
         double min1[] = { 25, -10};
         double max1[] = { 60,  50};
@@ -1607,13 +1533,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         org.opengis.filter.Filter filter2 = FF.bbox(GEOMETRY_PROPERTY, 25,-10,60,50,"CRS:84");
         SpatialQuery spatialQuery1 = new SpatialQuery(wrap(filter1));
         SpatialQuery spatialQuery2 = new SpatialQuery(wrap(filter2));
-
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery1.getQuery(), BooleanClause.Occur.SHOULD)
                                .add(spatialQuery2.getQuery(), BooleanClause.Occur.SHOULD)
                                .build();
-
-
 
         //we perform a lucene query
         TopDocs docs = searcher.search(serialQuery, 15);
@@ -1630,23 +1553,20 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("box 5"));
 
         // TODO add precision
         //assertTrue(results.contains("line 1 projected"));
-
         /*
          * case 2: same test with AND instead of OR
-         *
          */
         serialQuery = new BooleanQuery.Builder()
                                 .add(spatialQuery1.getQuery(), BooleanClause.Occur.MUST)
                                 .add(spatialQuery2.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
-
 
         //we perform a lucene query
         docs = searcher.search(serialQuery, 15);
@@ -1663,11 +1583,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
+        assertEquals(0, nbResults.value);
         /*
          * case 3: NOT INTERSECT line1
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(7, 40),
@@ -1678,7 +1596,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                           .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST_NOT)
-                          .add(simpleQuery,                     BooleanClause.Occur.MUST)
+                          .add(simpleQuery, BooleanClause.Occur.MUST)
                           .build();
 
         //we perform a lucene query
@@ -1696,16 +1614,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 4);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-
-
         /*
          * case 4: INTERSECT line AND BBOX
-         *
          */
         double min2[]          = {-12, -17};
         double max2[]          = { 15,  50};
@@ -1715,8 +1630,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bfilter));
         serialQuery = new BooleanQuery.Builder()
                           .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                          .add(bboxQuery.getQuery(),    BooleanClause.Occur.MUST)
-                          .add(simpleQuery,                     BooleanClause.Occur.MUST)
+                          .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
+                          .add(simpleQuery, BooleanClause.Occur.MUST)
                           .build();
 
         //we perform a lucene query
@@ -1734,18 +1649,16 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-
         /*
          * case 5: INTERSECT line AND NOT BBOX
-         *
          */
         serialQuery = new BooleanQuery.Builder()
                           .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                          .add(bboxQuery.getQuery(),    BooleanClause.Occur.MUST_NOT)
-                          .add(simpleQuery,                     BooleanClause.Occur.MUST)
+                          .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST_NOT)
+                          .add(simpleQuery, BooleanClause.Occur.MUST)
                           .build();
 
         //we perform a lucene query
@@ -1763,9 +1676,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
-
+        assertEquals(0, nbResults.value);
     }
 
     /**
@@ -1773,10 +1684,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void dWithinTest() throws Exception {
-
         /*
          * case 1: point distance 5Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1784,7 +1693,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -1802,11 +1711,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
+        assertEquals(0, nbResults.value);
         /*
          * case 2: point distance 1500Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1814,7 +1721,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -1832,13 +1739,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-
         /*
          * case 3: point distance 1500000m (same request than 2 in meters)
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1846,7 +1751,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -1864,13 +1769,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-
         /*
          * case 4: point distance 2000Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1878,7 +1781,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -1896,14 +1799,12 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-
         /*
          * case 5: point distance 4000Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1911,7 +1812,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -1929,15 +1830,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 4);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 3"));
-
         /*
          * case 6: point distance 5000Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1945,7 +1844,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -1963,16 +1862,14 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 5);
+        assertEquals(5, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 6: point distance 6000Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -1980,7 +1877,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -1998,14 +1895,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 6);
+        assertEquals(6, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 7: BBOX distance 5km
          */
@@ -2017,7 +1913,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2035,12 +1931,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-
-
         /*
          * case 8: BBOX distance 1500km
          */
@@ -2048,7 +1942,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2066,12 +1960,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 4);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
-
         /*
          * case 9: BBOX distance 3000km
          */
@@ -2079,7 +1972,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2097,17 +1990,15 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 6);
+        assertEquals(6, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 10: a line distance 5km
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(-50, -45),
@@ -2118,7 +2009,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2136,18 +2027,16 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 1"));
-
-         /*
+        /*
          * case 11: a line distance 4000km
-         *
          */
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),4000.0, "kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2165,20 +2054,18 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 1"));
-//        assertTrue(results.contains("box 3"));
-//        assertTrue(results.contains("box 5"));
-
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("box 5"));
         /*
          * case 12: a line distance 5000km
-         *
          */
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5000.0, "kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2195,27 +2082,24 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
-
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
-//        assertTrue(results.contains("point 2"));   //touches are not considered within
-//        assertTrue(results.contains("point 3"));
+        assertEquals(6, nbResults.value);
+        assertFalse(results.contains("point 2"));   //touches are not considered within
+        assertFalse(results.contains("point 3"));
         assertTrue(results.contains("box 1"));
-//        assertTrue(results.contains("box 3"));
-//        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-//        assertTrue(results.contains("line 1"));
-//        assertTrue(results.contains("line 1 projected"));
-
+        assertFalse(results.contains("line 1"));
+        assertFalse(results.contains("line 1 projected"));
         /*
          * case 12: a line distance 6000km
-         *
          */
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom), 6000.0, "kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2233,14 +2117,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 4);
+        assertEquals(6, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-//        assertTrue(results.contains("box 2"));
-//        assertTrue(results.contains("box 2 projected"));
-
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
     }
 
     /**
@@ -2248,10 +2131,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void beyondTest() throws Exception {
-
         /*
          * case 1: point distance 5Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -2259,7 +2140,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2277,17 +2158,15 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 6);
+        assertEquals(6, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 2: point distance 1500Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -2295,7 +2174,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2317,12 +2196,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-
-        assertEquals(nbResults.value, 4);
-
+        assertEquals(4, nbResults.value);
         /*
          * case 3: point distance 1500000m
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -2330,7 +2206,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2348,16 +2224,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 4);
+        assertEquals(4, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-
-
         /*
          * case 4: point distance 2000Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -2365,7 +2238,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2383,14 +2256,12 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 5: point distance 4000Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -2398,7 +2269,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2416,13 +2287,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 6: point distance 5000Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -2430,7 +2299,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2448,12 +2317,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 1"));
-
         /*
          * case 7: point distance 6000Km
-         *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
         JTS.setCRS(geom, CommonCRS.defaultGeographic());
@@ -2461,7 +2328,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2479,8 +2346,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
+        assertEquals(0, nbResults.value);
         /*
          * case 8: BBOX distance 5km
          */
@@ -2492,7 +2358,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2510,11 +2376,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 8: BBOX distance 1500km
          */
@@ -2523,7 +2388,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2541,10 +2406,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 9: BBOX distance 3000km
          */
@@ -2553,7 +2417,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2571,11 +2435,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 0);
-
-         /*
+        assertEquals(0, nbResults.value);
+        /*
          * case 10: a line distance 5km
-         *
          */
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(-50, -45),
@@ -2586,7 +2448,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2604,22 +2466,20 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 5);
+        assertEquals(5, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-
         /*
          * case 11: a line distance 4000km
-         *
          */
         filter = FF.beyond(GEOMETRY_PROPERTY,FF.literal(geom), 4000.0, "kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(spatialQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2637,13 +2497,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 5);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         //issue: this box as tha same y value than box 3
-        assertTrue(results.contains("box 3"));
-        assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("box 5"));
+        assertFalse(results.contains("box 3"));
+        assertFalse(results.contains("box 4"));
+        assertFalse(results.contains("box 5"));
 
 //        /*
 //         * case 12: a line distance 5000km
@@ -2667,17 +2527,15 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 //        }
 //
 //        //we verify that we obtain the correct results.
-//        assertEquals(nbResults.value, 6);
+//        assertEquals(6, nbResults.value);
 //        assertTrue(results.contains("point 1"));
 //        assertTrue(results.contains("point 1 projected"));
 //      assertTrue(results.contains("point 4"));
 //        assertTrue(results.contains("point 5"));
 //        assertTrue(results.contains("box 2"));
 //      assertTrue(results.contains("box 2 projected"));
-//
 //        /*
 //         * case 13: a line distance 6000km
-//         *
 //         */
 //        filter = FF.beyond(GEOMETRY_PROPERTY,FF.literal(geom), 6000.0, "kilometers");
 //        spatialQuery = new SpatialQuery(wrap(filter));
@@ -2697,10 +2555,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 //        }
 //
 //        //we verify that we obtain the correct results.
-//        assertEquals(nbResults.value, 1);
+//        assertEquals(1, nbResults.value);
 //  assertTrue(results.contains("point 5"));
-
-
     }
 
     /**
@@ -2719,7 +2575,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2737,7 +2593,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 1);
+        assertEquals(1, nbResults.value);
         assertTrue(results.contains("box 4"));
 
         /*
@@ -2751,7 +2607,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         bboxQuery = new SpatialQuery(wrap(filter));
         serialQuery = new BooleanQuery.Builder()
                                .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                               .add(simpleQuery,                      BooleanClause.Occur.MUST)
+                               .add(simpleQuery, BooleanClause.Occur.MUST)
                                .build();
 
         //we perform a lucene query
@@ -2769,11 +2625,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
-    assertTrue(results.contains("box 2 projected"));
-
+        assertTrue(results.contains("box 2 projected"));
     }
 
     /**
@@ -2781,7 +2636,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void QueryAndSpatialFilterTest() throws Exception {
-
         /*
          * case 1: a normal spatial request BBOX
          */
@@ -2794,7 +2648,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
         //we perform a lucene query
         TopDocs docs = searcher.search(serialQuery, 15);
@@ -2811,15 +2665,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-
         /*
          *  case 2: same filter with a StringQuery
          */
-
         //we perform a lucene query
         Analyzer analyzer    = new ClassicAnalyzer();
         QueryParser parser  = new QueryParser("metafile", analyzer);
@@ -2827,7 +2679,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(query,                        BooleanClause.Occur.MUST)
+                                .add(query, BooleanClause.Occur.MUST)
                                 .build();
         docs = searcher.search(serialQuery, 15);
 
@@ -2843,12 +2695,10 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(results.size(), 0);
-
+        assertEquals(0, results.size());
         /*
          *  case 3: same filter same query but with an OR
          */
-
         //we perform two lucene query
         analyzer      = new ClassicAnalyzer();
         parser        = new QueryParser("metafile", analyzer);
@@ -2856,12 +2706,11 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
 
         TopDocs hits1 = searcher.search(query, 15);
         TopDocs hits2 = searcher.search(serialQuery, 15);
-
 
         results = new ArrayList<>();
         StringBuilder resultString = new StringBuilder();
@@ -2882,16 +2731,14 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         LOGGER.finer(resultString.toString());
 
         //we verify that we obtain the correct results
-        assertEquals(results.size(), 3);
+        assertEquals(3, results.size());
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-
         /*
          *  case 4: two filter two query with an OR in the middle
          *          (BBOX and name like point*) OR (INTERSECT line1 and name like box*)
          */
-
         //we perform two lucene query
         analyzer                = new ClassicAnalyzer();
         parser                  = new QueryParser("metafile", analyzer);
@@ -2908,14 +2755,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         BooleanQuery serialQuery1 = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(query1,                       BooleanClause.Occur.MUST)
+                                .add(query1, BooleanClause.Occur.MUST)
                                 .build();
 
         BooleanQuery serialQuery2 = new BooleanQuery.Builder()
                                 .add(interQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(query2,                       BooleanClause.Occur.MUST)
+                                .add(query2, BooleanClause.Occur.MUST)
                                 .build();
-
 
         hits1 = searcher.search(serialQuery1, 15);
         hits2 = searcher.search(serialQuery2, 15);
@@ -2938,10 +2784,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         LOGGER.finer(resultString.toString());
 
         //we verify that we obtain the correct results
-        assertEquals(results.size(), 1);
+        assertEquals(1, results.size());
         assertTrue(results.contains("box 3"));
     }
-
 
     /**
      * Test the combination of a String query and/or spatial filter.
@@ -2961,7 +2806,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         IndexReader reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(firstChild));
         searcher = new IndexSearcher(reader);
-
         /*
          * case 1: a normal spatial request BBOX
          */
@@ -2974,7 +2818,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
         BooleanQuery serialQuery = new BooleanQuery.Builder()
                                 .add(bboxQuery.getQuery(), BooleanClause.Occur.MUST)
-                                .add(simpleQuery,                  BooleanClause.Occur.MUST)
+                                .add(simpleQuery, BooleanClause.Occur.MUST)
                                 .build();
         //we perform a lucene query
         TopDocs docs = searcher.search(serialQuery, 15);
@@ -2991,10 +2835,9 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults.value, 2);
+        assertEquals(2, nbResults.value);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
-
 
         // re-add the document
         final CoordinateReferenceSystem CRS3395 = CRS.forCode("EPSG:3395");
@@ -3015,7 +2858,6 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(firstChild));
         searcher = new IndexSearcher(reader);
 
-
          //we perform a lucene query
         docs = searcher.search(serialQuery, 15);
 
@@ -3031,14 +2873,13 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults.value, 3);
+        assertEquals(3, nbResults.value);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
     }
 
     private static List<DocumentEnvelope> fillTestData() throws Exception {
-
         final List<DocumentEnvelope> docs = new ArrayList<>();
         final CoordinateReferenceSystem CRS3395 = CRS.forCode("EPSG:3395");
 

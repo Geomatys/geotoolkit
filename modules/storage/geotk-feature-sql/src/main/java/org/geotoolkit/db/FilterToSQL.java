@@ -16,221 +16,516 @@
  */
 package org.geotoolkit.db;
 
-import org.opengis.filter.And;
-import org.opengis.filter.ExcludeFilter;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.Id;
-import org.opengis.filter.IncludeFilter;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNil;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.NilExpression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.AnyInteracts;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.Meets;
-import org.opengis.filter.temporal.MetBy;
-import org.opengis.filter.temporal.OverlappedBy;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
-import org.opengis.filter.temporal.TOverlaps;
+import java.lang.reflect.Array;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.logging.Logger;
+import org.apache.sis.internal.filter.FunctionNames;
+import org.apache.sis.internal.filter.Visitor;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.cql.FilterToCQLVisitor;
+import org.geotoolkit.db.reverse.ColumnMetaModel;
+import org.geotoolkit.db.reverse.PrimaryKey;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.filter.visitor.AbstractVisitor;
+import org.geotoolkit.util.NamesExt;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.opengis.feature.FeatureType;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.DistanceOperator;
+import org.opengis.filter.DistanceOperatorName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.Literal;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.ValueReference;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.SpatialOperator;
+import org.opengis.filter.SpatialOperatorName;
+import org.opengis.geometry.Envelope;
+import org.opengis.util.GenericName;
 
 /**
  * Convert filters and expressions in SQL.
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface FilterToSQL extends FilterVisitor, ExpressionVisitor{
+public abstract class FilterToSQL extends Visitor<Object,StringBuilder> {
+    protected final FeatureType featureType;
 
-    ////////////////////////////////////////////////////////////////////////////
-    // EXPRESSION EXPRESSION ///////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+    protected int currentsrid;
 
-    @Override
-    StringBuilder visit(NilExpression candidate, Object o);
+    /**
+     * Creates a new instance initialized with a default set of handlers.
+     */
+    protected FilterToSQL(final FeatureType featureType, final PrimaryKey pkey) {
+        this.featureType = featureType;
+        setFilterHandler(AbstractVisitor.RESOURCEID_NAME, (f, sb) -> {
+            final ResourceId filter = (ResourceId) f;
+            sb.append('(');
+            final FilterFactory ff = FilterUtilities.FF;
+            final List<ColumnMetaModel> columns = pkey.getColumns();
 
-    @Override
-    StringBuilder visit(Add candidate, Object o);
+            final String ids = filter.getIdentifier();
+            final List<Filter> idPartFilters = new ArrayList<>();
+            final Object[] idValues = pkey.decodeFID(ids);
+            for (int k=0; k < idValues.length; k++) {
+                idPartFilters.add(ff.equal(ff.property(columns.get(k).getName()), ff.literal(idValues[k])));
+            }
+            final Filter and = ff.and(idPartFilters);
+            visit(and, sb);
+            sb.append(')');
+        });
+        setNullAndNilHandlers((f, sb) -> {
+            visit(f.getExpressions().get(0), sb);
+            sb.append(" IS NULL");
+        });
+        setFilterHandler(Filter.exclude().getOperatorType(), new Constant("1=0"));
+        setFilterHandler(Filter.include().getOperatorType(), new Constant("1=1"));
+        setFilterHandler(LogicalOperatorName.AND, new Logical("AND"));
+        setFilterHandler(LogicalOperatorName.OR,  new Logical("OR"));
+        setFilterHandler(LogicalOperatorName.NOT, (f, sb) -> {
+            final LogicalOperator<Object> filter = (LogicalOperator<Object>) f;
+            sb.append("NOT(");
+            visit(filter.getOperands().get(0), sb);
+            sb.append(')');
+        });
+        setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_BETWEEN), (f, sb) -> {
+            final BetweenComparisonOperator<Object> filter = (BetweenComparisonOperator<Object>) f;
+            visit(filter.getExpression(),    sb); sb.append(" BETWEEN ");
+            visit(filter.getLowerBoundary(), sb); sb.append(" AND ");
+            visit(filter.getUpperBoundary(), sb);
+        });
+        // TODO: use of "ilike" should escape % and _ characters.
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_EQUAL_TO,                 new Comparison("=", "ilike"));
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_NOT_EQUAL_TO,             new Comparison("<>", "not ilike"));
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_GREATER_THAN,             new Comparison(">"));
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_GREATER_THAN_OR_EQUAL_TO, new Comparison(">="));
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_LESS_THAN,                new Comparison("<"));
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_LESS_THAN_OR_EQUAL_TO,    new Comparison("<="));
+        setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_LIKE), (f, sb) -> {
+            final LikeOperator<Object> filter = (LikeOperator<Object>) f;
+            final boolean matchingCase = filter.isMatchingCase();
+            List<Expression<Object, ?>> expressions = filter.getExpressions();
+            final Expression<Object,?>  expression  = expressions.get(0);
+            final Expression<Object,?>  literal     = expressions.get(1);
+            String pattern = FilterToCQLVisitor.convertToSQL92(
+                    filter.getEscapeChar(),
+                    filter.getWildCard(),
+                    filter.getSingleChar(),
+                    (String) ((Literal<Object,?>) literal).getValue());
 
-    @Override
-    StringBuilder visit(Divide candidate, Object o);
+            if (!matchingCase) {
+                pattern = pattern.toUpperCase();
+                sb.append(" UPPER(");
+            }
 
-    @Override
-    StringBuilder visit(Function candidate, Object o);
+            // we don't know the type, make a type cast to be on the safe side
+            sb.append(" CAST( ");
+            visit(expression, sb);
+            sb.append(" AS VARCHAR)");
+            if (!matchingCase){
+                sb.append(')');
+            }
+            sb.append(" LIKE '").append(pattern).append("' ");
+        });
+        setFilterHandler(SpatialOperatorName.BBOX, new Spatial("st_intersects"));
+        setFilterHandler(DistanceOperatorName.BEYOND, new SpatialWithDistance("st_distance", "st_dwithin"));
+        setFilterHandler(SpatialOperatorName.CONTAINS, new Spatial("st_contains", "st_within"));
+        setFilterHandler(SpatialOperatorName.CROSSES, new Spatial("st_crosses"));
+        setFilterHandler(SpatialOperatorName.DISJOINT, (f, sb) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            final PreparedSpatialFilter prepared = new PreparedSpatialFilter(filter);
+            sb.append("not(st_intersects(");
+            visit(prepared.property, sb); sb.append(',');
+            visit(prepared.geometry, sb); sb.append("))");
+        });
+        setFilterHandler(DistanceOperatorName.WITHIN, new SpatialWithDistance("st_dwithin", "st_distance"));
+        setFilterHandler(SpatialOperatorName.EQUALS, new Spatial("st_equals"));
+        setFilterHandler(SpatialOperatorName.INTERSECTS, new Spatial("st_intersects"));
+        setFilterHandler(SpatialOperatorName.OVERLAPS, new Spatial("st_overlaps"));
+        setFilterHandler(SpatialOperatorName.TOUCHES, new Spatial("st_touches"));
+        setFilterHandler(SpatialOperatorName.WITHIN, new Spatial("st_within", "st_contains"));
+        setExpressionHandler(FunctionNames.Add, new Arithmetic('+'));
+        setExpressionHandler(FunctionNames.Subtract, new Arithmetic('-'));
+        setExpressionHandler(FunctionNames.Multiply, new Arithmetic('*'));
+        setExpressionHandler(FunctionNames.Divide, new Arithmetic('/'));
+        setExpressionHandler(FunctionNames.ValueReference, (e, sb) -> {
+            final ValueReference<Object,?> expression = (ValueReference<Object,?>) e;
+            final GenericName name = NamesExt.valueOf(expression.getXPath());
+            sb.append('"').append(name.tip()).append('"');
+        });
+        setExpressionHandler(FunctionNames.Literal, (e, sb) -> {
+            final Literal<Object,?> expression = (Literal<Object,?>) e;
+            final Object value = expression.getValue();
+            writeValue(sb, value, currentsrid);
+        });
+    }
 
-    @Override
-    StringBuilder visit(Literal candidate, Object o);
+    /**
+     * Ensures the given double is not an infinite, doesn't work well with SQL and postgres.
+     *
+     * @return double unchanged if not an infinite.
+     */
+    private static double checkInfinites(final double value) {
+        if (value == Double.NEGATIVE_INFINITY) {
+            return Double.MIN_VALUE;
+        } else if (value == Double.POSITIVE_INFINITY) {
+            return Double.MAX_VALUE;
+        } else {
+            return value;
+        }
+    }
 
-    @Override
-    StringBuilder visit(Multiply candidate, Object o);
+    /**
+     * Handler for filters materialized by a constant values.
+     * This is used for "include" or "exclude" filters.
+     */
+    private static final class Constant implements BiConsumer<Filter<Object>, StringBuilder> {
+        private final String text;
 
-    @Override
-    StringBuilder visit(PropertyName candidate, Object o);
+        /**
+         * Creates a new handler with the given constant value.
+         *
+         * @param  text  the constant value.
+         */
+        public Constant(final String text) {
+            this.text = text;
+        }
 
-    @Override
-    StringBuilder visit(Subtract candidate, Object o);
+        @Override public void accept(final Filter<Object> f, final StringBuilder sb) {
+            sb.append(text);
+        }
+    }
 
-    ////////////////////////////////////////////////////////////////////////////
-    // FILTER EXPRESSION ///////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+    /**
+     * Handler for {@link BinaryLogicOperator} materialized by an expression such as
+     * {@code "(a AND b AND c AND d"} (taking the "AND" operator as an example).
+     */
+    private final class Logical implements BiConsumer<Filter<Object>, StringBuilder> {
+        private final String operator;
 
-    @Override
-    StringBuilder visitNullFilter(Object o);
+        /**
+         * Creates a new handler for the given operator.
+         * Examples: {@code "AND"}, {@code "OR="}.
+         *
+         * @param  operator  the operator without space.
+         */
+        public Logical(final String operator) {
+            this.operator = operator;
+        }
 
-    @Override
-    StringBuilder visit(ExcludeFilter candidate, Object o);
+        @Override public void accept(final Filter<Object> f, final StringBuilder sb) {
+            final LogicalOperator filter = (LogicalOperator) f;
+            final List<Filter<Object>> subs = filter.getOperands();
+            sb.append('(');
+            final int n = subs.size();
+            for (int i=0; i<n; i++) {
+                if (i > 0) {
+                    sb.append(' ').append(operator).append(' ');
+                }
+                visit(subs.get(i), sb);
+            }
+            sb.append(')');
+        }
+    }
 
-    @Override
-    StringBuilder visit(IncludeFilter candidate, Object o);
+    /**
+     * Handler for {@link BinaryComparisonOperator} materialized by an expression such as {@code "(a = d"}
+     * (taking the "=" operator as an example). A different operator can optionally be used for case-sensitive
+     * comparisons.
+     */
+    protected final class Comparison implements BiConsumer<Filter<Object>, StringBuilder> {
+        private final String operator, caseInsensitive;
 
-    @Override
-    StringBuilder visit(And candidate, Object o);
+        /**
+         * Creates a new handler for the given operator.
+         * Examples: {@code ">"}, {@code ">="}.
+         *
+         * @param  operator  the operator without space.
+         */
+        public Comparison(final String operator) {
+            this.operator   = operator;
+            caseInsensitive = operator;
+        }
 
-    @Override
-    StringBuilder visit(Id candidate, Object o);
+        /**
+         * Creates a new handler for the given operator.
+         * Examples: {@code ">"}, {@code ">="}.
+         *
+         * @param  operator  the operator (without case) for case-sensitive comparisons.
+         * @param  caseInsensitive  the operator for case-insensitive operations.
+         */
+        public Comparison(final String operator, final String caseInsensitive) {
+            this.operator = operator;
+            this.caseInsensitive = caseInsensitive;
+        }
 
-    @Override
-    StringBuilder visit(Not candidate, Object o);
+        @SuppressWarnings("StringEquality")
+        @Override public void accept(final Filter<Object> f, final StringBuilder sb) {
+            final BinaryComparisonOperator filter = (BinaryComparisonOperator) f;
+            final boolean isMatchingCase = (operator == caseInsensitive) || filter.isMatchingCase();
+            visit(filter.getOperand1(), sb);
+            sb.append(' ').append(isMatchingCase ? operator : caseInsensitive).append(' ');
+            visit(filter.getOperand2(), sb);
+        }
+    }
 
-    @Override
-    StringBuilder visit(Or candidate, Object o);
+    /**
+     * Handler for {@link BinarySpatialOperator} materialized by an expression such as
+     * {@code "st_intersects(a, d)"} (taking the "st_intersects" operator as an example).
+     * A different operator can optionally be used when arguments are swapped.
+     */
+    private final class Spatial implements BiConsumer<Filter<Object>, StringBuilder> {
+        private final String operator, swapped;
 
-    @Override
-    StringBuilder visit(PropertyIsBetween candidate, Object o);
+        public Spatial(final String operator) {
+            this.operator = operator;
+            this.swapped  = operator;
+        }
 
-    @Override
-    StringBuilder visit(PropertyIsEqualTo candidate, Object o);
+        public Spatial(final String operator, final String swapped) {
+            this.operator = operator;
+            this.swapped  = swapped;
+        }
 
-    @Override
-    StringBuilder visit(PropertyIsNotEqualTo candidate, Object o);
+        @Override public void accept(final Filter<Object> f, final StringBuilder sb) {
+            final BinarySpatialOperator filter = (BinarySpatialOperator) f;
+            final PreparedSpatialFilter prepared = new PreparedSpatialFilter(filter);
+            sb.append(prepared.swap ? swapped : operator).append('(');
+            visit(prepared.property, sb); sb.append(',');
+            visit(prepared.geometry, sb); sb.append(')');
+        }
+    }
 
-    @Override
-    StringBuilder visit(PropertyIsGreaterThan candidate, Object o);
+    /**
+     * Handler for {@link DistanceBufferOperator} materialized by an expression such as
+     * {@code "st_distance(a, d) > c"} (taking the "st_distance" operator as an example).
+     * A different operator can optionally be used when arguments are swapped.
+     */
+    private final class SpatialWithDistance implements BiConsumer<Filter<Object>, StringBuilder> {
+        private final String operator, swapped;
 
-    @Override
-    StringBuilder visit(PropertyIsGreaterThanOrEqualTo candidate, Object o);
+        public SpatialWithDistance(final String operator) {
+            this.operator = operator;
+            this.swapped  = operator;
+        }
 
-    @Override
-    StringBuilder visit(PropertyIsLessThan candidate, Object o);
+        public SpatialWithDistance(final String operator, final String swapped) {
+            this.operator = operator;
+            this.swapped  = swapped;
+        }
 
-    @Override
-    StringBuilder visit(PropertyIsLessThanOrEqualTo candidate, Object o);
+        @Override public void accept(final Filter<Object> f, final StringBuilder sb) {
+            final DistanceOperator<Object> filter = (DistanceOperator<Object>) f;
+            final PreparedSpatialFilter prepared = new PreparedSpatialFilter(filter);
+            if (prepared.swap) {
+                sb.append(swapped).append('(');
+                visit(prepared.property, sb); sb.append(',');
+                visit(prepared.geometry, sb); sb.append(',');
+                sb.append(filter.getDistance()).append(')');
+            } else {
+                sb.append(operator).append('(');
+                visit(prepared.property, sb ); sb.append(',');
+                visit(prepared.geometry, sb); sb.append(") > ");
+                sb.append(filter.getDistance());
+            }
+        }
+    }
 
-    @Override
-    StringBuilder visit(PropertyIsLike candidate, Object o);
+    private final class Arithmetic implements BiConsumer<Expression<Object,?>, StringBuilder> {
+        private final char operator;
 
-    @Override
-    StringBuilder visit(PropertyIsNull candidate, Object o);
+        public Arithmetic(final char operator) {
+            this.operator = operator;
+        }
 
-    @Override
-    StringBuilder visit(PropertyIsNil candidate, Object o);
+        @Override public void accept(final Expression<Object,?> e, final StringBuilder sb) {
+            List<Expression<? super Object, ?>> parameters = e.getParameters();
+            visit(parameters.get(0), sb.append('('));
+            visit(parameters.get(1), sb.append(' ').append(operator).append(' '));
+            sb.append(')');
+        }
+    }
 
-    @Override
-    StringBuilder visit(BBOX candidate, Object o);
+    /**
+     * Prepares a spatial filter, isolate the field and geometry parts.
+     * Eventually converting it in a geometry.
+     */
+    private final class PreparedSpatialFilter {
+        public ValueReference<Object,?> property;
+        public Literal<Object,?> geometry;
+        public boolean swap;
 
-    @Override
-    StringBuilder visit(Beyond candidate, Object o);
+        public PreparedSpatialFilter(final SpatialOperator<Object> filter) {
+            List<Expression<? super Object, ?>> expressions = filter.getExpressions();
+            final Expression<Object,?> exp1 = expressions.get(0);
+            final Expression<Object,?> exp2 = expressions.get(1);
+            if (exp1 instanceof ValueReference) {
+                swap     = false;
+                property = (ValueReference<Object,?>) exp1;
+                geometry = (Literal<Object,?>) exp2;
+            } else {
+                swap     = true;
+                property = (ValueReference<Object,?>) exp2;
+                geometry = (Literal<Object,?>) exp1;
+            }
+            // Change Envelope in polygon.
+            final Object obj = geometry.getValue();
+            if (obj instanceof Envelope) {
+                final Envelope env = (Envelope) obj;
+                final FilterFactory ff = FilterUtilities.FF;
+                final GeometryFactory gf = new GeometryFactory();
+                final Coordinate[] coords = new Coordinate[5];
+                double minx = checkInfinites(env.getMinimum(0));
+                double maxx = checkInfinites(env.getMaximum(0));
+                double miny = checkInfinites(env.getMinimum(1));
+                double maxy = checkInfinites(env.getMaximum(1));
 
-    @Override
-    StringBuilder visit(Contains candidate, Object o);
+                coords[0] = new Coordinate(minx,miny);
+                coords[1] = new Coordinate(minx,maxy);
+                coords[2] = new Coordinate(maxx,maxy);
+                coords[3] = new Coordinate(maxx,miny);
+                coords[4] = new Coordinate(minx,miny);
+                final LinearRing ring = gf.createLinearRing(coords);
+                final Geometry geom = gf.createPolygon(ring, new LinearRing[0]);
+                geometry = ff.literal(geom);
+                property = setSRID(property);
+            }
+        }
+    }
 
-    @Override
-    StringBuilder visit(Crosses candidate, Object o);
+    /**
+     * Set the current srid, extract it from feature type.
+     * Required when encoding geometry.
+     */
+    protected abstract ValueReference setSRID(ValueReference property);
 
-    @Override
-    StringBuilder visit(Disjoint candidate, Object o);
+    public void writeValue(final StringBuilder sb, Object candidate, int srid){
+        if (candidate instanceof Date) {
+            // Convert it to a timestamp, string representation won't be ambiguious like dates toString()
+            candidate = new Timestamp(((Date)candidate).getTime());
+        }
+        if (candidate == null) {
+          sb.append("NULL");
+        } else if (candidate instanceof Boolean) {
+            sb.append(candidate);
+        } else if (candidate instanceof Double) {
+            if (((Double) candidate).isNaN()) {
+                sb.append("'NaN'");
+            } else {
+                sb.append(candidate);
+            }
+        } else if (candidate instanceof Float) {
+            if (((Float)candidate).isNaN()) {
+                sb.append("'NaN'");
+            } else {
+                sb.append(candidate);
+            }
+        } else if (candidate instanceof Number) {
+            sb.append(candidate);
+        } else if (candidate instanceof byte[]) {
+            // special case for byte array
+            sb.append("decode('")
+              .append(Base64.getEncoder().encodeToString((byte[]) candidate))
+              .append("','base64')");
+        } else if (candidate instanceof Geometry) {
+            // evaluate the literal and store it for later
+            Geometry geom = (Geometry) candidate;
+            if (emptyAsNull(geom)) {
+                //empty geometries are interpreted as Geometrycollection in postgis < 2
+                //this breaks the column geometry type constraint so we replace those by null
+                sb.append("NULL");
+            } else {
+                if (geom instanceof LinearRing) {
+                    //postgis does not handle linear rings, convert to just a line string
+                    geom = geom.getFactory().createLineString(((LinearRing) geom).getCoordinateSequence());
+                }
+                sb.append("st_geomfromtext('")
+                  .append(geom.toText());
+                if (srid > 0) {
+                    sb.append("',").append(srid).append(')');
+                } else {
+                    sb.append("')");
+                }
+            }
+        } else if (candidate.getClass().isArray()) {
+            final int size = Array.getLength(candidate);
+            sb.append("'{");
+            for (int i=0; i<size; i++) {
+                if (i>0) {
+                    sb.append(',');
+                }
+                final Object o = Array.get(candidate, i);
+                if (o != null && o.getClass().isArray()) {
+                    final StringBuilder suba = new StringBuilder();
+                    writeValue(suba, o, -1);
+                    if (suba.charAt(0) == '\'') {
+                        sb.append(suba.substring(1, suba.length() - 1));
+                    } else {
+                        sb.append(suba.toString());
+                    }
+                } else if (!(o instanceof Number || o instanceof Boolean) && o != null) {
+                    // we don't know what this is, let's convert back to a string
+                    String encoding = null;
+                    try {
+                        encoding = ObjectConverters.convert(o, String.class);
+                    } catch (UnconvertibleObjectException | UnsupportedOperationException e) {
+                        Logging.recoverableException(getLogger(), getClass(), "writeValue", e);
+                    }
+                    if (encoding == null) {
+                        // could not convert back to string, use original value
+                        encoding = o.toString();
+                    }
+                    // single quotes must be escaped to have a valid sql string
+                    appendArrayElement(sb, encoding.replaceAll("'", "''"));
+                }else{
+                    writeValue(sb,o,-1);
+                }
+            }
+            sb.append("}'");
+        } else {
+            // we don't know what this is, let's convert back to a string
+            String encoded = null;
+            try {
+                encoded = ObjectConverters.convert(candidate, String.class);
+            } catch (UnconvertibleObjectException | UnsupportedOperationException e) {
+                Logging.recoverableException(getLogger(), getClass(), "writeValue", e);
+            }
+            if (encoded == null) {
+                // could not convert back to string, use original value
+                encoded = candidate.toString();
+            }
+            // single quotes must be escaped to have a valid sql string
+            final String escaped = encoded.replaceAll("'", "''");
+            sb.append('\'').append(escaped).append('\'');
+        }
+    }
 
-    @Override
-    StringBuilder visit(DWithin candidate, Object o);
+    protected boolean emptyAsNull(Geometry geom) {
+        return geom.isEmpty();
+    }
 
-    @Override
-    StringBuilder visit(Equals candidate, Object o);
+    protected void appendArrayElement(final StringBuilder sb, final String escaped) {
+        sb.append('"').append(escaped).append('"');
+    }
 
-    @Override
-    StringBuilder visit(Intersects candidate, Object o);
-
-    @Override
-    StringBuilder visit(Overlaps candidate, Object o);
-
-    @Override
-    StringBuilder visit(Touches candidate, Object o);
-
-    @Override
-    StringBuilder visit(Within candidate, Object o);
-
-    @Override
-    StringBuilder visit(After candidate, Object o);
-
-    @Override
-    StringBuilder visit(AnyInteracts candidate, Object o);
-
-    @Override
-    StringBuilder visit(Before candidate, Object o);
-
-    @Override
-    StringBuilder visit(Begins candidate, Object o);
-
-    @Override
-    StringBuilder visit(BegunBy candidate, Object o);
-
-    @Override
-    StringBuilder visit(During candidate, Object o);
-
-    @Override
-    StringBuilder visit(EndedBy candidate, Object o);
-
-    @Override
-    StringBuilder visit(Ends candidate, Object o);
-
-    @Override
-    StringBuilder visit(Meets candidate, Object o);
-
-    @Override
-    StringBuilder visit(MetBy candidate, Object o);
-
-    @Override
-    StringBuilder visit(OverlappedBy candidate, Object o);
-
-    @Override
-    StringBuilder visit(TContains candidate, Object o);
-
-    @Override
-    StringBuilder visit(TEquals candidate, Object o);
-
-    @Override
-    StringBuilder visit(TOverlaps candidate, Object o);
-
+    protected Logger getLogger() {
+        return Logging.getLogger(getClass());
+    }
 }

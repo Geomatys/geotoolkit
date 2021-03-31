@@ -20,20 +20,18 @@ import java.util.Objects;
 import org.apache.sis.util.Classes;
 import javax.measure.Unit;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Line symbolizer.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSymbolizer{
 
@@ -55,7 +53,7 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
             final String name, final Description desc){
         super(uom, geom, name, desc);
         this.stroke = (stroke == null) ? DEFAULT_STROKE : stroke;
-        this.offset = (offset == null || offset == NIL) ? DEFAULT_LINE_OFFSET : offset;
+        this.offset = (offset == null) ? DEFAULT_LINE_OFFSET : offset;
     }
 
     /**
@@ -104,7 +102,6 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
                 && this.uom.equals(other.uom)
                 && Objects.equals(this.geom, other.geom)
                 && Objects.equals(this.name, other.name);
-
     }
 
     /**
@@ -149,7 +146,6 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
             sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
             builder.append(sub);
         }
-
         return builder.toString();
     }
 }

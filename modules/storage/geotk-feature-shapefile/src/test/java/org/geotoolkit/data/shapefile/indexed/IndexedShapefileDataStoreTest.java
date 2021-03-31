@@ -37,7 +37,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.ShapeTestData;
@@ -70,16 +69,13 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
 
 /**
  *
- * @version $Id$
  * @author Ian Schneider
  * @module
  */
@@ -264,15 +260,19 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Set<String> expectedFids = new HashSet<>();
         final Filter fidFilter;
         try {
-            FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
-            Set<FeatureId> fids = new HashSet<>();
+            FilterFactory2 ff = FilterUtilities.FF;
+            Set<Filter<Object>> fids = new HashSet<>();
             while (indexIter.hasNext()) {
                 Feature newFeature = indexIter.next();
-                String id = FeatureExt.getId(newFeature).getID();
+                String id = FeatureExt.getId(newFeature).getIdentifier();
                 expectedFids.add(id);
-                fids.add(ff.featureId(id));
+                fids.add(ff.resourceId(id));
             }
-            fidFilter = ff.id(fids);
+            switch (fids.size()) {
+                case 0:  fidFilter = Filter.exclude(); break;
+                case 1:  fidFilter = fids.iterator().next(); break;
+                default: fidFilter = ff.or(fids); break;
+            }
         } finally {
             indexIter.close();
         }
@@ -282,7 +282,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             indexIter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName().toString(), fidFilter));
             while (indexIter.hasNext()) {
                 Feature next = indexIter.next();
-                String id = FeatureExt.getId(next).getID();
+                String id = FeatureExt.getId(next).getIdentifier();
                 actualFids.add(id);
             }
             indexIter.close();
@@ -308,7 +308,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             IOException, DataStoreException {
         FeatureCollection features;
         FeatureIterator indexIter;
-        FilterFactory2 fac = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+        FilterFactory2 fac = FilterUtilities.FF;
         String geometryName = FeatureExt.getDefaultGeometry(indexedDS.getFeatureType()).getName().tip().toString();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
@@ -718,7 +718,6 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         ds.close();
     }
 
-
     /**
      * Issueing a request, whether its a query, update or delete, with a fid filter where feature
      * ids match the {@code <typeName>.<number>} structure but the {@code <typeName>} part does not
@@ -733,18 +732,18 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         final String validFid1, validFid2, invalidFid1, invalidFid2;
         try (FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getName().toString()))) {
-            validFid1 = FeatureExt.getId(features.next()).getID();
-            validFid2 = FeatureExt.getId(features.next()).getID();
-            invalidFid1 = "_" + FeatureExt.getId(features.next()).getID();
-            invalidFid2 = FeatureExt.getId(features.next()).getID()+ "abc";
+            validFid1 = FeatureExt.getId(features.next()).getIdentifier();
+            validFid2 = FeatureExt.getId(features.next()).getIdentifier();
+            invalidFid1 = "_" + FeatureExt.getId(features.next()).getIdentifier();
+            invalidFid2 = FeatureExt.getId(features.next()).getIdentifier() + "abc";
         }
-        FilterFactory2 ff = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
-        Set<Identifier> ids = new HashSet<>();
-        ids.add(ff.featureId(validFid1));
-        ids.add(ff.featureId(validFid2));
-        ids.add(ff.featureId(invalidFid1));
-        ids.add(ff.featureId(invalidFid2));
-        Filter fidFilter = ff.id(ids);
+        FilterFactory2 ff = FilterUtilities.FF;
+        Set<Filter<Object>> ids = new HashSet<>();
+        ids.add(ff.resourceId(validFid1));
+        ids.add(ff.resourceId(validFid2));
+        ids.add(ff.resourceId(invalidFid1));
+        ids.add(ff.resourceId(invalidFid2));
+        Filter fidFilter = ff.or(ids);
 
         final FeatureType schema = ds.getFeatureType();
         final String typeName = schema.getName().tip().toString();
@@ -754,7 +753,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         session.updateFeatures(ds.getName().toString(),fidFilter, Collections.singletonMap("f", "modified"));
         session.commit();
-        Filter modifiedFilter = ff.equals(ff.property("f"), ff.literal("modified"));
+        Filter modifiedFilter = ff.equal(ff.property("f"), ff.literal("modified"));
         assertEquals(2, count(ds, typeName, modifiedFilter));
 
         final long initialCount = ds.getCount(QueryBuilder.all(ds.getName().toString()));

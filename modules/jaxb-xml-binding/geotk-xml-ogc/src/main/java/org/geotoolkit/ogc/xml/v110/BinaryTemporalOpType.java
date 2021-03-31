@@ -17,6 +17,7 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,9 +29,9 @@ import org.geotoolkit.gml.xml.v311.AbstractTimeObjectType;
 import org.geotoolkit.gml.xml.v311.AbstractTimePrimitiveType;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.temporal.BinaryTemporalOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.TemporalOperator;
+import org.opengis.filter.TemporalOperatorName;
 
 
 /**
@@ -53,16 +54,13 @@ import org.opengis.filter.temporal.BinaryTemporalOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryTemporalOpType", propOrder = {
     "propertyName",
     "rest"
 })
-public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTemporalOperator {
+public class BinaryTemporalOpType extends TemporalOpsType implements TemporalOperator {
 
     @XmlElements({
         //@XmlElement(name = "TimeTopologyComplex", namespace = "http://www.opengis.net/gml", type = TimeTopologyComplexType.class),
@@ -85,7 +83,6 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
      * Empty contructor used by JAXB
      */
     public BinaryTemporalOpType(){
-
     }
 
     /**
@@ -156,21 +153,14 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List getExpressions() {
+        return Arrays.asList(getExpression1(), getExpression2());
     }
 
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public Expression getExpression1() {
         return new PropertyNameType(propertyName);
     }
 
-    @Override
     public Expression getExpression2() {
         if (rest != null && !rest.isEmpty()) {
             return (Expression) rest.get(0);
@@ -180,6 +170,11 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
 
     @Override
     public TemporalOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
+    }
+
+    @Override
+    public TemporalOperatorName getOperatorType() {
         throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
 }

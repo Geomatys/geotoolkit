@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.iso.Names;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -43,9 +45,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionType", propOrder = {
@@ -59,13 +58,11 @@ public class FunctionType extends ExpressionType {
     private String name;
 
     public FunctionType() {
-
     }
 
     public FunctionType(final FunctionType that) {
         if (that != null) {
             this.name = that.name;
-
             if (that.expression != null) {
                 this.expression = new ArrayList<JAXBElement<?>>();
                 final ObjectFactory factory = new ObjectFactory();
@@ -86,9 +83,14 @@ public class FunctionType extends ExpressionType {
             }
         }
     }
+
+    @Override
+    public ScopedName getFunctionName() {
+        return Names.createScopedName(Names.createLocalName(null, null, "Geotk"), null, name);
+    }
+
     /**
      * Gets the value of the expression property.
-     *
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
@@ -99,7 +101,6 @@ public class FunctionType extends ExpressionType {
 
     /**
      * Gets the value of the name property.
-     *
      */
     public String getName() {
         return name;
@@ -107,10 +108,8 @@ public class FunctionType extends ExpressionType {
 
     /**
      * Sets the value of the name property.
-     *
      */
     public void setName(final String value) {
         this.name = value;
     }
-
 }

@@ -44,9 +44,6 @@ import org.opengis.filter.capability.GeometryOperand;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometryOperandsType", propOrder = {
@@ -61,7 +58,6 @@ public class GeometryOperandsType {
      * Empty constructor used by JAXB
      */
     public GeometryOperandsType() {
-
     }
 
     /**

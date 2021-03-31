@@ -16,13 +16,63 @@
  */
 package org.geotoolkit.ogc.xml;
 
+import java.util.Arrays;
+import java.util.List;
+import org.apache.sis.internal.feature.jts.JTS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.gml.xml.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.SpatialOperatorName;
+import org.opengis.filter.ValueReference;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
  * @author guilhem
  */
+@Deprecated
 public interface BBOX extends SpatialOperator {
+    public static BBOX wrap(final BinarySpatialOperator<Object> filter) {
+        if (filter instanceof BBOX) {
+            return (BBOX) filter;
+        }
+        return new BBOX() {
+            @Override public Expression getOperand1() {return filter.getOperand1();}
+            @Override public Expression getOperand2() {return filter.getOperand2();}
+            @Override public String getPropertyName() {return ((ValueReference) getOperand1()).getXPath();}
+            @Override public String getOperator()     {throw new UnsupportedOperationException();}
+            @Override public Envelope getEnvelope()   {throw new UnsupportedOperationException();}
+            @Override public double getMinX()         {return envelope().getMinX();}
+            @Override public double getMinY()         {return envelope().getMinY();}
+            @Override public double getMaxX()         {return envelope().getMaxX();}
+            @Override public double getMaxY()         {return envelope().getMaxY();}
+            @Override public String getSRS()          {envelope(); return crsName;}
+
+            private org.locationtech.jts.geom.Envelope envelope;
+            private String crsName;
+            private synchronized org.locationtech.jts.geom.Envelope envelope() {
+                if (envelope == null) try {
+                    Geometry geometry = ((Geometry) getOperand2().apply(null));
+                    envelope = geometry.getEnvelopeInternal();
+                    CoordinateReferenceSystem crs = JTS.getCoordinateReferenceSystem(geometry);
+                    if (crs != null) crsName = IdentifiedObjects.getIdentifierOrName(crs);
+                } catch (FactoryException e) {
+                }
+                return envelope;
+            }
+
+            @Override public SpatialOperatorName getOperatorType() {return SpatialOperatorName.BBOX;}
+            @Override public List getExpressions() {return Arrays.asList(getOperand1(), getOperand2());}
+            @Override public boolean test(Object object) {throw new UnsupportedOperationException();}
+        };
+    }
+
+    Expression getOperand1();
+
+    Expression getOperand2();
 
     Envelope getEnvelope();
 

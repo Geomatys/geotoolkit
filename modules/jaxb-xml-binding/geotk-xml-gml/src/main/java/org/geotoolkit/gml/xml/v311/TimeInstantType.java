@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.GmlInstant;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Literal;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPosition;
 

@@ -31,7 +31,6 @@ import java.util.stream.Stream;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.storage.query.SimpleQuery;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -40,6 +39,7 @@ import org.apache.sis.storage.WritableFeatureSet;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.data.mapinfo.mif.MIFProvider;
 import org.geotoolkit.data.mapinfo.mif.MIFStore;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.DataStores;
 import org.junit.After;
 import static org.junit.Assert.*;
@@ -68,7 +68,7 @@ import org.opengis.util.GenericName;
 public class MIFStoreTest extends org.geotoolkit.test.TestBase {
 
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final FilterFactory FF = DefaultFactories.forClass(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
     private Path tempDir;
 
     @Before

@@ -166,5 +166,4 @@ public class InterpolateType
     public void setMethod(final MethodType value) {
         this.method = value;
     }
-
 }

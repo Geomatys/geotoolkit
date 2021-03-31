@@ -18,9 +18,8 @@ package org.geotoolkit.style.function;
 
 import java.util.List;
 import org.opengis.annotation.XmlElement;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 
 
 /**
@@ -34,11 +33,9 @@ import org.opengis.filter.expression.Literal;
  *
  * @version <A HREF="http://www.opengeospatial.org/standards/symbol">Symbology Encoding Implementation Specification 1.1.0</A>
  * @author Johann Sorel (Geomatys)
- * @module
  */
 @XmlElement("Interpolate")
-public interface Interpolate extends Function{
-
+public interface Interpolate extends Expression<Object,Object> {
     /**
      * Get lookup value.
      *
@@ -68,4 +65,5 @@ public interface Interpolate extends Function{
     @XmlElement("Method")
     Method getMethod();
 
+    Literal getFallbackValue();
 }

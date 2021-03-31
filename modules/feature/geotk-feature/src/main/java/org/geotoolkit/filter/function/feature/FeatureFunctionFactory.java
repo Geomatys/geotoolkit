@@ -39,5 +39,4 @@ public class FeatureFunctionFactory extends AbstractFunctionFactory {
     public FeatureFunctionFactory() {
         super("feature", FUNCTIONS);
     }
-
 }

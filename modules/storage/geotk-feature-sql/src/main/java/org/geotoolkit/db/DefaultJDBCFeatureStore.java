@@ -32,7 +32,6 @@ import javax.sql.DataSource;
 import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
@@ -51,6 +50,7 @@ import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.feature.FeatureTypeExt;
 import org.geotoolkit.feature.ReprojectMapper;
 import org.geotoolkit.feature.ViewMapper;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
@@ -77,7 +77,7 @@ import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -101,7 +101,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             new String[]{org.geotoolkit.storage.feature.query.Query.GEOTK_QOM, CUSTOM_SQL});
 
     protected final GeometryFactory geometryFactory = new GeometryFactory();
-    protected final FilterFactory filterFactory = DefaultFactories.forBuildin(FilterFactory.class);
+    protected final FilterFactory filterFactory = FilterUtilities.FF;
 
     private final DataBaseModel dbmodel;
     private final String factoryId;
@@ -178,8 +178,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     /**
      * Get database version.
-     * @return
-     * @throws DataStoreException
      */
     public Version getVersion() throws DataStoreException {
         try {
@@ -220,8 +218,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     /**
      * Provide a session with transaction control.
      *
-     * @param async
-     * @param version
      * @return Session never null
      */
     @Override
@@ -295,9 +291,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     /**
      * Get reader with geotk query model.
-     * @param gquery
-     * @return FeatureReader
-     * @throws DataStoreException
      */
     private FeatureReader getQOMFeatureReader(final org.geotoolkit.storage.feature.query.Query query, Connection cnx) throws DataStoreException {
 
@@ -328,7 +321,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         //replace any PropertyEqualsTo in true ID filters
         Filter baseFilter = query.getFilter();
-        baseFilter = (Filter) baseFilter.accept(new FIDFixVisitor(), null);
+        baseFilter = (Filter) FIDFixVisitor.INSTANCE.visit(baseFilter);
 
         //split the filter between what can be send and must be handle by code
         final Filter[] divided = getDialect().splitFilter(baseFilter,tableType);
@@ -336,7 +329,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         Filter postFilter = divided[1];
 
         //ensure spatial filters are in featuretype geometry crs
-        preFilter = (Filter)preFilter.accept(new CRSAdaptorVisitor(tableType),null);
+        preFilter = (Filter) new CRSAdaptorVisitor(tableType).visit(preFilter);
 
         // rebuild a new query with the same params, but just the pre-filter
         final QueryBuilder builder = new QueryBuilder(query);
@@ -358,7 +351,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             //TODO BUG here, query with filter on a not returned geometry field crash
             returnedFeatureType = (FeatureType) FeatureTypeExt.createSubType(tableType, query.getPropertyNames());
             final FilterAttributeExtractor extractor = new FilterAttributeExtractor(tableType);
-            postFilter.accept(extractor, null);
+            extractor.visit(postFilter, null);
             final GenericName[] extraAttributes = extractor.getAttributeNames();
 
             final List<GenericName> allAttributes = new ArrayList<>();
@@ -383,11 +376,9 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 //add the pk attribut
                 allAttributes.add(baseType.getProperty(pkcName).getName());
              }
-
             final GenericName[] allAttributeArray = allAttributes.toArray(new GenericName[allAttributes.size()]);
             queryFeatureType = (FeatureType) FeatureTypeExt.createSubType(tableType, allAttributeArray);
         }
-
 
         final String sql;
 
@@ -421,9 +412,8 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             }
         }
 
-
         // if post filter, wrap it
-        if (postFilter != null && postFilter != Filter.INCLUDE) {
+        if (postFilter != null && postFilter != Filter.include()) {
             reader = FeatureStreams.filter(reader, postFilter);
         }
 
@@ -441,16 +431,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         if(!returnedFeatureType.equals(queryFeatureType)){
             reader = FeatureStreams.decorate(reader, new ViewMapper(type, query.getPropertyNames()), query.getHints());
         }
-
         return reader;
     }
 
     /**
      * return true if one of the requestes property is an operation.
-     *
-     * @param query
-     * @param type
-     * @return
      */
     private boolean containsOperation(org.geotoolkit.storage.feature.query.Query query, FeatureType type) {
         if (query.retrieveAllProperties()) {
@@ -472,9 +457,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     /**
      * Get reader with SQL query.
-     * @param gquery
-     * @return FeatureReader
-     * @throws DataStoreException
      */
     private FeatureReader getSQLFeatureReader(final SQLQuery query, Connection cnx) throws DataStoreException {
 
@@ -489,7 +471,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 throw new DataStoreException(ex.getMessage(), ex);
             }
         }
-
         try {
             final FeatureType ft = getFeatureType(query);
 
@@ -528,9 +509,9 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         final Filter filter = gquery.getFilter();
         final Hints hints = gquery.getHints();
         try {
-            if (Filter.EXCLUDE.equals(filter)) {
+            if (Filter.exclude().equals(filter)) {
                //append mode
-               return getFeatureWriterInternal(gquery.getTypeName(), Filter.EXCLUDE, EditMode.INSERT, null, hints);
+               return getFeatureWriterInternal(gquery.getTypeName(), Filter.exclude(), EditMode.INSERT, null, hints);
             } else {
                 //update mode
                 return getFeatureWriterInternal(gquery.getTypeName(), filter, EditMode.UPDATE_AND_INSERT, null, hints);
@@ -551,7 +532,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         final PrimaryKey pkey = dbmodel.getPrimaryKey(typeName);
 
         //replace any PropertyEqualsTo in true ID filters
-        baseFilter = (Filter) baseFilter.accept(new FIDFixVisitor(), null);
+        baseFilter = (Filter) FIDFixVisitor.INSTANCE.visit(baseFilter);
 
         //split the filter between what can be send and must be handle by code
         final Filter[] divided = getDialect().splitFilter(baseFilter,baseType);
@@ -559,7 +540,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         Filter postFilter = divided[1];
 
         //ensure spatial filters are in featuretype geometry crs
-        preFilter = (Filter)preFilter.accept(new CRSAdaptorVisitor(baseType),null);
+        preFilter = (Filter) new CRSAdaptorVisitor(baseType).visit(preFilter);
 
         //we gave him the connection, he must not release it
         final boolean release = (cnx == null);
@@ -577,13 +558,12 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             //check for insert only
             if ( EditMode.INSERT == mode ) {
                 //build up a statement for the content, inserting only so we dont want
-                //the query to return any data ==> Filter.EXCLUDE
-                final org.geotoolkit.storage.feature.query.Query queryNone = QueryBuilder.filtered(typeName, Filter.EXCLUDE);
+                //the query to return any data ==> Filter.exclude()
+                final org.geotoolkit.storage.feature.query.Query queryNone = QueryBuilder.filtered(typeName, Filter.exclude());
                 final String sql = getQueryBuilder().selectSQL(baseType, queryNone);
                 getLogger().fine(sql);
                 return new JDBCFeatureWriterInsert(this,sql,baseType,cnx,release,hints);
             }
-
 
             // build up a statement for the content
             final org.geotoolkit.storage.feature.query.Query preQuery = QueryBuilder.filtered(typeName, preFilter);
@@ -596,7 +576,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 //update insert case
                 writer = new JDBCFeatureWriterUpdateInsert(this,sql,baseType,cnx,release,hints);
             }
-
         } catch (SQLException e) {
             // close the connection
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),(release)?cnx:null);
@@ -605,7 +584,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         }
 
         //check for post filter and wrap accordingly
-        if ( postFilter != null && postFilter != Filter.INCLUDE ) {
+        if ( postFilter != null && postFilter != Filter.include() ) {
             writer = FeatureStreams.filter(writer, postFilter);
         }
         return writer;
@@ -613,11 +592,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     /**
      * Updates an existing feature(s) in the database for a particular feature type / table.
-     * @param featureType
-     * @param changes
-     * @param filter
-     * @param cx
-     * @throws org.apache.sis.storage.DataStoreException
      */
     protected void updateSingle(final FeatureType featureType, final Map<String,Object> changes,
             final Filter filter, final Connection cx) throws DataStoreException{
@@ -655,10 +629,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     /**
      * Complexe feature types will be decomposed in flat types then relations
      * will be rebuilded.
-     *
-     * @param typeName
-     * @param featureType
-     * @throws DataStoreException
      */
     @Override
     public void createFeatureType(final FeatureType featureType) throws DataStoreException {
@@ -724,7 +694,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                     }
                 }
             }
-
             cnx.commit();
         } catch (SQLException ex) {
             if(cnx!=null){
@@ -741,7 +710,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         // reset the type name cache, will be recreated when needed.
         dbmodel.clearCache();
-
     }
 
     @Override
@@ -840,16 +808,10 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cnx,stmt,null);
         }
-
     }
 
     /**
      * Decompose given type in flat types for table creation.
-     *
-     * @param type
-     * @param types
-     * @param relations
-     * @throws DataStoreException
      */
     private void decompose(FeatureType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
 
@@ -894,11 +856,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<ResourceId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return addFeatures(groupName, newFeatures, null, hints);
     }
 
-    public final List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures,
+    public final List<ResourceId> addFeatures(String groupName, Collection<? extends Feature> newFeatures,
             Connection cnx, Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, cnx, hints);
     }
@@ -1030,8 +992,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     /**
      * Decompose feature in flat features, they are ordered in appropriate insertion order.
-     *
-     * @param candidate
      */
     private List<InsertRelation> decompose(Feature candidate) throws DataStoreException{
         final List<InsertRelation> flats = new ArrayList<InsertRelation>();
@@ -1122,16 +1082,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * Convinient method to handle adding features operation by using the
      * FeatureWriter.
      *
-     * @param groupName
-     * @param newFeatures
-     * @param cnx
-     * @param hints
      * @return list of ids of the features added.
-     * @throws DataStoreException
      */
-    protected List<FeatureId> handleAddWithFeatureWriter(final String groupName, final Collection<? extends Feature> newFeatures,
+    protected List<ResourceId> handleAddWithFeatureWriter(final String groupName, final Collection<? extends Feature> newFeatures,
             Connection cnx, final Hints hints) throws DataStoreException{
-        try(final FeatureWriter writer = getFeatureWriterInternal(groupName, Filter.EXCLUDE, EditMode.INSERT, cnx, hints)){
+        try(final FeatureWriter writer = getFeatureWriterInternal(groupName, Filter.exclude(), EditMode.INSERT, cnx, hints)){
             return FeatureStoreUtilities.write(writer, newFeatures);
         }catch(FeatureStoreRuntimeException | IOException ex){
             throw new DataStoreException(ex);
@@ -1141,12 +1096,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     /**
      * Convinient method to handle adding features operation by using the
      * FeatureWriter.
-     *
-     * @param groupName
-     * @param filter
-     * @param values
-     * @param cnx
-     * @throws DataStoreException
      */
     protected void handleUpdateWithFeatureWriter(final String groupName, final Filter filter,
             final Map<String, ? extends Object> values, Connection cnx) throws DataStoreException {
@@ -1168,11 +1117,6 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     /**
      * Convenient method to handle adding features operation by using the
      * FeatureWriter.
-     *
-     * @param groupName
-     * @param filter
-     * @param cnx
-     * @throws DataStoreException
      */
     protected void handleRemoveWithFeatureWriter(final String groupName, final Filter filter, Connection cnx) throws DataStoreException {
 
@@ -1220,5 +1164,4 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             }
         }
     }
-
 }

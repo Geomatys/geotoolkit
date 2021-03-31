@@ -45,8 +45,8 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.math.Histogram;
 import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.storage.coverage.DefaultSampleDimensionExt;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.ContentInformation;
@@ -239,7 +239,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
         final String mode = bound.getMode();
         if (DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION.equalsIgnoreCase(mode)) {
             final Expression exp = bound.getValue();
-            final Number val = exp.evaluate(stats, Number.class);
+            final Number val = (Number) exp.apply(stats);
             return (val==null) ? Double.NaN : val.doubleValue();
         } else if (DynamicRangeSymbolizer.DRBound.MODE_PERCENT.equalsIgnoreCase(mode)) {
             final long[] histo = (long[]) stats.get(DynamicRangeSymbolizer.PROPERTY_HISTO);
@@ -251,14 +251,12 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 return Double.NaN;
             } else {
                 final Expression exp = bound.getValue();
-                final Number val = exp.evaluate(stats, Number.class);
+                final Number val = (Number) exp.apply(stats);
                 final Histogram h = new Histogram(histo, histoMin, histoMax);
                 return h.getValueAt(val.doubleValue()/100.0);
             }
-
         } else {
             throw new PortrayalException("Unknwoned mode "+mode);
         }
     }
-
 }

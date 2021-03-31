@@ -18,23 +18,17 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class FloorFunction extends AbstractFunction {
 
     public FloorFunction(final Expression expression) {
-        super(MathFunctionFactory.FLOOR, new Expression[] {expression}, null);
+        super(MathFunctionFactory.FLOOR, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number = parameters.get(0).evaluate(feature, Number.class);
-        if (number == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function floor argument #0 - expected type double");
-        }
-
-        return Math.floor(number.doubleValue());
+    public Object apply(final Object feature) {
+        return Math.floor(doubleValue(feature));
     }
 }

@@ -17,10 +17,10 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.opengis.filter.capability.TemporalOperand;
-import org.opengis.filter.capability.TemporalOperator;
+import org.opengis.util.CodeList;
 
 /**
  * Immutable temporal operator.
@@ -28,55 +28,41 @@ import org.opengis.filter.capability.TemporalOperator;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultTemporalOperator extends DefaultOperator implements TemporalOperator{
+@Deprecated
+public class TemporalOperator extends Operator {
 
-    private final List<TemporalOperand> operands;
+    private final List<CodeList<?>> operands;
 
-    public DefaultTemporalOperator(final String name, final TemporalOperand[] operands) {
+    /** For JAXB. */
+    protected TemporalOperator(final String name) {
         super(name);
+        operands = Collections.emptyList();
+    }
 
+    public TemporalOperator(final String name, final CodeList<?>[] operands) {
+        super(name);
         if(operands == null || operands.length == 0){
             throw new IllegalArgumentException("Operands list can not be null or empty");
         }
-
         //use a threadsafe optimized immutable list
         this.operands = UnmodifiableArrayList.wrap(operands.clone());
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<TemporalOperand> getTemporalOperands() {
+    public Collection<CodeList<?>> getTemporalOperands() {
         return operands;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultTemporalOperator other = (DefaultTemporalOperator) obj;
-        if (this.operands != other.operands && (this.operands == null || !this.operands.equals(other.operands))) {
-            return false;
-        }
-        return true;
+        final TemporalOperator other = (TemporalOperator) obj;
+        return operands.equals(other.operands);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 13 * hash + (this.operands != null ? this.operands.hashCode() : 0);
-        return hash;
+        return super.hashCode() + operands.hashCode();
     }
-
 }

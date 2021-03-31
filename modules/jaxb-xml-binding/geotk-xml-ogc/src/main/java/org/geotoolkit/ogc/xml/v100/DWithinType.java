@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.DistanceOperatorName;
 
 /**
  *
@@ -27,10 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DWithin")
-public class DWithinType extends DistanceBufferType implements org.opengis.filter.spatial.DWithin {
-
+public class DWithinType extends DistanceBufferType {
     public DWithinType() {
-
     }
 
     /**
@@ -47,6 +46,11 @@ public class DWithinType extends DistanceBufferType implements org.opengis.filte
     @Override
     public SpatialOpsType getClone() {
         return new DWithinType(this);
+    }
+
+    @Override
+    public DistanceOperatorName getOperatorType() {
+        return DistanceOperatorName.WITHIN;
     }
 
     @Override

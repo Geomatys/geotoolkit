@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v110;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeEqualsType extends BinaryTemporalOpType implements TEquals {
-
+public class TimeEqualsType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeEqualsType() {
-
     }
 
     public TimeEqualsType(final String propertyName, final Object temporal) {
@@ -47,13 +44,7 @@ public class TimeEqualsType extends BinaryTemporalOpType implements TEquals {
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.EQUALS;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

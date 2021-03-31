@@ -24,17 +24,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
-import org.apache.sis.internal.feature.FunctionRegister;
+import org.apache.sis.internal.filter.FunctionRegister;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 
 /**
  * Utility class to create functions.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class Functions {
 
@@ -72,7 +70,7 @@ public class Functions {
      * @param parameters : parameters of the function
      * @return Function or null if no factory are able to create this function
      */
-    public static Function function(final String name, final Literal fallback, final Expression ... parameters) {
+    public static Expression function(final String name, final Literal fallback, final Expression ... parameters) {
         final FunctionRegister ff = MAPPING.get(name);
         if (ff instanceof FunctionFactory) {
             return ((FunctionFactory) ff).createFunction(name,fallback, parameters);
@@ -81,5 +79,4 @@ public class Functions {
         }
         return null;
     }
-
 }

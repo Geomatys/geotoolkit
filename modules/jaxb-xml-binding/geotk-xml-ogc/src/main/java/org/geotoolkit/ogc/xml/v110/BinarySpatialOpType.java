@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -38,9 +40,8 @@ import org.geotoolkit.gml.xml.v311.OrientableSurfaceType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
 import org.geotoolkit.gml.xml.v311.RingType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.BinarySpatialOperator;
 
 
 /**
@@ -67,9 +68,6 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinarySpatialOpType", propOrder = {
@@ -97,7 +95,6 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
      * An empty constructor used by JAXB
      */
     public BinarySpatialOpType() {
-
     }
 
     /**
@@ -181,7 +178,12 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
     }
 
     @Override
-    public Expression getExpression1() {
+    public List getExpressions() {
+        return Arrays.asList(getOperand1(), getOperand2());
+    }
+
+    @Override
+    public Expression getOperand1() {
         if (propertyName != null) {
             return propertyName.getValue();
         }
@@ -189,23 +191,13 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
     }
 
     @Override
-    public Expression getExpression2() {
+    public Expression getOperand2() {
         if (abstractGeometry != null) {
             return abstractGeometry.getValue();
         } else if (envelope != null) {
             return envelope.getValue();
         }
         return null;
-    }
-
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public JAXBElement<? extends AbstractGeometryType> getAbstractGeometry() {
@@ -282,7 +274,7 @@ public abstract class BinarySpatialOpType extends SpatialOpsType implements Bina
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
         if (propertyName != null && propertyName.getValue() != null) {
-            s.append("PropertyName: ").append(propertyName.getValue().getPropertyName()).append('\n');
+            s.append("PropertyName: ").append(propertyName.getValue().getXPath()).append('\n');
         }
         if (envelope != null && envelope.getValue() != null) {
             s.append("envelope: ").append(envelope.getValue().toString()).append('\n');

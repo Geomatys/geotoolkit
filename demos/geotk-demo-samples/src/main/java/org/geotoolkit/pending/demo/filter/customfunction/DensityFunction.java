@@ -3,8 +3,8 @@
 package org.geotoolkit.pending.demo.filter.customfunction;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 
 public class DensityFunction extends AbstractFunction{
 
@@ -19,17 +19,15 @@ public class DensityFunction extends AbstractFunction{
         if(parameters.length != 2){
             throw new IllegalArgumentException("Expecting 2 parameters.");
         }
-
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object apply(Object object) {
 
-        final Number x = parameters.get(0).evaluate(object, Number.class);
-        final Number y = parameters.get(1).evaluate(object, Number.class);
+        final Number x = (Number) parameters.get(0).apply(object);
+        final Number y = (Number) parameters.get(1).apply(object);
 
         //an incredible highly complex mathematic algorithm
         return x.doubleValue() * 2 + y.doubleValue();
     }
-
 }

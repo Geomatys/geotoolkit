@@ -18,37 +18,18 @@ package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.filter.function.other.StaticUtils;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class ConcatFunction extends AbstractFunction {
 
     public ConcatFunction(final Expression expr1, final Expression expr2) {
-        super(StringFunctionFactory.CONCAT, new Expression[]{expr1,expr2}, null);
+        super(StringFunctionFactory.CONCAT, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String arg0;
-        String arg1;
-
-        try {
-            // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature, String.class);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strConcat argument #0 - expected type String");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg1 = parameters.get(1).evaluate(feature, String.class);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strConcat argument #1 - expected type String");
-        }
-
-        return StaticUtils.strConcat(arg0, arg1);
+    public Object apply(final Object feature) {
+        final String[] args = stringValues(feature);
+        return StaticUtils.strConcat(args[0], args[1]);
     }
 }

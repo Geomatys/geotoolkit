@@ -40,34 +40,31 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.version.Version;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.Id;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.identity.Identifier;
+import org.geotoolkit.filter.FilterFactory2;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.internal.filter.FunctionNames;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.DefaultSelectorFeatureCollection;
 import org.geotoolkit.storage.feature.FeatureStreams;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.FilterFactory;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultSession extends AbstractSession {
 
-    protected static final FilterFactory2 FF = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+    protected static final FilterFactory2 FF = FilterUtilities.FF;
 
     private final DefaultSessionDiff diff;
     private final boolean async;
@@ -93,11 +90,11 @@ public class DefaultSession extends AbstractSession {
     }
 
     protected ModifyDelta createModifyDelta(Session session, String typeName,
-            Id filter , final Map<String,?> values){
+            Filter filter , final Map<String,?> values){
         return new ModifyDelta(this, typeName, filter, values);
     }
 
-    protected RemoveDelta createRemoveDelta(Session session, String typeName, Id filter){
+    protected RemoveDelta createRemoveDelta(Session session, String typeName, Filter filter){
         return new RemoveDelta(session, typeName, filter);
     }
 
@@ -197,15 +194,15 @@ public class DefaultSession extends AbstractSession {
         }
 
         if(async){
-            final Id modified;
+            final Filter modified;
 
-            final SimplifyingFilterVisitor simplifier = new SimplifyingFilterVisitor();
-            filter = (Filter) filter.accept(simplifier, null);
+            final SimplifyingFilterVisitor simplifier = SimplifyingFilterVisitor.INSTANCE;
+            filter = (Filter) simplifier.visit(filter);
 
-            if(filter instanceof Id){
-                modified = FF.id( ((Id)filter).getIdentifiers());
+            if(filter instanceof ResourceId){
+                modified = filter;
             }else{
-                final Set<Identifier> identifiers = new HashSet<Identifier>();
+                final Set<Filter<Object>> identifiers = new HashSet<>();
                 QueryBuilder qb = new QueryBuilder(groupName);
                 qb.setFilter(filter);
                 final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
@@ -216,15 +213,12 @@ public class DefaultSession extends AbstractSession {
                 }finally{
                     ite.close();
                 }
-
-                if(identifiers.isEmpty()){
-                    //no feature match this filter, no need to create a modify delta
-                    return;
-                }else{
-                    modified = FF.id(identifiers);
+                switch (identifiers.size()) {
+                    case 0:  return;     // no feature match this filter, no need to create a modify delta
+                    case 1:  modified = identifiers.iterator().next(); break;
+                    default: modified = FF.or(identifiers); break;
                 }
             }
-
             diff.add(createModifyDelta(this, groupName, modified, values));
             fireSessionChanged();
         }else{
@@ -242,12 +236,12 @@ public class DefaultSession extends AbstractSession {
         store.getFeatureType(groupName);
 
         if(async){
-            final Id removed;
+            final Filter removed;
 
-            if(filter instanceof Id){
-                removed = (Id)filter;
+            if(filter instanceof ResourceId){
+                removed = (ResourceId)filter;
             }else{
-                final Set<Identifier> identifiers = new HashSet<Identifier>();
+                final Set<Filter<Object>> identifiers = new HashSet<>();
                 QueryBuilder qb = new QueryBuilder(groupName);
                 qb.setFilter(filter);
                 final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
@@ -258,15 +252,12 @@ public class DefaultSession extends AbstractSession {
                 }finally{
                     ite.close();
                 }
-
-                if(identifiers.isEmpty()){
-                    //no feature match this filter, no need to create to remove delta
-                    return;
-                }else{
-                    removed = FF.id(identifiers);
+                switch (identifiers.size()) {
+                    case 0:  return;     // no feature match this filter, no need to create to remove delta
+                    case 1:  removed = identifiers.iterator().next(); break;
+                    default: removed = FF.or(identifiers); break;
                 }
             }
-
             diff.add(createRemoveDelta(this, groupName, removed));
             fireSessionChanged();
         }else{
@@ -354,65 +345,58 @@ public class DefaultSession extends AbstractSession {
 
     private static Filter forceCRS(final Filter filter, final CoordinateReferenceSystem crs, final boolean replace){
 
-        if(crs == null) return filter;
+        if (crs == null) return filter;
 
-        final FilterVisitor visitor = new DuplicatingFilterVisitor(){
-
-            @Override
-            public Object visit(final Literal expression, final Object extraData) {
-
-                final Object obj = expression.getValue();
-
-                if(obj instanceof BoundingBox){
-                    BoundingBox bb = (BoundingBox) obj;
-                    if(bb.getCoordinateReferenceSystem() == null){
-                        //force crs definition
-                        bb = new BoundingBox(bb, crs);
-                        return FF.literal(bb);
-                    }else if(replace){
-                        try {
-                            //reproject bbox
-                            final Envelope env = Envelopes.transform(bb, crs);
-                            bb = new BoundingBox(env);
+        final DuplicatingFilterVisitor visitor = new DuplicatingFilterVisitor() {
+            {
+                setExpressionHandler(FunctionNames.Literal, (e) -> {
+                    final Literal expression = (Literal) e;
+                    final Object obj = expression.getValue();
+                    if (obj instanceof BoundingBox) {
+                        BoundingBox bb = (BoundingBox) obj;
+                        if (bb.getCoordinateReferenceSystem() == null) {
+                            //force crs definition
+                            bb = new BoundingBox(bb, crs);
                             return FF.literal(bb);
-                        } catch (TransformException ex) {
-                            Logging.getLogger("org.geotoolkit.data.session").log(Level.SEVERE, null, ex);
+                        } else if (replace) {
+                            try {
+                                //reproject bbox
+                                final Envelope env = Envelopes.transform(bb, crs);
+                                bb = new BoundingBox(env);
+                                return FF.literal(bb);
+                            } catch (TransformException ex) {
+                                Logging.getLogger("org.geotoolkit.data.session").log(Level.SEVERE, null, ex);
+                            }
                         }
-                    }
-                    return expression;
-                }else if(obj instanceof Geometry){
-                    Geometry geom = (Geometry) obj;
-                    try {
-                        CoordinateReferenceSystem cdtcrs = JTS.findCoordinateReferenceSystem(geom);
-                        if(cdtcrs == null){
+                        return expression;
+                    } else if (obj instanceof Geometry) {
+                        Geometry geom = (Geometry) obj;
+                        try {
+                            CoordinateReferenceSystem cdtcrs = JTS.findCoordinateReferenceSystem(geom);
+                            if (cdtcrs == null) {
+                                geom = (Geometry) geom.clone();
+                                JTS.setCRS(geom, crs);
+                                return FF.literal(geom);
+                            } else if (replace) {
+                                //reproject geometry
+                                final MathTransform trs = CRS.findOperation(cdtcrs, crs, null).getMathTransform();
+                                geom = JTS.transform(geom, trs);
+                                JTS.setCRS(geom, crs);
+                                return FF.literal(geom);
+                            }
+                        } catch (Exception ex) {
+                            Logging.getLogger("org.geotoolkit.data.session").log(Level.WARNING, ex.getLocalizedMessage(), ex);
                             geom = (Geometry) geom.clone();
                             JTS.setCRS(geom, crs);
                             return FF.literal(geom);
-                        }else if(replace){
-                            //reproject geometry
-                            final MathTransform trs = CRS.findOperation(cdtcrs, crs, null).getMathTransform();
-                            geom = JTS.transform(geom, trs);
-                            JTS.setCRS(geom, crs);
-                            return FF.literal(geom);
                         }
-                    } catch (Exception ex) {
-                        Logging.getLogger("org.geotoolkit.data.session").log(Level.WARNING, ex.getLocalizedMessage(), ex);
-                        geom = (Geometry) geom.clone();
-                        JTS.setCRS(geom, crs);
-                        return FF.literal(geom);
+                        return expression;
+                    } else {
+                        return super.visit(expression);
                     }
-
-                    return expression;
-                }else{
-                    return super.visit(expression, extraData);
-                }
-
+                });
             }
-
         };
-
-        return (Filter) filter.accept(visitor, null);
+        return (Filter) visitor.visit(filter);
     }
-
-
 }

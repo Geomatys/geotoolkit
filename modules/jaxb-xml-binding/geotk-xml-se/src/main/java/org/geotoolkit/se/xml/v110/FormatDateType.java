@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -40,9 +39,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FormatDateType", propOrder = {
@@ -64,7 +60,6 @@ public class FormatDateType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getDateValue() {
         return dateValue;
@@ -76,7 +71,6 @@ public class FormatDateType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setDateValue(final ParameterValueType value) {
         this.dateValue = value;
@@ -88,7 +82,6 @@ public class FormatDateType
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     public String getPattern() {
         return pattern;
@@ -100,10 +93,8 @@ public class FormatDateType
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setPattern(final String value) {
         this.pattern = value;
     }
-
 }

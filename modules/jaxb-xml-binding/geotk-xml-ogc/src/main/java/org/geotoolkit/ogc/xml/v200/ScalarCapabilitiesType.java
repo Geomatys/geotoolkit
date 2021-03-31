@@ -22,9 +22,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.ArithmeticOperators;
-import org.opengis.filter.capability.ComparisonOperators;
-import org.opengis.filter.capability.ScalarCapabilities;
+import org.geotoolkit.filter.capability.ArithmeticOperators;
+import org.geotoolkit.filter.capability.ComparisonOperators;
+import org.geotoolkit.filter.capability.ScalarCapabilities;
 
 
 /**
@@ -52,7 +52,7 @@ import org.opengis.filter.capability.ScalarCapabilities;
     "logicalOperators",
     "comparisonOperators"
 })
-public class ScalarCapabilitiesType implements ScalarCapabilities{
+public class ScalarCapabilitiesType extends ScalarCapabilities {
 
     @XmlElement(name = "LogicalOperators")
     private LogicalOperators logicalOperators;
@@ -77,11 +77,6 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
 
     /**
      * Gets the value of the logicalOperators property.
-     *
-     * @return
-     *     possible object is
-     *     {@link LogicalOperators }
-     *
      */
     public LogicalOperators getLogicalOperators() {
         return logicalOperators;
@@ -89,11 +84,6 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
 
     /**
      * Sets the value of the logicalOperators property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link LogicalOperators }
-     *
      */
     public void setLogicalOperators(LogicalOperators value) {
         this.logicalOperators = value;
@@ -101,11 +91,6 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
 
     /**
      * Gets the value of the comparisonOperators property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ComparisonOperatorsType }
-     *
      */
     @Override
     public ComparisonOperatorsType getComparisonOperators() {
@@ -114,19 +99,11 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
 
     /**
      * Sets the value of the comparisonOperators property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ComparisonOperatorsType }
-     *
      */
     public void setComparisonOperators(ComparisonOperatorsType value) {
         this.comparisonOperators = value;
     }
 
-    /**
-     * Gets the value of the arithmeticOperators property.
-     */
     @Override
     public ArithmeticOperators getArithmeticOperators() {
         return null;

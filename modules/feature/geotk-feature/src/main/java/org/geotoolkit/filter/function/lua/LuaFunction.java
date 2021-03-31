@@ -27,14 +27,13 @@ import javax.script.ScriptException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 
 /**
  * Lua function.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class LuaFunction extends AbstractFunction {
 
@@ -75,7 +74,7 @@ public class LuaFunction extends AbstractFunction {
 
     public LuaFunction(final Expression expression) {
         super(LuaFunctionFactory.LUA, prepare(expression), null);
-        lua = expression.evaluate(null, String.class);
+        lua = expression.apply(null).toString();
     }
 
     /**
@@ -84,7 +83,7 @@ public class LuaFunction extends AbstractFunction {
      * @return Expression[]
      */
     private static Expression[] prepare(final Expression gvFunction){
-        final String str = gvFunction.evaluate(null, String.class);
+        final String str = gvFunction.apply(null).toString();
 
         final List<Expression> properties = new ArrayList<Expression>();
         properties.add(gvFunction);
@@ -108,35 +107,28 @@ public class LuaFunction extends AbstractFunction {
                 }
             }
         }
-
         if(current != null && !current.isEmpty()){
             properties.add(new DefaultPropertyName(current));
         }
-
         return properties.toArray(new Expression[properties.size()]);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
 
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine e = mgr.getEngineByName("luaj");
 
         for(int i=1,n=parameters.size(); i<n; i++){
-            final PropertyName property = (PropertyName) parameters.get(i);
-            final Object value = property.evaluate(feature);
-            e.put(VAR_CHARACTER+property.getPropertyName(), value);
+            final ValueReference property = (ValueReference) parameters.get(i);
+            final Object value = property.apply(feature);
+            e.put(VAR_CHARACTER+property.getXPath(), value);
         }
-
         try {
             return e.eval(lua);
         } catch (ScriptException ex) {
             Logging.getLogger("org.geotoolkit.filter.function.lua").log(Level.WARNING, null, ex);
         }
-
         return "";
     }
-
-
-
 }

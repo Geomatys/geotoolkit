@@ -27,7 +27,7 @@ import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.collection.NotifiedCheckedSet;
 import org.apache.sis.util.Classes;
 
-import org.opengis.filter.Id;
+import org.opengis.filter.ResourceId;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.Description;
 import org.opengis.style.SemanticType;
@@ -148,7 +148,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
 
     private Description desc = StyleConstants.DEFAULT_DESCRIPTION;
 
-    private Id ids = null;
+    private ResourceId ids = null;
 
     private OnlineResource online = null;
 
@@ -213,10 +213,10 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
 
     /**
      * {@inheritDoc }
-     * @return Id : This is the "living" Id collection.
+     * @return ResourceId : This is the "living" ResourceId collection.
      */
     @Override
-    public Id getFeatureInstanceIDs() {
+    public ResourceId getFeatureInstanceIDs() {
         return ids;
     }
 
@@ -225,8 +225,8 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
      * This method is thread safe.
      */
     @Override
-    public void setFeatureInstanceIDs(final Id id){
-        final Id oldIds;
+    public void setFeatureInstanceIDs(final ResourceId id){
+        final ResourceId oldIds;
         synchronized (this) {
             oldIds = this.ids;
             if(Objects.equals(oldIds, id)){

@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
+import org.geotoolkit.ogc.xml.AbstractExpression;
 
 
 /**
@@ -39,15 +39,12 @@ import org.opengis.filter.expression.PropertyName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyNameType", propOrder = {
     "content"
 })
-public class InternalPropertyName implements PropertyName {
+public class InternalPropertyName extends AbstractExpression implements ValueReference {
 
     @XmlValue
     private String content;
@@ -56,7 +53,6 @@ public class InternalPropertyName implements PropertyName {
      * An empty constructor used by JAXB
      */
     public InternalPropertyName() {
-
     }
 
     /**
@@ -105,23 +101,8 @@ public class InternalPropertyName implements PropertyName {
     }
 
     @Override
-    public String getPropertyName() {
+    public String getXPath() {
         return content;
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this,extraData);
     }
 
     /**

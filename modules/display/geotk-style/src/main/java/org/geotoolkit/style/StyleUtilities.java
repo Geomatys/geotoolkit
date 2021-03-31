@@ -26,8 +26,9 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableUserLayer;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.sld.Layer;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.sld.UserLayer;
@@ -54,7 +55,7 @@ import org.opengis.style.TextSymbolizer;
 public final class StyleUtilities extends Static {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
     private static final MutableSLDFactory SLDF = new DefaultSLDFactory();
 
     private StyleUtilities(){}

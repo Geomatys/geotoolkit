@@ -62,8 +62,8 @@ import org.geotoolkit.xml.DomCompare;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.Expression;
+import org.opengis.filter.SortOrder;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -277,7 +277,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
         result    =    result.replaceAll("(?i)epsg\\:\\d+\\.\\d+\\.?\\d*\\:", "epsg::");
 
         final Expression exp = new DefaultPropertyName("/identifier/_value");
-        Object v = exp.evaluate(featureEmpty);
+        Object v = exp.apply(featureEmpty);
         DomCompare.compare(expResult, result);
     }
 
@@ -342,7 +342,7 @@ public class XmlFeatureTest extends org.geotoolkit.test.TestBase {
 
         try {
             SimpleQuery query = new SimpleQuery();
-            query.setSortBy(FF.sort("attDouble", SortOrder.ASCENDING));
+            query.setSortBy(FF.sort(FF.property("attDouble"), SortOrder.ASCENDING));
             result = result.subset(query);
         } catch (DataStoreException ex) {
             Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);

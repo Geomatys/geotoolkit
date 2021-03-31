@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import org.apache.sis.internal.storage.query.SimpleQuery;
@@ -25,7 +24,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
-import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
 import org.geotoolkit.feature.FeatureExt;
@@ -33,10 +31,9 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
+import org.opengis.filter.ResourceId;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -46,7 +43,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Use it knowing you make clear cache operation in a synchronize way.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
@@ -93,8 +89,8 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
             PropertyType prop = null;
 
             if (!isNullorEmpty(geomExp)) {
-                if (geomExp instanceof PropertyName) {
-                    prop = featuretype.getProperty(((PropertyName)geomExp).getPropertyName());
+                if (geomExp instanceof ValueReference) {
+                    prop = featuretype.getProperty(((ValueReference)geomExp).getXPath());
                 } else {
                     //calculated geometry
                 }
@@ -117,16 +113,15 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
         if (!proj.isSet()) {
             proj.setDataGeometry(GO2Utilities.getGeometry(candidate, geomExp), dataCRS);
         }
-
         return proj;
     }
 
     private static boolean isNullorEmpty(Expression exp){
-        if (exp==null || exp==Expression.NIL) {
+        if (exp == null) {
             return true;
-        } else if (exp instanceof PropertyName) {
-            final PropertyName pn = (PropertyName) exp;
-            final String str = pn.getPropertyName();
+        } else if (exp instanceof ValueReference) {
+            final ValueReference pn = (ValueReference) exp;
+            final String str = pn.getXPath();
             if (str == null || str.trim().isEmpty()) {
                 return true;
             }
@@ -137,36 +132,32 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
     /**
      * Get the id of the feature.
      *
-     * @return FeatureId
+     * @return ResourceId
      */
-    public FeatureId getFeatureId() {
+    public ResourceId getFeatureId() {
         return FeatureExt.getId(candidate);
     }
 
-    private Feature getCompleteFeature(final FeatureId id)throws DataStoreException{
+    private Feature getCompleteFeature(final ResourceId id)throws DataStoreException{
 
         final MapLayer fml = getLayer();
         if (fml != null && fml.getData() instanceof FeatureSet) {
-            final Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
-            Feature feature = null;
+            Feature feature;
 
             final SimpleQuery query = new SimpleQuery();
-            query.setFilter(filter);
+            query.setFilter(id);
             final FeatureSet collection = ((FeatureSet) fml.getData()).subset(query);
             try (Stream<Feature> features = collection.features(false)) {
                 feature = features.findAny().orElse(null);
             }
-
             if (feature == null) {
                 //worst case, return the partial feature
                 return this.candidate;
             }
-
             return feature;
         } else {
             //worst case, return the partial feature
             return candidate;
         }
     }
-
 }

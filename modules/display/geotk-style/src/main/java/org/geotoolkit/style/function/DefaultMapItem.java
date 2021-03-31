@@ -17,9 +17,11 @@
 
 package org.geotoolkit.style.function;
 
+import java.util.Collections;
+import java.util.List;
 import org.geotoolkit.filter.AbstractExpression;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.Expression;
+import org.opengis.util.ScopedName;
 
 /**
  *
@@ -31,7 +33,16 @@ public class DefaultMapItem extends AbstractExpression implements MapItem{
     private double data;
 
     public DefaultMapItem(final double data, final Expression value){
+    }
 
+    @Override
+    public ScopedName getFunctionName() {
+        return null;    // TODO: which implementation?
+    }
+
+    @Override
+    public List getParameters() {
+        return Collections.singletonList(value);
     }
 
     @Override
@@ -45,7 +56,7 @@ public class DefaultMapItem extends AbstractExpression implements MapItem{
     }
 
     @Override
-    public Object evaluate(final Object object) {
+    public Object apply(final Object object) {
         if(object instanceof Number){
             final Number num = (Number) object;
             if(num.doubleValue() == data){
@@ -56,10 +67,4 @@ public class DefaultMapItem extends AbstractExpression implements MapItem{
             return object;
         }
     }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return null;
-    }
-
 }

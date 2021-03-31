@@ -21,18 +21,16 @@ import java.util.List;
 
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Font;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Font.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultFont implements Font{
 
@@ -56,9 +54,9 @@ public class DefaultFont implements Font{
      */
     public DefaultFont(final List<Expression> family, final Expression style, final Expression weight, final Expression size){
 
-        this.style = (style == null || style == NIL) ? DEFAULT_FONT_STYLE : style;
-        this.weight = (weight == null || weight == NIL) ? DEFAULT_FONT_WEIGHT : weight;
-        this.size = (size == null || size == NIL) ? DEFAULT_FONT_SIZE : size;
+        this.style  = (style  == null) ? DEFAULT_FONT_STYLE : style;
+        this.weight = (weight == null) ? DEFAULT_FONT_WEIGHT : weight;
+        this.size   = (size   == null) ? DEFAULT_FONT_SIZE : size;
 
         if(family != null && !family.isEmpty()) {
             final Expression[] rep = family.toArray(new Expression[family.size()]);
@@ -66,7 +64,6 @@ public class DefaultFont implements Font{
         }else{
             this.family = Collections.emptyList();
         }
-
     }
 
     /**
@@ -129,7 +126,6 @@ public class DefaultFont implements Font{
                 && this.size.equals(other.size)
                 && this.style.equals(other.style)
                 && this.weight.equals(other.weight);
-
     }
 
     /**
@@ -160,5 +156,4 @@ public class DefaultFont implements Font{
         builder.append(']');
         return builder.toString();
     }
-
 }

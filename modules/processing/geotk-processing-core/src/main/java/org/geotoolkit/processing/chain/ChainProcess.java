@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.DefaultParameterValue;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.cql.CQL;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 import org.geotoolkit.process.Process;
@@ -47,7 +47,7 @@ import org.geotoolkit.processing.chain.model.ElementCondition;
 import org.geotoolkit.processing.chain.model.ElementProcess;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValue;
@@ -244,11 +244,10 @@ public class ChainProcess extends AbstractProcess {
                 }
             }
         }
-
     }
 
     private boolean executeConditionalElement(final ElementCondition condition, final ParameterValueGroup inputs) throws ProcessException {
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory ff = FilterUtilities.FF;
         final String statement = condition.getExpression();
         final String syntax = condition.getSyntax();
 
@@ -262,7 +261,7 @@ public class ChainProcess extends AbstractProcess {
             if(filter == null){
                 try{
                     final Expression exp = CQL.parseExpression(statement);
-                    filter = ff.equals(exp, ff.literal(true));
+                    filter = ff.equal(exp, ff.literal(true));
                 }catch(Exception ex){
                     throw new ProcessException("Unvalid CQL : "+statement, this, null);
                 }
@@ -270,15 +269,14 @@ public class ChainProcess extends AbstractProcess {
 
         }else if("JAVASCRIPT".equalsIgnoreCase(syntax)){
             final Expression exp = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, ff.literal(statement));
-            filter = ff.equals(exp, ff.literal(true));
+            filter = ff.equal(exp, ff.literal(true));
         }else if("GROOVY".equalsIgnoreCase(syntax)){
             final Expression exp = ff.function(GroovyFunctionFactory.GROOVY, ff.literal(statement));
-            filter = ff.equals(exp, ff.literal(true));
+            filter = ff.equal(exp, ff.literal(true));
         }else{
             throw new ProcessException("Unknwoned syntax : "+syntax+" supported sysntaxes are : CQL,Javascript,Groovy", this, null);
         }
-
-        return filter.evaluate(inputs);
+        return filter.test(inputs);
     }
 
     private ProcessDescriptor getProcessDescriptor(final ElementProcess desc) throws NoSuchIdentifierException{

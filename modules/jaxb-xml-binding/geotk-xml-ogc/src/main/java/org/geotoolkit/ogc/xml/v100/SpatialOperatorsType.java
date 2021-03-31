@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.SpatialOperator;
-import org.opengis.filter.capability.SpatialOperators;
+import org.geotoolkit.filter.capability.SpatialOperator;
+import org.geotoolkit.filter.capability.SpatialOperators;
 
 
 /**
@@ -55,14 +55,12 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Spatial_OperatorsType", propOrder = {
     "bboxOrEqualsOrDisjoint"
 })
-public class SpatialOperatorsType implements SpatialOperators {
+public class SpatialOperatorsType extends SpatialOperators {
 
     @XmlElements({
         @XmlElement(name = "Intersect", type = Intersect.class),
@@ -83,7 +81,6 @@ public class SpatialOperatorsType implements SpatialOperators {
      * An empty constructor used by JAXB
      */
     public SpatialOperatorsType() {
-
     }
 
     /**

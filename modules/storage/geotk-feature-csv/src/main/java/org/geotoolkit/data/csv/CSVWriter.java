@@ -40,7 +40,7 @@ import org.locationtech.jts.io.WKTWriter;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 
 
 /**
@@ -55,9 +55,9 @@ class CSVWriter extends CSVReader {
     private Feature edited = null;
     private Feature lastWritten = null;
     private boolean appendMode = false;
-    protected final Set<Identifier> deletedIds = new HashSet<>();
-    protected final Set<Identifier> updatedIds = new HashSet<>();
-    protected final Set<Identifier> addedIds = new HashSet<>();
+    protected final Set<ResourceId> deletedIds = new HashSet<>();
+    protected final Set<ResourceId> updatedIds = new HashSet<>();
+    protected final Set<ResourceId> addedIds = new HashSet<>();
     private final ReadWriteLock tempLock = new ReentrantReadWriteLock();
     private boolean closed = false;
 

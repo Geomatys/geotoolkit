@@ -35,7 +35,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.sis.cql.CQLException;
 import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Swing CQL text pane. highlights syntax.

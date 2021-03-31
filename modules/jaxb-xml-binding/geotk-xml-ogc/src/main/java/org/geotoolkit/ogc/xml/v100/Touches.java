@@ -17,14 +17,11 @@
 
 package org.geotoolkit.ogc.xml.v100;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.GeometryOperand;
-import org.opengis.filter.capability.SpatialOperator;
+import org.geotoolkit.filter.capability.SpatialOperator;
 
 
 /**
@@ -40,21 +37,12 @@ import org.opengis.filter.capability.SpatialOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "Touches")
-public class Touches implements SpatialOperator {
-
-    @Override
-    public Collection<GeometryOperand> getGeometryOperands() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public String getName() {
-        return "Touches";
+public class Touches extends SpatialOperator {
+    public Touches() {
+        super("Touches");
     }
 }

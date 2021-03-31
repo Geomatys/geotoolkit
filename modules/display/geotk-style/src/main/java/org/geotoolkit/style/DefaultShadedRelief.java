@@ -16,18 +16,16 @@
  */
 package org.geotoolkit.style;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types shaded relief.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultShadedRelief implements ShadedRelief{
 
@@ -43,7 +41,7 @@ public class DefaultShadedRelief implements ShadedRelief{
      */
     public DefaultShadedRelief(final boolean bright, final Expression relief){
         this.bright = bright;
-        this.relief = (relief == null || relief == NIL) ? DEFAULT_SHADED_RELIEF_FACTOR : relief;
+        this.relief = (relief == null) ? DEFAULT_SHADED_RELIEF_FACTOR : relief;
     }
 
     /**
@@ -88,7 +86,6 @@ public class DefaultShadedRelief implements ShadedRelief{
 
         return this.bright == other.bright
                 && this.relief.equals(other.relief);
-
     }
 
     /**

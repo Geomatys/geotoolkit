@@ -43,7 +43,7 @@ public class SortByProcess extends AbstractProcess {
     @Override
     protected void execute() {
         final FeatureCollection inputFeatureList = inputParameters.getValue(VectorDescriptor.FEATURE_IN);
-        final org.opengis.filter.sort.SortBy[] sorter = inputParameters.getValue(SortByDescriptor.SORTER_IN);
+        final org.opengis.filter.SortProperty[] sorter = inputParameters.getValue(SortByDescriptor.SORTER_IN);
         final FeatureCollection resultFeatureList = FeatureStreams.sort(inputFeatureList, sorter);
         outputParameters.getOrCreate(VectorDescriptor.FEATURE_OUT).setValue(resultFeatureList);
     }

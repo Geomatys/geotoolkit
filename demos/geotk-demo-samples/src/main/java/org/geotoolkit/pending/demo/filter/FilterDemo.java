@@ -6,10 +6,11 @@ import java.util.Iterator;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.locationtech.jts.geom.Coordinate;
@@ -18,15 +19,13 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 
 
 public class FilterDemo {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory2 FF = FilterUtilities.FF;
 
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
@@ -49,24 +48,24 @@ public class FilterDemo {
         final Iterator<Feature> ite = collection.features(false).iterator();
         while(ite.hasNext()){
             final Feature candidate = ite.next();
-            if(filter.evaluate(candidate)){
+            if(filter.test(candidate)){
                 System.out.println(candidate);
             }
         }
     }
 
     private static Filter attributeFilter(){
-        final PropertyName property = FF.property("name");
+        final ValueReference property = FF.property("name");
         final Literal value = FF.literal("robert");
-        final Filter filter = FF.equals(property, value);
+        final Filter filter = FF.equal(property, value);
         return filter;
     }
 
     private static Filter idFilter(){
-        final Set<Identifier> ids = new HashSet<Identifier>();
-        ids.add(FF.featureId("id-1"));
-        ids.add(FF.featureId("id-4"));
-        final Filter filter = FF.id(ids);
+        final Set<Filter<Object>> ids = new HashSet<>();
+        ids.add(FF.resourceId("id-1"));
+        ids.add(FF.resourceId("id-4"));
+        final Filter filter = FF.or(ids);
         return filter;
     }
 
@@ -125,5 +124,4 @@ public class FilterDemo {
 
         return FeatureStoreUtilities.collection(feature1,feature2,feature3,feature4);
     }
-
 }

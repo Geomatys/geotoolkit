@@ -19,7 +19,7 @@ package org.geotoolkit.style;
 import java.util.List;
 import java.util.Objects;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.Displacement;
 import org.opengis.style.GraphicFill;

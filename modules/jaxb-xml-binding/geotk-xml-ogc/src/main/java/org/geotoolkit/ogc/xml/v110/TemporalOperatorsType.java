@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.TemporalOperator;
-import org.opengis.filter.capability.TemporalOperators;
+import org.geotoolkit.filter.capability.TemporalOperator;
+import org.geotoolkit.filter.capability.TemporalOperators;
 
 
 /**
@@ -44,22 +44,18 @@ import org.opengis.filter.capability.TemporalOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperatorsType", propOrder = {
     "temporalOperator"
 })
-public class TemporalOperatorsType implements TemporalOperators {
+public class TemporalOperatorsType extends TemporalOperators {
 
     @XmlElement(name = "TemporalOperator", required = true)
     private List<TemporalOperatorType> temporalOperator;
 
     /**
      * Gets the value of the temporalOperator property.
-     *
      */
     public List<TemporalOperatorType> getTemporalOperator() {
         if (temporalOperator == null) {
@@ -70,7 +66,7 @@ public class TemporalOperatorsType implements TemporalOperators {
 
     @Override
     public Collection<TemporalOperator> getOperators() {
-        List<TemporalOperator> result =  new ArrayList<TemporalOperator>();
+        List<TemporalOperator> result =  new ArrayList<>();
         if (temporalOperator == null) {
             temporalOperator = new ArrayList<TemporalOperatorType>();
             return result;
@@ -129,5 +125,4 @@ public class TemporalOperatorsType implements TemporalOperators {
         hash = 37 * hash + (this.temporalOperator != null ? this.temporalOperator.hashCode() : 0);
         return hash;
     }
-
 }

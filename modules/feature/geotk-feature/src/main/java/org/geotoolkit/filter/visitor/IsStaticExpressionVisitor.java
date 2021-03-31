@@ -17,18 +17,8 @@
  */
 package org.geotoolkit.filter.visitor;
 
-import java.util.List;
-
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.NilExpression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
+import org.apache.sis.internal.filter.FunctionNames;
+import org.opengis.filter.Expression;
 
 /**
  * Check if an expression is static (ie does not contain a PropertyName expression).
@@ -45,94 +35,24 @@ import org.opengis.filter.expression.Subtract;
  *
  * @author Jody
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public class IsStaticExpressionVisitor implements ExpressionVisitor {
+public class IsStaticExpressionVisitor extends AbstractVisitor<Object,Boolean> {
 
     public static final IsStaticExpressionVisitor VISITOR = new IsStaticExpressionVisitor();
 
-    /**
-     * visit each expression and check that they are static
-     */
     protected IsStaticExpressionVisitor() {
+        super(false, true);
+        setExpressionHandler(FunctionNames.Literal,        (e) -> Boolean.TRUE);
+        setExpressionHandler(FunctionNames.ValueReference, (e) -> Boolean.FALSE);
     }
 
-    /**
-     * visit each expression and check that they are static
-     */
     @Override
-    public Boolean visit(final NilExpression expression, final Object data) {
-        return Boolean.TRUE;
-    }
-
-    /**
-     * visit each expression and check that they are static
-     */
-    @Override
-    public Boolean visit(final Add expression, final Object data) {
-        return (Boolean)expression.getExpression1().accept(this, data) &&
-               (Boolean)expression.getExpression2().accept(this, data);
-    }
-
-    /**
-     * visit each expression and check that they are static
-     */
-    @Override
-    public Boolean visit(final Divide expression, final Object data) {
-        return (Boolean)expression.getExpression1().accept(this, data) &&
-               (Boolean)expression.getExpression2().accept(this, data);
-    }
-
-    /**
-     * Visit each parameter and check if they are static
-     */
-    @Override
-    public Boolean visit(final Function expression, final Object data) {
-        final List<Expression> parameters = expression.getParameters();
-        if (parameters != null) {
-            for (final Expression parameter : parameters) {
-                if(!(Boolean)parameter.accept(this, data)) return false;
+    protected Boolean typeNotFound(final String name, final Expression<Object,?> expression) {
+        for (final Expression<? super Object, ?> parameter : expression.getParameters()) {
+            if (!visit(parameter)) {
+                return Boolean.FALSE;
             }
         }
         return Boolean.TRUE;
-    }
-
-    /**
-     * Literal expressions are always static.
-     * @return true
-     */
-    @Override
-    public Boolean visit(final Literal expression, final Object data) {
-        return Boolean.TRUE;
-    }
-
-    /**
-     * visit each expression and check that they are static.
-     * @return true if getExpression1 and getExpression2 are static
-     */
-    @Override
-    public Boolean visit(final Multiply expression, final Object data) {
-        return (Boolean)expression.getExpression1().accept(this, data) &&
-               (Boolean)expression.getExpression2().accept(this, data);
-    }
-
-    /**
-     * If even a single PropertyName is found in the expression
-     * the expression is not static.
-     * @return false
-     */
-    @Override
-    public Boolean visit(final PropertyName expression, final Object data) {
-        return Boolean.FALSE;
-    }
-
-    /**
-     * visit each expression and check that they are static.
-     * @return true if getExpression1 and getExpression2 are static
-     */
-    @Override
-    public Boolean visit(final Subtract expression, final Object data) {
-        return (Boolean)expression.getExpression1().accept(this, data) &&
-               (Boolean)expression.getExpression2().accept(this, data);
     }
 }

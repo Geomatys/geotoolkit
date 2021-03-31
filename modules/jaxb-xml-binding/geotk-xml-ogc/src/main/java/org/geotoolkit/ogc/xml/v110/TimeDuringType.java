@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v110;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.During;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeDuringType extends BinaryTemporalOpType implements During {
-
+public class TimeDuringType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeDuringType() {
-
     }
 
     public TimeDuringType(final String propertyName, final Object temporal) {
@@ -46,15 +43,8 @@ public class TimeDuringType extends BinaryTemporalOpType implements During {
         return new TimeDuringType(this);
     }
 
-
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.DURING;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

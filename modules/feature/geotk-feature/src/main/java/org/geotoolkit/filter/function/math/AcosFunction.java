@@ -18,23 +18,17 @@
 package org.geotoolkit.filter.function.math;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class AcosFunction extends AbstractFunction {
 
     public AcosFunction(final Expression expression) {
-        super(MathFunctionFactory.ACOS, new Expression[] {expression}, null);
+        super(MathFunctionFactory.ACOS, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Number number = parameters.get(0).evaluate(feature, Number.class);
-        if (number == null) {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function acos argument #0 - expected type double");
-        }
-
-        return Math.acos(number.doubleValue());
+    public Object apply(final Object feature) {
+        return Math.acos(doubleValue(feature));
     }
 }

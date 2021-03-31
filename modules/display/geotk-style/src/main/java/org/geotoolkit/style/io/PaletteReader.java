@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.io.SimpleFileFilter;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -35,8 +36,7 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
+import org.opengis.filter.Expression;
 import org.opengis.style.ColorMap;
 import org.opengis.style.StyleFactory;
 
@@ -62,7 +62,7 @@ public class PaletteReader {
 
     public static final SimpleFileFilter FILE_FILTER = new SimpleFileFilter("Palette",false,new String[]{"clr","cpt","pal"});
 
-    protected static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    protected static final FilterFactory FF = FilterUtilities.FF;
     protected static final MutableStyleFactory SF = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
 
     private static class Row implements Comparable<Row> {
@@ -215,7 +215,7 @@ public class PaletteReader {
             for (Row row : rows) {
                 values.add( SF.interpolationPoint(row.v1, SF.literal(row.getColor1(isHSV))));
             }
-            final Function function = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP,
+            final Expression function = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP,
                     values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
             colorMap = SF.colorMap(function);
 
@@ -258,7 +258,7 @@ public class PaletteReader {
                     values.put( FF.literal(Double.NaN), SF.literal(new Color(0f,0f,0f,0f)));
                 }
             }
-            final Function function = SF.categorizeFunction(DEFAULT_CATEGORIZE_LOOKUP,
+            final Expression function = SF.categorizeFunction(DEFAULT_CATEGORIZE_LOOKUP,
                     values, ThreshholdsBelongTo.SUCCEEDING, DEFAULT_FALLBACK);
             colorMap = SF.colorMap(function);
         }

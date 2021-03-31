@@ -20,7 +20,7 @@ import org.locationtech.jts.geom.Geometry;
 import javax.measure.Unit;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.geometry.jts.JTS;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.measure.Units;
@@ -34,24 +34,14 @@ import org.apache.sis.measure.Units;
 public class BufferGeoFunction extends AbstractFunction {
 
     public BufferGeoFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
-        super(GeometryFunctionFactory.BUFFERGEO, new Expression[] {expr1, expr2, expr3}, null);
+        super(GeometryFunctionFactory.BUFFERGEO, expr1, expr2, expr3);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Geometry geom;
-        double width;
-        final String unit;
-
-        try {
-            geom = parameters.get(0).evaluate(feature,Geometry.class);
-            width = parameters.get(1).evaluate(feature,Number.class).doubleValue();
-            unit = parameters.get(2).evaluate(feature,String.class);
-        } catch (Exception e){
-            throw new IllegalArgumentException("Invalid function parameter."+
-                    parameters.get(0)+" "+parameters.get(1)+" "+parameters.get(2));
-        }
-
+    public Object apply(final Object feature) {
+        final Geometry geom = geometryValue(feature);
+        double width = doubleValue(feature, 1);
+        final String unit = stringValue(feature, 2);
         if(width==0) return geom;
 
         final CoordinateReferenceSystem crs;

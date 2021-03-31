@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.IdCapabilities;
+import org.geotoolkit.filter.capability.DefaultIdCapabilities;
 
 
 /**
@@ -43,23 +43,22 @@ import org.opengis.filter.capability.IdCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Id_CapabilitiesType", propOrder = {
     "resourceIdentifier"
 })
-public class IdCapabilitiesType implements IdCapabilities {
+public class IdCapabilitiesType extends DefaultIdCapabilities {
 
     @XmlElement(name = "ResourceIdentifier", required = true)
     private List<ResourceIdentifierType> resourceIdentifier;
 
     public IdCapabilitiesType() {
-
+        super(false, false);
     }
 
     public IdCapabilitiesType(ResourceIdentifierType resourceIdentifier) {
+        super(false, false);
         if (resourceIdentifier != null) {
             this.resourceIdentifier = new ArrayList<>();
             this.resourceIdentifier.add(resourceIdentifier);
@@ -67,11 +66,11 @@ public class IdCapabilitiesType implements IdCapabilities {
     }
 
     public IdCapabilitiesType(final List<ResourceIdentifierType> resourceIdentifier) {
+        super(false, false);
         this.resourceIdentifier = resourceIdentifier;
     }
     /**
      * Gets the value of the resourceIdentifier property.
-     *
      */
     public List<ResourceIdentifierType> getResourceIdentifier() {
         if (resourceIdentifier == null) {
@@ -79,13 +78,4 @@ public class IdCapabilitiesType implements IdCapabilities {
         }
         return this.resourceIdentifier;
     }
-
-    public boolean hasEID() {
-        return false;
-    }
-
-    public boolean hasFID() {
-        return false;
-    }
-
 }

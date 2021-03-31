@@ -45,9 +45,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -59,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
     "idCapabilities"
 })
 @XmlRootElement(name = "Filter_Capabilities")
-public class FilterCapabilities implements org.opengis.filter.capability.FilterCapabilities {
+public class FilterCapabilities extends org.geotoolkit.filter.capability.FilterCapabilities {
 
     @XmlElement(name = "Spatial_Capabilities", required = true)
     private SpatialCapabilitiesType spatialCapabilities;
@@ -78,7 +75,6 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
      * An empty constructor used by JAXB
      */
     public FilterCapabilities() {
-
     }
 
     /**
@@ -88,7 +84,6 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         this.spatialCapabilities = spatial;
         this.idCapabilities      = id;
         this.scalarCapabilities  = scalar;
-
     }
 
     /**
@@ -99,7 +94,6 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         this.idCapabilities       = id;
         this.scalarCapabilities   = scalar;
     }
-
 
     /**
      * Gets the value of the spatialCapabilities property.
@@ -234,6 +228,4 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         hash = 59 * hash + (this.idCapabilities != null ? this.idCapabilities.hashCode() : 0);
         return hash;
     }
-
-
 }

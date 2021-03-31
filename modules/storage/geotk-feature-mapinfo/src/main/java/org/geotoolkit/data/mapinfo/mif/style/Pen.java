@@ -19,7 +19,7 @@ package org.geotoolkit.data.mapinfo.mif.style;
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFLineBuilder;
 import org.geotoolkit.style.DefaultDescription;
 import org.opengis.util.GenericName;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Stroke;

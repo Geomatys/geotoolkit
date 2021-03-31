@@ -18,7 +18,7 @@ package org.geotoolkit.filter.function.feature;
 
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.feature.Feature;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Extract feature type name.
@@ -28,15 +28,14 @@ import org.opengis.filter.expression.Expression;
 public class FeatureTypeNameFunction extends AbstractFunction {
 
     public FeatureTypeNameFunction(final Expression expr1) {
-        super("featureTypeName", new Expression[] {}, null);
+        super("featureTypeName");
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
         if (feature instanceof Feature) {
             return ((Feature)feature).getType().getName().toString();
         }
         return "";
     }
-
 }

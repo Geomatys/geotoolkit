@@ -27,16 +27,15 @@ import org.apache.sis.internal.coverage.j2d.ColorModelFactory;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.filter.AbstractExpression;
-import org.geotoolkit.filter.DefaultLiteral;
+import static org.geotoolkit.filter.FilterUtilities.FF;
 import org.geotoolkit.image.RecolorRenderedImage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.feature.Feature;
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.expression.Expression;
-import static org.opengis.filter.expression.Expression.*;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Literal;
+import org.geotoolkit.filter.capability.FunctionName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.util.ScopedName;
 
 /**
  *
@@ -61,7 +60,6 @@ import org.opengis.filter.expression.Literal;
  * In reality any expression will do.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultInterpolate extends AbstractExpression implements Interpolate {
 
@@ -76,35 +74,13 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
      * Make the instance of FunctionName available in
      * a consistent spot.
      */
-    public static final FunctionName NAME = new Name();
-
-    /**
-     * Describe how this function works.
-     * (should be available via FactoryFinder lookup...)
-     */
-    public static class Name implements FunctionName {
-
-        @Override
-        public int getArgumentCount() {
-            return -2; // indicating unbounded, 2 minimum
-        }
-
-        @Override
-        public List<String> getArgumentNames() {
-            return Arrays.asList(new String[]{
-                        "LookupValue",
-                        "Data 1", "Value 1",
-                        "Data 2", "Value 2",
-                        "linear, cosine or cubic",
-                        "numeric or color"
-                    });
-        }
-
-        @Override
-        public String getName() {
-            return "Interpolate";
-        }
-    };
+    public static final FunctionName NAME = new FunctionName("Interpolate", Arrays.asList(
+            "LookupValue",
+            "Data 1", "Value 1",
+            "Data 2", "Value 2",
+            "linear, cosine or cubic",
+            "numeric or color"),
+            -2);        // indicating unbounded, 2 minimum
 
 
     public DefaultInterpolate(final Expression ... expressions){
@@ -112,26 +88,26 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         final List<InterpolationPoint> points = new ArrayList<InterpolationPoint>();
         for(int i=1;i<expressions.length-2;i+=2){
             final InterpolationPoint ip = new DefaultInterpolationPoint(
-                    expressions[i].evaluate(null, Number.class), expressions[i+1]);
+                    (Number) expressions[i].apply(null), expressions[i+1]);
             points.add(ip);
         }
         this.points = points.toArray(new InterpolationPoint[points.size()]);
 
-        final Method me = Method.parse(expressions[expressions.length-2].evaluate(null, String.class));
-        final Mode mo = Mode.parse(expressions[expressions.length-1].evaluate(null, String.class));
+        final Method me = Method.parse(expressions[expressions.length-2].apply(null).toString());
+        final Mode mo = Mode.parse(expressions[expressions.length-1].apply(null).toString());
         this.method = (me==null) ? Method.COLOR : me;
         this.mode = (mo == null) ? Mode.LINEAR : mo;
         this.fallback = DEFAULT_FALLBACK;
     }
 
-    public DefaultInterpolate(final Expression LookUpValue, List<InterpolationPoint> values,
+    public DefaultInterpolate(final Expression lookUpValue, List<InterpolationPoint> values,
            final Method method, final Mode mode,final Literal fallback){
 
         if(values == null ){
             values = Collections.emptyList();
         }
 
-        this.lookup = (LookUpValue == null || LookUpValue == NIL) ?  DEFAULT_CATEGORIZE_LOOKUP : LookUpValue;
+        this.lookup = (lookUpValue == null) ?  DEFAULT_CATEGORIZE_LOOKUP : lookUpValue;
         this.points = values.toArray(new InterpolationPoint[values.size()]);
 
         Arrays.sort(points, new Comparator<InterpolationPoint>(){
@@ -166,37 +142,29 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         this.fallback = (fallback == null) ? DEFAULT_FALLBACK : fallback;
     }
 
-
     @Override
-    public String getName() {
-        return "Interpolate";
+    public ScopedName getFunctionName() {
+        return createName("Interpolate");
     }
 
     @Override
-    public List<Expression> getParameters() {
-        final List<Expression> params = new ArrayList<Expression>();
+    public List<Expression<Object,?>> getParameters() {
+        final List<Expression<Object,?>> params = new ArrayList<>();
         params.add(lookup);
         for(InterpolationPoint ip : points){
-            params.add(new DefaultLiteral(ip.getData()));
+            params.add(FF.literal(ip.getData()));
             params.add(ip.getValue());
         }
-        params.add(new DefaultLiteral(method.name().toLowerCase()));
-        params.add(new DefaultLiteral(mode.name().toLowerCase()));
+        params.add(FF.literal(method.name().toLowerCase()));
+        params.add(FF.literal(mode.name().toLowerCase()));
         return params;
     }
 
     @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-
+    public Object apply(final Object object) {
         if (object instanceof RenderedImage) {
             return evaluateImage((RenderedImage) object);
         }
-
         return evaluate(object, Object.class);
     }
 
@@ -207,11 +175,11 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
         final Number value;
         if(object instanceof Feature){
-            value = lookup.evaluate(object,Number.class);
+            value = (Number) lookup.apply(object);
         }else if(object instanceof Number){
             value = (Number)object;
         }else{
-            return fallback.evaluate(object,c);
+            return ObjectConverters.convert(fallback.apply(object), c);
         }
 
         final double dval = value.doubleValue();
@@ -236,7 +204,6 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 ipval = ipnum.doubleValue();
             }
 
-
             if(ipval < dval){
                 before = ip;
             }else if(ipval > dval){
@@ -244,7 +211,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 break;
             }else{
                 //exact match
-                return ip.getValue().evaluate(object,c);
+                return ObjectConverters.convert(ip.getValue().apply(object), c);
             }
         }
 
@@ -255,27 +222,27 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
         }else if(before == null){
             //only have an over value
-            return after.getValue().evaluate(object,c);
+            return ObjectConverters.convert(after.getValue().apply(object), c);
         }else if(after == null){
             //only have an under value
-            return before.getValue().evaluate(object,c);
+            return ObjectConverters.convert(before.getValue().apply(object), c);
         }else{
             //must interpolate
             final double d1 = before.getData().doubleValue();
             final double d2 = after.getData().doubleValue();
             final double pourcent = (dval - d1)/ (d2 - d1);
 
-            final Object o1 = before.getValue().evaluate(object,c);
-            final Object o2 = after.getValue().evaluate(object,c);
+            final Object o1 = ObjectConverters.convert(before.getValue().apply(object), c);
+            final Object o2 = ObjectConverters.convert(after.getValue().apply(object), c);
             if(o1 instanceof Color && o2 instanceof Color){
                 //datas are not numbers, looks like we deal with colors
-                final Color c1 = before.getValue().evaluate(object,Color.class);
-                final Color c2 = after.getValue().evaluate(object,Color.class);
+                final Color c1 = (Color) before.getValue().apply(object);
+                final Color c2 = (Color) after.getValue().apply(object);
                 final Color in = interpolate(c1, c2, pourcent);
                 return ObjectConverters.convert( in , c);
             }else{
-                final Double n1 = before.getValue().evaluate(object,Double.class);
-                final Double n2 = after.getValue().evaluate(object,Double.class);
+                final double n1 = ((Number) before.getValue().apply(object)).doubleValue();
+                final double n2 = ((Number) after.getValue().apply(object)).doubleValue();
                 return ObjectConverters.convert( (n1 + pourcent*(n2-n1)) , c);
             }
         }
@@ -398,7 +365,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         for (int i = 0, n = points.size(); i < n; i++) {
             final InterpolationPoint point = points.get(i);
             SE_VALUES[i] = point.getData().doubleValue();
-            final Color evaluate = point.getValue().evaluate(null, Color.class);
+            final Color evaluate = (Color) point.getValue().apply(null);
             SE_ARGB[i] = (evaluate != null) ? evaluate.getRGB() : 0;
         }
 
@@ -448,7 +415,6 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                     ARGB[i] = currentColor;
                 }
             }
-
         }
         return ARGB;
     }
@@ -498,5 +464,4 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         int b = lastBlue  + (int)(pourcent*blueInterval);
         return new Color(r, g, b, a) ;
     }
-
 }

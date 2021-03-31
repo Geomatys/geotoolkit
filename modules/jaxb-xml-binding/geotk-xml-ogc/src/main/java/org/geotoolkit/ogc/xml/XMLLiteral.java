@@ -17,7 +17,7 @@
 package org.geotoolkit.ogc.xml;
 
 import java.util.List;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Literal;
 
 /**
  * @author Guilhem Legal (Geomatys)

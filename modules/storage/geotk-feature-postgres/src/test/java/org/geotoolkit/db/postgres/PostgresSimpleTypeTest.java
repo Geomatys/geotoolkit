@@ -65,9 +65,9 @@ import static org.geotoolkit.db.postgres.PostgresProvider.*;
 import static org.junit.Assert.*;
 import org.geotoolkit.storage.DataStores;
 import org.junit.After;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
@@ -80,7 +80,7 @@ import org.opengis.filter.FilterFactory;
  */
 public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
 
-    private final FilterFactory FF = new DefaultFilterFactory2();
+    private final FilterFactory FF = FilterUtilities.FF;
 
     /** driver types */
     private static final FeatureType FTYPE_DRIVER;
@@ -161,7 +161,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(GeometryCollection.class).setName("geometrycollection").setCRS(CommonCRS.WGS84.normalizedGeographic());
         FTYPE_GEOMETRY = ftb.build();
 
-
         ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
         ftb.setName("Stop");
@@ -182,7 +181,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         ftb.addAssociation(FTYPE_STOP).setName("stops").setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
         FTYPE_COMPLEX = ftb.build();
 
-
         ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
         ftb.setName("Data");
@@ -200,7 +198,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(Long.class).setName("identifier");
         ftb.addAssociation(FTYPE_RECORD).setName("records").setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
         FTYPE_COMPLEX2 = ftb.build();
-
 
         ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
@@ -226,9 +223,9 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
     private static Parameters params;
 
     /**
-     * <p>Find JDBC connection parameters in specified file at
-     * "/home/.geotoolkit.org/test-pgfeature.properties".<br/>
-     * If properties file doesn't find all tests are skipped.</p>
+     * Find JDBC connection parameters in specified file at
+     * "/home/.geotoolkit.org/test-pgfeature.properties".
+     * If properties file doesn't find all tests are skipped.
      *
      * <p>To lunch tests user should create file with this architecture<br/>
      * for example : <br/>
@@ -239,7 +236,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
      * password   = postgres (user password)<br/>
      * simpletype = false <br/>
      * namespace  = no namespace</p>
-     * @throws IOException
      */
     @BeforeClass
     public static void beforeClass() throws IOException {
@@ -321,7 +317,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         desc = descs.get(index++);
         assertEquals("string", desc.getName().tip().toString());
         assertEquals(String.class, ((AttributeType)desc).getValueClass());
-
     }
 
     @Test
@@ -364,7 +359,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         desc = descs.get(index++);
         assertEquals("string", desc.getName().tip().toString());
         assertEquals(String[].class, ((AttributeType)desc).getValueClass());
-
     }
 
     @Test
@@ -407,7 +401,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         desc = descs.get(index++);
         assertEquals("string", desc.getName().tip().toString());
         assertEquals(String[][].class, ((AttributeType)desc).getValueClass());
-
     }
 
     @Test
@@ -484,10 +477,10 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         feature.setPropertyValue("double",14.5);
         feature.setPropertyValue("string","a string");
 
-        List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
+        List<ResourceId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("1"), addedIds.get(0));
+        assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         Session session = store.createSession(false);
         FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -509,7 +502,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
             ite.close();
         }
 
-
         // SECOND TEST for NAN values ------------------------------------------
         reload(true);
         store.createFeatureType(FTYPE_SIMPLE);
@@ -529,7 +521,7 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("1"), addedIds.get(0));
+        assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         session = store.createSession(false);
         col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -550,9 +542,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         }finally{
             ite.close();
         }
-
-
-
     }
 
     @Test
@@ -573,10 +562,10 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         feature.setPropertyValue("double",new Double[]{78.3d,41.23d,-99.66d});
         feature.setPropertyValue("string",new String[]{"marc","hubert","samy"});
 
-         List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
+         List<ResourceId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("1"), addedIds.get(0));
+        assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -598,7 +587,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         }finally{
             ite.close();
         }
-
     }
 
     @Test
@@ -619,10 +607,10 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         feature.setPropertyValue("double",new Double[][]{{1d,2d,3d},{4d,5d,6d},{7d,8d,9d}});
         feature.setPropertyValue("string",new String[][]{{"1","2","3"},{"4","5","6"},{"7","8","9"}});
 
-        List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
+        List<ResourceId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("1"), addedIds.get(0));
+        assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -644,7 +632,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         }finally{
             ite.close();
         }
-
     }
 
     @Test
@@ -706,10 +693,10 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         feature.setPropertyValue("multipolygon",mpolygon);
         feature.setPropertyValue("geometrycollection",gc);
 
-        List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
+        List<ResourceId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(feature));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("1"), addedIds.get(0));
+        assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
         final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName().toString()));
@@ -752,9 +739,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
 
     /**
      * Test ugly named table
-     *
-     * @throws DataStoreException
-     * @throws VersioningException
      */
     @Test
     public void testUglyTableName() throws Exception{
@@ -771,10 +755,10 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         final Feature record = resType.newInstance();
         record.setPropertyValue("text","un'deux'trois'quatre");
 
-        List<FeatureId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(record));
+        List<ResourceId> addedIds = store.addFeatures(resType.getName().toString(), Collections.singleton(record));
 
         assertEquals(1, addedIds.size());
-        assertEquals(FF.featureId("1"), addedIds.get(0));
+        assertEquals(FF.resourceId("1"), addedIds.get(0));
 
         final Query query = QueryBuilder.all(resType.getName().toString());
         final FeatureReader ite = store.getFeatureReader(query);
@@ -789,8 +773,6 @@ public class PostgresSimpleTypeTest extends org.geotoolkit.test.TestBase {
         }finally{
             ite.close();
         }
-
         assertTrue(found);
     }
-
 }

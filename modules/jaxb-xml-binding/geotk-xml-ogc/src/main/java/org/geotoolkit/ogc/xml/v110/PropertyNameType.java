@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.PropertyName;
+import org.geotoolkit.ogc.xml.AbstractExpression;
+import org.opengis.filter.ValueReference;
 
 
 /**
@@ -39,15 +39,12 @@ import org.opengis.filter.expression.PropertyName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyNameType", propOrder = {
     "content"
 })
-public class PropertyNameType implements PropertyName {
+public class PropertyNameType extends AbstractExpression implements ValueReference {
 
     @XmlValue
     private String content;
@@ -56,7 +53,6 @@ public class PropertyNameType implements PropertyName {
      * An empty constructor used by JAXB
      */
     public PropertyNameType() {
-
     }
 
     /**
@@ -105,23 +101,13 @@ public class PropertyNameType implements PropertyName {
     }
 
     @Override
-    public String getPropertyName() {
+    public String getXPath() {
         return content;
     }
 
     @Override
-    public Object evaluate(final Object object) {
+    public Object apply(final Object object) {
         throw new UnsupportedOperationException("Property name in the right part is not allowed.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Property name in the right part is not allowed.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this,extraData);
     }
 
     /**

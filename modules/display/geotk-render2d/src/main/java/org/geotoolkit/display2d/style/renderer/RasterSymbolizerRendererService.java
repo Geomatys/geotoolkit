@@ -52,8 +52,7 @@ import org.geotoolkit.style.function.Jenks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
+import org.opengis.filter.Expression;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -330,14 +329,14 @@ public class RasterSymbolizerRendererService extends AbstractSymbolizerRendererS
         final ColorMap cm = symbol.getSource().getColorMap();
 
         if (cm != null && cm.getFunction() != null ) {
-            final Function fct = cm.getFunction();
+            final Expression fct = cm.getFunction();
             if (fct instanceof Interpolate) {
                 final Interpolate interpolate = (Interpolate) fct;
                 final List<InterpolationPoint> points = interpolate.getInterpolationPoints();
                 final int size = points.size();
                 for(int i=0;i<size;i++){
                     final InterpolationPoint pt = points.get(i);
-                    Color color = pt.getValue().evaluate(null, Color.class);
+                    Color color = (Color) pt.getValue().apply(null);
                     if(color == null) try {
                         color = ObjectConverters.convert(pt.getValue().toString(), Color.class);
                     } catch (UnconvertibleObjectException e) {
@@ -382,11 +381,11 @@ public class RasterSymbolizerRendererService extends AbstractSymbolizerRendererS
 
                 for (Map.Entry<Expression, Expression> entry : thresholds.entrySet()) {
 
-                    final Color currentColor = entry.getValue().evaluate(null, Color.class);
+                    final Color currentColor = (Color) entry.getValue().apply(null);
                     Double currentValue = Double.NEGATIVE_INFINITY;
 
                     try {
-                        Double value = entry.getKey().evaluate(null, Double.class);
+                        Double value = doubleValue(entry.getKey());
                         if (value != null) {
                             currentValue = value;
                         }
@@ -422,8 +421,12 @@ public class RasterSymbolizerRendererService extends AbstractSymbolizerRendererS
                 }
             }
         }
-
         return colorMap;
+    }
+
+    private static Double doubleValue(final Expression e) {
+        final Number v = (Number) e.apply(null);
+        return (v != null) ? v.doubleValue() : null;
     }
 
     /**

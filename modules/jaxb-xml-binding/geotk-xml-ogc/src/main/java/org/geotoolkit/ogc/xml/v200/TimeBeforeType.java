@@ -17,25 +17,19 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.Before;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeBeforeType extends BinaryTemporalOpType implements Before {
-
-     /**
+public class TimeBeforeType extends BinaryTemporalOpType {
+    /**
      * An empty constructor used by JAXB
      */
     public TimeBeforeType() {
-
     }
 
-    /**
-     * Build a new TIme After Type
-     */
     public TimeBeforeType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
@@ -50,13 +44,7 @@ public class TimeBeforeType extends BinaryTemporalOpType implements Before {
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.BEFORE;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

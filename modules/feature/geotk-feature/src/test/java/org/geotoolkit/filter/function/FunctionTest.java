@@ -20,12 +20,11 @@ package org.geotoolkit.filter.function;
 
 import org.junit.Test;
 
-import org.opengis.filter.expression.Function;
-
 import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 import org.geotoolkit.filter.function.string.LengthFunction;
 import org.geotoolkit.filter.function.string.StringFunctionFactory;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -36,7 +35,7 @@ import org.geotoolkit.filter.function.string.StringFunctionFactory;
 public class FunctionTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testFunctionLenght() {
-        Function f = FF.function(StringFunctionFactory.LENGTH, FF.property("."));
+        Expression f = FF.function(StringFunctionFactory.LENGTH, FF.property("."));
         assertInstanceOf("EXPRESSION_VALUE_LENGHT", LengthFunction.class, f);
         assertSerializedEquals(f); //test serialize
     }

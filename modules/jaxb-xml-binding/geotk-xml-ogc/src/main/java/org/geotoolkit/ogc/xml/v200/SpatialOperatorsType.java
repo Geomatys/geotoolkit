@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.SpatialOperator;
-import org.opengis.filter.capability.SpatialOperators;
+import org.geotoolkit.filter.capability.SpatialOperator;
+import org.geotoolkit.filter.capability.SpatialOperators;
 
 
 /**
@@ -53,7 +53,7 @@ import org.opengis.filter.capability.SpatialOperators;
 @XmlType(name = "SpatialOperatorsType", propOrder = {
     "spatialOperator"
 })
-public class SpatialOperatorsType implements SpatialOperators {
+public class SpatialOperatorsType extends SpatialOperators {
 
     @XmlElement(name = "SpatialOperator", required = true)
     private List<SpatialOperatorType> spatialOperator;
@@ -62,7 +62,6 @@ public class SpatialOperatorsType implements SpatialOperators {
      * An empty constructor used by JAXB
      */
     public SpatialOperatorsType() {
-
     }
 
     /**
@@ -92,7 +91,7 @@ public class SpatialOperatorsType implements SpatialOperators {
      */
     @Override
     public Collection<SpatialOperator> getOperators() {
-        List<SpatialOperator> result =  new ArrayList<SpatialOperator>();
+        List<SpatialOperator> result =  new ArrayList<>();
         if (spatialOperator == null) {
             spatialOperator = new ArrayList<SpatialOperatorType>();
             return result;
@@ -116,5 +115,4 @@ public class SpatialOperatorsType implements SpatialOperators {
         }
         return null;
     }
-
 }

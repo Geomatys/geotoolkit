@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.opengis.filter.capability.GeometryOperand;
-import org.opengis.filter.capability.SpatialOperator;
+import org.geotoolkit.filter.capability.SpatialOperator;
 
 /**
  * <p>Java class for SpatialOperatorType complex type.
@@ -54,7 +54,7 @@ import org.opengis.filter.capability.SpatialOperator;
 @XmlType(name = "SpatialOperatorType", propOrder = {
     "geometryOperands"
 })
-public class SpatialOperatorType implements SpatialOperator {
+public class SpatialOperatorType extends SpatialOperator {
 
     @XmlElement(name = "GeometryOperands")
     private GeometryOperandsType geometryOperands;
@@ -65,18 +65,18 @@ public class SpatialOperatorType implements SpatialOperator {
      * An empty constructor used by JAXB
      */
     public SpatialOperatorType() {
-
+        super("");
     }
 
     /**
      * build a new spatial operator
      */
     public SpatialOperatorType(final String name, final GeometryOperand[] geometryOperands) {
+        super(name);
         this.name = SpatialOperatorNameType.valueOf(name);
         if (geometryOperands != null) {
             this.geometryOperands = new GeometryOperandsType(geometryOperands);
         }
-
     }
 
     /**
@@ -93,11 +93,6 @@ public class SpatialOperatorType implements SpatialOperator {
         return name;
     }
 
-
-    /**
-     * Implements SpatialOperator geoAPI interface
-     * @return
-     */
     @Override
     public Collection<GeometryOperand> getGeometryOperands() {
         List<GeometryOperand> result = new ArrayList<GeometryOperand>();

@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Collections;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
+import org.opengis.filter.NullOperator;
 
 
 /**
@@ -41,15 +42,12 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNullType", propOrder = {
     "propertyName"
 })
-public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsNull {
+public class PropertyIsNullType extends ComparisonOpsType implements NullOperator {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -58,7 +56,6 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
      * An empty constructor used by JAXB
      */
      public PropertyIsNullType() {
-
      }
 
      /**
@@ -99,22 +96,21 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
         return s.toString();
     }
 
+    @Override
+    public List getExpressions() {
+        return Collections.singletonList(getExpression());
+    }
+
     /**
      * implements PropertyIsNull Types interface
      */
-    @Override
     public Expression getExpression() {
         return propertyName;
     }
 
     @Override
-    public boolean evaluate(final Object object) {
+    public boolean test(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        return visitor.visit( this, extraData );
     }
 
     @Override

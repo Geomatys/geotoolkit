@@ -23,8 +23,8 @@ import org.opengis.style.Description;
 import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 
 /**
  * Abstract implementation of Types symbolizer.
@@ -70,8 +70,8 @@ public abstract class AbstractSymbolizer implements Symbolizer{
      */
     @Override
     public String getGeometryPropertyName() {
-        if(geom instanceof PropertyName){
-            return ((PropertyName)geom).getPropertyName();
+        if(geom instanceof ValueReference){
+            return ((ValueReference)geom).getXPath();
         }else{
             return null;
         }

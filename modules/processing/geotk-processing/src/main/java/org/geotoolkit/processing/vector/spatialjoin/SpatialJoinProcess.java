@@ -187,7 +187,7 @@ public class SpatialJoinProcess extends AbstractProcess {
     static Feature copyAttributes(final Feature target, final Feature source, final FeatureType concatType) {
         final Feature resultFeature = concatType.newInstance();
         resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),
-                FeatureExt.getId(target).getID() + "_" + FeatureExt.getId(source).getID());
+                FeatureExt.getId(target).getIdentifier() + "_" + FeatureExt.getId(source).getIdentifier());
 
         //copy target Feature
         for (final PropertyType targetProperty : target.getType().getProperties(true)) {

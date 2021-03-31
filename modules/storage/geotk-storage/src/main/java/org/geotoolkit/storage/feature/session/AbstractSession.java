@@ -29,7 +29,7 @@ import org.geotoolkit.storage.feature.FeatureStore;
 import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.storage.event.StorageEvent;
 import org.geotoolkit.storage.event.StorageListener;
-import org.opengis.filter.Id;
+import org.opengis.filter.ResourceId;
 import org.opengis.metadata.Metadata;
 import org.opengis.util.GenericName;
 
@@ -122,7 +122,7 @@ public abstract class AbstractSession implements Resource, Session, StoreListene
      * @param name of the schema where features where added.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesAdded(final GenericName name, final Id ids){
+    protected void fireFeaturesAdded(final GenericName name, final ResourceId ids){
         sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractSession implements Resource, Session, StoreListene
      * @param name of the schema where features where updated.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesUpdated(final GenericName name, final Id ids){
+    protected void fireFeaturesUpdated(final GenericName name, final ResourceId ids){
         sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
@@ -142,7 +142,7 @@ public abstract class AbstractSession implements Resource, Session, StoreListene
      * @param name of the schema where features where deleted
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesDeleted(final GenericName name, final Id ids){
+    protected void fireFeaturesDeleted(final GenericName name, final ResourceId ids){
         sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 

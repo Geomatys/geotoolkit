@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.MultiGeometry;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -47,9 +46,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiGeometryType", propOrder = {
@@ -95,7 +91,6 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
      * @return
      *     possible object is
      *     {@link GeometryArrayPropertyType }
-     *
      */
     public GeometryArrayPropertyType getGeometryMembers() {
         return geometryMembers;
@@ -107,25 +102,9 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
      * @param value
      *     allowed object is
      *     {@link GeometryArrayPropertyType }
-     *
      */
     public void setGeometryMembers(final GeometryArrayPropertyType value) {
         this.geometryMembers = value;
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -140,11 +119,9 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
                 s.append(geoProp).append('\n');
             }
         }
-
         if (geometryMembers != null) {
             s.append("geometryMembers: ").append(geometryMembers).append('\n');
         }
-
         return s.toString();
     }
 

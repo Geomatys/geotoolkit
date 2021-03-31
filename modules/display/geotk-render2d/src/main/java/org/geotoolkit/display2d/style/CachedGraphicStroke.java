@@ -22,7 +22,6 @@ import org.opengis.style.GraphicStroke;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class CachedGraphicStroke extends CachedGraphic<GraphicStroke>{
 
@@ -31,12 +30,10 @@ public class CachedGraphicStroke extends CachedGraphic<GraphicStroke>{
     }
 
     public float getGap(final Object candidate){
-        return styleElement.getGap().evaluate(candidate,Float.class);
+        return ((Number) styleElement.getGap().apply(candidate)).floatValue();
     }
 
     public float getInitialGap(final Object candidate){
-        return styleElement.getInitialGap().evaluate(candidate,Float.class);
+        return ((Number) styleElement.getInitialGap().apply(candidate)).floatValue();
     }
-
-
 }

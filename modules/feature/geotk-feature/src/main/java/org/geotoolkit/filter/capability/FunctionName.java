@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.List;
-import org.opengis.filter.capability.FunctionName;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Immutable function name.
@@ -26,45 +26,32 @@ import org.opengis.filter.capability.FunctionName;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultFunctionName implements FunctionName{
+@Deprecated
+@XmlTransient
+public class FunctionName {
 
     private final String name;
     private final List<String> argNames;
     private final int size;
 
-    public DefaultFunctionName(final String name, final List<String> argNames, final int size) {
+    public FunctionName(final String name, final List<String> argNames, final int size) {
         this.name = name;
         this.argNames = argNames;
         this.size = size;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public int getArgumentCount() {
         return size;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public List<String> getArgumentNames() {
         return argNames;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -73,7 +60,7 @@ public class DefaultFunctionName implements FunctionName{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DefaultFunctionName other = (DefaultFunctionName) obj;
+        final FunctionName other = (FunctionName) obj;
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
@@ -86,9 +73,6 @@ public class DefaultFunctionName implements FunctionName{
         return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
         int hash = 3;
@@ -97,5 +81,4 @@ public class DefaultFunctionName implements FunctionName{
         hash = 53 * hash + this.size;
         return hash;
     }
-
 }

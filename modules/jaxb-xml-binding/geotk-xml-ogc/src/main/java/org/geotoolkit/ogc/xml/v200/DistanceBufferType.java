@@ -23,12 +23,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
+import javax.measure.Quantity;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
+import org.apache.sis.measure.Quantities;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.DistanceBufferOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.DistanceOperator;
+import org.opengis.geometry.Geometry;
 
 /**
  * <p>Java class for DistanceBufferType complex type.
@@ -48,8 +51,6 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DistanceBufferType", propOrder = {
@@ -57,7 +58,7 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
     "any",
     "distance"
 })
-public abstract class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
+public abstract class DistanceBufferType extends SpatialOpsType implements DistanceOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -73,7 +74,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
     private static final ObjectFactory factory = new ObjectFactory();
 
     public DistanceBufferType() {
-
     }
 
     /**
@@ -103,7 +103,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
                 }
             }
-
             if (that.any != null) {
                 this.any = new ArrayList<>();
                 for (Object obj : that.any) {
@@ -115,7 +114,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
                     }
                 }
             }
-
             if (that.distance != null) {
                 this.distance = new MeasureType(that.distance.getValue(), that.distance.getUom());
             }
@@ -129,6 +127,11 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         return null;
     }
 
+    @Override
+    public Geometry getGeometry() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Gets the value of the expression property.
      *
@@ -138,7 +141,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -153,7 +155,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
      */
     public void setExpression(JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -161,11 +162,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
 
     /**
      * Gets the value of the any property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *
      */
     public Object getAny() {
         cleanAny();
@@ -177,11 +173,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
 
     /**
      * Sets the value of the any property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *
      */
     public void setAny(final Object value) {
         this.any = Arrays.asList(value);
@@ -211,37 +202,26 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
 
     /**
      * Gets the value of the distance property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MeasureType }
-     *
      */
     public MeasureType getDistanceType() {
         return distance;
     }
 
     @Override
-    public double getDistance() {
+    public Quantity getDistance() {
         if (distance != null) {
-            return distance.getValue();
+            return Quantities.create(distance.getValue(), Units.valueOf(distance.getUom()));
         }
-        return 0.0;
+        return Quantities.create(0, Units.METRE);
     }
 
     /**
      * Sets the value of the distance property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MeasureType }
-     *
      */
     public void setDistance(MeasureType value) {
         this.distance = value;
     }
 
-    @Override
     public String getDistanceUnits() {
         if (distance != null) {
             return distance.getUom();
@@ -250,6 +230,10 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
     }
 
     @Override
+    public List getExpressions() {
+        return Arrays.asList(getExpression1(), getExpression2());
+    }
+
     public Expression getExpression1() {
         if (expression != null && expression.getValue() != null) {
             if (expression.getValue() instanceof Expression) {
@@ -261,7 +245,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         return null;
     }
 
-    @Override
     public Expression getExpression2() {
         final Object a = getAny();
         if (a != null) {
@@ -281,16 +264,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         return null;
     }
 
-    @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -302,14 +275,12 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         if (object instanceof DistanceBufferType) {
             final DistanceBufferType that = (DistanceBufferType) object;
 
-
             boolean env = false;
             if (this.expression != null && that.expression != null) {
                 env = Objects.equals(this.expression.getValue(), that.expression.getValue());
             } else if (this.expression == null && that.expression == null) {
                 env = true;
             }
-
             boolean anyEq = false;
             if (this.any == null && that.any == null) {
                 anyEq = true;
@@ -328,7 +299,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
                     }
                 }
             }
-
             return  Objects.equals(this.distance, that.distance) && env && anyEq;
         }
         return false;
@@ -342,9 +312,6 @@ public abstract class DistanceBufferType extends SpatialOpsType implements Dista
         hash = 67 * hash + (this.any != null ? this.any.hashCode() : 0);
         return hash;
     }
-
-
-
 
     @Override
     public String toString() {

@@ -21,7 +21,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.LineString;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Extract first geometry segment angle in radians.
@@ -31,19 +31,12 @@ import org.opengis.filter.expression.Expression;
 public class StartAngleFunction extends AbstractFunction {
 
     public StartAngleFunction(final Expression expr1) {
-        super(GeometryFunctionFactory.STARTANGLE, new Expression[] {expr1}, null);
+        super(GeometryFunctionFactory.STARTANGLE, expr1);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Geometry geom;
-
-        try {
-            geom = parameters.get(0).evaluate(feature,Geometry.class);
-        } catch (Exception e){
-            throw new IllegalArgumentException("Invalid function parameter."+parameters.get(0));
-        }
-
+    public Object apply(final Object feature) {
+        final Geometry geom = geometryValue(feature);
         if(geom==null) return 0.0;
         final LineString line = getLine(geom);
         if(line==null) return 0.0;
@@ -64,5 +57,4 @@ public class StartAngleFunction extends AbstractFunction {
         }
         return null;
     }
-
 }

@@ -35,14 +35,8 @@ import org.locationtech.jts.io.WKTReader;
 import org.opengis.feature.Feature;
 
 /**
- * Base class for test suite. This class is not abstract for the purpose of
- * {@link TestCaseSupportTest}, but should not be instantiated otherwise. It
- * should be extented (which is why the constructor is protected).
- * <p>
- * Note: a nearly identical copy of this file exists in the {@code ext/shape}
- * module.
+ * Base class for test suite.
  *
- * @version $Id$
  * @author Ian Schneider
  * @author Martin Desruisseaux
  * @module
@@ -214,5 +208,4 @@ public abstract class AbstractTestCaseSupport {
 
         return copy;
     }
-
 }

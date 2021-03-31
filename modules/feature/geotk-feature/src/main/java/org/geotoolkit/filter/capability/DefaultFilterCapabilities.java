@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.filter.capability;
 
+import java.util.Optional;
 import org.geotoolkit.filter.visitor.IsSupportedFilterVisitor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.capability.Conformance;
 import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.capability.IdCapabilities;
 import org.opengis.filter.capability.ScalarCapabilities;
@@ -50,42 +52,31 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
         this.temporal = temporal;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public ScalarCapabilities getScalarCapabilities() {
-        return scalar;
+    public Conformance getConformance() {
+        throw new UnsupportedOperationException();
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public SpatialCapabilities getSpatialCapabilities() {
-        return spatial;
+    public Optional<ScalarCapabilities> getScalarCapabilities() {
+        return Optional.ofNullable(scalar);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public TemporalCapabilities getTemporalCapabilities() {
-        return temporal;
+    public Optional<SpatialCapabilities> getSpatialCapabilities() {
+        return Optional.ofNullable(spatial);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public IdCapabilities getIdCapabilities() {
-        return id;
+    public Optional<TemporalCapabilities> getTemporalCapabilities() {
+        return Optional.ofNullable(temporal);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
+    public Optional<IdCapabilities> getIdCapabilities() {
+        return Optional.ofNullable(id);
+    }
+
     public String getVersion() {
         return version;
     }
@@ -95,12 +86,9 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
             return false;
         }
         final IsSupportedFilterVisitor supportedVisitor = new IsSupportedFilterVisitor(this);
-        return (Boolean) filter.accept(supportedVisitor, null);
+        return supportedVisitor.visit(filter);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -125,9 +113,6 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
         return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -137,5 +122,4 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
         hash = 71 * hash + (this.scalar != null ? this.scalar.hashCode() : 0);
         return hash;
     }
-
 }

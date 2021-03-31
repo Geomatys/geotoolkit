@@ -16,19 +16,17 @@
  */
 package org.geotoolkit.style;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.Halo;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types halo.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultHalo implements Halo{
 
@@ -43,8 +41,8 @@ public class DefaultHalo implements Halo{
      * @param radius : if null or Expression.NIL will be replaced by default value.
      */
     public DefaultHalo(final Fill fill, final Expression radius){
-        this.fill = (fill == null) ? DEFAULT_HALO_FILL : fill;
-        this.radius = (radius == null || radius == NIL) ? DEFAULT_HALO_RADIUS : radius;
+        this.fill   = (fill   == null) ? DEFAULT_HALO_FILL   : fill;
+        this.radius = (radius == null) ? DEFAULT_HALO_RADIUS : radius;
     }
 
     /**
@@ -89,7 +87,6 @@ public class DefaultHalo implements Halo{
 
         return this.fill.equals(other.fill)
                 && this.radius.equals(other.radius);
-
     }
 
     /**

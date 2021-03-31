@@ -39,7 +39,7 @@ public final class FilterMarshallerPool {
                     "org.geotoolkit.gml.xml.v311:"           +
                     "org.geotoolkit.gml.xml.v321"), null);
         } catch (JAXBException ex) {
-            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+            throw new ExceptionInInitializerError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
 
@@ -52,7 +52,7 @@ public final class FilterMarshallerPool {
                     "org.geotoolkit.gml.xml.v212:"
             ), null);
         } catch (JAXBException ex) {
-            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+            throw new ExceptionInInitializerError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
 

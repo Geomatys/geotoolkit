@@ -16,16 +16,14 @@
  */
 package org.geotoolkit.filter.visitor;
 
-import java.util.Collections;
-import java.util.HashSet;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.opengis.filter.Filter;
 import org.junit.Test;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.FeatureId;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import org.opengis.filter.LogicalOperator;
 
 /**
  * Test simplifying filter visitor
@@ -36,57 +34,20 @@ public class SimplifyFilterVisitorTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void testIdRegroup(){
-        final Filter id1 = FF.id(Collections.singleton(new MockIdentifier("123")));
-        final Filter id2 = FF.id( new HashSet(UnmodifiableArrayList.wrap(new MockIdentifier[] {new MockIdentifier("456"), new MockIdentifier("789")}) ));
-        final Filter id3 = FF.id(Collections.singleton(new MockIdentifier("789")));
-        final Filter or = FF.or(UnmodifiableArrayList.wrap(new Filter[] {id1,id2,id3}));
+        final Filter id1 = FF.resourceId("123");
+        final Filter id2 = FF.or(Arrays.asList(FF.resourceId("456"), FF.resourceId("789")));
+        final Filter id3 = FF.resourceId("789");
+        final Filter or = FF.or(Arrays.<Filter<? super Object>>asList(id1, id2, id3));
 
-        SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
-        final Filter res = (Filter) or.accept(visitor, null);
+        SimplifyingFilterVisitor visitor = SimplifyingFilterVisitor.INSTANCE;
+        final Filter res = (Filter) visitor.visit(or);
 
-        assertTrue(res instanceof Id);
+        assertTrue(res instanceof LogicalOperator);
 
-        final Id ids = (Id) res;
-        assertEquals(3, ids.getIdentifiers().size());
-        assertEquals(3, ids.getIDs().size());
+        final List ids = ((LogicalOperator) res).getOperands();
+        assertEquals(3, ids.size());
 
-        assertTrue( ids.getIDs().contains("123"));
-        assertTrue( ids.getIDs().contains("456"));
-        assertTrue( ids.getIDs().contains("789"));
-
+        assertTrue(ids.contains(id1));
+        assertTrue(ids.contains(id3));
     }
-
-
-    private static class MockIdentifier implements FeatureId{
-
-        private final String id;
-
-        public MockIdentifier(String id) {
-            this.id = id;
-        }
-
-        @Override
-        public String getID() {
-            return id;
-        }
-
-        @Override
-        public boolean matches(Object o) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return this.id.equals( ((MockIdentifier)obj).id );
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 37 * hash + (this.id != null ? this.id.hashCode() : 0);
-            return hash;
-        }
-
-    }
-
 }

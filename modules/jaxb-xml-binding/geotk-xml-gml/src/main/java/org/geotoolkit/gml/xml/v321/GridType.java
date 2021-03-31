@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.coverage.grid.Grid;
-import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -56,8 +55,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GridType", propOrder = {
@@ -80,18 +77,12 @@ public class GridType extends AbstractGeometryType {
     private Integer dimension;
 
     public GridType() {
-
     }
 
     public GridType(final Grid grid) {
         this(grid, null);
     }
 
-    /**
-     *
-     * @param grid
-     * @param crs
-     */
     public GridType(final Grid grid, final CoordinateReferenceSystem crs) {
         final ObjectFactory factory = new ObjectFactory();
         if (grid != null) {
@@ -142,8 +133,6 @@ public class GridType extends AbstractGeometryType {
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link GridLimitsType }{@code >}
-     *
-     *
      */
     public List<JAXBElement<?>> getRest() {
         if (rest == null) {
@@ -158,7 +147,6 @@ public class GridType extends AbstractGeometryType {
      * @return
      *     possible object is
      *     {@link Integer }
-     *
      */
     public Integer getDimension() {
         return dimension;
@@ -170,22 +158,8 @@ public class GridType extends AbstractGeometryType {
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *
      */
     public void setDimension(Integer value) {
         this.dimension = value;
     }
-
-    public Object evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public <T> T evaluate(Object o, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Object accept(ExpressionVisitor ev, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

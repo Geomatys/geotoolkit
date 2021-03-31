@@ -62,6 +62,7 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
@@ -117,12 +118,10 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Id;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.PropertyName;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -139,7 +138,6 @@ import org.opengis.util.GenericName;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public final class GO2Utilities {
 
@@ -192,7 +190,7 @@ public final class GO2Utilities {
         }
 
         STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+        FILTER_FACTORY = FilterUtilities.FF;
 
         //LINE -----------------------------------------------------------------
         final float x2Points[] = {0,    0.4f,   0.6f,   1f};
@@ -391,7 +389,7 @@ public final class GO2Utilities {
         final float[] dashes;
 
         if(GO2Utilities.isStatic(expColor)){
-            color = expColor.evaluate(null, Color.class);
+            color = (Color) expColor.apply(null);
         }else{
             color = Color.RED;
         }
@@ -401,7 +399,7 @@ public final class GO2Utilities {
         }
 
         if(expOpa != null && GO2Utilities.isStatic(expOpa)){
-            Number num = expOpa.evaluate(null, Number.class);
+            Number num = (Number) expOpa.apply(null);
             if(num != null){
                 opacity = XMath.clamp(num.floatValue(),0f,1f);
             }else{
@@ -437,7 +435,7 @@ public final class GO2Utilities {
         }
 
         if(Units.POINT.equals(uom) && GO2Utilities.isStatic(expWidth)){
-            width = expWidth.evaluate(null, Number.class).floatValue();
+            width = ((Number) expWidth.apply(null)).floatValue();
 
             if(stroke.getDashArray() != null && stroke.getDashArray().length >0){
                 dashes = stroke.getDashArray();
@@ -480,7 +478,7 @@ public final class GO2Utilities {
         final float opacity;
 
         if(GO2Utilities.isStatic(expColor)){
-            color = expColor.evaluate(null, Color.class);
+            color = (Color) expColor.apply(null);
         }else{
             color = Color.RED;
         }
@@ -490,7 +488,7 @@ public final class GO2Utilities {
         }
 
         if(GO2Utilities.isStatic(expOpa)){
-            opacity = XMath.clamp(expOpa.evaluate(null, Number.class).floatValue(),0f,1f);
+            opacity = XMath.clamp(((Number) expOpa.apply(null)).floatValue(),0f,1f);
         }else{
             opacity = 0.6f;
         }
@@ -849,7 +847,10 @@ public final class GO2Utilities {
         if(exp==null) return defaultValue;
         T value;
         try{
-            value = exp.evaluate(candidate, type);
+            value = (T) exp.apply(candidate);       // TODO: bad!
+            if (type != null) {
+                value = ObjectConverters.convert(value, type);
+            }
             if(value == null){
                 value = defaultValue;
             }
@@ -863,24 +864,24 @@ public final class GO2Utilities {
     public static Float evaluate(final Expression exp, final Object candidate,
             final float defaultValue, final float min, final float max){
         if(exp==null) return defaultValue;
-        Float value;
+        Number value;
         try{
-            value = exp.evaluate(candidate, Float.class);
+            value = (Number) exp.apply(candidate);
             if(value == null){
                 value = defaultValue;
             }else{
                 //ensure min/max
-                value = XMath.clamp(value, min, max);
+                value = XMath.clamp(value.floatValue(), min, max);
             }
         }catch(IllegalArgumentException ex){
             //if functions or candidate do not have the proper field we will have a IllegalArgumentException
             value = defaultValue;
         }
-        return value;
+        return value.floatValue();
     }
 
     public static Geometry getGeometry(final Object obj, final Expression geomExp){
-        return geomExp.evaluate(obj, Geometry.class);
+        return (Geometry) geomExp.apply(obj);
     }
 
     public static Class getGeometryClass(final FeatureType featuretype, final String geomName){
@@ -906,33 +907,34 @@ public final class GO2Utilities {
             final java.util.function.Function<Feature, Geometry> extractor = GEOM_EXTRACTION_CACHE.computeIfAbsent(feature.getType(), FeatureExt::prepareGeometryExtractor);
             return extractor.apply(feature);
         } else {
-            return geomExp.evaluate(feature, Geometry.class);
+            return (Geometry) geomExp.apply(feature);
         }
     }
 
     public static Collection<String> getRequieredAttributsName(final Expression exp, final Collection<String> collection){
-        return (Collection<String>) exp.accept(ListingPropertyVisitor.VISITOR, collection);
+        ListingPropertyVisitor.VISITOR.visit(exp, collection);
+        return collection;
     }
 
     public static boolean isStatic(final Expression exp) {
         if(exp == null) return true;
-        return Boolean.TRUE.equals(exp.accept(IsStaticExpressionVisitor.VISITOR, null));
+        return Boolean.TRUE.equals(IsStaticExpressionVisitor.VISITOR.visit(exp));
     }
 
     /**
      * Test if an expression is :
      * - null
      * - Expression.NIL
-     * - PropertyName with null or empty name
+     * - ValueReference with null or empty name
      *
      * @return true if empty
      */
     public static boolean isNullorEmpty(Expression exp){
-        if(exp==null || exp==Expression.NIL){
+        if (exp == null) {
             return true;
-        }else if(exp instanceof PropertyName){
-            final PropertyName pn = (PropertyName) exp;
-            final String str = pn.getPropertyName();
+        }else if(exp instanceof ValueReference){
+            final ValueReference pn = (ValueReference) exp;
+            final String str = pn.getXPath();
             if(str==null || str.trim().isEmpty()){
                 return true;
             }
@@ -964,7 +966,7 @@ public final class GO2Utilities {
                 for (final Rule rule : rules) {
 
                     //test if the rule is valid and is not a "else" rule
-                    if (!rule.isElseFilter() && (rule.getFilter() == null || rule.getFilter().evaluate(feature))) {
+                    if (!rule.isElseFilter() && (rule.getFilter() == null || rule.getFilter().test(feature))) {
                         doElse = false;
                         //append all the symbolizers
                         final Collection<? extends Symbolizer> syms = rule.symbolizers();
@@ -988,7 +990,6 @@ public final class GO2Utilities {
                 }
             }
         }
-
         return symbols;
     }
 
@@ -1046,7 +1047,6 @@ public final class GO2Utilities {
 
     public static List<Rule> getValidRules(final FeatureTypeStyle fts, final double scale, final FeatureType type) {
 
-        final Id ids = fts.getFeatureInstanceIDs();
         final Set<GenericName> names = fts.featureTypeNames();
 
         //check semantic, only if we have a feature type
@@ -1119,7 +1119,6 @@ public final class GO2Utilities {
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
         for(final FeatureTypeStyle fts : ftss){
 
-            final Id ids = fts.getFeatureInstanceIDs();
             final Set<GenericName> names = fts.featureTypeNames();
 
             //check semantic, only if we have a feature type
@@ -1182,7 +1181,6 @@ public final class GO2Utilities {
                 }
             }
         }
-
         return validRules.toArray(new CachedRule[validRules.size()]);
     }
 
@@ -1192,7 +1190,6 @@ public final class GO2Utilities {
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
         for(final FeatureTypeStyle fts : ftss){
 
-            final Id ids = fts.getFeatureInstanceIDs();
             final Set<GenericName> names = fts.featureTypeNames();
             final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
 
@@ -1211,7 +1208,6 @@ public final class GO2Utilities {
                 }
             }
         }
-
         return validRules.toArray(new CachedRule[validRules.size()]);
     }
 
@@ -1227,17 +1223,20 @@ public final class GO2Utilities {
         final RasterSymbolizer rs = (RasterSymbolizer)symbolizer;
 
         if(rs.getShadedRelief() != null &&
-           rs.getShadedRelief().getReliefFactor().evaluate(null, Float.class) != 0){
+           ((Number) rs.getShadedRelief().getReliefFactor().apply(null)).floatValue() != 0)
+        {
             return false;
         }
-        if(rs.getOpacity() != null && rs.getOpacity().evaluate(null, Float.class) != 1f){
+        if(rs.getOpacity() != null && ((Number) rs.getOpacity().apply(null)).floatValue() != 1f)
+        {
             return false;
         }
         if(rs.getImageOutline() != null){
             return false;
         }
         if(rs.getContrastEnhancement() != null &&
-           rs.getContrastEnhancement().getGammaValue().evaluate(null, Float.class) != 1f){
+           ((Number) rs.getContrastEnhancement().getGammaValue().apply(null)).floatValue() != 1f)
+        {
            return false;
         }
         if(rs.getColorMap() != null && rs.getColorMap().getFunction() != null){
@@ -1486,7 +1485,7 @@ public final class GO2Utilities {
             assert StrictMath.abs(currentVal - step - palMax) < 1E-9;
             values.add(STYLE_FACTORY.interpolationPoint(bmax, STYLE_FACTORY.literal(colorsPal[colorsPal.length - 1])));
 
-            final Function function = STYLE_FACTORY.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
+            final Expression function = STYLE_FACTORY.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
             final ColorMap colorMap = STYLE_FACTORY.colorMap(function);
             final RasterSymbolizer symbol = STYLE_FACTORY.rasterSymbolizer(band0.getName(), null, null, null, colorMap, null, null, null);
             return Optional.of(STYLE_FACTORY.style(symbol));
@@ -1581,7 +1580,6 @@ public final class GO2Utilities {
                 ranges[bandIdx][1] = b.getMax();
             }
         }
-
         return ranges;
     }
 

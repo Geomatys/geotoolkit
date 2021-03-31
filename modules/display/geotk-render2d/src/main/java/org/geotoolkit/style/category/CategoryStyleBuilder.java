@@ -33,6 +33,7 @@ import org.apache.sis.storage.FeatureSet;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.feature.query.Query;
 import org.geotoolkit.storage.feature.query.QueryBuilder;
@@ -53,10 +54,11 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
@@ -85,10 +87,10 @@ public class CategoryStyleBuilder {
     private final FilterFactory ff;
 
     private final MutableFeatureTypeStyle fts;
-    private final List<PropertyName> properties = new ArrayList<PropertyName>();
+    private final List<ValueReference> properties = new ArrayList<ValueReference>();
     private Class<? extends Symbolizer> expectedType = null;
     private boolean other = false;
-    private PropertyName currentProperty = null;
+    private ValueReference currentProperty = null;
     private MapLayer layer;
 
     private Symbolizer template;
@@ -104,15 +106,12 @@ public class CategoryStyleBuilder {
         }else{
             sf = styleFactory;
         }
-
         if(filterFactory == null){
-             ff = DefaultFactories.forBuildin(FilterFactory.class);
+             ff = FilterUtilities.FF;
         }else{
             ff = filterFactory;
         }
-
         fts = sf.featureTypeStyle();
-
     }
 
     public void analyze(final MapLayer layer){
@@ -203,27 +202,27 @@ public class CategoryStyleBuilder {
                             other = true;
                         }else{
                             Filter f = r.getFilter();
-                            if(f != null && f instanceof PropertyIsEqualTo){
-                                PropertyIsEqualTo equal = (PropertyIsEqualTo) f;
-                                Expression exp1 = equal.getExpression1();
-                                Expression exp2 = equal.getExpression2();
+                            if(f != null && f.getOperatorType() == ComparisonOperatorName.PROPERTY_IS_EQUAL_TO){
+                                BinaryComparisonOperator equal = (BinaryComparisonOperator) f;
+                                Expression exp1 = equal.getOperand1();
+                                Expression exp2 = equal.getOperand2();
 
-                                if(exp1 instanceof PropertyName && exp2 instanceof Literal){
+                                if(exp1 instanceof ValueReference && exp2 instanceof Literal){
                                     if(properties.contains(exp1)){
                                         //it looks like it's a valid classification property rule
                                         this.fts.rules().add((MutableRule) r);
                                         template = symbol;
-                                        currentProperty = (PropertyName) exp1;
+                                        currentProperty = (ValueReference) exp1;
                                     }else{
                                         //property is not in the schema
                                         break;
                                     }
-                                }else if(exp2 instanceof PropertyName && exp1 instanceof Literal){
+                                }else if(exp2 instanceof ValueReference && exp1 instanceof Literal){
                                     if(properties.contains(exp2)){
                                         //it looks like it's a valid classification property rule
                                         this.fts.rules().add((MutableRule) r);
                                         template = symbol;
-                                        currentProperty = (PropertyName) exp2;
+                                        currentProperty = (ValueReference) exp2;
                                     }else{
                                         //property is not in the schema
                                         break;
@@ -234,13 +233,10 @@ public class CategoryStyleBuilder {
                                 }
                             }
                         }
-
                     }else{
                         break;
                     }
-
                 }
-
             }
         }
     }
@@ -265,15 +261,15 @@ public class CategoryStyleBuilder {
         return fts;
     }
 
-    public List<PropertyName> getProperties() {
+    public List<ValueReference> getProperties() {
         return properties;
     }
 
-    public void setCurrentProperty(final PropertyName currentProperty) {
+    public void setCurrentProperty(final ValueReference currentProperty) {
         this.currentProperty = currentProperty;
     }
 
-    public PropertyName getCurrentProperty() {
+    public ValueReference getCurrentProperty() {
         return currentProperty;
     }
 
@@ -288,7 +284,7 @@ public class CategoryStyleBuilder {
     public List<MutableRule> create(){
         //search the different values
         final Set<Object> differentValues = new HashSet<>();
-        final PropertyName property = currentProperty;
+        final ValueReference property = currentProperty;
         final FeatureSet resource = (FeatureSet) layer.getData();
 
         final QueryBuilder builder = new QueryBuilder();
@@ -297,14 +293,14 @@ public class CategoryStyleBuilder {
         } catch (DataStoreException ex) {
             LOGGER.log(Level.FINE, "Error while accessing data", ex);
         }
-        builder.setProperties(new String[]{property.getPropertyName()});
+        builder.setProperties(new String[]{property.getXPath()});
         final Query query = builder.buildQuery();
 
         try (Stream<Feature> stream = resource.subset(query).features(false)){
             final Iterator<Feature> features = stream.iterator();
             while(features.hasNext()){
                 final Feature feature = features.next();
-                differentValues.add(property.evaluate(feature));
+                differentValues.add(property.apply(feature));
             }
         } catch (DataStoreException|FeatureStoreRuntimeException ex) {
             LOGGER.log(Level.FINE, "Error while accessing data", ex);
@@ -367,9 +363,9 @@ public class CategoryStyleBuilder {
 
     }
 
-    public MutableRule createRule(final PropertyName property, final Object obj){
+    public MutableRule createRule(final ValueReference property, final Object obj){
         MutableRule r = sf.rule(createSymbolizer());
-        r.setFilter(ff.equals(property, ff.literal(obj)));
+        r.setFilter(ff.equal(property, ff.literal(obj)));
         r.setDescription(sf.description(obj.toString(), obj.toString()));
         return r;
     }

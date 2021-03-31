@@ -18,7 +18,7 @@ package org.geotoolkit.filter.function.other;
 
 import java.text.DecimalFormat;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -31,35 +31,14 @@ import org.opengis.filter.expression.Expression;
 public class NumberFormatFunction extends AbstractFunction {
 
     public NumberFormatFunction(final Expression expr1, final Expression expr2) {
-        super(OtherFunctionFactory.NUMBER_FORMAT, new Expression[]{expr1,expr2}, null);
+        super(OtherFunctionFactory.NUMBER_FORMAT, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String format;
-        Double number;
-
-        try {
-            // attempt to get value and perform conversion
-            format  = parameters.get(0).evaluate(feature, String.class);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function dateFormat argument #0 - expected type String");
-        }
-
-        try { // attempt to get value and perform conversion
-            number = parameters.get(1).evaluate(feature, Double.class);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function dateFormat argument #1 - expected type java.util.Date");
-        }
-
+    public Object apply(final Object feature) {
+        String format = stringValue(feature, 0);
+        double number = doubleValue(feature, 1);
         DecimalFormat numberFormat = new DecimalFormat(format);
         return numberFormat.format(number);
     }
-
-
-
 }

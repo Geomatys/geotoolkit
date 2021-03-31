@@ -46,7 +46,7 @@ import org.geotoolkit.display2d.primitive.UndefinedCRSException;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.feature.Feature;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;

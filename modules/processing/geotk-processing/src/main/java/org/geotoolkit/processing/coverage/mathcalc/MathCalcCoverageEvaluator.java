@@ -24,7 +24,7 @@ import org.apache.sis.coverage.grid.GridEvaluator;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -59,7 +59,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
     public void evaluate(DirectPosition position, double[] sampleBuffer) {
         //update pick object position before evaluation
         positionGeo.setLocation(position);
-        sampleBuffer[0] = exp.evaluate(pick, Double.class);
+        sampleBuffer[0] = ((Number) exp.apply(pick)).doubleValue();
     }
 
     @Override

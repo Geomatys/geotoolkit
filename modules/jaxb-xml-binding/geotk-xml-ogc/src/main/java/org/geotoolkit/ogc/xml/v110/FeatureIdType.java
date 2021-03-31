@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,8 +28,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.feature.FeatureExt;
 import org.opengis.feature.Feature;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 
 
 /**
@@ -45,13 +45,10 @@ import org.opengis.filter.identity.Identifier;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureIdType")
-public class FeatureIdType extends AbstractIdType implements FeatureId {
+public class FeatureIdType extends AbstractIdType implements ResourceId {
 
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -63,7 +60,6 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
      * An empty constructor used by JAXB
      */
     public FeatureIdType() {
-
     }
 
     /**
@@ -87,7 +83,7 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
     }
 
     @Override
-    public String getID() {
+    public String getIdentifier() {
         return fid;
     }
 
@@ -95,11 +91,10 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
         this.fid = fid;
     }
 
-    @Override
     public boolean matches(final Object feature) {
         if (feature instanceof Feature) {
-            final Identifier identifier = FeatureExt.getId((Feature)feature);
-            return identifier != null && fid.equals(identifier.getID());
+            final ResourceId identifier = FeatureExt.getId((Feature)feature);
+            return identifier != null && fid.equals(identifier.getIdentifier());
         }
         return false;
     }
@@ -133,5 +128,15 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
         int hash = 7;
         hash = 79 * hash + (this.fid != null ? this.fid.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public List getExpressions() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean test(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

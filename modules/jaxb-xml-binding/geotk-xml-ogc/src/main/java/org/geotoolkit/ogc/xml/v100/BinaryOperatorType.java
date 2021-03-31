@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -41,9 +42,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryOperatorType", propOrder = {
@@ -54,9 +52,13 @@ public class BinaryOperatorType extends ExpressionType {
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
 
+    @Override
+    public ScopedName getFunctionName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * Gets the value of the expression property.
-     *
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
@@ -64,5 +66,4 @@ public class BinaryOperatorType extends ExpressionType {
         }
         return this.expression;
     }
-
 }

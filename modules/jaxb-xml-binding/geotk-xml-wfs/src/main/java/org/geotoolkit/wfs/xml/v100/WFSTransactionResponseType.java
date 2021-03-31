@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v100.FeatureIdType;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 
 
 /**
@@ -56,8 +56,6 @@ import org.opengis.filter.identity.FeatureId;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WFS_TransactionResponseType", propOrder = {
@@ -74,7 +72,6 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
     private String version;
 
     public WFSTransactionResponseType() {
-
     }
 
     public WFSTransactionResponseType(final TransactionResultType transactionResults, final List<InsertResultType> insertResults, final String version) {
@@ -85,7 +82,6 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Gets the value of the insertResult property.
-     *
      */
     public List<InsertResultType> getInsertResult() {
         if (insertResult == null) {
@@ -96,11 +92,6 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Gets the value of the transactionResult property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TransactionResultType }
-     *
      */
     public TransactionResultType getTransactionResult() {
         return transactionResult;
@@ -108,11 +99,6 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Sets the value of the transactionResult property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TransactionResultType }
-     *
      */
     public void setTransactionResult(TransactionResultType value) {
         this.transactionResult = value;
@@ -120,11 +106,6 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Gets the value of the version property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getVersion() {
         if (version == null) {
@@ -136,19 +117,14 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
 
     /**
      * Sets the value of the version property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setVersion(String value) {
         this.version = value;
     }
 
     @Override
-    public List<FeatureId> getInsertedFID() {
-        final List<FeatureId> ids = new ArrayList<FeatureId>();
+    public List<ResourceId> getInsertedFID() {
+        final List<ResourceId> ids = new ArrayList<ResourceId>();
         if (insertResult != null) {
             for(InsertResultType ift : insertResult){
                 for(FeatureIdType fit : ift.getFeatureId()){
@@ -158,5 +134,4 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
         }
         return ids;
     }
-
 }

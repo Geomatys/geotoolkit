@@ -25,10 +25,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
 import org.opengis.filter.capability.GeometryOperand;
-import org.opengis.filter.capability.SpatialCapabilities;
-import org.opengis.filter.capability.SpatialOperators;
+import org.geotoolkit.filter.capability.SpatialCapabilities;
+import org.geotoolkit.filter.capability.SpatialOperators;
 
 
 /**
@@ -48,15 +47,13 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Spatial_CapabilitiesType", propOrder = {
     "geometryOperands",
     "spatialOperators"
 })
-public class SpatialCapabilitiesType implements SpatialCapabilities {
+public class SpatialCapabilitiesType extends SpatialCapabilities {
 
     @XmlElement(name = "GeometryOperands", required = true)
     private GeometryOperandsType geometryOperands;
@@ -67,7 +64,6 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
      * empty constructor used by JAXB
      */
     public SpatialCapabilitiesType() {
-
     }
 
     /**
@@ -88,11 +84,6 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * Gets the value of the geometryOperands property.
-     *
-     * @return
-     *     possible object is
-     *     {@link GeometryOperandsType }
-     *
      */
     public GeometryOperandsType getGeometryOperandsType() {
         return geometryOperands;
@@ -100,11 +91,6 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * Sets the value of the geometryOperands property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link GeometryOperandsType }
-     *
      */
     public void setGeometryOperands(GeometryOperandsType value) {
         this.geometryOperands = value;
@@ -112,8 +98,8 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * implements SpatialCapabilities geoAPI interface
-     * @return
      */
+    @Override
     public Collection<GeometryOperand> getGeometryOperands() {
         List<GeometryOperand> result = new ArrayList<GeometryOperand>();
         if (geometryOperands != null) {
@@ -126,26 +112,16 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * Gets the value of the spatialOperators property.
-     *
-     * @return
-     *     possible object is
-     *     {@link SpatialOperatorsType }
-     *
      */
+    @Override
     public SpatialOperatorsType getSpatialOperators() {
         return spatialOperators;
     }
 
     /**
      * Sets the value of the spatialOperators property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link SpatialOperatorsType }
-     *
      */
     public void setSpatialOperators(SpatialOperatorsType value) {
         this.spatialOperators = value;
     }
-
 }

@@ -17,42 +17,19 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class IsLikeFunction extends AbstractFunction {
 
     public IsLikeFunction(final Expression expr1, final Expression expr2) {
-        super(OtherFunctionFactory.IS_LIKE, new Expression[]{expr1,expr2}, null);
+        super(OtherFunctionFactory.IS_LIKE, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String arg0;
-        String arg1;
-
-        try { // attempt to get value and perform conversion
-            arg0 = (String) parameters.get(0).evaluate(feature, String.class); // extra
-                                                                    // protection
-                                                                    // for
-                                                                    // strings
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function isLike argument #0 - expected type String");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg1 = (String) parameters.get(1).evaluate(feature, String.class); // extra
-                                                                    // protection
-                                                                    // for
-                                                                    // strings
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function isLike argument #1 - expected type String");
-        }
-
+    public Object apply(final Object feature) {
+        String arg0 = stringValue(feature, 0);
+        String arg1 = stringValue(feature, 1);
         return StaticUtils.isLike(arg0, arg1);
     }
 }

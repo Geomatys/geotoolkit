@@ -44,8 +44,6 @@ import org.opengis.temporal.TemporalPrimitive;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimePrimitiveType", propOrder = {
@@ -60,7 +58,6 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
     private List<RelatedTimeType> relatedTime;
 
     public AbstractTimePrimitiveType() {
-
     }
 
     public AbstractTimePrimitiveType(final String id) {

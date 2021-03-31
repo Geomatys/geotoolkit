@@ -18,6 +18,8 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.Unit;
@@ -33,7 +35,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.filter.AbstractFilter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Geometry;
@@ -41,9 +42,8 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -56,11 +56,8 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @param <E> Expression or subclass
  * @param <F> Expression or subclass
- * @module
  */
-public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression>
-                                                extends AbstractFilter implements BinarySpatialOperator,Serializable {
-
+public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression> implements Serializable {
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.binaryspatial");
     protected static final CoordinateReferenceSystem MERCATOR;
 
@@ -83,19 +80,15 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         this.right = right;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public E getExpression1() {
+    public List getExpressions() {
+        return Arrays.asList(left, right);
+    }
+
+    public E getOperand1() {
         return left;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public F getExpression2() {
+    public F getOperand2() {
         return right;
     }
 
@@ -105,12 +98,11 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
 
     protected static Geometry toGeometry(final Object object, Expression exp){
         Object value;
-        if ((exp instanceof PropertyName) && object instanceof Feature && ((PropertyName)exp).getPropertyName().isEmpty()) {
-            value = findFirstGeometry((Feature)object);
+        if ((exp instanceof ValueReference) && object instanceof Feature && ((ValueReference) exp).getXPath().isEmpty()) {
+            value = findFirstGeometry((Feature) object);
         } else {
-            value = exp.evaluate(object);
+            value = exp.apply(object);
         }
-
         Geometry candidate;
         if(value instanceof GridCoverage){
             //use the coverage envelope
@@ -142,7 +134,6 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 candidate = null;
             }
         }
-
         return candidate;
     }
 
@@ -178,8 +169,8 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
      * return Array[leftGeometry, rightGeometry, matchingCRS];
      */
     protected static Object[] toSameCRS(final Geometry leftGeom, final Geometry rightGeom, final Unit unit)
-            throws NoSuchAuthorityCodeException, FactoryException, TransformException{
-
+            throws NoSuchAuthorityCodeException, FactoryException, TransformException
+    {
         final CoordinateReferenceSystem leftCRS = JTS.findCoordinateReferenceSystem(leftGeom);
         final CoordinateReferenceSystem rightCRS = JTS.findCoordinateReferenceSystem(rightGeom);
 
@@ -205,13 +196,11 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                         JTS.transform(leftGeom,trs),
                         JTS.transform(rightGeom,trs),
                         MERCATOR};
-
                 }else{
                     //we can not find a matching projection in this case
                     throw new TransformException("Could not find a matching CRS for both geometries for unit :" + unit);
                 }
             }
-
         }else{
             //both have different CRS, try to find the most appropriate crs amoung both
 
@@ -239,16 +228,13 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                     leftMatch = JTS.transform(leftGeom, trs);
                     trs = CRS.findOperation(rightCRS, matchingCRS, null).getMathTransform();
                     rightMatch = JTS.transform(rightGeom, trs);
-
                 }else{
                     //we can not find a matching projection in this case
                     throw new TransformException("Could not find a matching CRS for both geometries for unit :" + unit);
                 }
             }
-
             return new Object[]{leftMatch,rightMatch,matchingCRS};
         }
-
     }
 
     private static Object findFirstGeometry(Feature ca){
@@ -265,7 +251,6 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
             }
         }
 
-
         //search complex properties
         for(PropertyType pt : ca.getType().getProperties(true)){
             if(pt instanceof FeatureAssociationRole){
@@ -276,9 +261,6 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 }
             }
         }
-
         return null;
-
     }
-
 }

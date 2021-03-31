@@ -17,6 +17,7 @@
 package org.geotoolkit.ogc.xml.v100;
 
 import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,8 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v212.BoxType;
 import org.geotoolkit.gml.xml.v212.CoordType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  * <p>Java class for BBOXType complex type.
@@ -44,16 +46,13 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BBOXType", propOrder = {
     "propertyName",
     "box"
 })
-public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spatial.BBOX, org.geotoolkit.ogc.xml.BBOX {
+public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, org.geotoolkit.ogc.xml.BBOX {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -64,7 +63,6 @@ public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spat
      * An empty constructor used by JAXB
      */
     public BBOXType() {
-
     }
 
     /**
@@ -88,9 +86,14 @@ public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spat
             }
         }
     }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.BBOX;
+    }
+
     /**
      * Gets the value of the propertyName property.
-     *
      */
     public PropertyNameType getPropertyNameType() {
         return propertyName;
@@ -98,19 +101,17 @@ public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spat
 
     /**
      * Gets the value of the propertyName property.
-     *
      */
     @Override
     public String getPropertyName() {
         if (propertyName != null) {
-            return propertyName.getPropertyName();
+            return propertyName.getXPath();
         }
         return null;
     }
 
     /**
      * Sets the value of the propertyName property.
-     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
@@ -118,7 +119,6 @@ public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spat
 
     /**
      * Gets the value of the box property.
-     *
      */
     public BoxType getBox() {
         return box;
@@ -126,7 +126,6 @@ public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spat
 
     /**
      * Sets the value of the box property.
-     *
      */
     public void setBox(final BoxType value) {
         this.box = value;
@@ -176,22 +175,22 @@ public class BBOXType extends SpatialOpsType implements  org.opengis.filter.spat
     }
 
     @Override
-    public Expression getExpression1() {
+    public List getExpressions() {
+        return Arrays.asList(getOperand1(), getOperand2());
+    }
+
+    @Override
+    public Expression getOperand1() {
         return propertyName;
     }
 
     @Override
-    public Expression getExpression2() {
+    public Expression getOperand2() {
         return new LiteralType(box);
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean test(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

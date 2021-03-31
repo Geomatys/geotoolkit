@@ -48,6 +48,7 @@ import org.apache.sis.feature.builder.AttributeTypeBuilder;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.filter.FunctionNames;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -86,7 +87,7 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.Operation;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -439,9 +440,9 @@ public class WFSFeatureSet implements WritableFeatureSet {
 
             final Filter filter = gquery.getFilter();
             if (filter == null) {
-                request.setFilter(Filter.INCLUDE);
+                request.setFilter(Filter.include());
             } else {
-                final Object visited = filter.accept(new PropertyNameReplacement(replacements), null);
+                final Object visited = new PropertyNameReplacement(replacements).visit(filter);
                 if (visited instanceof Filter) {
                     request.setFilter((Filter) visited);
                 } else {
@@ -450,7 +451,7 @@ public class WFSFeatureSet implements WritableFeatureSet {
             }
 
             // Filter is already processed, but a query builder does not support null filter.
-            remainingQuery.setFilter(Filter.INCLUDE);
+            remainingQuery.setFilter(Filter.include());
 
             final long start = gquery.getOffset();
             final long max = gquery.getLimit();
@@ -500,22 +501,16 @@ public class WFSFeatureSet implements WritableFeatureSet {
     }
 
     private static class PropertyNameReplacement extends DuplicatingFilterVisitor {
-
-        private final Map<String, String> nameReplacements;
-
         public PropertyNameReplacement(Map<String, String> nameReplacements) {
-            this.nameReplacements = nameReplacements;
-        }
-
-        @Override
-        public Object visit(PropertyName expression, Object extraData) {
-            final String newName = nameReplacements.get(expression.getPropertyName());
-
-            if (newName != null) {
-                return getFactory(extraData).property(newName);
-            } else {
-                return super.visit(expression, extraData);
-            }
+            setExpressionHandler(FunctionNames.ValueReference, (e) -> {
+                final ValueReference expression = (ValueReference) e;
+                final String newName = nameReplacements.get(expression.getXPath());
+                if (newName != null) {
+                    return ff.property(newName);
+                } else {
+                    return super.visit(expression);
+                }
+            });
         }
     }
 }

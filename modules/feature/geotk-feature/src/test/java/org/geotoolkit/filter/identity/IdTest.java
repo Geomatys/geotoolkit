@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.identity;
 
 import org.junit.Test;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 
 import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
@@ -33,11 +33,11 @@ public class IdTest extends org.geotoolkit.test.TestBase {
     public void testFeatureId() {
         String strid = "testFeatureType.1";
 
-        FeatureId id1 = FF.featureId(strid);
-        FeatureId id2 = FF.featureId(strid);
+        ResourceId id1 = FF.resourceId(strid);
+        ResourceId id2 = FF.resourceId(strid);
         assertSerializedEquals(id1); //test serialize
 
-        assertEquals(strid, id1.getID());
+        assertEquals(strid, id1.getIdentifier());
         assertEquals(id1, id2);
     }
 }

@@ -29,12 +29,11 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedTextSymbolizer;
 import org.apache.sis.portrayal.MapLayer;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.TextSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class TextSymbolizerRendererService extends AbstractSymbolizerRendererService<TextSymbolizer, CachedTextSymbolizer>{
 
@@ -121,7 +120,7 @@ public class TextSymbolizerRendererService extends AbstractSymbolizerRendererSer
             float width = 1;
 
             if(GO2Utilities.isStatic(symbol.getSource().getHalo().getFill().getColor())){
-                paint = symbol.getSource().getHalo().getFill().getColor().evaluate(null, Color.class);
+                paint = (Color) symbol.getSource().getHalo().getFill().getColor().apply(null);
             }
 
             if(paint == null){
@@ -130,7 +129,7 @@ public class TextSymbolizerRendererService extends AbstractSymbolizerRendererSer
 
             final Expression expWidth = symbol.getSource().getHalo().getRadius();
             if(GO2Utilities.isStatic(expWidth)){
-                width = expWidth.evaluate(null, Number.class).floatValue();
+                width = ((Number) expWidth.apply(null)).floatValue();
             }else{
                 width = 1;
             }
@@ -142,10 +141,9 @@ public class TextSymbolizerRendererService extends AbstractSymbolizerRendererSer
             }
         }
 
-
         Paint paint = null;
         if(GO2Utilities.isStatic(symbol.getSource().getFill().getColor())){
-            paint = symbol.getSource().getFill().getColor().evaluate(null, Color.class);
+            paint = (Color) symbol.getSource().getFill().getColor().apply(null);
         }
 
         if(paint == null){
@@ -156,5 +154,4 @@ public class TextSymbolizerRendererService extends AbstractSymbolizerRendererSer
         g.setFont(font);
         g.drawString(GLYPH_CANDIDATE, 0, 0);
     }
-
 }

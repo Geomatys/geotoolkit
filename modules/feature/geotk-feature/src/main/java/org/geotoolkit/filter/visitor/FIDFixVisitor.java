@@ -16,13 +16,15 @@
  */
 package org.geotoolkit.filter.visitor;
 
-import java.util.Collections;
-import org.opengis.filter.Id;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import java.util.function.Function;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.filter.ComparisonOperator;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.Filter;
 
 /**
  * Used to clean PropertyEqualsTo on identifiers.
@@ -30,28 +32,31 @@ import org.apache.sis.internal.feature.AttributeConvention;
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class FIDFixVisitor extends DuplicatingFilterVisitor{
+public class FIDFixVisitor extends DuplicatingFilterVisitor {
+    public static final FIDFixVisitor INSTANCE = new FIDFixVisitor();
 
-    @Override
-    public Object visit(PropertyIsEqualTo filter, Object extraData) {
+    protected FIDFixVisitor() {
+        final Function<Filter<Object>, Object> previous  = getFilterHandler(ComparisonOperatorName.PROPERTY_IS_EQUAL_TO);
+        final Function<Filter<Object>, Object> idVisitor = getFilterHandler(AbstractVisitor.RESOURCEID_NAME);
+        setFilterHandler(ComparisonOperatorName.PROPERTY_IS_EQUAL_TO, (f) -> {
+            final ComparisonOperator<Object> filter = (ComparisonOperator<Object>) f;
 
-        //check if it's an id filter
-        Expression exp1 = filter.getExpression1();
-        Expression exp2 = filter.getExpression2();
-        if(exp2 instanceof PropertyName){
-            final Expression exp = exp1;
-            exp1 = exp2;
-            exp2 = exp;
-        }
-
-        if(exp1 instanceof PropertyName && exp2 instanceof Literal
-                && ((PropertyName)exp1).getPropertyName().trim().equalsIgnoreCase(AttributeConvention.IDENTIFIER_PROPERTY.toString())) {
-            //it's an id filter
-            final Id idfilter = ff.id(Collections.singleton(ff.featureId( String.valueOf( ((Literal)exp2).getValue()))));
-            return visit(idfilter,extraData);
-        }
-
-        return super.visit(filter, extraData);
+            // check if it's an id filter
+            Expression<Object,?> exp1 = filter.getExpressions().get(0);
+            Expression<Object,?> exp2 = filter.getExpressions().get(1);
+            if(exp2 instanceof ValueReference<Object,?>) {
+                final Expression<Object,?> exp = exp1;
+                exp1 = exp2;
+                exp2 = exp;
+            }
+            if (exp1 instanceof ValueReference<Object,?> && exp2 instanceof Literal<Object,?>
+                    && ((ValueReference<Object,?>) exp1).getXPath().trim().equalsIgnoreCase(AttributeConvention.IDENTIFIER_PROPERTY.toString()))
+            {
+                // it's an id filter
+                final ResourceId<Object> idfilter = ff.resourceId(String.valueOf(((Literal<Object,?>) exp2).getValue()));
+                return idVisitor.apply(idfilter);
+            }
+            return previous.apply(filter);
+        });
     }
-
 }

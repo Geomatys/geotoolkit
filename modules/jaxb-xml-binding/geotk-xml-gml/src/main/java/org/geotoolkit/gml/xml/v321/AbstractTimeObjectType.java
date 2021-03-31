@@ -38,8 +38,6 @@ import org.opengis.temporal.TemporalObject;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimeObjectType")
@@ -50,7 +48,6 @@ import org.opengis.temporal.TemporalObject;
 public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
 
     public AbstractTimeObjectType() {
-
     }
 
     public AbstractTimeObjectType(final String id) {

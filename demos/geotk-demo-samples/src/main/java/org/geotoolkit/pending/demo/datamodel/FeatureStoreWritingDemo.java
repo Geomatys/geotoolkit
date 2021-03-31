@@ -3,15 +3,13 @@
 package org.geotoolkit.pending.demo.datamodel;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.WritableFeatureSet;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.storage.feature.DefiningFeatureSet;
 import org.geotoolkit.storage.memory.InMemoryStore;
 import org.geotoolkit.pending.demo.Demos;
@@ -22,11 +20,11 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 
 public class FeatureStoreWritingDemo {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     public static void main(String[] args) throws  DataStoreException {
         Demos.init();
@@ -72,14 +70,11 @@ public class FeatureStoreWritingDemo {
         ////////////////////////////////////////////////////////////////////////////////
 
         //on the featurestore ------------------------------------------------------------
-        Set<Identifier> ids = new HashSet<Identifier>();
-        ids.add(FF.featureId("Fish.1"));
-        resource.removeIf(FF.id(ids)::evaluate);
+        ResourceId ids = FF.resourceId("Fish.1");
+        resource.removeIf(ids::test);
 
         //same thing on the session and normal java way on the collection.
         //to remove everything use
-        resource.removeIf(Filter.INCLUDE::evaluate);
-
+        resource.removeIf(Filter.include()::test);
     }
-
 }

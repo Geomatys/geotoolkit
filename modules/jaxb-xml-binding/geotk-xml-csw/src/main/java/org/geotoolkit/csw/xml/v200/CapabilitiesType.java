@@ -26,7 +26,7 @@ import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.ServiceIdentification;
 import org.geotoolkit.ows.xml.v100.ServiceProvider;
-import org.opengis.filter.capability.FilterCapabilities;
+import org.geotoolkit.filter.capability.FilterCapabilities;
 
 
 /**

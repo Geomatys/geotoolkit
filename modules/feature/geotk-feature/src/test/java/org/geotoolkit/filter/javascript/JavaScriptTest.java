@@ -19,38 +19,36 @@ package org.geotoolkit.filter.javascript;
 
 import java.util.List;
 import javax.script.ScriptException;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.filter.FilterTestConstants;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.filter.FilterUtilities;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class JavaScriptTest extends org.geotoolkit.test.TestBase {
     @Test
     public void simpleScriptTest() throws ScriptException {
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory ff = FilterUtilities.FF;
 
         Expression exp = ff.literal("2 + 3");
-        Function jsFunction = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, exp);
+        Expression jsFunction = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, exp);
 
-        double result = jsFunction.evaluate(null,Number.class).doubleValue();
+        double result = ((Number) jsFunction.apply(null)).doubleValue();
         assertTrue(result == 5);
 
         exp = ff.literal("$testInteger * $testDouble");
         jsFunction = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, exp);
 
-        result = jsFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
+        result = ((Number) jsFunction.apply(FilterTestConstants.CANDIDATE_1)).doubleValue();
         assertTrue(result == 10201);
 
         exp = ff.literal("x = $testLong - 6*$testFloat;" +
@@ -60,12 +58,12 @@ public class JavaScriptTest extends org.geotoolkit.test.TestBase {
         assertSerializedEquals(jsFunction); //test serialize
 
         List<Expression> exps = jsFunction.getParameters();
-        PropertyName property1 = (PropertyName) exps.get(1);
-        PropertyName property2 = (PropertyName) exps.get(2);
-        assertTrue(property1.getPropertyName().equals("testLong"));
-        assertTrue(property2.getPropertyName().equals("testFloat"));
+        ValueReference property1 = (ValueReference) exps.get(1);
+        ValueReference property2 = (ValueReference) exps.get(2);
+        assertTrue(property1.getXPath().equals("testLong"));
+        assertTrue(property2.getXPath().equals("testFloat"));
 
-        result = jsFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
+        result = ((Number) jsFunction.apply(FilterTestConstants.CANDIDATE_1)).doubleValue();
         assertTrue(result == 10);
     }
 }

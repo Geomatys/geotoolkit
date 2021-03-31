@@ -27,7 +27,7 @@ import org.geotoolkit.ogc.xml.v100.PropertyNameType;
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -697,7 +697,8 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
     @Override
     public org.geotoolkit.sld.xml.v100.ContrastEnhancement visit(final ContrastEnhancement contrastEnhancement, final Object data) {
         final org.geotoolkit.sld.xml.v100.ContrastEnhancement cet = sld_factory_v100.createContrastEnhancement();
-        cet.setGammaValue(contrastEnhancement.getGammaValue().evaluate(null, Double.class));
+        final Number gamma = (Number) contrastEnhancement.getGammaValue().apply(null);
+        cet.setGammaValue(gamma != null ? gamma.doubleValue() : null);
 
         final ContrastMethod cm = contrastEnhancement.getMethod();
         if(ContrastMethod.HISTOGRAM.equals(cm)){
@@ -763,7 +764,8 @@ public class GTtoSE100Transformer extends FilterToOGC100Converter implements Sty
     public org.geotoolkit.sld.xml.v100.ShadedRelief visit(final ShadedRelief shadedRelief, final Object data) {
         final org.geotoolkit.sld.xml.v100.ShadedRelief srt = sld_factory_v100.createShadedRelief();
         srt.setBrightnessOnly(shadedRelief.isBrightnessOnly());
-        srt.setReliefFactor(shadedRelief.getReliefFactor().evaluate(null, Double.class));
+        final Number rf = (Number) shadedRelief.getReliefFactor().apply(null);
+        srt.setReliefFactor(rf != null ? rf.doubleValue() : null);
         return srt;
     }
 

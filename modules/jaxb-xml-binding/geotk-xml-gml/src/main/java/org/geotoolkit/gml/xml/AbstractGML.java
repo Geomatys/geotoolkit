@@ -21,7 +21,6 @@ import org.opengis.metadata.Identifier;
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
 public interface AbstractGML {
 

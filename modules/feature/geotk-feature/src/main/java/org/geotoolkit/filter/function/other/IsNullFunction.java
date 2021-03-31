@@ -17,27 +17,18 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class IsNullFunction extends AbstractFunction {
 
     public IsNullFunction(final Expression expression) {
-        super(OtherFunctionFactory.IS_NULL, new Expression[]{expression}, null);
+        super(OtherFunctionFactory.IS_NULL, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        Object arg0;
-
-        try { // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function isNull argument #0 - expected type Object");
-        }
-
+    public Object apply(final Object feature) {
+        Object arg0 = parameters.get(0).apply(feature);
         return StaticUtils.isNull(arg0);
     }
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -28,9 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Overlaps")
 public class OverlapsType extends BinarySpatialOpType {
-
     public OverlapsType() {
-
     }
 
     public OverlapsType(String propertyName, Object geometry) {
@@ -49,5 +48,10 @@ public class OverlapsType extends BinarySpatialOpType {
     @Override
     public String getOperator() {
         return "Overlaps";
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.OVERLAPS;
     }
 }

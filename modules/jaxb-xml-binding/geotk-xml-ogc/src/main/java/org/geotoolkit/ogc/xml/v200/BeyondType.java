@@ -17,7 +17,7 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.opengis.filter.spatial.Beyond;
+import org.opengis.filter.DistanceOperatorName;
 
 /**
  *
@@ -25,13 +25,11 @@ import org.opengis.filter.spatial.Beyond;
  * @module
  */
 @XmlRootElement(name = "Beyond")
-public class BeyondType extends DistanceBufferType implements Beyond {
-
+public class BeyondType extends DistanceBufferType {
     /**
      * An empty constructor used by JAXB
      */
     public BeyondType() {
-
     }
 
     /**
@@ -48,6 +46,11 @@ public class BeyondType extends DistanceBufferType implements Beyond {
     @Override
     public SpatialOpsType getClone() {
         return new BeyondType(this);
+    }
+
+    @Override
+    public DistanceOperatorName getOperatorType() {
+        return DistanceOperatorName.BEYOND;
     }
 
     @Override

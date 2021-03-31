@@ -36,8 +36,8 @@ import org.geotoolkit.sld.xml.SLD110toGTTransformer;
 import org.apache.sis.xml.MarshallerPool;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.util.FactoryException;
 import org.opengis.sld.Extent;
 import org.opengis.sld.FeatureTypeConstraint;
@@ -65,7 +65,7 @@ public class SLD110Test {
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
         STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+        FILTER_FACTORY = FilterUtilities.FF;
         SLD_FACTORY = new DefaultSLDFactory();
     }
 
@@ -279,7 +279,4 @@ public class SLD110Test {
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
     }
-
-
-
 }

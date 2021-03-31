@@ -36,9 +36,6 @@ import org.geotoolkit.ogc.xml.ID;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractIdType")
@@ -47,6 +44,4 @@ import org.geotoolkit.ogc.xml.ID;
     GmlObjectIdType.class
 })
 public abstract class AbstractIdType implements ID {
-
-
 }

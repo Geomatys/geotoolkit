@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -44,8 +43,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiSolidType", propOrder = {
@@ -64,8 +61,6 @@ public class MultiSolidType extends AbstractGeometricAggregateType
      *
      * Objects of the following type(s) are allowed in the list
      * {@link SolidPropertyType }
-     *
-     *
      */
     public List<SolidPropertyType> getSolidMember() {
         if (solidMember == null) {
@@ -80,7 +75,6 @@ public class MultiSolidType extends AbstractGeometricAggregateType
      * @return
      *     possible object is
      *     {@link SolidArrayPropertyType }
-     *
      */
     public SolidArrayPropertyType getSolidMembers() {
         return solidMembers;
@@ -92,24 +86,8 @@ public class MultiSolidType extends AbstractGeometricAggregateType
      * @param value
      *     allowed object is
      *     {@link SolidArrayPropertyType }
-     *
      */
     public void setSolidMembers(SolidArrayPropertyType value) {
         this.solidMembers = value;
-    }
-
-     @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

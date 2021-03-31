@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.AbstractGeometricAggregateType;
 import org.geotoolkit.gml.xml.v321.DirectPositionListType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -42,8 +41,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SimpleMultiPointType", propOrder = {
@@ -60,7 +57,6 @@ public class SimpleMultiPointType extends AbstractGeometricAggregateType {
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *
      */
     public DirectPositionListType getPositions() {
         return positions;
@@ -72,25 +68,13 @@ public class SimpleMultiPointType extends AbstractGeometricAggregateType {
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *
      */
     public void setPositions(DirectPositionListType value) {
         this.positions = value;
     }
 
     @Override
-    public Object evaluate(Object o) {
+    public Object apply(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    public <T> T evaluate(Object o, Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(ExpressionVisitor ev, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

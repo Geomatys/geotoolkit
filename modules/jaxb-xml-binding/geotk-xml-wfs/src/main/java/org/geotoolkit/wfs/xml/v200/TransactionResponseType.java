@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.ResourceIdType;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 
 
 /**
@@ -53,8 +53,6 @@ import org.opengis.filter.identity.FeatureId;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransactionResponseType", propOrder = {
@@ -91,11 +89,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the transactionSummary property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TransactionSummaryType }
-     *
      */
     public TransactionSummaryType getTransactionSummary() {
         return transactionSummary;
@@ -103,11 +96,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the transactionSummary property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TransactionSummaryType }
-     *
      */
     public void setTransactionSummary(TransactionSummaryType value) {
         this.transactionSummary = value;
@@ -115,11 +103,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the insertResults property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ActionResultsType }
-     *
      */
     public ActionResultsType getInsertResults() {
         return insertResults;
@@ -127,11 +110,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the insertResults property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ActionResultsType }
-     *
      */
     public void setInsertResults(ActionResultsType value) {
         this.insertResults = value;
@@ -139,11 +117,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the updateResults property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ActionResultsType }
-     *
      */
     public ActionResultsType getUpdateResults() {
         return updateResults;
@@ -151,11 +124,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the updateResults property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ActionResultsType }
-     *
      */
     public void setUpdateResults(ActionResultsType value) {
         this.updateResults = value;
@@ -163,11 +131,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the replaceResults property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ActionResultsType }
-     *
      */
     public ActionResultsType getReplaceResults() {
         return replaceResults;
@@ -175,11 +138,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the replaceResults property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ActionResultsType }
-     *
      */
     public void setReplaceResults(ActionResultsType value) {
         this.replaceResults = value;
@@ -187,11 +145,6 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the version property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     @Override
     public String getVersion() {
@@ -204,19 +157,14 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the version property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setVersion(String value) {
         this.version = value;
     }
 
     @Override
-    public List<FeatureId> getInsertedFID() {
-        final List<FeatureId> ids = new ArrayList<FeatureId>();
+    public List<ResourceId> getInsertedFID() {
+        final List<ResourceId> ids = new ArrayList<ResourceId>();
         if (insertResults != null) {
             final List<CreatedOrModifiedFeatureType> inserted = insertResults.getFeature();
             if (inserted != null) {
@@ -280,5 +228,4 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
         hash = 19 * hash + (this.version != null ? this.version.hashCode() : 0);
         return hash;
     }
-
 }

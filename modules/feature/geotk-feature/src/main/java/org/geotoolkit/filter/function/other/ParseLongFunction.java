@@ -17,27 +17,18 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class ParseLongFunction extends AbstractFunction {
 
     public ParseLongFunction(final Expression expression) {
-        super(OtherFunctionFactory.PARSE_LONG, new Expression[]{expression}, null);
+        super(OtherFunctionFactory.PARSE_LONG, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String arg0;
-
-        try { // attempt to get value and perform conversion
-            arg0 = (String) parameters.get(0).evaluate(feature, String.class);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function parseLong argument #0 - expected type String");
-        }
-
+    public Object apply(final Object feature) {
+        String arg0 = stringValue(feature, 0);
         return StaticUtils.parseLong(arg0);
     }
 }

@@ -48,8 +48,8 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.TransformException;
@@ -100,12 +100,12 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
             final GraduationSymbolizer.Graduation grad = cg.getGraduation();
             final GradInfo info = new GradInfo();
             info.grad = cg;
-            info.stepReal = grad.getStep().evaluate(feature, Number.class).floatValue();
-            info.size = grad.getSize().evaluate(feature, Number.class).doubleValue();
-            info.format = new DecimalFormat(grad.getFormat().evaluate(feature, String.class));
-            info.distanceTextOffset = grad.getStart().evaluate(feature, Number.class).floatValue();
-            info.distanceTextOffset = grad.getStart().evaluate(feature, Number.class).floatValue();
-            String side = grad.getSide().evaluate(feature, String.class);
+            info.stepReal = ((Number) grad.getStep().apply(feature)).floatValue();
+            info.size = ((Number) grad.getSize().apply(feature)).doubleValue();
+            info.format = new DecimalFormat(grad.getFormat().apply(feature).toString());
+            info.distanceTextOffset = ((Number) grad.getStart().apply(feature)).floatValue();
+            info.distanceTextOffset = ((Number) grad.getStart().apply(feature)).floatValue();
+            String side = grad.getSide().apply(feature).toString();
             if (GraduationSymbolizer.SIDE_BOTH.getValue().toString().equalsIgnoreCase(side)) {
                 info.side = GraduationSymbolizer.SIDE_BOTH;
             } else if(GraduationSymbolizer.SIDE_LEFT.getValue().toString().equalsIgnoreCase(side)) {
@@ -116,7 +116,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
 
             //get unit
             final Expression unitExp = grad.getUnit();
-            final String unitStr = (unitExp==null) ? null : unitExp.evaluate(feature, String.class);
+            final String unitStr = (unitExp==null) ? null : unitExp.apply(feature).toString();
             final Unit unit = (unitStr==null) ? Units.METRE : Units.valueOf(unitStr);
             //adjust unit to ellipsoid unit, for path walker
             final Ellipsoid ellipsoid = ReferencingUtilities.getEllipsoid(displayCrs);
@@ -125,7 +125,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
 
             //avoid 0 and very small values
             if (info.stepGeo>=0.0000001) {
-                if (Boolean.FALSE.equals(grad.getReverse().evaluate(feature, Boolean.class))) {
+                if (Boolean.FALSE.equals(grad.getReverse().apply(feature))) {
                     forwardCandidates.add(info);
                 } else {
                     backwardCandidates.add(info);

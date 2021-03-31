@@ -18,7 +18,7 @@ package org.geotoolkit.filter.function.other;
 
 import java.util.Objects;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class TableFunction extends AbstractFunction {
@@ -28,30 +28,20 @@ public class TableFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Object arg0;
-
-        try {
-            // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature);
-        } catch (Exception e){
-            // probably a type error
-            throw new IllegalArgumentException("Filter Function problem for function in10 argument #0 - expected type Object");
-        }
-
-        for(int i=2;i<parameters.size();i+=2){
+    public Object apply(final Object feature) {
+        final Object arg0 = parameters.get(0).apply(feature);
+        for (int i=2; i<parameters.size(); i+=2) {
             try {
                 // attempt to get value and perform conversion
-                Object key = (Object) parameters.get(i).evaluate(feature);
+                Object key = (Object) parameters.get(i).apply(feature);
                 if (Objects.equals(arg0,key)) {
-                    return parameters.get(i+1).evaluate(feature);
+                    return parameters.get(i+1).apply(feature);
                 }
             } catch (Exception e){
                 // probably a type error
                 throw new IllegalArgumentException("Filter Function problem for function in10 argument #"+ i+"- expected type Object");
             }
         }
-
-        return  parameters.get(1).evaluate(feature);
+        return  parameters.get(1).apply(feature);
     }
 }

@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d.style;
 
 import org.geotoolkit.display2d.GO2Utilities;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.PointPlacement;
 
 /**

@@ -46,11 +46,13 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.opengis.filter.Filter;
-import org.opengis.filter.spatial.*;
+import org.opengis.filter.SpatialOperatorName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import org.opengis.filter.DistanceOperatorName;
+import org.opengis.util.CodeList;
 
 /**
  *
@@ -166,28 +168,28 @@ public class LuceneUtils {
     }
 
     public static SpatialFilterType getSpatialFilterType(final Filter filter) {
-
-        if (filter instanceof BBOX) {
+        CodeList type = filter.getOperatorType();
+        if (type == SpatialOperatorName.BBOX) {
             return SpatialFilterType.BBOX;
-        } else if (filter instanceof Beyond){
+        } else if (type == DistanceOperatorName.BEYOND) {
             return SpatialFilterType.BEYOND;
-        } else if (filter instanceof Contains){
+        } else if (type == SpatialOperatorName.CONTAINS) {
             return SpatialFilterType.CONTAINS;
-        } else if (filter instanceof Crosses){
+        } else if (type == SpatialOperatorName.CROSSES) {
             return SpatialFilterType.CROSSES;
-        } else if (filter instanceof Disjoint){
+        } else if (type == SpatialOperatorName.DISJOINT) {
             return SpatialFilterType.DISJOINT;
-        } else if (filter instanceof DWithin){
+        } else if (type == DistanceOperatorName.WITHIN) {
             return SpatialFilterType.DWITHIN;
-        } else if (filter instanceof Equals){
+        } else if (type == SpatialOperatorName.EQUALS) {
             return SpatialFilterType.EQUALS;
-        } else if (filter instanceof Intersects){
+        } else if (type == SpatialOperatorName.INTERSECTS) {
             return SpatialFilterType.INTERSECTS;
-        } else if (filter instanceof Overlaps){
+        } else if (type == SpatialOperatorName.OVERLAPS) {
             return SpatialFilterType.OVERLAPS;
-        } else if (filter instanceof Touches){
+        } else if (type == SpatialOperatorName.TOUCHES) {
             return SpatialFilterType.TOUCHES;
-        } else if (filter instanceof Within){
+        } else if (type == SpatialOperatorName.WITHIN) {
             return SpatialFilterType.WITHIN;
         }
         throw new IllegalArgumentException("unexpected filter type:" + filter);

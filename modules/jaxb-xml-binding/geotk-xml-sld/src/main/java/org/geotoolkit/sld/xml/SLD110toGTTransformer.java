@@ -44,7 +44,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterFactory2;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
 import org.opengis.sld.CoverageConstraint;

@@ -42,7 +42,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- *
  */
 @XmlEnum
 public enum SpatialOperatorNameType {
@@ -86,5 +85,4 @@ public enum SpatialOperatorNameType {
         }
         throw new IllegalArgumentException(v.toString());
     }
-
 }

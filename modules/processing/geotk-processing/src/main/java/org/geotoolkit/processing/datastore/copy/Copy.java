@@ -27,10 +27,11 @@ import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.filter.FunctionNames;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
 
@@ -55,7 +56,6 @@ import static org.geotoolkit.processing.datastore.copy.CopyDescriptor.*;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module
  */
 public class Copy extends AbstractProcess {
 
@@ -188,7 +188,7 @@ public class Copy extends AbstractProcess {
 
         //Change * to featureType default geometry name
         if (query != null && query.getFilter() != null) {
-            final Filter newFilter = (Filter) query.getFilter().accept(new BBOXFilterVisitor(), type);
+            final Filter newFilter = (Filter) new BBOXFilterVisitor(type).visit((Filter) query.getFilter());
             final QueryBuilder builder = new QueryBuilder(query);
             builder.setFilter(newFilter);
             query = builder.buildQuery();
@@ -221,7 +221,7 @@ public class Copy extends AbstractProcess {
 
         //NEW VERSION (remove old features)
         if (newVersion) {
-            targetSS.removeFeatures(name.toString(), Filter.INCLUDE);
+            targetSS.removeFeatures(name.toString(), Filter.include());
         }
 
         //Logging
@@ -245,13 +245,14 @@ public class Copy extends AbstractProcess {
      * default geometry name in given FeatureType.
      */
     private class BBOXFilterVisitor extends DuplicatingFilterVisitor {
-        @Override
-        public Object visit(PropertyName expression, Object extraData) {
-            if ("*".equals(expression.getPropertyName()) && extraData instanceof FeatureType) {
-                return new DefaultPropertyName(((FeatureType) extraData).getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()).getName().toString());
-            }
-            return super.visit(expression, extraData);
+        BBOXFilterVisitor(final FeatureType type) {
+            setExpressionHandler(FunctionNames.ValueReference, (e) -> {
+                final ValueReference expression = (ValueReference) e;
+                if ("*".equals(expression.getXPath())) {
+                    return new DefaultPropertyName(type.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()).getName().toString());
+                }
+                return super.visit(expression);
+            });
         }
-
     }
 }

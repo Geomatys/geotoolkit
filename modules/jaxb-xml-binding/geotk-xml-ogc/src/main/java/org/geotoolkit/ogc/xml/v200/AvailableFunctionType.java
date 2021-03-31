@@ -45,8 +45,6 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AvailableFunctionType", propOrder = {
@@ -67,11 +65,6 @@ public class AvailableFunctionType {
 
     /**
      * Gets the value of the metadata property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MetadataType }
-     *
      */
     public MetadataType getMetadata() {
         return metadata;
@@ -79,11 +72,6 @@ public class AvailableFunctionType {
 
     /**
      * Sets the value of the metadata property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MetadataType }
-     *
      */
     public void setMetadata(MetadataType value) {
         this.metadata = value;
@@ -91,11 +79,6 @@ public class AvailableFunctionType {
 
     /**
      * Gets the value of the returns property.
-     *
-     * @return
-     *     possible object is
-     *     {@link QName }
-     *
      */
     public QName getReturns() {
         return returns;
@@ -103,11 +86,6 @@ public class AvailableFunctionType {
 
     /**
      * Sets the value of the returns property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link QName }
-     *
      */
     public void setReturns(QName value) {
         this.returns = value;
@@ -115,11 +93,6 @@ public class AvailableFunctionType {
 
     /**
      * Gets the value of the arguments property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ArgumentsType }
-     *
      */
     public ArgumentsType getArguments() {
         return arguments;
@@ -127,11 +100,6 @@ public class AvailableFunctionType {
 
     /**
      * Sets the value of the arguments property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ArgumentsType }
-     *
      */
     public void setArguments(ArgumentsType value) {
         this.arguments = value;
@@ -139,11 +107,6 @@ public class AvailableFunctionType {
 
     /**
      * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getName() {
         return name;
@@ -151,14 +114,8 @@ public class AvailableFunctionType {
 
     /**
      * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setName(String value) {
         this.name = value;
     }
-
 }

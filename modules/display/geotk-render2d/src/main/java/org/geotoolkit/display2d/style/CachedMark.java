@@ -30,7 +30,7 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
 import org.geotoolkit.renderer.style.MarkFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalMark;
 import org.opengis.style.Mark;
@@ -108,7 +108,7 @@ public class CachedMark extends Cache<Mark>{
             isWKN = false;
         }else if(GO2Utilities.isStatic(expWKN)){
 
-            Object markRef = expWKN.evaluate(null);
+            Object markRef = expWKN.apply(null);
 
             for(int i=0; i<MARK_FACTORIES.length && cachedWKN==null; i++){
                 try {
@@ -171,7 +171,7 @@ public class CachedMark extends Cache<Mark>{
             Object markRef = null;
             int markIndex = 0;
             if(wkn!=null){
-                markRef = wkn.evaluate(candidate);
+                markRef = wkn.apply(candidate);
             }else if(external!=null){
                 format = external.getFormat();
                 markRef = external.getOnlineResource().getLinkage().toString();

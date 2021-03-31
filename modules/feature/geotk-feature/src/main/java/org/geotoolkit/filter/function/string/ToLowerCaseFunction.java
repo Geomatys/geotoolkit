@@ -18,30 +18,18 @@ package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.filter.function.other.StaticUtils;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class ToLowerCaseFunction extends AbstractFunction {
 
     public ToLowerCaseFunction(final Expression expression) {
-        super(StringFunctionFactory.TO_LOWER_CASE, new Expression[]{expression}, null);
+        super(StringFunctionFactory.TO_LOWER_CASE, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String arg0;
-
-        try { // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature, String.class); // extra
-                                                                    // protection
-                                                                    // for
-                                                                    // strings
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strLength argument #0 - expected type String");
-        }
-
-        return StaticUtils.strToLowerCase(arg0);
+    public Object apply(final Object feature) {
+        final String[] args = stringValues(feature);
+        return StaticUtils.strToLowerCase(args[0]);
     }
 }

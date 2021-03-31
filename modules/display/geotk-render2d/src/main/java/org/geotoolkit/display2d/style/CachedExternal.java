@@ -22,25 +22,22 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
-import org.opengis.filter.expression.Function;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
 import org.opengis.style.ExternalGraphic;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.nio.IOUtilities;
+import org.opengis.filter.Expression;
 
 /**
  * Cached External graphic
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class CachedExternal extends Cache<ExternalGraphic>{
 
@@ -204,11 +201,10 @@ public class CachedExternal extends Cache<ExternalGraphic>{
     private static BufferedImage recode(BufferedImage buffer, final Collection<ColorReplacement> replacements){
         if(buffer != null){
             for(final ColorReplacement replace : replacements){
-                final Function fct = replace.getRecoding();
-                buffer = fct.evaluate(buffer, BufferedImage.class);
+                final Expression fct = replace.getRecoding();
+                buffer = (BufferedImage) fct.apply(buffer);
             }
         }
         return buffer;
     }
-
 }

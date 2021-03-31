@@ -17,7 +17,7 @@
 
 package org.geotoolkit.style.function;
 
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Literal;
 
 /**
  *

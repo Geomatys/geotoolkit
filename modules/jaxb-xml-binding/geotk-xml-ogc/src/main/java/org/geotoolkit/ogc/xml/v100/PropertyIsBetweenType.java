@@ -16,12 +16,16 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.internal.filter.FunctionNames;
+import org.opengis.filter.ComparisonOperatorName;
 
 
 /**
@@ -42,9 +46,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsBetweenType", propOrder = {
@@ -62,7 +63,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
     private UpperBoundaryType upperBoundary;
 
     public PropertyIsBetweenType() {
-
     }
 
     public PropertyIsBetweenType(final PropertyIsBetweenType that) {
@@ -82,7 +82,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
                 }
             }
-
             if (that.lowerBoundary != null) {
                 this.lowerBoundary = new LowerBoundaryType(that.lowerBoundary);
             }
@@ -94,7 +93,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Gets the value of the expression property.
-     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -102,7 +100,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Sets the value of the expression property.
-     *
      */
     public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -110,7 +107,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Gets the value of the lowerBoundary property.
-     *
      */
     public LowerBoundaryType getLowerBoundary() {
         return lowerBoundary;
@@ -118,7 +114,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Sets the value of the lowerBoundary property.
-     *
      */
     public void setLowerBoundary(final LowerBoundaryType value) {
         this.lowerBoundary = value;
@@ -126,7 +121,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Gets the value of the upperBoundary property.
-     *
      */
     public UpperBoundaryType getUpperBoundary() {
         return upperBoundary;
@@ -134,7 +128,6 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
 
     /**
      * Sets the value of the upperBoundary property.
-     *
      */
     public void setUpperBoundary(final UpperBoundaryType value) {
         this.upperBoundary = value;
@@ -145,4 +138,18 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
         return new PropertyIsBetweenType(this);
     }
 
+    @Override
+    public ComparisonOperatorName getOperatorType() {
+        return ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_BETWEEN);
+    }
+
+    @Override
+    public List getExpressions() {
+        return Arrays.asList(expression.getValue(), lowerBoundary.getLiteral(), upperBoundary.getLiteral());
+    }
+
+    @Override
+    public boolean test(Object object) {
+        throw new UnsupportedOperationException();
+    }
 }

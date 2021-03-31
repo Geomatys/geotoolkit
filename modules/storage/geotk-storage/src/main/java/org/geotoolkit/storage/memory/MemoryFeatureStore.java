@@ -30,7 +30,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.IllegalNameException;
@@ -48,6 +47,7 @@ import org.geotoolkit.storage.feature.query.QueryBuilder;
 import org.geotoolkit.storage.feature.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureExt;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.feature.GenericNameIndex;
 import org.locationtech.jts.geom.Geometry;
@@ -57,9 +57,9 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.ResourceId;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
@@ -68,12 +68,11 @@ import org.opengis.util.GenericName;
 /**
  * @todo : make this concurrent
  * @author Johann Sorel (Geomatys)
- * @module
  */
 @Deprecated
 public class MemoryFeatureStore extends AbstractFeatureStore{
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     private static abstract class Group {
         final FeatureType type;
@@ -87,7 +86,20 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         public FeatureType getFeatureType() {
             return type;
         }
+    }
 
+    private static Set<ResourceId> identifiers(final Filter<Object> ids) {
+        if (ids.getOperatorType() == LogicalOperatorName.OR) {
+            final Set<ResourceId> fids = new HashSet<>();
+            for (final Filter f : ((LogicalOperator<Object>) ids).getOperands()) {
+                fids.add((ResourceId) f);
+            }
+            return fids;
+        }
+        if (ids == Filter.exclude()) {
+            return Collections.emptySet();
+        }
+        return Collections.singleton((ResourceId) ids);
     }
 
     private static class GroupWithId extends Group {
@@ -110,15 +122,11 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
             }
         }
 
-        public Iterator<? extends Feature> createIterator(final Id ids) {
-
+        public Iterator<? extends Feature> createIterator(final Filter ids) {
             if(ids == null){
                 return features.values().iterator();
             }
-
-            final Set<Identifier> fids = ids.getIdentifiers();
-            final Iterator<Identifier> iteIds = fids.iterator();
-
+            final Iterator<ResourceId> iteIds = identifiers(ids).iterator();
             return new Iterator<Feature>(){
 
                 Feature next = null;
@@ -148,12 +156,10 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
                     if(next != null) return;
 
                     while(next == null && iteIds.hasNext()){
-                        final String strid = iteIds.next().getID().toString();
+                        final String strid = iteIds.next().getIdentifier().toString();
                         next = features.get(strid);
                     }
-
                 }
-
             };
         }
     }
@@ -192,7 +198,6 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
     /**
      * Create a memory feature store with a single type.
      *
-     * @param type
      * @param singleTypeLock : true if you don't want any other types to be create or
      * this type to be deleted.
      */
@@ -229,7 +234,6 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         if(grp == null){
             throw new DataStoreException("Schema "+ name +" doesnt exist in this feature store.");
         }
-
         return grp.getFeatureType();
     }
 
@@ -316,12 +320,12 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> collection,
+    public List<ResourceId> addFeatures(final String groupName, final Collection<? extends Feature> collection,
             final Hints hints) throws DataStoreException {
         typeCheck(groupName);
         final Group grp = groups.get(this, groupName);
 
-        final List<FeatureId> addedIds = new ArrayList<>();
+        final List<ResourceId> addedIds = new ArrayList<>();
         for(final Feature f : collection){
             Object candidateId = null;
             if(grp instanceof GroupWithId){
@@ -345,7 +349,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
                     }
                 }
                 f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), candidateId);
-                addedIds.add(FF.featureId(String.valueOf(candidateId)));
+                addedIds.add(FF.resourceId(String.valueOf(candidateId)));
             }
 
             //copy the feature
@@ -382,8 +386,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         }
 
         //fire add event
-        final Id eventIds = FF.id(new HashSet<Identifier>(addedIds));
-        fireFeaturesAdded(grp.type.getName(),eventIds);
+        fireFeaturesAdded(grp.type.getName(), Collections.emptySet());
         return addedIds;
     }
 
@@ -424,12 +427,12 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         }
 
         if(grp instanceof GroupWithId){
-            final Collection<Identifier> toUpdate = getAffectedFeatures(groupName, filter);
+            final Collection<ResourceId> toUpdate = getAffectedFeatures(groupName, filter);
             if(toUpdate.isEmpty()) return;
 
-            final Set<Identifier> ups = new HashSet<>();
-            for(final Identifier itd : toUpdate){
-                final Feature candidate = ((GroupWithId)grp).features.get(itd.getID());
+            final Set<ResourceId> ups = new HashSet<>();
+            for(final ResourceId itd : toUpdate){
+                final Feature candidate = ((GroupWithId)grp).features.get(itd.getIdentifier());
                 if(candidate == null) continue;
 
                 ups.add(itd);
@@ -441,13 +444,12 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
             }
 
             //fire update event
-            final Id eventIds = FF.id(new HashSet<>(ups));
-            fireFeaturesUpdated(((GroupWithId) grp).type.getName(),eventIds);
+            fireFeaturesUpdated(((GroupWithId) grp).type.getName(), ups);
         }else{
             final GroupWithId grpnoid = (GroupWithId) grp;
             for (int i=grpnoid.features.size()-1;i>=0;i--) {
                 Feature candidate = grpnoid.features.get(i);
-                if (filter.evaluate(candidate)) {
+                if (filter.test(candidate)) {
                     for(Map.Entry<String, ?> entry : values.entrySet()){
                         final String name = entry.getKey();
                         final Object value = entry.getValue();
@@ -455,10 +457,8 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
                     }
                 }
             }
-
-            fireFeaturesUpdated(grpnoid.type.getName(),FF.id(new HashSet(Collections.EMPTY_SET)));
+            fireFeaturesUpdated(grpnoid.type.getName(), Collections.emptySet());
         }
-
     }
 
     /**
@@ -471,40 +471,35 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         final Group grp = groups.get(this, groupName);
         if(grp instanceof GroupWithId){
             final GroupWithId grpwithid = (GroupWithId) grp;
-            final Collection<Identifier> toRemove = getAffectedFeatures(groupName, filter);
-            final Set<Identifier> rems = new HashSet<>();
-            for(final Identifier itd : toRemove){
-                final Feature candidate = grpwithid.features.remove(String.valueOf(itd.getID()));
+            final Collection<ResourceId> toRemove = getAffectedFeatures(groupName, filter);
+            final Set<ResourceId> rems = new HashSet<>();
+            for(final ResourceId itd : toRemove){
+                final Feature candidate = grpwithid.features.remove(String.valueOf(itd.getIdentifier()));
                 if(candidate == null) continue;
                 rems.add(itd);
             }
             //fire remove event
-            final Id eventIds = FF.id(new HashSet<>(rems));
-            fireFeaturesDeleted(grpwithid.type.getName(),eventIds);
+            fireFeaturesDeleted(grpwithid.type.getName(), rems);
         }else{
             final GroupNoId grpnoid = (GroupNoId) grp;
             for (int i=grpnoid.features.size()-1;i>=0;i--) {
                 Feature f = grpnoid.features.get(i);
-                if (filter.evaluate(f)) {
+                if (filter.test(f)) {
                     grpnoid.features.remove(i);
                 }
             }
-
-            fireFeaturesDeleted(grpnoid.type.getName(),FF.id(new HashSet(Collections.EMPTY_SET)));
+            fireFeaturesDeleted(grpnoid.type.getName(), Collections.emptySet());
         }
-
     }
 
-    private Collection<Identifier> getAffectedFeatures(final String groupName, final Filter filter) throws DataStoreException{
+    private Collection<ResourceId> getAffectedFeatures(final String groupName, final Filter filter) throws DataStoreException{
         final Group grp = groups.get(this, groupName);
 
-        final Collection<Identifier> affected;
-        if(filter instanceof Id){
-            final Id ids = (Id) filter;
-            affected = ids.getIdentifiers();
+        final Collection<ResourceId> affected;
+        if(filter instanceof ResourceId || filter.getOperatorType() == LogicalOperatorName.OR) {
+            affected = identifiers(filter);
         }else{
             affected = new ArrayList<>();
-
             final QueryBuilder qb = new QueryBuilder(groupName);
             qb.setFilter(filter);
             qb.setProperties(new String[]{AttributeConvention.IDENTIFIER_PROPERTY.toString()}); //no properties, only ids
@@ -540,10 +535,10 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
         final Iterator<? extends Feature> ite;
         if(grp instanceof GroupWithId){
-            if(filter instanceof Id){
-                ite = ((GroupWithId)grp).createIterator((Id)filter);
+            if(filter instanceof ResourceId){
+                ite = ((GroupWithId)grp).createIterator((ResourceId)filter);
                 if(ite != null){
-                    remaining.setFilter(Filter.INCLUDE);
+                    remaining.setFilter(Filter.include());
                 }
             }else{
                 ite = ((GroupWithId)grp).createIterator(null);
@@ -590,5 +585,4 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
             return false;
         }
     }
-
 }

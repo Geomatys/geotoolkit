@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.DistanceOperatorName;
 
 /**
  *
@@ -29,10 +30,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Beyond")
 @XmlRootElement(name = "Beyond")
-public class BeyondType extends DistanceBufferType implements org.opengis.filter.spatial.Beyond {
-
+public class BeyondType extends DistanceBufferType {
     public BeyondType() {
-
     }
 
     /**
@@ -49,6 +48,11 @@ public class BeyondType extends DistanceBufferType implements org.opengis.filter
     @Override
     public SpatialOpsType getClone() {
         return new BeyondType(this);
+    }
+
+    @Override
+    public DistanceOperatorName getOperatorType() {
+        return DistanceOperatorName.BEYOND;
     }
 
     @Override

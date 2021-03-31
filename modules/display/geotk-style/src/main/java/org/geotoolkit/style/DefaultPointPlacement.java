@@ -16,20 +16,18 @@
  */
 package org.geotoolkit.style;
 
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.Displacement;
 import org.opengis.style.PointPlacement;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types point placement.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultPointPlacement implements PointPlacement{
 
@@ -47,9 +45,9 @@ public class DefaultPointPlacement implements PointPlacement{
      * @param rotation : if null or Expression.NIL will be replaced by default value.
      */
     public DefaultPointPlacement(final AnchorPoint anchor, final Displacement disp, final Expression rotation){
-        this.anchor = (anchor == null) ? DEFAULT_ANCHOR_POINT : anchor;
-        this.disp = (disp == null) ? DEFAULT_DISPLACEMENT : disp;
-        this.rotation = (rotation == null || rotation == NIL) ? DEFAULT_POINTPLACEMENT_ROTATION : rotation;
+        this.anchor   = (anchor   == null) ? DEFAULT_ANCHOR_POINT : anchor;
+        this.disp     = (disp     == null) ? DEFAULT_DISPLACEMENT : disp;
+        this.rotation = (rotation == null) ? DEFAULT_POINTPLACEMENT_ROTATION : rotation;
     }
 
     /**
@@ -103,7 +101,6 @@ public class DefaultPointPlacement implements PointPlacement{
         return this.disp.equals(other.disp)
                 && this.anchor.equals(other.anchor)
                 && this.rotation.equals(other.rotation);
-
     }
 
     /**

@@ -18,7 +18,7 @@ package org.geotoolkit.filter.function.geometry;
 
 import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * JTS geometry buffer.
@@ -28,22 +28,13 @@ import org.opengis.filter.expression.Expression;
 public class BufferFunction extends AbstractFunction {
 
     public BufferFunction(final Expression expr1, final Expression expr2) {
-        super(GeometryFunctionFactory.BUFFER, new Expression[] {expr1, expr2}, null);
+        super(GeometryFunctionFactory.BUFFER, expr1, expr2);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        final Geometry geom;
-        double width;
-
-        try {
-            geom = parameters.get(0).evaluate(feature,Geometry.class);
-            width = parameters.get(1).evaluate(feature,Number.class).doubleValue();
-        } catch (Exception e){
-            throw new IllegalArgumentException("Invalid function parameter."+
-                    parameters.get(0)+" "+parameters.get(1));
-        }
-
+    public Object apply(final Object feature) {
+        final Geometry geom = geometryValue(feature);
+        final double width = doubleValue(feature, 1);
         if(width==0) return geom;
 
         final Geometry geomBuf = geom.buffer(width);

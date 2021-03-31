@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.Collections;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
+import org.opengis.filter.NullOperator;
 
 
 /**
@@ -42,16 +43,13 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNullType", propOrder = {
     "propertyName",
     "literal"
 })
-public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsNull {
+public class PropertyIsNullType extends ComparisonOpsType implements NullOperator {
 
     @XmlElement(name = "PropertyName")
     private PropertyNameType propertyName;
@@ -59,7 +57,6 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
     private LiteralType literal;
 
     public PropertyIsNullType() {
-
     }
 
     public PropertyIsNullType(PropertyNameType propertyName) {
@@ -79,7 +76,6 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
 
     /**
      * Gets the value of the propertyName property.
-     *
      */
     public PropertyNameType getPropertyName() {
         return propertyName;
@@ -87,7 +83,6 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
 
     /**
      * Sets the value of the propertyName property.
-     *
      */
     public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
@@ -95,7 +90,6 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
 
     /**
      * Gets the value of the literal property.
-     *
      */
     public LiteralType getLiteral() {
         return literal;
@@ -103,7 +97,6 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
 
     /**
      * Sets the value of the literal property.
-     *
      */
     public void setLiteral(final LiteralType value) {
         this.literal = value;
@@ -115,18 +108,16 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
     }
 
     @Override
+    public List getExpressions() {
+        return Collections.singletonList(getExpression());
+    }
+
     public Expression getExpression() {
         return propertyName;
     }
 
     @Override
-    public boolean evaluate(Object object) {
+    public boolean test(Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

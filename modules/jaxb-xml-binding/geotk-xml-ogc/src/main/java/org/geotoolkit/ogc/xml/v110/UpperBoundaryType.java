@@ -21,9 +21,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.AbstractExpression;
 import org.geotoolkit.ogc.xml.Boundary;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -44,21 +46,17 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UpperBoundaryType", propOrder = {
     "expression"
 })
-public class UpperBoundaryType implements Expression, Boundary {
+public class UpperBoundaryType extends AbstractExpression implements Boundary, Literal {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
     public UpperBoundaryType() {
-
     }
 
     public UpperBoundaryType(final JAXBElement<?> expression) {
@@ -88,6 +86,23 @@ public class UpperBoundaryType implements Expression, Boundary {
         }
     }
 
+    @Override
+    public ScopedName getFunctionName() {
+        Object value = expression.getValue();
+        return (value instanceof Expression) ? ((Expression) value).getFunctionName() : null;
+    }
+
+    @Override
+    public Object apply(Object o) {
+        Object value = expression.getValue();
+        return (value instanceof Expression) ? ((Expression) value).apply(o) : null;
+    }
+
+    @Override
+    public Object getValue() {
+        return apply(null);
+    }
+
     /**
      * Gets the value of the expression property.
      *
@@ -115,7 +130,6 @@ public class UpperBoundaryType implements Expression, Boundary {
      *     {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     *
      */
     public JAXBElement<?> getExpression() {
         return expression;
@@ -148,7 +162,6 @@ public class UpperBoundaryType implements Expression, Boundary {
      *     {@link JAXBElement }{@code <}{@link FormatNumberType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SubstringType }{@code >}
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
-     *
      */
     public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
@@ -186,21 +199,6 @@ public class UpperBoundaryType implements Expression, Boundary {
             return (String)value;
         }
         return null;
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return extraData;
     }
 
     @Override

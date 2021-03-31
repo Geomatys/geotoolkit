@@ -90,11 +90,11 @@ public class PieSymbolizerRendererService extends AbstractSymbolizerRendererServ
             final Rectangle2D rect = new Rectangle2D.Double(5, line * (fabove + 5), 30, fabove);
             g.draw(rect);
 
-            g.setPaint(colorQuarter.getColor().evaluate(null, Color.class));
+            g.setPaint((Color) colorQuarter.getColor().apply(null));
             g.fill(rect);
 
             g.setPaint(Color.BLACK);
-            g.drawString(colorQuarter.getQuarter().evaluate(null, String.class), 45, line * (fabove + 5) + fabove);
+            g.drawString(colorQuarter.getQuarter().apply(null).toString(), 45, line * (fabove + 5) + fabove);
 
             line++;
         }

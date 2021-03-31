@@ -18,38 +18,29 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import org.locationtech.jts.geom.Geometry;
-
-import org.geotoolkit.filter.DefaultLiteral;
-
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 import org.geotoolkit.geometry.BoundingBox;
+import org.opengis.filter.Literal;
 
 /**
  * Perform the same work as the LooseBBox expect it does not reproject the candidate geometry to the filter CRS.
  * Use this only if you are sure that the evaluated object are in the same CRS than the filter
  *
  * @author Guilhem Legal (Geomatys)
- * @module
  */
-public class UnreprojectedLooseBBox extends LooseBBox{
+public class UnreprojectedLooseBBox extends LooseBBox {
 
-    public UnreprojectedLooseBBox(final PropertyName property, final DefaultLiteral<BoundingBox> bbox) {
+    public UnreprojectedLooseBBox(final ValueReference property, final Literal<Object,BoundingBox> bbox) {
         super(property,bbox);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean evaluate(final Object object) {
+    public boolean test(final Object object) {
         Geometry candidate = toGeometry(object, left);
-
-        if(candidate == null){
+        if (candidate == null) {
             return false;
         }
-
         final org.locationtech.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
         return boundingEnv.intersects(candidateEnv);
     }
-
 }

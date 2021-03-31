@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.TemporalCapabilities;
-import org.opengis.filter.capability.TemporalOperand;
-import org.opengis.filter.capability.TemporalOperators;
+import org.geotoolkit.filter.capability.TemporalCapabilities;
+import org.geotoolkit.filter.capability.TemporalOperand;
+import org.geotoolkit.filter.capability.TemporalOperators;
 
 
 /**
@@ -47,15 +47,13 @@ import org.opengis.filter.capability.TemporalOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Temporal_CapabilitiesType", propOrder = {
     "temporalOperands",
     "temporalOperators"
 })
-public class TemporalCapabilitiesType implements TemporalCapabilities {
+public class TemporalCapabilitiesType extends TemporalCapabilities {
 
     @XmlElement(name = "TemporalOperands", required = true)
     private TemporalOperandsType temporalOperands;
@@ -66,7 +64,6 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
      * empty constructor used by JAXB
      */
     public TemporalCapabilitiesType() {
-
     }
 
     /**
@@ -79,11 +76,6 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
 
     /**
      * Gets the value of the temporalOperands property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TemporalOperandsType }
-     *
      */
     public TemporalOperandsType getTemporalOperandsType() {
         return temporalOperands;
@@ -91,11 +83,6 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
 
     /**
      * Sets the value of the temporalOperands property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TemporalOperandsType }
-     *
      */
     public void setTemporalOperands(TemporalOperandsType value) {
         this.temporalOperands = value;
@@ -103,11 +90,6 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
 
     /**
      * Gets the value of the temporalOperators property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TemporalOperatorsType }
-     *
      */
     @Override
     public TemporalOperatorsType getTemporalOperators() {
@@ -116,11 +98,6 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
 
     /**
      * Sets the value of the temporalOperators property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TemporalOperatorsType }
-     *
      */
     public void setTemporalOperators(TemporalOperatorsType value) {
         this.temporalOperators = value;
@@ -128,7 +105,6 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
 
     /**
      * implements SpatialCapabilities geoAPI interface
-     * @return
      */
     @Override
     public Collection<TemporalOperand> getTemporalOperands() {
@@ -140,5 +116,4 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
         }
         return result;
     }
-
 }

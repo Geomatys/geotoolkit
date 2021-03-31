@@ -18,48 +18,26 @@ package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.filter.function.other.StaticUtils;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class SubstringFunction extends AbstractFunction {
 
     public SubstringFunction(final Expression expr1, final  Expression expr2, final Expression expr3) {
-        super(StringFunctionFactory.SUBSTRING, new Expression[]{expr1,expr2,expr3}, null);
+        super(StringFunctionFactory.SUBSTRING, expr1, expr2, expr3);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        String arg0;
-        int arg1;
-        int arg2;
-
-        try { // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature, String.class); // extra
-                                                                    // protection
-                                                                    // for
-                                                                    // strings
-        } catch (Exception e) // probably a type error
-        {
+    public Object apply(final Object feature) {
+        final String[] args = stringValues(feature, 1);
+        int arg1, arg2;
+        try {
+            arg1 = ((Number) parameters.get(1).apply(feature)).intValue();
+            arg2 = ((Number) parameters.get(2).apply(feature)).intValue();
+        } catch (Exception e) {
             throw new IllegalArgumentException(
-                    "Filter Function problem for function strSubstring argument #0 - expected type String");
+                    "Filter Function problem for function strSubstring - expected type int");
         }
-
-        try { // attempt to get value and perform conversion
-            arg1 = ((Number) parameters.get(1).evaluate(feature)).intValue();
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strSubstring argument #1 - expected type int");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg2 = ((Number) parameters.get(2).evaluate(feature)).intValue();
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function strSubstring argument #2 - expected type int");
-        }
-
-        return StaticUtils.strSubstring(arg0, arg1, arg2);
+        return StaticUtils.strSubstring(args[0], arg1, arg2);
     }
 }

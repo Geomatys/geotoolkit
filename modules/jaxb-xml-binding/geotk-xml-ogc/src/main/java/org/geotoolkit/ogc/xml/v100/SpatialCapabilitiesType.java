@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.capability.GeometryOperand;
-import org.opengis.filter.capability.SpatialCapabilities;
-import org.opengis.filter.capability.SpatialOperators;
+import org.geotoolkit.filter.capability.SpatialCapabilities;
+import org.geotoolkit.filter.capability.SpatialOperators;
 
 
 /**
@@ -42,20 +42,17 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Spatial_CapabilitiesType", propOrder = {
     "spatialOperators"
 })
-public class SpatialCapabilitiesType implements SpatialCapabilities {
+public class SpatialCapabilitiesType extends SpatialCapabilities {
 
     @XmlElement(name = "Spatial_Operators", required = true)
     private SpatialOperatorsType spatialOperators;
 
     public SpatialCapabilitiesType() {
-
     }
 
     public SpatialCapabilitiesType(final SpatialOperators spatialOperators) {
@@ -64,11 +61,6 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * Gets the value of the spatialOperators property.
-     *
-     * @return
-     *     possible object is
-     *     {@link SpatialOperatorsType }
-     *
      */
     @Override
     public SpatialOperatorsType getSpatialOperators() {
@@ -77,11 +69,6 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * Sets the value of the spatialOperators property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link SpatialOperatorsType }
-     *
      */
     public void setSpatialOperators(SpatialOperatorsType value) {
         this.spatialOperators = value;
@@ -91,5 +78,4 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
     public Collection<GeometryOperand> getGeometryOperands() {
         return null;
     }
-
 }

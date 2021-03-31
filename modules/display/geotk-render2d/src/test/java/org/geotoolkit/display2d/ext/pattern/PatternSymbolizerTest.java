@@ -33,8 +33,8 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.junit.Test;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
+import org.geotoolkit.filter.FilterFactory2;
+import org.opengis.filter.Expression;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -42,7 +42,6 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class PatternSymbolizerTest {
-
     /**
      * Test Jaxb xml support.
      */
@@ -66,5 +65,4 @@ public class PatternSymbolizerTest {
         IOUtilities.deleteOnExit(path);
         new StyleXmlIO().writeStyle(path, style, Specification.StyledLayerDescriptor.V_1_1_0);
     }
-
 }

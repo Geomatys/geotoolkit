@@ -25,9 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.AbstractExpression;
 import org.geotoolkit.ogc.xml.XMLLiteral;
-import org.apache.sis.util.ObjectConverters;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -46,15 +45,12 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LiteralType", propOrder = {
     "content"
 })
-public class LiteralType implements XMLLiteral {
+public class LiteralType extends AbstractExpression implements XMLLiteral {
 
     @XmlMixed
     @XmlAnyElement(lax = true)
@@ -64,7 +60,6 @@ public class LiteralType implements XMLLiteral {
      * an empty constructor used by JAXB
      */
     public LiteralType() {
-
     }
 
     /**
@@ -154,17 +149,12 @@ public class LiteralType implements XMLLiteral {
     }
 
     @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object evaluate(final Object object, final Class context) {
+    public Object apply(final Object object) {
        Object literal = null;
        if (content != null && !content.isEmpty()) {
             literal = content.get(0);
        }
-       return ObjectConverters.convert(literal, context);
+       return literal;
     }
 
     @Override
@@ -199,20 +189,4 @@ public class LiteralType implements XMLLiteral {
         hash = 31 * hash + (this.content != null ? this.content.hashCode() : 0);
         return hash;
     }
-
-    /**
-     * Used by FilterVisitors to perform some action on this filter instance.
-     * Typicaly used by Filter decoders, but may also be used by any thing
-     * which needs infomration from filter structure. Implementations should
-     * always call: visitor.visit(this); It is importatant that this is not
-     * left to a parent class unless the parents API is identical.
-     *
-     * @param visitor The visitor which requires access to this filter, the
-     *        method must call visitor.visit(this);
-     */
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this,extraData);
-    }
-
 }

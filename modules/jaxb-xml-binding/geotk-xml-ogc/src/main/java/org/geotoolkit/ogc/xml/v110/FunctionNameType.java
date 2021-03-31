@@ -19,13 +19,11 @@ package org.geotoolkit.ogc.xml.v110;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.opengis.filter.capability.FunctionName;
+import org.geotoolkit.filter.capability.FunctionName;
 
 
 /**
@@ -42,15 +40,11 @@ import org.opengis.filter.capability.FunctionName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FunctionNameType", propOrder = {
     "value"
 })
-public class FunctionNameType implements FunctionName {
+public class FunctionNameType extends FunctionName {
 
     @XmlValue
     private String value;
@@ -66,13 +60,14 @@ public class FunctionNameType implements FunctionName {
      * An empty constructor used by JAXB
      */
     public FunctionNameType() {
-
+        super(null, null, 0);
     }
 
     /**
      * An empty constructor used by JAXB
      */
     public FunctionNameType(final String name, final int nArgs) {
+        super(name, null, nArgs);
         this.value = name;
         this.nArgs = nArgs + "";
     }

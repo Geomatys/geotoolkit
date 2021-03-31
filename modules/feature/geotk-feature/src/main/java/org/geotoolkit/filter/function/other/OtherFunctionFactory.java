@@ -19,9 +19,8 @@ package org.geotoolkit.filter.function.other;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.filter.function.AbstractFunctionFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 
 
 /**
@@ -103,10 +102,9 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
      * {@inheritDoc }
      */
     @Override
-    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
+    public Expression createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
         if(name.equals(IN)) return new InFunction(parameters);
         if(name.equals(TABLE)) return new TableFunction(parameters);
         return super.createFunction(name,fallback,parameters);
     }
-
 }

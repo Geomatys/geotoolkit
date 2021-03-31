@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiSurface;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -47,9 +46,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiSurfaceType", propOrder = {
@@ -64,7 +60,6 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
 
     /**
      * Gets the value of the surfaceMember property.
-     *
      */
     public List<SurfacePropertyType> getSurfaceMember() {
         if (surfaceMember == null) {
@@ -90,7 +85,6 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
      * @return
      *     possible object is
      *     {@link SurfaceArrayPropertyType }
-     *
      */
     public SurfaceArrayPropertyType getSurfaceMembers() {
         return surfaceMembers;
@@ -102,25 +96,9 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
      * @param value
      *     allowed object is
      *     {@link SurfaceArrayPropertyType }
-     *
      */
     public void setSurfaceMembers(final SurfaceArrayPropertyType value) {
         this.surfaceMembers = value;
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

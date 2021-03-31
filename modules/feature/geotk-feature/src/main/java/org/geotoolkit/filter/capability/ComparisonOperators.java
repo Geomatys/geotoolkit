@@ -18,49 +18,44 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.opengis.filter.capability.SpatialOperator;
-import org.opengis.filter.capability.SpatialOperators;
 
 /**
- * Immutalbe spatial operators.
+ * Immutable comparison operators.
  *
  * @author Johann Sorel (Geomatys)
  * @module
  */
-public class DefaultSpatialOperators implements SpatialOperators {
+@Deprecated
+public class ComparisonOperators {
 
-    private final Map<String,SpatialOperator> operators = new HashMap<String, SpatialOperator>();
+    private final Map<String,Operator> operators;
 
-    public DefaultSpatialOperators(final SpatialOperator[] operators) {
+    /** For JAXB. */
+    protected ComparisonOperators() {
+        operators = Collections.emptyMap();
+    }
+
+    public ComparisonOperators(final Operator[] operators) {
         if(operators == null || operators.length == 0){
             throw new IllegalArgumentException("Functions must not be null or empty");
         }
-        for(SpatialOperator op : operators){
+        this.operators = new HashMap<>();
+        for (Operator op : operators) {
             this.operators.put(op.getName(), op);
         }
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<SpatialOperator> getOperators() {
+    public Collection<Operator> getOperators() {
         return operators.values();
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SpatialOperator getOperator(final String name) {
+    public Operator getOperator(final String name) {
         return operators.get(name);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -69,21 +64,17 @@ public class DefaultSpatialOperators implements SpatialOperators {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DefaultSpatialOperators other = (DefaultSpatialOperators) obj;
+        final ComparisonOperators other = (ComparisonOperators) obj;
         if (this.operators != other.operators && (this.operators == null || !this.operators.equals(other.operators))) {
             return false;
         }
         return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + (this.operators != null ? this.operators.hashCode() : 0);
+        int hash = 7;
+        hash = 11 * hash + (this.operators != null ? this.operators.hashCode() : 0);
         return hash;
     }
-
 }

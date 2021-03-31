@@ -33,9 +33,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.SpatialOperatorName;
 import org.opengis.geometry.DirectPosition;
 
 
@@ -56,15 +56,13 @@ import org.opengis.geometry.DirectPosition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BBOXType", propOrder = {
     "expression",
     "any"
 })
-public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc.xml.BBOX {
+public class BBOXType extends SpatialOpsType implements BinarySpatialOperator, org.geotoolkit.ogc.xml.BBOX {
 
     private static final String DEFAULT_SRS = "EPSG:4326";
 
@@ -79,7 +77,6 @@ public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc
      * An empty constructor used by JAXB
      */
     public BBOXType() {
-
     }
 
     /**
@@ -125,7 +122,6 @@ public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc
                     throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
                 }
             }
-
             if (that.any != null) {
                 this.any = new ArrayList<>();
                 for (Object obj : that.any) {
@@ -138,6 +134,11 @@ public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc
                 }
             }
         }
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.BBOX;
     }
 
     /**
@@ -218,33 +219,23 @@ public class BBOXType extends SpatialOpsType implements BBOX, org.geotoolkit.ogc
 
     /**
      * Sets the value of the any property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *
      */
     public void setAny(Object value) {
         this.any = Arrays.asList(value);
     }
 
     @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List getExpressions() {
+        return Arrays.asList(getOperand1(), getOperand2());
     }
 
     @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Expression getExpression1() {
+    public Expression getOperand1() {
         return new InternalPropertyName(getPropertyName());
     }
 
     @Override
-    public Expression getExpression2() {
+    public Expression getOperand2() {
         if (this.any != null && !this.any.isEmpty()) {
             return new LiteralType(this.any.get(0));
         }

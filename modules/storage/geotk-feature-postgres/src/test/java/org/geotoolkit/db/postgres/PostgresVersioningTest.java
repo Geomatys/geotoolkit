@@ -29,7 +29,6 @@ import java.util.Properties;
 import java.util.Set;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
@@ -53,8 +52,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.ResourceId;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
@@ -64,7 +62,6 @@ import org.opengis.util.GenericName;
  */
 public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final FeatureType FTYPE_SIMPLE;
 
@@ -77,7 +74,6 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ftb.addAttribute(Point.class).setName("point").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
         ftb.addAttribute(String.class).setName("string");
         FTYPE_SIMPLE = ftb.build();
-
     }
 
     private PostgresStore store;
@@ -88,9 +84,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
     private static Parameters params;
 
     /**
-     * <p>Find JDBC connection parameters in specified file at
-     * "/home/.geotoolkit.org/test-pgfeature.properties".<br/>
-     * If properties file doesn't find all tests are skipped.</p>
+     * Find JDBC connection parameters in specified file at
+     * "/home/.geotoolkit.org/test-pgfeature.properties".
+     * If properties file doesn't find all tests are skipped.
      *
      * <p>To lunch tests user should create file with this architecture<br/>
      * for example : <br/>
@@ -146,7 +142,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         List<Version> versions;
         Version version;
         Feature feature;
-        FeatureId fid;
+        ResourceId fid;
         Version v1;
         Version v2;
         Version v3;
@@ -179,7 +175,6 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         store.refreshMetaModel();
         final Set<GenericName> names = store.getNames();
         assertEquals(1, names.size());
-
 
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
@@ -245,7 +240,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates.put("point", secondPoint);
         updates.put("string", "anothertextupdated");
 
-        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
+        store.updateFeatures(refType.getName().toString(), fid, updates);
 
         //we should have two versions
         versions = vc.list();
@@ -317,7 +312,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
 
-        store.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
+        store.removeFeatures(refType.getName().toString(), fid);
         qb.reset();
         qb.setTypeName(refType.getName());
         assertEquals(0, store.getCount(qb.buildQuery()));
@@ -392,14 +387,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         qb.reset();
         qb.setTypeName(refType.getName());
         assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
-
     }
 
     /**
      * Check versions are created on each call on the session.
-     *
-     * @throws DataStoreException
-     * @throws VersioningException
      */
     @Test
     public void testVersioningSynchrone() throws DataStoreException, VersioningException{
@@ -407,7 +398,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         List<Version> versions;
         Version version;
         Feature feature;
-        FeatureId fid;
+        ResourceId fid;
         FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
 
@@ -458,7 +449,6 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
             fail(ex.getMessage());
         }
 
-
         ////////////////////////////////////////////////////////////////////////
         //make an update 1 /////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
@@ -467,7 +457,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates.put("integer", -3);
         updates.put("point", secondPoint);
         updates.put("string", "anothertextupdated");
-        session.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
+        session.updateFeatures(refType.getName().toString(), fid, updates);
 
         //we should have two versions
         versions = vc.list();
@@ -481,7 +471,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates.put("integer", -89);
         updates.put("point", thirdPoint);
         updates.put("string", "thridupdatetext");
-        session.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
+        session.updateFeatures(refType.getName().toString(), fid, updates);
 
         //we should have three versions
         versions = vc.list();
@@ -490,7 +480,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
 
-        session.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
+        session.removeFeatures(refType.getName().toString(), fid);
         qb.reset();
         qb.setTypeName(refType.getName().toString());
         assertEquals(0, session.getCount(qb.buildQuery()));
@@ -513,15 +503,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         //we should have five versions
         versions = vc.list();
         assertEquals(5, versions.size());
-
-
     }
 
     /**
      * Check versions are created only on session commit calls.
-     *
-     * @throws DataStoreException
-     * @throws VersioningException
      */
     @Test
     public void testVersioningASynchrone() throws DataStoreException, VersioningException{
@@ -529,7 +514,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         List<Version> versions;
         Version version;
         Feature feature;
-        FeatureId fid;
+        ResourceId fid;
         FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
 
@@ -586,7 +571,6 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
             fail(ex.getMessage());
         }
 
-
         ////////////////////////////////////////////////////////////////////////
         //make 2 updates at the time ///////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
@@ -595,7 +579,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates.put("integer", -3);
         updates.put("point", secondPoint);
         updates.put("string", "anothertextupdated");
-        session.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
+        session.updateFeatures(refType.getName().toString(), fid, updates);
 
         //we should have 1 version
         versions = vc.list();
@@ -607,7 +591,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates.put("integer", -89);
         updates.put("point", thirdPoint);
         updates.put("string", "thridupdatetext");
-        session.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
+        session.updateFeatures(refType.getName().toString(), fid, updates);
 
         //we should have 1 version
         versions = vc.list();
@@ -633,11 +617,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
             ite.close();
         }
 
-
         ////////////////////////////////////////////////////////////////////////
         // make delete + insert at the same time ///////////////////////////////
 
-        session.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
+        session.removeFeatures(refType.getName().toString(), fid);
         qb.reset();
         qb.setTypeName(refType.getName().toString());
         assertEquals(0, session.getCount(qb.buildQuery()));
@@ -649,7 +632,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
 
-        session.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
+        session.removeFeatures(refType.getName().toString(), fid);
         qb.reset();
         qb.setTypeName(refType.getName().toString());
         assertEquals(0, session.getCount(qb.buildQuery()));
@@ -690,7 +673,6 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }finally{
             ite.close();
         }
-
     }
 
     @Test
@@ -698,7 +680,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         reload(true);
         List<Version> versions;
         Feature feature;
-        FeatureId fid;
+        ResourceId fid;
         Version v0;
         Version v1;
         Version v2;
@@ -763,7 +745,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates.put("point", secondPoint);
         updates.put("string", "anothertextupdated");
 
-        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
+        store.updateFeatures(refType.getName().toString(), fid, updates);
 
         try {
             //wait a bit just to have some space between version dates
@@ -780,7 +762,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates2.put("point", thirdPoint);
         updates2.put("string", "secondtextupdated");
 
-        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates2);
+        store.updateFeatures(refType.getName().toString(), fid, updates2);
 
         //get all versions organized in increase dates order.
         versions = vc.list();
@@ -843,7 +825,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         reload(true);
         List<Version> versions;
         Feature feature;
-        FeatureId fid;
+        ResourceId fid;
         Version v0;
         Version v1;
         Version v2;
@@ -908,7 +890,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates.put("point", secondPoint);
         updates.put("string", "anothertextupdated");
 
-        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
+        store.updateFeatures(refType.getName().toString(), fid, updates);
 
         try {
             //wait a bit just to have some space between version dates
@@ -918,7 +900,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //make a remove ///////////////////////////////////////////////////////
-        store.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
+        store.removeFeatures(refType.getName().toString(), fid);
 
         //ensure test table is empty
         qb.reset();
@@ -1040,7 +1022,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         reload(true);
         List<Version> versions;
         Feature feature;
-        FeatureId fid;
+        ResourceId fid;
         Version v0;
         Version v1;
         Version v2;
@@ -1070,10 +1052,8 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
         assertTrue(store2.getNames().isEmpty());
 
-
         //delete historisation functions, he must create them himself
         store2.dropHSFunctions();
-
 
         //-------------- create table in public schema --------------------
         store.createFeatureType(refType);
@@ -1156,7 +1136,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         updates.put("integer", -3);
         updates.put("point", secondPoint);
         updates.put("string", "anothertextupdated");
-        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
+        store.updateFeatures(refType.getName().toString(), fid, updates);
 
         // ensure test table in public2 schema is empty
         qb.reset();
@@ -1167,7 +1147,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertTrue(vcP2.list().isEmpty());
 
         //make a remove ///////////////////////////////////////////////////////
-        store.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
+        store.removeFeatures(refType.getName().toString(), fid);
 
         // ensure test table in public2 schema is empty
         qb.reset();

@@ -20,6 +20,6 @@ package org.geotoolkit.ogc.xml;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface ComparisonOperator {
+public interface ComparisonOperator extends org.opengis.filter.ComparisonOperator {
 
 }

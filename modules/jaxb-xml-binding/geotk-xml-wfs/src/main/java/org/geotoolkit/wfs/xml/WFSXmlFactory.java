@@ -28,8 +28,8 @@ import org.geotoolkit.ogc.xml.XMLFilter;
 import org.geotoolkit.ows.xml.*;
 import org.geotoolkit.wfs.xml.v110.ValueType;
 import org.geotoolkit.wfs.xml.v200.ValueReference;
-import org.opengis.filter.capability.FilterCapabilities;
-import org.opengis.filter.sort.SortOrder;
+import org.geotoolkit.filter.capability.FilterCapabilities;
+import org.opengis.filter.SortOrder;
 
 import static org.geotoolkit.wfs.xml.WFSVersion.*;
 

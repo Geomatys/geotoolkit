@@ -20,15 +20,13 @@ package org.geotoolkit.style.function;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.filter.function.AbstractFunctionFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 
 /**
  * Factory registering the default Symbology Encoding functions.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class StyleFunctionFactory extends AbstractFunctionFactory{
 
@@ -50,12 +48,9 @@ public class StyleFunctionFactory extends AbstractFunctionFactory{
      * {@inheritDoc }
      */
     @Override
-    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
-
+    public Expression createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
         if(name.equals(INTERPOLATE))        return new DefaultInterpolate(parameters);
         else if(name.equals(CATEGORIZE))    return new DefaultCategorize(parameters);
-
-        throw new IllegalArgumentException("Unknowed function name : "+ name);
+        throw new IllegalArgumentException("Unknowed function name: " + name);
     }
-
 }

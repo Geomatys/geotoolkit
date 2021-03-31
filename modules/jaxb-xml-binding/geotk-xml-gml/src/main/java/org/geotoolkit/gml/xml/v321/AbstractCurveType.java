@@ -40,8 +40,6 @@ import org.geotoolkit.gml.xml.AbstractCurve;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractCurveType")
@@ -52,13 +50,10 @@ import org.geotoolkit.gml.xml.AbstractCurve;
     CompositeCurveType.class
 })
 public abstract class AbstractCurveType extends AbstractGeometricPrimitiveType implements AbstractCurve {
-
     public AbstractCurveType() {
-
     }
 
     public AbstractCurveType(final String id, final String srsName) {
         super(id, srsName);
     }
-
 }

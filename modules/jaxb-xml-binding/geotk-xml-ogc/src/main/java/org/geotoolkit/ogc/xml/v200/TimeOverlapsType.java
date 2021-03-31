@@ -17,20 +17,17 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.TOverlaps;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeOverlapsType extends BinaryTemporalOpType implements TOverlaps {
-
+public class TimeOverlapsType extends BinaryTemporalOpType {
     /**
      * An empty constructor used by JAXB
      */
     public TimeOverlapsType() {
-
     }
 
     public TimeOverlapsType(final String propertyName, final Object temporal) {
@@ -47,13 +44,7 @@ public class TimeOverlapsType extends BinaryTemporalOpType implements TOverlaps 
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.OVERLAPS;
     }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

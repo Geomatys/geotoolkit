@@ -20,7 +20,7 @@ import java.util.Collections;
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFLineBuilder;
 import org.geotoolkit.style.DefaultDescription;
 import org.opengis.util.GenericName;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.*;
 
 import javax.measure.quantity.Length;

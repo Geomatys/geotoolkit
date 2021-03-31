@@ -174,7 +174,7 @@ public class ReportDemo {
                 final FeatureType subType = ftb.build();
                 final FeatureCollection subcol = FeatureStoreUtilities.collection("sub", subType);
                 try {
-                    FeatureWriter fw = subcol.getSession().getFeatureStore().getFeatureWriter(QueryBuilder.filtered(subType.getName().toString(),Filter.EXCLUDE));
+                    FeatureWriter fw = subcol.getSession().getFeatureStore().getFeatureWriter(QueryBuilder.filtered(subType.getName().toString(), Filter.exclude()));
                     for(int i=0,n=new Random().nextInt(20);i<n;i++){
                         Feature f =fw.next();
                         f.setPropertyValue("men",new Random().nextInt());

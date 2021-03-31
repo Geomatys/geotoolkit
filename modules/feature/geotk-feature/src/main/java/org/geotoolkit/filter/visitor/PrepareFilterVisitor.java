@@ -17,9 +17,10 @@
 
 package org.geotoolkit.filter.visitor;
 
+import org.apache.sis.internal.filter.FunctionNames;
 import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.FeatureType;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.ValueReference;
 
 /**
  * Simplify and prepare the filter against a given target class.
@@ -28,18 +29,10 @@ import org.opengis.filter.expression.PropertyName;
  * @author Johann Sorel (Geomatys)
  */
 public class PrepareFilterVisitor extends SimplifyingFilterVisitor{
-
-    private final Class clazz;
-    private final FeatureType expectedType;
-
-    public PrepareFilterVisitor(final Class clazz,final FeatureType expectedType){
-        this.clazz = clazz;
-        this.expectedType = expectedType;
+    public PrepareFilterVisitor(final Class<?> clazz,final FeatureType expectedType){
+        setExpressionHandler(FunctionNames.ValueReference, (e) -> {
+            final ValueReference expression = (ValueReference) e;
+            return FilterUtilities.prepare(expression, clazz, expectedType);
+        });
     }
-
-    @Override
-    public Object visit(final PropertyName expression, final Object extraData) {
-        return FilterUtilities.prepare(expression, clazz, expectedType);
-    }
-
 }

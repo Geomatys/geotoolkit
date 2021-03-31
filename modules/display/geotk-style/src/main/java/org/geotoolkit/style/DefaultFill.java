@@ -17,19 +17,17 @@
 package org.geotoolkit.style;
 
 import java.util.Objects;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.GraphicFill;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of Types Fill.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class DefaultFill implements Fill{
 
@@ -48,8 +46,8 @@ public class DefaultFill implements Fill{
      */
     public DefaultFill(final GraphicFill fill, final Expression color, final Expression opacity){
         this.fill = fill;
-        this.color = (color == null || color == NIL) ? DEFAULT_FILL_COLOR : color;
-        this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_FILL_OPACITY : opacity;
+        this.color = (color == null) ? DEFAULT_FILL_COLOR : color;
+        this.opacity = (opacity == null) ? DEFAULT_FILL_OPACITY : opacity;
     }
 
     /**
@@ -103,7 +101,6 @@ public class DefaultFill implements Fill{
         return Objects.equals(this.color, other.color)
                 && Objects.equals(this.fill, this.fill)
                 && Objects.equals(this.opacity, other.opacity);
-
     }
 
     /**
@@ -115,7 +112,6 @@ public class DefaultFill implements Fill{
         if(color != null) hash += color.hashCode();
         if(fill != null) hash += fill.hashCode();
         if(opacity != null) hash += opacity.hashCode();
-
         return hash;
     }
 
@@ -132,5 +128,4 @@ public class DefaultFill implements Fill{
         builder.append(']');
         return builder.toString();
     }
-
 }

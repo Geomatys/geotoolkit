@@ -16,20 +16,24 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
-import org.opengis.filter.Not;
+import java.util.Collections;
+import java.util.List;
+import org.opengis.filter.LogicalOperatorName;
 
 /**
  *
  * @author guilhem
- * @module
  */
-public class NotType extends UnaryLogicOpType implements Not {
-
+public class NotType extends UnaryLogicOpType {
     /**
      * An empty constructor used by JAXB
      */
     public NotType() {
+    }
 
+    @Override
+    public LogicalOperatorName getOperatorType() {
+        return LogicalOperatorName.NOT;
     }
 
     /**
@@ -37,7 +41,6 @@ public class NotType extends UnaryLogicOpType implements Not {
      */
     public NotType(final Object operators) {
         super(operators);
-
     }
 
     public NotType(final UnaryLogicOpType that) {
@@ -52,5 +55,10 @@ public class NotType extends UnaryLogicOpType implements Not {
     @Override
     public String getOperator() {
         return "NOT";
+    }
+
+    @Override
+    public List getOperands() {
+        return Collections.singletonList(getFilter());
     }
 }

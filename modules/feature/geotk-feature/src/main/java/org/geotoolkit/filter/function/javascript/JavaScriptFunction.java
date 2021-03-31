@@ -29,8 +29,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.ValueReference;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -80,7 +80,7 @@ public class JavaScriptFunction extends AbstractFunction {
 
     public JavaScriptFunction(final Expression expression) throws ScriptException {
         super(JavaScriptFunctionFactory.JAVASCRIPT, prepare(expression), null);
-        javascript = expression.evaluate(null, String.class);
+        javascript = expression.apply(null).toString();
     }
 
     private ScriptEngine getEngine(){
@@ -101,7 +101,7 @@ public class JavaScriptFunction extends AbstractFunction {
 
 
     private static Expression[] prepare(final Expression jsFunction){
-        final String str = jsFunction.evaluate(null, String.class);
+        final String str = jsFunction.apply(null).toString();
 
         final List<Expression> properties = new ArrayList<Expression>();
         properties.add(jsFunction);
@@ -125,34 +125,27 @@ public class JavaScriptFunction extends AbstractFunction {
                 }
             }
         }
-
         if(current != null && !current.isEmpty()){
             properties.add(new DefaultPropertyName(current));
         }
-
         return properties.toArray(new Expression[properties.size()]);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
 
         final Bindings bindings = getEngine().createBindings();
 
         for(int i=1,n=parameters.size(); i<n; i++){
-            final PropertyName property = (PropertyName) parameters.get(i);
-            final Object value = property.evaluate(feature);
-            bindings.put(VAR_CHARACTER+property.getPropertyName(), value);
+            final ValueReference property = (ValueReference) parameters.get(i);
+            final Object value = property.apply(feature);
+            bindings.put(VAR_CHARACTER+property.getXPath(), value);
         }
-
         try {
             return getCompiled().eval(bindings);
         } catch (ScriptException ex) {
             Logging.getLogger("org.geotoolkit.filter.function.javascript").log(Level.WARNING, null, ex);
         }
-
         return "";
     }
-
-
-
 }

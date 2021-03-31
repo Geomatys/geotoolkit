@@ -41,9 +41,6 @@ import org.geotoolkit.ogc.xml.XMLLiteral;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LowerBoundaryType", propOrder = {
@@ -55,7 +52,6 @@ public class LowerBoundaryType implements Boundary {
     private JAXBElement<?> expression;
 
     public LowerBoundaryType() {
-
     }
 
     public LowerBoundaryType(final LowerBoundaryType that) {
@@ -99,5 +95,4 @@ public class LowerBoundaryType implements Boundary {
         }
         return null;
     }
-
 }

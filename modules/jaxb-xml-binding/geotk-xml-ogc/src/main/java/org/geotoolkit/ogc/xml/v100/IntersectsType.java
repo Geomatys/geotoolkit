@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.SpatialOperatorName;
 
 /**
  *
@@ -30,7 +31,6 @@ import javax.xml.bind.annotation.XmlType;
 public class IntersectsType extends BinarySpatialOpType {
 
     public IntersectsType() {
-
     }
 
     public IntersectsType(String propertyName, Object geometry) {
@@ -44,6 +44,11 @@ public class IntersectsType extends BinarySpatialOpType {
     @Override
     public SpatialOpsType getClone() {
         return new IntersectsType(this);
+    }
+
+    @Override
+    public SpatialOperatorName getOperatorType() {
+        return SpatialOperatorName.INTERSECTS;
     }
 
     @Override

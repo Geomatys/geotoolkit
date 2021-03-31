@@ -39,8 +39,6 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtensionOperatorType")
@@ -51,11 +49,6 @@ public class ExtensionOperatorType {
 
     /**
      * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link QName }
-     *
      */
     public QName getName() {
         return name;
@@ -63,14 +56,8 @@ public class ExtensionOperatorType {
 
     /**
      * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link QName }
-     *
      */
     public void setName(QName value) {
         this.name = value;
     }
-
 }

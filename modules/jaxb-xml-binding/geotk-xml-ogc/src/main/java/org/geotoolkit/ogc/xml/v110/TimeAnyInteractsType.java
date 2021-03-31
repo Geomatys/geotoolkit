@@ -17,17 +17,14 @@
 
 package org.geotoolkit.ogc.xml.v110;
 
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.AnyInteracts;
+import org.opengis.filter.TemporalOperatorName;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInteracts {
-
+public class TimeAnyInteractsType extends BinaryTemporalOpType {
     public TimeAnyInteractsType() {
-
     }
 
     public TimeAnyInteractsType(final TimeAnyInteractsType that) {
@@ -39,17 +36,12 @@ public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInt
     }
 
     @Override
-    public boolean evaluate(Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(FilterVisitor fv, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public TemporalOpsType getClone() {
         return new TimeAnyInteractsType(this);
+    }
+
+    @Override
+    public TemporalOperatorName getOperatorType() {
+        return TemporalOperatorName.ANY_INTERACTS;
     }
 }

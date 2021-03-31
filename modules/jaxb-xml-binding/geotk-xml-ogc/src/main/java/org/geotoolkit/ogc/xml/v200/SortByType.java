@@ -59,7 +59,6 @@ public class SortByType implements SortBy {
      * An empty constructor used by JAXB
      */
     public SortByType() {
-
     }
 
     /**
@@ -90,5 +89,4 @@ public class SortByType implements SortBy {
         }
         return this.sortProperty;
     }
-
 }

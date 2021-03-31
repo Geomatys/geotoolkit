@@ -18,10 +18,9 @@
 package org.geotoolkit.filter.function;
 
 import java.util.Set;
-import org.apache.sis.internal.feature.FunctionRegister;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.apache.sis.internal.filter.FunctionRegister;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
@@ -29,7 +28,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * a specific number and order of expressions.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public interface FunctionFactory extends FunctionRegister {
 
@@ -52,15 +50,10 @@ public interface FunctionFactory extends FunctionRegister {
      * @return Function
      * @throws java.lang.IllegalArgumentException if some arguments are missing or incorrect
      */
-    Function createFunction(String name,Literal fallback, Expression ... parameters) throws IllegalArgumentException;
+    Expression createFunction(String name,Literal fallback, Expression ... parameters) throws IllegalArgumentException;
 
     /**
      * Get a description of the function parameters and results.
-     *
-     * @param name
-     * @return OperationType
-     * @throws IllegalArgumentException
      */
     ParameterDescriptorGroup describeFunction(String name) throws IllegalArgumentException;
-
 }

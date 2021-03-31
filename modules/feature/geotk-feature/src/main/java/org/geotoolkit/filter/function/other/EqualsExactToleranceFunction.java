@@ -18,45 +18,20 @@ package org.geotoolkit.filter.function.other;
 
 import org.locationtech.jts.geom.Geometry;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class EqualsExactToleranceFunction extends AbstractFunction {
 
     public EqualsExactToleranceFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
-        super(OtherFunctionFactory.EQUALS_EXACT_TOLERANCE, new Expression[]{expr1,expr2,expr3}, null);
+        super(OtherFunctionFactory.EQUALS_EXACT_TOLERANCE, expr1, expr2, expr3);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
-        Geometry arg0;
-        Geometry arg1;
-        double arg2;
-
-        try { // attempt to get value and perform conversion
-            arg0 = (Geometry) parameters.get(0).evaluate(feature);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function equalsExactTolerance argument #0 - expected type Geometry");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg1 = (Geometry) parameters.get(1).evaluate(feature);
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function equalsExactTolerance argument #1 - expected type Geometry");
-        }
-
-        try { // attempt to get value and perform conversion
-            arg2 = ((Number) parameters.get(2).evaluate(feature)).doubleValue();
-        } catch (Exception e) // probably a type error
-        {
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function equalsExactTolerance argument #2 - expected type double");
-        }
-
+    public Object apply(final Object feature) {
+        Geometry arg0 = geometryValue(feature, 0);
+        Geometry arg1 = geometryValue(feature, 1);
+        double arg2 = doubleValue(feature, 2);
         return StaticUtils.equalsExactTolerance(arg0, arg1, arg2);
     }
 }

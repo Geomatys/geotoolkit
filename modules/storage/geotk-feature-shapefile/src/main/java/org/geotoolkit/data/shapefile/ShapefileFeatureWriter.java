@@ -44,19 +44,19 @@ import java.util.Set;
 import org.apache.sis.feature.Features;
 import org.geotoolkit.feature.FeatureExt;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.event.FeatureStoreContentEvent;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique
@@ -70,7 +70,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public class ShapefileFeatureWriter implements FeatureWriter {
 
-    protected final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    protected final FilterFactory FF = FilterUtilities.FF;
 
     protected final ShapefileFeatureStore parent;
 
@@ -110,9 +110,9 @@ public class ShapefileFeatureWriter implements FeatureWriter {
     protected DbaseFileWriter dbfWriter;
     private DbaseFileHeader dbfHeader;
 
-    protected final Set<Identifier> deletedIds = new HashSet<>();
-    protected final Set<Identifier> updatedIds = new HashSet<>();
-    protected final Set<Identifier> addedIds   = new HashSet<>();
+    protected final Set<ResourceId> deletedIds = new HashSet<>();
+    protected final Set<ResourceId> updatedIds = new HashSet<>();
+    protected final Set<ResourceId> addedIds   = new HashSet<>();
     protected final Map<ShpFileType, StorageFile> storageFiles = new HashMap<>();
 
     // keep track of bounds during write
@@ -321,17 +321,17 @@ public class ShapefileFeatureWriter implements FeatureWriter {
 
     private void fireDataChangeEvents(){
         if (!addedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.ADD, featureType.getName(), addedIds);
             parent.forwardEvent(event);
         }
 
         if (!updatedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), updatedIds);
             parent.forwardEvent(event);
         }
 
         if (!deletedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(parent, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), deletedIds);
             parent.forwardEvent(event);
         }
     }

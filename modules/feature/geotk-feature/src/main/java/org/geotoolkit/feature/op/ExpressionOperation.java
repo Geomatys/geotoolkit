@@ -30,7 +30,7 @@ import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.feature.Property;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
@@ -71,14 +71,14 @@ public class ExpressionOperation extends AbstractOperation {
     @Override
     public Set<String> getDependencies() {
         final Set<String> dependencies = new HashSet<>();
-        expression.accept(ListingPropertyVisitor.VISITOR, dependencies);
+        ListingPropertyVisitor.VISITOR.visit(expression, dependencies);
         return dependencies;
     }
 
     @Override
     public Property apply(Feature feature, ParameterValueGroup parameters) {
         final Attribute<Object> att = TYPE.newInstance();
-        att.setValue(expression.evaluate(feature));
+        att.setValue(expression.apply(feature));
         return att;
     }
 }

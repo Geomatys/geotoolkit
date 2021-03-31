@@ -20,7 +20,7 @@ package org.geotoolkit.ogc.xml;
  *
  * @author guilhem
  */
-public interface SpatialOperator {
+public interface SpatialOperator extends org.opengis.filter.SpatialOperator {
 
     String getOperator();
 }

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import org.opengis.filter.expression.Function;
+import org.opengis.filter.Expression;
 import org.opengis.style.ColorReplacement;
 import org.opengis.style.StyleVisitor;
 
@@ -30,14 +30,14 @@ import static org.apache.sis.util.ArgumentChecks.*;
  */
 public class DefaultColorReplacement implements ColorReplacement{
 
-    private final Function recode;
+    private final Expression recode;
 
     /**
      * Create a default immutable color replacement.
      *
      * @param recode : can not be null.
      */
-    public DefaultColorReplacement(final Function recode){
+    public DefaultColorReplacement(final Expression recode){
         ensureNonNull("recode function", recode);
         this.recode = recode;
     }
@@ -46,7 +46,7 @@ public class DefaultColorReplacement implements ColorReplacement{
      * {@inheritDoc }
      */
     @Override
-    public Function getRecoding() {
+    public Expression getRecoding() {
         return recode;
     }
 

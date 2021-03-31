@@ -19,69 +19,36 @@ package org.geotoolkit.filter.visitor;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.sis.internal.system.DefaultFactories;
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
+import org.apache.sis.internal.filter.FunctionNames;
 
-import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 
-import org.opengis.filter.And;
-import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.Id;
-import org.opengis.filter.IncludeFilter;
 import org.opengis.filter.MatchAction;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNil;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.NilExpression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.AnyInteracts;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.Meets;
-import org.opengis.filter.temporal.MetBy;
-import org.opengis.filter.temporal.OverlappedBy;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
-import org.opengis.filter.temporal.TOverlaps;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
 import org.geotoolkit.geometry.BoundingBox;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.ComparisonOperatorName;
+import org.opengis.filter.DistanceOperator;
+import org.opengis.filter.DistanceOperatorName;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.SpatialOperatorName;
+import org.opengis.filter.TemporalOperator;
+import org.opengis.filter.TemporalOperatorName;
+import org.opengis.filter.ValueReference;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -89,429 +56,169 @@ import org.geotoolkit.geometry.BoundingBox;
  * <p>
  * Extra data can be used to provide a {@link FilterFactory2} but this is NOT required.
  * This class is thread safe.
- * </ul>
- * @author Jesse
  *
- * @module
+ * @author Jesse
  */
-public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisitor {
+public class DuplicatingFilterVisitor extends AbstractVisitor<Object,Object> {
 
-    protected final FilterFactory2 ff;
+    protected final FilterFactory<Object,Object,Object> ff;
 
     public DuplicatingFilterVisitor() {
-        this((FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class));
+        this(FilterUtilities.FF);
     }
 
-    public DuplicatingFilterVisitor(final FilterFactory2 factory) {
+    public DuplicatingFilterVisitor(final FilterFactory<Object,Object,Object> factory) {
         this.ff = factory;
-    }
-
-    protected FilterFactory2 getFactory(final Object extraData) {
-        if (extraData instanceof FilterFactory2) {
-            return (FilterFactory2) extraData;
-        }
-        return ff;
-    }
-
-    @Override
-    public Object visit(final ExcludeFilter filter, final Object extraData) {
-        return filter;
-    }
-
-    @Override
-    public Object visit(final IncludeFilter filter, final Object extraData) {
-        return filter;
-    }
-
-    /**
-     * Null safe expression cloning
-     */
-    public Expression visit(final Expression expression, final Object extraData) {
-        if (expression == null) {
-            return null;
-        }
-        return (Expression) expression.accept(this, extraData);
-    }
-
-    @Override
-    public Object visit(final And filter, final Object extraData) {
-        final List<Filter> children = filter.getChildren();
-        final List<Filter> newChildren = new ArrayList<Filter>();
-        for (final Filter child : children) {
-            if (child != null) {
-                newChildren.add((Filter)child.accept(this, extraData));
+        setIncludeExcludeHandlers((f) -> f);
+        setNullAndNilHandlers((f) -> {
+            final Expression expr = (Expression) visit(f.getExpressions().get(0));
+            return ff.isNull(expr);
+        });
+        setFilterHandler(RESOURCEID_NAME, (f) -> {
+            final ResourceId<Object> filter = (ResourceId<Object>) f;
+            return ff.resourceId(filter.getIdentifier());
+        });
+        setBinaryLogicalHandlers((f) -> {
+            final LogicalOperator<Object> filter = (LogicalOperator<Object>) f;
+            final List<Filter<? super Object>> children = filter.getOperands();
+            final List<Filter<? super Object>> newChildren = new ArrayList<>();
+            for (final Filter<? super Object> child : children) {
+                newChildren.add((Filter) visit(child));
             }
-        }
-        return getFactory(extraData).and(newChildren);
-    }
-
-    @Override
-    public Object visit(final Id filter, final Object extraData) {
-        return getFactory(extraData).id(filter.getIdentifiers());
-    }
-
-    @Override
-    public Object visit(final Not filter, final Object extraData) {
-        return getFactory(extraData).not((Filter) filter.getFilter().accept(this, extraData));
-    }
-
-    @Override
-    public Object visit(final Or filter, final Object extraData) {
-        final List<Filter> children = filter.getChildren();
-        final List<Filter> newChildren = new ArrayList<Filter>();
-        for (Filter child : children) {
-            if (child != null) {
-                newChildren.add((Filter)child.accept(this, extraData));
+            final LogicalOperatorName type = filter.getOperatorType();
+            if (type == LogicalOperatorName.AND) return ff.and(newChildren);
+            if (type == LogicalOperatorName.OR)  return ff.or (newChildren);
+            throw new AssertionError(type);
+        });
+        setFilterHandler(LogicalOperatorName.NOT, (f) -> {
+            final LogicalOperator<Object> filter = (LogicalOperator<Object>) f;
+            return ff.not((Filter) visit(filter.getOperands().get(0)));
+        });
+        setBinaryComparisonHandlers((f) -> {
+            final BinaryComparisonOperator<Object> filter = (BinaryComparisonOperator<Object>) f;
+            final Expression expr1 = (Expression) visit(filter.getOperand1());
+            final Expression expr2 = (Expression) visit(filter.getOperand2());
+            final boolean matchCase = filter.isMatchingCase();
+            final MatchAction matchAction = filter.getMatchAction();
+            final ComparisonOperatorName type = filter.getOperatorType();
+            if (type == ComparisonOperatorName.PROPERTY_IS_EQUAL_TO)                 return ff.equal         (expr1, expr2, matchCase,matchAction);
+            if (type == ComparisonOperatorName.PROPERTY_IS_NOT_EQUAL_TO)             return ff.notEqual      (expr1, expr2, matchCase,matchAction);
+            if (type == ComparisonOperatorName.PROPERTY_IS_GREATER_THAN)             return ff.greater       (expr1, expr2, matchCase,matchAction);
+            if (type == ComparisonOperatorName.PROPERTY_IS_GREATER_THAN_OR_EQUAL_TO) return ff.greaterOrEqual(expr1, expr2, matchCase,matchAction);
+            if (type == ComparisonOperatorName.PROPERTY_IS_LESS_THAN)                return ff.less          (expr1, expr2, matchCase,matchAction);
+            if (type == ComparisonOperatorName.PROPERTY_IS_LESS_THAN_OR_EQUAL_TO)    return ff.lessOrEqual   (expr1, expr2, matchCase,matchAction);
+            throw new AssertionError(type);
+        });
+        setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_BETWEEN), (f) -> {
+            final BetweenComparisonOperator<Object> filter = (BetweenComparisonOperator<Object>) f;
+            final Expression expr  = (Expression) visit(filter.getExpression());
+            final Expression lower = (Expression) visit(filter.getLowerBoundary());
+            final Expression upper = (Expression) visit(filter.getUpperBoundary());
+            return ff.between(expr, lower, upper);
+        });
+        setFilterHandler(ComparisonOperatorName.valueOf(FunctionNames.PROPERTY_IS_LIKE), (f) -> {
+            final LikeOperator<Object> filter = (LikeOperator<Object>) f;
+            final List<Expression<? super Object, ?>> expressions = filter.getExpressions();
+            final Expression expr   = (Expression) visit(expressions.get(0));
+            final String pattern    = (String) ((Literal<Object,?>) expressions.get(1)).getValue();
+            final char wildcard     = filter.getWildCard();
+            final char singleChar   = filter.getSingleChar();
+            final char escape       = filter.getEscapeChar();
+            final boolean matchCase = filter.isMatchingCase();
+            return ff.like(expr, pattern, wildcard, singleChar, escape, matchCase);
+        });
+        setBinarySpatialHandlers((f) -> {
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            final Expression geometry1 = (Expression) visit(filter.getOperand1());
+            final Expression geometry2 = (Expression) visit(filter.getOperand2());
+            final SpatialOperatorName type = filter.getOperatorType();
+            if (type == SpatialOperatorName.EQUALS)     return ff.equals    (geometry1, geometry2);
+            if (type == SpatialOperatorName.CONTAINS)   return ff.contains  (geometry1, geometry2);
+            if (type == SpatialOperatorName.CROSSES)    return ff.crosses   (geometry1, geometry2);
+            if (type == SpatialOperatorName.DISJOINT)   return ff.disjoint  (geometry1, geometry2);
+            if (type == SpatialOperatorName.INTERSECTS) return ff.intersects(geometry1, geometry2);
+            if (type == SpatialOperatorName.OVERLAPS)   return ff.overlaps  (geometry1, geometry2);
+            if (type == SpatialOperatorName.TOUCHES)    return ff.touches   (geometry1, geometry2);
+            if (type == SpatialOperatorName.WITHIN)     return ff.within    (geometry1, geometry2);
+            throw new AssertionError(type);
+        });
+        setFilterHandler(SpatialOperatorName.BBOX, (f) -> {     // Must be after `setBinarySpatialHandlers(…)`.
+            final BinarySpatialOperator<Object> filter = (BinarySpatialOperator<Object>) f;
+            final List<Expression<? super Object, ?>> expressions = filter.getExpressions();
+            final Expression exp1 = (Expression) visit(expressions.get(0));
+            final Expression exp2 = expressions.get(1);
+            if (!(exp2 instanceof Literal)) {
+                // This value is supposed to hold a BoundingBox.
+                throw new IllegalArgumentException("Illegal BBOX filter, "
+                        + "second expression should have been a literal with a boundingBox value:\n" + filter);
             }
-        }
-        return getFactory(extraData).or(newChildren);
-    }
-
-    @Override
-    public Object visit(final PropertyIsBetween filter, final Object extraData) {
-        final Expression expr = visit(filter.getExpression(), extraData);
-        final Expression lower = visit(filter.getLowerBoundary(), extraData);
-        final Expression upper = visit(filter.getUpperBoundary(), extraData);
-        return getFactory(extraData).between(expr, lower, upper);
-    }
-
-    @Override
-    public Object visit(final PropertyIsEqualTo filter, final Object extraData) {
-        final Expression expr1 = visit(filter.getExpression1(), extraData);
-        final Expression expr2 = visit(filter.getExpression2(), extraData);
-        boolean matchCase = filter.isMatchingCase();
-        final MatchAction matchAction = filter.getMatchAction();
-        return getFactory(extraData).equal(expr1, expr2, matchCase,matchAction);
-    }
-
-    @Override
-    public Object visit(final PropertyIsNotEqualTo filter, final Object extraData) {
-        final Expression expr1 = visit(filter.getExpression1(), extraData);
-        final Expression expr2 = visit(filter.getExpression2(), extraData);
-        final boolean matchCase = filter.isMatchingCase();
-        final MatchAction matchAction = filter.getMatchAction();
-        return getFactory(extraData).notEqual(expr1, expr2, matchCase,matchAction);
-    }
-
-    @Override
-    public Object visit(final PropertyIsGreaterThan filter, final Object extraData) {
-        final Expression expr1 = visit(filter.getExpression1(), extraData);
-        final Expression expr2 = visit(filter.getExpression2(), extraData);
-        final boolean matchCase = filter.isMatchingCase();
-        final MatchAction matchAction = filter.getMatchAction();
-        return getFactory(extraData).greater(expr1, expr2,matchCase,matchAction);
-    }
-
-    @Override
-    public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object extraData) {
-        final Expression expr1 = visit(filter.getExpression1(), extraData);
-        final Expression expr2 = visit(filter.getExpression2(), extraData);
-        final boolean matchCase = filter.isMatchingCase();
-        final MatchAction matchAction = filter.getMatchAction();
-        return getFactory(extraData).greaterOrEqual(expr1, expr2,matchCase,matchAction);
-    }
-
-    @Override
-    public Object visit(final PropertyIsLessThan filter, final Object extraData) {
-        final Expression expr1 = visit(filter.getExpression1(), extraData);
-        final Expression expr2 = visit(filter.getExpression2(), extraData);
-        final boolean matchCase = filter.isMatchingCase();
-        final MatchAction matchAction = filter.getMatchAction();
-        return getFactory(extraData).less(expr1, expr2,matchCase,matchAction);
-    }
-
-    @Override
-    public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object extraData) {
-        final Expression expr1 = visit(filter.getExpression1(), extraData);
-        final Expression expr2 = visit(filter.getExpression2(), extraData);
-        final boolean matchCase = filter.isMatchingCase();
-        final MatchAction matchAction = filter.getMatchAction();
-        return getFactory(extraData).lessOrEqual(expr1, expr2,matchCase,matchAction);
-    }
-
-    @Override
-    public Object visit(final PropertyIsLike filter, final Object extraData) {
-        final Expression expr = visit(filter.getExpression(), extraData);
-        final String pattern = filter.getLiteral();
-        final String wildcard = filter.getWildCard();
-        final String singleChar = filter.getSingleChar();
-        final String escape = filter.getEscape();
-        final boolean matchCase = filter.isMatchingCase();
-        return getFactory(extraData).like(expr, pattern, wildcard, singleChar, escape, matchCase);
-    }
-
-    @Override
-    public Object visit(final PropertyIsNull filter, final Object extraData) {
-        final Expression expr = visit(filter.getExpression(), extraData);
-        return getFactory(extraData).isNull(expr);
-    }
-
-    @Override
-    public Object visit(final PropertyIsNil filter, Object extraData) {
-        final Expression expr = visit(filter.getExpression(), extraData);
-        return getFactory(extraData).isNil(expr);
-    }
-
-    @Override
-    public Object visit(final BBOX filter, final Object extraData) {
-
-        final Expression exp1 = visit(filter.getExpression1(),extraData);
-        final Expression exp2 = filter.getExpression2();
-        if(!(exp2 instanceof Literal)){
-            //this value is supposed to hold a BoundingBox
-            throw new IllegalArgumentException("Illegal BBOX filter, "
-                    + "second expression should have been a literal with a boundingBox value: \n" + filter);
-        }else{
-            Literal l = (Literal)visit(exp2,extraData);
+            Literal l = (Literal) visit(exp2);
             final Object obj = l.getValue();
-            if(obj instanceof BoundingBox){
+            if (obj instanceof BoundingBox) {
                 if (filter instanceof UnreprojectedLooseBBox) {
-                    return new UnreprojectedLooseBBox((PropertyName)exp1, new DefaultLiteral<BoundingBox>((BoundingBox) obj));
+                    return new UnreprojectedLooseBBox((ValueReference) exp1, ff.literal((BoundingBox) obj));
                 } else if (filter instanceof LooseBBox) {
-                    return new LooseBBox((PropertyName)exp1, new DefaultLiteral<BoundingBox>((BoundingBox) obj));
+                    return new LooseBBox((ValueReference) exp1, ff.literal((BoundingBox) obj));
                 } else {
-                    return getFactory(extraData).bbox(exp1, (BoundingBox) obj);
+                    return ff.bbox(exp1, (BoundingBox) obj);
                 }
-            }else{
+            } else if (obj instanceof Envelope) {
+                return ff.bbox(exp1, (Envelope) obj);
+            } else {
                 throw new IllegalArgumentException("Illegal BBOX filter, "
                     + "second expression should have been a literal with a boundingBox value but value was a : \n" + obj.getClass());
             }
+        });
+        setDistanceSpatialHandlers((f) -> {
+            final DistanceOperator<Object> filter = (DistanceOperator<Object>) f;
+            final List<Expression<? super Object, ?>> expressions = filter.getExpressions();
+            final Expression geometry1 = (Expression) visit(expressions.get(0));
+            final Expression geometry2 = (Expression) visit(expressions.get(1));
+            final Quantity<Length> distance = filter.getDistance();
+            final DistanceOperatorName type = filter.getOperatorType();
+            if (type == DistanceOperatorName.BEYOND) return ff.beyond(geometry1, geometry2, distance);
+            if (type == DistanceOperatorName.WITHIN) return ff.within(geometry1, geometry2, distance);
+            throw new AssertionError(type);
+        });
+        setBinaryTemporalHandlers((f) -> {
+            final TemporalOperator<Object> filter = (TemporalOperator<Object>) f;
+            final List<Expression<? super Object, ?>> expressions = filter.getExpressions();
+            final Expression exp1 = (Expression) visit(expressions.get(0));
+            final Expression exp2 = (Expression) visit(expressions.get(1));
+            final TemporalOperatorName type = filter.getOperatorType();
+            if (type == TemporalOperatorName.EQUALS)        return ff.tequals     (exp1, exp2);
+            if (type == TemporalOperatorName.BEFORE)        return ff.before      (exp1, exp2);
+            if (type == TemporalOperatorName.AFTER)         return ff.after       (exp1, exp2);
+            if (type == TemporalOperatorName.BEGINS)        return ff.begins      (exp1, exp2);
+            if (type == TemporalOperatorName.BEGUN_BY)      return ff.begunBy     (exp1, exp2);
+            if (type == TemporalOperatorName.CONTAINS)      return ff.tcontains   (exp1, exp2);
+            if (type == TemporalOperatorName.DURING)        return ff.during      (exp1, exp2);
+            if (type == TemporalOperatorName.ENDS)          return ff.ends        (exp1, exp2);
+            if (type == TemporalOperatorName.ENDED_BY)      return ff.endedBy     (exp1, exp2);
+            if (type == TemporalOperatorName.MEETS)         return ff.meets       (exp1, exp2);
+            if (type == TemporalOperatorName.MET_BY)        return ff.metBy       (exp1, exp2);
+            if (type == TemporalOperatorName.OVERLAPS)      return ff.overlaps    (exp1, exp2);
+            if (type == TemporalOperatorName.OVERLAPPED_BY) return ff.overlappedBy(exp1, exp2);
+            if (type == TemporalOperatorName.ANY_INTERACTS) return ff.anyInteracts(exp1, exp2);
+            throw new AssertionError(type);
+        });
+        setExpressionHandler(FunctionNames.Literal, (e) -> {
+            final Literal<Object,?> expression = (Literal<Object,?>) e;
+            return ff.literal(expression.getValue());
+        });
+        setExpressionHandler(FunctionNames.ValueReference, (e) -> {
+            final ValueReference<Object,?> expression = (ValueReference<Object,?>) e;
+            return ff.property(expression.getXPath());
+        });
+    }
+
+    @Override
+    protected Object typeNotFound(final String type, final Expression<Object,?> expression) {
+        final List<Expression<? super Object, ?>> old = expression.getParameters();
+        final Expression[] args = new Expression[old.size()];
+        for (int i=0; i<args.length; i++) {
+            args[i] = (Expression) visit(old.get(i));
         }
-    }
-
-    @Override
-    public Object visit(final Beyond filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        final double distance = filter.getDistance();
-        final String units = filter.getDistanceUnits();
-        return getFactory(extraData).beyond(geometry1, geometry2, distance, units);
-    }
-
-    @Override
-    public Object visit(final Contains filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).contains(geometry1, geometry2);
-    }
-
-    @Override
-    public Object visit(final Crosses filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).crosses(geometry1, geometry2);
-    }
-
-    @Override
-    public Object visit(final Disjoint filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).disjoint(geometry1, geometry2);
-    }
-
-    @Override
-    public Object visit(final DWithin filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        final double distance = filter.getDistance();
-        final String units = filter.getDistanceUnits();
-        return getFactory(extraData).dwithin(geometry1, geometry2, distance, units);
-    }
-
-    @Override
-    public Object visit(final Equals filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).equal(geometry1, geometry2);
-    }
-
-    @Override
-    public Object visit(final Intersects filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).intersects(geometry1, geometry2);
-    }
-
-    @Override
-    public Object visit(final Overlaps filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).overlaps(geometry1, geometry2);
-    }
-
-    @Override
-    public Object visit(final Touches filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).touches(geometry1, geometry2);
-    }
-
-    @Override
-    public Object visit(final Within filter, final Object extraData) {
-        final Expression geometry1 = visit(filter.getExpression1(), extraData);
-        final Expression geometry2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).within(geometry1, geometry2);
-    }
-
-    @Override
-    public Object visit(After filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).after(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(AnyInteracts filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).anyInteracts(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(Before filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).before(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(Begins filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).begins(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(BegunBy filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).begunBy(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(During filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).during(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(EndedBy filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).endedBy(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(Ends filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).ends(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(Meets filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).meets(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(MetBy filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).metBy(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(OverlappedBy filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).overlappedBy(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(TContains filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).tcontains(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(TEquals filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).tequals(exp1, exp2);
-    }
-
-    @Override
-    public Object visit(TOverlaps filter, Object extraData) {
-        final Expression exp1 = visit(filter.getExpression1(), extraData);
-        final Expression exp2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).toverlaps(exp1, exp2);
-    }
-
-    @Override
-    public Object visitNullFilter(final Object extraData) {
-        return null;
-    }
-
-    @Override
-    public Object visit(final NilExpression expression, final Object extraData) {
-        return expression;
-    }
-
-    @Override
-    public Object visit(final Add expression, final Object extraData) {
-        final Expression expr1 = visit(expression.getExpression1(), extraData);
-        final Expression expr2 = visit(expression.getExpression2(), extraData);
-        return getFactory(extraData).add(expr1, expr2);
-    }
-
-    @Override
-    public Object visit(final Divide expression, final Object extraData) {
-        final Expression expr1 = visit(expression.getExpression1(), extraData);
-        final Expression expr2 = visit(expression.getExpression2(), extraData);
-        return getFactory(extraData).divide(expr1, expr2);
-    }
-
-    @Override
-    public Object visit(final Function expression, final Object extraData) {
-        //TODO bug on duplicate interpolate and catorize.
-        //expecting the function to be immutable for now.
-        return expression;
-
-//        final List<Expression> old = expression.getParameters();
-//        final Expression[] args = new Expression[old.size()];
-//        int i = 0;
-//        for (Iterator<Expression> iter = old.iterator(); iter.hasNext(); i++) {
-//            Expression exp = iter.next();
-//            args[i] = visit(exp, extraData);
-//        }
-//        return getFactory(extraData).function(expression.getName(), args);
-    }
-
-    @Override
-    public Object visit(final Literal expression, final Object extraData) {
-        return getFactory(extraData).literal(expression.getValue());
-    }
-
-    @Override
-    public Object visit(final Multiply expression, final Object extraData) {
-        final Expression expr1 = visit(expression.getExpression1(), extraData);
-        final Expression expr2 = visit(expression.getExpression2(), extraData);
-        return getFactory(extraData).multiply(expr1, expr2);
-    }
-
-    @Override
-    public Object visit(final PropertyName expression, final Object extraData) {
-        return getFactory(extraData).property(expression.getPropertyName());
-    }
-
-    @Override
-    public Object visit(final Subtract expression, final Object extraData) {
-        final Expression expr1 = visit(expression.getExpression1(), extraData);
-        final Expression expr2 = visit(expression.getExpression2(), extraData);
-        return getFactory(extraData).subtract(expr1, expr2);
+        return ff.function(expression.getFunctionName().tip().toString(), args);
     }
 }

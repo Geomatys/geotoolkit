@@ -35,9 +35,9 @@ import org.opengis.feature.FeatureType;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.internal.feature.AttributeConvention;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.ResourceId;
 
 /**
  * Basic support for a  FeatureWriter that redicts it's calls to
@@ -49,7 +49,7 @@ import org.apache.sis.internal.system.DefaultFactories;
  */
 public class GenericFeatureWriter implements FeatureWriter {
 
-    private static final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private static final FilterFactory FF = FilterUtilities.FF;
 
     protected final FeatureStore store;
     protected final String typeName;
@@ -121,7 +121,7 @@ public class GenericFeatureWriter implements FeatureWriter {
     @Override
     public void write() throws FeatureStoreRuntimeException {
         if(currentFeature != null){
-            final Filter filter = FF.id(Collections.singleton(FeatureExt.getId(currentFeature)));
+            final Filter filter = FeatureExt.getId(currentFeature);
             if(remove){
                 //it's a remove operation
                 try {
@@ -159,9 +159,9 @@ public class GenericFeatureWriter implements FeatureWriter {
             if(modified != null){
                 //it's an add operation
                 try {
-                    final List<FeatureId> res = store.addFeatures(typeName.toString(), Collections.singleton(modified));
+                    final List<ResourceId> res = store.addFeatures(typeName.toString(), Collections.singleton(modified));
                     if (!res.isEmpty()) {
-                        modified.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), res.get(0).getID());
+                        modified.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), res.get(0).getIdentifier());
                     }
                 } catch (DataStoreException ex) {
                     throw new FeatureStoreRuntimeException(ex);
@@ -198,7 +198,7 @@ public class GenericFeatureWriter implements FeatureWriter {
     }
 
     public static FeatureWriter wrapAppend(final FeatureStore store, final String typeName) throws DataStoreException{
-        return wrap(store,typeName,Filter.EXCLUDE);
+        return wrap(store,typeName, Filter.exclude());
     }
 
 }

@@ -895,7 +895,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
             //performance routine, only one symbol to render
             if (renderers.rules.length == 1
-               && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
+               && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.include())
                && renderers.rules[0].symbolizers().length == 1) {
                 stream = Stream.concat(stream, renderers.renderers[0][0].presentations(layer, resource));
                 continue;
@@ -908,7 +908,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                     final CachedRule rule = renderers.rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
-                    if (ruleFilter == null || ruleFilter.evaluate(resource)) {
+                    if (ruleFilter == null || ruleFilter.test(resource)) {
                         painted = true;
                         for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
                             stream = Stream.concat(stream, renderer.presentations(layer, resource));
@@ -922,7 +922,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                         final CachedRule rule = renderers.rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(resource)) {
+                        if (ruleFilter == null || ruleFilter.test(resource)) {
                             for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
                                 stream = Stream.concat(stream, renderer.presentations(layer, resource));
                             }
@@ -963,7 +963,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                                 final CachedRule rule = renderers.rules[i];
                                 final Filter ruleFilter = rule.getFilter();
                                 //test if the rule is valid for this feature
-                                if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                                if (ruleFilter == null || ruleFilter.test(feature)) {
                                     painted = true;
                                     for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
                                         stream = Stream.concat(stream, renderer.presentations(layer, feature));
@@ -977,7 +977,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                                     final CachedRule rule = renderers.rules[i];
                                     final Filter ruleFilter = rule.getFilter();
                                     //test if the rule is valid for this feature
-                                    if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                                    if (ruleFilter == null || ruleFilter.test(feature)) {
                                         for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
                                             stream = Stream.concat(stream, renderer.presentations(layer, feature));
                                         }

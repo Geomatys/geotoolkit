@@ -37,7 +37,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Feature;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 /**
  * Pie symbolizer renderer.
@@ -87,9 +87,9 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
                         continue;
                     }
 
-                    final Object key = group.evaluate(f);
-                    final Object quarterKey = quarter.evaluate(f);
-                    final Double valueKey = value.evaluate(f, Double.class);
+                    final Object key = group.apply(f);
+                    final Object quarterKey = quarter.apply(f);
+                    final double valueKey = ((Number) value.apply(f)).doubleValue();
                     PropsPie propsPie = vals.get(key);
                     if (propsPie == null) {
                         propsPie = new PropsPie();
@@ -97,9 +97,9 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
                     }
                     propsPie.geometries = ((ProjectedFeature) next).getGeometry(null).getDisplayGeometryJTS();
                     if (size != null) {
-                        final Double s = size.evaluate(f, Double.class);
-                        if (s != null && !Double.isNaN(s) && s > 0) {
-                            propsPie.size = s;
+                        final Number s = (Number) size.apply(f);
+                        if (s != null && !Double.isNaN(s.doubleValue()) && s.doubleValue() > 0) {
+                            propsPie.size = s.doubleValue();
                         }
                     }
 
@@ -145,8 +145,8 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
                             // Try to find the matching color for this quarter of pie
                             Color c = null;
                             for (final PieSymbolizer.ColorQuarter candidate : colorQuarters) {
-                                if (entryPropsVal.getKey().equals(candidate.getQuarter().evaluate(null))) {
-                                    c = candidate.getColor().evaluate(null, Color.class);
+                                if (entryPropsVal.getKey().equals(candidate.getQuarter().apply(null))) {
+                                    c = (Color) candidate.getColor().apply(null);
                                     break;
                                 }
                             }

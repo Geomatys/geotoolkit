@@ -19,6 +19,7 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBElement;
@@ -27,10 +28,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.ComparisonOperatorName;
 import org.opengis.filter.MatchAction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 /**
@@ -51,14 +51,12 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
     "expression"
 })
-public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator, org.geotoolkit.ogc.xml.BinaryComparisonOperator {
+public class BinaryComparisonOpType extends ComparisonOpsType implements org.geotoolkit.ogc.xml.BinaryComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
@@ -73,7 +71,6 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      * Empty constructor used by JAXB
      */
     public BinaryComparisonOpType() {
-
     }
 
     /**
@@ -133,8 +130,6 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      * {@link JAXBElement }{@code <}{@link Object }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     *
-     *
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
@@ -149,13 +144,9 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         }
         this.expression.add(FACTORY.createValueReference(prop));
     }
+
     /**
      * Gets the value of the matchCase property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *
      */
     @Override
     public boolean isMatchingCase() {
@@ -168,11 +159,6 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     /**
      * Sets the value of the matchCase property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *
      */
     public void setMatchCase(Boolean value) {
         this.matchCase = value;
@@ -180,11 +166,6 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     /**
      * Gets the value of the matchAction property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MatchActionType }
-     *
      */
     public MatchActionType getMatchActionType() {
         if (matchAction == null) {
@@ -196,28 +177,23 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     /**
      * Sets the value of the matchAction property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MatchActionType }
-     *
      */
     public void setMatchAction(MatchActionType value) {
         this.matchAction = value;
     }
 
     @Override
-    public boolean evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List getExpressions() {
+        return Arrays.asList(getOperand1(), getOperand2());
     }
 
     @Override
     public Expression getExpression1() {
+        return getOperand1();
+    }
+
+    @Override
+    public Expression getOperand1() {
         for (JAXBElement<?> elem : getExpression()) {
             final Object value = elem.getValue();
             if (value instanceof String) {
@@ -231,7 +207,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     }
 
     @Override
-    public Expression getExpression2() {
+    public Expression getOperand2() {
         for (JAXBElement<?> elem : getExpression()) {
             if (elem.getValue() instanceof LiteralType) {
                 return (LiteralType)elem.getValue();
@@ -248,7 +224,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
                 return (String) value;
             }
             if (value instanceof InternalPropertyName) {
-                return ((InternalPropertyName) value).getPropertyName();
+                return ((InternalPropertyName) value).getXPath();
             }
         }
         return null;
@@ -326,5 +302,10 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     @Override
     public ComparisonOpsType getClone() {
         throw new UnsupportedOperationException("Must be overriden in sub-class.");
+    }
+
+    @Override
+    public ComparisonOperatorName getOperatorType() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
 }

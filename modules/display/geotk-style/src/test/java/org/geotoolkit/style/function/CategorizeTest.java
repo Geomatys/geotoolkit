@@ -26,11 +26,11 @@ import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.StyleConstants;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import static org.junit.Assert.*;
 import static java.awt.Color.*;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
-import org.apache.sis.internal.system.DefaultFactories;
+import org.geotoolkit.filter.FilterUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
 
@@ -47,7 +47,7 @@ public class CategorizeTest extends org.geotoolkit.test.TestBase {
     public void categorize(){
         final String attribut = "att_value";
 
-        final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+        final FilterFactory ff = FilterUtilities.FF;
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
@@ -61,7 +61,6 @@ public class CategorizeTest extends org.geotoolkit.test.TestBase {
         final Feature f3 = sft.newInstance();
         f3.setPropertyValue(attribut, 30d);
 
-
         final Expression Lookup = ff.property(attribut);
         final Map<Expression,Expression> values = new HashMap<Expression, Expression>();
         values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, ff.literal(GREEN));
@@ -71,29 +70,27 @@ public class CategorizeTest extends org.geotoolkit.test.TestBase {
 
         Categorize categorize = new DefaultCategorize(Lookup, values, ThreshholdsBelongTo.PRECEDING, null);
 
-        Color c = categorize.evaluate(f1,Color.class);
+        Color c = (Color) categorize.apply(f1);
         assertEquals(c, GREEN);
-        c = categorize.evaluate(f2,Color.class);
+        c = (Color) categorize.apply(f2);
         assertEquals(c, YELLOW);
-        c = categorize.evaluate(f3,Color.class);
+        c = (Color) categorize.apply(f3);
         assertEquals(c, BLUE);
 
         categorize = new DefaultCategorize(Lookup, values, ThreshholdsBelongTo.SUCCEEDING, null);
-        c = categorize.evaluate(f1,Color.class);
+        c = (Color) categorize.apply(f1);
         assertEquals(c, GREEN);
-        c = categorize.evaluate(f2,Color.class);
+        c = (Color) categorize.apply(f2);
         assertEquals(c, RED);
-        c = categorize.evaluate(f3,Color.class);
+        c = (Color) categorize.apply(f3);
         assertEquals(c, BLUE);
 
 
         //test get lookup property
         Collection<String> requieredAttributs = new HashSet<String>();
-        categorize.accept(ListingPropertyVisitor.VISITOR, requieredAttributs);
+        ListingPropertyVisitor.VISITOR.visit(categorize, requieredAttributs);
 
         assertEquals(requieredAttributs.size(), 1);
         assertEquals(requieredAttributs.iterator().next(), attribut);
-
     }
-
 }

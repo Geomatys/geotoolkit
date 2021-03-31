@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.geometry.*;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
@@ -38,6 +38,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -62,8 +63,6 @@ import org.apache.sis.util.logging.Logging;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeometryType")
@@ -74,7 +73,6 @@ import org.apache.sis.util.logging.Logging;
     AbstractGeometricAggregateType.class
 })
 public abstract class AbstractGeometryType extends AbstractGMLType implements Geometry, Expression, AbstractGeometry {
-
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String srsName;
@@ -85,7 +83,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     private List<String> axisLabels;
     @XmlAttribute
     private List<String> uomLabels;
-
 
     /**
      * empty constructor used by JAXB
@@ -113,7 +110,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      * @return
      *     possible object is
      *     {@link String }
-     *
      */
     @Override
     public String getSrsName() {
@@ -126,7 +122,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      * @param value
      *     allowed object is
      *     {@link String }
-     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
@@ -138,7 +133,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      * @return
      *     possible object is
      *     {@link Integer }
-     *
      */
     public Integer getSrsDimension() {
         return srsDimension;
@@ -150,7 +144,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *
      */
     public void setSrsDimension(Integer value) {
         this.srsDimension = value;
@@ -161,8 +154,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     *
-     *
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
@@ -176,8 +167,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     *
-     *
      */
     public List<String> getUomLabels() {
         if (uomLabels == null) {
@@ -409,5 +398,23 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         return sb.toString();
     }
 
+    @Override
+    public ScopedName getFunctionName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
+    @Override
+    public List<Expression> getParameters() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object apply(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Expression toValueType(Class type) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

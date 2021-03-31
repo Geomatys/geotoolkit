@@ -17,21 +17,21 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class IntToDdoubleFunction extends AbstractFunction {
 
     public IntToDdoubleFunction(final Expression expression) {
-        super(OtherFunctionFactory.INT_TO_DDOUBLE, new Expression[]{expression}, null);
+        super(OtherFunctionFactory.INT_TO_DDOUBLE, expression);
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
         int arg0;
 
         try { // attempt to get value and perform conversion
-            arg0 = ((Number) parameters.get(0).evaluate(feature)).intValue();
+            arg0 = ((Number) parameters.get(0).apply(feature)).intValue();
         } catch (Exception e) // probably a type error
         {
             throw new IllegalArgumentException(

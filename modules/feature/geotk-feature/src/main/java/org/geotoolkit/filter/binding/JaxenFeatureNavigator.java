@@ -48,7 +48,6 @@ import org.opengis.feature.FeatureAssociationRole;
 import org.opengis.feature.FeatureType;
 import org.opengis.feature.Property;
 import org.opengis.feature.PropertyType;
-import org.opengis.filter.identity.Identifier;
 import org.opengis.util.GenericName;
 
 /**
@@ -174,7 +173,7 @@ final class JaxenFeatureNavigator implements Navigator{
 
     @Override
     public boolean isAttribute(final Object o) {
-        return o instanceof Identifier;
+        return o instanceof String;
     }
 
     @Override
@@ -224,8 +223,7 @@ final class JaxenFeatureNavigator implements Navigator{
 
     @Override
     public String getAttributeStringValue(final Object o) {
-        final Identifier property = (Identifier) o;
-        return property.getID().toString();
+        return (String) o;
     }
 
     @Override

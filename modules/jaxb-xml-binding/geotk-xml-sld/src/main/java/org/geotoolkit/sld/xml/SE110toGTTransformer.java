@@ -114,11 +114,10 @@ import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.util.NamesExt;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import org.geotoolkit.filter.FilterFactory2;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.filter.ValueReference;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -370,7 +369,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 //        JAXBElementPropertyNameType> ---k
 //        JAXBElementBinaryOperatorType> ---k
 
-        Expression result = Expression.NIL;
+        Expression result = null;
 
         final List<Serializable> sers = param.getContent();
         if (sers.size() == 1) {
@@ -390,7 +389,6 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 }
             }
         }
-
         return result;
     }
 
@@ -400,7 +398,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      * @return
      */
     private static Expression notEmpty(Expression exp){
-        if(exp instanceof PropertyName && ((PropertyName)exp).getPropertyName().trim().isEmpty()){
+        if(exp instanceof ValueReference && ((ValueReference)exp).getXPath().trim().isEmpty()){
             return null;
         }
         return exp;
@@ -807,13 +805,13 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
         final GraphicFill fill = visit(strk.getGraphicFill());
         final GraphicStroke stroke = visit(strk.getGraphicStroke());
-        Expression color = Expression.NIL;
-        Expression opacity = Expression.NIL;
-        Expression width = Expression.NIL;
-        Expression join = Expression.NIL;
-        Expression cap = Expression.NIL;
-        float[] dashes = null;
-        Expression offset = Expression.NIL;
+        Expression color   = null;
+        Expression opacity = null;
+        Expression width   = null;
+        Expression join    = null;
+        Expression cap     = null;
+        float[]    dashes  = null;
+        Expression offset  = null;
 
         final List<SvgParameterType> params = strk.getSvgParameter();
         for(final SvgParameterType svg : params){
@@ -833,7 +831,6 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 offset = (Expression)visitSVG(svg);
             }
         }
-
         if(fill != null){
             return styleFactory.stroke(fill, color, opacity, width, join, cap, dashes, offset);
         }else if(stroke != null){
@@ -841,7 +838,6 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         }else{
             return styleFactory.stroke(color, opacity, width, join, cap, dashes, offset);
         }
-
     }
 
     /**
@@ -851,8 +847,8 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         if(fl == null) return null;
 
         final GraphicFill fill = visit(fl.getGraphicFill());
-        Expression color = Expression.NIL;
-        Expression opacity = Expression.NIL;
+        Expression color   = null;
+        Expression opacity = null;
 
         final List<SvgParameterType> params = fl.getSvgParameter();
         for(final SvgParameterType svg : params){
@@ -919,7 +915,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     public ColorMap visit(final ColorMapType colorMap) {
         if(colorMap == null) return null;
 
-        Function function = null;
+        Expression function = null;
         if (colorMap.getCategorize() != null) {
             function = visit(colorMap.getCategorize());
         } else if(colorMap.getInterpolate() != null) {
@@ -983,9 +979,9 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         if(font == null) return null;
 
         final List<Expression> family = new ArrayList<Expression>();
-        Expression style = Expression.NIL;
-        Expression weight = Expression.NIL;
-        Expression size = Expression.NIL;
+        Expression style  = null;
+        Expression weight = null;
+        Expression size   = null;
 
         final List<SvgParameterType> params = font.getSvgParameter();
         for(final SvgParameterType svg : params){

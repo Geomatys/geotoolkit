@@ -25,11 +25,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.filter.AbstractExpression;
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import org.geotoolkit.filter.capability.FunctionName;
+import org.opengis.filter.Expression;
+import org.opengis.filter.Literal;
+import org.opengis.util.ScopedName;
 
 /**
  * Implementation of "Recode" as a normal function.
@@ -50,9 +49,8 @@ import org.opengis.filter.expression.Literal;
  * In reality any expression will do.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
-public class RecolorFunction extends AbstractExpression implements Function {
+public class RecolorFunction extends AbstractExpression {
 
     private static final int MASK_ALPHA = 0xFF000000;
     private static final int MASK_NO_ALPHA = 0x00FFFFFF;
@@ -64,34 +62,11 @@ public class RecolorFunction extends AbstractExpression implements Function {
      * Make the instance of FunctionName available in
      * a consistent spot.
      */
-    public static final FunctionName NAME = new Name();
-
-
-    /**
-     * Describe how this function works.
-     * (should be available via FactoryFinder lookup...)
-     */
-    public static class Name implements FunctionName {
-
-        @Override
-        public int getArgumentCount() {
-            return -2; // indicating unbounded, 2 minimum
-        }
-
-        @Override
-        public List<String> getArgumentNames() {
-            return Arrays.asList(new String[]{
-                        "LookupValue",
-                        "Data 1", "Value 1",
-                        "Data 2", "Value 2"
-                    });
-        }
-
-        @Override
-        public String getName() {
-            return "Recode";
-        }
-    };
+    public static final FunctionName NAME = new FunctionName("Recolor", Arrays.asList(
+            "LookupValue",
+            "Data 1", "Value 1",
+            "Data 2", "Value 2"),
+            -2);    // indicating unbounded, 2 minimum
 
     public RecolorFunction(final List<ColorItem> items, final Literal fallback){
         this.items = items;
@@ -103,22 +78,17 @@ public class RecolorFunction extends AbstractExpression implements Function {
     }
 
     @Override
-    public String getName() {
-        return "Recolor";
+    public ScopedName getFunctionName() {
+        return createName("Recolor");
     }
 
     @Override
-    public List<Expression> getParameters() {
+    public List<Expression<Object,?>> getParameters() {
         return Collections.emptyList();
     }
 
     @Override
-    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
-    }
-
-    @Override
-    public Object evaluate(final Object object) {
+    public Object apply(final Object object) {
 
         if(!(object instanceof Image)){
             throw new IllegalArgumentException("Unexpected type : " + object + ", need Image.");
@@ -144,8 +114,8 @@ public class RecolorFunction extends AbstractExpression implements Function {
         }
 
         for(ColorItem item : items){
-            final int dataExp = item.getSourceColor().evaluate(null, Color.class).getRGB() & MASK_NO_ALPHA;
-            final int resultExp = item.getTargetColor().evaluate(null, Color.class).getRGB() & MASK_NO_ALPHA;
+            final int dataExp = ((Color) item.getSourceColor().apply(null)).getRGB() & MASK_NO_ALPHA;
+            final int resultExp = ((Color) item.getTargetColor().apply(null)).getRGB() & MASK_NO_ALPHA;
 
             for (int y=0,h=buffer.getHeight(); y<h ; y++) {
                 for (int x=0,w=buffer.getWidth(); x<w; x++) {
@@ -160,13 +130,10 @@ public class RecolorFunction extends AbstractExpression implements Function {
                 }
             }
         }
-
         return buffer;
     }
 
-    @Override
     public Literal getFallbackValue() {
         return fallback;
     }
-
 }

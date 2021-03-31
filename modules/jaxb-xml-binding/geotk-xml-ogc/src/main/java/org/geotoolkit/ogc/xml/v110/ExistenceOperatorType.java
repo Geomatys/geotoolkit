@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- *
  */
 @XmlEnum
 public enum ExistenceOperatorType {
@@ -60,5 +59,4 @@ public enum ExistenceOperatorType {
         }
         throw new IllegalArgumentException(v.toString());
     }
-
 }

@@ -34,8 +34,8 @@ import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.ows.xml.OWSXmlFactory;
 import org.geotoolkit.ows.xml.Sections;
 import org.opengis.filter.Filter;
-import org.opengis.filter.capability.FilterCapabilities;
-import org.opengis.filter.sort.SortOrder;
+import org.geotoolkit.filter.capability.FilterCapabilities;
+import org.opengis.filter.SortOrder;
 
 /**
  *

@@ -27,7 +27,6 @@ import org.apache.sis.util.logging.Logging;
  * General interface for cached style element.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public abstract class Cache<T extends Object> {
 
@@ -148,6 +147,4 @@ public abstract class Cache<T extends Object> {
         evaluate();
         return isStaticVisible;
     }
-
-
 }

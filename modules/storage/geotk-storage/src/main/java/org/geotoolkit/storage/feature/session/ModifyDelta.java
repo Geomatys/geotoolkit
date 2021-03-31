@@ -14,12 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.storage.feature.session;
 
 import org.locationtech.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -36,9 +36,6 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.NullArgumentException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureType;
-import org.opengis.util.GenericName;
-import org.opengis.filter.Id;
-import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -47,6 +44,8 @@ import org.apache.sis.internal.feature.AttributeConvention;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.filter.Filter;
+import org.opengis.filter.ResourceId;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -56,24 +55,22 @@ import org.opengis.referencing.operation.TransformException;
  * Delta which modify a collection of features.
  *
  * @author Johann Sorel (Geomatys)
- * @module
  * @todo make this concurrent
  */
 public class ModifyDelta extends AbstractDelta{
 
     protected final Map<String,Object> values = new HashMap<>();
-    protected Id filter;
+    protected Filter<Object> filter;
 
-    public ModifyDelta(final Session session, final String typeName, final Id filter, final Map<String,?> values){
+    public ModifyDelta(final Session session, final String typeName, final Filter filter, final Map<String,?> values){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         if(filter == null){
-            throw new NullArgumentException("Filter can not be null. Did you mean Filter.INCLUDE ?");
+            throw new NullArgumentException("Filter can not be null. Did you mean Filter.include()?");
         }
         if(values == null || values.isEmpty()){
             throw new IllegalArgumentException("Modified values can not be null or empty. A modify delta is useless in this case.");
         }
-
         this.filter = filter;
         this.values.putAll(values);
     }
@@ -84,22 +81,21 @@ public class ModifyDelta extends AbstractDelta{
     @Override
     public void update(Map<String, String> idUpdates) {
         if(idUpdates == null || idUpdates.isEmpty())return;
-
-        final Set<Identifier> ids = filter.getIdentifiers();
-        final Set<Identifier> newIds = new HashSet<Identifier>();
-
-        for(final Identifier id : ids){
-            String newId = idUpdates.get(id.getID().toString());
-            if(newId != null){
+        final List<Filter<Object>> ids = list(filter);
+        final Set<Filter<Object>> newIds = new HashSet<>();
+        for (Filter<Object> id : ids) {
+            String newId = idUpdates.get(((ResourceId) id).getIdentifier());
+            if (newId != null) {
                 //id has change
-                newIds.add(FF.featureId(newId));
-            }else{
-                //this id did not change
-                newIds.add(id);
+                id = FF.resourceId(newId);
             }
+            newIds.add(id);
         }
-
-        filter = FF.id(newIds);
+        switch (newIds.size()) {
+            case 0: filter = Filter.exclude(); break;
+            case 1: filter = newIds.iterator().next(); break;
+            case 2: filter = FF.or(newIds);
+        }
     }
 
     /**
@@ -129,7 +125,7 @@ public class ModifyDelta extends AbstractDelta{
             @Override
             protected Feature modify(Feature feature) {
 
-                if(!filter.evaluate(feature)){
+                if(!filter.test(feature)){
                     return feature;
                 }
 
@@ -160,9 +156,7 @@ public class ModifyDelta extends AbstractDelta{
                                 }
                             }
                         }
-
                     }
-
                 } catch (DataStoreException ex) {
                     getLogger().log(Level.WARNING, null, ex);
                     feature = null;
@@ -170,12 +164,9 @@ public class ModifyDelta extends AbstractDelta{
                     getLogger().log(Level.WARNING, null, ex);
                     feature = null;
                 }
-
                 return feature;
             }
-
         };
-
         return wrap;
     }
 
@@ -214,5 +205,4 @@ public class ModifyDelta extends AbstractDelta{
     @Override
     public void dispose() {
     }
-
 }

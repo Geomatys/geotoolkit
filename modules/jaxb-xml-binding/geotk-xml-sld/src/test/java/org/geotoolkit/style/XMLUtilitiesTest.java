@@ -36,7 +36,7 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
 import org.opengis.sld.SLDLibrary;
@@ -67,8 +67,9 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.PropertyIsBetween;
+import org.geotoolkit.filter.FilterFactory2;
+import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.filter.BetweenComparisonOperator;
 import org.opengis.style.StyleFactory;
 
 /**
@@ -85,7 +86,7 @@ public class XMLUtilitiesTest {
 
     static{
         STYLE_FACTORY = (MutableStyleFactory) DefaultFactories.forBuildin(StyleFactory.class);
-        FILTER_FACTORY = (FilterFactory2) DefaultFactories.forBuildin(FilterFactory.class);
+        FILTER_FACTORY = FilterUtilities.FF;
         SLD_FACTORY = new DefaultSLDFactory();
     }
 
@@ -462,13 +463,12 @@ public class XMLUtilitiesTest {
         return STYLE_FACTORY.rasterSymbolizer(name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
     }
 
-    private static PropertyIsBetween createFilter(){
-       final FilterFactory ff = DefaultFactories.forBuildin(FilterFactory.class);
+    private static BetweenComparisonOperator createFilter(){
+       final FilterFactory ff = FILTER_FACTORY;
        Expression field = ff.property("aFiled");
        Expression lower = ff.literal(50d);
        Expression upper = ff.literal(100d);
 
        return ff.between(field, lower, upper);
     }
-
 }

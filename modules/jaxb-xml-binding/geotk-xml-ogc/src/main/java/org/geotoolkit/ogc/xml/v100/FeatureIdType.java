@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,8 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.feature.FeatureExt;
 import org.geotoolkit.ogc.xml.ID;
 import org.opengis.feature.Feature;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.ResourceId;
 
 
 /**
@@ -41,13 +41,10 @@ import org.opengis.filter.identity.Identifier;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureIdType")
-public class FeatureIdType implements FeatureId, ID {
+public class FeatureIdType implements ResourceId, ID {
 
     @XmlAttribute(required = true)
     private String fid;
@@ -56,7 +53,6 @@ public class FeatureIdType implements FeatureId, ID {
      * An empty constructor used by JAXB
      */
     public FeatureIdType() {
-
     }
 
     /**
@@ -68,31 +64,38 @@ public class FeatureIdType implements FeatureId, ID {
 
     /**
      * Gets the value of the fid property.
-     *
      */
     public String getFid() {
         return fid;
     }
 
     @Override
-    public String getID() {
+    public String getIdentifier() {
         return fid;
     }
 
     /**
      * Sets the value of the fid property.
-     *
      */
     public void setFid(final String value) {
         this.fid = value;
     }
 
-    @Override
     public boolean matches(final Object feature) {
         if (feature instanceof Feature) {
-            final Identifier identifier = FeatureExt.getId((Feature)feature);
-            return identifier != null && fid.equals(identifier.getID());
+            final ResourceId identifier = FeatureExt.getId((Feature)feature);
+            return identifier != null && fid.equals(identifier.getIdentifier());
         }
         return false;
+    }
+
+    @Override
+    public List getExpressions() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean test(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

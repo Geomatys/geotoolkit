@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -39,9 +38,6 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StringLengthType", propOrder = {
@@ -60,7 +56,6 @@ public class StringLengthType
      * @return
      *     possible object is
      *     {@link ParameterValueType }
-     *
      */
     public ParameterValueType getStringValue() {
         return stringValue;
@@ -72,10 +67,8 @@ public class StringLengthType
      * @param value
      *     allowed object is
      *     {@link ParameterValueType }
-     *
      */
     public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
     }
-
 }

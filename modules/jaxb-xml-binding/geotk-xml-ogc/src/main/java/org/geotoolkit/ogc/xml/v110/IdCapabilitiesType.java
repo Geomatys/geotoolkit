@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.IdCapabilities;
+import org.geotoolkit.filter.capability.DefaultIdCapabilities;
 
 
 /**
@@ -50,7 +50,7 @@ import org.opengis.filter.capability.IdCapabilities;
     "eid",
     "fid"
 })
-public class IdCapabilitiesType implements IdCapabilities {
+public class IdCapabilitiesType extends DefaultIdCapabilities {
 
     @XmlElement(name = "EID")
     private EID eid;
@@ -62,13 +62,14 @@ public class IdCapabilitiesType implements IdCapabilities {
      * Empty constructor used By JAXB
      */
      public IdCapabilitiesType() {
-
+         super(true, true);
      }
 
     /**
      * Build a new ID capabilities
      */
      public IdCapabilitiesType(final boolean eid, final boolean fid) {
+        super(eid, fid);
         if (eid)
             this.eid = new EID();
         if (fid)
@@ -117,7 +118,6 @@ public class IdCapabilitiesType implements IdCapabilities {
         if (object == this) {
             return true;
         }
-
        if (object instanceof IdCapabilitiesType) {
            final IdCapabilitiesType that = (IdCapabilitiesType) object;
 

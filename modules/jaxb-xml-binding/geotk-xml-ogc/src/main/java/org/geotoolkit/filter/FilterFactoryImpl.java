@@ -16,19 +16,17 @@
  */
 package org.geotoolkit.filter;
 
-// JTS dependencies
+import org.geotoolkit.filter.capability.TemporalOperand;
+import org.geotoolkit.filter.capability.ArithmeticOperators;
+import org.geotoolkit.filter.capability.Functions;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-
-// J2SE dependencies
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
-
-// Geotoolkit dependencies
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -50,7 +48,6 @@ import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 import org.geotoolkit.ogc.xml.v110.FunctionNameType;
 import org.geotoolkit.ogc.xml.v110.FunctionNamesType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
-import org.geotoolkit.ogc.xml.v110.GmlObjectIdType;
 import org.geotoolkit.ogc.xml.v110.IdCapabilitiesType;
 import org.geotoolkit.ogc.xml.v110.IntersectsType;
 import org.geotoolkit.ogc.xml.v110.LiteralType;
@@ -94,82 +91,38 @@ import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.filter.capability.ComparisonOperators;
 import org.geotoolkit.ogc.xml.FilterXmlFactory;
-
-// Types dependencies
-import org.opengis.filter.And;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Id;
 import org.opengis.filter.MatchAction;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNil;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.capability.ArithmeticOperators;
-import org.opengis.filter.capability.ComparisonOperators;
-import org.opengis.filter.capability.FilterCapabilities;
-import org.opengis.filter.capability.FunctionName;
-import org.opengis.filter.capability.Functions;
+import org.geotoolkit.filter.capability.FilterCapabilities;
+import org.geotoolkit.filter.capability.FunctionName;
+import org.geotoolkit.filter.capability.TemporalOperators;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.BinarySpatialOperator;
+import org.opengis.filter.DistanceOperator;
 import org.opengis.filter.capability.GeometryOperand;
-import org.opengis.filter.capability.IdCapabilities;
-import org.opengis.filter.capability.Operator;
-import org.opengis.filter.capability.ScalarCapabilities;
-import org.opengis.filter.capability.SpatialCapabilities;
-import org.opengis.filter.capability.SpatialOperator;
-import org.opengis.filter.capability.SpatialOperators;
-import org.opengis.filter.capability.TemporalCapabilities;
-import org.opengis.filter.capability.TemporalOperand;
-import org.opengis.filter.capability.TemporalOperators;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.GmlObjectId;
-import org.opengis.filter.identity.Identifier;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.AnyInteracts;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.Meets;
-import org.opengis.filter.temporal.MetBy;
-import org.opengis.filter.temporal.OverlappedBy;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
-import org.opengis.filter.temporal.TOverlaps;
+import org.geotoolkit.filter.capability.DefaultIdCapabilities;
+import org.geotoolkit.filter.capability.Operator;
+import org.geotoolkit.filter.capability.ScalarCapabilities;
+import org.geotoolkit.filter.capability.SpatialCapabilities;
+import org.geotoolkit.filter.capability.SpatialOperators;
+import org.geotoolkit.filter.capability.TemporalCapabilities;
+import org.opengis.filter.BetweenComparisonOperator;
+import org.opengis.filter.Expression;
+import org.opengis.filter.LikeOperator;
+import org.opengis.filter.Literal;
+import org.opengis.filter.LogicalOperator;
+import org.opengis.filter.LogicalOperatorName;
+import org.opengis.filter.NilOperator;
+import org.opengis.filter.NullOperator;
+import org.opengis.filter.ResourceId;
+import org.opengis.filter.SortOrder;
+import org.opengis.filter.SortProperty;
+import org.opengis.filter.TemporalOperator;
+import org.opengis.filter.ValueReference;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
-import org.opengis.util.GenericName;
 
 
 /**
@@ -178,7 +131,7 @@ import org.opengis.util.GenericName;
  * @author Guilhem Legal
  * @module
  */
-public class FilterFactoryImpl implements FilterFactory2 {
+public class FilterFactoryImpl extends FilterFactory2 {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
@@ -188,33 +141,27 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public FeatureId featureId(final String id) {
+    public ResourceId<Object>resourceId(final String id) {
         return new FeatureIdType(id);
     }
 
     @Override
-    public GmlObjectId gmlObjectId(final String id) {
-        return new GmlObjectIdType(id);
-    }
-
-    @Override
-    public And and(final Filter f, final Filter g) {
-        final List<Filter> filterList = new ArrayList<>();
+    public LogicalOperator<Object> and(final Filter<Object> f, final Filter<Object> g) {
+        final List<Filter<Object>> filterList = new ArrayList<>();
         boolean factorized = false;
         // factorize OR filter
-        if (g instanceof And) {
+        if (g.getOperatorType() == LogicalOperatorName.AND) {
             factorized = true;
-            filterList.addAll(((And)g).getChildren());
+            filterList.addAll(((LogicalOperator<Object>)g).getOperands());
         } else {
             filterList.add(g);
         }
-        if (f instanceof And) {
+        if (f.getOperatorType() == LogicalOperatorName.AND) {
             factorized = true;
-            filterList.addAll(((And)f).getChildren());
+            filterList.addAll(((LogicalOperator<Object>)f).getOperands());
         } else {
             filterList.add(f);
         }
-
         if (factorized) {
             return new AndType(filterList.toArray());
         } else {
@@ -223,28 +170,27 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public And and(final List<Filter> f) {
+    public LogicalOperator<Object> and(final Collection<? extends Filter<Object>> f) {
         return new AndType(f.toArray());
     }
 
     @Override
-    public Or or(final Filter f, final Filter g) {
-        final List<Filter> filterList = new ArrayList<>();
+    public LogicalOperator<Object> or(final Filter<Object> f, final Filter<Object> g) {
+        final List<Filter<Object>> filterList = new ArrayList<>();
         boolean factorized = false;
         // factorize OR filter
-        if (g instanceof Or) {
+        if (g.getOperatorType() == LogicalOperatorName.OR) {
             factorized = true;
-            filterList.addAll(((Or)g).getChildren());
+            filterList.addAll(((LogicalOperator<Object>)g).getOperands());
         } else {
             filterList.add(g);
         }
-        if (f instanceof Or) {
+        if (f.getOperatorType() == LogicalOperatorName.OR) {
             factorized = true;
-            filterList.addAll(((Or)f).getChildren());
+            filterList.addAll(((LogicalOperator<Object>)f).getOperands());
         } else {
             filterList.add(f);
         }
-
         if (factorized) {
             return new OrType(filterList.toArray());
         } else {
@@ -253,27 +199,22 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public Or or(final List<Filter> filterList) {
+    public LogicalOperator<Object> or(final Collection<? extends Filter<Object>> filterList) {
         return new OrType(filterList.toArray());
     }
 
     @Override
-    public Not not(final Filter f) {
+    public LogicalOperator<Object> not(final Filter<Object> f) {
         return new NotType(f);
     }
 
     @Override
-    public Id id(final Set<? extends Identifier> ids) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public PropertyName property(final String name) {
+    public ValueReference<Object,Object> property(final String name) {
         return new PropertyNameType(name);
     }
 
     @Override
-    public PropertyIsBetween between(final Expression expr, Expression lower, Expression upper) {
+    public BetweenComparisonOperator<Object> between(final Expression<Object,?> expr, Expression<Object,?> lower, Expression<Object,?> upper) {
         if (lower instanceof LiteralType) {
             lower = new LowerBoundaryType((LiteralType)lower);
         }
@@ -293,7 +234,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsEqualTo equals(final Expression expr1, final Expression expr2) {
+    public BinaryComparisonOperator<Object> equal(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -301,7 +242,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -311,7 +251,9 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsEqualTo equal(final Expression expr1, final Expression expr2, final boolean matchCase,final MatchAction action) {
+    public BinaryComparisonOperator<Object> equal(final Expression<Object,?> expr1, final Expression<Object,?> expr2,
+            final boolean matchCase,final MatchAction action)
+    {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -319,7 +261,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -329,7 +270,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2) {
+    public BinaryComparisonOperator<Object> notEqual(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -337,7 +278,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -347,7 +287,9 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2, final boolean matchCase,final MatchAction action) {
+    public BinaryComparisonOperator<Object> notEqual(final Expression<Object,?> expr1, final Expression<Object,?> expr2,
+            final boolean matchCase,final MatchAction action)
+    {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -355,7 +297,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -365,7 +306,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsGreaterThan greater(final Expression expr1, final Expression expr2) {
+    public BinaryComparisonOperator<Object> greater(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -373,7 +314,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -383,7 +323,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsGreaterThan greater(final Expression expr1, final Expression expr2, final boolean matchCase, final MatchAction action) {
+    public BinaryComparisonOperator<Object> greater(final Expression<Object,?> expr1, final Expression<Object,?> expr2, final boolean matchCase, final MatchAction action) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -391,7 +331,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -401,7 +340,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(final Expression expr1, final Expression expr2) {
+    public BinaryComparisonOperator<Object> greaterOrEqual(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -409,7 +348,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -419,7 +357,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(final Expression expr1, final Expression expr2, final boolean matchCase, final MatchAction action) {
+    public BinaryComparisonOperator<Object> greaterOrEqual(final Expression<Object,?> expr1, final Expression<Object,?> expr2, final boolean matchCase, final MatchAction action) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -427,7 +365,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -437,7 +374,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsLessThan less(final Expression expr1, final Expression expr2, final boolean matchCase, final MatchAction action) {
+    public BinaryComparisonOperator<Object> less(final Expression<Object,?> expr1, final Expression<Object,?> expr2, final boolean matchCase, final MatchAction action) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -445,7 +382,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -455,7 +391,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsLessThan less(final Expression expr1, final Expression expr2) {
+    public BinaryComparisonOperator<Object> less(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -463,7 +399,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -473,7 +408,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1, final Expression expr2, final boolean matchCase, final MatchAction action) {
+    public BinaryComparisonOperator<Object> lessOrEqual(final Expression<Object,?> expr1, final Expression<Object,?> expr2, final boolean matchCase, final MatchAction action) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -481,7 +416,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -491,7 +425,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1, final Expression expr2) {
+    public BinaryComparisonOperator<Object> lessOrEqual(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
         LiteralType lit           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -499,7 +433,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else if (expr2 instanceof PropertyNameType) {
             propName = (PropertyNameType) expr2;
         }
-
         if (expr1 instanceof LiteralType) {
             lit = (LiteralType) expr1;
         } else if (expr2 instanceof LiteralType) {
@@ -509,39 +442,38 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsLike like(final Expression expr, final String pattern) {
-        return like(expr, pattern, "*", "?", "\\");
+    public LikeOperator<Object> like(final Expression<Object,?> expr, final String pattern) {
+        return like(expr, pattern, '*', '?', '\\');
     }
 
-    public PropertyIsLike like(final Expression expr, final String pattern, final boolean isMatchingCase) {
-        return like(expr, pattern, "*", "?", "\\", isMatchingCase);
+    public LikeOperator<Object> like(final Expression<Object,?> expr, final String pattern, final boolean isMatchingCase) {
+        return like(expr, pattern, '*', '?', '\\', isMatchingCase);
     }
 
-    @Override
-    public PropertyIsLike like(final Expression expr, String pattern, final String wildcard, final String singleChar, final String escape) {
+    public LikeOperator<Object> like(final Expression<Object,?> expr, String pattern, final char wildcard, final char singleChar, final char escape) {
         //SQLBuilder add a white space at then end of the pattern we remove it
         if (pattern != null && pattern.lastIndexOf(' ') == pattern.length() -1) {
             pattern = pattern.substring(0, pattern.length() -1);
         }
-        return new PropertyIsLikeType(expr, pattern, wildcard, singleChar, escape);
+        return new PropertyIsLikeType(expr, pattern, String.valueOf(wildcard), String.valueOf(singleChar), String.valueOf(escape));
     }
 
     @Override
-    public PropertyIsLike like(final Expression expr, String pattern, final String wildcard, final String singleChar, final String escape, final boolean isMatchingCase) {
+    public LikeOperator<Object> like(final Expression<Object,?> expr, String pattern, final char wildcard, final char singleChar, final char escape, final boolean isMatchingCase) {
         //SQLBuilder add a white space at then end of the pattern we remove it
         if (pattern != null && pattern.lastIndexOf(' ') == pattern.length() -1) {
             pattern = pattern.substring(0, pattern.length() -1);
         }
-        return new PropertyIsLikeType(expr, pattern, wildcard, singleChar, escape, isMatchingCase);
+        return new PropertyIsLikeType(expr, pattern, String.valueOf(wildcard), String.valueOf(singleChar), String.valueOf(escape), isMatchingCase);
     }
 
     @Override
-    public PropertyIsNull isNull(final Expression expr) {
+    public NullOperator<Object> isNull(final Expression<Object,?> expr) {
         return new PropertyIsNullType((PropertyNameType)expr);
     }
 
     @Override
-    public BBOX bbox(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, String srs) {
+    public BinarySpatialOperator<Object> bbox(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         if (srs == null || srs.equals("")) {
             srs = "CRS:84"; // default CRS used is normally EPSG 4326 but most of the implementation use this one by default
         }
@@ -549,10 +481,10 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public BBOX bbox(final Expression geometry, final double minx, final double miny, final double maxx, final double maxy, String srs) {
+    public BinarySpatialOperator<Object> bbox(final Expression geometry, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         String propertyName = "";
         if (geometry instanceof PropertyNameType) {
-            propertyName = ((PropertyNameType)geometry).getPropertyName();
+            propertyName = ((PropertyNameType)geometry).getXPath();
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry.getClass().getSimpleName());
         }
@@ -563,11 +495,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public BBOX bbox(final Expression geometry, final Envelope bounds) {
+    public BinarySpatialOperator<Object> bbox(final Expression geometry, final Envelope bounds) {
         String propertyName = "";
         final String CRSName;
         if (geometry instanceof PropertyNameType) {
-            propertyName = ((PropertyNameType)geometry).getPropertyName();
+            propertyName = ((PropertyNameType)geometry).getXPath();
         }
         if (bounds.getCoordinateReferenceSystem() != null) {
             CRSName = IdentifiedObjects.getIdentifierOrName(bounds.getCoordinateReferenceSystem());
@@ -579,51 +511,46 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public Beyond beyond(final String propertyName, final Geometry geometry, final double distance, final String units) {
-
+    public DistanceOperator<Object> beyond(final String propertyName, final Geometry geometry, final double distance, final String units) {
         return new BeyondType(propertyName, (AbstractGeometryType) geometry, distance, units);
     }
 
     @Override
-    public Beyond beyond(final Expression geometry1, final Expression geometry2, final double distance, String units) {
+    public DistanceOperator<Object> beyond(final Expression geometry1, final Expression geometry2, final double distance, String units) {
         String propertyName = "";
         if (geometry1 instanceof PropertyNameType) {
-            propertyName = ((PropertyNameType)geometry1).getPropertyName();
+            propertyName = ((PropertyNameType)geometry1).getXPath();
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-
         // we formats the units (CQL parser add a white space at the end)
         if (units.indexOf(' ') == units.length() -1) {
             units = units.substring(0, units.length() - 1);
         }
-
         return new BeyondType(propertyName, (AbstractGeometryType) geom, distance, units);
     }
 
     @Override
-    public DWithin dwithin(final String propertyName, final Geometry geometry, final double distance, final String units) {
+    public DistanceOperator dwithin(final String propertyName, final Geometry geometry, final double distance, final String units) {
         return new DWithinType(propertyName, (AbstractGeometryType) geometry, distance, units);
     }
 
     @Override
-    public DWithin dwithin(final Expression geometry1, final Expression geometry2, final double distance, String units) {
+    public DistanceOperator<Object> dwithin(final Expression geometry1, final Expression geometry2, final double distance, String units) {
         String propertyName = "";
 
         // we get the propertyName
         if (geometry1 instanceof PropertyNameType) {
-            propertyName = ((PropertyNameType)geometry1).getPropertyName();
+            propertyName = ((PropertyNameType)geometry1).getXPath();
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
@@ -634,17 +561,16 @@ public class FilterFactoryImpl implements FilterFactory2 {
         if (units.indexOf(' ') == units.length() -1) {
             units = units.substring(0, units.length() - 1);
         }
-
         return new DWithinType(propertyName, (AbstractGeometryType) geom, distance, units);
     }
 
     @Override
-    public Contains contains(final String propertyName, final Geometry geometry) {
+    public BinarySpatialOperator<Object> contains(final String propertyName, final Geometry geometry) {
         return new ContainsType(propertyName, (AbstractGeometryType) geometry);
     }
 
     @Override
-    public Contains contains(final Expression geometry1, final Expression geometry2) {
+    public BinarySpatialOperator<Object> contains(final Expression<Object,?> geometry1, final Expression<Object,?> geometry2) {
         // we get the propertyName
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
@@ -652,7 +578,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
@@ -663,36 +588,34 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public Crosses crosses(final String propertyName, final Geometry geometry) {
+    public BinarySpatialOperator<Object> crosses(final String propertyName, final Geometry geometry) {
         return new CrossesType(propertyName, (AbstractGeometryType) geometry);
     }
 
     @Override
-    public Crosses crosses(final Expression geometry1, final Expression geometry2) {
+    public BinarySpatialOperator<Object> crosses(final Expression<Object,?> geometry1, final Expression<Object,?> geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-
         return new CrossesType(propertyName, geom);
     }
 
     @Override
-    public Disjoint disjoint(final String propertyName, final Geometry geometry) {
+    public BinarySpatialOperator<Object> disjoint(final String propertyName, final Geometry geometry) {
         return new DisjointType(propertyName, (AbstractGeometryType) geometry);
     }
 
     @Override
-    public Disjoint disjoint(final Expression geometry1, final Expression geometry2) {
+    public BinarySpatialOperator<Object> disjoint(final Expression<Object,?> geometry1, final Expression<Object,?> geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
@@ -705,48 +628,44 @@ public class FilterFactoryImpl implements FilterFactory2 {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-
         return new DisjointType(propertyName,  geom);
     }
 
     @Override
-    public Equals equals(final String propertyName, final Geometry geometry) {
+    public BinarySpatialOperator<Object> equals(final String propertyName, final Geometry geometry) {
         return new EqualsType(propertyName, (AbstractGeometryType) geometry);
     }
 
     @Override
-    public Equals equal(final Expression geometry1, final Expression geometry2) {
+    public BinarySpatialOperator<Object> equals(final Expression<Object,?> geometry1, final Expression<Object,?> geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-
         return new EqualsType(propertyName, geom);
     }
 
     @Override
-    public Intersects intersects(final String propertyName, final Geometry geometry) {
+    public BinarySpatialOperator<Object> intersects(final String propertyName, final Geometry geometry) {
         return new IntersectsType(propertyName, (AbstractGeometryType) geometry);
     }
 
     @Override
-    public Intersects intersects(final Expression geometry1, final Expression geometry2) {
+    public BinarySpatialOperator<Object> intersects(final Expression<Object,?> geometry1, final Expression<Object,?> geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-
         //we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
@@ -757,113 +676,106 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public Overlaps overlaps(final String propertyName, final Geometry geometry) {
+    public BinarySpatialOperator<Object> overlaps(final String propertyName, final Geometry geometry) {
         return new OverlapsType(propertyName, (AbstractGeometryType) geometry);
     }
 
     @Override
-    public Overlaps overlaps(final Expression geometry1, final Expression geometry2) {
+    public BinarySpatialOperator<Object> overlaps(final Expression<Object,?> geometry1, final Expression<Object,?> geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-
          //we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-
         return new OverlapsType(propertyName, geom);
     }
 
     @Override
-    public Touches touches(final String propertyName, final Geometry geometry) {
+    public BinarySpatialOperator<Object> touches(final String propertyName, final Geometry geometry) {
         return new TouchesType(propertyName, (AbstractGeometryType) geometry);
     }
 
     @Override
-    public Touches touches(final Expression propertyName1, final Expression geometry2) {
+    public BinarySpatialOperator<Object> touches(final Expression<Object,?> propertyName1, final Expression<Object,?> geometry2) {
         PropertyNameType propertyName = null;
         if (propertyName1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)propertyName1;
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + propertyName1.getClass().getSimpleName());
         }
-
         //we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-
         return new TouchesType(propertyName, geom);
-
     }
 
     @Override
-    public Within within(final String propertyName, final Geometry geometry) {
+    public BinarySpatialOperator<Object> within(final String propertyName, final Geometry geometry) {
        return new WithinType(propertyName, (AbstractGeometryType) geometry);
     }
 
     @Override
-    public Within within(final Expression geometry1, final Expression geometry2) {
+    public BinarySpatialOperator<Object> within(final Expression<Object,?> geometry1, final Expression<Object,?> geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-
         //we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-
         return new WithinType(propertyName, geom);
     }
 
 
     @Override
-    public Add add(final Expression expr1, final Expression expr2) {
+    public Expression<Object,?> add(final Expression expr1, final Expression expr2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Divide divide(final Expression expr1, final Expression expr2) {
+    public Expression<Object,?> divide(final Expression expr1, final Expression expr2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Multiply multiply(final Expression expr1, final Expression expr2) {
+    public Expression<Object,?> multiply(final Expression expr1, final Expression expr2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Subtract subtract(final Expression expr1, final Expression expr2) {
+    public Expression<Object,?> subtract(final Expression expr1, final Expression expr2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Function function(final String name, final Expression[] args) {
+    public Expression<Object,?> function(final String name, final Expression[] args) {
         return new FunctionType(name, args);
     }
 
-    public Function function(final String name, final Expression arg1) {
+    public Expression<Object,?> function(final String name, final Expression<Object,?> arg1) {
         return new FunctionType(name, arg1);
     }
 
-    public Function function(final String name, final Expression arg1, final Expression arg2) {
+    public Expression<Object,?> function(final String name, final Expression<Object,?> arg1, final Expression<Object,?> arg2) {
         return new FunctionType(name, arg1, arg2);
     }
 
-    public Function function(final String name, final Expression arg1, final Expression arg2, final Expression arg3) {
+    public Expression<Object,?> function(final String name, final Expression<Object,?> arg1, final Expression<Object,?> arg2, final Expression<Object,?> arg3) {
          return new FunctionType(name, arg1, arg2, arg3);
     }
 
@@ -919,73 +831,52 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public SortBy sort(final String propertyName, final SortOrder order) {
-        return new SortPropertyType(propertyName, order);
+    public SortProperty sort(final ValueReference propertyName, final SortOrder order) {
+        return new SortPropertyType(propertyName.getXPath(), order);
     }
 
-    @Override
-    public Operator operator(final String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public SpatialOperator spatialOperator(final String name, final GeometryOperand[] geometryOperands) {
+    public org.geotoolkit.filter.capability.SpatialOperator spatialOperator(final String name, final GeometryOperand[] geometryOperands) {
         return new SpatialOperatorType(name, geometryOperands);
     }
 
-    @Override
     public FunctionName functionName(final String name, final int nargs) {
         return new FunctionNameType(name, nargs);
     }
 
-    @Override
     public Functions functions(final FunctionName[] functionNames) {
         return new FunctionNamesType(Arrays.asList((FunctionNameType[])functionNames));
     }
 
-    @Override
-    public SpatialOperators spatialOperators(final SpatialOperator[] spatialOperators) {
+    public SpatialOperators spatialOperators(final org.geotoolkit.filter.capability.SpatialOperator[] spatialOperators) {
        return new SpatialOperatorsType( spatialOperators );
     }
 
-    @Override
     public ComparisonOperators comparisonOperators(final Operator[] comparisonOperators) {
         return new ComparisonOperatorsType(comparisonOperators);
     }
 
-    @Override
     public ArithmeticOperators arithmeticOperators(final boolean simple, final Functions functions) {
          return new ArithmeticOperatorsType(simple, functions);
     }
 
-    @Override
     public ScalarCapabilities scalarCapabilities(final ComparisonOperators comparison, final ArithmeticOperators arithmetic, final boolean logical) {
         return new ScalarCapabilitiesType(comparison, arithmetic, logical);
     }
 
-    @Override
     public SpatialCapabilities spatialCapabilities(final GeometryOperand[] geometryOperands, final SpatialOperators spatial) {
         return new SpatialCapabilitiesType(geometryOperands, spatial);
     }
 
-    @Override
-    public IdCapabilities idCapabilities(final boolean eid, final boolean fid) {
+    public DefaultIdCapabilities idCapabilities(final boolean eid, final boolean fid) {
         return new IdCapabilitiesType(eid, fid);
     }
 
-    public FilterCapabilities capabilities(final String version, final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id) {
+    public FilterCapabilities capabilities(final String version, final ScalarCapabilities scalar, final SpatialCapabilities spatial, final DefaultIdCapabilities id) {
         return FilterXmlFactory.buildFilterCapabilities(version, scalar, spatial, id, null, null);
-    }
-
-    @Override
-    public PropertyName property(final GenericName name) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
      * Transform a JTS geometric object into a GML marshallable object
-     * @param geom
-     * @return
      */
     public Object GeometryToGML(final Object geom) {
         Object result = null;
@@ -1004,13 +895,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             final Coordinate[] coord = p.getCoordinates();
             result = new PointType(null, new DirectPositionType(coord[0].x, coord[0].y, coord[0].z));
             ((PointType)result).setSrsName("EPSG:4326");
-
         } else if (geom instanceof LineString){
             final LineString ls = (LineString) geom;
             final Coordinate[] coord = ls.getCoordinates();
             result = new LineStringType(new CoordinatesType(coord[0].x + "," + coord[0].y + " " + coord[1].x + "," + coord[1].y ));
             ((LineStringType)result).setSrsName("EPSG:4326");
-
         } else {
             LOGGER.severe("unable to create GML geometry with: " + geom.getClass().getSimpleName());
         }
@@ -1018,12 +907,12 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyIsNil isNil(final Expression exprsn) {
+    public NilOperator<Object> isNil(final Expression<Object,?> exprsn, String reason) {
         throw new UnsupportedOperationException("Not supported in filter v110.");
     }
 
     @Override
-    public After after(final Expression expr1, final Expression expr2) {
+    public TemporalOperator<Object>after(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1033,12 +922,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-
-        return new TimeAfterType(propName.getPropertyName(), temporal);
+        return new TimeAfterType(propName.getXPath(), temporal);
     }
 
     @Override
-    public AnyInteracts anyInteracts(final Expression expr1, final Expression expr2) {
+    public TemporalOperator<Object> anyInteracts(final Expression<Object,?> expr1, final Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1048,12 +936,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-
-        return new TimeAnyInteractsType(propName.getPropertyName(), temporal);
+        return new TimeAnyInteractsType(propName.getXPath(), temporal);
     }
 
     @Override
-    public Before before(final Expression expr1, final  Expression expr2) {
+    public TemporalOperator<Object> before(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1063,12 +950,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-
-        return new TimeBeforeType(propName.getPropertyName(), temporal);
+        return new TimeBeforeType(propName.getXPath(), temporal);
     }
 
     @Override
-    public Begins begins(final Expression expr1, final  Expression expr2) {
+    public TemporalOperator<Object> begins(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1078,10 +964,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeBeginsType(propName.getPropertyName(), temporal);
+        return new TimeBeginsType(propName.getXPath(), temporal);
     }
 
-    public BegunBy begunBy(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> begunBy(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1091,10 +978,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeBegunByType(propName.getPropertyName(), temporal);
+        return new TimeBegunByType(propName.getXPath(), temporal);
     }
 
-    public During during(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> during(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1104,10 +992,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeDuringType(propName.getPropertyName(), temporal);
+        return new TimeDuringType(propName.getXPath(), temporal);
     }
 
-    public Ends ends(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> ends(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1117,10 +1006,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeEndsType(propName.getPropertyName(), temporal);
+        return new TimeEndsType(propName.getXPath(), temporal);
     }
 
-    public EndedBy endedBy(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> endedBy(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1130,10 +1020,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeEndedByType(propName.getPropertyName(), temporal);
+        return new TimeEndedByType(propName.getXPath(), temporal);
     }
 
-    public Meets meets(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> meets(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1143,10 +1034,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeMeetsType(propName.getPropertyName(), temporal);
+        return new TimeMeetsType(propName.getXPath(), temporal);
     }
 
-    public MetBy metBy(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> metBy(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1156,10 +1048,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeMetByType(propName.getPropertyName(), temporal);
+        return new TimeMetByType(propName.getXPath(), temporal);
     }
 
-    public OverlappedBy overlappedBy(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> overlappedBy(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1169,10 +1062,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeOverlappedByType(propName.getPropertyName(), temporal);
+        return new TimeOverlappedByType(propName.getXPath(), temporal);
     }
 
-    public TContains tcontains(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> tcontains(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1182,10 +1076,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeContainsType(propName.getPropertyName(), temporal);
+        return new TimeContainsType(propName.getXPath(), temporal);
     }
 
-    public TEquals tequals(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> tequals(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1195,10 +1090,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeEqualsType(propName.getPropertyName(), temporal);
+        return new TimeEqualsType(propName.getXPath(), temporal);
     }
 
-    public TOverlaps toverlaps(final Expression expr1, final  Expression expr2) {
+    @Override
+    public TemporalOperator<Object> toverlaps(final Expression<Object,?> expr1, final  Expression<Object,?> expr2) {
         Object temporal           = null;
         PropertyNameType propName = null;
         if (expr1 instanceof PropertyNameType) {
@@ -1208,14 +1104,14 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propName = (PropertyNameType) expr2;
             temporal = expr1;
         }
-        return new TimeOverlapsType(propName.getPropertyName(), temporal);
+        return new TimeOverlapsType(propName.getXPath(), temporal);
     }
 
     public TemporalCapabilities temporalCapabilities(final TemporalOperand[] tos, final TemporalOperators to) {
         return new TemporalCapabilitiesType(tos, to);
     }
 
-    public FilterCapabilities capabilities(final String string, final ScalarCapabilities sc, final SpatialCapabilities sc1, final TemporalCapabilities tc, final IdCapabilities ic) {
+    public FilterCapabilities capabilities(final String string, final ScalarCapabilities sc, final SpatialCapabilities sc1, final TemporalCapabilities tc, final DefaultIdCapabilities ic) {
         return FilterXmlFactory.buildFilterCapabilities("1.1.0", sc, sc1, ic, tc, null);
     }
 }

@@ -26,7 +26,7 @@ import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.style.StyleConstants.*;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.GraphicFill;
 import org.opengis.style.Stroke;
 

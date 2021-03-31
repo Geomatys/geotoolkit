@@ -45,8 +45,6 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ArgumentType", propOrder = {
@@ -64,11 +62,6 @@ public class ArgumentType {
 
     /**
      * Gets the value of the metadata property.
-     *
-     * @return
-     *     possible object is
-     *     {@link MetadataType }
-     *
      */
     public MetadataType getMetadata() {
         return metadata;
@@ -76,11 +69,6 @@ public class ArgumentType {
 
     /**
      * Sets the value of the metadata property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link MetadataType }
-     *
      */
     public void setMetadata(MetadataType value) {
         this.metadata = value;
@@ -88,11 +76,6 @@ public class ArgumentType {
 
     /**
      * Gets the value of the type property.
-     *
-     * @return
-     *     possible object is
-     *     {@link QName }
-     *
      */
     public QName getType() {
         return type;
@@ -100,11 +83,6 @@ public class ArgumentType {
 
     /**
      * Sets the value of the type property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link QName }
-     *
      */
     public void setType(QName value) {
         this.type = value;
@@ -112,11 +90,6 @@ public class ArgumentType {
 
     /**
      * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
      */
     public String getName() {
         return name;
@@ -124,14 +97,8 @@ public class ArgumentType {
 
     /**
      * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
      */
     public void setName(String value) {
         this.name = value;
     }
-
 }

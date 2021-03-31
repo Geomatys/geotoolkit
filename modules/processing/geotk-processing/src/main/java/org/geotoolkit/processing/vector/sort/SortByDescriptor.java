@@ -47,11 +47,11 @@ public final class SortByDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Array of SortBy used give the order
      */
-    public static final ParameterDescriptor<org.opengis.filter.sort.SortBy[]> SORTER_IN = new ParameterBuilder()
+    public static final ParameterDescriptor<org.opengis.filter.SortProperty[]> SORTER_IN = new ParameterBuilder()
             .addName("sorter_in")
             .setRemarks("Array of SortBy used give the order")
             .setRequired(true)
-            .create(org.opengis.filter.sort.SortBy[].class, null);
+            .create(org.opengis.filter.SortProperty[].class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

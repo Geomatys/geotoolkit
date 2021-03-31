@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.ComparisonOperators;
-import org.opengis.filter.capability.Operator;
+import org.geotoolkit.filter.capability.ComparisonOperators;
+import org.geotoolkit.filter.capability.Operator;
 
 
 /**
@@ -41,15 +41,12 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
- * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComparisonOperatorsType", propOrder = {
     "comparisonOperator"
 })
-public class ComparisonOperatorsType implements ComparisonOperators {
+public class ComparisonOperatorsType extends ComparisonOperators {
 
     @XmlElement(name = "ComparisonOperator", required = true)
     private List<ComparisonOperatorType> comparisonOperator;
@@ -58,7 +55,6 @@ public class ComparisonOperatorsType implements ComparisonOperators {
      * An empty constructor used by JAXB
      */
     public ComparisonOperatorsType() {
-
     }
 
     /**
@@ -70,12 +66,20 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         if ( operators == null ){
             operators = new Operator[]{};
         }
-        this.comparisonOperator = new ArrayList(Arrays.asList(operators));
+        this.comparisonOperator = new ArrayList(operators.length);
+        for (Operator op : operators) {
+            // Inneficient code below.
+            for (final ComparisonOperatorType t : ComparisonOperatorType.values()) {
+                if (t.value().equals(op.getName())) {
+                    this.comparisonOperator.add(t);
+                    break;
+                }
+            }
+        }
     }
 
     /**
      * Gets the value of the comparisonOperator property.
-     *
      */
     @Override
     public Collection<Operator> getOperators() {
@@ -85,7 +89,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
             return result;
         } else {
             for (ComparisonOperatorType c: comparisonOperator) {
-                result.add(c);
+                result.add(new Operator(c.value()));
             }
         }
         return result;
@@ -99,9 +103,9 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         if ( name == null || comparisonOperator == null) {
             return null;
         }
-        for ( Operator operator : comparisonOperator ) {
-            if ( name.equals( operator.getName() ) ) {
-                return operator;
+        for ( ComparisonOperatorType operator : comparisonOperator ) {
+            if ( name.equals( operator.value() ) ) {
+                return new Operator(name);
             }
         }
         return null;

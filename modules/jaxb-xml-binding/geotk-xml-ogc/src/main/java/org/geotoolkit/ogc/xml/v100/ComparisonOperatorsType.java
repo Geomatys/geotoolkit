@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.ComparisonOperators;
-import org.opengis.filter.capability.Operator;
+import org.geotoolkit.filter.capability.ComparisonOperators;
+import org.geotoolkit.filter.capability.Operator;
 
 
 /**
@@ -48,14 +48,12 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Comparison_OperatorsType", propOrder = {
     "simpleComparisonsOrLikeOrBetween"
 })
-public class ComparisonOperatorsType implements ComparisonOperators {
+public class ComparisonOperatorsType extends ComparisonOperators {
 
     @XmlElements({
         @XmlElement(name = "NullCheck", type = NullCheck.class),
@@ -66,7 +64,6 @@ public class ComparisonOperatorsType implements ComparisonOperators {
     private List<Object> simpleComparisonsOrLikeOrBetween;
 
     public ComparisonOperatorsType() {
-
     }
 
     public ComparisonOperatorsType(Operator[] operators) {
@@ -84,8 +81,6 @@ public class ComparisonOperatorsType implements ComparisonOperators {
      * {@link SimpleComparisons }
      * {@link Between }
      * {@link Like }
-     *
-     *
      */
     public List<Object> getSimpleComparisonsOrLikeOrBetween() {
         if (simpleComparisonsOrLikeOrBetween == null) {
@@ -94,7 +89,6 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         return this.simpleComparisonsOrLikeOrBetween;
     }
 
-    @Override
     public Collection<Operator> getOperators() {
         final List<Operator> result = new ArrayList<>();
         for (Object o : simpleComparisonsOrLikeOrBetween) {
@@ -105,7 +99,6 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         return result;
     }
 
-    @Override
     public Operator getOperator(String name) {
         for (Object o : simpleComparisonsOrLikeOrBetween) {
             if (o instanceof Operator && ((Operator)o).getName().equals(name)) {
@@ -114,5 +107,4 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         }
         return null;
     }
-
 }

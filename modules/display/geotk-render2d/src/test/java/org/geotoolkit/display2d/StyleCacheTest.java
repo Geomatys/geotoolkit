@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.sis.internal.system.DefaultFactories;
 import org.geotoolkit.display2d.style.CachedExternal;
 import org.geotoolkit.display2d.style.CachedFill;
 import org.geotoolkit.display2d.style.CachedGraphic;
@@ -28,6 +27,7 @@ import org.geotoolkit.display2d.style.CachedMark;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.VisibilityState;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -37,11 +37,9 @@ import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
@@ -55,22 +53,13 @@ import static org.geotoolkit.style.StyleConstants.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module
  */
 public class StyleCacheTest extends org.geotoolkit.test.TestBase {
 
     private final MutableStyleFactory SF = new DefaultStyleFactory();
-    private final FilterFactory FF = DefaultFactories.forBuildin(FilterFactory.class);
+    private final FilterFactory FF = FilterUtilities.FF;
 
     public StyleCacheTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @Test
@@ -179,9 +168,8 @@ public class StyleCacheTest extends org.geotoolkit.test.TestBase {
 
         CachedGraphic cached = CachedGraphic.cache(graphic);
 
-        assertTrue(!cached.isStatic());
+        assertFalse(cached.isStatic());
         assertEquals(VisibilityState.DYNAMIC, cached.isStaticVisible() );
-
     }
 
     @Test

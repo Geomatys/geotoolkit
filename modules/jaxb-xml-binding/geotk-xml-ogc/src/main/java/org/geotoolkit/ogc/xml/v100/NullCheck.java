@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.Operator;
+import org.geotoolkit.filter.capability.Operator;
 
 
 /**
@@ -36,16 +36,12 @@ import org.opengis.filter.capability.Operator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "NullCheck")
-public class NullCheck implements Operator {
-
-    @Override
-    public String getName() {
-        return "NullCheck";
+public class NullCheck extends Operator {
+    public NullCheck() {
+        super("NullCheck");
     }
 }

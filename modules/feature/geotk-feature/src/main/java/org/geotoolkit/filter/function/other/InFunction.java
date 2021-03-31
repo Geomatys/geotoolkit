@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.filter.expression.Expression;
+import org.opengis.filter.Expression;
 
 
 public class InFunction extends AbstractFunction {
@@ -27,14 +27,14 @@ public class InFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(final Object feature) {
+    public Object apply(final Object feature) {
 
         final Object arg0;
         final Object[] args = new Object[parameters.size()-1];
 
         try {
             // attempt to get value and perform conversion
-            arg0 = (Object) parameters.get(0).evaluate(feature);
+            arg0 = (Object) parameters.get(0).apply(feature);
         } catch (Exception e){
             // probably a type error
             throw new IllegalArgumentException("Filter Function problem for function in10 argument #0 - expected type Object");
@@ -43,7 +43,7 @@ public class InFunction extends AbstractFunction {
         for(int i=1;i<parameters.size();i++){
             try {
                 // attempt to get value and perform conversion
-                args[i-1] = (Object) parameters.get(i).evaluate(feature);
+                args[i-1] = (Object) parameters.get(i).apply(feature);
             } catch (Exception e){
                 // probably a type error
                 throw new IllegalArgumentException("Filter Function problem for function in10 argument #"+ i+"- expected type Object");
