@@ -33,17 +33,13 @@ import java.lang.annotation.RetentionPolicy;
  * refer to code comments in order to locate the specific part.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
- *
- * @since 3.15
- * @module
  */
 @Target({ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.METHOD,
          ElementType.FIELD, ElementType.LOCAL_VARIABLE})
 @Retention(RetentionPolicy.SOURCE)
 public @interface Workaround {
     /**
-     * A string identifying the library. Typical values are {@code "JDK"}, {@code "JAI"},
+     * A string identifying the library. Typical values are {@code "JDK"},
      * {@code "NetCDF"}, {@code "Units"}, {@code "Swingx"} and {@code "Geotk"}.
      *
      * @return An identifier of the library.

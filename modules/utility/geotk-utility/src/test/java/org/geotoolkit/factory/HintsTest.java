@@ -18,7 +18,6 @@
 package org.geotoolkit.factory;
 
 import java.awt.RenderingHints;
-import javax.media.jai.JAI;
 
 import org.junit.*;
 
@@ -30,9 +29,6 @@ import static org.apache.sis.test.Assert.*;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
- * @version 3.05
- *
- * @since 2.4
  */
 public final strictfp class HintsTest extends org.geotoolkit.test.TestBase {
     /**
@@ -50,7 +46,6 @@ public final strictfp class HintsTest extends org.geotoolkit.test.TestBase {
     public void testNameOf() {
         assertEquals("CS_FACTORY",        Hints.nameOf(Hints.CS_FACTORY));
         assertEquals("KEY_INTERPOLATION", Hints.nameOf(RenderingHints.KEY_INTERPOLATION));
-        assertEquals("KEY_TILE_CACHE",    Hints.nameOf(JAI.KEY_TILE_CACHE));
     }
 
     /**
