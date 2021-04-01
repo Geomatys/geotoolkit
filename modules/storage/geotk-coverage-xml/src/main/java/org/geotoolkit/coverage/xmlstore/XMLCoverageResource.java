@@ -57,7 +57,6 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.coverage.SampleDimensionType;
 import org.geotoolkit.coverage.SampleDimensionUtils;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
@@ -105,7 +104,7 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
 
     /** One of geophysics/native */
     @XmlElement(name="packMode")
-    private String packMode = ViewType.RENDERED.name();
+    private String packMode = "RENDERED";
 
     @XmlElement(name="SampleDimension")
     private List<XMLSampleDimension> sampleDimensions = null;
@@ -693,15 +692,18 @@ public class XMLCoverageResource extends AbstractGridResource implements MultiRe
     /**
      * {@inheritDoc }.
      */
-    public ViewType getPackMode() {
-        return ViewType.valueOf(packMode);
+    public String getPackMode() {
+        return packMode;
     }
 
     /**
      * {@inheritDoc }.
      */
-    public void setPackMode(ViewType packMode) {
-        this.packMode = packMode.name();
+    public void setPackMode(String packMode) {
+        if (!packMode.equals("RENDERED") && !packMode.equals("GEOPHYSICS")) {
+            throw new IllegalArgumentException(packMode);
+        }
+        this.packMode = packMode;
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -51,7 +51,6 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         builder.setEnvelope(new Envelope2D(null, 0, 0, 2, 2));
         builder.setCoordinateReferenceSystem(PredefinedCRS.GRID_2D);
         coverage = builder.getGridCoverage2D();
-        assertTrue(coverage.getViewTypes().contains(ViewType.PHOTOGRAPHIC));
     }
 
     /**
@@ -72,8 +71,6 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         builder.setValues(SampleCoverage.SST.raster());
         coverage = builder.getGridCoverage2D();
         SampleCoverage.SST.verifyGridGeometry(coverage, 0);
-        assertTrue  ("Expected ViewType.PACKED", coverage.getViewTypes().contains(ViewType.PACKED));
-        assertFalse ("Expected ViewType.PACKED", coverage.getViewTypes().contains(ViewType.GEOPHYSICS));
         assertEquals("Wrong scale factor for X", 0.1, builder.getAffineGridToCRS().getScaleX(), 1E-10);
         final Graphics2D gr = (Graphics2D) builder.createGraphics(true);
         assertEquals("Wrong scale factor for X", 10, gr.getTransform().getScaleX(), 1E-10);
@@ -96,8 +93,6 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         builder.setValues(SampleCoverage.FLOAT.raster());
         coverage = builder.getGridCoverage2D();
         SampleCoverage.SST.verifyGridGeometry(coverage, 0);
-        assertTrue ("Expected ViewType.GEOPHYSICS", coverage.getViewTypes().contains(ViewType.GEOPHYSICS));
-        assertFalse("Expected ViewType.GEOPHYSICS", coverage.getViewTypes().contains(ViewType.PACKED));
         show(coverage);
     }
 
