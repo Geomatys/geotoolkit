@@ -87,12 +87,18 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
      */
     private static final XMLOutputFactory STANDARD_FACTORY;
     static {
+        // TODO: Replace all reflection code by XMLOutputFactory.newDefaultFactory() in JDK9.
+        Object factory;
         try {
-            // TODO: try using XMLOutputFactory.newDefaultFactory() with JDK9 instead.
-            STANDARD_FACTORY = (XMLOutputFactory) Class.forName("com.sun.xml.internal.stream.XMLOutputFactoryImpl").newInstance();
+            try {
+                factory = XMLOutputFactory.class.getMethod("newDefaultFactory", (Class[]) null).invoke(null, (Object[]) null);
+            } catch (NoSuchMethodException e) {
+                factory = Class.forName("com.sun.xml.internal.stream.XMLOutputFactoryImpl").newInstance();
+            }
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
         }
+        STANDARD_FACTORY = (XMLOutputFactory) factory;
     }
 
     protected XMLStreamWriter writer;

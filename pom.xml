@@ -125,6 +125,11 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <trimStackTrace>false</trimStackTrace>
+              <!-- Required by JAI codec plugins. -->
+              <argLine>
+                --add-opens java.base/sun.security.action=ALL-UNNAMED
+                --add-opens java.desktop/sun.awt.image=ALL-UNNAMED
+              </argLine>
             </configuration>
           </plugin>
         </plugins>
