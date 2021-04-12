@@ -156,9 +156,9 @@ public strictfp class Viewer extends JPanel {
         if (name != null) {
             buffer.append(name.toString(JComponent.getDefaultLocale()));
         }
-        if (coverage != coverage.view(ViewType.GEOPHYSICS)) {
+        if (coverage == coverage.forConvertedValues(false)) {
             buffer.append(" (packed)");
-        } else if (coverage != coverage.view(ViewType.RENDERED)) {
+        } else if (coverage == coverage.forConvertedValues(true)) {
             buffer.append(" (geophysics)");
         }
         return show(new Viewer(coverage), buffer.toString());

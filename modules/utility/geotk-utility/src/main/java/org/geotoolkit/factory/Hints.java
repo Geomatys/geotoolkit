@@ -48,13 +48,9 @@ import org.opengis.util.InternationalString;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.18
  *
  * @see Factory
  * @see FactoryRegistry
- *
- * @since 2.0
- * @module
  */
 public class Hints extends RenderingHints {
 
@@ -380,7 +376,6 @@ public class Hints extends RenderingHints {
      * <p>
      * <ul>
      *   <li>{@code org.geotoolkit.factory.Hints}  (this class)</li>
-     *   <li>{@code javax.media.jai.JAI}           (assuming JAI is on the classpath)</li>
      *   <li>{@code java.awt.RenderingHints}       (actually sun.awt.SunHints at least on Sun JDK)</li>
      * </ul>
      *
@@ -417,10 +412,6 @@ public class Hints extends RenderingHints {
         final Field[] fields = type.getFields();
         for (int i=0; i<fields.length; i++) {
             final Field f = fields[i];
-            /*
-             * Note: to be strict, the line below should ensure that the field is final in
-             * addition of static. Unfortunately the JAI static fields are not final in JAI 1.1.
-             */
             if (Modifier.isStatic(f.getModifiers())) {
                 final Object v;
                 try {

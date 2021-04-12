@@ -35,7 +35,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.event.IIOReadProgressListener;
 import javax.imageio.event.IIOReadWarningListener;
-import javax.media.jai.InterpolationNearest;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
@@ -1191,14 +1190,6 @@ public class GridCoverageStack extends org.geotoolkit.coverage.grid.GridCoverage
     private GridCoverage load(final Element element) throws IOException {
         assert Thread.holdsLock(this);
         GridCoverage coverage = element.getCoverage(listeners);
-        if (coverage instanceof GridCoverage2D) {
-            final GridCoverage2D coverage2D = (GridCoverage2D) coverage;
-            if (interpolationEnabled) {
-                if (coverage2D.getInterpolation() instanceof InterpolationNearest) {
-                    coverage = Interpolator2D.create(coverage2D);
-                }
-            }
-        }
         /*
          * CRS assertions (for debugging purpose).
          */

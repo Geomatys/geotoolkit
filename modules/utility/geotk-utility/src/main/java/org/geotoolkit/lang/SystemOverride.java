@@ -52,10 +52,6 @@ package org.geotoolkit.lang;
  * "<cite>All Known Implementing Classes</cite>" section above.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
- *
- * @since 3.07
- * @module
  */
 public interface SystemOverride { // NOSONAR
     /**

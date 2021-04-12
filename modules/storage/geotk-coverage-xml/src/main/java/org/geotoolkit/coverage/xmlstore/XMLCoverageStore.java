@@ -39,7 +39,6 @@ import org.apache.sis.storage.DataStoreProvider;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.WritableAggregate;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.DefiningCoverageResource;
@@ -178,12 +177,12 @@ public class XMLCoverageStore extends AbstractCoverageStore implements WritableA
      * Default is ViewType.RENDERED and PNG tile format.
      *
      * @param name name of the new CoverageResource.
-     * @param packMode data type (Geophysic or Rendered). Can be null.
+     * @param packMode data type (GEOPHYSICS or RENDERED). Can be null.
      * @param preferredFormat pyramid tile format. Can be null.
      * @return new CoverageResource.
      * @throws DataStoreException
      */
-    public GridCoverageResource create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
+    public GridCoverageResource create(GenericName name, String packMode, String preferredFormat) throws DataStoreException {
         if (Files.isRegularFile(root)) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }

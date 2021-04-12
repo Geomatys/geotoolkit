@@ -67,15 +67,6 @@ import org.geotoolkit.internal.sql.DefaultDataSource;
  *     </ul></td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
- *     <td nowrap>{@code geotk-coverage}</td>
- *     <td><ul>
- *       <li>{@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}</li>
- *     </ul></td>
- *     <td>
- *       Remove from the JAI {@link javax.media.jai.OperationRegistry} every
- *       plugins defined in any {@code org.geotoolkit} package.
- *     </td>
- *   </tr><tr>
  *     <td nowrap>{@code geotk-coverageio}</td>
  *     <td><ul>
  *       <li><code>{@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults WorldFileImageReader.Spi.registerDefaults}(null)</code></li>

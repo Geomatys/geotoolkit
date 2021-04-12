@@ -22,11 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Random;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -151,19 +147,12 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
          */
         assertSame(coverage.getRenderedImage(), coverage.getRenderableImage(0,1).createDefaultRendering());
         assertSame(image.getTile(0,0), coverage.getRenderedImage().getTile(0,0));
-        GridCoverage2D geophysics = coverage.view(ViewType.GEOPHYSICS);
-        assertSame(coverage,        coverage.view(ViewType.PACKED));
-        assertSame(coverage,      geophysics.view(ViewType.PACKED));
-        assertSame(geophysics,    geophysics.view(ViewType.GEOPHYSICS));
-        assertFalse( coverage.equals(geophysics));
-        assertFalse( coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
-        assertTrue(geophysics.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
+        assertFalse(coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
         /*
          * Compares data.
          */
         final int bandN = 0; // Band to test.
         double[] bufferCov = null;
-        double[] bufferGeo = null;
         final double left  = bounds.getMinX() + (0.5*PIXEL_SIZE); // Includes translation to center
         final double upper = bounds.getMaxY() - (0.5*PIXEL_SIZE); // Includes translation to center
         final Point2D.Double point = new Point2D.Double();        // Will maps to pixel center.
@@ -172,48 +161,11 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
                 point.x = left  + PIXEL_SIZE*i;
                 point.y = upper - PIXEL_SIZE*j;
                 double r = raster.getSampleDouble(i,j,bandN);
-                bufferCov =   coverage.evaluate(point, bufferCov);
-                bufferGeo = geophysics.evaluate(point, bufferGeo);
+                bufferCov = coverage.evaluate(point, bufferCov);
                 assertEquals(r, bufferCov[bandN], SAMPLE_TOLERANCE);
-
-                // Compares transcoded samples.
-                if (r < BEGIN_VALID) {
-                    assertTrue(Double.isNaN(bufferGeo[bandN]));
-                } else {
-                    assertEquals(OFFSET + SCALE*r, bufferGeo[bandN], SAMPLE_TOLERANCE);
-                }
             }
         }
         this.coverage = coverage;
-    }
-
-    /**
-     * Tests the serialization of the packed and geophysics views of the
-     * {@linkplain #coverage current coverage}.
-     *
-     * @return The deserialized grid coverage as packed view.
-     * @throws IOException if an I/O operation was needed and failed.
-     * @throws ClassNotFoundException Should never happen.
-     */
-    protected final GridCoverage2D serialize() throws IOException, ClassNotFoundException {
-        assertNotNull("CoverageTestCase.coverage field is not assigned.", coverage);
-        /*
-         * The previous line is not something that we should do.
-         * But we want to test the default GridCoverage2D encoding.
-         */
-        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        try (ObjectOutputStream out = new ObjectOutputStream(buffer)) {
-            out.writeObject(coverage.view(ViewType.PACKED));
-            out.writeObject(coverage.view(ViewType.GEOPHYSICS));
-        }
-        GridCoverage2D read;
-        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
-            read = (GridCoverage2D) in.readObject(); assertSame(read, read.view(ViewType.PACKED));
-            read = (GridCoverage2D) in.readObject(); assertSame(read, read.view(ViewType.GEOPHYSICS));
-        }
-        final GridCoverage2D view = read.view(ViewType.PACKED);
-        assertNotSame(read, view);
-        return view;
     }
 
     /**

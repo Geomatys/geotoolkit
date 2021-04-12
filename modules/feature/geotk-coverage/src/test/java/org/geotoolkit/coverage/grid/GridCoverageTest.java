@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.grid;
 import org.junit.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -47,17 +46,6 @@ public final strictfp class GridCoverageTest extends GridCoverageTestBase {
         createRandomCoverage();
         assertRasterEquals(coverage, coverage); // Actually a test of assertEqualRasters(...).
         assertSame(coverage.getRenderedImage(), coverage.getRenderableImage(0,1).createDefaultRendering());
-        /*
-         * Tests the creation of a "geophysics" view. This test make sure that the
-         * 'geophysics' method do not creates more grid coverage than needed.
-         */
-        GridCoverage2D geophysics= coverage.view(ViewType.GEOPHYSICS);
-        assertSame(coverage,       coverage.view(ViewType.PACKED));
-        assertSame(coverage,     geophysics.view(ViewType.PACKED));
-        assertSame(geophysics,   geophysics.view(ViewType.GEOPHYSICS));
-        assertFalse( coverage.equals(geophysics));
-        assertFalse( coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
-        assertTrue(geophysics.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
+        assertFalse(coverage.getSampleDimensions().get(0).getTransferFunction().get().isIdentity());
     }
-
 }
