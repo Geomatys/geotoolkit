@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wcs.xml.ServiceMetadata;
+import org.geotoolkit.wcs.xml.v200.crs.CrsMetadataType;
 
 
 /**
@@ -66,6 +67,11 @@ public class ServiceMetadataType implements ServiceMetadata {
 
     public ServiceMetadataType(final List<String> formatSupported) {
         this.formatSupported = formatSupported;
+    }
+
+    public ServiceMetadataType(final List<String> formatSupported, final List<String> supportedCrs) {
+        this.formatSupported = formatSupported;
+        this.extension = new ExtensionType(new CrsMetadataType(supportedCrs));
     }
 
     /**

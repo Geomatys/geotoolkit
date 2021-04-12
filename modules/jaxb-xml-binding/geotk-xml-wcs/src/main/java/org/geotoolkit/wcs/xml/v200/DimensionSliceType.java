@@ -51,6 +51,15 @@ public class DimensionSliceType extends DimensionSubsetType {
     @XmlElement(name = "SlicePoint", required = true)
     private String slicePoint;
 
+    public DimensionSliceType() {
+
+    }
+
+    public DimensionSliceType(String dimension, String slicePoint) {
+        super(dimension);
+        this.slicePoint = slicePoint;
+    }
+
     /**
      * Gets the value of the slicePoint property.
      *

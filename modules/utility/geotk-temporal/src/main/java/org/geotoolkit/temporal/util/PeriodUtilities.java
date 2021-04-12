@@ -56,6 +56,27 @@ public class PeriodUtilities {
     }
 
     /**
+     * Transform the original date with the specified date format.
+     * Sometimes the original date is more precise than the specified date format.
+     * This will lead to strange period computation.
+     *
+     * Example: if we want to get rid of the milliseconds we must calculate the periods
+     * without the millisecond in each date.
+     *
+     * @param d The original date.
+     * @return A new date conforming to the date format.
+     */
+    private long transDate(Date d) {
+        String view = dateFormat.format(d);
+        try {
+            Date transformed = dateFormat.parse(view);
+            return transformed.getTime();
+        } catch (ParseException ex) {
+            // should not happen
+            throw new IllegalArgumentException("date can not be parsed!");
+        }
+    }
+    /**
      * Evaluate the periodical gap between the different available time.
      * Return a String concatening periods and isolated date.
      *
@@ -80,7 +101,7 @@ public class PeriodUtilities {
 
         for (Date d : dates) {
             previousGap = gap;
-            gap = d.getTime() - previousDate.getTime();
+            gap = transDate(d) - transDate(previousDate);
 
             if (previousGap != gap) {
                 if (nbDataInGap >= 2) {
@@ -183,7 +204,7 @@ public class PeriodUtilities {
             gap -= temp * MINUTE_MS;
         }
 
-        //we look if the gap is more than one week (1000 ms)
+        //we look if the gap is more than one second (1000 ms)
         temp = gap / SECOND_MS;
         if (temp >= 1) {
             gap -= temp * SECOND_MS;

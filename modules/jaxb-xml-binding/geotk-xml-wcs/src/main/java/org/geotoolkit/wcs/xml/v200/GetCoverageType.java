@@ -31,10 +31,12 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.wcs.xml.DomainSubset;
 import org.geotoolkit.wcs.xml.GetCoverage;
 import org.geotoolkit.wcs.xml.InterpolationMethod;
 import org.geotoolkit.wcs.xml.RangeSubset;
+import org.geotoolkit.wcs.xml.v200.crs.CrsType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -94,6 +96,17 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
         this.mediaType  = mediaType;
         this.service    = "WCS";
         this.version    = "2.0.1";
+    }
+
+    public GetCoverageType(final String coverageId, final String format, final String mediaType, final String subsettingCrs, final String outputCrs) {
+        this.coverageId = coverageId;
+        this.format     = format;
+        this.mediaType  = mediaType;
+        this.service    = "WCS";
+        this.version    = "2.0.1";
+        if (subsettingCrs != null || outputCrs != null) {
+            this.extension = new ExtensionType(new CrsType(subsettingCrs, outputCrs));
+        }
     }
 
     /**
@@ -192,6 +205,12 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     @Override
     public CoordinateReferenceSystem getCRS() throws FactoryException {
+        if (extension != null) {
+            CrsType crs = extension.getForClass(CrsType.class);
+            if (crs != null && crs.getSubsettingCrs()!= null) {
+                return CRS.forCode(crs.getSubsettingCrs());
+            }
+        }
         return null;
     }
 
@@ -207,6 +226,12 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     @Override
     public CoordinateReferenceSystem getResponseCRS() throws FactoryException {
+        if (extension != null) {
+            CrsType crs = extension.getForClass(CrsType.class);
+            if (crs != null && crs.getOutputCrs() != null) {
+                return CRS.forCode(crs.getOutputCrs());
+            }
+        }
         return null;
     }
 

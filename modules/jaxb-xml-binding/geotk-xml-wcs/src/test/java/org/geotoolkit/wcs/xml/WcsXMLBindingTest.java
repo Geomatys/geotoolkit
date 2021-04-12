@@ -21,6 +21,8 @@ import java.io.StringReader;
 import java.util.Arrays;
 import org.geotoolkit.wcs.xml.v100.GetCoverageType;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -46,6 +48,8 @@ import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
 import org.geotoolkit.wcs.xml.v200.ExtensionType;
 
 import static org.apache.sis.test.MetadataAssert.*;
+import org.geotoolkit.wcs.xml.v200.CapabilitiesType;
+import org.geotoolkit.wcs.xml.v200.ServiceMetadataType;
 
 
 /**
@@ -202,6 +206,34 @@ public class WcsXMLBindingTest extends org.geotoolkit.test.TestBase {
 
         sw = new StringWriter();
         marshaller.marshal(jb, sw);
+
+        result = sw.toString();
+        System.out.println(result);
+
+        // test the crs extension in capabilities
+        List<String> supportedFormat = new ArrayList<>();
+        supportedFormat.add("image/tiff");
+        supportedFormat.add("application/x-netcdf");
+
+        List<String> supportedCrs = new ArrayList<>();
+        supportedCrs.add("http://www.opengis.net/def/crs/EPSG/0/4326");
+        supportedCrs.add("http://www.opengis.net/def/crs/EPSG/0/666");
+        ServiceMetadataType serviceMetadata = new ServiceMetadataType(supportedFormat, supportedCrs);
+        CapabilitiesType capa = new CapabilitiesType(null, null, null, "2.0.1", null, null, serviceMetadata);
+
+        sw = new StringWriter();
+        marshaller.marshal(capa, sw);
+
+        result = sw.toString();
+        System.out.println(result);
+
+        // test the crs extension in get coverage
+        String subsettingCRS = "http://www.opengis.net/def/crs/EPSG/0/4326";
+        String outputCRS = "http://www.opengis.net/def/crs/EPSG/0/666";
+        org.geotoolkit.wcs.xml.v200.GetCoverageType getCov = new org.geotoolkit.wcs.xml.v200.GetCoverageType("CID", "geotiff", "image/tiff", subsettingCRS, outputCRS);
+
+        sw = new StringWriter();
+        marshaller.marshal(getCov, sw);
 
         result = sw.toString();
         System.out.println(result);

@@ -62,6 +62,14 @@ public abstract class DimensionSubsetType implements DomainSubset {
     @XmlSchemaType(name = "NCName")
     private String dimension;
 
+    public DimensionSubsetType() {
+
+    }
+
+    public DimensionSubsetType(String dimension) {
+        this.dimension = dimension;
+    }
+
     /**
      * Gets the value of the dimension property.
      *
