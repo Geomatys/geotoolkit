@@ -93,9 +93,17 @@ public final class MapLayerJ2D extends MapItemJ2D<MapLayer> implements StoreList
 
     @Override
     public void dispose() {
-        super.dispose();
-        if (weakLayerListener != null) weakLayerListener.dispose();
-        weakResourceListener.dispose();
+        try (
+                AutoCloseable superClose = super::dispose;
+                AutoCloseable wllClose = weakLayerListener != null ? weakLayerListener::dispose : () -> {};
+                AutoCloseable wrlClose = weakResourceListener::dispose
+        ) {
+            // Nothing to do. Try/w/r allows to properly close all resources even in case of error.
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
