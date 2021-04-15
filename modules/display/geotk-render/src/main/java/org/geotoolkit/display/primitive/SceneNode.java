@@ -20,8 +20,10 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.measure.NumberRange;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -258,8 +260,21 @@ public class SceneNode extends DisplayElement implements Graphic {
 
     @Override
     public void dispose() {
-        for(SceneNode child : getChildren()){
-            child.dispose();
+        final Iterator<RuntimeException> errors = getChildren().stream()
+                .map(node -> {
+                    try {
+                        node.dispose();
+                        return null;
+                    } catch (RuntimeException e) {
+                        return e;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .iterator();
+        if (errors.hasNext()) {
+            final RuntimeException mainError = errors.next();
+            while (errors.hasNext()) mainError.addSuppressed(errors.next());
+            throw mainError;
         }
     }
 

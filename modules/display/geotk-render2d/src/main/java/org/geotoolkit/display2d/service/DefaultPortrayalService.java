@@ -83,6 +83,8 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+
+import static org.geotoolkit.display2d.GO2Utilities.LOGGER;
 import static org.geotoolkit.display2d.GO2Utilities.getCached;
 import static org.geotoolkit.display2d.GO2Utilities.mergeColors;
 import org.geotoolkit.display2d.GraphicVisitor;
@@ -250,7 +252,12 @@ public final class DefaultPortrayalService implements PortrayalService{
         BufferedImage buffer = null;
         if (graphics == null) {
             buffer = (BufferedImage) canvas.getSnapShot();
-            canvas.dispose();
+            try {
+                canvas.dispose();
+            } catch (RuntimeException e) {
+                LOGGER.warning("Error on resource disposal. Might cause memory leak.");
+                LOGGER.log(Level.FINE, "Error on resource disposal. Might cause memory leak.", e);
+            }
         }
 
         return buffer;
