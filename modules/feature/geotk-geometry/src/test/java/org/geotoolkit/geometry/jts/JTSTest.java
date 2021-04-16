@@ -87,7 +87,7 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
                 });
 
         final Polygon poly = GF.createPolygon(ring, null);
-        final Geometry returnedGeom = JTS.ensureCounterClockWise(poly);
+        final Geometry returnedGeom = JTS.ensureWinding(poly, false, false);
         assertTrue(Orientation.isCCW(returnedGeom.getCoordinates()));
 
     }
@@ -107,7 +107,7 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
 
         final Polygon poly = GF.createPolygon(ring, null);
 
-        final Geometry returnedGeom = JTS.ensureClockWise(poly);
+        final Geometry returnedGeom = JTS.ensureWinding(poly, true, false);
 
         assertFalse(Orientation.isCCW(returnedGeom.getCoordinates()));
 
@@ -126,7 +126,7 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
                 });
 
         final Polygon poly = GF.createPolygon(ring, null);
-        final Geometry returnedGeom = JTS.ensureCounterClockWise3D(poly);
+        final Geometry returnedGeom = JTS.ensureWinding(poly, false, true);
         assertTrue(JTS.isCCW3D(returnedGeom.getCoordinates()));
 
     }
@@ -145,7 +145,7 @@ public class JTSTest extends org.geotoolkit.test.TestBase {
                 });
 
         final Polygon poly = GF.createPolygon(ring, null);
-        final Geometry returnedGeom = JTS.ensureClockWise3D(poly);
+        final Geometry returnedGeom = JTS.ensureWinding(poly, true, true);
         assertFalse(JTS.isCCW3D(returnedGeom.getCoordinates()));
 
     }

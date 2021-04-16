@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.geometry.jts.JTS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -25,9 +27,6 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-
-import org.geotoolkit.geometry.jts.JTS;
-import org.apache.sis.storage.DataStoreException;
 
 /**
  * A collection of utility methods for use with JTS and the shapefile package.
@@ -86,10 +85,10 @@ public final class JTSUtilities {
             }
         } else if (type.isPolygonType()) {
             if (geom instanceof Polygon ) {
-                final Polygon p = JTS.ensureClockWise((Polygon) geom);
+                final Polygon p = JTS.ensureWinding((Polygon) geom, true, false);
                 retVal = FACTORY.createMultiPolygon(new Polygon[] { p });
             } else if (geom instanceof MultiPolygon) {
-                retVal = JTS.ensureClockWise((MultiPolygon) geom);
+                retVal = JTS.ensureWinding((MultiPolygon) geom, true, false);
             } else {
                 retVal = FACTORY.createMultiPolygon(null);
             }
