@@ -1,0 +1,72 @@
+# IMPORTANT notes:
+# 1. Use a global maven cache to avoid downloading released dependencies everytime
+# 2. sis-migration disabled (see comments on build section below)
+# 3. Release stage not ready yet. Only a manual maven artifact is available for now. More details about release work in
+#    "TODO" comment below.
+variables:
+  MAVEN_LOCAL: ".m2_local"
+  MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_LOCAL -Djava.awt.headless=true"
+  SONAR_HOST_URL: "https://sonar.geomatys.com"
+  DEPLOY_SERVER: "releases::https://nexus.geomatys.com/repository/releases/"
+
+# Cache dependencies
+cache: &global_cache
+  policy: pull
+  key: GLOBAL_MVN_CACHE
+  paths:
+    - "$MAVEN_LOCAL"
+
+stages:
+  - build
+  - quality
+  - release
+
+image: maven:3.8.1-openjdk-16
+
+# Force removing artifacts installed by local jobs, to avoid cache corruption with snapshots
+after_script:
+  - mvn build-helper:remove-project-artifact > /dev/null && echo "Successfully removed project artifacts from cache"
+
+# Mainly check project sanity by installing all components and running unit tests.
+# For now, disable it for sis-migration because:
+# 1. We would need to build GeoAPI / SIS beforehand
+# 2. We have to be careful with maven local repository caching, that would be polluted with GeoAPI and SIS snapshots
+build:
+  except:
+    refs:
+      - sis-migration
+  cache:
+    <<: *global_cache
+    policy: pull-push
+  stage: build
+  script:
+    - mvn clean install -s $MAVEN_SETTINGS
+    - mvn javadoc:jar # Ensure javadoc is valid
+
+# Perform Sonar analysis on main branch
+sonar:
+  # I mean: if we cannot post analysis to Sonar, that's not a fatal error, as long as the build step above succeed
+  allow_failure: true
+  stage: quality
+  needs:
+    - build
+  only:
+    refs:
+      - master
+  script:
+    - mvn clean install sonar:sonar -s $MAVEN_SETTINGS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+
+# TODO: use mvn release:prepare or any tool wanted to freeze versions on tag, then push the tag.
+# WARNING: before adding a job that push, we have to verify that mvn release is well-done. Specifically, we have to
+# handle buildset/pom.xml update.
+
+deploy:
+  stage: release
+  needs:
+    - build
+  # TODO: remove manual activation once release pipeline is fully migrated from Jenkins to Gitlab
+  when: manual
+  only:
+    - tags
+  script:
+    - mvn package source:jar javadoc:jar deploy -DaltDeploymentRepository=$DEPLOY_SERVER
