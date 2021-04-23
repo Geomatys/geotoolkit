@@ -27,18 +27,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.IntFunction;
 import org.apache.sis.coverage.SampleDimension;
+import org.apache.sis.coverage.grid.BufferedGridCoverage;
 import org.apache.sis.coverage.grid.GridCoverage;
+import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
-import org.apache.sis.coverage.grid.BufferedGridCoverage;
-import org.apache.sis.image.Interpolation;
-import org.apache.sis.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.measure.Units;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.cs.DefaultCartesianCS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.datum.DefaultImageDatum;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
@@ -53,13 +57,15 @@ import org.geotoolkit.storage.memory.InMemoryGridCoverageResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.opengis.referencing.datum.PixelInCell;
 import static org.opengis.referencing.datum.PixelInCell.CELL_CENTER;
 
 
@@ -1061,4 +1067,278 @@ public class AggregatedCoverageResourceTest {
         rendering = aggregate.read(biggerGrid).render(null);
         assertEquals("Infered sample type is wrong", DataBuffer.TYPE_INT, rendering.getSampleModel().getDataType());
     }
+
+    /**
+     * Test fail safe when a resource fails a read operation.
+     *
+     * @throws DataStoreException
+     * @throws TransformException
+     */
+    @Test
+    public void testResourceReadInError() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final List<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        | 1 |NaN|NaN|
+        +---+---+---+
+
+        Coverage 2
+        +---+---+---+
+        | 2 | 2 |NaN| <-- will fail at reading time
+        +---+---+---+
+
+        Coverage 3
+        +---+---+---+
+        | 3 | 3 | 3 |
+        +---+---+---+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2) {
+            @Override
+            public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+                throw new RuntimeException("Read failing");
+            }
+        };
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setSample(0, 1);
+        write1.moveTo(1, 0); write1.setSample(0, Double.NaN);
+        write1.moveTo(2, 0); write1.setSample(0, Double.NaN);
+        write2.moveTo(0, 0); write2.setSample(0, 2);
+        write2.moveTo(1, 0); write2.setSample(0, 2);
+        write2.moveTo(2, 0); write2.setSample(0, Double.NaN);
+        write3.moveTo(0, 0); write3.setSample(0, 3);
+        write3.moveTo(1, 0); write3.setSample(0, 3);
+        write3.moveTo(2, 0); write3.setSample(0, 3);
+
+
+        /*
+        We expect a final coverage with values [1,3,3] on a single row
+        since 2 has failed reading
+        +---+---+---+
+        | 1 | 3 | 3 |
+        +---+---+---+
+        */
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(Interpolation.NEAREST);
+        aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.add(resource1);
+        aggregate.add(resource2);
+        aggregate.add(resource3);
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); Assert.assertEquals(3, reader.getSample(0));
+        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+
+    }
+
+    /**
+     * Test fail safe when a resource fails on metadatas and read operation.
+     *
+     * @throws DataStoreException
+     * @throws TransformException
+     */
+    @Test
+    public void testResourceMetaInError() throws DataStoreException, TransformException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final List<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        | 1 |NaN|NaN|
+        +---+---+---+
+
+        Coverage 2
+        +---+---+---+
+        | 2 | 2 |NaN| <-- will fail at metadata and reading time
+        +---+---+---+
+
+        Coverage 3
+        +---+---+---+
+        | 3 | 3 | 3 |
+        +---+---+---+
+        */
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2) {
+            @Override
+            public GridGeometry getGridGeometry() throws DataStoreException {
+                throw new RuntimeException("Metadata failing");
+            }
+
+            @Override
+            public GridCoverage read(GridGeometry domain, int... range) throws DataStoreException {
+                throw new RuntimeException("Read failing");
+            }
+        };
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setSample(0, 1);
+        write1.moveTo(1, 0); write1.setSample(0, Double.NaN);
+        write1.moveTo(2, 0); write1.setSample(0, Double.NaN);
+        write2.moveTo(0, 0); write2.setSample(0, 2);
+        write2.moveTo(1, 0); write2.setSample(0, 2);
+        write2.moveTo(2, 0); write2.setSample(0, Double.NaN);
+        write3.moveTo(0, 0); write3.setSample(0, 3);
+        write3.moveTo(1, 0); write3.setSample(0, 3);
+        write3.moveTo(2, 0); write3.setSample(0, 3);
+
+
+        /*
+        We expect a final coverage with values [1,3,3] on a single row
+        since 2 has failed reading
+        +---+---+---+
+        | 1 | 3 | 3 |
+        +---+---+---+
+        */
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(Interpolation.NEAREST);
+        aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.add(resource1);
+        aggregate.add(resource2);
+        aggregate.add(resource3);
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); Assert.assertEquals(3, reader.getSample(0));
+        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+
+    }
+
+    /**
+     * Test that an image crs data is ignored.
+     */
+    @Test
+    public void testImageCRSIgnored() throws DataStoreException, TransformException, FactoryException {
+
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+
+        final SampleDimension sd = new SampleDimension.Builder().setName("data").build();
+        final List<SampleDimension> bands = Arrays.asList(sd);
+
+        /*
+        Coverage 1
+        +---+---+---+
+        | 1 |NaN|NaN|
+        +---+---+---+
+        Coverage 2
+        +---+---+---+
+        | 2 | 2 |NaN| <-- uncorrect crs
+        +---+---+---+
+        Coverage 3
+        +---+---+---+
+        | 3 | 3 | 3 |
+        +---+---+---+
+         */
+        final CoordinateReferenceSystem imgcrs = DefaultFactories.forBuildin(CRSFactory.class).createImageCRS(
+                    Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCRS"),
+                    new DefaultImageDatum(
+                            Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageDatum"),
+                            PixelInCell.CELL_CENTER),
+                    new DefaultCartesianCS(
+                            Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"ImageCS"),
+                            new DefaultCoordinateSystemAxis(
+                                    Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"AxisX"),
+                                    "x", AxisDirection.DISPLAY_LEFT, Units.POINT),
+                            new DefaultCoordinateSystemAxis(
+                                    Collections.singletonMap(CoordinateReferenceSystem.NAME_KEY,"AxisY"),
+                                    "y", AxisDirection.DISPLAY_DOWN, Units.POINT)));
+
+        final GridGeometry grid1 = new GridGeometry(new GridExtent(3, 1), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), crs);
+        final GridGeometry grid2 = new GridGeometry(new GridExtent(10, 30), PixelInCell.CELL_CENTER, new AffineTransform2D(1, 0, 0, 1, 0, 0), imgcrs);
+
+        final GridCoverage coverage1 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage2 = new BufferedGridCoverage(grid2, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverage coverage3 = new BufferedGridCoverage(grid1, bands, DataBuffer.TYPE_DOUBLE);
+        final GridCoverageResource resource1 = new InMemoryGridCoverageResource(coverage1);
+        final GridCoverageResource resource2 = new InMemoryGridCoverageResource(coverage2);
+        final GridCoverageResource resource3 = new InMemoryGridCoverageResource(coverage3);
+
+        final WritablePixelIterator write1 = WritablePixelIterator.create( (WritableRenderedImage) coverage1.render(null));
+        final WritablePixelIterator write2 = WritablePixelIterator.create( (WritableRenderedImage) coverage2.render(null));
+        final WritablePixelIterator write3 = WritablePixelIterator.create( (WritableRenderedImage) coverage3.render(null));
+
+        write1.moveTo(0, 0); write1.setSample(0, 1);
+        write1.moveTo(1, 0); write1.setSample(0, Double.NaN);
+        write1.moveTo(2, 0); write1.setSample(0, Double.NaN);
+        write2.moveTo(0, 0); write2.setSample(0, 2);
+        write2.moveTo(1, 0); write2.setSample(0, 2);
+        write2.moveTo(2, 0); write2.setSample(0, Double.NaN);
+        write3.moveTo(0, 0); write3.setSample(0, 3);
+        write3.moveTo(1, 0); write3.setSample(0, 3);
+        write3.moveTo(2, 0); write3.setSample(0, 3);
+
+
+        /*
+        We expect a final coverage with values [1,3,3] on a single row
+        since 2 has failed reading
+        +---+---+---+
+        | 1 | 3 | 3 |
+        +---+---+---+
+        */
+        final AggregatedCoverageResource aggregate =  new AggregatedCoverageResource();
+        aggregate.setInterpolation(Interpolation.NEAREST);
+        aggregate.setMode(AggregatedCoverageResource.Mode.ORDER);
+        aggregate.add(resource1);
+        aggregate.add(resource2);
+        aggregate.add(resource3);
+        final double[] resolution = aggregate.getGridGeometry().getResolution(true);
+        Assert.assertArrayEquals(new double[]{1.0,1.0}, resolution, 0.0);
+
+        final GridGeometry gridGeometry = aggregate.getGridGeometry();
+        Assert.assertEquals(grid1, gridGeometry);
+
+        final GridCoverage coverage = aggregate.read(grid1);
+        final RenderedImage image = coverage.render(null);
+        final PixelIterator reader =  PixelIterator.create( image);
+        reader.moveTo(0, 0); Assert.assertEquals(1, reader.getSample(0));
+        reader.moveTo(1, 0); Assert.assertEquals(3, reader.getSample(0));
+        reader.moveTo(2, 0); Assert.assertEquals(3, reader.getSample(0));
+    }
+
+
 }
