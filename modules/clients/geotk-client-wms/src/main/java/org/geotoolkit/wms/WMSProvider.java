@@ -96,14 +96,16 @@ public class WMSProvider extends AbstractClientProvider {
     @Override
     public ProbeResult probeContent(StorageConnector connector) throws DataStoreException {
         try {
-            URL url = connector.getStorageAs(java.net.URL.class);
-            if (url!= null && url.getProtocol().startsWith("http")) {
-                try (WebMapClient client = new WebMapClient(url)) {
-                    AbstractWMSCapabilities capability = client.getServiceCapabilities();
-                    return new ProbeResult(true, MIME_TYPE, new Version(client.getVersion().getCode()));
+            final URL url = connector.getStorageAs(java.net.URL.class);
+            if (url != null) {
+                final String protocol = url.getProtocol();
+                if (protocol != null && protocol.startsWith("http")) {
+                    try (WebMapClient client = new WebMapClient(url)) {
+                        AbstractWMSCapabilities capability = client.getServiceCapabilities();
+                        return new ProbeResult(true, MIME_TYPE, new Version(client.getVersion().getCode()));
+                    }
                 }
             }
-
         } catch (IllegalArgumentException | CapabilitiesException ex) {
             //do nothing
         }

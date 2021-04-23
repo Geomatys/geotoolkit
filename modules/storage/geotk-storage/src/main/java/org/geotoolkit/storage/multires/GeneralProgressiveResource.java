@@ -60,7 +60,7 @@ public class GeneralProgressiveResource extends AbstractResource implements Prog
     private final Map<String,ProgressiveTileMatrixSet> cachePyramids = new HashMap<>();
     protected TileGenerator generator;
 
-    public GeneralProgressiveResource(MultiResolutionResource base, TileGenerator generator) throws DataStoreException {
+    public GeneralProgressiveResource(MultiResolutionResource base, TileGenerator generator) {
         super(null);
         this.base = base;
         this.generator = generator;

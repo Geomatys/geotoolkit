@@ -33,6 +33,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.SampleDimensionUtils;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.math.XMath;
+import org.geotoolkit.storage.DataStores;
 import org.geotoolkit.storage.multires.Tile;
 import org.geotoolkit.storage.multires.TileMatrix;
 
@@ -269,6 +270,8 @@ public class TileMatrixImage extends ComputedImage implements RenderedImage {
         } catch (DataStoreException | IOException e) {
             if (allowException) {
                 throw e;
+            } else if (DataStores.isInterrupted(e)){
+                LOGGER.log(Level.INFO, "Tile(" + tileX +","+tileY+") creation has been interrupted.\n" + e.getMessage(), e);
             } else {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
