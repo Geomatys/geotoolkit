@@ -68,6 +68,15 @@ public class DisplayElement {
     }
 
     /**
+     * Returns the hints attached to this element.
+     *
+     * @return Hints or null
+     */
+    public Hints getHints() {
+        return hints;
+    }
+
+    /**
      * Returns the logger for all messages to be logged by this object.
      *
      * @return Logger for this object

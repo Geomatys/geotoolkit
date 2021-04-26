@@ -75,11 +75,6 @@ public class WebMapClient extends AbstractClient implements Client, Aggregate {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
-    /**
-     * Defines the timeout in milliseconds for the GetCapabilities request.
-     */
-    private static final long TIMEOUT_GETCAPS = 20000L;
-
     private AbstractWMSCapabilities capabilities;
     private Resource rootNode = null;
 
@@ -162,7 +157,21 @@ public class WebMapClient extends AbstractClient implements Client, Aggregate {
      */
     public WebMapClient(final URL serverURL, final ClientSecurity security,
             WMSVersion version, final AbstractWMSCapabilities capabilities) {
-        super(create(WMSProvider.PARAMETERS, serverURL, security));
+        this(serverURL, security, version, capabilities, null);
+    }
+
+    /**
+     * Builds a web map server with the given server url, version and getCapabilities response.
+     *
+     * @param serverURL The server base url.
+     * @param security The server security.
+     * @param version A string representation of the service version.
+     * @param capabilities A getCapabilities response.
+     * @param timeout defaut connection timeout in millisecond (default 20000).
+     */
+    public WebMapClient(final URL serverURL, final ClientSecurity security,
+            WMSVersion version, final AbstractWMSCapabilities capabilities, final Integer timeout) {
+        super(create(WMSProvider.PARAMETERS, serverURL, security, timeout));
 
         this.capabilities = capabilities;
 
@@ -220,7 +229,7 @@ public class WebMapClient extends AbstractClient implements Client, Aggregate {
 
     /**
      * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
-     * request if the server answers in less than 20s, otherwise throws a
+     * request if the server answers in less than timeout value * 2 (40s default), otherwise throws a
      * {@link CapabilitiesException}.
      *
      * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
@@ -228,25 +237,13 @@ public class WebMapClient extends AbstractClient implements Client, Aggregate {
      * @see {@link #getCapabilities(long)}
      */
     public AbstractWMSCapabilities getServiceCapabilities() throws CapabilitiesException{
-        return getServiceCapabilities(TIMEOUT_GETCAPS);
-    }
 
-    /**
-     * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
-     * request if the server answers before the specified timeout, otherwise throws a
-     * {@link CapabilitiesException}.
-     *
-     * @param timeout Timeout in milliseconds
-     * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
-     * @throws CapabilitiesException
-     */
-    public AbstractWMSCapabilities getServiceCapabilities(final long timeout) throws CapabilitiesException {
         if (capabilities != null) {
             return capabilities;
         }
         final GetCapabilitiesRequest getCaps = createGetCapabilities();
         getCaps.getHeaderMap().putAll(getRequestHeaderMap());
-        getCaps.setTimeout((int) (timeout & Integer.MAX_VALUE));
+        getCaps.setTimeout((int) ((getTimeOutValue() * 2) & Integer.MAX_VALUE));
 
         // Useful, because it serves as trace and URL validation
         try {
@@ -422,7 +419,6 @@ public class WebMapClient extends AbstractClient implements Client, Aggregate {
 
     @Override
     public Collection<org.apache.sis.storage.Resource> components() throws DataStoreException {
-        checkForUpdates();
         final Resource root = getRootResource();
         return (root == null) ? Collections.EMPTY_LIST : Collections.singletonList(root);
     }

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -106,7 +105,7 @@ public class ProjectedGeometry  {
                 dataCRS = JTS.findCoordinateReferenceSystem(geom);
             }
             if (dataCRS == null) {
-                throw new IllegalArgumentException("Geometry CRS is undefined");
+                throw new UndefinedCRSException("Geometry CRS is undefined");
             }
             if(dataCRS != null && this.dataCRS!=dataCRS){
                 this.dataCRS = dataCRS;
@@ -114,6 +113,8 @@ public class ProjectedGeometry  {
                 dataToObjective = (MathTransform2D) CRS.findOperation(dataCRS, context.getObjectiveCRS2D(), null).getMathTransform();
                 dataToDisplay = (MathTransform2D) CRS.findOperation(dataCRS, context.getDisplayCRS(), null).getMathTransform();
             }
+        } catch (UndefinedCRSException ex) {
+            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.FINE, "Geometry has no defined crs");
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "An error occurred while analysing input geometry referencing", ex);
         }
@@ -234,11 +235,11 @@ public class ProjectedGeometry  {
                 }
 
                 objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[nbIncRep+nbDecRep+1];
-                int n=0;
-                for (int i=0;i<nbIncRep;i++) {
+                int n = 0;
+                for (int i = 0; i < nbIncRep; i++) {
                     //check that the futur geometry will intersect the visible area
                     final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapIncObj[i]);
-                    if(candidate.intersects(context.objectiveJTSEnvelope)){
+                    if (candidate.intersects(context.objectiveJTSEnvelope)) {
                         org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapIncObj[i]);
                         trsGeom.setUserData(objCrs);
                         objectiveGeometryJTS[n++] = trsGeom;
@@ -248,22 +249,22 @@ public class ProjectedGeometry  {
                     objBase.setUserData(objCrs);
                     objectiveGeometryJTS[n++] = objBase;
                 }
-                for (int i=0;i<nbDecRep;i++) {
+                for (int i = 0; i < nbDecRep; i++) {
                     //check that the futur geometry will intersect the visible area
                     final org.locationtech.jts.geom.Envelope candidate = JTS.transform(objBounds, context.wraps.wrapDecObj[i]);
-                    if(candidate.intersects(context.objectiveJTSEnvelope)){
+                    if (candidate.intersects(context.objectiveJTSEnvelope)) {
                         org.locationtech.jts.geom.Geometry trsGeom = JTS.transform(objBase, context.wraps.wrapDecObj[i]);
                         trsGeom.setUserData(objCrs);
                         objectiveGeometryJTS[n++] = trsGeom;
                     }
                 }
-                if(n!=objectiveGeometryJTS.length){
+                if (n != objectiveGeometryJTS.length) {
                     //some of the wrapped geometries do not intersect the visible area
                     objectiveGeometryJTS = Arrays.copyOf(objectiveGeometryJTS, n);
                 }
 
 
-            }else{
+            } else {
                 //geometry is valid with no modifications or repetition
                 objectiveGeometryJTS = new org.locationtech.jts.geom.Geometry[1];
                 objectiveGeometryJTS[0] = objBase;

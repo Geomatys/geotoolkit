@@ -19,7 +19,6 @@ package org.geotoolkit.feature;
 import java.util.function.Function;
 import org.apache.sis.feature.Features;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.locationtech.jts.geom.Geometry;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URL;
@@ -34,10 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.internal.feature.ArrayFeature;
 import java.util.function.BiFunction;
-import org.geotoolkit.internal.feature.FeatureLoop;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,11 +41,15 @@ import java.util.stream.Collectors;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.DefaultFeatureType;
-import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.Geometries;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Static;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.internal.feature.ArrayFeature;
+import org.geotoolkit.internal.feature.FeatureLoop;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
@@ -571,16 +571,33 @@ public final class FeatureExt extends Static {
      * @throws IllegalStateException If we've found more than one geometry.
      */
     public static Optional<Object> getDefaultGeometryValue(Feature input) throws PropertyNotFoundException, IllegalStateException {
+        PropertyType geomType = null;
         Object geometry;
         try{
             geometry = input.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
         } catch(PropertyNotFoundException ex) {
             try {
-                final PropertyType geomType = FeatureExt.getDefaultGeometry(input.getType());
+                geomType = FeatureExt.getDefaultGeometry(input.getType());
                 geometry = input.getPropertyValue(geomType.getName().toString());
             } catch (RuntimeException e) {
                 e.addSuppressed(ex);
                 throw e;
+            }
+        }
+
+        if (geometry instanceof Geometry) {
+            //fix for bad readers who do not have crs set on geometries
+            Geometry g = (Geometry) geometry;
+            CoordinateReferenceSystem crs = Geometries.wrap(geometry).get().getCoordinateReferenceSystem();
+            if (crs == null) {
+                if (geomType == null) {
+                    crs = getCRS(input.getType().getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()));
+                } else {
+                    crs = getCRS(geomType);
+                }
+                if (crs != null) {
+                    g.setUserData(crs);
+                }
             }
         }
 

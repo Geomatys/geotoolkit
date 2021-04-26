@@ -87,6 +87,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
     private double[] fillValues;
     private boolean coverageIsHomogeneous = true;
     private boolean skipExistingTiles = false;
+    private boolean generateFromSource = false;
 
     public CoverageTileGenerator(GridCoverageResource resource) throws DataStoreException {
         ArgumentChecks.ensureNonNull("resource", resource);
@@ -164,6 +165,23 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         return fillValues;
     }
 
+    /**
+     * Set to true to always generate tiles from original resource.
+     * This will disable generation optimisation.
+     *
+     * @param generateFromSource
+     */
+    public void setGenerateFromSource(boolean generateFromSource) {
+        this.generateFromSource = generateFromSource;
+    }
+
+    /**
+     * @return true if tiles are always generated from original resource.
+     */
+    public boolean isGenerateFromSource() {
+        return generateFromSource;
+    }
+
     private static double getEmptyValue(SampleDimension dim){
         //dim = dim.forConvertedValues(true);
         double fillValue = Double.NaN;
@@ -223,17 +241,19 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
         final AtomicLong al = new AtomicLong();
         final Supplier<Float> progress = () -> (float) (al.get() / totalAsDouble *100.0);
 
-        GridCoverageResource resource = this.resource;
+        GridCoverageResource resourceCenter = this.resource;
+        GridCoverageResource resourceBorder = this.resource;
 
         for (final TileMatrix mosaic : mosaics) {
             if (resolutions == null || resolutions.contains(mosaic.getScale())) {
-                final GridCoverageResource source = resource;
                 final Rectangle rect;
                 try {
                     rect = TileMatrices.getTilesInEnvelope(mosaic, env);
                 } catch (NoSuchDataException ex) {
                     continue;
                 }
+                final GridCoverageResource sourceCenter = resourceCenter;
+                final GridCoverageResource sourceBorder = resourceBorder;
 
                 final long nbTile = ((long)rect.width) * ((long)rect.height);
                 final long eventstep = Math.min(1000, Math.max(1, nbTile/100l));
@@ -244,7 +264,10 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                                 final long x = rect.x + (value % rect.width);
                                 final long y = rect.y + (value / rect.width);
 
-                                Tile data;
+                                final boolean isBorderTile = (x == rect.x || x == (rect.x + rect.width-1))
+                                                          || (y == rect.y || y == (rect.y + rect.height-1));
+
+                                Tile data = null;
                                 try {
                                     if (skipExistingTiles && !mosaic.isMissing((int) x, (int) y)) {
                                         //tile already exist
@@ -253,7 +276,7 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
 
                                     final Point coord = new Point((int)x, (int)y);
                                     try {
-                                        data = generateTile(pyramid, mosaic, coord, source);
+                                        data = generateTile(pyramid, mosaic, coord, isBorderTile ? sourceBorder : sourceCenter);
                                     } catch (Exception ex) {
                                         data = TileInError.create(coord, null, ex);
                                     }
@@ -275,22 +298,25 @@ public class CoverageTileGenerator extends AbstractTileGenerator {
                     listener.progressing(new ProcessEvent(DUMMY, v+"/"+total+" mosaic="+mosaic.getIdentifier()+" scale="+mosaic.getScale(), progress.get()  ));
                 }
 
-                //modify context
-                final DefaultTileMatrixSet pm = new DefaultTileMatrixSet(pyramid.getCoordinateReferenceSystem());
-                pm.getMosaicsInternal().add(mosaic);
-                final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
-                r.setSampleDimensions(resource.getSampleDimensions());
-                r.getModels().add(pm);
+                if (!generateFromSource) {
+                    //modify context
+                    final DefaultTileMatrixSet pm = new DefaultTileMatrixSet(pyramid.getCoordinateReferenceSystem());
+                    pm.getMosaicsInternal().add(mosaic);
+                    final InMemoryPyramidResource r = new InMemoryPyramidResource(NamesExt.create("test"));
+                    r.setSampleDimensions(resourceCenter.getSampleDimensions());
+                    r.getModels().add(pm);
 
-                //we must still use the original resource for generation because
-                //lower level tiles may not be sufficient to generate border tiles
-                final AggregatedCoverageResource aggregated = new AggregatedCoverageResource();
-                aggregated.setMode(AggregatedCoverageResource.Mode.ORDER);
-                aggregated.add(r);
-                aggregated.add(this.resource);
-                aggregated.setInterpolation(interpolation.toSis());
+                    //we must still use the original resource for generation because
+                    //lower level tiles may not be sufficient to generate border tiles
+                    final AggregatedCoverageResource aggregated = new AggregatedCoverageResource();
+                    aggregated.setMode(AggregatedCoverageResource.Mode.ORDER);
+                    aggregated.add(r);
+                    aggregated.add(this.resource);
+                    aggregated.setInterpolation(interpolation.toSis());
 
-                resource = aggregated;
+                    resourceCenter = r;
+                    resourceBorder = aggregated;
+                }
             }
         }
     }
