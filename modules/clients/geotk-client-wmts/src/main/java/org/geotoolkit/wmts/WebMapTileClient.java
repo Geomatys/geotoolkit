@@ -92,7 +92,7 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
      * @throws IllegalArgumentException if the version specified is not applyable.
      */
     public WebMapTileClient(final URL serverURL, final ClientSecurity security, final WMTSVersion version) {
-        this(serverURL, security, version, null, false);
+        this(serverURL, security, version, null, false, null);
     }
 
     /**
@@ -102,7 +102,7 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
      * @param version The service version.
      */
     public WebMapTileClient(final URL serverURL, final WMTSVersion version) {
-        this(serverURL, version, null);
+        this(serverURL, null, version, null, false, null);
     }
 
     /**
@@ -114,7 +114,7 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
      * @throws IllegalArgumentException if the version specified is not applyable.
      */
     public WebMapTileClient(final URL serverURL, final String version, final Capabilities capabilities) {
-        this(serverURL, WMTSVersion.getVersion(version), capabilities);
+        this(serverURL, null, WMTSVersion.getVersion(version), capabilities, false, null);
     }
 
     /**
@@ -125,7 +125,7 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
      * @param capabilities A getCapabilities response.
      */
     public WebMapTileClient(final URL serverURL, final WMTSVersion version, final Capabilities capabilities) {
-        this(serverURL,null,version,capabilities,false);
+        this(serverURL,null,version,capabilities,false, null);
     }
 
     /**
@@ -138,9 +138,24 @@ public class WebMapTileClient extends AbstractClient implements Client, Aggregat
      */
     public WebMapTileClient(final URL serverURL, final ClientSecurity security,
             final WMTSVersion version, final Capabilities capabilities, boolean cacheImage) {
+        this(serverURL, security, version, capabilities, cacheImage, null);
+    }
+
+    /**
+     * Builds a web map server with the given server url, version and getCapabilities response.
+     *
+     * @param serverURL The server base url.
+     * @param security The server security.
+     * @param version A string representation of the service version.
+     * @param capabilities A getCapabilities response.
+     * @param timeout defaut connection timeout in millisecond (default 20000).
+     */
+    public WebMapTileClient(final URL serverURL, final ClientSecurity security,
+            final WMTSVersion version, final Capabilities capabilities, boolean cacheImage, final Integer timeout) {
         super(create(WMTSProvider.PARAMETERS, serverURL, security));
         parameters.getOrCreate(WMTSProvider.VERSION).setValue(version.getCode());
         parameters.getOrCreate(WMTSProvider.IMAGE_CACHE).setValue(cacheImage);
+        parameters.getOrCreate(WMTSProvider.TIMEOUT).setValue(timeout);
         this.capabilities = capabilities;
     }
 

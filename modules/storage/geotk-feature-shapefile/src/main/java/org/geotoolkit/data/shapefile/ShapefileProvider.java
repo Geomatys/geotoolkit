@@ -321,17 +321,14 @@ public class ShapefileProvider extends DataStoreProvider implements FileFeatureS
 
         if (isCreateSpatialIndex == null) {
             // should not be needed as default is TRUE
-            assert (true);
             isCreateSpatialIndex = Boolean.TRUE;
         }
         if (dbfCharset == null) {
-            assert (true);
             // this should not happen as Charset.forName("ISO-8859-1") was used
             // as the param default?
             dbfCharset = Charset.forName("ISO-8859-1");
         }
         if (isMemoryMapped == null) {
-            assert (true);
             // this should not happen as false was the default
             isMemoryMapped = Boolean.FALSE;
         }
