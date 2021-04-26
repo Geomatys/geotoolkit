@@ -18,6 +18,7 @@ package org.geotoolkit.wps.converters.inputs.literal;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.apache.sis.util.UnconvertibleObjectException;
 
@@ -28,12 +29,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
  *
  * @author Guilhem Legal
  */
-public class StringToBooleanArrayConverter extends SimpleConverter<String, boolean[]> {
-
-    @Override
-    public Class<String> getSourceClass() {
-        return String.class;
-    }
+public class StringToBooleanArrayConverter extends StringToNumberSequenceConverter<boolean[]> {
 
     @Override
     public Class<boolean[]> getTargetClass() {
@@ -41,33 +37,18 @@ public class StringToBooleanArrayConverter extends SimpleConverter<String, boole
     }
 
     @Override
-    public boolean[] apply(final String source) throws UnconvertibleObjectException {
+    protected boolean[] convertSequence(Stream<String> values) {
+        final Boolean[] booleanList = values.map(Boolean::valueOf)
+                .toArray(Boolean[]::new);
 
-        if (source != null && !source.trim().isEmpty()) {
-
-            final List<Boolean> booleanList = new LinkedList<Boolean>();
-            if (source.contains(",")) {
-                final String[] sourceSplit = source.split(",");
-
-                for (final String str : sourceSplit) {
-                    booleanList.add(Boolean.parseBoolean(str.trim()));
-                }
-            } else {
-
-                booleanList.add(Boolean.parseBoolean(source.trim()));
+        if (booleanList.length < 1) return new boolean[0];
+        else if (booleanList.length == 1) return new boolean[] { booleanList[0] };
+        else {
+            final boolean[] outArray = new boolean[booleanList.length];
+            for (int i = 0; i < booleanList.length; i++) {
+                outArray[i] = booleanList[i];
             }
-
-            if (!booleanList.isEmpty()) {
-                final boolean[] outArray = new boolean[booleanList.size()];
-                for (int i = 0; i < booleanList.size(); i++) {
-                    outArray[i] = booleanList.get(i);
-                }
-                return outArray;
-            } else {
-                throw new UnconvertibleObjectException("Invalid source String : "+source);
-            }
+            return outArray;
         }
-        return new boolean[0];
     }
-
 }
