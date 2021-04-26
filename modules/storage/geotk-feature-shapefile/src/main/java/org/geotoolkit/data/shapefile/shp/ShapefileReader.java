@@ -151,13 +151,12 @@ public final class ShapefileReader implements Closeable{
         this.randomAccessEnabled = channel instanceof FileChannel;
 
         try {
-            header = readHeader(channel, strict);
-
             if(shxChannel != null){
                 shxReader = new ShxReader(shxChannel, true);
             }else{
                 currentShape = UNKNOWN;
             }
+            header = readHeader(channel, strict);
 
             fileShapeType = header.getShapeType();
             handler = fileShapeType.getShapeHandler(read3D,resample);
@@ -297,14 +296,26 @@ public final class ShapefileReader implements Closeable{
      */
     @Override
     public void close() throws IOException {
+        Exception error = null;
         if (channel!= null && channel.isOpen()) {
-            channel.close();
+            try {
+                channel.close();
+                channel = null;
+            } catch (IOException | RuntimeException e) {
+                error = e;
+            }
         }
-        if(shxReader != null){
-            shxReader.close();
+        if (shxReader != null) {
+            try {
+                shxReader.close();
+                shxReader = null;
+            } catch (IOException | RuntimeException e) {
+                error.addSuppressed(e);
+            }
         }
-        shxReader = null;
-        channel = null;
+        if (error instanceof IOException) throw (IOException) error;
+        else if (error instanceof RuntimeException) throw (RuntimeException) error;
+        else if (error != null) throw new IOException(error);
     }
 
     @Override

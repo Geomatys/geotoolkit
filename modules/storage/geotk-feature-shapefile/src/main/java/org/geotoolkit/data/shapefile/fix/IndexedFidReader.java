@@ -27,16 +27,14 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
-
-import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
-import org.geotoolkit.data.shapefile.FeatureIDReader;
-import org.geotoolkit.data.shapefile.lock.ShpFileType;
-import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
-import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.apache.sis.internal.storage.io.IOUtilities;
 import org.geotoolkit.data.dbf.Closeable;
-
+import org.geotoolkit.data.shapefile.FeatureIDReader;
 import static org.geotoolkit.data.shapefile.ShapefileProvider.*;
+import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.data.shapefile.shp.ShapefileReader;
+import org.geotoolkit.storage.feature.FeatureStoreRuntimeException;
 
 /**
  * This object reads from a file the fid of a feature in a shapefile.
@@ -237,7 +235,6 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     }
 
     public void goTo(final long recno) throws IOException {
-        assert recno<count;
         if (readChannel instanceof FileChannel) {
             long newPosition = IndexedFidWriter.HEADER_SIZE
                     + (recno * IndexedFidWriter.RECORD_SIZE);

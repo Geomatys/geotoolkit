@@ -250,13 +250,11 @@ public class IndexedFidWriter implements Closeable {
 
         ShxReader indexFile = null;
         StorageFile file = locker.getStorageFile(FIX);
-        IndexedFidWriter writer = null;
-
         try {
             indexFile = locker.getSHXReader(false);
 
             // writer closes channel for you.
-            writer = locker.getFIXWriter(file);
+            final IndexedFidWriter writer = locker.getFIXWriter(file);
 
             for (int i = 0, j = indexFile.getRecordCount(); i < j; i++) {
                 writer.next();
@@ -264,9 +262,6 @@ public class IndexedFidWriter implements Closeable {
 
         } finally {
             try {
-                if (writer != null) {
-                    writer.close();
-                }
                 locker.disposeReaderAndWriters();
                 locker.replaceStorageFiles();
             } finally {

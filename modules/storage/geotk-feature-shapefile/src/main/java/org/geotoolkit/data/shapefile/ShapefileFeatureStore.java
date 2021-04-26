@@ -18,6 +18,7 @@
 
 package org.geotoolkit.data.shapefile;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -443,7 +444,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
             throw new DataStoreException("Cannot create a shapefile whose geometry type is "+ geomType);
         }
 
-        try{
+        try (Closeable disposeLocker = locker::disposeReaderAndWriters) {
             final StorageFile shpStoragefile = locker.getStorageFile(SHP);
             final StorageFile shxStoragefile = locker.getStorageFile(SHX);
             final StorageFile dbfStoragefile = locker.getStorageFile(DBF);
@@ -476,9 +477,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
                         writer.writeHeaders(transformedBounds, shapeType, 0, 100);
                     }
-                } finally {
-                    assert !shpChannel.isOpen();
-                    assert !shxChannel.isOpen();
                 }
             }
 
@@ -507,10 +505,15 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
             //write dbf encoding .cpg
             CpgFiles.write(dbfCharset, cpgStoragefile.getFile());
 
-            locker.disposeReaderAndWriters();
-            locker.replaceStorageFiles();
         }catch(IOException ex){
             throw new DataStoreException(ex);
+        }
+
+        // Once all writings have succeeded, we can commit them
+        try {
+            locker.replaceStorageFiles();
+        } catch (IOException e) {
+            throw new DataStoreException("Failed commiting file changes", e);
         }
 
         //force reading it again since the file type may be a little different
@@ -565,33 +568,26 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
 
         //read all attributes///////////////////////////////////////////////////
         final AccessManager locker = shpFiles.createLocker();
+        try (Closeable disposeLocker = locker::disposeReaderAndWriters) {
+            final ShapefileReader shp = locker.getSHPReader(true, useMemoryMappedBuffer, true, null);
+            final DbaseFileReader dbf = locker.getDBFReader(useMemoryMappedBuffer, dbfCharset);
 
-        final ShapefileReader shp;
-        final DbaseFileReader dbf;
-        try {
-            shp = locker.getSHPReader(true, useMemoryMappedBuffer, true, null);
-            dbf = locker.getDBFReader(useMemoryMappedBuffer, dbfCharset);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
+            CoordinateReferenceSystem crs = null;
 
-        CoordinateReferenceSystem crs = null;
-
-        //read the projection
-        final boolean qpjExists = shpFiles.exists(QPJ);
-        final boolean prjExists = shpFiles.exists(PRJ);
-        if (qpjExists || prjExists) {
-            try (final ReadableByteChannel channel = qpjExists ? shpFiles.getReadChannel(QPJ) : shpFiles.getReadChannel(PRJ)) {
-                crs = PrjFiles.read(channel, true);
-            } catch (IOException ex) {
-                getLogger().log(Level.WARNING, ex.getMessage(), ex);
-                crs = null;
+            //read the projection
+            final boolean qpjExists = shpFiles.exists(QPJ);
+            final boolean prjExists = shpFiles.exists(PRJ);
+            if (qpjExists || prjExists) {
+                try (final ReadableByteChannel channel = qpjExists ? shpFiles.getReadChannel(QPJ) : shpFiles.getReadChannel(PRJ)) {
+                    crs = PrjFiles.read(channel, true);
+                } catch (IOException ex) {
+                    getLogger().log(Level.WARNING, ex.getMessage(), ex);
+                    crs = null;
+                }
             }
-        }
 
-        final AttributeType geomDescriptor;
+            final AttributeType geomDescriptor;
 
-        try {
             //get the descriptor from shp
             geomDescriptor = shp.getHeader().createDescriptor(crs);
             builder.addAttribute(geomDescriptor).addRole(AttributeRole.DEFAULT_GEOMETRY);
@@ -603,9 +599,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements Resou
                     builder.addAttribute(at);
                 }
             }
-        } finally {
-            //we have finish readring what we want, dispose everything
-            locker.disposeReaderAndWriters();
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
         }
 
         return builder.build();
