@@ -19,9 +19,16 @@ public abstract class StringToNumberSequenceConverter<T> extends SimpleConverter
         try {
             return convertSequence(source == null ? Stream.empty() : SEPARATOR_REGEX.splitAsStream(source));
         } catch (NullPointerException | NumberFormatException e) {
-            throw new UnconvertibleObjectException("Cannot convert input text to a sequence of numbers", e);
+            throw new UnconvertibleObjectException("Cannot convert input text to a sequence of numbers: "+truncate(source, 50), e);
         }
     }
 
     protected abstract T convertSequence(Stream<String> values);
+
+    private static String truncate(String source, int limit) {
+        if (source == null) return "null";
+        else if (source.trim().isEmpty()) return "[empty string]";
+        else if (limit > 0 && source.length() > limit) return source.substring(0, limit)+"...";
+        else return source;
+    }
 }
