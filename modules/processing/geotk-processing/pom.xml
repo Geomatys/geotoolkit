@@ -113,7 +113,7 @@
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
-            <artifactId>cdm</artifactId>
+            <artifactId>cdm-core</artifactId>
         </dependency>
 
 

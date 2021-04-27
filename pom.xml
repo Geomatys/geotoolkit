@@ -187,8 +187,9 @@
     <ucar.repository.url>https://artifacts.unidata.ucar.edu/repository/unidata-releases</ucar.repository.url>
 
     <!-- associated projects dependencies -->
-    <geoapi.version>4.0-M15</geoapi.version>
-    <sis.version>2.0-M0076</sis.version>
+    <geoapi.version>4.0-M16</geoapi.version>
+    <sis.version>2.0-M0077</sis.version>
+    <sis.build.helper.version>0.8</sis.build.helper.version>
     <sis.non-free.version>1.0</sis.non-free.version>
 
     <!-- third party dependencies versions -->
@@ -206,6 +207,7 @@
     <jai.imageio.version>1.1.1</jai.imageio.version>
     <java.source>1.8</java.source>
     <java.target>1.8</java.target>
+    <javax.activation>1.2.2</javax.activation>  <!-- Should be version number used by JAXB. -->
     <jmh.version>1.25.1</jmh.version>
     <log4j.version>1.2.17</log4j.version>
     <lucene.version>8.4.0</lucene.version>
@@ -405,11 +407,16 @@
         <version>${jackson.version}</version>
       </dependency>
 
-      <!-- Web -->
+      <!-- Misc. -->
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.activation</groupId>
+        <artifactId>jakarta.activation-api</artifactId>
+        <version>${javax.activation}</version>
       </dependency>
 
       <!-- Logging -->
