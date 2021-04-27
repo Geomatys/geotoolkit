@@ -7,7 +7,7 @@ import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 public abstract class StringToNumberSequenceConverter<T> extends SimpleConverter<String, T> {
 
-    static final Pattern SEPARATOR_REGEX = Pattern.compile("[,;\\s]+");
+    static final Pattern SEPARATOR_REGEX = Pattern.compile("\\s*[,;\\s]\\s*");
 
     @Override
     public Class<String> getSourceClass() {

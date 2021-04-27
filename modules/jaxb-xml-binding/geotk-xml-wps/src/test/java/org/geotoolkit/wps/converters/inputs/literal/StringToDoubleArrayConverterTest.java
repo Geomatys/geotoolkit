@@ -20,6 +20,8 @@ import java.util.Arrays;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
+
+import static java.lang.Double.NaN;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -87,5 +89,11 @@ public class StringToDoubleArrayConverterTest extends org.geotoolkit.test.TestBa
     public void testSpaceOrTabSeparator() {
         final double[] result = converter.convert("4.4 3.3\t10000", null);
         assertArrayEquals(new double[]{4.4, 3.3, 10_000}, result, 1e-1);
+    }
+
+    @Test
+    public void testEmptyTokenIsConvertedToNaN() {
+        final double[] result = converter.convert("3.12, 4.14, , .11, , ,,7.4,,5.6", null);
+        assertArrayEquals(new double[]{3.12, 4.14, NaN, .11, NaN, NaN, NaN, 7.4,NaN, 5.6}, result, 1e-2);
     }
 }
