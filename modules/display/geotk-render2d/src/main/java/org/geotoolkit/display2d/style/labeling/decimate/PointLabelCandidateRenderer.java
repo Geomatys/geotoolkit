@@ -17,24 +17,26 @@
 
 package org.geotoolkit.display2d.style.labeling.decimate;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Point;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.opengis.referencing.operation.TransformException;
-import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -63,14 +65,14 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         } catch (TransformException ex) {
             Logging.getLogger("org.geotoolkit.display2d.style.labeling.decimate").log(Level.WARNING, null, ex);
         }
-        if(shapes == null) return null;
+        if (shapes == null) return null;
 
         final List<Candidate> candidates = new ArrayList<>(shapes.length);
 
-        for(int i=0; i<shapes.length; i++){
+        for (int i = 0; i < shapes.length; i++) {
             final Geometry shape = shapes[i];
             final Point pt = GO2Utilities.getBestPoint(shape);
-            if(pt==null || pt.isEmpty()) continue;
+            if (pt == null || pt.isEmpty()) continue;
             final Coordinate point = pt.getCoordinate();
 
             final FontMetrics metric = context.getFontMetrics(label.getTextFont());
@@ -83,9 +85,9 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
             refX = refX + label.getDisplacementX();
             refY = refY - label.getDisplacementY();
 
-            refX = refX - (label.getAnchorX()*textWidth);
+            refX = refX - (label.getAnchorX() * textWidth);
             //text is draw above reference point so use +
-            refY = refY + (label.getAnchorY()*(textUpper));
+            refY = refY + (label.getAnchorY() * textUpper);
 
             candidates.add(new PointCandidate(label,
                     textWidth,
@@ -100,7 +102,7 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
 
     @Override
     public void render(final Candidate candidate) {
-        if(!(candidate instanceof PointCandidate)) return;
+        if (!(candidate instanceof PointCandidate)) return;
 
         final PointCandidate pointCandidate = (PointCandidate) candidate;
         final PointLabelDescriptor label = pointCandidate.getDescriptor();
@@ -129,18 +131,20 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
 //                (int)pointCandidate.getCorrectedY());
 
         //rotation--------------------------------------------------------------
-        if(rotation != 0){
+        if (rotation != 0) {
             g2.rotate(rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
         }
 
-        g2.setFont(label.getTextFont());
+        final String text = label.getText();
+        final Font font = label.getTextFont();
+        g2.setFont(font);
 
         //paint halo------------------------------------------------------------
         final float haloWidth = label.getHaloWidth();
-        if(haloWidth > 0){
+        if (haloWidth > 0) {
             final float haloWidth2 = haloWidth+haloWidth;
-            FontMetrics metric = g2.getFontMetrics();
-            final Rectangle2D bounds = metric.getStringBounds(label.getText(), g2);
+            final GlyphVector glyphVector = font.createGlyphVector(g2.getFontRenderContext(), text);
+            final Rectangle2D bounds = glyphVector.getVisualBounds();
             Shape shape = new RoundRectangle2D.Double(
                     bounds.getMinX() + pointCandidate.getCorrectedX() - haloWidth,
                     bounds.getMinY() + pointCandidate.getCorrectedY() - haloWidth,
@@ -155,10 +159,10 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
 
         //paint text------------------------------------------------------------
         g2.setPaint(label.getTextPaint());
-        g2.drawString(label.getText(), pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+        g2.drawString(text, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
 
         //reset rotation
-        if(rotation != 0){
+        if (rotation != 0) {
             g2.rotate(-rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
         }
 
