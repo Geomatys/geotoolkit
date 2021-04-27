@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -81,29 +82,28 @@ public class ShapeFileIndexer {
             throw new IOException("You have to set a shape file name!");
         }
 
-        final AccessManager locker = shpFiles.createLocker();
         int cnt = 0;
+        final AccessManager locker = shpFiles.createLocker();
+        try (Closeable disposeLocker = locker::disposeReaderAndWriters) {
+            // Temporary file for building...
+            final StorageFile storage = locker.getStorageFile(this.idxType.shpFileType);
+            final Path treeFile = storage.getFile();
 
-        // Temporary file for building...
-        final StorageFile storage = locker.getStorageFile(this.idxType.shpFileType);
-        final Path treeFile = storage.getFile();
-
-        try (ShapefileReader reader = locker.getSHPReader(true, false, false, null)) {
-            switch (idxType) {
-            case QIX:
-                cnt = this.buildQuadTree(locker,reader, treeFile, verbose);
-                break;
-            default:
-                throw new IllegalArgumentException("NONE is not a legal index choice");
+            try (ShapefileReader reader = locker.getSHPReader(true, false, false, null)) {
+                switch (idxType) {
+                    case QIX:
+                        cnt = this.buildQuadTree(locker, reader, treeFile, verbose);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("NONE is not a legal index choice");
+                }
+            } catch (DataStoreException ex) {
+                if (ex.getCause() instanceof IOException) throw (IOException) ex.getCause();
+                else throw new IOException(ex);
             }
-        } catch(DataStoreException ex){
-            //do nothing
         }
 
-        // Final index file
-        locker.disposeReaderAndWriters();
         locker.replaceStorageFiles();
-
         return cnt;
     }
 

@@ -17,6 +17,7 @@
 package org.geotoolkit.storage;
 
 import java.io.Serializable;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,6 +52,7 @@ import org.geotoolkit.storage.multires.MultiResolutionModel;
 import org.geotoolkit.storage.multires.MultiResolutionResource;
 import org.geotoolkit.storage.multires.ProgressiveResource;
 import org.geotoolkit.storage.multires.TileFormat;
+import org.geotoolkit.storage.multires.TileMatrixSet;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.FeatureType;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -59,7 +61,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
-import org.geotoolkit.storage.multires.TileMatrixSet;
 
 
 /**
@@ -78,6 +79,34 @@ public final class DataStores extends Static {
      * Do not allow instantiation of this class.
      */
     private DataStores() {
+    }
+
+    /**
+     * Search if given exception is caused by an interruption
+     * or if current thread is interrupted.
+     * @param ex can be null
+     * @return true if interrupted
+     */
+    public static boolean isInterrupted(java.lang.Throwable ex) {
+        return Thread.currentThread().isInterrupted() || isInterruptedException(ex);
+    }
+
+    private static boolean isInterruptedException(java.lang.Throwable ex) {
+        if (ex != null) {
+            if (ex instanceof ClosedByInterruptException
+               || ex instanceof InterruptedStoreException
+               || ex instanceof InterruptedException
+               || isInterruptedException(ex.getCause())) {
+                return true;
+            } else {
+                for (Throwable t : ex.getSuppressed()) {
+                    if (isInterruptedException(t)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static void walk(Resource root, ResourceWalker walker) throws DataStoreException {
@@ -99,7 +128,7 @@ public final class DataStores extends Static {
                             final VisitOption copt = walkInternal(r, walker);
                             if (copt == VisitOption.FINISH) return VisitOption.FINISH;
                         }
-                    } catch (DataStoreException ex) {
+                    } catch (Exception ex) {
                         ResourceWalker.ErrorOption erropt = walker.errorOccured(agg, ex);
                         if (null != erropt) switch (erropt) {
                             case SKIP:   return VisitOption.CONTINUE;

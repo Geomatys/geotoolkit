@@ -26,7 +26,6 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.annotation.*;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -58,7 +57,7 @@ public class XMLPyramidSet {
     public String getFormatName() {
         final String format = ref.getPreferredFormat();
         if(format!=null && !format.isEmpty()) return format;
-        return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "tiff" : "PNG";
+        return ref.getPackMode().equals("GEOPHYSICS") ? "tiff" : "PNG";
     }
 
     public XMLCoverageResource getRef() {

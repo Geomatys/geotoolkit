@@ -62,7 +62,7 @@ import org.geotoolkit.ows.xml.RequestBase;
 public abstract class RequestBaseType implements RequestBase {
 
     @XmlElement(name = "Extension")
-    private ExtensionType extension;
+    protected ExtensionType extension;
     @XmlAttribute(required = true)
     protected String service;
     @XmlAttribute(required = true)

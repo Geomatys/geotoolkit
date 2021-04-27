@@ -25,6 +25,9 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
 import org.opengis.feature.FeatureType;
+import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
@@ -128,7 +131,25 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
     }
 
     @Override
-    public PropertyTypeBuilder expectedType(FeatureType type, FeatureTypeBuilder addTo) {
-        return addTo.addProperty((PropertyType) evaluate(type));
+    public PropertyTypeBuilder expectedType(FeatureType valueType, FeatureTypeBuilder addTo) {
+        PropertyType pt = (PropertyType) evaluate(valueType);
+        if (pt != null) return addTo.addProperty(pt);
+        try {
+            PropertyType type = valueType.getProperty(property);        // May throw IllegalArgumentException.
+            while (type instanceof Operation) {
+                final IdentifiedType result = ((Operation) type).getResult();
+                if (result != type && result instanceof PropertyType) {
+                    type = (PropertyType) result;
+                } else if (result instanceof FeatureType) {
+                    return addTo.addAssociation((FeatureType) result).setName(property);
+                } else {
+                    return null;
+                }
+            }
+            return addTo.addProperty(type);
+        } catch (PropertyNotFoundException ex) {
+            return addTo.addAttribute(Object.class).setName(property);
+        }
+
     }
 }

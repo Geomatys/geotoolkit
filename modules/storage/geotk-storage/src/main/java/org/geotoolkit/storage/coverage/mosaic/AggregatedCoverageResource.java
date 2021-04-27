@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2019, Geomatys
+ *    (C) 2019-2021, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,20 +22,13 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.measure.Quantity;
@@ -56,6 +49,7 @@ import org.apache.sis.image.ImageCombiner;
 import org.apache.sis.image.Interpolation;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.image.WritablePixelIterator;
+import org.apache.sis.internal.storage.ResourceOnFileSystem;
 import org.apache.sis.measure.Quantities;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.referencing.CRS;
@@ -77,8 +71,9 @@ import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.EstimatedGridGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.image.BufferedImages;
-import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.storage.DataStores;
+import org.geotoolkit.storage.InterruptedStoreException;
 import org.geotoolkit.storage.event.AggregationEvent;
 import org.geotoolkit.storage.event.ContentEvent;
 import org.geotoolkit.storage.event.ModelEvent;
@@ -91,6 +86,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.Metadata;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
@@ -101,10 +97,13 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 /**
+ * View a collection of GridCoverageResource as a single one.
  *
  * @author Johann Sorel (Geomatys)
  */
 public final class AggregatedCoverageResource implements WritableAggregate, GridCoverageResource {
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
     public static enum Mode {
         /**
@@ -119,6 +118,26 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
          */
         SCALE
     }
+
+    /**
+     * Based on sample dimension information, we can define
+     * the most appropriate merge operation.
+     */
+    private static enum MergingMode {
+        COLORED,
+        SAMPLED,
+        CONVERTED
+    }
+
+    /**
+     * Compare by scale then by coverage area
+     * if scales are equivalent, priorize data source with more overlap.
+     */
+    private static final Comparator<SourceToSort> SCALEAREA_COMPARATOR = (s1, s2) -> {
+            int c = Double.compare(s1.scaleRatio, s2.scaleRatio);
+            if (c == 0) c = Double.compare(s2.areaRatio, s1.areaRatio);
+            return c;
+        };
 
     private static final Set<String> COLORED_SAMPLE_NAMES = new HashSet<>();
     static {
@@ -152,6 +171,16 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private boolean photographic = false;
     /** See {@link #isHomogeneousSources()} */
     private boolean homogeneous = false;
+    /**
+     * Find a better way to control error recovery in the aggregation process.
+     */
+    private boolean neverfail = true;
+
+    /*
+     * list resources used more then once in the process
+     * this list is used in the aggregation process to keep in cache coverage read
+     */
+    private final Set<Entry<GridCoverageResource,Integer>> reusable = new HashSet<>();
 
 
     public static GridCoverageResource create(CoordinateReferenceSystem resultCrs, GridCoverageResource ... resources) throws DataStoreException, TransformException {
@@ -176,6 +205,10 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     }
 
     public AggregatedCoverageResource() {
+    }
+
+    public AggregatedCoverageResource(List<SampleDimension> sampleDimensions) {
+        this.bands.addAll(toBands(sampleDimensions));
     }
 
     @Override
@@ -216,18 +249,25 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     public synchronized void setSampleDimensions(List<SampleDimension> sampleDimensions) throws DataStoreException {
         eraseCaches();
         if (bands.isEmpty()) {
-            //create virtual bands with no datas
-            for (SampleDimension sd : sampleDimensions) {
-                final VirtualBand band = new VirtualBand();
-                band.userDefinedSampleDimension = sd;
-                bands.add(band);
-            }
+            bands.addAll(toBands(sampleDimensions));
         } else if (bands.size() != sampleDimensions.size()) {
             throw new DataStoreException("Provided dimensions do not match virtual bands size");
         }
         for (int i = 0,n = sampleDimensions.size(); i < n; i++) {
             bands.get(i).userDefinedSampleDimension = sampleDimensions.get(i);
         }
+    }
+
+    private static List<VirtualBand> toBands(List<SampleDimension> sampleDimensions) {
+        final List<VirtualBand> bands = new ArrayList<>();
+        if (sampleDimensions != null) {
+            for (SampleDimension sd : sampleDimensions) {
+                final VirtualBand band = new VirtualBand();
+                band.userDefinedSampleDimension = sd;
+                bands.add(band);
+            }
+        }
+        return bands;
     }
 
     @Override
@@ -294,6 +334,22 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         if (sendEvent) {
             listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, resource), AggregationEvent.class);
         }
+        eraseCaches();
+    }
+
+    /**
+     * Remove all resources from aggregation.
+     * This method does not delete any data.
+     */
+    public synchronized void removeAll() {
+        final Set<Resource> removed = new HashSet<>();
+        for (VirtualBand band : bands) {
+            for (Source source : band.sources) {
+                removed.add(source.resource);
+            }
+            band.sources.clear();
+        }
+        listeners.fire(new AggregationEvent(this, AggregationEvent.TYPE_REMOVE, removed.toArray(new Resource[0])), AggregationEvent.class);
         eraseCaches();
     }
 
@@ -431,7 +487,32 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         tree = new Quadtree();
 
-        final Set<GridCoverageResource> components = components();
+        final Map<GridCoverageResource, GridGeometry> components = new HashMap<>();
+        for (VirtualBand band : bands) {
+            for (Source source : band.sources) {
+                try {
+                    final GridGeometry gridGeometry = source.resource.getGridGeometry();
+                    if (!(gridGeometry.isDefined(GridGeometry.CRS) && gridGeometry.isDefined(GridGeometry.ENVELOPE))) {
+                        throw new DataStoreException("Resource has no defined CRS and Envelope.");
+                    }
+                    final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+                    if (crs instanceof ImageCRS) {
+                        throw new DataStoreException("CRS " + crs.getClass() + " can not be used in aggregation, resource will be ignored.");
+                    } else if (crs != null && crs.getCoordinateSystem().getDimension() != 2) {
+                        throw new DataStoreException("CRS " + crs.getName()+ " can not be used in aggregation it is not 2D, resource will be ignored.");
+                    }
+                    components.put(source.resource, gridGeometry);
+                } catch (Exception ex) {
+                    if (neverfail) {
+                        this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null);
+                        LOGGER.log(Level.INFO, "Failed to extract grid geometry crs or envelope from resource " + resourceName(source.resource) + " : " + ex.getMessage());
+                        source.inMetaError = true;
+                    } else {
+                        throw ex;
+                    }
+                }
+            }
+        }
 
         if (components.isEmpty()) {
             //no data yet
@@ -439,10 +520,13 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             return;
         } else if (components.size() == 1) {
             //copy exact definition
-            GridCoverageResource resource = components.iterator().next();
-            if (outputCrs == null || Utilities.equalsIgnoreMetadata(outputCrs, resource.getGridGeometry().getCoordinateReferenceSystem())) {
-                this.cachedGridGeometry = resource.getGridGeometry();
-                tree.insert(new JTSEnvelope2D(resource.getGridGeometry().getEnvelope()), resource);
+            final Map.Entry<GridCoverageResource, GridGeometry> entry = components.entrySet().iterator().next();
+            final GridCoverageResource resource = entry.getKey();
+            final GridGeometry gridGeometry = entry.getValue();
+            if (outputCrs == null || Utilities.equalsIgnoreMetadata(outputCrs, gridGeometry.getCoordinateReferenceSystem())) {
+                this.cachedGridGeometry = gridGeometry;
+                final JTSEnvelope2D key = new JTSEnvelope2D(gridGeometry.getEnvelope());
+                tree.insert(key, new IndexedResource(key, resource));
                 return;
             }
         }
@@ -451,8 +535,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             //use most common crs
             //TODO find a better approach to determinate a common crs
             final FrequencySortedSet<CoordinateReferenceSystem> map = new FrequencySortedSet<>();
-            for (GridCoverageResource resource : components) {
-                map.add(resource.getGridGeometry().getCoordinateReferenceSystem());
+            for (Map.Entry<GridCoverageResource, GridGeometry> entry : components.entrySet()) {
+                map.add(entry.getValue().getCoordinateReferenceSystem());
             }
             outputCrs = map.last();
         }
@@ -465,13 +549,14 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         Arrays.fill(estimatedResolution, Double.POSITIVE_INFINITY);
 
         //if all coverage resources have the same grid geometry we can use it directly
-        GridGeometry sharedGrid = components.iterator().next().getGridGeometry();
+        GridGeometry sharedGrid = components.entrySet().iterator().next().getValue();
         if (!Utilities.equalsIgnoreMetadata(sharedGrid.getCoordinateReferenceSystem(), outputCrs)) {
             sharedGrid = null;
         }
 
-        for (GridCoverageResource resource : components) {
-            final GridGeometry componentGrid = resource.getGridGeometry();
+        for (Map.Entry<GridCoverageResource, GridGeometry> entry : components.entrySet()) {
+            final GridCoverageResource resource = entry.getKey();
+            final GridGeometry componentGrid = entry.getValue();
 
             if (sharedGrid != null && !sharedGrid.equals(componentGrid)) {
                 //this coverage has a different grid
@@ -482,9 +567,15 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             try {
                 envelope = Envelopes.transform(envelope, outputCrs);
             } catch (TransformException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
+                if (neverfail) {
+                    LOGGER.log(Level.INFO, "Failed to transform resource envelope" + resourceName(resource) + " : " + ex.getMessage());
+                    continue;
+                } else {
+                    throw new DataStoreException(ex.getMessage(), ex);
+                }
             }
-            tree.insert(new JTSEnvelope2D(envelope), resource);
+            final JTSEnvelope2D key = new JTSEnvelope2D(envelope);
+            tree.insert(key, new IndexedResource(key, resource));
 
             //try to find an estimated resolution
             if (estimatedResolution != null) {
@@ -506,6 +597,9 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
         if (sharedGrid != null) {
             cachedGridGeometry = sharedGrid;
+        } else if (env.isAllNaN()) {
+            //could not extract any usefull information from datas
+            this.cachedGridGeometry = new GridGeometry(new GridExtent(1, 1), null);
         } else if (estimatedResolution != null) {
             cachedGridGeometry = new EstimatedGridGeometry(env, estimatedResolution);
         } else {
@@ -516,6 +610,28 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
     private void initSampleDimensions() throws DataStoreException {
         if (bands.isEmpty()) return;
         if (bands.get(0).cachedSampleDimension != null) return;
+
+        //list resources used more then once in the process
+        //this list is used in the aggregation process to keep in cache coverage read
+        reusable.clear();
+        final Map<Entry<GridCoverageResource,Integer>, AtomicInteger> count = new HashMap<>();
+        for (int i = 0, n = bands.size(); i < n; i++) {
+            final VirtualBand band = bands.get(i);
+            for (Source src : band.sources) {
+                final Entry<GridCoverageResource,Integer> key = new AbstractMap.SimpleImmutableEntry<>(src.resource, src.bandIndex);
+                AtomicInteger ai = count.get(key);
+                if (ai == null) {
+                    ai = new AtomicInteger();
+                    count.put(key, ai);
+                }
+                ai.incrementAndGet();
+            }
+        }
+        for (Entry<Entry<GridCoverageResource,Integer>, AtomicInteger> entry : count.entrySet()) {
+            if (entry.getValue().get() > 1) {
+                reusable.add(entry.getKey());
+            }
+        }
 
         final List<SampleDimension> sampleDimensions = new ArrayList<>();
         for (int i = 0, n = bands.size(); i < n; i++) {
@@ -558,8 +674,8 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             sampleDimensions.add(band.cachedSampleDimension);
         }
 
-        photographic = isPhotographic(getSampleDimensions());
-        homogeneous = isHomogeneousSources();
+        photographic = isPhotographic(sampleDimensions);
+        homogeneous = isHomogeneousSources(sampleDimensions);
 
         if (photographic && homogeneous) {
             forceTransformedValues = false;
@@ -611,8 +727,16 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         final Optional<Number> background = baseDim.getBackground();
         if (background.isPresent()) return background.get().doubleValue();
 
-        final Iterator<Number> noData = baseDim.getNoDataValues().iterator();
-        if (noData.hasNext()) return noData.next().doubleValue();
+        try {
+            final Iterator<Number> noData = baseDim.getNoDataValues().iterator();
+            if (noData.hasNext()) return noData.next().doubleValue();
+        } catch (Exception ex) {
+            if (neverfail) {
+                LOGGER.log(Level.FINE, "Failed to extract no data values from " + baseDim + " : " + ex.getMessage());
+            } else {
+                throw ex;
+            }
+        }
 
         return Double.NaN;
     }
@@ -628,7 +752,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      *
      * This is a common case where we just aggregate similar coverages.
      */
-    private boolean isHomogeneousSources() throws DataStoreException {
+    private boolean isHomogeneousSources(List<SampleDimension> sampleDimensions) throws DataStoreException {
 
         List<GridCoverageResource> orderedResources = null;
         for (int i = 0, n = bands.size(); i < n; i++) {
@@ -659,15 +783,25 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                 if (source.bandIndex != i) {
                     return false;
                 }
-                if (source.resource.getSampleDimensions().size() != getSampleDimensions().size()) {
-                    return false;
+                try {
+                    if (source.resource.getSampleDimensions().size() != sampleDimensions.size()) {
+                        return false;
+                    }
+                } catch (Exception ex) {
+                    source.inMetaError = true;
+                    if (neverfail) {
+                        LOGGER.log(Level.INFO, ex.getMessage());
+                        continue;
+                    } else {
+                        throw ex;
+                    }
                 }
             }
         }
         return true;
     }
 
-    private static boolean isPhotographic(List<SampleDimension> sampleDimensions) throws DataStoreException {
+    private static boolean isPhotographic(List<SampleDimension> sampleDimensions) {
         boolean photographic = true;
         for (SampleDimension sd : sampleDimensions) {
             final GenericName name = sd.getName();
@@ -720,7 +854,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
 
         // Extract resources which intersect request ///////////////////////////
-        final List<GridCoverageResource> candidates = getCandidates(domain);
+        final Set<GridCoverageResource> candidates = getCandidates(domain);
 
         // Build expected GridGeometry /////////////////////////////////////////
 
@@ -772,6 +906,13 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                     //do nothing
                 } catch (TransformException ex) {
                     //do nothing
+                } catch (Exception ex) {
+                    if (neverfail) {
+                        LOGGER.log(source.inReadError ? Level.FINE : Level.INFO, ex.getMessage(), ex);
+                        source.inReadError = true;
+                    } else {
+                        throw ex;
+                    }
                 }
             }
 
@@ -873,7 +1014,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
      * @throws NoSuchDataException if no source candidate can be found in given domain.
      * @throws DataStoreException if we cannot compare input domain with source ones.
      */
-    private List<GridCoverageResource> getCandidates(final GridGeometry domain) throws DataStoreException {
+    private Set<GridCoverageResource> getCandidates(final GridGeometry domain) throws DataStoreException {
         Envelope envelope = domain.getEnvelope();
         try {
             envelope = Envelopes.transform(envelope, outputCrs);
@@ -881,7 +1022,11 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             throw new DataStoreException(ex.getMessage(), ex);
         }
 
-        final List<GridCoverageResource> treeResults = tree.query(new JTSEnvelope2D(envelope));
+        final JTSEnvelope2D searchEnv = new JTSEnvelope2D(envelope);
+        final Set<GridCoverageResource> treeResults = ((Stream<IndexedResource>) tree.query(searchEnv).stream())
+                .filter(r -> r.key.intersects(searchEnv))
+                .map(r -> r.value)
+                .collect(Collectors.toSet());
 
         if (treeResults == null || treeResults.isEmpty()) {
             throw new NoSuchDataException("No data on requested domain");
@@ -938,39 +1083,53 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         // HACK: To try and preserve color space if possible, we keep aggregated source images in memory
         final List<Integer> sourceDataTypes = new ArrayList<>(ordered.size());
+        //for espadon projet : altimetry data is used twice
+        //cache each source result, they may be used several times
+        final Map<Entry<GridCoverageResource,Integer>, Entry<RenderedImage,double[]>> reuse = new HashMap<>();
+
         for (Source source : ordered) {
             final GridGeometry readGeometry = adapt(canvas, mask);
             if (readGeometry == null) break; // No more empty space to fill
-            final SingleBandedFilteredSource filteredSource = readSingleBandedSource(source, readGeometry).orElse(null);
-            if (filteredSource == null) continue; // Source not available for remaining area to fill
 
-            final double[] sourceNoData = {filteredSource.fillValue};
-            final RenderedImage coverageImage = filteredSource.image;
-            sourceDataTypes.add(coverageImage.getSampleModel().getDataType());
-
+            final Entry<GridCoverageResource,Integer> key = new AbstractMap.SimpleImmutableEntry<>(source.resource, source.bandIndex);
+            Entry<RenderedImage, double[]> r = reuse.get(key);
+            double[] sourceNoData = (r != null) ? r.getValue() : null;
+            RenderedImage resampledImage = (r != null) ? r.getKey(): null;
             try {
-                //resample coverage
-                RenderedImage resampledImage;
-                try {
-                    final BufferedImage image = BufferedImages.createImage(result, null, null, null, tmpDataType, sourceNoData);
-                    final Dimension dim = interpolation.getSupportSize();
+                if (r == null) {
+                    final SingleBandedFilteredSource filteredSource = readSingleBandedSource(source, readGeometry).orElse(null);
+                    if (filteredSource == null) continue; // Source not available for remaining area to fill
 
-                    Interpolation inter = interpolation;
-                    if (coverageImage.getWidth() < dim.width || coverageImage.getHeight() < dim.height) {
-                        inter = Interpolation.NEAREST;
+                    sourceNoData = new double[]{filteredSource.fillValue};
+
+                    //resample coverage
+                    try {
+                        final RenderedImage coverageImage = filteredSource.image;
+                        sourceDataTypes.add(coverageImage.getSampleModel().getDataType());
+                        final BufferedImage image = BufferedImages.createImage(result, null, null, null, DataBuffer.TYPE_DOUBLE, sourceNoData);
+
+                        final MathTransform toSource = createTransform(canvas, image, filteredSource.geometry, coverageImage);
+
+                        Interpolation inter = interpolation;
+                        final Dimension dim = interpolation.getSupportSize();
+                        if (coverageImage.getWidth() < dim.width || coverageImage.getHeight() < dim.height) {
+                            inter = Interpolation.NEAREST;
+                        }
+
+                        final ImageCombiner ic = new ImageCombiner(image);
+                        ic.setInterpolation(inter);
+                        ic.setPositionalAccuracyHints(accuracy);
+                        ic.resample(coverageImage, new Rectangle(image.getWidth(), image.getHeight()), toSource);
+                        resampledImage = image;
+                    } catch (FactoryException ex) {
+                        throw new DataStoreException(ex.getMessage(), ex);
                     }
-
-                    final MathTransform toSource = createTransform(canvas, image, filteredSource.geometry, coverageImage);
-
-                    final ImageCombiner ic = new ImageCombiner(image);
-                    ic.setInterpolation(inter);
-                    ic.setPositionalAccuracyHints(accuracy);
-                    ic.resample(coverageImage, new Rectangle(image.getWidth(), image.getHeight()), toSource);
-                    resampledImage = image;
-                } catch (FactoryException ex) {
-                    throw new DataStoreException(ex.getMessage(), ex);
+                    if (reusable.contains(key)) reuse.put(key, new AbstractMap.SimpleImmutableEntry<>(resampledImage, sourceNoData));
                 }
 
+                final double[] cst_nodata = sourceNoData;
+
+                //we need to merge image, replacing only not-NaN values
                 final TriFunction<Point, double[], double[], double[]> merger = new TriFunction<Point, double[], double[], double[]>() {
                     @Override
                     public double[] apply(Point position, double[] sourcePixel, double[] targetPixel) {
@@ -986,7 +1145,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
                             return null;
                         }
 
-                        if (sourceNoData != null && Arrays.equals(sourceNoData, sourcePixel)) {
+                        if (cst_nodata != null && Arrays.equals(cst_nodata, sourcePixel)) {
                             return null;
                         }
                         if (Arrays.equals(noData, targetPixel)) {
@@ -1000,8 +1159,39 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
                 BufferedImages.mergeImages(resampledImage, result, true, merger);
 
+            } catch (NoSuchDataException | DisjointExtentException ex) {
+                //may happen, enveloppe is larger then data or mask do not intersect anymore
+                //quad tree may also return more results
             } catch (TransformException ex) {
-                throw new DataStoreException("Error while aggregating source datasets into queried domain", ex);
+                if (neverfail) {
+                    if (source.inReadError) {
+                        LOGGER.log(Level.FINE, ex.getMessage(), ex);
+                    } else {
+                        LOGGER.log(Level.INFO, "This error wille be logged at FINE level in futur read operations : " + ex.getMessage(), ex);
+                    }
+                    source.inReadError = true;
+                } else {
+                    throw new DataStoreException("Error while aggregating source datasets into queried domain", ex);
+                }
+            } catch (Exception ex) {
+
+                //propage exceptions which are caused by interruptions
+                if (ex instanceof InterruptedStoreException) {
+                    throw ex;
+                } else if (DataStores.isInterrupted(ex)) {
+                    throw new InterruptedStoreException(ex);
+                }
+
+                if (neverfail) {
+                    if (source.inReadError) {
+                        LOGGER.log(Level.FINE, ex.getMessage(), ex);
+                    } else {
+                        LOGGER.log(Level.INFO, "This error wille be logged at FINE level in futur read operations : " + ex.getMessage(), ex);
+                    }
+                    source.inReadError = true;
+                } else {
+                    throw ex;
+                }
             }
         }
 
@@ -1091,39 +1281,50 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         }
     }
 
-    private static void sort(GridGeometry canvas, List<Source> sorted, Mode mode) throws DataStoreException {
+    private void sort(GridGeometry canvas, List<Source> sorted, Mode mode) throws DataStoreException {
         if (Mode.SCALE.equals(mode)) {
             //the most accurate order is to render in order coverages
             //with relative scale going from 1.0 to 0.0 then from 1.0 to +N
             //filling only the gaps at each coverage
 
-            List<Source> ordered = new ArrayList<>();
-            final Map<GridCoverageResource,Double> ratios = new HashMap<>();
+            final List<SourceToSort> ordered = new ArrayList<>();
             for (Source entry : sorted) {
-                try {
-                    double ratio = estimateRatio(entry.resource.getGridGeometry(), canvas);
-                    if (Double.isNaN(ratio)) {
-                        GridGeometry realGrid = entry.resource.read(canvas).getGridGeometry();
-                        ratio = estimateRatio(realGrid, canvas);
-                    }
-
-                    double order = ratio;
-                    if (ratio <= 1.05) { //little tolerance du to crs deformations and math
-                        order = 1.05 - ratio;
-                    }
-                    ratios.put(entry.resource, order);
-                    ordered.add(entry);
-                } catch (DisjointExtentException ex) {
-                    continue;
-                } catch (FactoryException | TransformException ex) {
-                    continue;
-                }
+                final SourceToSort sts = compute(entry, canvas);
+                if (sts != null) ordered.add(sts);
             }
-            ordered.sort((Source o1, Source o2) -> ratios.get(o1.resource).compareTo(ratios.get(o2.resource)));
+            ordered.sort(SCALEAREA_COMPARATOR);
             sorted.clear();
-            sorted.addAll(ordered);
+            for (SourceToSort sts : ordered) sorted.add(sts.source);
         } else if (Mode.ORDER.equals(mode)) {
             //do nothing
+        }
+    }
+
+    private SourceToSort compute(final Source entry, final GridGeometry canvas) throws DataStoreException {
+        try {
+            GridGeometry sourceGrid = entry.resource.getGridGeometry();
+            double ratio = estimateRatio(sourceGrid, canvas);
+            if (Double.isNaN(ratio)) {
+                sourceGrid = entry.resource.read(canvas).getGridGeometry();
+                ratio = estimateRatio(sourceGrid, canvas);
+            }
+
+            double order = ratio;
+            if (ratio <= 1.05) { //little tolerance du to crs deformations and math
+                order = 1.05 - ratio;
+            }
+
+            return new SourceToSort(entry, order, ratio(sourceGrid.getEnvelope(), canvas.getEnvelope()));
+        } catch (DisjointExtentException ex) {
+            return null;
+        } catch (FactoryException | TransformException ex) {
+            return null;
+        } catch (DataStoreException|RuntimeException ex) {
+            if (neverfail) {
+                return null;
+            } else {
+                throw ex;
+            }
         }
     }
 
@@ -1147,6 +1348,7 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
 
         final List<String> texts = new ArrayList<>();
         texts.add("Interpolate : "+ interpolation);
+        texts.add("Mode : "+ mode);
 
         for (VirtualBand vb : bands) {
             String name = vb.cachedSampleDimension.getName().toString();
@@ -1266,6 +1468,53 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         return lst;
     }
 
+    /**
+     * Extract name and resource path if possible.
+     * @param r
+     * @return composed name.
+     */
+    private static String resourceName(Resource r) {
+        String name = "Unamed";
+        try {
+            Optional<GenericName> id = r.getIdentifier();
+            if (id.isPresent()) {
+                name = id.get().toString();
+            }
+        } catch (Exception ex) {
+            //do nothing
+        }
+
+        if (r instanceof ResourceOnFileSystem) {
+            final ResourceOnFileSystem rfs = (ResourceOnFileSystem) r;
+            try {
+                final Path[] paths = rfs.getComponentFiles();
+                if (paths != null && paths.length > 0 && paths[0] != null) {
+                    name += " " + paths[0].toUri().toString();
+                }
+            } catch (Exception ex) {
+                //do nothing
+            }
+        }
+        return name;
+    }
+
+    private static double ratio(Envelope source, Envelope target) {
+        final GeneralEnvelope env = new GeneralEnvelope(target);
+        try {
+            env.intersect(Envelopes.transform(source, target.getCoordinateReferenceSystem()));
+        } catch (TransformException e) {
+            throw new BackingStoreException(e);
+        }
+
+        return pseudoArea(env) / pseudoArea(target);
+    }
+
+    private static double pseudoArea(Envelope target) {
+        return IntStream.range(0, target.getDimension())
+                .mapToDouble(target::getSpan)
+                .reduce(1, (d1, d2) -> d1 * d2);
+    }
+
     public static class VirtualBand {
         private SampleDimension userDefinedSampleDimension;
         SampleDimension cachedSampleDimension;
@@ -1298,6 +1547,13 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
         public final int bandIndex;
         public final MathTransform1D sampleTransform;
 
+        /**
+         * Keep a flag if a resource caused an error.
+         * We will still try to use it afterward but we won't log at the same level.
+         */
+        private boolean inMetaError = false;
+        private boolean inReadError = false;
+
         public Source(GridCoverageResource resource, int bandIndex) {
             this(resource, bandIndex, null);
         }
@@ -1318,6 +1574,50 @@ public final class AggregatedCoverageResource implements WritableAggregate, Grid
             this.image = image;
             this.geometry = geometry;
             this.fillValue = fillValue;
+        }
+    }
+
+    private static void log(Collection<Source> sources, Envelope target) {
+        if (sources.size() < 4) return;
+        else {
+            final String debug = sources.stream()
+                    .limit(5)
+                    .map(source -> {
+                try {
+                    return source.resource.getGridGeometry();
+                } catch (DataStoreException e) {
+                    throw new BackingStoreException(e);
+                }
+            })
+                    .map(grid ->
+                            "scale: " + grid.getResolution(true)[0] + " ; roi: " + ratio(grid.getEnvelope(), target)
+                    )
+                    .collect(Collectors.joining(System.lineSeparator(), "\n=== Tile ===\n", "\n"));
+
+            System.out.println(debug);
+        }
+    }
+
+    private static class IndexedResource {
+        final JTSEnvelope2D key;
+        final GridCoverageResource value;
+
+        public IndexedResource(JTSEnvelope2D key, GridCoverageResource value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    private static class SourceToSort {
+        final Source source;
+
+        final double scaleRatio;
+        final double areaRatio;
+
+        public SourceToSort(Source source, double scaleRatio, double areaRatio) {
+            this.source = source;
+            this.scaleRatio = scaleRatio;
+            this.areaRatio = areaRatio;
         }
     }
 }

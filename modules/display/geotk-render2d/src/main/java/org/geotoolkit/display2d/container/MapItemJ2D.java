@@ -127,7 +127,9 @@ public class MapItemJ2D<T extends MapItem> extends GraphicJ2D implements Propert
     @Override
     public void dispose() {
         super.dispose();
-        weakListener.dispose();
+        if (weakListener != null) {
+            weakListener.dispose();
+        }
 
         for(GraphicJ2D graphic : itemGraphics.values()){
             graphic.dispose();

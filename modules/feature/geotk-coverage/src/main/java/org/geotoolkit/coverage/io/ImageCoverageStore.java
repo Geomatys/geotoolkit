@@ -27,7 +27,6 @@ import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
@@ -158,14 +157,13 @@ final class ImageCoverageStore extends Static {
             name = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
         }
         /*
-         * Get the view types (PHOTOGRAPHIC, RENDERED, PACKED, NATIVE, GEOPHYSICS).
-         * This is specific to GridCoverage2D. For all other cases, we will write "none".
+         * Get the view types (PACKED, GEOPHYSICS).
          */
         final String viewTypes;
-        if (coverage instanceof GridCoverage2D) {
-            viewTypes = ((GridCoverage2D) coverage).getViewTypes().toString();
+        if (coverage == coverage.forConvertedValues(true)) {
+            viewTypes = "GEOPHYSICS";
         } else {
-            viewTypes = Vocabulary.getResources(locale).getString(Vocabulary.Keys.None);
+            viewTypes = "PACKED";
         }
         /*
          * Get the coverage dimension. In the special case of ImageCoverageWriter, the

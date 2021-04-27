@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
@@ -47,6 +48,7 @@ import org.geotoolkit.resources.Errors;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequences;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -873,233 +875,94 @@ public final class JTS {
      * @return A new ring with the reversed Coordinates.
      */
     public static LinearRing reverseRing(final LinearRing lr) {
-        final GeometryFactory gf = new GeometryFactory();
-        final int numPoints = lr.getNumPoints() - 1;
-        final Coordinate[] newCoords = new Coordinate[numPoints + 1];
-        for (int t = numPoints; t >= 0; t--) {
-            newCoords[t] = lr.getCoordinateN(numPoints - t);
-        }
-        return gf.createLinearRing(newCoords);
+        final GeometryFactory gf = lr.getFactory();
+        final CoordinateSequence cs = lr.getCoordinateSequence().copy();
+        CoordinateSequences.reverse(cs);
+
+        final LinearRing reversed = gf.createLinearRing(cs);
+        reversed.setSRID(reversed.getSRID());
+        reversed.setUserData(lr.getUserData());
+        return reversed;
     }
 
     /**
-     * Create a clockwise Polygon from the given Polygon. Will ensure that
-     * shells are clockwise and holes are counter-clockwise. Handle only
-     * <b>2D</b> Polygon and MultiPolygon Geometry. This method use the
-     * CGAlgorithm.isCCW() method form JTS.
+     * Create a geometry from given geometry. Will ensure that
+     * shells are in the requested winding and holes are in reverse-winding.
+     * Handles only Polygon, MultiPolygon and LinearRing Geometry type.
+     * Other geometry types are returned unchanged.
      *
-     * @param p The Polygon to make CW.
+     * @param g The Geometry to make CW.
+     * @param clockwise true for exterior ring clockwise, false for counter-clockwise
+     * @param threeD use 3d clockwise computation
      * @return The "nice" Polygon.
      */
-    public static <T extends Geometry> T ensureClockWise(final T g) {
-        if (!(g instanceof MultiPolygon) && !(g instanceof Polygon)) {
-            return g;
-        }
-        final GeometryFactory gf = new GeometryFactory();
+    public static <T extends Geometry> T ensureWinding(final T g, boolean clockwise, boolean threeD) {
 
-        boolean isMultiPolygon = false;
-        int nbPolygon = 1;
+        Predicate<CoordinateSequence> evaluator = threeD ? JTS::isCCW3D : Orientation::isCCW;
+        if (clockwise) evaluator = evaluator.negate();
 
-        if (g instanceof MultiPolygon) {
-            nbPolygon = g.getNumGeometries();
-            isMultiPolygon = true;
-        }
-        final Polygon[] ps = new Polygon[nbPolygon];
-        for (int i = 0; i < nbPolygon; i++) {
-            final Polygon p;
-            if (isMultiPolygon) {
-                p = (Polygon) g.getGeometryN(i);
-            } else {
-                p = (Polygon) g;
+        if (g instanceof MultiPolygon || g instanceof Polygon) {
+            final GeometryFactory gf = g.getFactory();
+            boolean isMultiPolygon = false;
+            int nbPolygon = 1;
+
+            if (g instanceof MultiPolygon) {
+                nbPolygon = g.getNumGeometries();
+                isMultiPolygon = true;
             }
-            final LinearRing outer;
-            final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
-            Coordinate[] coords;
-            coords = p.getExteriorRing().getCoordinates();
-            if (Orientation.isCCW(coords)) {
-                outer = reverseRing((LinearRing) p.getExteriorRing());
-            } else {
-                outer = (LinearRing) p.getExteriorRing();
-            }
-            for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
-                coords = p.getInteriorRingN(t).getCoordinates();
-                if (!(Orientation.isCCW(coords))) {
-                    holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
+            final Polygon[] ps = new Polygon[nbPolygon];
+            for (int i = 0; i < nbPolygon; i++) {
+                final Polygon p;
+                if (isMultiPolygon) {
+                    p = (Polygon) g.getGeometryN(i);
                 } else {
-                    holes[t] = (LinearRing) p.getInteriorRingN(t);
+                    p = (Polygon) g;
                 }
+                final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
+                LinearRing outer = p.getExteriorRing();
+                if (!evaluator.test(outer.getCoordinateSequence())) {
+                    outer = reverseRing(p.getExteriorRing());
+                }
+
+                for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
+                    holes[t] = p.getInteriorRingN(t);
+                    if (evaluator.test(holes[t].getCoordinateSequence())) {
+                        holes[t] = reverseRing(holes[t]);
+                    }
+                }
+                ps[i] = gf.createPolygon(outer, holes);
             }
-            ps[i] = gf.createPolygon(outer, holes);
-        }
-        if (isMultiPolygon) {
-            return (T) gf.createMultiPolygon(ps);
-        } else {
-            return (T) ps[0];
-        }
-    }
 
-    /**
-     * Create a counter clockwise Polygon from the given Polygon. Will ensure
-     * that shells are counter-clockwise and holes are clockwise. Handle only
-     * <b>2D</b> Polygon and MultiPolygon Geometry. This method use the
-     * CGAlgorithm.isCCW() method form JTS.
-     *
-     * @param p The Polygon to make CCW.
-     * @return The "nice" Polygon.
-     */
-    public static <T extends Geometry> T ensureCounterClockWise(final T g) {
-        if (!(g instanceof MultiPolygon) && !(g instanceof Polygon)) {
-            return g;
-        }
-        final GeometryFactory gf = new GeometryFactory();
-
-        boolean isMultiPolygon = false;
-        int nbPolygon = 1;
-
-        if (g instanceof MultiPolygon) {
-            nbPolygon = g.getNumGeometries();
-            isMultiPolygon = true;
-        }
-        final Polygon[] ps = new Polygon[nbPolygon];
-        for (int i = 0; i < nbPolygon; i++) {
-            final Polygon p;
+            Geometry reversed;
             if (isMultiPolygon) {
-                p = (Polygon) g.getGeometryN(i);
+                reversed = gf.createMultiPolygon(ps);
             } else {
-                p = (Polygon) g;
+                reversed = ps[0];
             }
-            final LinearRing outer;
-            final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
-            Coordinate[] coords;
-            coords = p.getExteriorRing().getCoordinates();
-            if (Orientation.isCCW(coords)) {
-                outer = (LinearRing) p.getExteriorRing();
-            } else {
-                outer = reverseRing((LinearRing) p.getExteriorRing());
+            reversed.setSRID(g.getSRID());
+            reversed.setUserData(g.getUserData());
+            return (T) reversed;
+
+        } else if (g instanceof LinearRing) {
+            LinearRing lr = (LinearRing) g;
+            if (!evaluator.test(lr.getCoordinateSequence())) {
+               lr = reverseRing(lr);
             }
-            for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
-                coords = p.getInteriorRingN(t).getCoordinates();
-                if (!(Orientation.isCCW(coords))) {
-                    holes[t] = (LinearRing) p.getInteriorRingN(t);
-                } else {
-                    holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
-                }
-            }
-            ps[i] = gf.createPolygon(outer, holes);
-        }
-        if (isMultiPolygon) {
-            return (T) gf.createMultiPolygon(ps);
+            return (T) lr;
+
         } else {
-            return (T) ps[0];
+            return g;
         }
     }
 
     /**
-     * Create a clockwise Polygon from the given Polygon. Will ensure that
-     * shells are clockwise and holes are counter-clockwise. Handle 2D and 3D
-     * Polygon and MultiPolygon Geometry.
+     * Test if a ring is counter clockwise oriended or not in 3D.
      *
-     * @param p The Polygon to make CW.
-     * @return The "nice" Polygon.
+     * @param ring The ring to test.
+     * @return true if ring is CCW, false if ring is CW.
      */
-    public static <T extends Geometry> T ensureClockWise3D(final T g) {
-        if (!(g instanceof MultiPolygon) && !(g instanceof Polygon)) {
-            return g;
-        }
-        final GeometryFactory gf = new GeometryFactory();
-
-        boolean isMultiPolygon = false;
-        int nbPolygon = 1;
-
-        if (g instanceof MultiPolygon) {
-            nbPolygon = g.getNumGeometries();
-            isMultiPolygon = true;
-        }
-        final Polygon[] ps = new Polygon[nbPolygon];
-        for (int i = 0; i < nbPolygon; i++) {
-            final Polygon p;
-            if (isMultiPolygon) {
-                p = (Polygon) g.getGeometryN(i);
-            } else {
-                p = (Polygon) g;
-            }
-            final LinearRing outer;
-            final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
-            Coordinate[] coords;
-            coords = p.getExteriorRing().getCoordinates();
-            if (isCCW3D(coords)) {
-                outer = reverseRing((LinearRing) p.getExteriorRing());
-            } else {
-                outer = (LinearRing) p.getExteriorRing();
-            }
-            for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
-                coords = p.getInteriorRingN(t).getCoordinates();
-                if (!(isCCW3D(coords))) {
-                    holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
-                } else {
-                    holes[t] = (LinearRing) p.getInteriorRingN(t);
-                }
-            }
-            ps[i] = gf.createPolygon(outer, holes);
-        }
-        if (isMultiPolygon) {
-            return (T) gf.createMultiPolygon(ps);
-        } else {
-            return (T) ps[0];
-        }
-    }
-
-    /**
-     * Create a counter clockwise Polygon from the given Polygon. Will ensure
-     * that shells are counter-clockwise and holes are clockwise. Handle 2D and
-     * 3D Polygon and MultiPolygon Geometry.
-     *
-     * @param p The Polygon to make CCW.
-     * @return The "nice" Polygon.
-     */
-    public static <T extends Geometry> T ensureCounterClockWise3D(final T g) {
-        if (!(g instanceof MultiPolygon) && !(g instanceof Polygon)) {
-            return g;
-        }
-        final GeometryFactory gf = new GeometryFactory();
-        boolean isMultiPolygon = false;
-        int nbPolygon = 1;
-        if (g instanceof MultiPolygon) {
-            nbPolygon = g.getNumGeometries();
-            isMultiPolygon = true;
-        }
-        final Polygon[] ps = new Polygon[nbPolygon];
-        for (int i = 0; i < nbPolygon; i++) {
-            final Polygon p;
-            if (isMultiPolygon) {
-                p = (Polygon) g.getGeometryN(i);
-            } else {
-                p = (Polygon) g;
-            }
-            final LinearRing outer;
-            final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
-            Coordinate[] coords;
-            coords = p.getExteriorRing().getCoordinates();
-            if (isCCW3D(coords)) {
-                outer = (LinearRing) p.getExteriorRing();
-            } else {
-                outer = reverseRing((LinearRing) p.getExteriorRing());
-            }
-            for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
-                coords = p.getInteriorRingN(t).getCoordinates();
-                if (!(isCCW3D(coords))) {
-                    holes[t] = (LinearRing) p.getInteriorRingN(t);
-                } else {
-                    holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
-                }
-            }
-            ps[i] = gf.createPolygon(outer, holes);
-        }
-        if (isMultiPolygon) {
-            return (T) gf.createMultiPolygon(ps);
-        } else {
-            return (T) ps[0];
-        }
+    static boolean isCCW3D(CoordinateSequence ring) {
+        return isCCW3D(ring.toCoordinateArray());
     }
 
     /**

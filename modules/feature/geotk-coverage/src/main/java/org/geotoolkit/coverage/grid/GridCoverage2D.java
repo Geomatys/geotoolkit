@@ -27,18 +27,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import javax.measure.Unit;
-import javax.media.jai.Interpolation;
-import javax.media.jai.OperationNode;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.remote.SerializableRenderedImage;
 import org.apache.sis.coverage.SampleDimension;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.internal.referencing.PositionTransformer;
-import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.resources.Errors;
@@ -101,12 +95,6 @@ public class GridCoverage2D extends GridCoverage {
      * The raster data.
      */
     protected final transient RenderedImage image;
-
-    /**
-     * The views returned by {@link #views}. Constructed when first needed.
-     * Note that some views may appear in the {@link #sources} list.
-     */
-    private transient ViewsManager views;
 
     /**
      * Used for transforming a direct position from arbitrary to internal CRS.
@@ -316,16 +304,6 @@ public class GridCoverage2D extends GridCoverage {
      */
     public CoordinateReferenceSystem getCoordinateReferenceSystem2D() {
         return getGridGeometry().getCoordinateReferenceSystem2D();
-    }
-
-    /**
-     * Returns the interpolation used for all {@code evaluate(...)} methods.
-     * The default implementation returns {@link javax.media.jai.InterpolationNearest}.
-     *
-     * @return The interpolation.
-     */
-    public Interpolation getInterpolation() {
-        return Interpolation.getInstance(Interpolation.INTERP_NEAREST);
     }
 
     /**
@@ -606,11 +584,6 @@ public class GridCoverage2D extends GridCoverage {
      */
     @Override
     public void show(String title, final int xAxis, final int yAxis) {
-        final GridCoverage2D displayable = view(ViewType.RENDERED);
-        if (displayable != this) {
-            displayable.show(title, xAxis, yAxis);
-            return;
-        }
         if (title == null || (title = title.trim()).isEmpty()) {
             final StringBuilder buffer = new StringBuilder(String.valueOf(getName()));
             final int visibleBandIndex = CoverageUtilities.getVisibleBand(this);
@@ -652,11 +625,6 @@ public class GridCoverage2D extends GridCoverage {
      */
     protected class Renderable extends GridCoverage.Renderable {
         /**
-         * For compatibility during cross-version serialization.
-         */
-        private static final long serialVersionUID = 4544636336787905450L;
-
-        /**
          * Constructs a renderable image.
          */
         public Renderable() {
@@ -678,216 +646,5 @@ public class GridCoverage2D extends GridCoverage {
             }
             return super.createDefaultRendering();
         }
-    }
-
-    /**
-     * Returns a view of the specified type. Valid types are:
-     * <ul>
-     *   <li><p>
-     *     {@link ViewType#GEOPHYSICS GEOPHYSICS}: all sample values are equals to geophysics
-     *     ("<cite>real world</cite>") values without the need for any transformation. The
-     *     {@linkplain SampleDimension#getSampleToGeophysics sample to geophysics} transform
-     *     {@linkplain org.opengis.referencing.operation.MathTransform1D#isIdentity is identity}
-     *     for all sample dimensions. "<cite>No data</cite>" values (if any) are expressed as
-     *     {@linkplain Float#NaN NaN} numbers. This view is suitable for computation, but usually
-     *     not for rendering.
-     *   </p></li>
-     *   <li><p>
-     *     {@link ViewType#PACKED PACKED}: sample values are typically integers. A
-     *     {@linkplain SampleDimension#getSampleToGeophysics sample to geophysics} transform may
-     *     exists for converting them to "<cite>real world</cite>" values.
-     *   </p></li>
-     *   <li><p>
-     *     {@link ViewType#RENDERED RENDERED}: synonymous of {@code PACKED} for now. Will be
-     *     improved in a future version.
-     *   </p></li>
-     *   <li><p>
-     *     {@link ViewType#PHOTOGRAPHIC PHOTOGRAPHIC}: synonymous of {@code RENDERED} for now.
-     *     Will be improved in a future version.
-     *   </p></li>
-     *   <li><p>
-     *     {@link ViewType#SAME SAME}: returns {@code this} coverage unchanged.
-     *   </p></li>
-     * </ul>
-     *
-     * This method may be understood as applying the JAI's
-     * {@linkplain javax.media.jai.operator.PiecewiseDescriptor piecewise} operation with
-     * breakpoints specified by the {@link org.geotoolkit.coverage.Category} objects in each
-     * sample dimension. However, it is more general in that the transformation specified
-     * with each breakpoint doesn't need to be linear. On an implementation note, this method
-     * tries to use the first of the following operations which is found applicable:
-     * <cite>identity</cite>,
-     * {@linkplain javax.media.jai.operator.LookupDescriptor lookup},
-     * {@linkplain javax.media.jai.operator.RescaleDescriptor rescale},
-     * {@linkplain javax.media.jai.operator.PiecewiseDescriptor piecewise} and in
-     * last ressort a more general (but slower) <cite>sample transcoding</cite> algorithm.
-     *
-     * @param  type The kind of view wanted.
-     * @return The grid coverage. Never {@code null}, but may be {@code this}.
-     *
-     * @see SampleDimension#geophysics
-     * @see org.geotoolkit.coverage.Category#geophysics
-     * @see javax.media.jai.operator.LookupDescriptor
-     * @see javax.media.jai.operator.RescaleDescriptor
-     * @see javax.media.jai.operator.PiecewiseDescriptor
-     *
-     * @since 2.5
-     */
-    final GridCoverage2D view(final ViewType type) {
-        if (type == ViewType.SAME) {
-            return this;
-        }
-        synchronized (this) {
-            if (views == null) {
-                views = ViewsManager.create(this);
-            }
-        }
-        // Do not synchronize past this point, because ViewsManager.get is already
-        // synchronized. We need to rely on ViewsManager locking because the views
-        // are shared among many GridCoverage2D instances.
-        return views.get(this, type);
-    }
-
-    @Override
-    public GridCoverage2D forConvertedValues(boolean converted) {
-        if (converted) {
-            return view(ViewType.GEOPHYSICS);
-        } else {
-            return getNativeView();
-        }
-    }
-
-    /**
-     * Returns the native view to be given to a newly created {@link ViewsManager}.  For
-     * {@link GridCoverage2D}, this is always {@code this} because the first coverage to
-     * instantiate a {@link ViewsManager} can not be anything else than native, since the
-     * views do not exist yet. For {@link Calculator2D} (which is a decorator around an
-     * other {@link GridCoverage2D}), we use the native view of its source.
-     */
-    GridCoverage2D getNativeView() {
-        return this;
-    }
-
-    /**
-     * Invoked (indirectly) by <code>{@linkplain #view view}(type)</code> when the
-     * {@linkplain ViewType#PACKED packed}, {@linkplain ViewType#GEOPHYSICS geophysics} or
-     * {@linkplain ViewType#PHOTOGRAPHIC photographic} view of this grid coverage needs to
-     * be created.
-     * <p>
-     * This method is defined here for {@link ViewsManager} needs, which invokes it. But it
-     * make sense only for {@link Calculator2D}, which override it with protected access.
-     * For other subclasses, we do not allow overriding (i.e. we keep this method package-
-     * privated) on purpose. See {@link #getViewClass} for the reason.
-     */
-    GridCoverage2D specialize(final GridCoverage2D view) {
-        return view;
-    }
-
-    /**
-     * Returns the base class of the view returned by {@link #specialize}, or {@code null} if
-     * unknown. This method is invoked by {@link ViewsManager#create} in order to determine
-     * if a given coverage can share its views with an other coverage. The condition tested
-     * by {@link ViewsManager} (namely: coverages have the same image, same grid geometry and
-     * same sample dimensions) are sufficient only if the coverages build the views in the same
-     * way. The last condition can be guarantee only if we know how {@link #specialize} is
-     * implemented. It is safe for non-{@link Calculator2D} classes (because users can not
-     * override {@link #specialize} and for final classes like {@link Interpolator2D}, but
-     * the later must returns a different class in order to tells {@link ViewsManager} that
-     * it does not build the views in the same way.
-     */
-    Class<? extends GridCoverage2D> getViewClass() {
-        return GridCoverage2D.class;
-    }
-
-    /**
-     * Copies the views from this class into the specified coverage and returns them. The views
-     * are actually shared, i.e. views created for one coverage can be used by the other. This
-     * method is for internal use by {@link ViewsManager} only.
-     */
-    final synchronized ViewsManager copyViewsTo(final GridCoverage2D target) {
-        if (views == null) {
-            views = ViewsManager.create(this);
-        }
-        if (target.views == null) {
-            target.views = views;
-        } else if (target.views != views) {
-            throw new IllegalStateException(); // As a safety, but should never happen.
-        }
-        return views;
-    }
-
-    /**
-     * Returns the set of views that this coverage represents. The same coverage may be used for
-     * more than one view. For example a coverage could be valid both as a {@link ViewType#PACKED
-     * PACKED} and {@link ViewType#RENDERED RENDERED} view.
-     *
-     * @return The set of views that this coverage represents.
-     *
-     * @since 2.5
-     */
-    public synchronized Set<ViewType> getViewTypes() {
-        synchronized (this) {
-            if (views == null) {
-                views = ViewsManager.create(this);
-            }
-        }
-        return views.viewTypes;
-    }
-
-    /**
-     * Provides a hint that a coverage will no longer be accessed from a reference in user space.
-     * This method {@linkplain PlanarImage#dispose disposes} the {@linkplain #image} only if at
-     * least one of the following conditions is true (otherwise this method do nothing):
-     * <p>
-     * <ul>
-     *   <li>{@code force} is {@code true}, <strong>or</strong></li>
-     *   <li>The underlying {@linkplain #image} has no {@linkplain PlanarImage#getSinks sinks}
-     *       other than the views (geophysics, display, <i>etc.</i>).</li>
-     * </ul>
-     * <p>
-     * This safety check helps to prevent the disposal of an {@linkplain #image} that still
-     * used in a JAI operation chain. It doesn't prevent the disposal in every cases however.
-     * When unsure about whatever a coverage is still in use or not, it is safer to not invoke
-     * this method and rely on the garbage collector instead.
-     *
-     * @see PlanarImage#dispose
-     *
-     * @since 2.4
-     */
-    @Override
-    public synchronized boolean dispose(final boolean force) {
-        if (views != null) {
-            if (views.dispose(force).contains(this)) {
-                // The remaining GridCoverage2D include this one,
-                // which means that this view has not been disposed.
-                return false;
-            }
-            views = null;
-        }
-        return super.dispose(force);
-    }
-
-    /**
-     * Returns a string representation of this grid coverage.
-     * This is mostly for debugging purpose and may change in any future version.
-     */
-    @Override
-    public String toString() {
-        final StringBuilder buffer = new StringBuilder(super.toString());
-        final String lineSeparator = System.lineSeparator();
-        buffer.append("\u2514 Image=").append(Classes.getShortClassName(image)).append('[');
-        if (image instanceof OperationNode) {
-            buffer.append('"').append(((OperationNode) image).getOperationName()).append('"');
-        }
-        buffer.append(']');
-        if (views == null || !Thread.holdsLock(views)) {
-            /*
-             * We use Thread.holdsLock(views) as a semaphore for avoiding never-ending loop if
-             * toString() is invoked from ViewsManager (either by IDE debugger or by 'println'
-             * statement). Because ViewsManager is not public, this trick doesn't impact users.
-             */
-            buffer.append(" as views ").append(getViewTypes());
-        }
-        return buffer.append(lineSeparator).toString();
     }
 }

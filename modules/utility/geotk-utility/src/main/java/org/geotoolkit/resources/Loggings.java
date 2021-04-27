@@ -68,13 +68,6 @@ public final class Loggings extends IndexedResourceBundle {
         public static final short AppliedOperation_4 = 3;
 
         /**
-         * Resampled coverage “{0}” from coordinate system “{1}” (for an image of size {2}×{3}) to
-         * coordinate system “{4}” (image size {5}×{6}). JAI operation is “{7}” with “{9}”
-         * interpolation on {8,choice,0#packed|1#geophysics} pixels values. Background value is ({10}).
-         */
-        public static final short AppliedResample_11 = 4;
-
-        /**
          * Failed to create a coordinate operation from “{0}” authority factory.
          */
         public static final short CantCreateCoordinateOperation_1 = 5;

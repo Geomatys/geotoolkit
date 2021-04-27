@@ -109,7 +109,8 @@ public final class ShxReader implements Closeable{
                 readRecords(byteChannel);
                 byteChannel.close();
 //            }
-        } catch (Throwable e) {
+        } catch (Exception e) {
+            closed = true;
             if (byteChannel != null) {
                 byteChannel.close();
             }
@@ -150,7 +151,9 @@ public final class ShxReader implements Closeable{
         final ByteBuffer buffer = ByteBuffer.allocate(remaining);
         buffer.order(ByteOrder.BIG_ENDIAN);
         while (buffer.remaining() > 0) {
-            channel.read(buffer);
+            if (channel.read(buffer) < 0) {
+                 throw new EOFException("End of file reached while reading SHX records");
+             }
         }
         ((Buffer) buffer).flip();
         content = new int[remaining / 4]; // 2 integer for each record

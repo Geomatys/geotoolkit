@@ -37,7 +37,7 @@ public final class ProgressiveCoverageResource<T extends GridCoverageResource & 
 
     private T base = null;
 
-    public ProgressiveCoverageResource(T resource, TileGenerator generator) throws DataStoreException {
+    public ProgressiveCoverageResource(T resource, TileGenerator generator) {
         super(resource, generator);
         this.base = resource;
     }

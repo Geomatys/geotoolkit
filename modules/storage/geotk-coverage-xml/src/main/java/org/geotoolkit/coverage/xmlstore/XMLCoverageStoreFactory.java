@@ -111,7 +111,9 @@ public class XMLCoverageStoreFactory extends DataStoreProvider {
     @Override
     public DataStore open(StorageConnector connector) throws DataStoreException {
         try {
-            return new XMLCoverageStore(connector.getStorageAs(Path.class));
+            final Path path = connector.getStorageAs(Path.class);
+            connector.closeAllExcept(path);
+            return new XMLCoverageStore(path);
         } catch (IOException | URISyntaxException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }

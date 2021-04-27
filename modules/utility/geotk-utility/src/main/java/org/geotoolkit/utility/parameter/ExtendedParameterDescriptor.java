@@ -129,6 +129,27 @@ public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.Def
                                        final Comparable<T> minimum,
                                        final Comparable<T> maximum,
                                        final Unit<?> unit,
+                                       final int minOccurs,
+                                       final int maxOccurs,
+                                       final Map<String, Object> userObject) {
+
+        super(properties, minOccurs, maxOccurs, valueClass, toRange(valueClass, minimum, maximum, unit), validValues, defaultValue);
+        this.userObject = userObject;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param unit not used since ExtendedParameter extend SIS DefaultParameterDescriptor.
+     * @param userObject map that contain additional value for the parameter.
+     */
+    public ExtendedParameterDescriptor(final Map<String, ?> properties,
+                                       final Class<T> valueClass,
+                                       final T[] validValues,
+                                       final T defaultValue,
+                                       final Comparable<T> minimum,
+                                       final Comparable<T> maximum,
+                                       final Unit<?> unit,
                                        final boolean required,
                                        final Map<String, Object> userObject) {
 
