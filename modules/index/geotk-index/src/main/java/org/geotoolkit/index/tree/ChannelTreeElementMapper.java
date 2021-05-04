@@ -114,7 +114,7 @@ public abstract class ChannelTreeElementMapper<E> implements TreeElementMapper<E
         final ByteOrder bO;
         boolean isRead = channel.size() >= headLength;
 
-        byteBuffer.position(0);
+        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) byteBuffer).position(0);
         byteBuffer.limit(13);
 
         if (isRead) {
@@ -166,7 +166,7 @@ public abstract class ChannelTreeElementMapper<E> implements TreeElementMapper<E
         }
 
         //-- init buffer
-        byteBuffer.position(0);
+        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) byteBuffer).position(0);
         byteBuffer.flip();
 
         beginPosition         = (int) inOutChannel.position();
@@ -306,7 +306,7 @@ public abstract class ChannelTreeElementMapper<E> implements TreeElementMapper<E
         rwIndex -= channelPos;
         //-- only write that is necessarily
         byteBuffer.limit(Math.max(byteBuffer.limit(), (int) rwIndex + objSize));
-        byteBuffer.position((int) rwIndex);
+        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) byteBuffer).position((int) rwIndex);
     }
 
     /**
@@ -324,7 +324,7 @@ public abstract class ChannelTreeElementMapper<E> implements TreeElementMapper<E
             writtenByte += inOutChannel.write(byteBuffer);
         }
         inOutChannel.position(channelPosition);
-        byteBuffer.position(0);
+        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) byteBuffer).position(0);
         byteBuffer.flip();
     }
 
@@ -338,7 +338,7 @@ public abstract class ChannelTreeElementMapper<E> implements TreeElementMapper<E
         byteBuffer.clear();
         inOutChannel.read(byteBuffer);
         inOutChannel.position(channelPosition);
-        byteBuffer.position(0);
+        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) byteBuffer).position(0);
         byteBuffer.flip();
     }
 
