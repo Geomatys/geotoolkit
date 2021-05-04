@@ -19,11 +19,11 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.geom.Rectangle2D;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.FeatureSet;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.storage.Resource;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.opengis.feature.FeatureType;
 import org.opengis.style.Symbolizer;
 
@@ -45,6 +45,7 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
     }
 
     protected Object mimicObject(MapLayer layer) {
+        if (layer == null) return null;
         final Resource resource = layer.getData();
         if (resource instanceof FeatureSet) {
             try {
