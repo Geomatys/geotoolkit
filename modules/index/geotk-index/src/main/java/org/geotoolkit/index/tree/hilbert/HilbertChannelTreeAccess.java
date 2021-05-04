@@ -91,10 +91,10 @@ abstract strictfp class HilbertChannelTreeAccess extends ChannelTreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-        byteBuffer.position(byteBuffer.position() + 5);// step properties (1 byte) and step parent ID (int : 4 bytes)
+        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) byteBuffer).position(byteBuffer.position() + 5);// step properties (1 byte) and step parent ID (int : 4 bytes)
         final int sibling = byteBuffer.getInt();
         final int child   = byteBuffer.getInt();
-        byteBuffer.position(byteBuffer.position() + 12);// step hilbertOrder, step child count and step dataCount
+        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) byteBuffer).position(byteBuffer.position() + 12);// step hilbertOrder, step child count and step dataCount
         if (sibling != 0) {
             internalSearch(sibling);
         }

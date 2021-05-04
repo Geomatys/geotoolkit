@@ -303,7 +303,7 @@ public class RawTiffImageReader extends SpatialImageReader {
     private void ensureBufferContains(long position, final int min, final int max) throws IOException {
         final long offset = position - positionBuffer;
         if (offset >= 0 && offset < buffer.limit()) {
-            if (buffer.position((int) offset).remaining() < min) {
+            if (/* HACK: cast for jdk8 support */ ((Buffer) buffer).position((int) offset).remaining() < min) {
                 final int valid = buffer.compact().position();
                 if ((position += valid) != filePosition) {
                     channel.position(position);
@@ -1159,7 +1159,7 @@ public class RawTiffImageReader extends SpatialImageReader {
                         targetStep = numBands;
                     }
                     do {
-                        sourceBuffer.position(bufferPosition);
+                        /* HACK: cast for jdk8 support */ ((Buffer) sourceBuffer).position(bufferPosition);
                         switch (dataType) {
                             case DataBuffer.TYPE_BYTE:   ((ByteBuffer)   sourceBuffer).get((byte[])   targetArray, targetPosition, targetStep); break;
                             case DataBuffer.TYPE_USHORT:

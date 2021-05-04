@@ -4,6 +4,7 @@
 package org.geotoolkit.processing.science.drift.v2;
 
 import java.awt.geom.Point2D;
+import java.nio.Buffer;
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +90,7 @@ class PointBucket {
         }
 
         try {
-            buffer.position(idx);
+            /* HACK: cast for jdk8 support */ ((Buffer) buffer).position(idx);
             buffer.put(point);
             final PointReference ref = new PointReference(idx, weight);
             references.add(ref);
@@ -123,7 +124,7 @@ class PointBucket {
             positions = Arrays.copyOf(positions, newLength);
             buffer = DoubleBuffer.wrap(positions);
             buffer.limit(newLimit);
-            buffer.position(position);
+            /* HACK: cast for jdk8 support */ ((java.nio.Buffer) buffer).position(position);
         } else {
             buffer.limit(newLimit);
         }
@@ -155,7 +156,7 @@ class PointBucket {
             }
 
             System.arraycopy(tmpPositions, 0, positions, 0, newSize);
-            buffer.position(0);
+            /* HACK: cast for jdk8 support */ ((java.nio.Buffer) buffer).position(0);
             buffer.limit(newSize);
             freeRooms.clear();
             dirtyGrid = true;

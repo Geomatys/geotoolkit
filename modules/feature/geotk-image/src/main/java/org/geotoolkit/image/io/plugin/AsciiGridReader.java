@@ -397,7 +397,7 @@ readLine:   while (true) {
                         if (buffer.hasRemaining()) {
                             c = (char) (buffer.get() & 0xFF);
                             if (c != '\n') {
-                                buffer.position(buffer.position() - 1);
+                                /* HACK: cast for jdk8 support */ ((java.nio.Buffer) buffer).position(buffer.position() - 1);
                             }
                         }
                         break readLine;
@@ -406,7 +406,7 @@ readLine:   while (true) {
                 if (skipWhitespaces) {
                     // If the first non-blank character seems to be part of a number, stop.
                     if (c >= '+' && c <= '9') { // Include +,-./ and digits
-                        buffer.position(startPos);
+                        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) buffer).position(startPos);
                         break readHeader;
                     }
                     if (c > ' ') {

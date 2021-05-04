@@ -53,7 +53,7 @@ public class DecimateMultiPointHandler extends MultiPointHandler {
         final int dimensions = (read3D && shapeType == ShapeType.MULTIPOINTZ)? 3 : 2;
 
         // read bounding box (not needed)
-        buffer.position(buffer.position() + 32);
+        /* HACK: cast for jdk8 support */ ((java.nio.Buffer) buffer).position(buffer.position() + 32);
         final int numpoints = buffer.getInt();
 
         final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
@@ -67,7 +67,7 @@ public class DecimateMultiPointHandler extends MultiPointHandler {
                     new ShapeCoordinateSequence2D(coords,decimatePoint2D(coords)));
         } else {
             // z min, max
-            dbuffer.position(dbuffer.position() + 2);
+            /* HACK: cast for jdk8 support */ ((java.nio.Buffer) dbuffer).position(dbuffer.position() + 2);
             dbuffer.get(coords,xySize,numpoints);
             return GEOMETRY_FACTORY.createMultiPoint(
                     new ShapeCoordinateSequence3D(coords));
