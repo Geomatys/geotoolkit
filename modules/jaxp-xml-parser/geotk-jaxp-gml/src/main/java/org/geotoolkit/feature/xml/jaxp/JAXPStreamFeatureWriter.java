@@ -76,6 +76,8 @@ import org.geotoolkit.gml.xml.v321.SolidPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.NamesExt;
+import org.geotoolkit.feature.xml.FeatureSetCollection;
+import org.geotoolkit.feature.xml.Link;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -92,7 +94,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.w3c.dom.Document;
-
+//import org.geotoolkit.wfs.xml
 
 /**
  * Handles writing process of features using JAXP. The {@link #dispose()} method MUST be
@@ -130,6 +132,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private final String wfsLocation;
     private final String gmlNamespace;
     private final String gmlLocation;
+
+    private final String sfNamespace = "http://www.opengis.net/ogcapi-features-1/1.0/sf";
 
 
     //automatic id increment for geometries id
@@ -384,8 +388,36 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 }
             }
         }
-
         writeEndCollection();
+    }
+
+    public void writeFeatureSetCollection(final FeatureSet featureSet) throws DataStoreException, XMLStreamException {
+        final String collectionId = featureSet.getIdentifier().map(GenericName::toString).orElse("");
+
+        writer.writeStartElement("sf", "FeatureCollection", sfNamespace);
+
+        writeCommonNamespaces();
+
+        final String schemaLocation = buildSchemaLocationString(schemaLocations);
+        if (!schemaLocation.isEmpty()) {
+            writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
+        }
+
+        writeNamespaces(featureSet.getType());
+
+        Envelope envelope = FeatureStoreUtilities.getEnvelope(featureSet);
+        writeBounds(envelope, writer);
+
+        // we write each feature member of the collection
+        try (Stream<Feature> stream = featureSet.features(false)) {
+            final Iterator<Feature> iterator = stream.iterator();
+            while (iterator.hasNext()) {
+                final Feature f = iterator.next();
+                writeStartMember("sf", "featureMember", sfNamespace);
+                writeFeature(f, false);
+                writeEndMember();
+            }
+        }
     }
 
     /**
@@ -438,6 +470,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 }
             }
             writeEndCollection();
+            writeEndDocument();
+        } else if (candidate instanceof FeatureSetCollection) {
+            writeStartDocument();
+            writeFeatureSetCollection(((FeatureSetCollection) candidate).getFeatureSet());
             writeEndDocument();
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +

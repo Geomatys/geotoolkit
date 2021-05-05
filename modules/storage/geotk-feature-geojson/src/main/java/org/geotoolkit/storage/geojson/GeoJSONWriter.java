@@ -26,6 +26,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +58,7 @@ import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.feature.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.feature.xml.Link;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -459,6 +461,44 @@ final class GeoJSONWriter implements Closeable, Flushable {
             writer.writeEndArray(); // "]"
         }
     }
+
+    public void writeLinks(List<Link> links) throws IOException {
+        writer.writeArrayFieldStart("links");
+        for (Link link : links) {
+            writer.writeStartObject();
+            writer.writeStringField("href", link.getHref());
+            if (link.getRel() != null) {
+                writer.writeStringField("rel", link.getRel());
+            }
+            if (link.getType() != null) {
+                writer.writeStringField("type", link.getType());
+            }
+            if (link.getHreflang() != null) {
+                writer.writeStringField("hreflang", link.getHreflang());
+            }
+            if (link.getTitle() != null) {
+                writer.writeStringField("title", link.getTitle());
+            }
+            if (link.getLength() != null) {
+                writer.writeNumberField("length", link.getLength());
+            }
+            writer.writeEndObject();
+        }
+        writer.writeEndArray();
+        writeNewLine();
+    }
+
+    public void writeNumber(Integer nbMatched, Integer nbReturned) throws IOException{
+        if (nbMatched != null) {
+            writer.writeNumberField("numberMatched", nbMatched);
+            writeNewLine();
+        }
+        if (nbReturned != null) {
+            writer.writeNumberField("numberReturned", nbReturned);
+            writeNewLine();
+        }
+    }
+
 
     @Override
     public void flush() throws IOException {

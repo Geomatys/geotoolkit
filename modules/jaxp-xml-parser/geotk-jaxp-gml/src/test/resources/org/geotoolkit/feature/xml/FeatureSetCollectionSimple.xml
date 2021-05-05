@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sf:FeatureCollection
+    xmlns:sf="http://www.opengis.net/ogcapi-features-1/1.0/sf"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ns0="http://www.geotoolkit.org/custom">
+    <sf:featureMember>
+        <ns0:TestSimpleBasic gml:id="id412">
+            <ns0:attString>a text composed of words.</ns0:attString>
+            <ns0:attDouble>12.31</ns0:attDouble>
+        </ns0:TestSimpleBasic>
+    </sf:featureMember>
+    <sf:featureMember>
+        <ns0:TestSimpleBasic gml:id="id36">
+            <ns0:attString>some words assembled in a text.</ns0:attString>
+            <ns0:attDouble>39.45</ns0:attDouble>
+        </ns0:TestSimpleBasic>
+    </sf:featureMember>
+    <sf:featureMember>
+        <ns0:TestSimpleBasic gml:id="id89">
+            <ns0:attString>some text with words.</ns0:attString>
+            <ns0:attDouble>56.14</ns0:attDouble>
+        </ns0:TestSimpleBasic>
+    </sf:featureMember>
+</sf:FeatureCollection>
