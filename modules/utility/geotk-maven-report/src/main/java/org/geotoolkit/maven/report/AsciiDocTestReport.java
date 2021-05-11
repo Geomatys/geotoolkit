@@ -23,10 +23,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -55,10 +55,19 @@ public final class AsciiDocTestReport extends RunListener {
     public static final String INFO_STATUS_FR = "status_fr";
     public static final String INFO_EXCEPTION = "exception";
 
-    private final Map<String,String> informations = new HashMap<>();
+    private enum State {
+        SUCCESS,
+        FAILED,
+        IGNORED
+    }
+
+    //keep keys sorted for a constant order in generated report files
+    private final Map<String,String> informations = new TreeMap<>();
 
     private long startTime;
     private long endTime;
+    private State state = null;
+    private Throwable failureException = null;
 
     /**
      * Current report instance.
@@ -88,6 +97,14 @@ public final class AsciiDocTestReport extends RunListener {
         informations.put(name, value);
     }
 
+    private void reset() {
+        informations.clear();
+        failureException = null;
+        state = null;
+        startTime = 0;
+        endTime = 0;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -107,7 +124,7 @@ public final class AsciiDocTestReport extends RunListener {
      */
     @Override
     public void testStarted(Description description) throws Exception {
-        informations.clear();
+        reset();
         startTime = System.currentTimeMillis();
     }
 
@@ -117,8 +134,27 @@ public final class AsciiDocTestReport extends RunListener {
     @Override
     public void testFinished(Description description) throws Exception {
         endTime = System.currentTimeMillis();
-        informations.put(INFO_STATUS_EN, STATUS_SUCCESS_EN);
-        informations.put(INFO_STATUS_FR, STATUS_SUCCESS_FR);
+        if (state == null) state = State.SUCCESS;
+
+        switch (state) {
+            case SUCCESS :
+                informations.put(INFO_STATUS_EN, STATUS_SUCCESS_EN);
+                informations.put(INFO_STATUS_FR, STATUS_SUCCESS_FR);
+                break;
+            case FAILED :
+                informations.put(INFO_STATUS_EN, STATUS_FAILED_EN);
+                informations.put(INFO_STATUS_FR, STATUS_FAILED_FR);
+                break;
+            case IGNORED :
+                informations.put(INFO_STATUS_EN, STATUS_IGNORED_EN);
+                informations.put(INFO_STATUS_FR, STATUS_IGNORED_FR);
+                break;
+        }
+
+        if (failureException != null) {
+            informations.put(INFO_EXCEPTION, toString(failureException));
+        }
+
         save(description);
     }
 
@@ -127,14 +163,8 @@ public final class AsciiDocTestReport extends RunListener {
      */
     @Override
     public void testFailure(Failure failure) throws Exception {
-        endTime = System.currentTimeMillis();
-        informations.put(INFO_STATUS_EN, STATUS_FAILED_EN);
-        informations.put(INFO_STATUS_FR, STATUS_FAILED_FR);
-
-        if (failure.getException() != null) {
-            informations.put(INFO_EXCEPTION, toString(failure.getException()));
-        }
-        save(failure.getDescription());
+        state = State.FAILED;
+        failureException = failure.getException();
     }
 
     /**
@@ -142,10 +172,8 @@ public final class AsciiDocTestReport extends RunListener {
      */
     @Override
     public void testAssumptionFailure(Failure failure) {
-        endTime = System.currentTimeMillis();
-        informations.put(INFO_STATUS_EN, STATUS_FAILED_EN);
-        informations.put(INFO_STATUS_FR, STATUS_FAILED_FR);
-        save(failure.getDescription());
+        state = State.FAILED;
+        failureException = failure.getException();
     }
 
     /**
@@ -153,11 +181,9 @@ public final class AsciiDocTestReport extends RunListener {
      */
     @Override
     public void testIgnored(Description description) throws Exception {
+        state = State.IGNORED;
         startTime = System.currentTimeMillis();
-        endTime = System.currentTimeMillis();
-        informations.put(INFO_STATUS_EN, STATUS_IGNORED_EN);
-        informations.put(INFO_STATUS_FR, STATUS_IGNORED_FR);
-        save(description);
+        testFinished(description);
     }
 
     /**
@@ -186,6 +212,7 @@ public final class AsciiDocTestReport extends RunListener {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        reset();
     }
 
     private static String toString(Throwable ex) {
