@@ -573,4 +573,33 @@ public final class TileMatrices extends Static {
         return new GridGeometry(tileExtent, PixelInCell.CELL_CENTER, tileGridToCrs, crs);
     }
 
+    /**
+     * Count the number of tiles in TileMatrixSet.
+     *
+     * @param pyramid
+     * @param env searched envelope, can be null
+     * @param resolutions, searched resolutions, can be null
+     * @return number of tiles.
+     * @throws DataStoreException
+     */
+    public static long countTiles(TileMatrixSet pyramid, Envelope env, NumberRange resolutions) throws DataStoreException {
+
+        long count = 0;
+        for (TileMatrix mosaic : pyramid.getTileMatrices()) {
+            if (resolutions == null || resolutions.containsAny(mosaic.getScale())) {
+                if (env == null) {
+                    count += ((long) mosaic.getGridSize().width) * ((long) mosaic.getGridSize().height);
+                } else {
+                    final Rectangle rect;
+                    try {
+                        rect = TileMatrices.getTilesInEnvelope(mosaic, env);
+                    } catch (NoSuchDataException ex) {
+                        continue;
+                    }
+                    count += ((long) rect.width) * ((long) rect.height);
+                }
+            }
+        }
+        return count;
+    }
 }
