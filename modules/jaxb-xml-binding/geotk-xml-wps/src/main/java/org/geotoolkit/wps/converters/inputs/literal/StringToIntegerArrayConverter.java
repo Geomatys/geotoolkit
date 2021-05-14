@@ -16,12 +16,7 @@
  */
 package org.geotoolkit.wps.converters.inputs.literal;
 
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.ArrayList;
-import java.util.List;
-import org.geotoolkit.feature.util.converter.SimpleConverter;
-import org.apache.sis.util.UnconvertibleObjectException;
+import java.util.stream.Stream;
 
 /**
  * Convert a String to an array of int.
@@ -30,12 +25,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
  *
  * @author Quentin Boileau
  */
-public class StringToIntegerArrayConverter extends SimpleConverter<String, int[]> {
-
-    @Override
-    public Class<String> getSourceClass() {
-        return String.class;
-    }
+public class StringToIntegerArrayConverter extends StringToNumberSequenceConverter<int[]> {
 
     @Override
     public Class<int[]> getTargetClass() {
@@ -43,53 +33,9 @@ public class StringToIntegerArrayConverter extends SimpleConverter<String, int[]
     }
 
     @Override
-    public int[] apply(String source) throws UnconvertibleObjectException {
-
-        if (source != null) {
-            source = source.trim();
-            if (!source.isEmpty()) {
-
-                final List<Number> values = new ArrayList<>();
-
-                final int length = source.length();
-                final NumberFormat nf = NumberFormat.getIntegerInstance();
-                nf.setParseIntegerOnly(true);
-                final ParsePosition pp = new ParsePosition(0);
-                int idx = 0;
-
-                for(;;) {
-                    Number number = nf.parse(source, pp);
-                    if (number == null) {
-                        throw new UnconvertibleObjectException("Invalid source String : "+source);
-                    }
-                    values.add(number);
-
-                    idx = pp.getIndex();
-                    while (idx != length) {
-                        char c = source.charAt(idx);
-                        if (c == ',' || c == ' ' || c == '\t' || c == '\n') {
-                            idx++;
-                        } else {
-                            break;
-                        }
-                    }
-                    if (idx == length) break;
-                    pp.setIndex(idx);
-                }
-
-                if (!values.isEmpty()) {
-                    final int[] outArray = new int[values.size()];
-                    for (int i = 0; i < outArray.length; i++) {
-                        outArray[i] = values.get(i).intValue();
-                    }
-                    return outArray;
-                } else {
-                    throw new UnconvertibleObjectException("Invalid source String : "+source);
-                }
-            }
-        }
-
-        return new int[0];
+    protected int[] convertSequence(Stream<String> values) {
+        return values
+                .mapToInt(Integer::parseInt)
+                .toArray();
     }
-
 }

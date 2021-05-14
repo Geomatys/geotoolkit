@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.wps.converters.inputs.literal;
 
-import java.util.LinkedList;
-import java.util.List;
-import org.geotoolkit.feature.util.converter.SimpleConverter;
-import org.apache.sis.util.UnconvertibleObjectException;
+import java.util.stream.Stream;
 
 /**
  * Convert a String to an array of double.
@@ -28,12 +25,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
  *
  * @author Quentin Boileau
  */
-public class StringToDoubleWArrayConverter extends SimpleConverter<String, Double[]> {
-
-    @Override
-    public Class<String> getSourceClass() {
-        return String.class;
-    }
+public class StringToDoubleWArrayConverter extends StringToNumberSequenceConverter<Double[]> {
 
     @Override
     public Class<Double[]> getTargetClass() {
@@ -41,43 +33,14 @@ public class StringToDoubleWArrayConverter extends SimpleConverter<String, Doubl
     }
 
     @Override
-    public Double[] apply(final String source) throws UnconvertibleObjectException {
-
-        if (source != null && !source.trim().isEmpty()) {
-
-            final List<Double> doubleList = new LinkedList<Double>();
-            if (source.contains(",")) {
-                final String[] sourceSplit = source.split(",");
-
-                for (final String str : sourceSplit) {
-                    try {
-                        final Double dbl = Double.valueOf(str.trim());
-                        if (dbl != null) {
-                            doubleList.add(dbl);
-                        }
-                    } catch (NumberFormatException ex) {
-                        throw new UnconvertibleObjectException(ex.getMessage(), ex);
-                    }
-                }
-            } else {
-                 try {
-                    final Double dbl = Double.valueOf(source.trim());
-                    if (dbl != null) {
-                        doubleList.add(dbl);
-                    }
-                } catch (NumberFormatException ex) {
-                    throw new UnconvertibleObjectException(ex.getMessage(), ex);
-                }
-            }
-
-            if (!doubleList.isEmpty()) {
-                return doubleList.toArray(new Double[doubleList.size()]);
-            } else {
-                throw new UnconvertibleObjectException("Invalid source String : "+source);
-            }
-        }
-
-        return new Double[0];
+    protected Double[] convertSequence(Stream<String> values) {
+        return values
+                .map(StringToDoubleWArrayConverter::valueOf)
+                .toArray(Double[]::new);
     }
 
+    private static Double valueOf(final String token) {
+        if (token.isEmpty()) return Double.NaN;
+        else return Double.valueOf(token);
+    }
 }

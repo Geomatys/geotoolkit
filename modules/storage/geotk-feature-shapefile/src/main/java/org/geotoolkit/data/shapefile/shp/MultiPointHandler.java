@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import org.apache.sis.storage.DataStoreException;
@@ -113,7 +114,8 @@ public class MultiPointHandler extends AbstractShapeHandler {
         final int dimensions = (read3D && shapeType == ShapeType.MULTIPOINTZ)? 3 : 2;
 
         // read bounding box (not needed)
-        buffer.position(buffer.position() + 32);
+        // HACK: noisy cast is needed for java 8 compatibility. Drop it once java 8 is not supported anymore
+        ((Buffer)buffer).position(buffer.position() + 32);
         final int numpoints = buffer.getInt();
 
         final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
@@ -126,7 +128,8 @@ public class MultiPointHandler extends AbstractShapeHandler {
             return GEOMETRY_FACTORY.createMultiPoint(new ShapeCoordinateSequence2D(coords));
         } else {
             // z min, max
-            dbuffer.position(dbuffer.position() + 2);
+            // HACK: noisy cast is needed for java 8 compatibility. Drop it once java 8 is not supported anymore
+            ((Buffer) dbuffer).position(dbuffer.position() + 2);
             dbuffer.get(coords,xySize,numpoints);
             return GEOMETRY_FACTORY.createMultiPoint(new ShapeCoordinateSequence3D(coords));
         }

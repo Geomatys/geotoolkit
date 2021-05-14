@@ -99,7 +99,7 @@ public class DecimateMultiLineHandler extends MultiLineHandler {
         // sequences
         if (dimensions == 3) {
             // z min, max
-            dbuffer.position(dbuffer.position() + 2);
+            /* HACK: cast for jdk8 support */ ((java.nio.Buffer) dbuffer).position(dbuffer.position() + 2);
             for (int part = 0; part < numParts; part++) {
 
                 final int finish;

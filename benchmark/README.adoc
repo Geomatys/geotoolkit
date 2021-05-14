@@ -1,13 +1,13 @@
-# Benchmark module
+= Benchmark module
 
 A set of JMH benchmarks to measure performance of various Geotoolkit components.
 
-## Requirements
+== Requirements
 
  * JDK 
  * Define `SIS_DATA` environment variable, whose value is a directory (either empty, or containing an already setup EPSG database).
 
-## Usage
+== Usage
 
 . Open a terminal at Geotoolkit project root
 . Compile Geotoolkit: `mvn install`
@@ -15,4 +15,8 @@ A set of JMH benchmarks to measure performance of various Geotoolkit components.
 . A JSON file should be produced in `benchmark/target/jmh-result.json`
 .. You should be able to visualize results by exporting the file to https://jmh.morethan.io
 .. Alternatvely, you can directly read repoort from console output
+
+=== Launching a single benchmark
+
+This module contains multiple benchmark classes. To launch only a specific benchmark class, append the canonical class name as command argument. Example: `java -jar target/benchmark.jar org.geotoolkit.benchmarks.StringToDoubleArray -rf json`
 

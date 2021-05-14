@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.wps.converters.inputs.literal;
 
-import java.util.LinkedList;
-import java.util.List;
-import org.geotoolkit.feature.util.converter.SimpleConverter;
-import org.apache.sis.util.UnconvertibleObjectException;
+import java.util.stream.Stream;
 
 /**
  * Convert a String to an array of int.
@@ -28,12 +25,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
  *
  * @author Quentin Boileau
  */
-public class StringToIntegerWArrayConverter extends SimpleConverter<String, Integer[]> {
-
-    @Override
-    public Class<String> getSourceClass() {
-        return String.class;
-    }
+public class StringToIntegerWArrayConverter extends StringToNumberSequenceConverter<Integer[]> {
 
     @Override
     public Class<Integer[]> getTargetClass() {
@@ -41,43 +33,9 @@ public class StringToIntegerWArrayConverter extends SimpleConverter<String, Inte
     }
 
     @Override
-    public Integer[] apply(final String source) throws UnconvertibleObjectException {
-
-        if (source != null && !source.trim().isEmpty()) {
-
-            final List<Integer> integerList = new LinkedList<Integer>();
-            if (source.contains(",")) {
-                final String[] sourceSplit = source.split(",");
-
-                for (final String str : sourceSplit) {
-                    try {
-                        final Integer i = Integer.valueOf(str.trim());
-                        if (i != null) {
-                            integerList.add(i);
-                        }
-                    } catch (NumberFormatException ex) {
-                        throw new UnconvertibleObjectException(ex.getMessage(), ex);
-                    }
-                }
-            } else {
-                 try {
-                    final Integer i = Integer.valueOf(source.trim());
-                    if (i != null) {
-                        integerList.add(i);
-                    }
-                } catch (NumberFormatException ex) {
-                    throw new UnconvertibleObjectException(ex.getMessage(), ex);
-                }
-            }
-
-            if (!integerList.isEmpty()) {
-                return integerList.toArray(new Integer[integerList.size()]);
-            } else {
-                throw new UnconvertibleObjectException("Invalid source String : "+source);
-            }
-        }
-
-        return new Integer[0];
+    protected Integer[] convertSequence(Stream<String> values) {
+        return values
+                .map(Integer::valueOf)
+                .toArray(Integer[]::new);
     }
-
 }
