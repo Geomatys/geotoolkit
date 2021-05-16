@@ -14,13 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.processing.coverage.mathcalc;
 
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.logging.Level;
-import org.apache.sis.coverage.grid.Interpolator;
+import org.apache.sis.coverage.grid.GridEvaluator;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CRS;
@@ -48,7 +47,8 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
     }
 
     public MathCalcCoverageEvaluator(GridCoverage[] coverages, String[] mapping,
-            Expression exp, CoordinateReferenceSystem crs) throws FactoryException {
+            Expression exp, CoordinateReferenceSystem crs) throws FactoryException
+    {
         // prepare dynamic pick object
         this.exp = exp;
         positionGeo = new GeneralDirectPosition(crs);
@@ -67,10 +67,10 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
         return new MathCalcCoverageEvaluator(this);
     }
 
-    private static class DynamicPick extends AbstractMap{
+    private static class DynamicPick extends AbstractMap {
 
         private final GridCoverage[] coverages;
-        private final Interpolator[] evaluators;
+        private final GridEvaluator[] evaluators;
         private final String[] mapping;
         private final MathTransform[] baseToCoverage;
         private final GeneralDirectPosition[] coverageCoord;
@@ -78,7 +78,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
 
         private DynamicPick(GridCoverage[] coverages, String[] mapping, DirectPosition coord) throws FactoryException {
             this.coverages = coverages;
-            evaluators = new Interpolator[coverages.length];
+            evaluators = new GridEvaluator[coverages.length];
             for (int i=0; i<coverages.length; i++) {
                 evaluators[i] = coverages[i].evaluator();
             }
@@ -86,7 +86,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
             this.coord = coord;
             baseToCoverage = new MathTransform[coverages.length];
             coverageCoord = new GeneralDirectPosition[coverages.length];
-            for(int i=0;i<coverages.length;i++){
+            for (int i=0; i<coverages.length; i++) {
                 baseToCoverage[i] = CRS.findOperation(coord.getCoordinateReferenceSystem(), coverages[i].getCoordinateReferenceSystem(), null).getMathTransform();
                 coverageCoord[i] = new GeneralDirectPosition(coverages[i].getCoordinateReferenceSystem());
             }
@@ -94,7 +94,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
 
         @Override
         public Object get(Object key) {
-            //search the coverage for given name
+            // search the coverage for given name
             final String name = String.valueOf(key);
             int index = -1;
             for(int i=0;i<mapping.length;i++){
@@ -109,13 +109,11 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
                     break;
                 }
             }
-
-            if(index<0){
+            if (index < 0) {
                 // no coverage for this name
                 return Double.NaN;
             }
-
-            //find value at given coordinate
+            // find value at given coordinate
             return evaluators[index].apply(coverageCoord[index])[0];
         }
 
@@ -124,5 +122,4 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
             throw new UnsupportedOperationException("Not supported.");
         }
     }
-
 }

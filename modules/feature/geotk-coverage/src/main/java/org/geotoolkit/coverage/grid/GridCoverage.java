@@ -57,7 +57,7 @@ import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 import javax.media.jai.operator.ImageFunctionDescriptor;
 import org.apache.sis.coverage.SampleDimension;
-import org.apache.sis.coverage.grid.Interpolator;
+import org.apache.sis.coverage.grid.GridEvaluator;
 import org.apache.sis.coverage.grid.GridExtent;
 import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -540,7 +540,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                 final int numBands = tiled.getNumBands();
                 final double[] padNaNs = new double[numBands];
                 Arrays.fill(padNaNs, Double.NaN);
-                final Interpolator evaluator = evaluator();
+                final GridEvaluator evaluator = evaluator();
                 final WritableRectIter iterator = RectIterFactory.createWritable(tiled, gridBounds);
                 if (!iterator.finishedLines()) try {
                     int y = gridBounds.y;
@@ -700,7 +700,7 @@ public abstract class GridCoverage extends org.apache.sis.coverage.grid.GridCove
                                 final int    countX, final int    countY, final int dim,
                                 final double[] real, final double[] imag)
         {
-            final Interpolator evaluator = evaluator();
+            final GridEvaluator evaluator = evaluator();
             int index = 0;
             // Clones the coordinate point in order to allow multi-thread invocation.
             final GeneralDirectPosition coordinate = new GeneralDirectPosition(this.coordinate);
