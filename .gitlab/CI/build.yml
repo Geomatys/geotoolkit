@@ -9,9 +9,8 @@ build:
   except:
     refs:
       - sis-migration
-  cache:
-    <<: *global_cache
-    policy: pull-push
+  extends: .update-cache
   stage: build
   script:
     - mvn clean install -s $MAVEN_SETTINGS
+    - mvn javadoc:jar
