@@ -1,11 +1,3 @@
-# Ensure written javadoc is valid
-javadoc:
-  stage: quality
-  needs:
-    - build
-  script:
-    - mvn javadoc:jar
-
 # Perform Sonar analysis on main branch
 sonar:
   # If we cannot post analysis to Sonar, that's not a fatal error, as long as the build step succeed

@@ -45,6 +45,7 @@ build:
   stage: build
   script:
     - mvn clean install -s $MAVEN_SETTINGS
+#    - mvn javadoc:jar TODO: activate back to ensure API doc is valid. Maybe move to quality stage
 
 include:
   - '.gitlab/CI/quality.yml'
