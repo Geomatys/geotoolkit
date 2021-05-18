@@ -27,7 +27,24 @@ image: maven:3.8.1-openjdk-16
 after_script:
   - mvn build-helper:remove-project-artifact > /dev/null && echo "Successfully removed project artifacts from cache"
 
+build:
+  # Mainly check project sanity by installing all components and running unit tests.
+  # It also serve as main job for cache update.
+  #
+  # For now, disable it for sis-migration because:
+  # 1. We would need to build GeoAPI / SIS beforehand
+  # 2. We have to be careful with maven local repository caching, that would be polluted with GeoAPI and SIS snapshots
+  # 3. Anyway, dependence upon unstable libraries is a bad idea. If not avoidable, we should use submodules to ease the maintainance
+  except:
+    refs:
+      - sis-migration
+  cache:
+    <<: *global_cache
+    policy: pull-push
+  stage: build
+  script:
+    - mvn clean install -s $MAVEN_SETTINGS
+
 include:
-  - '.gitlab/CI/build.yml'
   - '.gitlab/CI/quality.yml'
   - '.gitlab/CI/release.yml'
