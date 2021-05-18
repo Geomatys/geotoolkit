@@ -21,7 +21,8 @@ stages:
   - quality
   - release
 
-image: maven:3.8.1-openjdk-16
+# Cannot use newer version of maven because we still need http repositories (Ex: http://jaspersoft.jfrog.io/jaspersoft)
+image: maven:3.6.3-openjdk-16
 
 # Force removing artifacts installed by local jobs, to avoid cache corruption with snapshots.
 after_script:
