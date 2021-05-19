@@ -8,7 +8,8 @@ sonar:
   only:
     refs:
       - master
+      - fix/ci_sonar
     variables: 
       - $SONAR_TOKEN
   script:
-    - mvn sonar:sonar -s $MAVEN_SETTINGS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+    - mvn install sonar:sonar -s $MAVEN_SETTINGS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
