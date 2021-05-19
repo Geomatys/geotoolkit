@@ -12,7 +12,7 @@ variables:
 # Cache dependencies globally. Project snapshot are removed with below after script to avoid caching nightly artifact.
 cache: &global_cache
   policy: pull
-  key: GLOBAL_MVN_CACHE
+  key: GEOTK_MVN_CACHE
   paths:
     - "$MAVEN_LOCAL"
 
