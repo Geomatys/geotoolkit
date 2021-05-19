@@ -1,0 +1,14 @@
+# Perform Sonar analysis on main branch
+sonar:
+  # If we cannot post analysis to Sonar, that's not a fatal error, as long as the build step succeed
+  allow_failure: true
+  stage: quality
+  needs:
+    - build
+  only:
+    refs:
+      - master
+    variables: 
+      - $SONAR_TOKEN
+  script:
+    - mvn sonar:sonar -s $MAVEN_SETTINGS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
