@@ -46,6 +46,8 @@ import org.apache.sis.coverage.grid.GridGeometry;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.image.PixelIterator;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.portrayal.MapLayer;
+import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.NoSuchDataException;
@@ -57,8 +59,6 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.map.MapBuilder;
-import org.apache.sis.portrayal.MapLayers;
-import org.apache.sis.portrayal.MapLayer;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -265,7 +265,7 @@ public class MapContextTileGenerator extends AbstractTileGenerator {
             MapLayers parent = sceneDef.getContext();
             Hints hints = sceneDef.getHints();
 
-            final long total = countTiles(pyramid, env, resolutions);
+            final long total = TileMatrices.countTiles(pyramid, env, resolutions);
             final AtomicLong al = new AtomicLong();
             //send an event only every few seconds
             final AtomicLong tempo = new AtomicLong(System.currentTimeMillis());
