@@ -8,7 +8,6 @@ sonar:
   only:
     refs:
       - master
-      - fix/ci_sonar
     variables: 
       - $SONAR_TOKEN
   script:
