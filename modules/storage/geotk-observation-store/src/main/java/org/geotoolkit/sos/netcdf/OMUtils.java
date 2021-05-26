@@ -126,8 +126,8 @@ public class OMUtils {
         fields.add(PRESSION_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
             final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.unit, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.label, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.label, cat));
+            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.id, uom, null);
+            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.id, cat));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -137,8 +137,8 @@ public class OMUtils {
         fields.add(TIME_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
             final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.unit, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.label, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.label, cat));
+            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.id, uom, null);
+            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.id, cat));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -150,8 +150,8 @@ public class OMUtils {
         fields.add(LONGITUDE_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
             final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.unit, null);
-            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.label, uom, null);
-            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.label, cat));
+            final Quantity cat = SOSXmlFactory.buildQuantity(version, phenomenon.id, uom, null);
+            fields.add(SOSXmlFactory.buildAnyScalar(version, null, phenomenon.id, cat));
         }
         return SOSXmlFactory.buildSimpleDatarecord(version, null, null, null, true, fields);
     }
@@ -165,13 +165,17 @@ public class OMUtils {
     }
 
     public static Phenomenon getPhenomenon(final String version, final List<Field> phenomenons, final String phenomenonIdBase, final Set<org.opengis.observation.Phenomenon> existingPhens) {
+        return getPhenomenon(version, null, phenomenons, phenomenonIdBase, existingPhens);
+    }
+
+    public static Phenomenon getPhenomenon(final String version, String name, final List<Field> phenomenons, final String phenomenonIdBase, final Set<org.opengis.observation.Phenomenon> existingPhens) {
         final Phenomenon phenomenon;
         if (phenomenons.size() == 1) {
-            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).label, phenomenons.get(0).label, phenomenons.get(0).description);
+            phenomenon = SOSXmlFactory.buildPhenomenon(version, phenomenons.get(0).id, phenomenons.get(0).label, phenomenons.get(0).id, phenomenons.get(0).description);
         } else {
             final Set<PhenomenonType> types = new LinkedHashSet<>();
             for (Field phen : phenomenons) {
-                types.add(new PhenomenonType(phen.label, phen.label));
+                types.add(new PhenomenonType(phen.id, phen.label, phen.id, phen.description));
             }
 
             // look for an already existing (composite) phenomenon to use instead of creating a new one
@@ -185,8 +189,11 @@ public class OMUtils {
             }
 
             final String compositeId = "composite" + UUID.randomUUID().toString();
-            final String compositeName = phenomenonIdBase + compositeId;
-            phenomenon = new CompositePhenomenonType(compositeId, compositeName, null, null, types);
+            final String definition = phenomenonIdBase + compositeId;
+            if (name == null) {
+                name = definition;
+            }
+            phenomenon = new CompositePhenomenonType(compositeId, name, definition, null, null, types);
         }
         return phenomenon;
     }

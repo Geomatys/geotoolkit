@@ -38,19 +38,19 @@ public class OMUtilsTest {
     @Test
     public void getPhenomenonTest() throws Exception {
 
-        Field PRES = new Field("PRES", Type.DOUBLE, 1, "pres");
-        Field PSAL = new Field("PSAL", Type.DOUBLE, 1, "psal");
-        Field TEMP = new Field("TEMP", Type.DOUBLE, 1, "temp");
+        Field PRES = new Field("PRES", "PRES", Type.DOUBLE, 1, "pres");
+        Field PSAL = new Field("PSAL", "PSAL", Type.DOUBLE, 1, "psal");
+        Field TEMP = new Field("TEMP","TEMP", Type.DOUBLE, 1, "temp");
 
         List<Field> phenomenons = Arrays.asList(PRES, PSAL, TEMP);
         final Set<PhenomenonType> components = new LinkedHashSet<>();
         for (Field phen : phenomenons) {
-            components.add(new PhenomenonType(phen.label, phen.label));
+            components.add(new PhenomenonType(phen.id, phen.label, phen.id, phen.description));
         }
         String phenomenonIdBase = "urn:ogc:phenomenon:";
         final String compositeId = "composite" + UUID.randomUUID().toString();
         final String compositeName = phenomenonIdBase + compositeId;
-        CompositePhenomenonType expResult = new CompositePhenomenonType(compositeId, compositeName, null, null, components);
+        CompositePhenomenonType expResult = new CompositePhenomenonType(compositeId, compositeName, null, null, null, components);
 
         Set<org.opengis.observation.Phenomenon> existingPhens = new HashSet<>();
         existingPhens.add(expResult);

@@ -35,7 +35,7 @@ public interface AbstractGML {
 
     Identifier getName();
 
-    void setName(String name);
+    void setName(Identifier name);
 
     Reference getDescriptionReference();
 

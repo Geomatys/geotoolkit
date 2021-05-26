@@ -104,7 +104,7 @@ public interface Envelope extends org.opengis.geometry.Envelope, AbstractGeometr
     }
 
     @Override
-    public default void setName(String name) {
+    public default void setName(Identifier name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

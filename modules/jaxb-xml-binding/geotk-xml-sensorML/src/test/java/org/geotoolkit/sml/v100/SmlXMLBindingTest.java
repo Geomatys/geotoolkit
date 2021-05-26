@@ -91,6 +91,7 @@ import org.geotoolkit.swe.xml.v100.UomPropertyType;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 
 // Constellation dependencies
 import org.geotoolkit.gml.xml.v311.CodeType;
@@ -248,7 +249,7 @@ public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
         component.setParameters(parameters);
 
         component.setPosition(new Position("conductivitePosition", "piezometer#piezoPosition"));
-        component.setName("Capteur Profondeur de ARGELES");
+        component.setName(new DefaultIdentifier("Capteur Profondeur de ARGELES"));
 
         member.setProcess(sml100Factory.createComponent(component));
         SensorML expectedResult = new SensorML("1.0", Arrays.asList(member));
@@ -553,7 +554,7 @@ public class SmlXMLBindingTest extends org.geotoolkit.test.TestBase {
         system.setLegalConstraint(legalConstraint);
 
         system.setDescription("information about the piezometer");
-        system.setName("Piezometer Test");
+        system.setName(new DefaultIdentifier("Piezometer Test"));
 
         member.setProcess(sml100Factory.createSystem(system));
         SensorML expectedResult = new SensorML("1.0", Arrays.asList(member));

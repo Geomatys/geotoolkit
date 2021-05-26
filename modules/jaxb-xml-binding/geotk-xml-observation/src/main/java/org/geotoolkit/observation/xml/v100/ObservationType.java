@@ -55,6 +55,7 @@ import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -366,8 +367,12 @@ public class ObservationType implements Entry, AbstractObservation {
     /**
      */
     @Override
-    public void setName(final String name) {
-        this.name  = name;
+    public void setName(final Identifier name) {
+        if (name != null) {
+            this.name  = name.getCode();
+        } else {
+            this.name  = null;
+        }
     }
 
     @Override
@@ -632,7 +637,7 @@ public class ObservationType implements Entry, AbstractObservation {
         final ObservationType template = (ObservationType) abstractTemplate;
         final boolean obsProperty;
         if (this.observedProperty != null && template.observedProperty != null) {
-            obsProperty = Objects.equals(this.observedProperty.getPhenomenon(),    template.observedProperty.getPhenomenon());
+            obsProperty = matchPhenomenon(this.observedProperty.getPhenomenon(), template.observedProperty.getPhenomenon());
             if (!obsProperty) {
                 LOGGER.info("\ncomparing observed property:\nTHIS     => " +  this.observedProperty.getPhenomenon() +
                             "\nTEMPLATE => "                               + template.observedProperty.getPhenomenon() + '\n');
@@ -670,10 +675,32 @@ public class ObservationType implements Entry, AbstractObservation {
                    "\nPHEN =>" + obsProperty);
         }
         return match;
+    }
 
+    private boolean matchPhenomenon(PhenomenonType phen, PhenomenonType templatePhen) {
+        if (Objects.equals(phen.getName().getCode(), templatePhen.getName().getCode())) {
 
+            // due to transient field observed properties name will not be equals. so if the code is equals, we assume that its correct
+            if (phen instanceof CompositePhenomenonType &&
+                templatePhen instanceof CompositePhenomenonType) {
 
-
+                CompositePhenomenonType copyCompo = new CompositePhenomenonType((CompositePhenomenonType) phen);
+                CompositePhenomenonType tempCompo = (CompositePhenomenonType) templatePhen;
+                if (copyCompo.getComponent().size() == tempCompo.getComponent().size()) {
+                    for (int i = 0; i < copyCompo.getComponent().size(); i++) {
+                        if (!matchPhenomenon(copyCompo.getComponent().get(i), tempCompo.getComponent().get(i))) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            } else {
+                PhenomenonType copyPhen = new PhenomenonType(phen);
+                copyPhen.setName(templatePhen.getName());
+                return Objects.equals(copyPhen, templatePhen);
+            }
+        }
+        return false;
     }
 
     /**

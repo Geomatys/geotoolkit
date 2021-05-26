@@ -177,7 +177,7 @@ public class NetcdfObservationStore extends DataStore implements Aggregate, Reso
     public Set<String> getPhenomenonNames() {
         final Set<String> phenomenons = new HashSet<>();
         for (Field field : analyze.phenfields) {
-            phenomenons.add(field.label);
+            phenomenons.add(field.id);
         }
         return phenomenons;
     }
