@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.ext.pattern;
 
-import org.geotoolkit.display2d.ext.cellular.*;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
@@ -31,13 +30,13 @@ public class PatternSymbolizerObjectFactory {
 
     private static final QName _PatternSymbolizer_QNAME = new QName("http://geotoolkit.org", "PatternSymbolizer");
 
-    public PatternSymbolizerType createPatternSymbolizer() {
-        return new PatternSymbolizerType();
+    public PatternSymbolizer createPatternSymbolizer() {
+        return new PatternSymbolizer();
     }
 
-    @XmlElementDecl(namespace = "http://geotoolkit.org", name = "CellSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
-    public JAXBElement<PatternSymbolizerType> createCellSymbolizer(final PatternSymbolizerType value) {
-        return new JAXBElement<PatternSymbolizerType>(_PatternSymbolizer_QNAME, PatternSymbolizerType.class, null, value);
+    @XmlElementDecl(namespace = "http://geotoolkit.org", name = "PatternSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
+    public JAXBElement<PatternSymbolizer> createPatternSymbolizer(final PatternSymbolizer value) {
+        return new JAXBElement<PatternSymbolizer>(_PatternSymbolizer_QNAME, PatternSymbolizer.class, null, value);
     }
 
 }

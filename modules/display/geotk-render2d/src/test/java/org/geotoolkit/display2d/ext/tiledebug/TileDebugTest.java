@@ -19,6 +19,10 @@ package org.geotoolkit.display2d.ext.tiledebug;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import javax.xml.bind.JAXBException;
 import org.apache.sis.portrayal.MapLayer;
 import org.apache.sis.portrayal.MapLayers;
 import org.apache.sis.referencing.CRS;
@@ -30,6 +34,9 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.sld.xml.Specification;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.storage.memory.InMemoryPyramidResource;
 import org.geotoolkit.storage.multires.TileMatrices;
 import org.geotoolkit.style.MutableStyle;
@@ -77,4 +84,16 @@ public class TileDebugTest extends org.geotoolkit.test.TestBase {
 
     }
 
+    /**
+     * Test Jaxb xml support.
+     */
+    @Test
+    public void testXml() throws JAXBException, IOException {
+        final TileDebugSymbolizer gs = new TileDebugSymbolizer();
+        final MutableStyle style = GO2Utilities.STYLE_FACTORY.style(gs);
+
+        final Path path = Files.createTempFile("xml", ".xml");
+        IOUtilities.deleteOnExit(path);
+        new StyleXmlIO().writeStyle(path, style, Specification.StyledLayerDescriptor.V_1_1_0);
+    }
 }

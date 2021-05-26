@@ -19,6 +19,10 @@ package org.geotoolkit.display2d.ext.graduation;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import javax.xml.bind.JAXBException;
 import org.apache.sis.feature.builder.AttributeRole;
 import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.portrayal.MapLayer;
@@ -30,6 +34,9 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.sld.xml.Specification;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.storage.feature.FeatureStoreUtilities;
 import org.geotoolkit.style.MutableStyle;
 import org.junit.Assert;
@@ -88,7 +95,19 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
 
         final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef);
         Assert.assertNotNull(img);
+    }
 
+    /**
+     * Test Jaxb xml support.
+     */
+    @Test
+    public void testXml() throws JAXBException, IOException {
+        final GraduationSymbolizer ps = new GraduationSymbolizer();
+        final MutableStyle style = GO2Utilities.STYLE_FACTORY.style(ps);
+
+        final Path path = Files.createTempFile("xml", ".xml");
+        IOUtilities.deleteOnExit(path);
+        new StyleXmlIO().writeStyle(path, style, Specification.StyledLayerDescriptor.V_1_1_0);
     }
 
 }
