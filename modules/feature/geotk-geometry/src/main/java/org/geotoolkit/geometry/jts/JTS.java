@@ -21,6 +21,9 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.PathIterator;
+import static java.awt.geom.PathIterator.SEG_CLOSE;
+import static java.awt.geom.PathIterator.SEG_LINETO;
+import static java.awt.geom.PathIterator.SEG_MOVETO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1052,4 +1055,137 @@ public final class JTS {
         final CoordinateReferenceSystem crs2 = findCoordinateReferenceSystem(geom2);
         return crs1 != null && crs2 != null && (!crs1.equals(crs2));
     }
+
+    /**
+     * Convert a Java2D Shape to JTS Geometry.
+     *
+     * @param factory, factory used to create the geometry, not null
+     * @param shp, shape to convert, not null
+     * @param flatness, the maximum distance that the line segments used
+     *        to approximate the curved segments are allowed to deviate from
+     *        any point on the original curve
+     * @return JTS Geometry, may be null
+     */
+    public static Geometry fromAwt(GeometryFactory factory, Shape shp, double flatness) {
+        return fromAwt(factory, shp.getPathIterator(null, flatness));
+    }
+
+    /**
+     * Convert a Java2D PathIterator to JTS Geometry.
+     *
+     * @param factory, factory used to create the geometry, not null
+     * @param ite, Java2D Path iterator, not null
+     * @return JTS Geometry, may be null
+     */
+    public static Geometry fromAwt(GeometryFactory factory, PathIterator ite) {
+
+        final List<Geometry> geoms = new ArrayList<>();
+        boolean allPolygons = true;
+        boolean allPoints = true;
+        boolean allLines = true;
+        while (!ite.isDone()) {
+            final Geometry geom = nextGeometry(factory, ite);
+            if (geom != null) {
+                geoms.add(geom);
+                allPolygons &= geom instanceof Polygon;
+                allPoints &= geom instanceof Point;
+                allLines &= geom instanceof LineString;
+            }
+        }
+
+        final int count = geoms.size();
+        if (count == 0) {
+            return null;
+        } else if (count == 1) {
+            return geoms.get(0);
+        } else {
+            if (allPoints) {
+                return factory.createMultiPoint(GeometryFactory.toPointArray(geoms));
+
+            } else if (allPolygons) {
+                Geometry result = geoms.get(0);
+                for (int i = 1; i < count; i++) {
+                    result = result.symDifference(geoms.get(i));
+                }
+                return result;
+
+            } else if (allLines) {
+                return factory.createMultiLineString(GeometryFactory.toLineStringArray(geoms));
+            } else {
+                return factory.createGeometryCollection(GeometryFactory.toGeometryArray(geoms));
+            }
+        }
+
+    }
+
+    /**
+     * Extract the next point, line or ring from iterator.
+     */
+    private static Geometry nextGeometry(GeometryFactory factory, PathIterator ite) {
+        final double[] vertex = new double[6];
+
+        List<Coordinate> coords = null;
+        boolean isRing = false;
+
+        loop:
+        while (!ite.isDone()) {
+            switch (ite.currentSegment(vertex)) {
+                case SEG_MOVETO:
+                    if (coords == null) {
+                        //start of current geometry
+                        coords = new ArrayList<>();
+                        coords.add(new Coordinate(vertex[0], vertex[1]));
+                        ite.next();
+                    } else {
+                        //start of next geometry
+                        break loop;
+                    }
+                    break;
+                case SEG_LINETO:
+                    if (coords == null) {
+                        throw new IllegalArgumentException("Unvalid path iterator, LINETO without previous MOVETO.");
+                    } else {
+                        coords.add(new Coordinate(vertex[0], vertex[1]));
+                        ite.next();
+                    }
+                    break;
+                case SEG_CLOSE:
+                    //end of current geometry
+                    if (coords == null) {
+                        throw new IllegalArgumentException("Unvalid path iterator, CLOSE without previous MOVETO.");
+                    } else {
+                        if (!coords.isEmpty()) {
+                            coords.add(coords.get(0).copy());
+                            isRing = true;
+                        }
+                        ite.next();
+                        break loop;
+                    }
+                default :
+                    throw new IllegalArgumentException("Unvalid path iterator, must contain only flat segments.");
+            }
+        }
+
+        if (coords == null) {
+            return null;
+        }
+
+        final int size = coords.size();
+        switch (size) {
+            case 0 : return null;
+            case 1 : return factory.createPoint(coords.get(0));
+            case 2 : return factory.createLineString(new Coordinate[]{coords.get(0),coords.get(1)});
+            default :
+                final Coordinate[] array = coords.toArray(new Coordinate[size]);
+                if (isRing) {
+                    //JTS do not care about ring orientation
+                    // https://locationtech.github.io/jts/javadoc/org/locationtech/jts/geom/Polygon.html
+                    return factory.createPolygon(array);
+                } else {
+                    return factory.createLineString(array);
+                }
+        }
+    }
+
+
 }
