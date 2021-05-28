@@ -27,6 +27,7 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Measure;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -69,11 +70,11 @@ public class MeasurementType extends ObservationType implements Measurement {
      */
     public MeasurementType(final String name,
             final String                 definition,
-            final SamplingFeatureType   station,
-            final PhenomenonType        observedProperty,
-            final ProcessType           procedure,
-            final ElementType           quality,
-            final MeasureType           result,
+            final FeaturePropertyType    station,
+            final PhenomenonPropertyType observedProperty,
+            final ProcessType            procedure,
+            final ElementType            quality,
+            final MeasureType            result,
             final AbstractTimeGeometricPrimitiveType    samplingTime,
             final DefaultMetadata        observationMetadata,
             final AbstractTimeGeometricPrimitiveType    procedureTime,

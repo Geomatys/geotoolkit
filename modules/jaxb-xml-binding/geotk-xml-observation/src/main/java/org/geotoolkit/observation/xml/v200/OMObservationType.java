@@ -138,14 +138,16 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime,
             final String procedure, final String observedProperty, final Phenomenon hiddenObservedProperty, final FeaturePropertyType foi, final Object result) {
+        this(id, name, type, phenomenonTime, new OMProcessPropertyType(procedure), observedProperty, hiddenObservedProperty, foi, result);
+    }
+
+    public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime,
+            final OMProcessPropertyType procedure, final String observedProperty, final Phenomenon hiddenObservedProperty, final FeaturePropertyType foi, final Object result) {
         super(id, name, null);
         this.type = new ReferenceType(type);
         this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
         this.resultTime     = new TimeInstantPropertyType();
-
-        if (procedure != null) {
-            this.procedure      = new OMProcessPropertyType(procedure);
-        }
+        this.procedure      = procedure;
         if (observedProperty != null) {
             this.observedProperty    = new ReferenceType(observedProperty);
         }

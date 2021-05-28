@@ -1036,6 +1036,16 @@ public class SOSXmlFactory {
         }
     }
 
+    public static Process buildProcess(final String currentVersion, final String href, final String name, final String description) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new OMProcessPropertyType(href, name, description);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new ProcessType(href,name, description);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
     public static DirectPosition buildDirectPosition(final String version, final String srsName, final Integer srsDimension, final List<Double> value) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.buildDirectPosition("3.2.1", srsName, srsDimension, value);

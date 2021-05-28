@@ -372,6 +372,7 @@ public class Thing implements STSResponse, DeltaComparable {
         }
         Thing thing = (Thing) o;
         return Objects.equals(this.iotId, thing.iotId)
+                && Objects.equals(this.name, thing.name)
                 && Objects.equals(this.iotSelfLink, thing.iotSelfLink)
                 && Objects.equals(this.description, thing.description)
                 && Objects.equals(this.properties, thing.properties)
@@ -387,7 +388,7 @@ public class Thing implements STSResponse, DeltaComparable {
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(iotId, iotSelfLink, description, properties, locations, historicalLocations, datastreams, historicalLocationsIotNavigationLink, datastreamsIotNavigationLink, locationsIotNavigationLink, multiDatastreams, multiDatastreamsIotNavigationLink);
+        return java.util.Objects.hash(iotId, name, iotSelfLink, description, properties, locations, historicalLocations, datastreams, historicalLocationsIotNavigationLink, datastreamsIotNavigationLink, locationsIotNavigationLink, multiDatastreams, multiDatastreamsIotNavigationLink);
     }
 
     @Override
@@ -400,6 +401,7 @@ public class Thing implements STSResponse, DeltaComparable {
         }
         Thing thing = (Thing) o;
         return Objects.equals(this.iotId, thing.iotId)
+                && Objects.equals(this.name, thing.name)
                 && Objects.equals(this.iotSelfLink, thing.iotSelfLink)
                 && Objects.equals(this.description, thing.description)
                 && Objects.equals(this.properties, thing.properties)
@@ -419,6 +421,7 @@ public class Thing implements STSResponse, DeltaComparable {
         sb.append("class Thing {\n");
 
         sb.append("    iotId: ").append(toIndentedString(iotId)).append("\n");
+        sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    iotSelfLink: ").append(toIndentedString(iotSelfLink)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    properties: ").append(toIndentedString(properties)).append("\n");

@@ -50,6 +50,7 @@ import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.observation.CompositePhenomenon;
 import org.opengis.temporal.TemporalGeometricPrimitive;
+import org.opengis.observation.Process;
 
 /**
  *
@@ -226,8 +227,12 @@ public class OMUtils {
         return sp;
     }
 
+    public static Process buildProcess(final String procedureId) {
+        return SOSXmlFactory.buildProcess("2.0.0", procedureId);
+    }
+
     public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
-            final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
+            final Phenomenon phenomenon, final Process procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
 
         final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString(), null);
         final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
@@ -243,7 +248,7 @@ public class OMUtils {
     }
 
     public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf,
-            final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final List<Object> dataValues, final TemporalGeometricPrimitive time) {
+            final Phenomenon phenomenon, final Process procedure, final int count , final AbstractDataRecord datarecord, final List<Object> dataValues, final TemporalGeometricPrimitive time) {
 
         final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, null, dataValues);
         final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);

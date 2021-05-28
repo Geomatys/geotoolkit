@@ -31,7 +31,7 @@ import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swes.xml.InsertSensor;
 import org.geotoolkit.swes.xml.ObservationTemplate;
 import org.opengis.observation.Observation;
-
+import org.opengis.observation.Process;
 
 /**
  * <p>Java class for InsertSensorType complex type.
@@ -185,7 +185,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      */
     public List<String> getObservableProperty() {
         if (observableProperty == null) {
-            observableProperty = new ArrayList<String>();
+            observableProperty = new ArrayList<>();
         }
         return this.observableProperty;
     }
@@ -199,7 +199,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      */
     public List<InsertSensorType.RelatedFeature> getRelatedFeature() {
         if (relatedFeature == null) {
-            relatedFeature = new ArrayList<InsertSensorType.RelatedFeature>();
+            relatedFeature = new ArrayList<>();
         }
         return this.relatedFeature;
     }
@@ -210,7 +210,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      */
     public List<InsertSensorType.Metadata> getMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<InsertSensorType.Metadata>();
+            metadata = new ArrayList<>();
         }
         return this.metadata;
     }
@@ -235,16 +235,16 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
         private String name;
 
-        private String procedure;
+        private Process procedure;
 
-        private List<String> observableProperty;
+        private final List<String> observableProperty;
 
         public ObservationTemplateType(final List<String> properties) {
             this.observableProperty = properties;
         }
 
         @Override
-        public String getProcedure() {
+        public Process getProcedure() {
             return procedure;
         }
 
@@ -259,7 +259,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         }
 
         @Override
-        public void setProcedure(final String process) {
+        public void setProcedure(final Process process) {
             this.procedure = process;
         }
 

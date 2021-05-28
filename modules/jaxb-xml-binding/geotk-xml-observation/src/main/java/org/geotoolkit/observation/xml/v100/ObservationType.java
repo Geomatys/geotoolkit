@@ -198,6 +198,39 @@ public class ObservationType implements Entry, AbstractObservation {
         this.samplingTime        = observation.samplingTime;
     }
 
+    public ObservationType(final String                name,
+                            final String               definition,
+                            final SamplingFeatureType  featureOfInterest,
+                            final PhenomenonType       observedProperty,
+                            final String               procedure,
+                            final Object               result,
+                            final AbstractTimeGeometricPrimitiveType   samplingTime)
+    {
+        this(name, definition, buildFeatureProperty(featureOfInterest), new PhenomenonPropertyType(observedProperty), new ProcessType(procedure), null, result, samplingTime, null, null, null);
+    }
+
+    public ObservationType(final String                name,
+                           final String                definition,
+                           final FeaturePropertyType   featureOfInterest,
+                           final PhenomenonType        observedProperty,
+                           final String                procedure,
+                           final Object                result,
+                           final AbstractTimeGeometricPrimitiveType   samplingTime)
+    {
+        this(name, definition, featureOfInterest, new PhenomenonPropertyType(observedProperty), new ProcessType(procedure),null,  result, samplingTime, null, null, null);
+    }
+
+    public ObservationType(final String                  name,
+                            final String                 definition,
+                            final FeaturePropertyType    featureOfInterest,
+                            final PhenomenonPropertyType observedProperty,
+                            final String                 procedure,
+                            final Object                 result,
+                            final AbstractTimeGeometricPrimitiveType   samplingTime)
+    {
+        this(name, definition, featureOfInterest, observedProperty, new ProcessType(procedure), null, result, samplingTime, null, null, null);
+    }
+
     /**
      * Construit une observation.
      *
@@ -207,12 +240,12 @@ public class ObservationType implements Entry, AbstractObservation {
      * @param procedure         La procédure associée.
      * @param resultQuality    La qualité de la donnée, ou {@code null} si inconnue.
      */
-    public ObservationType(final String               name,
+    public ObservationType(final String                name,
                             final String               definition,
-                            final SamplingFeatureType featureOfInterest,
-                            final PhenomenonType      observedProperty,
-                            final ProcessType         procedure,
-                            final ElementType         quality,
+                            final FeaturePropertyType  featureOfInterest,
+                            final PhenomenonPropertyType observedProperty,
+                            final ProcessType          procedure,
+                            final ElementType          quality,
                             final Object               result,
                             final AbstractTimeGeometricPrimitiveType  samplingTime,
                             final DefaultMetadata      observationMetadata,
@@ -221,116 +254,32 @@ public class ObservationType implements Entry, AbstractObservation {
     {
         this.name                = name;
         this.definition          = definition;
-        if (featureOfInterest instanceof SamplingPointType) {
-            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingPoint((SamplingPointType)featureOfInterest));
-        } else if (featureOfInterest instanceof SamplingCurveType) {
-            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingCurve((SamplingCurveType)featureOfInterest));
-        } else if (featureOfInterest instanceof SamplingSolidType) {
-            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSolid((SamplingSolidType)featureOfInterest));
-        } else if (featureOfInterest instanceof SamplingSurfaceType) {
-            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
-        }
-        if (observedProperty != null) {
-            this.observedProperty    = new PhenomenonPropertyType(observedProperty);
-        }
+        this.featureOfInterest   = featureOfInterest;
+        this.observedProperty    = observedProperty;
         this.procedure           = procedure;
         this.resultQuality       = quality;
         this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = observationMetadata;
         this.procedureParameter  = procedureParameter;
-        this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
-        this.procedureTime       = new TimeGeometricPrimitivePropertyType(procedureTime);
+        if (samplingTime != null) {
+            this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
+        }
+        if (procedureTime != null) {
+            this.procedureTime    = new TimeGeometricPrimitivePropertyType(procedureTime);
+        }
     }
 
-    /**
-     * Build a new observation.
-     *
-     *
-     * @param featureOfInterest The observation station.
-     * @param observedProperty  The observed phenomenon.
-     * @param procedure         The associated procedure.
-     */
-    public ObservationType(final String                name,
-                            final String               definition,
-                            final SamplingFeatureType  featureOfInterest,
-                            final PhenomenonType       observedProperty,
-                            final String               procedure,
-                            final Object               result,
-                            final AbstractTimeGeometricPrimitiveType   samplingTime)
-    {
-        this.name                = name;
-        this.definition          = definition;
+    private static FeaturePropertyType buildFeatureProperty(final SamplingFeatureType featureOfInterest) {
         if (featureOfInterest instanceof SamplingPointType) {
-            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingPoint((SamplingPointType)featureOfInterest));
+            return new FeaturePropertyType(SAMPLING_FACTORY.createSamplingPoint((SamplingPointType)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingCurveType) {
-            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingCurve((SamplingCurveType)featureOfInterest));
+            return new FeaturePropertyType(SAMPLING_FACTORY.createSamplingCurve((SamplingCurveType)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingSolidType) {
-            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSolid((SamplingSolidType)featureOfInterest));
+            return new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSolid((SamplingSolidType)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingSurfaceType) {
-            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
+            return new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
         }
-        if (observedProperty != null) {
-            this.observedProperty = new PhenomenonPropertyType(observedProperty);
-        }
-        if (procedure != null) {
-            this.procedure       = new ProcessType(procedure);
-        }
-        this.resultQuality       = null;
-        this.result              = OM_FACTORY.createResult(result);
-        this.observationMetadata = null;
-        this.procedureTime       = null;
-        this.procedureParameter  = null;
-        this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
-    }
-
-    /**
-     * Build a new observation.
-     *
-     *
-     * @param featureOfInterest The observation station.
-     * @param observedProperty  The observed phenomenon.
-     * @param procedure         The associated procedure.
-     */
-    public ObservationType(final String                  name,
-                            final String                 definition,
-                            final FeaturePropertyType    featureOfInterest,
-                            final PhenomenonPropertyType observedProperty,
-                            final String                 procedure,
-                            final Object                 result,
-                            final AbstractTimeGeometricPrimitiveType   samplingTime)
-    {
-        this.name                = name;
-        this.definition          = definition;
-        this.featureOfInterest   = featureOfInterest;
-        this.observedProperty    = observedProperty;
-        if (procedure != null) {
-            this.procedure       = new ProcessType(procedure);
-        }
-        this.resultQuality       = null;
-        this.result              = OM_FACTORY.createResult(result);
-        this.observationMetadata = null;
-        this.procedureTime       = null;
-        this.procedureParameter  = null;
-        this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
-    }
-
-    /**
-     * Build a new observation.
-     *
-     *
-     * @param featureOfInterest The observation station.
-     * @param observedProperty  The observed phenomenon.
-     * @param procedure         The associated procedure.
-     */
-    public ObservationType(final String                name,
-                           final String                definition,
-                           final FeaturePropertyType   featureOfInterest,
-                           final PhenomenonType       observedProperty,
-                           final String          procedure,
-                           final Object                result,
-                           final AbstractTimeGeometricPrimitiveType   samplingTime)
-    {
-       this(name, definition, featureOfInterest, new PhenomenonPropertyType(observedProperty), procedure, result, samplingTime);
+        return null;
     }
 
     /**
@@ -657,8 +606,15 @@ public class ObservationType implements Entry, AbstractObservation {
             obsFoi = this.featureOfInterest == null && template.featureOfInterest == null;
         }
 
-        boolean match = obsFoi                                                                   &&
-                        Objects.equals(this.procedure,           template.procedure)           &&
+        final boolean obsProc;
+        if (this.procedure != null && template.procedure != null) {
+            obsProc = Objects.equals(this.procedure.getHref(),    template.procedure.getHref());
+        } else {
+            obsProc = this.procedure == null && template.procedure == null;
+        }
+
+        boolean match = obsFoi                                                                 &&
+                        obsProc                                                                &&
                         Objects.equals(this.resultQuality,       template.resultQuality)       &&
                         Objects.equals(this.observationMetadata, template.observationMetadata) &&
                         Objects.equals(this.procedureTime,       template.procedureTime)       &&
@@ -666,8 +622,8 @@ public class ObservationType implements Entry, AbstractObservation {
                         obsProperty;
         if (!match) {
             LOGGER.severe("error matching template report:" +
-                   "\nFOI  =>" + obsFoi                                                                   +
-                   "\nPROC =>" + Objects.equals(this.procedure,           template.procedure)           +
+                   "\nFOI  =>" + obsFoi                                                                 +
+                   "\nPROC =>" + obsProc                                                                +
                    "\nQUAL =>" + Objects.equals(this.resultQuality,       template.resultQuality)       +
                    "\nMETA =>" + Objects.equals(this.observationMetadata, template.observationMetadata) +
                    "\nPTI  =>" + Objects.equals(this.procedureTime,       template.procedureTime)       +
