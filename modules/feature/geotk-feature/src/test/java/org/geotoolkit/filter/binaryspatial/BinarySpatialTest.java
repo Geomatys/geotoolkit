@@ -17,12 +17,23 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LinearRing;
 
 import org.junit.Test;
 
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
 
@@ -35,6 +46,8 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
@@ -262,4 +275,41 @@ public class BinarySpatialTest extends org.geotoolkit.test.TestBase {
 
     }
 
+    /**
+     * We want to be sure that geometries created with ESRI or an unknown CRS authority (one without factory) does not
+     * break bbox testing.
+     *
+     * Note: This test has been copied from Apache SIS, and can be removed once BBOX filter has been fully replaced with
+     * SIS implementation.
+     */
+    @Test
+    public void bbox_filter_does_not_fail_on_esri_crs() throws Exception {
+        final Coordinate[] coords = new Coordinate[3];
+        coords[0] = new Coordinate(4, 2);
+        coords[1] = new Coordinate(7, 5);
+        coords[2] = new Coordinate(9, 3);
+        final Geometry esriGeom = GF.createLineString(coords);
+        final String crsWkt;
+        try (
+                InputStream is = BinarySpatialTest.class.getResourceAsStream("/io/wkt/extra_ESRI_CRS.txt");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
+        ) {
+            crsWkt = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+        }
+        final CoordinateReferenceSystem esriCRS = CRS.fromWKT(crsWkt);
+        esriGeom.setUserData(esriCRS);
+        esriGeom.setSRID(Integer.parseInt(esriCRS.getIdentifiers().iterator().next().getCode()));
+        Envelope2D envelope = new Envelope2D(esriCRS, 0, 0, 10, 10);
+
+        final PropertyName property = FF.property("geometry");
+        final Map<String, Geometry> geometry = Collections.singletonMap(property.getPropertyName(), esriGeom);
+
+        BBOX filter = FF.bbox(property, envelope);
+        assertTrue(filter.evaluate(geometry));
+
+        // Ensure no error is raised, even if a reprojection is involved
+        envelope = new Envelope2D(CommonCRS.defaultGeographic(), 0, 0, 10, 10);
+        filter = FF.bbox(property, envelope);
+        filter.evaluate(geometry);
+    }
 }
