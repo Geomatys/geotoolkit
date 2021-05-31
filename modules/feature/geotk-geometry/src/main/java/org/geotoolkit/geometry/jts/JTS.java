@@ -1058,13 +1058,15 @@ public final class JTS {
 
     /**
      * Convert a Java2D Shape to JTS Geometry.
+     * Commodity method for {@code fromAwt(factory, shp.getPathIterator(null, flatness)); }
      *
      * @param factory, factory used to create the geometry, not null
      * @param shp, shape to convert, not null
      * @param flatness, the maximum distance that the line segments used
      *        to approximate the curved segments are allowed to deviate from
      *        any point on the original curve
-     * @return JTS Geometry, may be null
+     * @return JTS Geometry, not null, can be empty
+     * @see #fromAwt(GeometryFactory, PathIterator)
      */
     public static Geometry fromAwt(GeometryFactory factory, Shape shp, double flatness) {
         return fromAwt(factory, shp.getPathIterator(null, flatness));
@@ -1075,7 +1077,7 @@ public final class JTS {
      *
      * @param factory, factory used to create the geometry, not null
      * @param ite, Java2D Path iterator, not null
-     * @return JTS Geometry, may be null
+     * @return JTS Geometry, not null, can be empty
      */
     public static Geometry fromAwt(GeometryFactory factory, PathIterator ite) {
 
@@ -1095,7 +1097,7 @@ public final class JTS {
 
         final int count = geoms.size();
         if (count == 0) {
-            return null;
+            return factory.createEmpty(2);
         } else if (count == 1) {
             return geoms.get(0);
         } else {
@@ -1105,6 +1107,14 @@ public final class JTS {
             } else if (allPolygons) {
                 Geometry result = geoms.get(0);
                 for (int i = 1; i < count; i++) {
+                    /*
+                     Java2D shape and JTS have fondamental differences.
+                     Java2D fills the resulting contour based on visual winding rules.
+                     JTS has an absolute system where outer shell and holes are clearly separated.
+                     We would need to process the contours as Java2D to compute the resulting JTS equivalent,
+                     but this would require a lot of work, maybe in the futur. TODO
+                     The SymDifference operation is what behave the most like EVEN_ODD or NON_ZERO winding rules.
+                    */
                     result = result.symDifference(geoms.get(i));
                 }
                 return result;
@@ -1143,7 +1153,7 @@ public final class JTS {
                     break;
                 case SEG_LINETO:
                     if (coords == null) {
-                        throw new IllegalArgumentException("Unvalid path iterator, LINETO without previous MOVETO.");
+                        throw new IllegalArgumentException("Invalid path iterator, LINETO without previous MOVETO.");
                     } else {
                         coords.add(new Coordinate(vertex[0], vertex[1]));
                         ite.next();
@@ -1152,7 +1162,7 @@ public final class JTS {
                 case SEG_CLOSE:
                     //end of current geometry
                     if (coords == null) {
-                        throw new IllegalArgumentException("Unvalid path iterator, CLOSE without previous MOVETO.");
+                        throw new IllegalArgumentException("Invalid path iterator, CLOSE without previous MOVETO.");
                     } else {
                         if (!coords.isEmpty()) {
                             coords.add(coords.get(0).copy());
@@ -1162,7 +1172,7 @@ public final class JTS {
                         break loop;
                     }
                 default :
-                    throw new IllegalArgumentException("Unvalid path iterator, must contain only flat segments.");
+                    throw new IllegalArgumentException("Invalid path iterator, must contain only flat segments.");
             }
         }
 
