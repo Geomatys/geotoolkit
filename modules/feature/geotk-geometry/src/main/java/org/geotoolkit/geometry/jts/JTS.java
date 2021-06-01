@@ -30,8 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.internal.system.Loggers;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.GeodeticCalculator;
@@ -40,6 +42,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.collection.BackingStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.geometry.BoundingBox;
 import org.geotoolkit.geometry.jts.awt.JTSGeometryJ2D;
@@ -768,7 +771,7 @@ public final class JTS {
         if (crs == null) {
             return;
         }
-        int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+
         Object userData = geom.getUserData();
         if (userData instanceof CoordinateReferenceSystem) {
             userData = crs;
@@ -783,7 +786,15 @@ public final class JTS {
             userData = crs;
         }
         geom.setUserData(userData);
-        geom.setSRID(srid);
+
+        try {
+            int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+            geom.setSRID(srid);
+        } catch (IllegalArgumentException e) {
+            Logging.getLogger("org.geotoolkit.geometry")
+                    .log(Level.FINE, "Cannot update SRID of geometry. It will be reset.", e);
+            geom.setSRID(0);
+        }
     }
 
     /**
